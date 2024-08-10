@@ -9,18 +9,19 @@ dependencies {
   implementation "software.sava:anchor-src-gen:$sava_anchor_src_gen"
 }
 
-def getGitHash = { ->
+def gitHash = { ->
   def stdout = new ByteArrayOutputStream()
   exec {
     commandLine 'git', 'rev-parse', '--short', 'HEAD'
     standardOutput = stdout
   }
-  return stdout.toString().trim()
+  return stdout.toString().trim();
 } as Object
 
 afterEvaluate {
   jlink {
-    imageName.set(getGitHash())
+    mergedModuleJarVersion.set("0")
+    imageName.set(gitHash())
     options.addAll(List.of('--bind-services', '--no-man-pages', '--ignore-signing-information'))
     enableCds()
   }

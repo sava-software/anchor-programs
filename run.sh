@@ -24,7 +24,9 @@ tabLength=2;
 sourceDirectory="src/main/java";
 basePackageName="$package";
 rpc="";
-programsCSV="generator/main_net_programs.csv"
+programsCSV="generator/main_net_programs.csv";
+numThreads=5;
+baseDelayMillis=200;
 
 for arg in "$@"
 do
@@ -56,11 +58,13 @@ do
         esac
         ;;
 
-      tl | tabLength) tabLength="$val";;
-      sd | sourceDirectory) sourceDirectory="$val";;
+      bdm | baseDelayMillis) baseDelayMillis="$val";;
       bp | basePackageName) basePackageName="$val";;
-      rpc) rpc="$val";;
+      nt | numThreads) numThreads="$val";;
       pcsv) programsCSV="$val";;
+      rpc) rpc="$val";;
+      sd | sourceDirectory) sourceDirectory="$val";;
+      tl | tabLength) tabLength="$val";;
 
       *)
           printf "Unsupported flag '%s' [key=%s] [val=%s].\n" "$arg" "$key" "$val";
@@ -73,11 +77,13 @@ do
   fi
 done
 
-javaArgs+=("-D$moduleName.tabLength=$tabLength")
-javaArgs+=("-D$moduleName.sourceDirectory=$sourceDirectory")
+javaArgs+=("-D$moduleName.baseDelayMillis=$baseDelayMillis")
 javaArgs+=("-D$moduleName.basePackageName=$basePackageName")
-javaArgs+=("-D$moduleName.rpc=$rpc")
+javaArgs+=("-D$moduleName.numThreads=$numThreads")
 javaArgs+=("-D$moduleName.programsCSV=$programsCSV")
+javaArgs+=("-D$moduleName.rpc=$rpc")
+javaArgs+=("-D$moduleName.sourceDirectory=$sourceDirectory")
+javaArgs+=("-D$moduleName.tabLength=$tabLength")
 
 javaVersion=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}' | grep -oEi '^[0-9]+')
 readonly javaVersion
