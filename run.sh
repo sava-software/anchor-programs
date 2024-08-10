@@ -11,7 +11,7 @@ readonly moduleName="software.sava.anchor_generator"
 readonly package="software.sava.anchor.programs"
 projectDirectory="$(pwd)/generator"
 readonly projectDirectory
-readonly mainClass="$package.AnchorSourceGenerator"
+readonly mainClass="$package.Entrypoint"
 
 javaArgs=(
   '-XX:+UseZGC'

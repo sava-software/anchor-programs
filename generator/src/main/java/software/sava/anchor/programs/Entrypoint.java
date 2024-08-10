@@ -1,6 +1,7 @@
 package software.sava.anchor.programs;
 
 import software.sava.anchor.AnchorIDL;
+import software.sava.anchor.AnchorSourceGenerator;
 import software.sava.anchor.AnchorUtil;
 import software.sava.anchor.OnChainIDL;
 import software.sava.rpc.json.http.SolanaNetwork;
@@ -20,20 +21,20 @@ import java.util.stream.Collectors;
 
 import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 
-public record AnchorSourceGenerator(SolanaRpcClient rpcClient, int tabLength) {
+public record Entrypoint(SolanaRpcClient rpcClient, int tabLength) {
 
   private static String formatPackage(final String basePackage, final String moduleName) {
     return String.format("%s.%s.anchor", basePackage, moduleName);
   }
 
-  public software.sava.anchor.AnchorSourceGenerator createGenerator(final String moduleName,
-                                                                    final String programAddress,
-                                                                    final Path sourceDirectory,
-                                                                    final String basePackageName) {
+  public AnchorSourceGenerator createGenerator(final String moduleName,
+                                               final String programAddress,
+                                               final Path sourceDirectory,
+                                               final String basePackageName) {
     final var idlAddress = AnchorUtil.createIdlAddress(fromBase58Encoded(programAddress));
     final var idlAccountInfo = rpcClient.getAccountInfo(idlAddress, OnChainIDL.FACTORY).join();
     final var idl = AnchorIDL.parseIDL(JsonIterator.parse(idlAccountInfo.data().json()));
-    return new software.sava.anchor.AnchorSourceGenerator(
+    return new AnchorSourceGenerator(
         sourceDirectory,
         formatPackage(basePackageName, moduleName),
         tabLength,
@@ -41,11 +42,11 @@ public record AnchorSourceGenerator(SolanaRpcClient rpcClient, int tabLength) {
     );
   }
 
-  public software.sava.anchor.AnchorSourceGenerator createGenerator(final String moduleName,
-                                                                    final URI url,
-                                                                    final Path sourceDirectory,
-                                                                    final String basePackageName) {
-    return software.sava.anchor.AnchorSourceGenerator.createGenerator(
+  public AnchorSourceGenerator createGenerator(final String moduleName,
+                                               final URI url,
+                                               final Path sourceDirectory,
+                                               final String basePackageName) {
+    return AnchorSourceGenerator.createGenerator(
         rpcClient.httpClient(),
         url,
         sourceDirectory,
@@ -55,7 +56,7 @@ public record AnchorSourceGenerator(SolanaRpcClient rpcClient, int tabLength) {
   }
 
   public static void main(final String[] args) {
-    final var clas = AnchorSourceGenerator.class;
+    final var clas = Entrypoint.class;
     final var moduleName = clas.getModule().getName();
     final int tabLength = Integer.parseInt(System.getProperty(moduleName + ".tabLength", "2"));
     final var sourceDirectory = Path.of(System.getProperty(moduleName + ".sourceDirectory", "anchor-programs/src/main/java")).toAbsolutePath();
@@ -76,7 +77,7 @@ public record AnchorSourceGenerator(SolanaRpcClient rpcClient, int tabLength) {
               rpcEndpoint == null || rpcEndpoint.isBlank() ? SolanaNetwork.MAIN_NET.getEndpoint() : URI.create(rpcEndpoint),
               httpClient
           );
-          final var anchorGenerator = new AnchorSourceGenerator(rpcClient, tabLength);
+          final var anchorGenerator = new Entrypoint(rpcClient, tabLength);
           final var futures = programs.entrySet().stream()
               .map(entry -> anchorGenerator.createGenerator(entry.getKey(), entry.getValue(), sourceDirectory, basePackageName))
               .map(generator -> CompletableFuture.runAsync(generator, executor))
