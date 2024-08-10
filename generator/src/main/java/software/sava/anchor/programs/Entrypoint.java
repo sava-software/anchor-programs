@@ -74,7 +74,6 @@ public final class Entrypoint extends Thread {
   private AnchorSourceGenerator createGenerator(final String moduleName, final AnchorIDL idl) {
     return new AnchorSourceGenerator(
         sourceDirectory,
-        outputModuleName,
         formatPackage(moduleName),
         tabLength,
         idl
@@ -155,7 +154,7 @@ public final class Entrypoint extends Thread {
         "2"
     ));
     final var sourceDirectory = Path.of(propertyOrElse(moduleName + ".sourceDirectory", "anchor-programs/src/main/java")).toAbsolutePath();
-    final var outputModuleName = propertyOrElse(moduleName + ".moduleName", moduleName.substring(moduleName.lastIndexOf('.')) + ".anchor_programs");
+    final var outputModuleName = propertyOrElse(moduleName + ".moduleName", moduleName.substring(0, moduleName.lastIndexOf('.')) + ".anchor_programs");
     final var basePackageName = propertyOrElse(moduleName + ".basePackageName", clas.getPackageName());
     final var rpcEndpoint = System.getProperty(moduleName + ".rpc");
     final var programsCSV = mandatoryProperty(moduleName + ".programsCSV");
@@ -215,7 +214,7 @@ public final class Entrypoint extends Thread {
             }
           }
           final var builder = new StringBuilder(2_048);
-          builder.append(String.format("module %s {%n", moduleName));
+          builder.append(String.format("module %s {%n", outputModuleName));
 
           for (final var thread : threads) {
             thread.join();

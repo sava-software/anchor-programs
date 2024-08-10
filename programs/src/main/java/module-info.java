@@ -1,4 +1,4 @@
-module software.sava.anchor_generator {
+module software.sava.anchor_programs {
   exports software.sava.anchor.programs.drift.anchor.types;
   exports software.sava.anchor.programs.drift.anchor;
   exports software.sava.anchor.programs.glam.anchor.types;
