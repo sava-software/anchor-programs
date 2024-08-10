@@ -41,11 +41,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
 
       - name: Gradle Check
-        run: ./gradlew \
-          -Pgpr.sava.user=${{ secrets.GPR_USER }} \
-          -Pgpr.sava.token=${{ secrets.GPR_TOKEN }} \
-          -PtargetJava=22 \
-          check --stacktrace --no-daemon
+        run: ./gradlew -Pgpr.sava.user=${{ secrets.GPR_USER }} -Pgpr.sava.token=${{ secrets.GPR_TOKEN }} -PtargetJava=22 check --stacktrace --no-daemon
         env:
           GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

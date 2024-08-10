@@ -35,12 +35,11 @@ jobs:
 
       - name: Generate Source
         run: ./run.sh --log="INFO" --tabLength=2 --sourceDirectory="programs/src/main/java" --rpc="${{ secrets.RPC_URL }}" --baseDelayMillis=200 --numThreads=5
+        env:
+          GITHUB_ACTOR: ${{ secrets.GPR_USER }}
+          GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
 
       - name: Gradle Check
-        run: ./gradlew \
-          -Pgpr.sava.user=${{ secrets.GPR_USER }} \
-          -Pgpr.sava.token=${{ secrets.GPR_TOKEN }} \
-          -PtargetJava=22 \
-          check --stacktrace --no-daemon
+        run: ./gradlew -Pgpr.sava.user=${{ secrets.GPR_USER }} -Pgpr.sava.token=${{ secrets.GPR_TOKEN }} -PtargetJava=22 check --stacktrace --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
