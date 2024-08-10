@@ -39,7 +39,6 @@ public final class Entrypoint extends Thread {
   private final AtomicLong latestCall;
   private final SolanaRpcClient rpcClient;
   private final Path sourceDirectory;
-  private final String outputModuleName;
   private final String basePackageName;
   private final Set<String> exports;
   private final int tabLength;
@@ -51,8 +50,8 @@ public final class Entrypoint extends Thread {
                      final AtomicLong latestCall,
                      final SolanaRpcClient rpcClient,
                      final Path sourceDirectory,
-                     final String outputModuleName,
-                     final String basePackageName, final Set<String> exports,
+                     final String basePackageName,
+                     final Set<String> exports,
                      final int tabLength) {
     this.semaphore = semaphore;
     this.tasks = tasks;
@@ -61,7 +60,6 @@ public final class Entrypoint extends Thread {
     this.latestCall = latestCall;
     this.rpcClient = rpcClient;
     this.sourceDirectory = sourceDirectory;
-    this.outputModuleName = outputModuleName;
     this.basePackageName = basePackageName;
     this.exports = exports;
     this.tabLength = tabLength;
@@ -158,14 +156,8 @@ public final class Entrypoint extends Thread {
     final var basePackageName = propertyOrElse(moduleName + ".basePackageName", clas.getPackageName());
     final var rpcEndpoint = System.getProperty(moduleName + ".rpc");
     final var programsCSV = mandatoryProperty(moduleName + ".programsCSV");
-    final int numThreads = Integer.parseInt(propertyOrElse(
-        moduleName + ".numThreads",
-        Integer.toString(Runtime.getRuntime().availableProcessors())
-    ));
-    final int baseDelayMillis = Integer.parseInt(propertyOrElse(
-        moduleName + ".baseDelayMillis",
-        "200"
-    ));
+    final int numThreads = Integer.parseInt(propertyOrElse(moduleName + ".numThreads", "5"));
+    final int baseDelayMillis = Integer.parseInt(propertyOrElse(moduleName + ".baseDelayMillis", "200"));
 
     try (final var lines = Files.lines(Path.of(programsCSV))) {
       final var semaphore = new Semaphore(numThreads, false);
@@ -190,7 +182,7 @@ public final class Entrypoint extends Thread {
               .mapToObj(_ -> new Entrypoint(
                   semaphore, tasks, errorCount, baseDelayMillis, latestCall,
                   rpcClient,
-                  sourceDirectory, outputModuleName, basePackageName,
+                  sourceDirectory, basePackageName,
                   exports,
                   tabLength
               ))

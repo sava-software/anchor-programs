@@ -26,7 +26,7 @@ outputModuleName="";
 basePackageName="$package";
 rpc="";
 programsCSV="generator/main_net_programs.csv";
-numThreads=5;
+numThreads="5";
 baseDelayMillis=200;
 
 for arg in "$@"

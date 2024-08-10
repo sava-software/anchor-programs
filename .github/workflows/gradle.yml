@@ -34,7 +34,20 @@ jobs:
       - run: printf "\norg.gradle.java.installations.paths=%s" "$JAVA_HOME" >> gradle.properties
       - run: java --version
 
+      - name: Generate Source
+        run: bash run.sh\
+          --log="INFO"\
+          --tabLength=2\
+          --sourceDirectory="programs/src/main/java"\
+          --rpc="${{ secrets.RPC_URL }}"\
+          --baseDelayMillis=200\
+          --numThreads=5
+
       - name: Gradle Check
-        run: ./gradlew -Pgpr.sava.user=${{ secrets.GPR_USER }} -Pgpr.sava.token=${{ secrets.GPR_TOKEN }} -PtargetJava=22 check --stacktrace --no-daemon
+        run: ./gradlew\
+          -Pgpr.sava.user=${{ secrets.GPR_USER }}\
+          -Pgpr.sava.token=${{ secrets.GPR_TOKEN }}\
+          -PtargetJava=22\
+          check --stacktrace --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
