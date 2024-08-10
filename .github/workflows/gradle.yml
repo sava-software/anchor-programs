@@ -35,6 +35,6 @@ jobs:
       - run: java --version
 
       - name: Gradle Check
-        run: ./gradlew -PtargetJava=22 check --stacktrace --no-daemon
+        run: ./gradlew -Pgpr.user=${{ secrets.GPR_USER }} -Pgpr.token=${{ secrets.GPR_TOKEN }} -PtargetJava=22 check --stacktrace --no-daemon
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
