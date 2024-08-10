@@ -1,0 +1,27 @@
+apply plugin: 'org.beryx.jlink'
+
+dependencies {
+  implementation "systems.comodal:json-iterator:$jsoniter"
+
+  implementation "software.sava:sava-core:$sava"
+  implementation "software.sava:sava-rpc:$sava"
+
+  implementation "software.sava:anchor-src-gen:$sava_anchor_src_gen"
+}
+
+def getGitHash = { ->
+  def stdout = new ByteArrayOutputStream()
+  exec {
+    commandLine 'git', 'rev-parse', '--short', 'HEAD'
+    standardOutput = stdout
+  }
+  return stdout.toString().trim()
+}
+
+afterEvaluate {
+  jlink {
+    imageName.set(getGitHash())
+    options.addAll(List.of('--bind-services', '--no-man-pages', '--vm=server', '--ignore-signing-information'))
+    enableCds()
+  }
+}
