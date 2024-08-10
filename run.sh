@@ -26,7 +26,6 @@ basePackageName="$package";
 rpc="";
 programsCSV="generator/main_net_programs.csv"
 
-name=""
 for arg in "$@"
 do
   if [[ "$arg" =~ ^--.* ]]; then
@@ -122,5 +121,5 @@ if [[ "$screen" == 0 ]]; then
   "$javaExe" "${javaArgs[@]}"
 else
   set -x
-  screen -S "$name" "$javaExe" "${javaArgs[@]}"
+  screen -S "anchor-src-gen" "$javaExe" "${javaArgs[@]}"
 fi

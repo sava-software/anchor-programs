@@ -2,13 +2,12 @@ package software.sava.anchor.programs.glam.anchor;
 
 import java.util.List;
 
+import software.sava.anchor.programs.glam.anchor.types.FundModel;
+import software.sava.anchor.programs.glam.anchor.types.ShareClassModel;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.borsh.Borsh;
 import software.sava.core.tx.Instruction;
-
-import software.sava.anchor.programs.glam.anchor.types.FundModel;
-import software.sava.anchor.programs.glam.anchor.types.ShareClassModel;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 

@@ -16,12 +16,12 @@ def getGitHash = { ->
     standardOutput = stdout
   }
   return stdout.toString().trim()
-}
+} as Object
 
 afterEvaluate {
   jlink {
     imageName.set(getGitHash())
-    options.addAll(List.of('--bind-services', '--no-man-pages', '--vm=server', '--ignore-signing-information'))
+    options.addAll(List.of('--bind-services', '--no-man-pages', '--ignore-signing-information'))
     enableCds()
   }
 }
