@@ -35,8 +35,8 @@ ext {
   VCS_URL = 'https://github.com/sava-software/anchor-programs'
   jsoniter = '2.11.+'
   sava = '1.0.+'
-  sava_solana_programs = '1.0.0'
-  sava_anchor_src_gen = '1.0.1'
+  sava_solana_programs = '1.0.2'
+  sava_anchor_src_gen = '1.0.2'
   bouncycastleMinor = 'jdk18on'
   bouncycastlePatch = '1.78.1' // https://www.bouncycastle.org/latest_releases.html#LATEST
 }
@@ -75,17 +75,17 @@ subprojects {
       }
     }
     maven {
-      url = "https://maven.pkg.github.com/sava-software/anchor-src-gen"
+      url = "https://maven.pkg.github.com/sava-software/solana-programs"
       credentials {
-        username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-        password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+        username = project.findProperty("gpr.user2") ?: System.getenv("GITHUB_ACTOR")
+        password = project.findProperty("gpr.token2") ?: System.getenv("GITHUB_TOKEN")
       }
     }
     maven {
-      url = "https://maven.pkg.github.com/sava-software/solana-programs"
+      url = "https://maven.pkg.github.com/sava-software/anchor-src-gen"
       credentials {
-        username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-        password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+        username = project.findProperty("gpr.user2") ?: System.getenv("GITHUB_ACTOR")
+        password = project.findProperty("gpr.token2") ?: System.getenv("GITHUB_TOKEN")
       }
     }
     mavenCentral()

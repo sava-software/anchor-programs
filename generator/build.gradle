@@ -6,6 +6,7 @@ dependencies {
   implementation "software.sava:sava-core:$sava"
   implementation "software.sava:sava-rpc:$sava"
 
+  implementation "software.sava:solana-programs:$sava_solana_programs"
   implementation "software.sava:anchor-src-gen:$sava_anchor_src_gen"
 }
 

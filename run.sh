@@ -22,6 +22,7 @@ screen=0;
 logLevel="INFO";
 tabLength=2;
 sourceDirectory="src/main/java";
+outputModuleName="";
 basePackageName="$package";
 rpc="";
 programsCSV="generator/main_net_programs.csv";
@@ -60,6 +61,7 @@ do
 
       bdm | baseDelayMillis) baseDelayMillis="$val";;
       bp | basePackageName) basePackageName="$val";;
+      mn | outputModuleName) outputModuleName="$val";;
       nt | numThreads) numThreads="$val";;
       pcsv) programsCSV="$val";;
       rpc) rpc="$val";;
@@ -79,6 +81,7 @@ done
 
 javaArgs+=("-D$moduleName.baseDelayMillis=$baseDelayMillis")
 javaArgs+=("-D$moduleName.basePackageName=$basePackageName")
+javaArgs+=("-D$moduleName.outputModuleName=$outputModuleName")
 javaArgs+=("-D$moduleName.numThreads=$numThreads")
 javaArgs+=("-D$moduleName.programsCSV=$programsCSV")
 javaArgs+=("-D$moduleName.rpc=$rpc")

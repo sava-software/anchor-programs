@@ -1,9 +1,12 @@
 package software.sava.anchor.programs;
 
+import software.sava.anchor.AnchorIDL;
 import software.sava.anchor.AnchorSourceGenerator;
 import software.sava.core.accounts.PublicKey;
+import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.SolanaNetwork;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
+import systems.comodal.jsoniter.JsonIterator;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -12,13 +15,18 @@ import java.net.http.HttpClient;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.LongBinaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static java.nio.file.StandardOpenOption.*;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 
@@ -31,7 +39,9 @@ public final class Entrypoint extends Thread {
   private final AtomicLong latestCall;
   private final SolanaRpcClient rpcClient;
   private final Path sourceDirectory;
+  private final String outputModuleName;
   private final String basePackageName;
+  private final Set<String> exports;
   private final int tabLength;
 
   private Entrypoint(final Semaphore semaphore,
@@ -41,7 +51,8 @@ public final class Entrypoint extends Thread {
                      final AtomicLong latestCall,
                      final SolanaRpcClient rpcClient,
                      final Path sourceDirectory,
-                     final String basePackageName,
+                     final String outputModuleName,
+                     final String basePackageName, final Set<String> exports,
                      final int tabLength) {
     this.semaphore = semaphore;
     this.tasks = tasks;
@@ -50,7 +61,9 @@ public final class Entrypoint extends Thread {
     this.latestCall = latestCall;
     this.rpcClient = rpcClient;
     this.sourceDirectory = sourceDirectory;
+    this.outputModuleName = outputModuleName;
     this.basePackageName = basePackageName;
+    this.exports = exports;
     this.tabLength = tabLength;
   }
 
@@ -58,24 +71,24 @@ public final class Entrypoint extends Thread {
     return String.format("%s.%s.anchor", basePackageName, moduleName);
   }
 
-  private AnchorSourceGenerator createGenerator(final String moduleName, final PublicKey programAddress) {
-    final var idl = AnchorSourceGenerator.fetchIDLForProgram(programAddress, rpcClient).join();
+  private AnchorSourceGenerator createGenerator(final String moduleName, final AnchorIDL idl) {
     return new AnchorSourceGenerator(
         sourceDirectory,
+        outputModuleName,
         formatPackage(moduleName),
         tabLength,
         idl
     );
   }
 
+  private AnchorSourceGenerator createGenerator(final String moduleName, final PublicKey programAddress) {
+    final var idl = AnchorSourceGenerator.fetchIDLForProgram(programAddress, rpcClient).join();
+    return createGenerator(moduleName, idl);
+  }
+
   private AnchorSourceGenerator createGenerator(final String moduleName, final URI url) {
-    return AnchorSourceGenerator.createGenerator(
-        rpcClient.httpClient(),
-        url,
-        sourceDirectory,
-        formatPackage(moduleName),
-        tabLength
-    );
+    final var idl = AnchorSourceGenerator.fetchIDL(rpcClient.httpClient(), url).join();
+    return createGenerator(moduleName, idl);
   }
 
   private AnchorSourceGenerator createGenerator(final String moduleName, final String addressOrURL) {
@@ -111,7 +124,7 @@ public final class Entrypoint extends Thread {
         this.latestCall.getAndAccumulate(now, MAX);
         final var generator = createGenerator(task);
         generator.run();
-
+        generator.addExports(exports);
         this.latestCall.getAndAccumulate(now + ((System.currentTimeMillis() - now) >> 1), MAX);
         this.errorCount.getAndUpdate(x -> x > 0 ? x - 1 : x);
       } catch (final RuntimeException e) {
@@ -125,22 +138,32 @@ public final class Entrypoint extends Thread {
     }
   }
 
+  private static String mandatoryProperty(final String key) {
+    return Objects.requireNonNull(System.getProperty(key, "Must pass property "), key);
+  }
+
+  private static String propertyOrElse(final String key, final String orElse) {
+    final var property = System.getProperty(key);
+    return property == null || property.isBlank() ? orElse : property;
+  }
+
   public static void main(final String[] args) throws InterruptedException {
     final var clas = Entrypoint.class;
     final var moduleName = clas.getModule().getName();
-    final int tabLength = Integer.parseInt(System.getProperty(
+    final int tabLength = Integer.parseInt(propertyOrElse(
         moduleName + ".tabLength",
         "2"
     ));
-    final var sourceDirectory = Path.of(System.getProperty(moduleName + ".sourceDirectory", "anchor-programs/src/main/java")).toAbsolutePath();
-    final var basePackageName = System.getProperty(moduleName + ".basePackageName", clas.getPackageName());
+    final var sourceDirectory = Path.of(propertyOrElse(moduleName + ".sourceDirectory", "anchor-programs/src/main/java")).toAbsolutePath();
+    final var outputModuleName = propertyOrElse(moduleName + ".moduleName", moduleName.substring(moduleName.lastIndexOf('.')) + ".anchor_programs");
+    final var basePackageName = propertyOrElse(moduleName + ".basePackageName", clas.getPackageName());
     final var rpcEndpoint = System.getProperty(moduleName + ".rpc");
-    final var programsCSV = System.getProperty(moduleName + ".programsCSV");
-    final int numThreads = Integer.parseInt(System.getProperty(
+    final var programsCSV = mandatoryProperty(moduleName + ".programsCSV");
+    final int numThreads = Integer.parseInt(propertyOrElse(
         moduleName + ".numThreads",
         Integer.toString(Runtime.getRuntime().availableProcessors())
     ));
-    final int baseDelayMillis = Integer.parseInt(System.getProperty(
+    final int baseDelayMillis = Integer.parseInt(propertyOrElse(
         moduleName + ".baseDelayMillis",
         "200"
     ));
@@ -163,14 +186,45 @@ public final class Entrypoint extends Thread {
               httpClient
           );
 
+          final var exports = new ConcurrentSkipListSet<String>();
           final var threads = IntStream.range(0, numThreads)
-              .mapToObj(_ -> new Entrypoint(semaphore, tasks, errorCount, baseDelayMillis, latestCall, rpcClient, sourceDirectory, basePackageName, tabLength))
+              .mapToObj(_ -> new Entrypoint(
+                  semaphore, tasks, errorCount, baseDelayMillis, latestCall,
+                  rpcClient,
+                  sourceDirectory, outputModuleName, basePackageName,
+                  exports,
+                  tabLength
+              ))
               .peek(Thread::start)
               .toList();
+
+          exports.add(String.format("requires %s;", HttpClient.class.getModule().getName()));
+          exports.add(String.format("requires %s;", JsonIterator.class.getModule().getName()));
+          exports.add(String.format("requires %s;", Instruction.class.getModule().getName()));
+          exports.add(String.format("requires %s;", SolanaRpcClient.class.getModule().getName()));
+          exports.add(String.format("requires %s;", System.class.getModule().getName()));
+          exports.add(String.format("requires %s;", AnchorSourceGenerator.class.getModule().getName()));
 
           for (final var thread : threads) {
             thread.join();
           }
+
+          final var moduleFilePath = sourceDirectory.resolve("module-info.java");
+
+          if (Files.exists(moduleFilePath)) {
+            try (final var moduleFileLines = Files.lines(moduleFilePath)) {
+              moduleFileLines
+                  .map(String::strip)
+                  .filter(line -> !line.isBlank() && !line.startsWith("module") && !line.equals("}"))
+                  .forEach(exports::add);
+            }
+          }
+
+          final var builder = new StringBuilder(1_024);
+          builder.append(String.format("module %s {%n", moduleName));
+          builder.append(exports.stream().sorted().collect(Collectors.joining("\n")).indent(tabLength));
+          builder.append('}').append('\n');
+          Files.writeString(moduleFilePath, builder.toString(), CREATE, TRUNCATE_EXISTING, WRITE);
         }
       }
     } catch (final IOException e) {
