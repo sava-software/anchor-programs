@@ -77,15 +77,15 @@ subprojects {
     maven {
       url = "https://maven.pkg.github.com/sava-software/solana-programs"
       credentials {
-        username = project.findProperty("gpr.user2") ?: System.getenv("GITHUB_ACTOR")
-        password = project.findProperty("gpr.token2") ?: System.getenv("GITHUB_TOKEN")
+        username = project.findProperty("gpr.sava.user") ?: System.getenv("GITHUB_ACTOR")
+        password = project.findProperty("gpr.sava.token") ?: System.getenv("GITHUB_TOKEN")
       }
     }
     maven {
       url = "https://maven.pkg.github.com/sava-software/anchor-src-gen"
       credentials {
-        username = project.findProperty("gpr.user2") ?: System.getenv("GITHUB_ACTOR")
-        password = project.findProperty("gpr.token2") ?: System.getenv("GITHUB_TOKEN")
+        username = project.findProperty("gpr.sava.user") ?: System.getenv("GITHUB_ACTOR")
+        password = project.findProperty("gpr.sava.token") ?: System.getenv("GITHUB_TOKEN")
       }
     }
     mavenCentral()

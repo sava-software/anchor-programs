@@ -222,7 +222,7 @@ public final class Entrypoint extends Thread {
 
           final var builder = new StringBuilder(1_024);
           builder.append(String.format("module %s {%n", moduleName));
-          builder.append(exports.stream().sorted().collect(Collectors.joining("\n")).indent(tabLength));
+          builder.append(exports.stream().sorted(String::compareToIgnoreCase).collect(Collectors.joining("\n")).indent(tabLength));
           builder.append('}').append('\n');
           Files.writeString(moduleFilePath, builder.toString(), CREATE, TRUNCATE_EXISTING, WRITE);
         }
