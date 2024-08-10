@@ -1,3 +1,14 @@
+buildscript {
+  repositories {
+    maven { url = 'https://plugins.gradle.org/m2/' }
+    mavenCentral()
+  }
+  dependencies {
+    // https://plugins.gradle.org/plugin/org.beryx.jlink
+    classpath "org.beryx:badass-jlink-plugin:+"
+  }
+}
+
 def getAppVersion = { ->
   try (final var gitTagOut = new ByteArrayOutputStream()) {
     exec {
@@ -30,102 +41,111 @@ ext {
   bouncycastlePatch = '1.78.1' // https://www.bouncycastle.org/latest_releases.html#LATEST
 }
 
-apply plugin: 'java-library'
-apply plugin: 'maven-publish'
+subprojects {
+  apply plugin: 'java-library'
+  apply plugin: 'maven-publish'
 
-project.group = 'software.sava'
-project.version = "$VERSION"
+  project.group = 'software.sava'
+  project.version = "$VERSION"
 
-final JLV = JavaLanguageVersion.of(project.findProperty('jv') as Integer ?: 22)
+  final JLV = JavaLanguageVersion.of(project.findProperty('jv') as Integer ?: 22)
 
-plugins.withType(JavaPlugin).configureEach {
-  java {
-    modularity.inferModulePath = true
-    toolchain {
-      languageVersion = JLV
-    }
-  }
-}
-
-dependencies {
-  implementation "systems.comodal:json-iterator:$jsoniter"
-
-  implementation "software.sava:sava-core:$sava"
-  implementation "software.sava:sava-rpc:$sava"
-  implementation "software.sava:solana-programs:$sava_solana_programs"
-  implementation "software.sava:anchor-src-gen:$sava_anchor_src_gen"
-}
-
-repositories {
-  maven {
-    url = "https://maven.pkg.github.com/comodal/json-iterator"
-    credentials {
-      username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-      password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
-    }
-  }
-  maven {
-    url = "https://maven.pkg.github.com/sava-software/sava"
-    credentials {
-      username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-      password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
-    }
-  }
-  mavenCentral()
-}
-
-configurations.configureEach {
-  resolutionStrategy {
-    cacheDynamicVersionsFor 15, 'minutes'
-    cacheChangingModulesFor 15, 'minutes'
-  }
-}
-
-dependencies {
-  testImplementation 'org.junit.jupiter:junit-jupiter-api:+'
-  testImplementation 'org.junit.jupiter:junit-jupiter-params:+'
-  testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:+'
-}
-
-test {
-  useJUnitPlatform()
-  testLogging {
-    events "passed", "skipped", "failed", "standardOut", "standardError"
-    exceptionFormat "full"
-    showStandardStreams true
-  }
-}
-
-tasks.register('sourcesJar', Jar) {
-  from sourceSets.main.allJava
-  archiveClassifier.set('sources')
-}
-
-publishing {
-  publications {
-    mavenJava(MavenPublication) {
-      from components.java
-      artifact sourcesJar
-      groupId project.group
-      artifactId project.name
-      version = project.version
-      pom {
-        name = project.name
-        url = "$VCS_URL"
-        scm {
-          connection = 'scm:git:git@github.com:sava-software/anchor-programs.git'
-          url = "$VCS_URL"
-        }
+  plugins.withType(JavaPlugin).configureEach {
+    java {
+      modularity.inferModulePath = true
+      toolchain {
+        languageVersion = JLV
       }
     }
   }
+
+  dependencies {
+    implementation "systems.comodal:json-iterator:$jsoniter"
+
+    implementation "software.sava:sava-core:$sava"
+    implementation "software.sava:sava-rpc:$sava"
+    implementation "software.sava:solana-programs:$sava_solana_programs"
+    implementation "software.sava:anchor-src-gen:$sava_anchor_src_gen"
+  }
+
   repositories {
     maven {
-      name = "GitHubPackages"
-      url = "https://maven.pkg.github.com/sava-software/anchor-programs"
+      url = "https://maven.pkg.github.com/comodal/json-iterator"
       credentials {
-        username = System.getenv("GITHUB_ACTOR") ?: project.findProperty("gpr.user.write")
-        password = System.getenv("GITHUB_TOKEN") ?: project.findProperty("gpr.token.write")
+        username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+        password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+      }
+    }
+    maven {
+      url = "https://maven.pkg.github.com/sava-software/sava"
+      credentials {
+        username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+        password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+      }
+    }
+    maven {
+      url = "https://maven.pkg.github.com/sava-software/anchor-src-gen"
+      credentials {
+        username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+        password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+      }
+    }
+    mavenCentral()
+  }
+
+  configurations.configureEach {
+    resolutionStrategy {
+      cacheDynamicVersionsFor 15, 'minutes'
+      cacheChangingModulesFor 15, 'minutes'
+    }
+  }
+
+  dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:+'
+    testImplementation 'org.junit.jupiter:junit-jupiter-params:+'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:+'
+  }
+
+  test {
+    useJUnitPlatform()
+    testLogging {
+      events "passed", "skipped", "failed", "standardOut", "standardError"
+      exceptionFormat "full"
+      showStandardStreams true
+    }
+  }
+
+  tasks.register('sourcesJar', Jar) {
+    from sourceSets.main.allJava
+    archiveClassifier.set('sources')
+  }
+
+  publishing {
+    publications {
+      mavenJava(MavenPublication) {
+        from components.java
+        artifact sourcesJar
+        groupId project.group
+        artifactId project.name
+        version = project.version
+        pom {
+          name = project.name
+          url = "$VCS_URL"
+          scm {
+            connection = 'scm:git:git@github.com:sava-software/anchor-programs.git'
+            url = "$VCS_URL"
+          }
+        }
+      }
+    }
+    repositories {
+      maven {
+        name = "GitHubPackages"
+        url = "https://maven.pkg.github.com/sava-software/anchor-programs"
+        credentials {
+          username = System.getenv("GITHUB_ACTOR") ?: project.findProperty("gpr.user.write")
+          password = System.getenv("GITHUB_TOKEN") ?: project.findProperty("gpr.token.write")
+        }
       }
     }
   }

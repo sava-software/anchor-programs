@@ -1,3 +1,6 @@
 rootProject.name = 'anchor-programs'
 
 include 'generator'
+
+include 'programs'
+project(':programs').name = 'anchor-programs'
