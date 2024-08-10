@@ -204,11 +204,6 @@ public final class Entrypoint extends Thread {
           exports.add(String.format("requires %s;", SolanaRpcClient.class.getModule().getName()));
           exports.add(String.format("requires %s;", System.class.getModule().getName()));
           exports.add(String.format("requires %s;", AnchorSourceGenerator.class.getModule().getName()));
-
-          for (final var thread : threads) {
-            thread.join();
-          }
-
           final var moduleFilePath = sourceDirectory.resolve("module-info.java");
 
           if (Files.exists(moduleFilePath)) {
@@ -219,9 +214,13 @@ public final class Entrypoint extends Thread {
                   .forEach(exports::add);
             }
           }
-
-          final var builder = new StringBuilder(1_024);
+          final var builder = new StringBuilder(2_048);
           builder.append(String.format("module %s {%n", moduleName));
+
+          for (final var thread : threads) {
+            thread.join();
+          }
+
           builder.append(exports.stream().sorted(String::compareToIgnoreCase).collect(Collectors.joining("\n")).indent(tabLength));
           builder.append('}').append('\n');
           Files.writeString(moduleFilePath, builder.toString(), CREATE, TRUNCATE_EXISTING, WRITE);
