@@ -117,7 +117,7 @@ else
   gradleArgs+=('clean')
 fi
 
-./gradlew "-PmainClassName=$mainClass" "${gradleArgs[@]}" ":$projectName:jlink"
+./gradlew --no-daemon "-PmainClassName=$mainClass" "${gradleArgs[@]}" ":$projectName:jlink"
 
 javaArgs+=('-m' "$moduleName/$mainClass")
 
