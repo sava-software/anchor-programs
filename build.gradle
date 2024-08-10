@@ -59,15 +59,6 @@ subprojects {
     }
   }
 
-  dependencies {
-    implementation "systems.comodal:json-iterator:$jsoniter"
-
-    implementation "software.sava:sava-core:$sava"
-    implementation "software.sava:sava-rpc:$sava"
-    implementation "software.sava:solana-programs:$sava_solana_programs"
-    implementation "software.sava:anchor-src-gen:$sava_anchor_src_gen"
-  }
-
   repositories {
     maven {
       url = "https://maven.pkg.github.com/comodal/json-iterator"
@@ -85,6 +76,13 @@ subprojects {
     }
     maven {
       url = "https://maven.pkg.github.com/sava-software/anchor-src-gen"
+      credentials {
+        username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
+        password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+      }
+    }
+    maven {
+      url = "https://maven.pkg.github.com/sava-software/solana-programs"
       credentials {
         username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
         password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
