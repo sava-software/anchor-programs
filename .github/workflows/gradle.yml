@@ -35,7 +35,7 @@ jobs:
       - run: java --version
 
       - name: Generate Source
-        run: ./run.sh --log="INFO" --tabLength=2 --sourceDirectory="programs/src/main/java" --rpc="${{ secrets.RPC_URL }}" --baseDelayMillis=200 --numThreads=5
+        run: ./genSrc.sh --log="INFO" --tabLength=2 --sourceDirectory="programs/src/main/java" --rpc="${{ secrets.RPC_URL }}" --baseDelayMillis=200 --numThreads=5
         env:
           GITHUB_ACTOR: ${{ secrets.GPR_USER }}
           GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# ./run.sh --log=[INFO|WARN|DEBUG] --tabLength=2 --sourceDirectory="anchor-programs/src/main/java" --basePackageName="software.sava.anchor.programs" --programsCSV="anchor-generator/main_net_programs.csv" --screen=[1|0] --rpc=""
-# ./run.sh --log="INFO" --tabLength=2 --sourceDirectory="anchor-programs/src/main/java" --basePackageName="software.sava.anchor.programs"
+# ./genSrc.sh --log=[INFO|WARN|DEBUG] --tabLength=2 --sourceDirectory="anchor-programs/src/main/java" --basePackageName="software.sava.anchor.programs" --programsCSV="anchor-generator/main_net_programs.csv" --screen=[1|0] --rpc=""
+# ./genSrc.sh --log="INFO" --tabLength=2 --sourceDirectory="anchor-programs/src/main/java" --basePackageName="software.sava.anchor.programs"
 set -e
 
 readonly JAVA_VERSION="22"
@@ -63,7 +63,7 @@ do
       bp | basePackageName) basePackageName="$val";;
       mn | outputModuleName) outputModuleName="$val";;
       nt | numThreads) numThreads="$val";;
-      pcsv) programsCSV="$val";;
+      pcsv | programsCSVs) programsCSV="$val";;
       rpc) rpc="$val";;
       sd | sourceDirectory) sourceDirectory="$val";;
       tl | tabLength) tabLength="$val";;
