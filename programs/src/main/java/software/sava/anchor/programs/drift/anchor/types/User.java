@@ -84,11 +84,11 @@ public record User(PublicKey _address,
   public static final int DELEGATE_OFFSET = 40;
   public static final int NAME_OFFSET = 72;
   public static final int SPOT_POSITIONS_OFFSET = 104;
-  
+
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);
   }
-  
+
   public static Filter createDelegateFilter(final PublicKey delegate) {
     return Filter.createMemCompFilter(DELEGATE_OFFSET, delegate);
   }
@@ -96,13 +96,13 @@ public record User(PublicKey _address,
   public static User read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static User read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], User> FACTORY = User::read;
-  
+
   public static User read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

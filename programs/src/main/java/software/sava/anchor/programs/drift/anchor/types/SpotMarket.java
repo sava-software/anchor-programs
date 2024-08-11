@@ -185,23 +185,23 @@ public record SpotMarket(PublicKey _address,
   public static final int VAULT_OFFSET = 104;
   public static final int NAME_OFFSET = 136;
   public static final int HISTORICAL_ORACLE_DATA_OFFSET = 168;
-  
+
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);
   }
-  
+
   public static Filter createOracleFilter(final PublicKey oracle) {
     return Filter.createMemCompFilter(ORACLE_OFFSET, oracle);
   }
-  
+
   public static Filter createMintFilter(final PublicKey mint) {
     return Filter.createMemCompFilter(MINT_OFFSET, mint);
   }
-  
+
   public static Filter createVaultFilter(final PublicKey vault) {
     return Filter.createMemCompFilter(VAULT_OFFSET, vault);
   }
-  
+
   public static Filter createHistoricalOracleDataFilter(final HistoricalOracleData historicalOracleData) {
     return Filter.createMemCompFilter(HISTORICAL_ORACLE_DATA_OFFSET, historicalOracleData.write());
   }
@@ -209,13 +209,13 @@ public record SpotMarket(PublicKey _address,
   public static SpotMarket read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static SpotMarket read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], SpotMarket> FACTORY = SpotMarket::read;
-  
+
   public static SpotMarket read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

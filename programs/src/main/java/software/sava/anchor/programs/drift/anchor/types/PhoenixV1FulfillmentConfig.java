@@ -37,41 +37,41 @@ public record PhoenixV1FulfillmentConfig(PublicKey _address,
   public static final int FULFILLMENT_TYPE_OFFSET = 202;
   public static final int STATUS_OFFSET = 203;
   public static final int PADDING_OFFSET = 204;
-  
+
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);
   }
-  
+
   public static Filter createPhoenixProgramIdFilter(final PublicKey phoenixProgramId) {
     return Filter.createMemCompFilter(PHOENIX_PROGRAM_ID_OFFSET, phoenixProgramId);
   }
-  
+
   public static Filter createPhoenixLogAuthorityFilter(final PublicKey phoenixLogAuthority) {
     return Filter.createMemCompFilter(PHOENIX_LOG_AUTHORITY_OFFSET, phoenixLogAuthority);
   }
-  
+
   public static Filter createPhoenixMarketFilter(final PublicKey phoenixMarket) {
     return Filter.createMemCompFilter(PHOENIX_MARKET_OFFSET, phoenixMarket);
   }
-  
+
   public static Filter createPhoenixBaseVaultFilter(final PublicKey phoenixBaseVault) {
     return Filter.createMemCompFilter(PHOENIX_BASE_VAULT_OFFSET, phoenixBaseVault);
   }
-  
+
   public static Filter createPhoenixQuoteVaultFilter(final PublicKey phoenixQuoteVault) {
     return Filter.createMemCompFilter(PHOENIX_QUOTE_VAULT_OFFSET, phoenixQuoteVault);
   }
-  
+
   public static Filter createMarketIndexFilter(final int marketIndex) {
     final byte[] _data = new byte[2];
     putInt16LE(_data, 0, marketIndex);
     return Filter.createMemCompFilter(MARKET_INDEX_OFFSET, _data);
   }
-  
+
   public static Filter createFulfillmentTypeFilter(final SpotFulfillmentType fulfillmentType) {
     return Filter.createMemCompFilter(FULFILLMENT_TYPE_OFFSET, fulfillmentType.write());
   }
-  
+
   public static Filter createStatusFilter(final SpotFulfillmentConfigStatus status) {
     return Filter.createMemCompFilter(STATUS_OFFSET, status.write());
   }
@@ -79,13 +79,13 @@ public record PhoenixV1FulfillmentConfig(PublicKey _address,
   public static PhoenixV1FulfillmentConfig read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static PhoenixV1FulfillmentConfig read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], PhoenixV1FulfillmentConfig> FACTORY = PhoenixV1FulfillmentConfig::read;
-  
+
   public static PhoenixV1FulfillmentConfig read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

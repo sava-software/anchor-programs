@@ -43,53 +43,53 @@ public record InsuranceFundStake(PublicKey _address,
   public static final int COST_BASIS_OFFSET = 112;
   public static final int MARKET_INDEX_OFFSET = 120;
   public static final int PADDING_OFFSET = 122;
-  
+
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);
   }
-  
+
   public static Filter createIfSharesFilter(final BigInteger ifShares) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, ifShares);
     return Filter.createMemCompFilter(IF_SHARES_OFFSET, _data);
   }
-  
+
   public static Filter createLastWithdrawRequestSharesFilter(final BigInteger lastWithdrawRequestShares) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, lastWithdrawRequestShares);
     return Filter.createMemCompFilter(LAST_WITHDRAW_REQUEST_SHARES_OFFSET, _data);
   }
-  
+
   public static Filter createIfBaseFilter(final BigInteger ifBase) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, ifBase);
     return Filter.createMemCompFilter(IF_BASE_OFFSET, _data);
   }
-  
+
   public static Filter createLastValidTsFilter(final long lastValidTs) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, lastValidTs);
     return Filter.createMemCompFilter(LAST_VALID_TS_OFFSET, _data);
   }
-  
+
   public static Filter createLastWithdrawRequestValueFilter(final long lastWithdrawRequestValue) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, lastWithdrawRequestValue);
     return Filter.createMemCompFilter(LAST_WITHDRAW_REQUEST_VALUE_OFFSET, _data);
   }
-  
+
   public static Filter createLastWithdrawRequestTsFilter(final long lastWithdrawRequestTs) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, lastWithdrawRequestTs);
     return Filter.createMemCompFilter(LAST_WITHDRAW_REQUEST_TS_OFFSET, _data);
   }
-  
+
   public static Filter createCostBasisFilter(final long costBasis) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, costBasis);
     return Filter.createMemCompFilter(COST_BASIS_OFFSET, _data);
   }
-  
+
   public static Filter createMarketIndexFilter(final int marketIndex) {
     final byte[] _data = new byte[2];
     putInt16LE(_data, 0, marketIndex);
@@ -99,13 +99,13 @@ public record InsuranceFundStake(PublicKey _address,
   public static InsuranceFundStake read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static InsuranceFundStake read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], InsuranceFundStake> FACTORY = InsuranceFundStake::read;
-  
+
   public static InsuranceFundStake read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

@@ -65,7 +65,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, subAccountId);
     i += 2;
     Borsh.fixedWrite(name, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -114,7 +114,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.fixedLen(name)];
     int i = writeDiscriminator(INITIALIZE_REFERRER_NAME_DISCRIMINATOR, _data, 0);
     Borsh.fixedWrite(name, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -148,7 +148,7 @@ public final class DriftProgram {
     putInt64LE(_data, i, amount);
     i += 8;
     _data[i] = (byte) (reduceOnly ? 1 : 0);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -184,7 +184,7 @@ public final class DriftProgram {
     putInt64LE(_data, i, amount);
     i += 8;
     _data[i] = (byte) (reduceOnly ? 1 : 0);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -213,7 +213,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -233,7 +233,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(params)];
     int i = writeDiscriminator(PLACE_PERP_ORDER_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -253,7 +253,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[13];
     int i = writeDiscriminator(CANCEL_ORDER_DISCRIMINATOR, _data, 0);
     Borsh.writeOptional(orderId, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -273,7 +273,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(CANCEL_ORDER_BY_USER_ID_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) userOrderId;
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -297,7 +297,7 @@ public final class DriftProgram {
     i += Borsh.writeOptional(marketType, _data, i);
     i += Borsh.writeOptional(marketIndex, _data, i);
     Borsh.writeOptional(direction, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -317,7 +317,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(orderIds)];
     int i = writeDiscriminator(CANCEL_ORDERS_BY_IDS_DISCRIMINATOR, _data, 0);
     Borsh.write(orderIds, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -339,7 +339,7 @@ public final class DriftProgram {
     int i = writeDiscriminator(MODIFY_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptional(orderId, _data, i);
     Borsh.write(modifyOrderParams, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -362,7 +362,7 @@ public final class DriftProgram {
     _data[i] = (byte) userOrderId;
     ++i;
     Borsh.write(modifyOrderParams, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -386,7 +386,7 @@ public final class DriftProgram {
     int i = writeDiscriminator(PLACE_AND_TAKE_PERP_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.write(params, _data, i);
     Borsh.writeOptional(makerOrderId, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -414,7 +414,7 @@ public final class DriftProgram {
     int i = writeDiscriminator(PLACE_AND_MAKE_PERP_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.write(params, _data, i);
     putInt32LE(_data, i, takerOrderId);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -434,7 +434,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(params)];
     int i = writeDiscriminator(PLACE_SPOT_ORDER_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -460,7 +460,7 @@ public final class DriftProgram {
     i += Borsh.write(params, _data, i);
     i += Borsh.writeOptional(fulfillmentType, _data, i);
     Borsh.writeOptional(makerOrderId, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -491,7 +491,7 @@ public final class DriftProgram {
     putInt32LE(_data, i, takerOrderId);
     i += 4;
     Borsh.writeOptional(fulfillmentType, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -511,7 +511,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(params)];
     int i = writeDiscriminator(PLACE_ORDERS_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -554,7 +554,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, outMarketIndex);
     i += 2;
     putInt64LE(_data, i, amountIn);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -599,7 +599,7 @@ public final class DriftProgram {
     i += 2;
     i += Borsh.writeOptional(limitPrice, _data, i);
     Borsh.writeOptional(reduceOnly, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -622,7 +622,7 @@ public final class DriftProgram {
     putInt64LE(_data, i, nShares);
     i += 8;
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -645,7 +645,7 @@ public final class DriftProgram {
     putInt64LE(_data, i, sharesToBurn);
     i += 8;
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -666,7 +666,7 @@ public final class DriftProgram {
     putInt64LE(_data, i, sharesToBurn);
     i += 8;
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -687,7 +687,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, subAccountId);
     i += 2;
     Borsh.fixedWrite(name, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -708,7 +708,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, subAccountId);
     i += 2;
     putInt32LE(_data, i, marginRatio);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -729,7 +729,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, subAccountId);
     i += 2;
     _data[i] = (byte) (marginTradingEnabled ? 1 : 0);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -750,7 +750,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, subAccountId);
     i += 2;
     delegate.write(_data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -771,7 +771,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, subAccountId);
     i += 2;
     _data[i] = (byte) (reduceOnly ? 1 : 0);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -792,7 +792,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, subAccountId);
     i += 2;
     _data[i] = (byte) (advancedLp ? 1 : 0);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -856,7 +856,7 @@ public final class DriftProgram {
     int i = writeDiscriminator(FILL_PERP_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptional(orderId, _data, i);
     Borsh.writeOptional(makerOrderId, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -903,7 +903,7 @@ public final class DriftProgram {
     i += Borsh.writeOptional(orderId, _data, i);
     i += Borsh.writeOptional(fulfillmentType, _data, i);
     Borsh.writeOptional(makerOrderId, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -925,7 +925,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(TRIGGER_ORDER_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, orderId);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -996,7 +996,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(ADMIN_DISABLE_UPDATE_PERP_BID_ASK_TWAP_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) (disable ? 1 : 0);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1018,7 +1018,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(SETTLE_PNL_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1042,7 +1042,7 @@ public final class DriftProgram {
     int i = writeDiscriminator(SETTLE_MULTIPLE_PNLS_DISCRIMINATOR, _data, 0);
     i += Borsh.write(marketIndexes, _data, i);
     Borsh.write(mode, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1071,7 +1071,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(SETTLE_LP_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1089,7 +1089,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(SETTLE_EXPIRED_MARKET_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1121,7 +1121,7 @@ public final class DriftProgram {
     putInt64LE(_data, i, liquidatorMaxBaseAssetAmount);
     i += 8;
     Borsh.writeOptional(limitPrice, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1156,7 +1156,7 @@ public final class DriftProgram {
     putInt128LE(_data, i, liquidatorMaxLiabilityTransfer);
     i += 16;
     Borsh.writeOptional(limitPrice, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1191,7 +1191,7 @@ public final class DriftProgram {
     putInt128LE(_data, i, liquidatorMaxLiabilityTransfer);
     i += 16;
     Borsh.writeOptional(limitPrice, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1226,7 +1226,7 @@ public final class DriftProgram {
     putInt128LE(_data, i, liquidatorMaxPnlTransfer);
     i += 16;
     Borsh.writeOptional(limitPrice, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1255,7 +1255,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, spotMarketIndex);
     i += 2;
     putInt16LE(_data, i, perpMarketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1292,7 +1292,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, quoteSpotMarketIndex);
     i += 2;
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1326,7 +1326,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(RESOLVE_SPOT_BANKRUPTCY_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1352,7 +1352,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(SETTLE_REVENUE_TO_INSURANCE_FUND_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, spotMarketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1372,7 +1372,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(UPDATE_FUNDING_RATE_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1441,7 +1441,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.fixedLen(marketIndexes)];
     int i = writeDiscriminator(UPDATE_AMMS_DISCRIMINATOR, _data, 0);
     Borsh.fixedWrite(marketIndexes, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1461,7 +1461,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_EXPIRY_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, expiryTs);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1512,7 +1512,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(INITIALIZE_INSURANCE_FUND_STAKE_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1549,7 +1549,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1576,7 +1576,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1600,7 +1600,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(CANCEL_REQUEST_REMOVE_INSURANCE_FUND_STAKE_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1632,7 +1632,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(REMOVE_INSURANCE_FUND_STAKE_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1665,7 +1665,7 @@ public final class DriftProgram {
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt128LE(_data, i, shares);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1689,7 +1689,7 @@ public final class DriftProgram {
     int i = writeDiscriminator(UPDATE_PYTH_PULL_ORACLE_DISCRIMINATOR, _data, 0);
     i += Borsh.fixedWrite(feedId, _data, i);
     Borsh.write(params, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1713,7 +1713,7 @@ public final class DriftProgram {
     int i = writeDiscriminator(POST_PYTH_PULL_ORACLE_UPDATE_ATOMIC_DISCRIMINATOR, _data, 0);
     i += Borsh.fixedWrite(feedId, _data, i);
     Borsh.write(params, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1824,7 +1824,7 @@ public final class DriftProgram {
     putInt32LE(_data, i, ifTotalFactor);
     i += 4;
     Borsh.fixedWrite(name, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1852,7 +1852,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(DELETE_INITIALIZED_SPOT_MARKET_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1888,7 +1888,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(INITIALIZE_SERUM_FULFILLMENT_CONFIG_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1908,7 +1908,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(status)];
     int i = writeDiscriminator(UPDATE_SERUM_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR, _data, 0);
     Borsh.write(status, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1942,7 +1942,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(INITIALIZE_PHOENIX_FULFILLMENT_CONFIG_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -1962,7 +1962,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(status)];
     int i = writeDiscriminator(PHOENIX_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR, _data, 0);
     Borsh.write(status, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2073,7 +2073,7 @@ public final class DriftProgram {
     _data[i] = (byte) ammJitIntensity;
     ++i;
     Borsh.fixedWrite(name, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2093,7 +2093,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(DELETE_INITIALIZED_PERP_MARKET_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2119,7 +2119,7 @@ public final class DriftProgram {
     putInt128LE(_data, i, quoteAssetReserve);
     i += 16;
     putInt128LE(_data, i, sqrtK);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2142,7 +2142,7 @@ public final class DriftProgram {
     putInt128LE(_data, i, pegMultiplier);
     i += 16;
     putInt128LE(_data, i, sqrtK);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2166,7 +2166,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(params)];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_AMM_SUMMARY_STATS_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2186,7 +2186,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_EXPIRY_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, expiryTs);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2233,7 +2233,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(DEPOSIT_INTO_PERP_MARKET_FEE_POOL_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amount);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2259,7 +2259,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(DEPOSIT_INTO_SPOT_MARKET_REVENUE_POOL_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amount);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2281,7 +2281,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[24];
     int i = writeDiscriminator(REPEG_AMM_CURVE_DISCRIMINATOR, _data, 0);
     putInt128LE(_data, i, newPegCandidate);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2337,7 +2337,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[24];
     int i = writeDiscriminator(UPDATE_K_DISCRIMINATOR, _data, 0);
     putInt128LE(_data, i, sqrtK);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2360,7 +2360,7 @@ public final class DriftProgram {
     putInt32LE(_data, i, marginRatioInitial);
     i += 4;
     putInt32LE(_data, i, marginRatioMaintenance);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2380,7 +2380,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_FUNDING_PERIOD_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, fundingPeriod);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2406,7 +2406,7 @@ public final class DriftProgram {
     putInt64LE(_data, i, maxRevenueWithdrawPerPeriod);
     i += 8;
     putInt64LE(_data, i, quoteMaxInsurance);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2429,7 +2429,7 @@ public final class DriftProgram {
     putInt32LE(_data, i, liquidatorFee);
     i += 4;
     putInt32LE(_data, i, ifLiquidationFee);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2449,7 +2449,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_INSURANCE_FUND_UNSTAKING_PERIOD_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, insuranceFundUnstakingPeriod);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2472,7 +2472,7 @@ public final class DriftProgram {
     putInt32LE(_data, i, liquidatorFee);
     i += 4;
     putInt32LE(_data, i, ifLiquidationFee);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2492,7 +2492,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_WITHDRAW_GUARD_THRESHOLD_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, withdrawGuardThreshold);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2518,7 +2518,7 @@ public final class DriftProgram {
     putInt32LE(_data, i, userIfFactor);
     i += 4;
     putInt32LE(_data, i, totalIfFactor);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2538,7 +2538,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_REVENUE_SETTLE_PERIOD_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, revenueSettlePeriod);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2558,7 +2558,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(status)];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_STATUS_DISCRIMINATOR, _data, 0);
     Borsh.write(status, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2578,7 +2578,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_PAUSED_OPERATIONS_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) pausedOperations;
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2598,7 +2598,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(assetTier)];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_ASSET_TIER_DISCRIMINATOR, _data, 0);
     Borsh.write(assetTier, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2630,7 +2630,7 @@ public final class DriftProgram {
     putInt32LE(_data, i, maintenanceLiabilityWeight);
     i += 4;
     putInt32LE(_data, i, imfFactor);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2659,7 +2659,7 @@ public final class DriftProgram {
     putInt32LE(_data, i, maxBorrowRate);
     i += 4;
     Borsh.writeOptional(minBorrowRate, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2679,7 +2679,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_MAX_TOKEN_DEPOSITS_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, maxTokenDeposits);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2699,7 +2699,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_SCALE_INITIAL_ASSET_WEIGHT_START_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, scaleInitialAssetWeightStart);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2724,7 +2724,7 @@ public final class DriftProgram {
     oracle.write(_data, i);
     i += 32;
     Borsh.write(oracleSource, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2747,7 +2747,7 @@ public final class DriftProgram {
     putInt64LE(_data, i, stepSize);
     i += 8;
     putInt64LE(_data, i, tickSize);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2767,7 +2767,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_MIN_ORDER_SIZE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, orderSize);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2787,7 +2787,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_ORDERS_ENABLED_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) (ordersEnabled ? 1 : 0);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2807,7 +2807,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_IF_PAUSED_OPERATIONS_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) pausedOperations;
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2827,7 +2827,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.fixedLen(name)];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_NAME_DISCRIMINATOR, _data, 0);
     Borsh.fixedWrite(name, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2847,7 +2847,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(status)];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_STATUS_DISCRIMINATOR, _data, 0);
     Borsh.write(status, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2867,7 +2867,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_PAUSED_OPERATIONS_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) pausedOperations;
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2887,7 +2887,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(contractTier)];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_CONTRACT_TIER_DISCRIMINATOR, _data, 0);
     Borsh.write(contractTier, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2910,7 +2910,7 @@ public final class DriftProgram {
     putInt32LE(_data, i, imfFactor);
     i += 4;
     putInt32LE(_data, i, unrealizedPnlImfFactor);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2933,7 +2933,7 @@ public final class DriftProgram {
     putInt32LE(_data, i, unrealizedInitialAssetWeight);
     i += 4;
     putInt32LE(_data, i, unrealizedMaintenanceAssetWeight);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2953,7 +2953,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[24];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_CONCENTRATION_COEF_DISCRIMINATOR, _data, 0);
     putInt128LE(_data, i, concentrationScale);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2973,7 +2973,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_CURVE_UPDATE_INTENSITY_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) curveUpdateIntensity;
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -2993,7 +2993,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_TARGET_BASE_ASSET_AMOUNT_PER_LP_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, targetBaseAssetAmountPerLp);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3013,7 +3013,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_PER_LP_BASE_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) perLpBase;
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3031,7 +3031,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_LP_COOLDOWN_TIME_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, lpCooldownTime);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3049,7 +3049,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(feeStructure)];
     int i = writeDiscriminator(UPDATE_PERP_FEE_STRUCTURE_DISCRIMINATOR, _data, 0);
     Borsh.write(feeStructure, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3067,7 +3067,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(feeStructure)];
     int i = writeDiscriminator(UPDATE_SPOT_FEE_STRUCTURE_DISCRIMINATOR, _data, 0);
     Borsh.write(feeStructure, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3085,7 +3085,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(UPDATE_INITIAL_PCT_TO_LIQUIDATE_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, initialPctToLiquidate);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3103,7 +3103,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(UPDATE_LIQUIDATION_DURATION_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) liquidationDuration;
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3121,7 +3121,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(UPDATE_LIQUIDATION_MARGIN_BUFFER_RATIO_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, liquidationMarginBufferRatio);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3139,7 +3139,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(oracleGuardRails)];
     int i = writeDiscriminator(UPDATE_ORACLE_GUARD_RAILS_DISCRIMINATOR, _data, 0);
     Borsh.write(oracleGuardRails, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3157,7 +3157,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(UPDATE_STATE_SETTLEMENT_DURATION_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, settlementDuration);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3175,7 +3175,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(UPDATE_STATE_MAX_NUMBER_OF_SUB_ACCOUNTS_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, maxNumberOfSubAccounts);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3193,7 +3193,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(UPDATE_STATE_MAX_INITIALIZE_USER_FEE_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, maxInitializeUserFee);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3218,7 +3218,7 @@ public final class DriftProgram {
     oracle.write(_data, i);
     i += 32;
     Borsh.write(oracleSource, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3238,7 +3238,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_BASE_SPREAD_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, baseSpread);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3258,7 +3258,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(UPDATE_AMM_JIT_INTENSITY_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) ammJitIntensity;
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3278,7 +3278,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_MAX_SPREAD_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, maxSpread);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3301,7 +3301,7 @@ public final class DriftProgram {
     putInt64LE(_data, i, stepSize);
     i += 8;
     putInt64LE(_data, i, tickSize);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3321,7 +3321,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.fixedLen(name)];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_NAME_DISCRIMINATOR, _data, 0);
     Borsh.fixedWrite(name, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3341,7 +3341,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_MIN_ORDER_SIZE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, orderSize);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3361,7 +3361,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_MAX_SLIPPAGE_RATIO_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, maxSlippageRatio);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3381,7 +3381,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_MAX_FILL_RESERVE_FRACTION_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, maxFillReserveFraction);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3401,7 +3401,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[24];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_MAX_OPEN_INTEREST_DISCRIMINATOR, _data, 0);
     putInt128LE(_data, i, maxOpenInterest);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3423,7 +3423,7 @@ public final class DriftProgram {
     int i = writeDiscriminator(UPDATE_PERP_MARKET_NUMBER_OF_USERS_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptional(numberOfUsers, _data, i);
     Borsh.writeOptional(numberOfUsersWithBase, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3443,7 +3443,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_FEE_ADJUSTMENT_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, feeAdjustment);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3463,7 +3463,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_FEE_ADJUSTMENT_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, feeAdjustment);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3481,7 +3481,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[40];
     int i = writeDiscriminator(UPDATE_ADMIN_DISCRIMINATOR, _data, 0);
     admin.write(_data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3499,7 +3499,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[40];
     int i = writeDiscriminator(UPDATE_WHITELIST_MINT_DISCRIMINATOR, _data, 0);
     whitelistMint.write(_data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3517,7 +3517,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[40];
     int i = writeDiscriminator(UPDATE_DISCOUNT_MINT_DISCRIMINATOR, _data, 0);
     discountMint.write(_data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3535,7 +3535,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(UPDATE_EXCHANGE_STATUS_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) exchangeStatus;
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3553,7 +3553,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(UPDATE_PERP_AUCTION_DURATION_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) minPerpAuctionDuration;
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3571,7 +3571,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[9];
     int i = writeDiscriminator(UPDATE_SPOT_AUCTION_DURATION_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) defaultSpotAuctionDuration;
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3612,7 +3612,7 @@ public final class DriftProgram {
     int i = writeDiscriminator(UPDATE_PROTOCOL_IF_SHARES_TRANSFER_CONFIG_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptional(whitelistedSigners, _data, i);
     Borsh.writeOptional(maxTransferPerEpoch, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3636,7 +3636,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(params)];
     int i = writeDiscriminator(INITIALIZE_PRELAUNCH_ORACLE_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3658,7 +3658,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(params)];
     int i = writeDiscriminator(UPDATE_PRELAUNCH_ORACLE_PARAMS_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3680,7 +3680,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(DELETE_PRELAUNCH_ORACLE_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, perpMarketIndex);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
@@ -3704,7 +3704,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.fixedLen(feedId)];
     int i = writeDiscriminator(INITIALIZE_PYTH_PULL_ORACLE_DISCRIMINATOR, _data, 0);
     Borsh.fixedWrite(feedId, _data, i);
-  
+
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
   

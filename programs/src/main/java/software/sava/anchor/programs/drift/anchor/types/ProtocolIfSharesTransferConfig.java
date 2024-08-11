@@ -30,19 +30,19 @@ public record ProtocolIfSharesTransferConfig(PublicKey _address,
   public static final int CURRENT_EPOCH_TRANSFER_OFFSET = 152;
   public static final int NEXT_EPOCH_TS_OFFSET = 168;
   public static final int PADDING_OFFSET = 176;
-  
+
   public static Filter createMaxTransferPerEpochFilter(final BigInteger maxTransferPerEpoch) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, maxTransferPerEpoch);
     return Filter.createMemCompFilter(MAX_TRANSFER_PER_EPOCH_OFFSET, _data);
   }
-  
+
   public static Filter createCurrentEpochTransferFilter(final BigInteger currentEpochTransfer) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, currentEpochTransfer);
     return Filter.createMemCompFilter(CURRENT_EPOCH_TRANSFER_OFFSET, _data);
   }
-  
+
   public static Filter createNextEpochTsFilter(final long nextEpochTs) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, nextEpochTs);
@@ -52,13 +52,13 @@ public record ProtocolIfSharesTransferConfig(PublicKey _address,
   public static ProtocolIfSharesTransferConfig read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static ProtocolIfSharesTransferConfig read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], ProtocolIfSharesTransferConfig> FACTORY = ProtocolIfSharesTransferConfig::read;
-  
+
   public static ProtocolIfSharesTransferConfig read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

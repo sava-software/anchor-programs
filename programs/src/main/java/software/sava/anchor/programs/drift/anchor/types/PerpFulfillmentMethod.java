@@ -13,7 +13,7 @@ import static software.sava.core.encoding.ByteUtil.putInt16LE;
 public sealed interface PerpFulfillmentMethod extends RustEnum permits
   PerpFulfillmentMethod.AMM,
   PerpFulfillmentMethod.Match {
-  
+
   static PerpFulfillmentMethod read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
     int i = offset + 1;
@@ -25,11 +25,11 @@ public sealed interface PerpFulfillmentMethod extends RustEnum permits
   }
 
   record AMM(OptionalLong val) implements OptionalEnumInt64, PerpFulfillmentMethod {
-  
+
     public static AMM read(final byte[] _data, int i) {
       return new AMM(_data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i)));
     }
-  
+
     @Override
     public int ordinal() {
       return 0;
@@ -37,9 +37,9 @@ public sealed interface PerpFulfillmentMethod extends RustEnum permits
   }
 
   record Match(PublicKey _publicKey, int _u16) implements PerpFulfillmentMethod {
-  
+
     public static final int BYTES = 34;
-  
+
     public static Match read(final byte[] _data, final int offset) {
       int i = offset;
       final var _publicKey = readPubKey(_data, i);
@@ -47,7 +47,7 @@ public sealed interface PerpFulfillmentMethod extends RustEnum permits
       final var _u16 = getInt16LE(_data, i);
       return new Match(_publicKey, _u16);
     }
-  
+
     @Override
     public int write(final byte[] _data, final int offset) {
       _data[offset] = (byte) ordinal();
@@ -58,12 +58,12 @@ public sealed interface PerpFulfillmentMethod extends RustEnum permits
       i += 2;
       return i - offset;
     }
-  
+
     @Override
     public int l() {
       return 1 + 32 + 2;
     }
-    
+
     @Override
     public int ordinal() {
       return 1;

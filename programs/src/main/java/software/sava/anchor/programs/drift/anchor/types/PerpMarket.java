@@ -96,11 +96,11 @@ public record PerpMarket(PublicKey _address,
   public static final int PUBKEY_OFFSET = 8;
   public static final int AMM_OFFSET = 40;
   public static final int PNL_POOL_OFFSET = 1000;
-  
+
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);
   }
-  
+
   public static Filter createPnlPoolFilter(final PoolBalance pnlPool) {
     return Filter.createMemCompFilter(PNL_POOL_OFFSET, pnlPool.write());
   }
@@ -108,13 +108,13 @@ public record PerpMarket(PublicKey _address,
   public static PerpMarket read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static PerpMarket read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], PerpMarket> FACTORY = PerpMarket::read;
-  
+
   public static PerpMarket read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

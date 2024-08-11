@@ -71,117 +71,117 @@ public record State(PublicKey _address,
   public static final int MAX_NUMBER_OF_SUB_ACCOUNTS_OFFSET = 474;
   public static final int MAX_INITIALIZE_USER_FEE_OFFSET = 476;
   public static final int PADDING_OFFSET = 478;
-  
+
   public static Filter createAdminFilter(final PublicKey admin) {
     return Filter.createMemCompFilter(ADMIN_OFFSET, admin);
   }
-  
+
   public static Filter createWhitelistMintFilter(final PublicKey whitelistMint) {
     return Filter.createMemCompFilter(WHITELIST_MINT_OFFSET, whitelistMint);
   }
-  
+
   public static Filter createDiscountMintFilter(final PublicKey discountMint) {
     return Filter.createMemCompFilter(DISCOUNT_MINT_OFFSET, discountMint);
   }
-  
+
   public static Filter createSignerFilter(final PublicKey signer) {
     return Filter.createMemCompFilter(SIGNER_OFFSET, signer);
   }
-  
+
   public static Filter createSrmVaultFilter(final PublicKey srmVault) {
     return Filter.createMemCompFilter(SRM_VAULT_OFFSET, srmVault);
   }
-  
+
   public static Filter createPerpFeeStructureFilter(final FeeStructure perpFeeStructure) {
     return Filter.createMemCompFilter(PERP_FEE_STRUCTURE_OFFSET, perpFeeStructure.write());
   }
-  
+
   public static Filter createSpotFeeStructureFilter(final FeeStructure spotFeeStructure) {
     return Filter.createMemCompFilter(SPOT_FEE_STRUCTURE_OFFSET, spotFeeStructure.write());
   }
-  
+
   public static Filter createOracleGuardRailsFilter(final OracleGuardRails oracleGuardRails) {
     return Filter.createMemCompFilter(ORACLE_GUARD_RAILS_OFFSET, oracleGuardRails.write());
   }
-  
+
   public static Filter createNumberOfAuthoritiesFilter(final long numberOfAuthorities) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, numberOfAuthorities);
     return Filter.createMemCompFilter(NUMBER_OF_AUTHORITIES_OFFSET, _data);
   }
-  
+
   public static Filter createNumberOfSubAccountsFilter(final long numberOfSubAccounts) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, numberOfSubAccounts);
     return Filter.createMemCompFilter(NUMBER_OF_SUB_ACCOUNTS_OFFSET, _data);
   }
-  
+
   public static Filter createLpCooldownTimeFilter(final long lpCooldownTime) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, lpCooldownTime);
     return Filter.createMemCompFilter(LP_COOLDOWN_TIME_OFFSET, _data);
   }
-  
+
   public static Filter createLiquidationMarginBufferRatioFilter(final int liquidationMarginBufferRatio) {
     final byte[] _data = new byte[4];
     putInt32LE(_data, 0, liquidationMarginBufferRatio);
     return Filter.createMemCompFilter(LIQUIDATION_MARGIN_BUFFER_RATIO_OFFSET, _data);
   }
-  
+
   public static Filter createSettlementDurationFilter(final int settlementDuration) {
     final byte[] _data = new byte[2];
     putInt16LE(_data, 0, settlementDuration);
     return Filter.createMemCompFilter(SETTLEMENT_DURATION_OFFSET, _data);
   }
-  
+
   public static Filter createNumberOfMarketsFilter(final int numberOfMarkets) {
     final byte[] _data = new byte[2];
     putInt16LE(_data, 0, numberOfMarkets);
     return Filter.createMemCompFilter(NUMBER_OF_MARKETS_OFFSET, _data);
   }
-  
+
   public static Filter createNumberOfSpotMarketsFilter(final int numberOfSpotMarkets) {
     final byte[] _data = new byte[2];
     putInt16LE(_data, 0, numberOfSpotMarkets);
     return Filter.createMemCompFilter(NUMBER_OF_SPOT_MARKETS_OFFSET, _data);
   }
-  
+
   public static Filter createSignerNonceFilter(final int signerNonce) {
     return Filter.createMemCompFilter(SIGNER_NONCE_OFFSET, new byte[]{(byte) signerNonce});
   }
-  
+
   public static Filter createMinPerpAuctionDurationFilter(final int minPerpAuctionDuration) {
     return Filter.createMemCompFilter(MIN_PERP_AUCTION_DURATION_OFFSET, new byte[]{(byte) minPerpAuctionDuration});
   }
-  
+
   public static Filter createDefaultMarketOrderTimeInForceFilter(final int defaultMarketOrderTimeInForce) {
     return Filter.createMemCompFilter(DEFAULT_MARKET_ORDER_TIME_IN_FORCE_OFFSET, new byte[]{(byte) defaultMarketOrderTimeInForce});
   }
-  
+
   public static Filter createDefaultSpotAuctionDurationFilter(final int defaultSpotAuctionDuration) {
     return Filter.createMemCompFilter(DEFAULT_SPOT_AUCTION_DURATION_OFFSET, new byte[]{(byte) defaultSpotAuctionDuration});
   }
-  
+
   public static Filter createExchangeStatusFilter(final int exchangeStatus) {
     return Filter.createMemCompFilter(EXCHANGE_STATUS_OFFSET, new byte[]{(byte) exchangeStatus});
   }
-  
+
   public static Filter createLiquidationDurationFilter(final int liquidationDuration) {
     return Filter.createMemCompFilter(LIQUIDATION_DURATION_OFFSET, new byte[]{(byte) liquidationDuration});
   }
-  
+
   public static Filter createInitialPctToLiquidateFilter(final int initialPctToLiquidate) {
     final byte[] _data = new byte[2];
     putInt16LE(_data, 0, initialPctToLiquidate);
     return Filter.createMemCompFilter(INITIAL_PCT_TO_LIQUIDATE_OFFSET, _data);
   }
-  
+
   public static Filter createMaxNumberOfSubAccountsFilter(final int maxNumberOfSubAccounts) {
     final byte[] _data = new byte[2];
     putInt16LE(_data, 0, maxNumberOfSubAccounts);
     return Filter.createMemCompFilter(MAX_NUMBER_OF_SUB_ACCOUNTS_OFFSET, _data);
   }
-  
+
   public static Filter createMaxInitializeUserFeeFilter(final int maxInitializeUserFee) {
     final byte[] _data = new byte[2];
     putInt16LE(_data, 0, maxInitializeUserFee);
@@ -191,13 +191,13 @@ public record State(PublicKey _address,
   public static State read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static State read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], State> FACTORY = State::read;
-  
+
   public static State read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

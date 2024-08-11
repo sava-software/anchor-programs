@@ -26,7 +26,7 @@ public sealed interface EngineFieldValue extends RustEnum permits
   EngineFieldValue.VecPubkey,
   EngineFieldValue.VecU32,
   EngineFieldValue.VecAcl {
-  
+
   static EngineFieldValue read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
     int i = offset + 1;
@@ -51,11 +51,11 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record Boolean(boolean val) implements EnumBool, EngineFieldValue {
-  
+
     public static Boolean read(final byte[] _data, int i) {
       return new Boolean(_data[i] == 1);
     }
-  
+
     @Override
     public int ordinal() {
       return 0;
@@ -63,15 +63,15 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record Date(byte[] val, java.lang.String _val) implements EnumString, EngineFieldValue {
-  
+
     public static Date createRecord(final java.lang.String val) {
       return new Date(val.getBytes(UTF_8), val);
     }
-  
+
     public static Date read(final byte[] data, final int offset) {
       return createRecord(Borsh.string(data, offset));
     }
-  
+
     @Override
     public int ordinal() {
       return 1;
@@ -79,11 +79,11 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record Double(long val) implements EnumInt64, EngineFieldValue {
-  
+
     public static Double read(final byte[] _data, int i) {
       return new Double(getInt64LE(_data, i));
     }
-  
+
     @Override
     public int ordinal() {
       return 2;
@@ -91,11 +91,11 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record Integer(int val) implements EnumInt32, EngineFieldValue {
-  
+
     public static Integer read(final byte[] _data, int i) {
       return new Integer(getInt32LE(_data, i));
     }
-  
+
     @Override
     public int ordinal() {
       return 3;
@@ -103,15 +103,15 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record String(byte[] val, java.lang.String _val) implements EnumString, EngineFieldValue {
-  
+
     public static String createRecord(final java.lang.String val) {
       return new String(val.getBytes(UTF_8), val);
     }
-  
+
     public static String read(final byte[] data, final int offset) {
       return createRecord(Borsh.string(data, offset));
     }
-  
+
     @Override
     public int ordinal() {
       return 4;
@@ -119,15 +119,15 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record Time(byte[] val, java.lang.String _val) implements EnumString, EngineFieldValue {
-  
+
     public static Time createRecord(final java.lang.String val) {
       return new Time(val.getBytes(UTF_8), val);
     }
-  
+
     public static Time read(final byte[] data, final int offset) {
       return createRecord(Borsh.string(data, offset));
     }
-  
+
     @Override
     public int ordinal() {
       return 5;
@@ -135,11 +135,11 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record U8(int val) implements EnumInt8, EngineFieldValue {
-  
+
     public static U8 read(final byte[] _data, int i) {
       return new U8(_data[i] & 0xFF);
     }
-  
+
     @Override
     public int ordinal() {
       return 6;
@@ -147,11 +147,11 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record U64(long val) implements EnumInt64, EngineFieldValue {
-  
+
     public static U64 read(final byte[] _data, int i) {
       return new U64(getInt64LE(_data, i));
     }
-  
+
     @Override
     public int ordinal() {
       return 7;
@@ -159,11 +159,11 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record Pubkey(PublicKey val) implements EnumPublicKey, EngineFieldValue {
-  
+
     public static Pubkey read(final byte[] _data, int i) {
       return new Pubkey(readPubKey(_data, i));
     }
-  
+
     @Override
     public int ordinal() {
       return 8;
@@ -171,11 +171,11 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record Percentage(int val) implements EnumInt32, EngineFieldValue {
-  
+
     public static Percentage read(final byte[] _data, int i) {
       return new Percentage(getInt32LE(_data, i));
     }
-  
+
     @Override
     public int ordinal() {
       return 9;
@@ -183,15 +183,15 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record URI(byte[] val, java.lang.String _val) implements EnumString, EngineFieldValue {
-  
+
     public static URI createRecord(final java.lang.String val) {
       return new URI(val.getBytes(UTF_8), val);
     }
-  
+
     public static URI read(final byte[] data, final int offset) {
       return createRecord(Borsh.string(data, offset));
     }
-  
+
     @Override
     public int ordinal() {
       return 10;
@@ -199,11 +199,11 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record Timestamp(long val) implements EnumInt64, EngineFieldValue {
-  
+
     public static Timestamp read(final byte[] _data, int i) {
       return new Timestamp(getInt64LE(_data, i));
     }
-  
+
     @Override
     public int ordinal() {
       return 11;
@@ -211,14 +211,14 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record VecPubkey(PublicKey[] val) implements EngineFieldValue {
-  
-  
+
+
     public static VecPubkey read(final byte[] _data, final int offset) {
       int i = offset;
       final var val = Borsh.readPublicKeyVector(_data, i);
       return new VecPubkey(val);
     }
-  
+
     @Override
     public int write(final byte[] _data, final int offset) {
       _data[offset] = (byte) ordinal();
@@ -226,12 +226,12 @@ public sealed interface EngineFieldValue extends RustEnum permits
       i += Borsh.write(val, _data, i);
       return i - offset;
     }
-  
+
     @Override
     public int l() {
       return 1 + Borsh.len(val);
     }
-    
+
     @Override
     public int ordinal() {
       return 12;
@@ -239,14 +239,14 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record VecU32(int[] val) implements EngineFieldValue {
-  
-  
+
+
     public static VecU32 read(final byte[] _data, final int offset) {
       int i = offset;
       final var val = Borsh.readintVector(_data, i);
       return new VecU32(val);
     }
-  
+
     @Override
     public int write(final byte[] _data, final int offset) {
       _data[offset] = (byte) ordinal();
@@ -254,12 +254,12 @@ public sealed interface EngineFieldValue extends RustEnum permits
       i += Borsh.write(val, _data, i);
       return i - offset;
     }
-  
+
     @Override
     public int l() {
       return 1 + Borsh.len(val);
     }
-    
+
     @Override
     public int ordinal() {
       return 13;
@@ -267,14 +267,14 @@ public sealed interface EngineFieldValue extends RustEnum permits
   }
 
   record VecAcl(Acl[] val) implements EngineFieldValue {
-  
-  
+
+
     public static VecAcl read(final byte[] _data, final int offset) {
       int i = offset;
       final var val = Borsh.readVector(Acl.class, Acl::read, _data, i);
       return new VecAcl(val);
     }
-  
+
     @Override
     public int write(final byte[] _data, final int offset) {
       _data[offset] = (byte) ordinal();
@@ -282,12 +282,12 @@ public sealed interface EngineFieldValue extends RustEnum permits
       i += Borsh.write(val, _data, i);
       return i - offset;
     }
-  
+
     @Override
     public int l() {
       return 1 + Borsh.len(val);
     }
-    
+
     @Override
     public int ordinal() {
       return 14;

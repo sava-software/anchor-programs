@@ -35,8 +35,8 @@ ext {
   VCS_URL = 'https://github.com/sava-software/anchor-programs'
   jsoniter = '2.11.+'
   sava = '1.0.+'
-  sava_solana_programs = '1.0.2'
-  sava_anchor_src_gen = '1.0.3'
+  sava_solana_programs = '1.0.3'
+  sava_anchor_src_gen = '1.0.4'
   bouncycastleMinor = 'jdk18on'
   bouncycastlePatch = '1.78.1' // https://www.bouncycastle.org/latest_releases.html#LATEST
 }

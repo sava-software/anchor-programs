@@ -23,15 +23,15 @@ public record ReferrerName(PublicKey _address,
   public static final int USER_OFFSET = 40;
   public static final int USER_STATS_OFFSET = 72;
   public static final int NAME_OFFSET = 104;
-  
+
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);
   }
-  
+
   public static Filter createUserFilter(final PublicKey user) {
     return Filter.createMemCompFilter(USER_OFFSET, user);
   }
-  
+
   public static Filter createUserStatsFilter(final PublicKey userStats) {
     return Filter.createMemCompFilter(USER_STATS_OFFSET, userStats);
   }
@@ -39,13 +39,13 @@ public record ReferrerName(PublicKey _address,
   public static ReferrerName read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static ReferrerName read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], ReferrerName> FACTORY = ReferrerName::read;
-  
+
   public static ReferrerName read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

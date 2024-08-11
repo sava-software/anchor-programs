@@ -39,7 +39,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[8 + Borsh.len(fund)];
     int i = writeDiscriminator(INITIALIZE_DISCRIMINATOR, _data, 0);
     Borsh.write(fund, _data, i);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -65,7 +65,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[8 + Borsh.len(shareClassMetadata)];
     int i = writeDiscriminator(ADD_SHARE_CLASS_DISCRIMINATOR, _data, 0);
     Borsh.write(shareClassMetadata, _data, i);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -83,7 +83,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[8 + Borsh.len(fund)];
     int i = writeDiscriminator(UPDATE_DISCRIMINATOR, _data, 0);
     Borsh.write(fund, _data, i);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -135,7 +135,7 @@ public final class GlamProgram {
     putInt64LE(_data, i, amount);
     i += 8;
     _data[i] = (byte) (skipState ? 1 : 0);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -169,7 +169,7 @@ public final class GlamProgram {
     _data[i] = (byte) (inKind ? 1 : 0);
     ++i;
     _data[i] = (byte) (skipState ? 1 : 0);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -201,7 +201,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[41];
     int i = writeDiscriminator(DRIFT_INITIALIZE_DISCRIMINATOR, _data, 0);
     Borsh.writeOptional(trader, _data, i);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -225,7 +225,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[41];
     int i = writeDiscriminator(DRIFT_UPDATE_DELEGATED_TRADER_DISCRIMINATOR, _data, 0);
     Borsh.writeOptional(trader, _data, i);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -259,7 +259,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(DRIFT_DEPOSIT_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amount);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -295,7 +295,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(DRIFT_WITHDRAW_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amount);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -364,7 +364,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(MARINADE_DEPOSIT_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, solAmount);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -404,7 +404,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(MARINADE_LIQUID_UNSTAKE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, solAmount);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -451,7 +451,7 @@ public final class GlamProgram {
     _data[i] = (byte) bump;
     ++i;
     Borsh.write(_ticketId, _data, i);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -520,7 +520,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(STAKE_POOL_DEPOSIT_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, lamports);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -564,7 +564,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(STAKE_POOL_WITHDRAW_SOL_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, lamports);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -616,7 +616,7 @@ public final class GlamProgram {
     i += 8;
     i += Borsh.write(_stakeAccountId, _data, i);
     _data[i] = (byte) stakeAccountBump;
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -658,7 +658,7 @@ public final class GlamProgram {
     i += 8;
     i += Borsh.write(_stakeAccountId, _data, i);
     _data[i] = (byte) stakeAccountBump;
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -744,7 +744,7 @@ public final class GlamProgram {
     putInt64LE(_data, i, amount);
     i += 8;
     Borsh.write(data, _data, i);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
@@ -774,7 +774,7 @@ public final class GlamProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(WSOL_WRAP_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amount);
-  
+
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 

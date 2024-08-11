@@ -25,21 +25,21 @@ public record TicketAccountData(PublicKey _address,
   public static final int BENEFICIARY_OFFSET = 40;
   public static final int LAMPORTS_AMOUNT_OFFSET = 72;
   public static final int CREATED_EPOCH_OFFSET = 80;
-  
+
   public static Filter createStateAddressFilter(final PublicKey stateAddress) {
     return Filter.createMemCompFilter(STATE_ADDRESS_OFFSET, stateAddress);
   }
-  
+
   public static Filter createBeneficiaryFilter(final PublicKey beneficiary) {
     return Filter.createMemCompFilter(BENEFICIARY_OFFSET, beneficiary);
   }
-  
+
   public static Filter createLamportsAmountFilter(final long lamportsAmount) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, lamportsAmount);
     return Filter.createMemCompFilter(LAMPORTS_AMOUNT_OFFSET, _data);
   }
-  
+
   public static Filter createCreatedEpochFilter(final long createdEpoch) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, createdEpoch);
@@ -49,13 +49,13 @@ public record TicketAccountData(PublicKey _address,
   public static TicketAccountData read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static TicketAccountData read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], TicketAccountData> FACTORY = TicketAccountData::read;
-  
+
   public static TicketAccountData read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

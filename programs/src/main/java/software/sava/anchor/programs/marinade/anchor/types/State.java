@@ -54,37 +54,37 @@ public record State(PublicKey _address,
   public static final int MSOL_MINT_AUTHORITY_BUMP_SEED_OFFSET = 137;
   public static final int RENT_EXEMPT_FOR_TOKEN_ACC_OFFSET = 138;
   public static final int REWARD_FEE_OFFSET = 146;
-  
+
   public static Filter createMsolMintFilter(final PublicKey msolMint) {
     return Filter.createMemCompFilter(MSOL_MINT_OFFSET, msolMint);
   }
-  
+
   public static Filter createAdminAuthorityFilter(final PublicKey adminAuthority) {
     return Filter.createMemCompFilter(ADMIN_AUTHORITY_OFFSET, adminAuthority);
   }
-  
+
   public static Filter createOperationalSolAccountFilter(final PublicKey operationalSolAccount) {
     return Filter.createMemCompFilter(OPERATIONAL_SOL_ACCOUNT_OFFSET, operationalSolAccount);
   }
-  
+
   public static Filter createTreasuryMsolAccountFilter(final PublicKey treasuryMsolAccount) {
     return Filter.createMemCompFilter(TREASURY_MSOL_ACCOUNT_OFFSET, treasuryMsolAccount);
   }
-  
+
   public static Filter createReserveBumpSeedFilter(final int reserveBumpSeed) {
     return Filter.createMemCompFilter(RESERVE_BUMP_SEED_OFFSET, new byte[]{(byte) reserveBumpSeed});
   }
-  
+
   public static Filter createMsolMintAuthorityBumpSeedFilter(final int msolMintAuthorityBumpSeed) {
     return Filter.createMemCompFilter(MSOL_MINT_AUTHORITY_BUMP_SEED_OFFSET, new byte[]{(byte) msolMintAuthorityBumpSeed});
   }
-  
+
   public static Filter createRentExemptForTokenAccFilter(final long rentExemptForTokenAcc) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, rentExemptForTokenAcc);
     return Filter.createMemCompFilter(RENT_EXEMPT_FOR_TOKEN_ACC_OFFSET, _data);
   }
-  
+
   public static Filter createRewardFeeFilter(final Fee rewardFee) {
     return Filter.createMemCompFilter(REWARD_FEE_OFFSET, rewardFee.write());
   }
@@ -92,13 +92,13 @@ public record State(PublicKey _address,
   public static State read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static State read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], State> FACTORY = State::read;
-  
+
   public static State read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

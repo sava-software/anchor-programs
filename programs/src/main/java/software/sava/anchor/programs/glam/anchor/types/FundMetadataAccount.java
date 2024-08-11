@@ -19,7 +19,7 @@ public record FundMetadataAccount(PublicKey _address,
 
   public static final int FUND_PUBKEY_OFFSET = 8;
   public static final int COMPANY_OFFSET = 40;
-  
+
   public static Filter createFundPubkeyFilter(final PublicKey fundPubkey) {
     return Filter.createMemCompFilter(FUND_PUBKEY_OFFSET, fundPubkey);
   }
@@ -27,13 +27,13 @@ public record FundMetadataAccount(PublicKey _address,
   public static FundMetadataAccount read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static FundMetadataAccount read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], FundMetadataAccount> FACTORY = FundMetadataAccount::read;
-  
+
   public static FundMetadataAccount read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

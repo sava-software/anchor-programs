@@ -27,7 +27,7 @@ public record FundAccount(PublicKey _address,
                           EngineField[][] params) implements Borsh {
 
   public static final int NAME_OFFSET = 8;
-  
+
   public static Filter createNameFilter(final String name) {
     final byte[] bytes = name.getBytes(UTF_8);
     final byte[] _data = new byte[4 + bytes.length];
@@ -62,13 +62,13 @@ public record FundAccount(PublicKey _address,
   public static FundAccount read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static FundAccount read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], FundAccount> FACTORY = FundAccount::read;
-  
+
   public static FundAccount read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

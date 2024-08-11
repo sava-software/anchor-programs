@@ -54,15 +54,15 @@ public record UserStats(PublicKey _address,
   public static final int AUTHORITY_OFFSET = 8;
   public static final int REFERRER_OFFSET = 40;
   public static final int FEES_OFFSET = 72;
-  
+
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);
   }
-  
+
   public static Filter createReferrerFilter(final PublicKey referrer) {
     return Filter.createMemCompFilter(REFERRER_OFFSET, referrer);
   }
-  
+
   public static Filter createFeesFilter(final UserFees fees) {
     return Filter.createMemCompFilter(FEES_OFFSET, fees.write());
   }
@@ -70,13 +70,13 @@ public record UserStats(PublicKey _address,
   public static UserStats read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static UserStats read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], UserStats> FACTORY = UserStats::read;
-  
+
   public static UserStats read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

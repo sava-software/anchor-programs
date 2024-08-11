@@ -49,63 +49,63 @@ public record SerumV3FulfillmentConfig(PublicKey _address,
   public static final int FULFILLMENT_TYPE_OFFSET = 338;
   public static final int STATUS_OFFSET = 339;
   public static final int PADDING_OFFSET = 340;
-  
+
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);
   }
-  
+
   public static Filter createSerumProgramIdFilter(final PublicKey serumProgramId) {
     return Filter.createMemCompFilter(SERUM_PROGRAM_ID_OFFSET, serumProgramId);
   }
-  
+
   public static Filter createSerumMarketFilter(final PublicKey serumMarket) {
     return Filter.createMemCompFilter(SERUM_MARKET_OFFSET, serumMarket);
   }
-  
+
   public static Filter createSerumRequestQueueFilter(final PublicKey serumRequestQueue) {
     return Filter.createMemCompFilter(SERUM_REQUEST_QUEUE_OFFSET, serumRequestQueue);
   }
-  
+
   public static Filter createSerumEventQueueFilter(final PublicKey serumEventQueue) {
     return Filter.createMemCompFilter(SERUM_EVENT_QUEUE_OFFSET, serumEventQueue);
   }
-  
+
   public static Filter createSerumBidsFilter(final PublicKey serumBids) {
     return Filter.createMemCompFilter(SERUM_BIDS_OFFSET, serumBids);
   }
-  
+
   public static Filter createSerumAsksFilter(final PublicKey serumAsks) {
     return Filter.createMemCompFilter(SERUM_ASKS_OFFSET, serumAsks);
   }
-  
+
   public static Filter createSerumBaseVaultFilter(final PublicKey serumBaseVault) {
     return Filter.createMemCompFilter(SERUM_BASE_VAULT_OFFSET, serumBaseVault);
   }
-  
+
   public static Filter createSerumQuoteVaultFilter(final PublicKey serumQuoteVault) {
     return Filter.createMemCompFilter(SERUM_QUOTE_VAULT_OFFSET, serumQuoteVault);
   }
-  
+
   public static Filter createSerumOpenOrdersFilter(final PublicKey serumOpenOrders) {
     return Filter.createMemCompFilter(SERUM_OPEN_ORDERS_OFFSET, serumOpenOrders);
   }
-  
+
   public static Filter createSerumSignerNonceFilter(final long serumSignerNonce) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, serumSignerNonce);
     return Filter.createMemCompFilter(SERUM_SIGNER_NONCE_OFFSET, _data);
   }
-  
+
   public static Filter createMarketIndexFilter(final int marketIndex) {
     final byte[] _data = new byte[2];
     putInt16LE(_data, 0, marketIndex);
     return Filter.createMemCompFilter(MARKET_INDEX_OFFSET, _data);
   }
-  
+
   public static Filter createFulfillmentTypeFilter(final SpotFulfillmentType fulfillmentType) {
     return Filter.createMemCompFilter(FULFILLMENT_TYPE_OFFSET, fulfillmentType.write());
   }
-  
+
   public static Filter createStatusFilter(final SpotFulfillmentConfigStatus status) {
     return Filter.createMemCompFilter(STATUS_OFFSET, status.write());
   }
@@ -113,13 +113,13 @@ public record SerumV3FulfillmentConfig(PublicKey _address,
   public static SerumV3FulfillmentConfig read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static SerumV3FulfillmentConfig read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], SerumV3FulfillmentConfig> FACTORY = SerumV3FulfillmentConfig::read;
-  
+
   public static SerumV3FulfillmentConfig read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;

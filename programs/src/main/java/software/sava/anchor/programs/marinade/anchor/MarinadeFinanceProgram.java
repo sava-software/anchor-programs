@@ -50,7 +50,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[8 + Borsh.len(data)];
     int i = writeDiscriminator(INITIALIZE_DISCRIMINATOR, _data, 0);
     Borsh.write(data, _data, i);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -68,7 +68,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[8 + Borsh.len(data)];
     int i = writeDiscriminator(CHANGE_AUTHORITY_DISCRIMINATOR, _data, 0);
     Borsh.write(data, _data, i);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -101,7 +101,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(ADD_VALIDATOR_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, score);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -128,7 +128,7 @@ public final class MarinadeFinanceProgram {
     putInt32LE(_data, i, index);
     i += 4;
     validatorVote.write(_data, i);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -154,7 +154,7 @@ public final class MarinadeFinanceProgram {
     validatorVote.write(_data, i);
     i += 32;
     putInt32LE(_data, i, score);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -172,7 +172,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(CONFIG_VALIDATOR_SYSTEM_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, extraRuns);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -209,7 +209,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(DEPOSIT_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, lamports);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -254,7 +254,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(DEPOSIT_STAKE_ACCOUNT_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, validatorIndex);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -288,7 +288,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(LIQUID_UNSTAKE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, msolAmount);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -320,7 +320,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(ADD_LIQUIDITY_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, lamports);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -356,7 +356,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(REMOVE_LIQUIDITY_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, tokens);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -374,7 +374,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[8 + Borsh.len(params)];
     int i = writeDiscriminator(CONFIG_LP_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -392,7 +392,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[8 + Borsh.len(params)];
     int i = writeDiscriminator(CONFIG_MARINADE_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -422,7 +422,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(ORDER_UNSTAKE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, msolAmount);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -487,7 +487,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(STAKE_RESERVE_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, validatorIndex);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -508,7 +508,7 @@ public final class MarinadeFinanceProgram {
     putInt32LE(_data, i, stakeIndex);
     i += 4;
     putInt32LE(_data, i, validatorIndex);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -528,7 +528,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(UPDATE_DEACTIVATED_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, stakeIndex);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -573,7 +573,7 @@ public final class MarinadeFinanceProgram {
     putInt32LE(_data, i, stakeIndex);
     i += 4;
     putInt32LE(_data, i, validatorIndex);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -606,7 +606,7 @@ public final class MarinadeFinanceProgram {
     putInt32LE(_data, i, stakeIndex);
     i += 4;
     putInt32LE(_data, i, validatorIndex);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -654,7 +654,7 @@ public final class MarinadeFinanceProgram {
     putInt32LE(_data, i, validatorIndex);
     i += 4;
     putInt64LE(_data, i, desiredUnstakeAmount);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -696,7 +696,7 @@ public final class MarinadeFinanceProgram {
     putInt32LE(_data, i, sourceStakeIndex);
     i += 4;
     putInt32LE(_data, i, validatorIndex);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -746,7 +746,7 @@ public final class MarinadeFinanceProgram {
     putInt32LE(_data, i, sourceValidatorIndex);
     i += 4;
     putInt32LE(_data, i, destValidatorIndex);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -823,7 +823,7 @@ public final class MarinadeFinanceProgram {
     putInt64LE(_data, i, msolAmount);
     i += 8;
     beneficiary.write(_data, i);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -847,7 +847,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(REALLOC_VALIDATOR_LIST_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, capacity);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
@@ -871,7 +871,7 @@ public final class MarinadeFinanceProgram {
     final byte[] _data = new byte[12];
     int i = writeDiscriminator(REALLOC_STAKE_LIST_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, capacity);
-  
+
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
   

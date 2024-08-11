@@ -32,37 +32,37 @@ public record PrelaunchOracle(PublicKey _address,
   public static final int AMM_LAST_UPDATE_SLOT_OFFSET = 40;
   public static final int PERP_MARKET_INDEX_OFFSET = 48;
   public static final int PADDING_OFFSET = 50;
-  
+
   public static Filter createPriceFilter(final long price) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, price);
     return Filter.createMemCompFilter(PRICE_OFFSET, _data);
   }
-  
+
   public static Filter createMaxPriceFilter(final long maxPrice) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, maxPrice);
     return Filter.createMemCompFilter(MAX_PRICE_OFFSET, _data);
   }
-  
+
   public static Filter createConfidenceFilter(final long confidence) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, confidence);
     return Filter.createMemCompFilter(CONFIDENCE_OFFSET, _data);
   }
-  
+
   public static Filter createLastUpdateSlotFilter(final long lastUpdateSlot) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, lastUpdateSlot);
     return Filter.createMemCompFilter(LAST_UPDATE_SLOT_OFFSET, _data);
   }
-  
+
   public static Filter createAmmLastUpdateSlotFilter(final long ammLastUpdateSlot) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, ammLastUpdateSlot);
     return Filter.createMemCompFilter(AMM_LAST_UPDATE_SLOT_OFFSET, _data);
   }
-  
+
   public static Filter createPerpMarketIndexFilter(final int perpMarketIndex) {
     final byte[] _data = new byte[2];
     putInt16LE(_data, 0, perpMarketIndex);
@@ -72,13 +72,13 @@ public record PrelaunchOracle(PublicKey _address,
   public static PrelaunchOracle read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
-  
+
   public static PrelaunchOracle read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
-  
+
   public static final BiFunction<PublicKey, byte[], PrelaunchOracle> FACTORY = PrelaunchOracle::read;
-  
+
   public static PrelaunchOracle read(final PublicKey _address, final byte[] _data, final int offset) {
     final byte[] discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length;
