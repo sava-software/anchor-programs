@@ -61,7 +61,7 @@ do
 
       bdm | baseDelayMillis) baseDelayMillis="$val";;
       bp | basePackageName) basePackageName="$val";;
-      mn | outputModuleName) outputModuleName="$val";;
+      mn | moduleName) outputModuleName="$val";;
       nt | numThreads) numThreads="$val";;
       pcsv | programsCSVs) programsCSV="$val";;
       rpc) rpc="$val";;
