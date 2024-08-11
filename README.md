@@ -19,3 +19,17 @@ Replace the values below to fit your needs.
  --numThreads=5 \
  --screen=[0|1]
 ```
+
+## Requirements
+
+- The latest generally available JDK. This project will continue to move to the latest and will not maintain
+  versions released against previous JDK's.
+
+## Dependencies
+
+- [solana-programs](https://github.com/sava-software/solana-programs)
+- [anchor-src-gen](https://github.com/sava-software/anchor-src-gen)
+
+## Contribution
+
+Unit tests are needed and welcomed. Otherwise, please open an issue or send an email before working on a pull request.
