@@ -78,8 +78,8 @@ public interface MarinadeProgramClient {
 
   CompletableFuture<AccountInfo<State>> fetchProgramState(final SolanaRpcClient rpcClient);
 
-  static CompletableFuture<AccountInfo<MarinadeValidatorList>> fetchProgramState(final SolanaRpcClient rpcClient,
-                                                                                 final State programState) {
+  static CompletableFuture<AccountInfo<MarinadeValidatorList>> fetchValidatorList(final SolanaRpcClient rpcClient,
+                                                                                  final State programState) {
     final var destinationValidatorList = programState.validatorSystem().validatorList();
     return rpcClient.getAccountInfo(destinationValidatorList.account(), MarinadeValidatorList.FACTORY);
   }
