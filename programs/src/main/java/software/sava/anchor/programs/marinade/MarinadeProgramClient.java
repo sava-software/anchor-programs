@@ -1,5 +1,7 @@
 package software.sava.anchor.programs.marinade;
 
+import software.sava.anchor.programs.marinade.anchor.types.State;
+import software.sava.anchor.programs.marinade.anchor.types.TicketAccountData;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -10,8 +12,6 @@ import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
-import software.sava.anchor.programs.marinade.anchor.types.State;
-import software.sava.anchor.programs.marinade.anchor.types.TicketAccountData;
 
 import java.util.Collection;
 import java.util.List;
@@ -77,6 +77,12 @@ public interface MarinadeProgramClient {
   Instruction marinadeDeposit(final PublicKey mSolTokenAccount, final long lamports);
 
   CompletableFuture<AccountInfo<State>> fetchProgramState(final SolanaRpcClient rpcClient);
+
+  static CompletableFuture<AccountInfo<MarinadeValidatorList>> fetchProgramState(final SolanaRpcClient rpcClient,
+                                                                                 final State programState) {
+    final var destinationValidatorList = programState.validatorSystem().validatorList();
+    return rpcClient.getAccountInfo(destinationValidatorList.account(), MarinadeValidatorList.FACTORY);
+  }
 
   ProgramDerivedAddress findDuplicationKey(PublicKey validatorPublicKey);
 
