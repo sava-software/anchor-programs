@@ -1,8 +1,8 @@
 package software.sava.anchor.programs.marinade;
 
+import software.sava.anchor.programs.marinade.anchor.types.ValidatorRecord;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.lookup.AccountIndexLookupTableEntry;
-import software.sava.anchor.programs.marinade.anchor.types.ValidatorRecord;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +41,7 @@ public record MarinadeValidatorList(PublicKey address,
     }
     final var reverseLookupTable = new AccountIndexLookupTableEntry[validators.size()];
     int i = 0;
-    for (final ValidatorRecord validatorRecord : validators) {
+    for (final var validatorRecord : validators) {
       reverseLookupTable[i] = new AccountIndexLookupTableEntry(validatorRecord.validatorAccount().toByteArray(), i);
       ++i;
     }

@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.glam;
 
+import software.sava.anchor.programs.glam.anchor.GlamProgram;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -11,7 +12,6 @@ import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramClient;
 import software.sava.solana.programs.token.AssociatedTokenProgram;
-import software.sava.anchor.programs.glam.anchor.GlamProgram;
 
 import java.util.Collection;
 import java.util.List;
@@ -141,7 +141,7 @@ final class GlamNativeClientImpl implements GlamNativeClient {
   public Instruction initializeAndDelegateStake(final FundPDA stakeAccountPDA,
                                                 final PublicKey validatorVoteAccount,
                                                 final long lamports) {
-    return GlamProgram.nativeStakeDeposit(
+    return GlamProgram.initializeAndDelegateStake(
         invokedProgram,
         feePayer,
         glamFundAccounts.fundPublicKey(),

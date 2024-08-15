@@ -8,8 +8,11 @@ public enum InvestorError implements Borsh.Enum {
   InvalidShareClass,
   InvalidAssetSubscribe,
   InvalidPricingOracle,
-  InvalidAssetsRedeem,
-  InvalidTreasuryAccount;
+  InvalidRemainingAccounts,
+  InvalidTreasuryAccount,
+  InvalidSignerAccount,
+  InvalidAssetPrice,
+  InvalidStableCoinPriceForSubscribe;
 
   public static InvestorError read(final byte[] _data, final int offset) {
     return Borsh.read(InvestorError.values(), _data, offset);

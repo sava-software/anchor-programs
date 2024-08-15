@@ -36,7 +36,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                 final long lamportsIn) {
     final var stakePoolState = stakePoolStateAccountInfo.data();
     final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
-    return GlamProgram.stakePoolDeposit(
+    return GlamProgram.stakePoolDepositSol(
         invokedProgram,
         feePayer,
         glamFundAccounts.fundPublicKey(),

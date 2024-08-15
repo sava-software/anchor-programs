@@ -1,5 +1,10 @@
 package software.sava.anchor.programs.glam;
 
+import software.sava.anchor.programs.glam.anchor.GlamProgram;
+import software.sava.anchor.programs.marinade.MarinadeAccounts;
+import software.sava.anchor.programs.marinade.MarinadeProgramClient;
+import software.sava.anchor.programs.marinade.anchor.types.State;
+import software.sava.anchor.programs.marinade.anchor.types.TicketAccountData;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -8,11 +13,6 @@ import software.sava.core.accounts.token.TokenAccount;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
-import software.sava.anchor.programs.glam.anchor.GlamProgram;
-import software.sava.anchor.programs.marinade.MarinadeAccounts;
-import software.sava.anchor.programs.marinade.MarinadeProgramClient;
-import software.sava.anchor.programs.marinade.anchor.types.State;
-import software.sava.anchor.programs.marinade.anchor.types.TicketAccountData;
 
 import java.util.Collection;
 import java.util.List;
@@ -60,7 +60,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
 
   @Override
   public Instruction marinadeDeposit(final PublicKey mSolTokenAccount, final long lamports) {
-    return GlamProgram.marinadeDeposit(
+    return GlamProgram.marinadeDepositSol(
         invokedProgram,
         feePayer,
         glamFundAccounts.fundPublicKey(),
@@ -121,8 +121,8 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         solanaAccounts.tokenProgram(),
         marinadeAccounts.marinadeProgram(),
         lamports,
-        ticketPDA.nonce(),
-        ticketAccount.accountId()
+        ticketAccount.accountId(),
+        ticketPDA.nonce()
     );
   }
 
@@ -132,7 +132,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   }
 
   private Instruction marinadeClaim() {
-    return GlamProgram.marinadeClaim(
+    return GlamProgram.marinadeClaimTickets(
         glamFundAccounts.glamAccounts().invokedProgram(),
         feePayer,
         glamFundAccounts.fundPublicKey(),
