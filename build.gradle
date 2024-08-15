@@ -33,12 +33,17 @@ def getAppVersion = { ->
 ext {
   VERSION = getAppVersion()
   VCS_URL = 'https://github.com/sava-software/anchor-programs'
-  jsoniter = '2.11.+'
-  sava = '1.0.7'
-  sava_solana_programs = '1.0.7'
-  sava_anchor_src_gen = '1.0.4'
+
   bouncycastleMinor = 'jdk18on'
   bouncycastlePatch = '1.78.1' // https://www.bouncycastle.org/latest_releases.html#LATEST
+
+  jsoniter = '2.11.+'
+
+  sava = '1.0.9'
+  sava_solana_web2 = '1.0.5'
+  sava_solana_programs = '1.0.7'
+  sava_anchor_src_gen = '1.0.4'
+  sava_anchor_programs = '1.0.8'
 }
 
 subprojects {
