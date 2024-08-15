@@ -12,7 +12,6 @@ public record ChangeAuthorityEvent(PublicKey state,
                                    PubkeyValueChange treasuryMsolAccountChange,
                                    PubkeyValueChange pauseAuthorityChange) implements Borsh {
 
-
   public static ChangeAuthorityEvent read(final byte[] _data, final int offset) {
     int i = offset;
     final var state = readPubKey(_data, i);

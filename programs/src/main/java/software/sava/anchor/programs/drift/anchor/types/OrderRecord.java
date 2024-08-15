@@ -11,7 +11,6 @@ public record OrderRecord(long ts,
                           PublicKey user,
                           Order order) implements Borsh {
 
-
   public static OrderRecord read(final byte[] _data, final int offset) {
     int i = offset;
     final var ts = getInt64LE(_data, i);

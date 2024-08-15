@@ -29,7 +29,6 @@ public record RedelegateEvent(PublicKey state,
                               int redelegateStakeIndex,
                               PublicKey redelegateStakeAccount) implements Borsh {
 
-
   public static RedelegateEvent read(final byte[] _data, final int offset) {
     int i = offset;
     final var state = readPubKey(_data, i);

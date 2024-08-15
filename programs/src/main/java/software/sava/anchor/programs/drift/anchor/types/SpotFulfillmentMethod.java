@@ -13,7 +13,7 @@ public sealed interface SpotFulfillmentMethod extends RustEnum permits
 
   static SpotFulfillmentMethod read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
-    int i = offset + 1;
+    final int i = offset + 1;
     return switch (ordinal) {
       case 0 -> ExternalMarket.INSTANCE;
       case 1 -> Match.read(_data, i);
@@ -22,6 +22,7 @@ public sealed interface SpotFulfillmentMethod extends RustEnum permits
   }
 
   record ExternalMarket() implements EnumNone, SpotFulfillmentMethod {
+
     public static final ExternalMarket INSTANCE = new ExternalMarket();
 
     @Override
@@ -44,8 +45,7 @@ public sealed interface SpotFulfillmentMethod extends RustEnum permits
 
     @Override
     public int write(final byte[] _data, final int offset) {
-      _data[offset] = (byte) ordinal();
-      int i = 1 + offset;
+      int i = writeOrdinal(_data, offset);
       _publicKey.write(_data, i);
       i += 32;
       putInt16LE(_data, i, _u16);

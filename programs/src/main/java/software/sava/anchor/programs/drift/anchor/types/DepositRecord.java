@@ -30,7 +30,6 @@ public record DepositRecord(long ts,
                             DepositExplanation explanation,
                             PublicKey transferUser) implements Borsh {
 
-
   public static DepositRecord read(final byte[] _data, final int offset) {
     int i = offset;
     final var ts = getInt64LE(_data, i);

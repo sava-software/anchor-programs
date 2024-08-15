@@ -29,7 +29,7 @@ public sealed interface EngineFieldValue extends RustEnum permits
 
   static EngineFieldValue read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
-    int i = offset + 1;
+    final int i = offset + 1;
     return switch (ordinal) {
       case 0 -> new Boolean(_data[i] == 1);
       case 1 -> Date.read(_data, i);
@@ -212,17 +212,14 @@ public sealed interface EngineFieldValue extends RustEnum permits
 
   record VecPubkey(PublicKey[] val) implements EngineFieldValue {
 
-
     public static VecPubkey read(final byte[] _data, final int offset) {
-      int i = offset;
-      final var val = Borsh.readPublicKeyVector(_data, i);
+      final var val = Borsh.readPublicKeyVector(_data, offset);
       return new VecPubkey(val);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
-      _data[offset] = (byte) ordinal();
-      int i = 1 + offset;
+      int i = writeOrdinal(_data, offset);
       i += Borsh.write(val, _data, i);
       return i - offset;
     }
@@ -240,17 +237,14 @@ public sealed interface EngineFieldValue extends RustEnum permits
 
   record VecU32(int[] val) implements EngineFieldValue {
 
-
     public static VecU32 read(final byte[] _data, final int offset) {
-      int i = offset;
-      final var val = Borsh.readintVector(_data, i);
+      final var val = Borsh.readintVector(_data, offset);
       return new VecU32(val);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
-      _data[offset] = (byte) ordinal();
-      int i = 1 + offset;
+      int i = writeOrdinal(_data, offset);
       i += Borsh.write(val, _data, i);
       return i - offset;
     }
@@ -268,17 +262,14 @@ public sealed interface EngineFieldValue extends RustEnum permits
 
   record VecAcl(Acl[] val) implements EngineFieldValue {
 
-
     public static VecAcl read(final byte[] _data, final int offset) {
-      int i = offset;
-      final var val = Borsh.readVector(Acl.class, Acl::read, _data, i);
+      final var val = Borsh.readVector(Acl.class, Acl::read, _data, offset);
       return new VecAcl(val);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
-      _data[offset] = (byte) ordinal();
-      int i = 1 + offset;
+      int i = writeOrdinal(_data, offset);
       i += Borsh.write(val, _data, i);
       return i - offset;
     }

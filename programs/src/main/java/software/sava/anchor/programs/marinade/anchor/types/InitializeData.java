@@ -19,7 +19,6 @@ public record InitializeData(PublicKey adminAuthority,
                              long slotsForStakeDelta,
                              PublicKey pauseAuthority) implements Borsh {
 
-
   public static InitializeData read(final byte[] _data, final int offset) {
     int i = offset;
     final var adminAuthority = readPubKey(_data, i);

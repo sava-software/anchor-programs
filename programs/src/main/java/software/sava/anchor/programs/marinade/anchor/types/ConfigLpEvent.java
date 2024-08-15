@@ -11,7 +11,6 @@ public record ConfigLpEvent(PublicKey state,
                             U64ValueChange liquidityTargetChange,
                             FeeValueChange treasuryCutChange) implements Borsh {
 
-
   public static ConfigLpEvent read(final byte[] _data, final int offset) {
     int i = offset;
     final var state = readPubKey(_data, i);

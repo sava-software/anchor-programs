@@ -12,7 +12,6 @@ public record PrelaunchOracleParams(int perpMarketIndex,
                                     OptionalLong price,
                                     OptionalLong maxPrice) implements Borsh {
 
-
   public static PrelaunchOracleParams read(final byte[] _data, final int offset) {
     int i = offset;
     final var perpMarketIndex = getInt16LE(_data, i);

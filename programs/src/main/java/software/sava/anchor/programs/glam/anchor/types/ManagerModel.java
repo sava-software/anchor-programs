@@ -12,7 +12,6 @@ public record ManagerModel(String portfolioManagerName, byte[] _portfolioManager
                            PublicKey pubkey,
                            ManagerKind kind) implements Borsh {
 
-
   public static ManagerModel createRecord(final String portfolioManagerName,
                                           final PublicKey pubkey,
                                           final ManagerKind kind) {

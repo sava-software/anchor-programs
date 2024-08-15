@@ -8,7 +8,7 @@ public sealed interface MarginCalculationMode extends RustEnum permits
 
   static MarginCalculationMode read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
-    int i = offset + 1;
+    final int i = offset + 1;
     return switch (ordinal) {
       case 0 -> new Standard(_data[i] == 1);
       case 1 -> Liquidation.read(_data, i);

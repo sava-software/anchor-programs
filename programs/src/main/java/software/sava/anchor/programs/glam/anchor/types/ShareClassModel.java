@@ -20,7 +20,6 @@ public record ShareClassModel(String symbol, byte[] _symbol,
                               PublicKey[] allowlist,
                               PublicKey[] blocklist) implements Borsh {
 
-
   public static ShareClassModel createRecord(final String symbol,
                                              final String name,
                                              final String uri,

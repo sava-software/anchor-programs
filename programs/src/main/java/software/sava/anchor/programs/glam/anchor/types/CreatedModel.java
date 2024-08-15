@@ -7,7 +7,6 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 
 public record CreatedModel(int[] key, PublicKey manager) implements Borsh {
 
-
   public static CreatedModel read(final byte[] _data, final int offset) {
     int i = offset;
     final var key = Borsh.readArray(new int[8], _data, i);

@@ -4,7 +4,6 @@ import software.sava.core.borsh.Borsh;
 
 public record OracleGuardRails(PriceDivergenceGuardRails priceDivergence, ValidityGuardRails validity) implements Borsh {
 
-
   public static OracleGuardRails read(final byte[] _data, final int offset) {
     int i = offset;
     final var priceDivergence = PriceDivergenceGuardRails.read(_data, i);

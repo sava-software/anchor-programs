@@ -8,7 +8,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public record CompanyField(CompanyFieldName name, String value, byte[] _value) implements Borsh {
 
-
   public static CompanyField createRecord(final CompanyFieldName name, final String value) {
     return new CompanyField(name, value, value.getBytes(UTF_8));
   }

@@ -29,7 +29,6 @@ public record OrderParams(OrderType orderType,
                           OptionalLong auctionStartPrice,
                           OptionalLong auctionEndPrice) implements Borsh {
 
-
   public static OrderParams read(final byte[] _data, final int offset) {
     int i = offset;
     final var orderType = OrderType.read(_data, i);

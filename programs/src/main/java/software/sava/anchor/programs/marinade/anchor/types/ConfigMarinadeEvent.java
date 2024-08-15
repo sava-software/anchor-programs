@@ -18,7 +18,6 @@ public record ConfigMarinadeEvent(PublicKey state,
                                   FeeCentsValueChange withdrawStakeAccountFeeChange,
                                   FeeValueChange maxStakeMovedPerEpochChange) implements Borsh {
 
-
   public static ConfigMarinadeEvent read(final byte[] _data, final int offset) {
     int i = offset;
     final var state = readPubKey(_data, i);

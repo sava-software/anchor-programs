@@ -22,7 +22,6 @@ public record StakeSystem(List stakeList,
                           // so we maximize user's rewards
                           int extraStakeDeltaRuns) implements Borsh {
 
-
   public static StakeSystem read(final byte[] _data, final int offset) {
     int i = offset;
     final var stakeList = List.read(_data, i);

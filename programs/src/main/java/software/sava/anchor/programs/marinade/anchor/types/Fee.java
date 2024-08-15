@@ -10,8 +10,7 @@ public record Fee(int basisPoints) implements Borsh {
   public static final int BYTES = 4;
 
   public static Fee read(final byte[] _data, final int offset) {
-    int i = offset;
-    final var basisPoints = getInt32LE(_data, i);
+    final var basisPoints = getInt32LE(_data, offset);
     return new Fee(basisPoints);
   }
 

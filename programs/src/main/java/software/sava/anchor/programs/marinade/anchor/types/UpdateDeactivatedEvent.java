@@ -24,7 +24,6 @@ public record UpdateDeactivatedEvent(PublicKey state,
                                      long totalVirtualStakedLamports,
                                      long msolSupply) implements Borsh {
 
-
   public static UpdateDeactivatedEvent read(final byte[] _data, final int offset) {
     int i = offset;
     final var state = readPubKey(_data, i);

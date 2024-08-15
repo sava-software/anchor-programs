@@ -228,7 +228,6 @@ public record AMM(// oracle price data public key
                   int referencePriceOffset,
                   int[] padding) implements Borsh {
 
-
   public static AMM read(final byte[] _data, final int offset) {
     int i = offset;
     final var oracle = readPubKey(_data, i);

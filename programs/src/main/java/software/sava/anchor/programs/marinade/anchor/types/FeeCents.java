@@ -12,8 +12,7 @@ public record FeeCents(int bpCents) implements Borsh {
   public static final int BYTES = 4;
 
   public static FeeCents read(final byte[] _data, final int offset) {
-    int i = offset;
-    final var bpCents = getInt32LE(_data, i);
+    final var bpCents = getInt32LE(_data, offset);
     return new FeeCents(bpCents);
   }
 

@@ -12,7 +12,6 @@ public record CompanyModel(String fundGroupName, byte[] _fundGroupName,
                            String emailAddressOfManCo, byte[] _emailAddressOfManCo,
                            String fundWebsiteOfManCo, byte[] _fundWebsiteOfManCo) implements Borsh {
 
-
   public static CompanyModel createRecord(final String fundGroupName,
                                           final String manCo,
                                           final String domicileOfManCo,

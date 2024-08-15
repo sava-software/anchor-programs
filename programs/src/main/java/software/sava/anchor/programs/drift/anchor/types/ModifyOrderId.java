@@ -10,7 +10,7 @@ public sealed interface ModifyOrderId extends RustEnum permits
 
   static ModifyOrderId read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
-    int i = offset + 1;
+    final int i = offset + 1;
     return switch (ordinal) {
       case 0 -> new UserOrderId(_data[i] & 0xFF);
       case 1 -> new OrderId(getInt32LE(_data, i));

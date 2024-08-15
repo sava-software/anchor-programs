@@ -10,7 +10,6 @@ public record FeeStructure(FeeTier[] feeTiers,
                            long referrerRewardEpochUpperBound,
                            long flatFillerFee) implements Borsh {
 
-
   public static FeeStructure read(final byte[] _data, final int offset) {
     int i = offset;
     final var feeTiers = Borsh.readArray(new FeeTier[10], FeeTier::read, _data, i);

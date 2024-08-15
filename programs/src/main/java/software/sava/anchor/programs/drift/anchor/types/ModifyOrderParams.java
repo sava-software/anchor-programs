@@ -25,7 +25,6 @@ public record ModifyOrderParams(PositionDirection direction,
                                 OptionalLong auctionEndPrice,
                                 ModifyOrderPolicy policy) implements Borsh {
 
-
   public static ModifyOrderParams read(final byte[] _data, final int offset) {
     int i = offset;
     final var direction = _data[i++] == 0 ? null : PositionDirection.read(_data, i);

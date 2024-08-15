@@ -24,7 +24,6 @@ public record LiqPool(PublicKey lpMint,
                       long lentFromSolLeg,
                       long liquiditySolCap) implements Borsh {
 
-
   public static LiqPool read(final byte[] _data, final int offset) {
     int i = offset;
     final var lpMint = readPubKey(_data, i);

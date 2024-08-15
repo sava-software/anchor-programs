@@ -24,7 +24,6 @@ public record FundModel(PublicKey id,
                         Boolean isRawOpenfunds,
                         FundOpenfundsModel rawOpenfunds) implements Borsh {
 
-
   public static FundModel createRecord(final PublicKey id,
                                        final String name,
                                        final String uri,

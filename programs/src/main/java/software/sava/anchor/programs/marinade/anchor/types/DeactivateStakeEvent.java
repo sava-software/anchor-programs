@@ -25,7 +25,6 @@ public record DeactivateStakeEvent(PublicKey state,
                                    long totalUnstakeDelta,
                                    long unstakedAmount) implements Borsh {
 
-
   public static DeactivateStakeEvent read(final byte[] _data, final int offset) {
     int i = offset;
     final var state = readPubKey(_data, i);

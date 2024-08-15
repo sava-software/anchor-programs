@@ -4,7 +4,6 @@ import software.sava.core.borsh.Borsh;
 
 public record FeeCentsValueChange(FeeCents old, FeeCents _new) implements Borsh {
 
-
   public static FeeCentsValueChange read(final byte[] _data, final int offset) {
     int i = offset;
     final var old = FeeCents.read(_data, i);

@@ -20,7 +20,6 @@ public record ConfigMarinadeParams(Fee rewardsFee,
                                    FeeCents withdrawStakeAccountFee,
                                    Fee maxStakeMovedPerEpoch) implements Borsh {
 
-
   public static ConfigMarinadeParams read(final byte[] _data, final int offset) {
     int i = offset;
     final var rewardsFee = _data[i++] == 0 ? null : Fee.read(_data, i);

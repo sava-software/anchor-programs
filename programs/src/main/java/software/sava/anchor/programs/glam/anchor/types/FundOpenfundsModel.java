@@ -24,7 +24,6 @@ public record FundOpenfundsModel(String fundDomicileAlpha2, byte[] _fundDomicile
                                  String typeOfEuDirective, byte[] _typeOfEuDirective,
                                  String ucitsVersion, byte[] _ucitsVersion) implements Borsh {
 
-
   public static FundOpenfundsModel createRecord(final String fundDomicileAlpha2,
                                                 final String legalFundNameIncludingUmbrella,
                                                 final String fiscalYearEnd,

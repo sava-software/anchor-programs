@@ -8,7 +8,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public record ShareClassField(ShareClassFieldName name, String value, byte[] _value) implements Borsh {
 
-
   public static ShareClassField createRecord(final ShareClassFieldName name, final String value) {
     return new ShareClassField(name, value, value.getBytes(UTF_8));
   }

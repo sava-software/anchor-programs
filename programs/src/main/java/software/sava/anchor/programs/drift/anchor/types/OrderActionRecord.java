@@ -42,7 +42,6 @@ public record OrderActionRecord(long ts,
                                 OptionalLong makerOrderCumulativeQuoteAssetAmountFilled,
                                 long oraclePrice) implements Borsh {
 
-
   public static OrderActionRecord read(final byte[] _data, final int offset) {
     int i = offset;
     final var ts = getInt64LE(_data, i);

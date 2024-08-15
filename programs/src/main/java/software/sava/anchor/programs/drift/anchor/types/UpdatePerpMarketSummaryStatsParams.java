@@ -12,7 +12,6 @@ public record UpdatePerpMarketSummaryStatsParams(OptionalLong quoteAssetAmountWi
                                                  OptionalLong netUnsettledFundingPnl,
                                                  Boolean updateAmmSummaryStats) implements Borsh {
 
-
   public static UpdatePerpMarketSummaryStatsParams read(final byte[] _data, final int offset) {
     int i = offset;
     final var quoteAssetAmountWithUnsettledLp = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));

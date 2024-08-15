@@ -36,7 +36,6 @@ public record ShareClassOpenfundsModel(String isin, byte[] _isin,
                                        String cusip, byte[] _cusip,
                                        String valor, byte[] _valor) implements Borsh {
 
-
   public static ShareClassOpenfundsModel createRecord(final String isin,
                                                       final String shareClassCurrency,
                                                       final String currencyOfMinimalSubscription,

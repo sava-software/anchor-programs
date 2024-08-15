@@ -7,7 +7,6 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 
 public record Acl(PublicKey pubkey, Permission[] permissions) implements Borsh {
 
-
   public static Acl read(final byte[] _data, final int offset) {
     int i = offset;
     final var pubkey = readPubKey(_data, i);
