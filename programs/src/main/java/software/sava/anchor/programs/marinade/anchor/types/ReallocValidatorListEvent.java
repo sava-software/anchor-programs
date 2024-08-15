@@ -37,6 +37,6 @@ public record ReallocValidatorListEvent(PublicKey state,
 
   @Override
   public int l() {
-    return 32 + 4 + 4;
+    return BYTES;
   }
 }

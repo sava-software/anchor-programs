@@ -39,6 +39,6 @@ public record OrderFillerRewardStructure(int rewardNumerator,
 
   @Override
   public int l() {
-    return 4 + 4 + 16;
+    return BYTES;
   }
 }

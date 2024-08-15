@@ -47,6 +47,6 @@ public record RemoveValidatorEvent(PublicKey state,
 
   @Override
   public int l() {
-    return 32 + 32 + 4 + 8;
+    return BYTES;
   }
 }

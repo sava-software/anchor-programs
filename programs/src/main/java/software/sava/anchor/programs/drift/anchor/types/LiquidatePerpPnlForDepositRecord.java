@@ -61,11 +61,6 @@ public record LiquidatePerpPnlForDepositRecord(int perpMarketIndex,
 
   @Override
   public int l() {
-    return 2
-         + 8
-         + 16
-         + 2
-         + 8
-         + 16;
+    return BYTES;
   }
 }

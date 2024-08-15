@@ -31,6 +31,6 @@ public record SplitStakeAccountInfo(PublicKey account, int index) implements Bor
 
   @Override
   public int l() {
-    return 32 + 4;
+    return BYTES;
   }
 }

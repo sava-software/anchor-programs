@@ -69,12 +69,6 @@ public record LiquidateSpotRecord(int assetMarketIndex,
 
   @Override
   public int l() {
-    return 2
-         + 8
-         + 16
-         + 2
-         + 8
-         + 16
-         + 8;
+    return BYTES;
   }
 }

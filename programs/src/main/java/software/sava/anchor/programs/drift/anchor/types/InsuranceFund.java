@@ -81,14 +81,6 @@ public record InsuranceFund(PublicKey vault,
 
   @Override
   public int l() {
-    return 32
-         + 16
-         + 16
-         + 16
-         + 8
-         + 8
-         + 8
-         + 4
-         + 4;
+    return BYTES;
   }
 }

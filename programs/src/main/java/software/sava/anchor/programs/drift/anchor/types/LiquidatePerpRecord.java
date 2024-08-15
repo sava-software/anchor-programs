@@ -86,15 +86,6 @@ public record LiquidatePerpRecord(int marketIndex,
 
   @Override
   public int l() {
-    return 2
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 4
-         + 4
-         + 8
-         + 8;
+    return BYTES;
   }
 }

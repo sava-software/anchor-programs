@@ -27,6 +27,6 @@ public record FeeCents(int bpCents) implements Borsh {
 
   @Override
   public int l() {
-    return 4;
+    return BYTES;
   }
 }

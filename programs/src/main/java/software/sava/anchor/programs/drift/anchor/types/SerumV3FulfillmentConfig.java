@@ -207,20 +207,6 @@ public record SerumV3FulfillmentConfig(PublicKey _address,
 
   @Override
   public int l() {
-    return 8 + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 8
-         + 2
-         + Borsh.len(fulfillmentType)
-         + Borsh.len(status)
-         + Borsh.fixedLen(padding);
+    return BYTES;
   }
 }

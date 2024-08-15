@@ -146,20 +146,6 @@ public record PerpPosition(// The perp market's last cumulative funding rate. Us
 
   @Override
   public int l() {
-    return 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 4
-         + 2
-         + 1
-         + 1;
+    return BYTES;
   }
 }

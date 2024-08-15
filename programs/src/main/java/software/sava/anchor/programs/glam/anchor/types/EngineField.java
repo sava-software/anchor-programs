@@ -24,6 +24,6 @@ public record EngineField(EngineFieldName name, EngineFieldValue value) implemen
 
   @Override
   public int l() {
-    return Borsh.len(name) + Borsh.len(value);
+    return BYTES;
   }
 }

@@ -28,6 +28,6 @@ public record MarketIdentifier(MarketType marketType, int marketIndex) implement
 
   @Override
   public int l() {
-    return Borsh.len(marketType) + 2;
+    return BYTES;
   }
 }

@@ -194,29 +194,6 @@ public record Order(// The slot the order was placed
 
   @Override
   public int l() {
-    return 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 4
-         + 4
-         + 2
-         + Borsh.len(status)
-         + Borsh.len(orderType)
-         + Borsh.len(marketType)
-         + 1
-         + Borsh.len(existingPositionDirection)
-         + Borsh.len(direction)
-         + 1
-         + 1
-         + 1
-         + Borsh.len(triggerCondition)
-         + 1
-         + Borsh.fixedLen(padding);
+    return BYTES;
   }
 }

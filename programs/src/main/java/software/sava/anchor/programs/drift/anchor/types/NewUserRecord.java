@@ -58,11 +58,6 @@ public record NewUserRecord(long ts,
 
   @Override
   public int l() {
-    return 8
-         + 32
-         + 32
-         + 2
-         + Borsh.fixedLen(name)
-         + 32;
+    return BYTES;
   }
 }

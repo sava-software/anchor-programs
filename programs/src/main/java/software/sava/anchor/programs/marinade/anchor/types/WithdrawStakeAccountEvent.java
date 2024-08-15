@@ -125,22 +125,6 @@ public record WithdrawStakeAccountEvent(PublicKey state,
 
   @Override
   public int l() {
-    return 32
-         + 8
-         + 32
-         + 8
-         + 4
-         + 32
-         + 4
-         + 8
-         + 32
-         + 8
-         + 8
-         + 32
-         + 32
-         + 8
-         + 4
-         + 8
-         + 8;
+    return BYTES;
   }
 }

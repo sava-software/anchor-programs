@@ -15,12 +15,14 @@ public sealed interface SpotFulfillmentMethod extends RustEnum permits
     final int ordinal = _data[offset] & 0xFF;
     int i = offset + 1;
     return switch (ordinal) {
-      case 0 -> new ExternalMarket();
+      case 0 -> ExternalMarket.INSTANCE;
       case 1 -> Match.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format("Unexpected ordinal [%d] for enum [SpotFulfillmentMethod].", ordinal));
     };
   }
+
   record ExternalMarket() implements EnumNone, SpotFulfillmentMethod {
+    public static final ExternalMarket INSTANCE = new ExternalMarket();
 
     @Override
     public int ordinal() {
@@ -53,7 +55,7 @@ public sealed interface SpotFulfillmentMethod extends RustEnum permits
 
     @Override
     public int l() {
-      return 1 + 32 + 2;
+      return BYTES;
     }
 
     @Override

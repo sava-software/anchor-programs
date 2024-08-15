@@ -67,13 +67,6 @@ public record FeeTier(int feeNumerator,
 
   @Override
   public int l() {
-    return 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4;
+    return BYTES;
   }
 }

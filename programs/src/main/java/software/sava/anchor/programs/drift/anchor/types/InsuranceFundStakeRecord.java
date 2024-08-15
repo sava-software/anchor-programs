@@ -98,17 +98,6 @@ public record InsuranceFundStakeRecord(long ts,
 
   @Override
   public int l() {
-    return 8
-         + 32
-         + Borsh.len(action)
-         + 8
-         + 2
-         + 8
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16;
+    return BYTES;
   }
 }

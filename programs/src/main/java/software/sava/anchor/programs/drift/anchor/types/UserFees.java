@@ -67,11 +67,6 @@ public record UserFees(// Total taker fee paid
 
   @Override
   public int l() {
-    return 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8;
+    return BYTES;
   }
 }

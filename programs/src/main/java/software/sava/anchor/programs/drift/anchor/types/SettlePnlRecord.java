@@ -80,14 +80,6 @@ public record SettlePnlRecord(long ts,
 
   @Override
   public int l() {
-    return 8
-         + 32
-         + 2
-         + 16
-         + 8
-         + 8
-         + 8
-         + 8
-         + Borsh.len(explanation);
+    return BYTES;
   }
 }

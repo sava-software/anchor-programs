@@ -29,6 +29,6 @@ public record PubkeyValueChange(PublicKey old, PublicKey _new) implements Borsh 
 
   @Override
   public int l() {
-    return 32 + 32;
+    return BYTES;
   }
 }

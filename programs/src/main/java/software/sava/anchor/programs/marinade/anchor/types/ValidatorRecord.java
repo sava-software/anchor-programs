@@ -55,10 +55,6 @@ public record ValidatorRecord(// Validator vote pubkey
 
   @Override
   public int l() {
-    return 32
-         + 8
-         + 4
-         + 8
-         + 1;
+    return BYTES;
   }
 }

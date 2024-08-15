@@ -39,11 +39,9 @@ ext {
 
   jsoniter = '2.11.+'
 
-  sava = '1.0.9'
-  sava_solana_web2 = '1.0.5'
-  sava_solana_programs = '1.0.7'
-  sava_anchor_src_gen = '1.0.4'
-  sava_anchor_programs = '1.0.8'
+  sava = '1.0.12'
+  sava_solana_programs = '1.0.8'
+  sava_anchor_src_gen = '1.0.11'
 }
 
 subprojects {

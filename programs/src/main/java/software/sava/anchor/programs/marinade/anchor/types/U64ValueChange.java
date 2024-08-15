@@ -29,6 +29,6 @@ public record U64ValueChange(long old, long _new) implements Borsh {
 
   @Override
   public int l() {
-    return 8 + 8;
+    return BYTES;
   }
 }

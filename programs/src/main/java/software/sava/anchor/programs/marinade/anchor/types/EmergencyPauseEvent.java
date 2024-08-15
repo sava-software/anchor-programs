@@ -25,6 +25,6 @@ public record EmergencyPauseEvent(PublicKey state) implements Borsh {
 
   @Override
   public int l() {
-    return 32;
+    return BYTES;
   }
 }

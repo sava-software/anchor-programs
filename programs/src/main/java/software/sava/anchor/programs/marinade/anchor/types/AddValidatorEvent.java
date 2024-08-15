@@ -45,6 +45,6 @@ public record AddValidatorEvent(PublicKey state,
 
   @Override
   public int l() {
-    return 32 + 32 + 4 + 4;
+    return BYTES;
   }
 }

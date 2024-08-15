@@ -51,10 +51,6 @@ public record List(PublicKey account,
 
   @Override
   public int l() {
-    return 32
-         + 4
-         + 4
-         + 32
-         + 4;
+    return BYTES;
   }
 }

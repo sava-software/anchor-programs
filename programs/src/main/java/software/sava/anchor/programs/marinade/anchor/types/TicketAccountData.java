@@ -91,6 +91,6 @@ public record TicketAccountData(PublicKey _address,
 
   @Override
   public int l() {
-    return 8 + 32 + 32 + 8 + 8;
+    return BYTES;
   }
 }

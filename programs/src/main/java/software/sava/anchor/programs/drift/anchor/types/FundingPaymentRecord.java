@@ -81,14 +81,6 @@ public record FundingPaymentRecord(long ts,
 
   @Override
   public int l() {
-    return 8
-         + 32
-         + 32
-         + 2
-         + 8
-         + 8
-         + 8
-         + 16
-         + 16;
+    return BYTES;
   }
 }

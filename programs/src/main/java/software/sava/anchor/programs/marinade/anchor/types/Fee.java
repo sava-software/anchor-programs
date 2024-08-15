@@ -25,6 +25,6 @@ public record Fee(int basisPoints) implements Borsh {
 
   @Override
   public int l() {
-    return 4;
+    return BYTES;
   }
 }

@@ -79,13 +79,6 @@ public record SpotPosition(// The scaled balance of the position. To get the tok
 
   @Override
   public int l() {
-    return 8
-         + 8
-         + 8
-         + 8
-         + 2
-         + Borsh.len(balanceType)
-         + 1
-         + Borsh.fixedLen(padding);
+    return BYTES;
   }
 }

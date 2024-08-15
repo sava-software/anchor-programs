@@ -60,10 +60,6 @@ public record InsuranceClaim(// The amount of revenue last settled
 
   @Override
   public int l() {
-    return 8
-         + 8
-         + 8
-         + 8
-         + 8;
+    return BYTES;
   }
 }

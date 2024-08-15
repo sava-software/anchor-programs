@@ -97,10 +97,6 @@ public record ProtocolIfSharesTransferConfig(PublicKey _address,
 
   @Override
   public int l() {
-    return 8 + Borsh.fixedLen(whitelistedSigners)
-         + 16
-         + 16
-         + 8
-         + Borsh.fixedLen(padding);
+    return BYTES;
   }
 }

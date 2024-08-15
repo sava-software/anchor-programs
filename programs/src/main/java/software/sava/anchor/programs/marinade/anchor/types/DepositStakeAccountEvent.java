@@ -101,18 +101,6 @@ public record DepositStakeAccountEvent(PublicKey state,
 
   @Override
   public int l() {
-    return 32
-         + 32
-         + 8
-         + 32
-         + 4
-         + 32
-         + 4
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8;
+    return BYTES;
   }
 }

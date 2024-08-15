@@ -95,17 +95,6 @@ public record OrderUnstakeEvent(PublicKey state,
 
   @Override
   public int l() {
-    return 32
-         + 8
-         + 32
-         + 32
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 4
-         + 8
-         + 8;
+    return BYTES;
   }
 }

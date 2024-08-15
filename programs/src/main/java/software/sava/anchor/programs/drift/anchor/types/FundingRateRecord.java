@@ -103,18 +103,6 @@ public record FundingRateRecord(long ts,
 
   @Override
   public int l() {
-    return 8
-         + 8
-         + 2
-         + 8
-         + 16
-         + 16
-         + 16
-         + 16
-         + 8
-         + 8
-         + 8
-         + 16
-         + 16;
+    return BYTES;
   }
 }

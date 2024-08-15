@@ -45,6 +45,6 @@ public record StakeRecord(PublicKey stakeAccount,
 
   @Override
   public int l() {
-    return 32 + 8 + 8 + 1;
+    return BYTES;
   }
 }

@@ -334,30 +334,6 @@ public record State(PublicKey _address,
 
   @Override
   public int l() {
-    return 8 + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + Borsh.len(perpFeeStructure)
-         + Borsh.len(spotFeeStructure)
-         + Borsh.len(oracleGuardRails)
-         + 8
-         + 8
-         + 8
-         + 4
-         + 2
-         + 2
-         + 2
-         + 1
-         + 1
-         + 1
-         + 1
-         + 1
-         + 1
-         + 2
-         + 2
-         + 2
-         + Borsh.fixedLen(padding);
+    return BYTES;
   }
 }

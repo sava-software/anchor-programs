@@ -29,6 +29,6 @@ public record PriceDivergenceGuardRails(long markOraclePercentDivergence, long o
 
   @Override
   public int l() {
-    return 8 + 8;
+    return BYTES;
   }
 }

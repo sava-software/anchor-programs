@@ -47,6 +47,6 @@ public record SpotBankruptcyRecord(int marketIndex,
 
   @Override
   public int l() {
-    return 2 + 16 + 16 + 16;
+    return BYTES;
   }
 }

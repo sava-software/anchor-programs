@@ -87,15 +87,6 @@ public record InsuranceFundRecord(long ts,
 
   @Override
   public int l() {
-    return 8
-         + 2
-         + 2
-         + 4
-         + 4
-         + 8
-         + 8
-         + 16
-         + 16
-         + 8;
+    return BYTES;
   }
 }

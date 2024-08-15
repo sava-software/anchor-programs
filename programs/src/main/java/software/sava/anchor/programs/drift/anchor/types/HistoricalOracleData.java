@@ -61,11 +61,6 @@ public record HistoricalOracleData(// precision: PRICE_PRECISION
 
   @Override
   public int l() {
-    return 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8;
+    return BYTES;
   }
 }

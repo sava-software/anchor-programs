@@ -81,15 +81,6 @@ public record RemoveLiquidityEvent(PublicKey state,
 
   @Override
   public int l() {
-    return 32
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8;
+    return BYTES;
   }
 }

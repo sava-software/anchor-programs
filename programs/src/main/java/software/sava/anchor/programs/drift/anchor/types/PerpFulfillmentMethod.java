@@ -61,7 +61,7 @@ public sealed interface PerpFulfillmentMethod extends RustEnum permits
 
     @Override
     public int l() {
-      return 1 + 32 + 2;
+      return BYTES;
     }
 
     @Override

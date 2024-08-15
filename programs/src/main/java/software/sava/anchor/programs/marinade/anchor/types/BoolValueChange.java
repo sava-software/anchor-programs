@@ -26,6 +26,6 @@ public record BoolValueChange(boolean old, boolean _new) implements Borsh {
 
   @Override
   public int l() {
-    return 1 + 1;
+    return BYTES;
   }
 }

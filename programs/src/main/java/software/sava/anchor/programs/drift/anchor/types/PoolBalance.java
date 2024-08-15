@@ -42,6 +42,6 @@ public record PoolBalance(// To get the pool's token amount, you must multiply t
 
   @Override
   public int l() {
-    return 16 + 2 + Borsh.fixedLen(padding);
+    return BYTES;
   }
 }

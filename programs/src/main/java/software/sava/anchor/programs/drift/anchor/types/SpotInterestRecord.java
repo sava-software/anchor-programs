@@ -81,14 +81,6 @@ public record SpotInterestRecord(long ts,
 
   @Override
   public int l() {
-    return 8
-         + 2
-         + 16
-         + 16
-         + 16
-         + 16
-         + 4
-         + 4
-         + 4;
+    return BYTES;
   }
 }

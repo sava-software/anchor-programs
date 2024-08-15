@@ -43,6 +43,6 @@ public record ValidityGuardRails(long slotsBeforeStaleForAmm,
 
   @Override
   public int l() {
-    return 8 + 8 + 8 + 8;
+    return BYTES;
   }
 }

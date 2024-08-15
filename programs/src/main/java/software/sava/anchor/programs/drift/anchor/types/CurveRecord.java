@@ -147,25 +147,6 @@ public record CurveRecord(long ts,
 
   @Override
   public int l() {
-    return 8
-         + 8
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 8
-         + 16
-         + 4
-         + 2;
+    return BYTES;
   }
 }

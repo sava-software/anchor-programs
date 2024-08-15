@@ -72,14 +72,6 @@ public record InitializeEvent(PublicKey state,
 
   @Override
   public int l() {
-    return 32
-         + Borsh.len(params)
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32;
+    return BYTES;
   }
 }
