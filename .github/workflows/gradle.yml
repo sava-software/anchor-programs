@@ -19,17 +19,16 @@ jobs:
 
       - uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: 21
+          distribution: ${{ vars.JAVA_VENDOR }}
+          java-version: ${{ vars.GRADLE_JAVA_VERSION }}
           java-package: jre
           cache: 'gradle'
       - run: printf "org.gradle.java.home=%s" "$JAVA_HOME" > gradle.properties
 
-
       - uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: 22
+          distribution: ${{ vars.JAVA_VENDOR }}
+          java-version: ${{ vars.JAVA_VERSION }}
           check-latest: true
       - run: printf "\norg.gradle.java.installations.paths=%s" "$JAVA_HOME" >> gradle.properties
       - run: java --version
@@ -41,7 +40,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
 
       - name: Gradle Check
-        run: ./gradlew -Pgpr.sava.user=${{ secrets.GPR_USER }} -Pgpr.sava.token=${{ secrets.GPR_TOKEN }} -PtargetJava=22 check --stacktrace --no-daemon
+        run: ./gradlew -Pgpr.sava.user=${{ secrets.GPR_USER }} -Pgpr.sava.token=${{ secrets.GPR_TOKEN }} -PtargetJava=${{ vars.JAVA_VERSION }} check --stacktrace --no-daemon
         env:
           GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
