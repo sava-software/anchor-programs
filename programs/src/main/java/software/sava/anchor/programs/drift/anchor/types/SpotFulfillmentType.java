@@ -6,7 +6,8 @@ public enum SpotFulfillmentType implements Borsh.Enum {
 
   SerumV3,
   Match,
-  PhoenixV1;
+  PhoenixV1,
+  OpenbookV2;
 
   public static SpotFulfillmentType read(final byte[] _data, final int offset) {
     return Borsh.read(SpotFulfillmentType.values(), _data, offset);

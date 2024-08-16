@@ -79,6 +79,8 @@ public record User(PublicKey _address,
                    int openAuctions,
                    // Whether or not user has open order with auction
                    boolean hasOpenAuction,
+                   int[] padding1,
+                   int lastFuelBonusUpdateTs,
                    int[] padding) implements Borsh {
 
   public static final int AUTHORITY_OFFSET = 8;
@@ -159,7 +161,11 @@ public record User(PublicKey _address,
     ++i;
     final var hasOpenAuction = _data[i] == 1;
     ++i;
-    final var padding = Borsh.readArray(new int[21], _data, i);
+    final var padding1 = Borsh.readArray(new int[5], _data, i);
+    i += Borsh.fixedLen(padding1);
+    final var lastFuelBonusUpdateTs = getInt32LE(_data, i);
+    i += 4;
+    final var padding = Borsh.readArray(new int[12], _data, i);
     return new User(_address,
                     discriminator,
                     authority,
@@ -188,6 +194,8 @@ public record User(PublicKey _address,
                     hasOpenOrder,
                     openAuctions,
                     hasOpenAuction,
+                    padding1,
+                    lastFuelBonusUpdateTs,
                     padding);
   }
 
@@ -242,6 +250,9 @@ public record User(PublicKey _address,
     ++i;
     _data[i] = (byte) (hasOpenAuction ? 1 : 0);
     ++i;
+    i += Borsh.fixedWrite(padding1, _data, i);
+    putInt32LE(_data, i, lastFuelBonusUpdateTs);
+    i += 4;
     i += Borsh.fixedWrite(padding, _data, i);
     return i - offset;
   }
@@ -274,6 +285,8 @@ public record User(PublicKey _address,
          + 1
          + 1
          + 1
+         + Borsh.fixedLen(padding1)
+         + 4
          + Borsh.fixedLen(padding);
   }
 }

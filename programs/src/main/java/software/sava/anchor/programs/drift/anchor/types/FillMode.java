@@ -6,7 +6,8 @@ public enum FillMode implements Borsh.Enum {
 
   Fill,
   PlaceAndMake,
-  PlaceAndTake;
+  PlaceAndTake,
+  Liquidation;
 
   public static FillMode read(final byte[] _data, final int offset) {
     return Borsh.read(FillMode.values(), _data, offset);

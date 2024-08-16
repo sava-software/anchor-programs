@@ -1126,6 +1126,32 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
+  public static final Discriminator LIQUIDATE_PERP_WITH_FILL_DISCRIMINATOR = toDiscriminator(95, 111, 124, 105, 86, 169, 187, 34);
+
+  public static Instruction liquidatePerpWithFill(final AccountMeta invokedDriftProgramMeta,
+                                                  final AccountMeta authorityKey,
+                                                  final PublicKey stateKey,
+                                                  final PublicKey liquidatorKey,
+                                                  final PublicKey liquidatorStatsKey,
+                                                  final PublicKey userKey,
+                                                  final PublicKey userStatsKey,
+                                                  final int marketIndex) {
+    final var keys = List.of(
+      createRead(stateKey),
+      authorityKey,
+      createWrite(liquidatorKey),
+      createWrite(liquidatorStatsKey),
+      createWrite(userKey),
+      createWrite(userStatsKey)
+    );
+
+    final byte[] _data = new byte[10];
+    int i = writeDiscriminator(LIQUIDATE_PERP_WITH_FILL_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, marketIndex);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
   public static final Discriminator LIQUIDATE_SPOT_DISCRIMINATOR = toDiscriminator(107, 0, 128, 41, 35, 229, 251, 18);
 
   public static Instruction liquidateSpot(final AccountMeta invokedDriftProgramMeta,
@@ -1469,7 +1495,7 @@ public final class DriftProgram {
   public static final Discriminator UPDATE_USER_QUOTE_ASSET_INSURANCE_STAKE_DISCRIMINATOR = toDiscriminator(251, 101, 156, 7, 2, 63, 30, 23);
 
   public static Instruction updateUserQuoteAssetInsuranceStake(final AccountMeta invokedDriftProgramMeta,
-                                                               final AccountMeta authorityKey,
+                                                               final AccountMeta signerKey,
                                                                final PublicKey stateKey,
                                                                final PublicKey spotMarketKey,
                                                                final PublicKey insuranceFundStakeKey,
@@ -1480,11 +1506,32 @@ public final class DriftProgram {
       createRead(spotMarketKey),
       createWrite(insuranceFundStakeKey),
       createWrite(userStatsKey),
-      authorityKey,
+      signerKey,
       createWrite(insuranceFundVaultKey)
     );
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_USER_QUOTE_ASSET_INSURANCE_STAKE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator UPDATE_USER_GOV_TOKEN_INSURANCE_STAKE_DISCRIMINATOR = toDiscriminator(143, 99, 235, 187, 20, 159, 184, 84);
+
+  public static Instruction updateUserGovTokenInsuranceStake(final AccountMeta invokedDriftProgramMeta,
+                                                             final AccountMeta signerKey,
+                                                             final PublicKey stateKey,
+                                                             final PublicKey spotMarketKey,
+                                                             final PublicKey insuranceFundStakeKey,
+                                                             final PublicKey userStatsKey,
+                                                             final PublicKey insuranceFundVaultKey) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createRead(spotMarketKey),
+      createWrite(insuranceFundStakeKey),
+      createWrite(userStatsKey),
+      signerKey,
+      createWrite(insuranceFundVaultKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_USER_GOV_TOKEN_INSURANCE_STAKE_DISCRIMINATOR);
   }
 
   public static final Discriminator INITIALIZE_INSURANCE_FUND_STAKE_DISCRIMINATOR = toDiscriminator(187, 179, 243, 70, 248, 90, 92, 147);
@@ -1534,7 +1581,7 @@ public final class DriftProgram {
                                                   final long amount) {
     final var keys = List.of(
       createRead(stateKey),
-      createRead(spotMarketKey),
+      createWrite(spotMarketKey),
       createWrite(insuranceFundStakeKey),
       createWrite(userStatsKey),
       authorityKey,
@@ -1565,7 +1612,7 @@ public final class DriftProgram {
                                                             final int marketIndex,
                                                             final long amount) {
     final var keys = List.of(
-      createRead(spotMarketKey),
+      createWrite(spotMarketKey),
       createWrite(insuranceFundStakeKey),
       createWrite(userStatsKey),
       authorityKey,
@@ -1591,7 +1638,7 @@ public final class DriftProgram {
                                                                   final PublicKey insuranceFundVaultKey,
                                                                   final int marketIndex) {
     final var keys = List.of(
-      createRead(spotMarketKey),
+      createWrite(spotMarketKey),
       createWrite(insuranceFundStakeKey),
       createWrite(userStatsKey),
       authorityKey,
@@ -1620,7 +1667,7 @@ public final class DriftProgram {
                                                      final int marketIndex) {
     final var keys = List.of(
       createRead(stateKey),
-      createRead(spotMarketKey),
+      createWrite(spotMarketKey),
       createWrite(insuranceFundStakeKey),
       createWrite(userStatsKey),
       authorityKey,
@@ -1713,6 +1760,26 @@ public final class DriftProgram {
     final byte[] _data = new byte[12 + Borsh.fixedLen(feedId) + Borsh.len(params)];
     int i = writeDiscriminator(POST_PYTH_PULL_ORACLE_UPDATE_ATOMIC_DISCRIMINATOR, _data, 0);
     i += Borsh.fixedWrite(feedId, _data, i);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public static final Discriminator POST_MULTI_PYTH_PULL_ORACLE_UPDATES_ATOMIC_DISCRIMINATOR = toDiscriminator(243, 79, 204, 228, 227, 208, 100, 244);
+
+  public static Instruction postMultiPythPullOracleUpdatesAtomic(final AccountMeta invokedDriftProgramMeta,
+                                                                 final AccountMeta keeperKey,
+                                                                 final PublicKey pythSolanaReceiverKey,
+                                                                 final PublicKey guardianSetKey,
+                                                                 final byte[] params) {
+    final var keys = List.of(
+      keeperKey,
+      createRead(pythSolanaReceiverKey),
+      createRead(guardianSetKey)
+    );
+
+    final byte[] _data = new byte[12 + Borsh.len(params)];
+    int i = writeDiscriminator(POST_MULTI_PYTH_PULL_ORACLE_UPDATES_ATOMIC_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -1913,6 +1980,60 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
+  public static final Discriminator INITIALIZE_OPENBOOK_V2_FULFILLMENT_CONFIG_DISCRIMINATOR = toDiscriminator(7, 221, 103, 153, 107, 57, 27, 197);
+
+  public static Instruction initializeOpenbookV2FulfillmentConfig(final AccountMeta invokedDriftProgramMeta,
+                                                                  final AccountMeta adminKey,
+                                                                  final PublicKey baseSpotMarketKey,
+                                                                  final PublicKey quoteSpotMarketKey,
+                                                                  final PublicKey stateKey,
+                                                                  final PublicKey openbookV2ProgramKey,
+                                                                  final PublicKey openbookV2MarketKey,
+                                                                  final PublicKey driftSignerKey,
+                                                                  final PublicKey openbookV2FulfillmentConfigKey,
+                                                                  final PublicKey rentKey,
+                                                                  final PublicKey systemProgramKey,
+                                                                  final int marketIndex) {
+    final var keys = List.of(
+      createRead(baseSpotMarketKey),
+      createRead(quoteSpotMarketKey),
+      createWrite(stateKey),
+      createRead(openbookV2ProgramKey),
+      createRead(openbookV2MarketKey),
+      createRead(driftSignerKey),
+      createWrite(openbookV2FulfillmentConfigKey),
+      adminKey,
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[10];
+    int i = writeDiscriminator(INITIALIZE_OPENBOOK_V2_FULFILLMENT_CONFIG_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, marketIndex);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public static final Discriminator OPENBOOK_V2_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR = toDiscriminator(25, 173, 19, 189, 4, 211, 64, 238);
+
+  public static Instruction openbookV2FulfillmentConfigStatus(final AccountMeta invokedDriftProgramMeta,
+                                                              final AccountMeta adminKey,
+                                                              final PublicKey stateKey,
+                                                              final PublicKey openbookV2FulfillmentConfigKey,
+                                                              final SpotFulfillmentConfigStatus status) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWrite(openbookV2FulfillmentConfigKey),
+      adminKey
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(status)];
+    int i = writeDiscriminator(OPENBOOK_V2_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR, _data, 0);
+    Borsh.write(status, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
   public static final Discriminator INITIALIZE_PHOENIX_FULFILLMENT_CONFIG_DISCRIMINATOR = toDiscriminator(135, 132, 110, 107, 185, 160, 169, 154);
 
   public static Instruction initializePhoenixFulfillmentConfig(final AccountMeta invokedDriftProgramMeta,
@@ -2078,6 +2199,21 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
+  public static final Discriminator INITIALIZE_PREDICTION_MARKET_DISCRIMINATOR = toDiscriminator(248, 70, 198, 224, 224, 105, 125, 195);
+
+  public static Instruction initializePredictionMarket(final AccountMeta invokedDriftProgramMeta,
+                                                       final AccountMeta adminKey,
+                                                       final PublicKey stateKey,
+                                                       final PublicKey perpMarketKey) {
+    final var keys = List.of(
+      adminKey,
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, INITIALIZE_PREDICTION_MARKET_DISCRIMINATOR);
+  }
+
   public static final Discriminator DELETE_INITIALIZED_PERP_MARKET_DISCRIMINATOR = toDiscriminator(91, 154, 24, 87, 106, 59, 190, 66);
 
   public static Instruction deleteInitializedPerpMarket(final AccountMeta invokedDriftProgramMeta,
@@ -2233,6 +2369,32 @@ public final class DriftProgram {
 
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(DEPOSIT_INTO_PERP_MARKET_FEE_POOL_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public static final Discriminator DEPOSIT_INTO_SPOT_MARKET_VAULT_DISCRIMINATOR = toDiscriminator(48, 252, 119, 73, 255, 205, 174, 247);
+
+  public static Instruction depositIntoSpotMarketVault(final AccountMeta invokedDriftProgramMeta,
+                                                       final AccountMeta adminKey,
+                                                       final PublicKey stateKey,
+                                                       final PublicKey spotMarketKey,
+                                                       final PublicKey sourceVaultKey,
+                                                       final PublicKey spotMarketVaultKey,
+                                                       final PublicKey tokenProgramKey,
+                                                       final long amount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWrite(spotMarketKey),
+      adminKey,
+      createWrite(sourceVaultKey),
+      createWrite(spotMarketVaultKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(DEPOSIT_INTO_SPOT_MARKET_VAULT_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -2680,6 +2842,26 @@ public final class DriftProgram {
     final byte[] _data = new byte[16];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_MAX_TOKEN_DEPOSITS_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, maxTokenDeposits);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public static final Discriminator UPDATE_SPOT_MARKET_MAX_TOKEN_BORROWS_DISCRIMINATOR = toDiscriminator(57, 102, 204, 212, 253, 95, 13, 199);
+
+  public static Instruction updateSpotMarketMaxTokenBorrows(final AccountMeta invokedDriftProgramMeta,
+                                                            final AccountMeta adminKey,
+                                                            final PublicKey stateKey,
+                                                            final PublicKey spotMarketKey,
+                                                            final int maxTokenBorrowsFraction) {
+    final var keys = List.of(
+      adminKey,
+      createRead(stateKey),
+      createWrite(spotMarketKey)
+    );
+
+    final byte[] _data = new byte[10];
+    int i = writeDiscriminator(UPDATE_SPOT_MARKET_MAX_TOKEN_BORROWS_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, maxTokenBorrowsFraction);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -3464,6 +3646,88 @@ public final class DriftProgram {
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_FEE_ADJUSTMENT_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, feeAdjustment);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public static final Discriminator UPDATE_PERP_MARKET_FUEL_DISCRIMINATOR = toDiscriminator(252, 141, 110, 101, 27, 99, 182, 21);
+
+  public static Instruction updatePerpMarketFuel(final AccountMeta invokedDriftProgramMeta,
+                                                 final AccountMeta adminKey,
+                                                 final PublicKey stateKey,
+                                                 final PublicKey perpMarketKey,
+                                                 final OptionalInt fuelBoostTaker,
+                                                 final OptionalInt fuelBoostMaker,
+                                                 final OptionalInt fuelBoostPosition) {
+    final var keys = List.of(
+      adminKey,
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[14];
+    int i = writeDiscriminator(UPDATE_PERP_MARKET_FUEL_DISCRIMINATOR, _data, 0);
+    i += Borsh.writeOptional(fuelBoostTaker, _data, i);
+    i += Borsh.writeOptional(fuelBoostMaker, _data, i);
+    Borsh.writeOptional(fuelBoostPosition, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public static final Discriminator UPDATE_SPOT_MARKET_FUEL_DISCRIMINATOR = toDiscriminator(226, 253, 76, 71, 17, 2, 171, 169);
+
+  public static Instruction updateSpotMarketFuel(final AccountMeta invokedDriftProgramMeta,
+                                                 final AccountMeta adminKey,
+                                                 final PublicKey stateKey,
+                                                 final PublicKey spotMarketKey,
+                                                 final OptionalInt fuelBoostDeposits,
+                                                 final OptionalInt fuelBoostBorrows,
+                                                 final OptionalInt fuelBoostTaker,
+                                                 final OptionalInt fuelBoostMaker,
+                                                 final OptionalInt fuelBoostInsurance) {
+    final var keys = List.of(
+      adminKey,
+      createRead(stateKey),
+      createWrite(spotMarketKey)
+    );
+
+    final byte[] _data = new byte[18];
+    int i = writeDiscriminator(UPDATE_SPOT_MARKET_FUEL_DISCRIMINATOR, _data, 0);
+    i += Borsh.writeOptional(fuelBoostDeposits, _data, i);
+    i += Borsh.writeOptional(fuelBoostBorrows, _data, i);
+    i += Borsh.writeOptional(fuelBoostTaker, _data, i);
+    i += Borsh.writeOptional(fuelBoostMaker, _data, i);
+    Borsh.writeOptional(fuelBoostInsurance, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public static final Discriminator INIT_USER_FUEL_DISCRIMINATOR = toDiscriminator(132, 191, 228, 141, 201, 138, 60, 48);
+
+  public static Instruction initUserFuel(final AccountMeta invokedDriftProgramMeta,
+                                         final AccountMeta adminKey,
+                                         final PublicKey stateKey,
+                                         final PublicKey userKey,
+                                         final PublicKey userStatsKey,
+                                         final OptionalInt fuelBoostDeposits,
+                                         final OptionalInt fuelBoostBorrows,
+                                         final OptionalInt fuelBoostTaker,
+                                         final OptionalInt fuelBoostMaker,
+                                         final OptionalInt fuelBoostInsurance) {
+    final var keys = List.of(
+      adminKey,
+      createRead(stateKey),
+      createWrite(userKey),
+      createWrite(userStatsKey)
+    );
+
+    final byte[] _data = new byte[33];
+    int i = writeDiscriminator(INIT_USER_FUEL_DISCRIMINATOR, _data, 0);
+    i += Borsh.writeOptional(fuelBoostDeposits, _data, i);
+    i += Borsh.writeOptional(fuelBoostBorrows, _data, i);
+    i += Borsh.writeOptional(fuelBoostTaker, _data, i);
+    i += Borsh.writeOptional(fuelBoostMaker, _data, i);
+    Borsh.writeOptional(fuelBoostInsurance, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }

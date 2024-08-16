@@ -92,6 +92,15 @@ public record PerpMarket(PublicKey _address,
                          // E.g. if this is -50 and the fee is 5bps, the new fee will be 2.5bps
                          // if this is 50 and the fee is 5bps, the new fee will be 7.5bps
                          int feeAdjustment,
+                         // fuel multiplier for perp funding
+                         // precision: 10
+                         int fuelBoostPosition,
+                         // fuel multiplier for perp taker
+                         // precision: 10
+                         int fuelBoostTaker,
+                         // fuel multiplier for perp maker
+                         // precision: 10
+                         int fuelBoostMaker,
                          int[] padding) implements Borsh {
 
   public static final int PUBKEY_OFFSET = 8;
@@ -175,7 +184,13 @@ public record PerpMarket(PublicKey _address,
     i += 2;
     final var feeAdjustment = getInt16LE(_data, i);
     i += 2;
-    final var padding = Borsh.readArray(new int[46], _data, i);
+    final var fuelBoostPosition = _data[i] & 0xFF;
+    ++i;
+    final var fuelBoostTaker = _data[i] & 0xFF;
+    ++i;
+    final var fuelBoostMaker = _data[i] & 0xFF;
+    ++i;
+    final var padding = Borsh.readArray(new int[43], _data, i);
     return new PerpMarket(_address,
                           discriminator,
                           pubkey,
@@ -206,6 +221,9 @@ public record PerpMarket(PublicKey _address,
                           pausedOperations,
                           quoteSpotMarketIndex,
                           feeAdjustment,
+                          fuelBoostPosition,
+                          fuelBoostTaker,
+                          fuelBoostMaker,
                           padding);
   }
 
@@ -261,6 +279,12 @@ public record PerpMarket(PublicKey _address,
     i += 2;
     putInt16LE(_data, i, feeAdjustment);
     i += 2;
+    _data[i] = (byte) fuelBoostPosition;
+    ++i;
+    _data[i] = (byte) fuelBoostTaker;
+    ++i;
+    _data[i] = (byte) fuelBoostMaker;
+    ++i;
     i += Borsh.fixedWrite(padding, _data, i);
     return i - offset;
   }
@@ -295,6 +319,9 @@ public record PerpMarket(PublicKey _address,
          + 1
          + 2
          + 2
+         + 1
+         + 1
+         + 1
          + Borsh.fixedLen(padding);
   }
 }

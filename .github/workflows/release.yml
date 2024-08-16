@@ -36,7 +36,7 @@ jobs:
       - name: Generate Source
         run: ./genSrc.sh --log="INFO" --tabLength=2 --sourceDirectory="programs/src/main/java" --rpc="${{ secrets.RPC_URL }}" --baseDelayMillis=200 --numThreads=5
         env:
-          GITHUB_ACTOR: ${{ secrets.GPR_USER }}
+          GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
 
       - name: Gradle Check

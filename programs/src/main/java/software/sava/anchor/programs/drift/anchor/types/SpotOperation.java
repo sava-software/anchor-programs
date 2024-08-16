@@ -6,6 +6,7 @@ public enum SpotOperation implements Borsh.Enum {
 
   UpdateCumulativeInterest,
   Fill,
+  Deposit,
   Withdraw,
   Liquidation;
 

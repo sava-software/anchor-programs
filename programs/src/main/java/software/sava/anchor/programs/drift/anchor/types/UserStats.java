@@ -10,8 +10,10 @@ import software.sava.core.rpc.Filter;
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
+import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
+import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record UserStats(PublicKey _address,
@@ -50,6 +52,23 @@ public record UserStats(PublicKey _address,
                         // Whether the user is a referrer. Sub account 0 can not be deleted if user is a referrer
                         boolean isReferrer,
                         boolean disableUpdatePerpBidAskTwap,
+                        int[] padding1,
+                        // accumulated fuel for token amounts of insurance
+                        int fuelInsurance,
+                        // accumulated fuel for notional of deposits
+                        int fuelDeposits,
+                        // accumulate fuel bonus for notional of borrows
+                        int fuelBorrows,
+                        // accumulated fuel for perp open interest
+                        int fuelPositions,
+                        // accumulate fuel bonus for taker volume
+                        int fuelTaker,
+                        // accumulate fuel bonus for maker volume
+                        int fuelMaker,
+                        // The amount of tokens staked in the governance spot markets if
+                        long ifStakedGovTokenAmount,
+                        // last unix ts user stats data was used to update if fuel (u32 to save space)
+                        int lastFuelIfBonusUpdateTs,
                         int[] padding) implements Borsh {
 
   public static final int AUTHORITY_OFFSET = 8;
@@ -111,7 +130,25 @@ public record UserStats(PublicKey _address,
     ++i;
     final var disableUpdatePerpBidAskTwap = _data[i] == 1;
     ++i;
-    final var padding = Borsh.readArray(new int[50], _data, i);
+    final var padding1 = Borsh.readArray(new int[2], _data, i);
+    i += Borsh.fixedLen(padding1);
+    final var fuelInsurance = getInt32LE(_data, i);
+    i += 4;
+    final var fuelDeposits = getInt32LE(_data, i);
+    i += 4;
+    final var fuelBorrows = getInt32LE(_data, i);
+    i += 4;
+    final var fuelPositions = getInt32LE(_data, i);
+    i += 4;
+    final var fuelTaker = getInt32LE(_data, i);
+    i += 4;
+    final var fuelMaker = getInt32LE(_data, i);
+    i += 4;
+    final var ifStakedGovTokenAmount = getInt64LE(_data, i);
+    i += 8;
+    final var lastFuelIfBonusUpdateTs = getInt32LE(_data, i);
+    i += 4;
+    final var padding = Borsh.readArray(new int[12], _data, i);
     return new UserStats(_address,
                          discriminator,
                          authority,
@@ -129,6 +166,15 @@ public record UserStats(PublicKey _address,
                          numberOfSubAccountsCreated,
                          isReferrer,
                          disableUpdatePerpBidAskTwap,
+                         padding1,
+                         fuelInsurance,
+                         fuelDeposits,
+                         fuelBorrows,
+                         fuelPositions,
+                         fuelTaker,
+                         fuelMaker,
+                         ifStakedGovTokenAmount,
+                         lastFuelIfBonusUpdateTs,
                          padding);
   }
 
@@ -164,6 +210,23 @@ public record UserStats(PublicKey _address,
     ++i;
     _data[i] = (byte) (disableUpdatePerpBidAskTwap ? 1 : 0);
     ++i;
+    i += Borsh.fixedWrite(padding1, _data, i);
+    putInt32LE(_data, i, fuelInsurance);
+    i += 4;
+    putInt32LE(_data, i, fuelDeposits);
+    i += 4;
+    putInt32LE(_data, i, fuelBorrows);
+    i += 4;
+    putInt32LE(_data, i, fuelPositions);
+    i += 4;
+    putInt32LE(_data, i, fuelTaker);
+    i += 4;
+    putInt32LE(_data, i, fuelMaker);
+    i += 4;
+    putInt64LE(_data, i, ifStakedGovTokenAmount);
+    i += 8;
+    putInt32LE(_data, i, lastFuelIfBonusUpdateTs);
+    i += 4;
     i += Borsh.fixedWrite(padding, _data, i);
     return i - offset;
   }
@@ -185,6 +248,15 @@ public record UserStats(PublicKey _address,
          + 2
          + 1
          + 1
+         + Borsh.fixedLen(padding1)
+         + 4
+         + 4
+         + 4
+         + 4
+         + 4
+         + 4
+         + 8
+         + 4
          + Borsh.fixedLen(padding);
   }
 }

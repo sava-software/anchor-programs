@@ -178,6 +178,22 @@ public record SpotMarket(PublicKey _address,
                          // 1 => 1/200 => .5%
                          // precision: X/200
                          int minBorrowRate,
+                         // fuel multiplier for spot deposits
+                         // precision: 10
+                         int fuelBoostDeposits,
+                         // fuel multiplier for spot borrows
+                         // precision: 10
+                         int fuelBoostBorrows,
+                         // fuel multiplier for spot taker
+                         // precision: 10
+                         int fuelBoostTaker,
+                         // fuel multiplier for spot maker
+                         // precision: 10
+                         int fuelBoostMaker,
+                         // fuel multiplier for spot insurance stake
+                         // precision: 10
+                         int fuelBoostInsurance,
+                         int tokenProgram,
                          int[] padding) implements Borsh {
 
   public static final int PUBKEY_OFFSET = 8;
@@ -332,7 +348,19 @@ public record SpotMarket(PublicKey _address,
     i += 8;
     final var minBorrowRate = _data[i] & 0xFF;
     ++i;
-    final var padding = Borsh.readArray(new int[47], _data, i);
+    final var fuelBoostDeposits = _data[i] & 0xFF;
+    ++i;
+    final var fuelBoostBorrows = _data[i] & 0xFF;
+    ++i;
+    final var fuelBoostTaker = _data[i] & 0xFF;
+    ++i;
+    final var fuelBoostMaker = _data[i] & 0xFF;
+    ++i;
+    final var fuelBoostInsurance = _data[i] & 0xFF;
+    ++i;
+    final var tokenProgram = _data[i] & 0xFF;
+    ++i;
+    final var padding = Borsh.readArray(new int[41], _data, i);
     return new SpotMarket(_address,
                           discriminator,
                           pubkey,
@@ -391,6 +419,12 @@ public record SpotMarket(PublicKey _address,
                           totalSwapFee,
                           scaleInitialAssetWeightStart,
                           minBorrowRate,
+                          fuelBoostDeposits,
+                          fuelBoostBorrows,
+                          fuelBoostTaker,
+                          fuelBoostMaker,
+                          fuelBoostInsurance,
+                          tokenProgram,
                           padding);
   }
 
@@ -500,6 +534,18 @@ public record SpotMarket(PublicKey _address,
     i += 8;
     _data[i] = (byte) minBorrowRate;
     ++i;
+    _data[i] = (byte) fuelBoostDeposits;
+    ++i;
+    _data[i] = (byte) fuelBoostBorrows;
+    ++i;
+    _data[i] = (byte) fuelBoostTaker;
+    ++i;
+    _data[i] = (byte) fuelBoostMaker;
+    ++i;
+    _data[i] = (byte) fuelBoostInsurance;
+    ++i;
+    _data[i] = (byte) tokenProgram;
+    ++i;
     i += Borsh.fixedWrite(padding, _data, i);
     return i - offset;
   }
@@ -561,6 +607,12 @@ public record SpotMarket(PublicKey _address,
          + 8
          + 8
          + 8
+         + 1
+         + 1
+         + 1
+         + 1
+         + 1
+         + 1
          + 1
          + Borsh.fixedLen(padding);
   }

@@ -14,7 +14,8 @@ public enum OracleSource implements Borsh.Enum {
   PythPull,
   Pyth1KPull,
   Pyth1MPull,
-  PythStableCoinPull;
+  PythStableCoinPull,
+  SwitchboardOnDemand;
 
   public static OracleSource read(final byte[] _data, final int offset) {
     return Borsh.read(OracleSource.values(), _data, offset);
