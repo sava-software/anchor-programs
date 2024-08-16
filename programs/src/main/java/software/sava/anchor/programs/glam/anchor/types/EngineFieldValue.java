@@ -46,7 +46,9 @@ public sealed interface EngineFieldValue extends RustEnum permits
       case 12 -> VecPubkey.read(_data, i);
       case 13 -> VecU32.read(_data, i);
       case 14 -> VecAcl.read(_data, i);
-      default -> throw new IllegalStateException(java.lang.String.format("Unexpected ordinal [%d] for enum [EngineFieldValue].", ordinal));
+      default -> throw new IllegalStateException(java.lang.String.format(
+          "Unexpected ordinal [%d] for enum [EngineFieldValue]", ordinal
+      ));
     };
   }
 

@@ -14,7 +14,9 @@ public sealed interface ModifyOrderId extends RustEnum permits
     return switch (ordinal) {
       case 0 -> new UserOrderId(_data[i] & 0xFF);
       case 1 -> new OrderId(getInt32LE(_data, i));
-      default -> throw new IllegalStateException(java.lang.String.format("Unexpected ordinal [%d] for enum [ModifyOrderId].", ordinal));
+      default -> throw new IllegalStateException(java.lang.String.format(
+          "Unexpected ordinal [%d] for enum [ModifyOrderId]", ordinal
+      ));
     };
   }
 

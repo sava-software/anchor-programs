@@ -20,7 +20,9 @@ public sealed interface PerpFulfillmentMethod extends RustEnum permits
     return switch (ordinal) {
       case 0 -> AMM.read(_data, i);
       case 1 -> Match.read(_data, i);
-      default -> throw new IllegalStateException(java.lang.String.format("Unexpected ordinal [%d] for enum [PerpFulfillmentMethod].", ordinal));
+      default -> throw new IllegalStateException(java.lang.String.format(
+          "Unexpected ordinal [%d] for enum [PerpFulfillmentMethod]", ordinal
+      ));
     };
   }
 
