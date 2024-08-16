@@ -4,8 +4,6 @@
 # ./genSrc.sh --log="INFO" --tabLength=2 --sourceDirectory="anchor-programs/src/main/java" --basePackageName="software.sava.anchor.programs"
 set -e
 
-readonly JAVA_VERSION="22"
-
 readonly projectName="generator"
 readonly moduleName="software.sava.anchor_generator"
 readonly package="software.sava.anchor.programs"
@@ -19,6 +17,7 @@ javaArgs=(
 )
 
 screen=0;
+targetJavaVersion=22
 logLevel="INFO";
 tabLength=2;
 sourceDirectory="src/main/java";
@@ -59,6 +58,8 @@ do
         esac
         ;;
 
+      tjv | targetJavaVersion) targetJavaVersion="$val";;
+
       bdm | baseDelayMillis) baseDelayMillis="$val";;
       bp | basePackageName) basePackageName="$val";;
       mn | moduleName) outputModuleName="$val";;
@@ -90,8 +91,8 @@ javaArgs+=("-D$moduleName.tabLength=$tabLength")
 
 javaVersion=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}' | grep -oEi '^[0-9]+')
 readonly javaVersion
-if [[ "$javaVersion" -ne "$JAVA_VERSION" ]]; then
-  echo "Invalid Java version $javaVersion must be $JAVA_VERSION."
+if [[ "$javaVersion" -ne "$targetJavaVersion" ]]; then
+  echo "Invalid Java version $javaVersion must be $targetJavaVersion."
   exit 3
 fi
 
