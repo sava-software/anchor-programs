@@ -18,32 +18,42 @@ jobs:
       - uses: gradle/actions/wrapper-validation@v3
 
       - uses: actions/setup-java@v4
+        if: ${{ vars.GRADLE_JAVA_VERSION != vars.JAVA_VERSION }}
         with:
           distribution: ${{ vars.JAVA_VENDOR }}
           java-version: ${{ vars.GRADLE_JAVA_VERSION }}
           java-package: jre
           cache: 'gradle'
+
       - run: printf "org.gradle.java.home=%s" "$JAVA_HOME" > gradle.properties
+        if: ${{ vars.GRADLE_JAVA_VERSION != vars.JAVA_VERSION }}
 
       - uses: actions/setup-java@v4
         with:
           distribution: ${{ vars.JAVA_VENDOR }}
           java-version: ${{ vars.JAVA_VERSION }}
           check-latest: true
+
+      - run: printf "org.gradle.java.home=%s" "$JAVA_HOME" > gradle.properties
+        if: ${{ vars.GRADLE_JAVA_VERSION == vars.JAVA_VERSION }}
+
       - run: printf "\norg.gradle.java.installations.paths=%s" "$JAVA_HOME" >> gradle.properties
+
       - run: java --version
 
       - name: Generate Source
-        run: ./genSrc.sh --log="INFO" --tabLength=2 --sourceDirectory="programs/src/main/java" --rpc="${{ secrets.RPC_URL }}" --baseDelayMillis=200 --numThreads=5
+        run: ./genSrc.sh --tjv="${{ vars.JAVA_VERSION }}" --log="INFO" --tl=2 --bdm=200 --nt=5 --sd="programs/src/main/java" --rpc="${{ secrets.RPC_URL }}"
         env:
-          GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
+          GITHUB_ACTOR: ${{ secrets.GPR_USER }}
           GITHUB_TOKEN: ${{ secrets.GPR_TOKEN }}
 
       - name: Gradle Check
-        run: ./gradlew -Pgpr.sava.user=${{ secrets.GPR_USER }} -Pgpr.sava.token=${{ secrets.GPR_TOKEN }} -PtargetJava=${{ vars.JAVA_VERSION }} check --stacktrace --no-daemon
+        run: ./gradlew -PtargetJava=${{ vars.JAVA_VERSION }} check --stacktrace
         env:
           GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_SAVA_USER: ${{ secrets.GPR_USER }}
+          GITHUB_SAVA_TOKEN: ${{ secrets.GPR_TOKEN }}
 
       - name: Github Packages
         run: ./gradlew -Pgpr.sava.user=${{ secrets.GPR_USER }} -Pgpr.sava.token=${{ secrets.GPR_TOKEN }} -PtargetJava=${{ vars.JAVA_VERSION }} :anchor-programs:publish
