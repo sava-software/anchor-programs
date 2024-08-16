@@ -80,6 +80,19 @@ do
   fi
 done
 
+javaVersion=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}' | grep -oEi '^[0-9]+')
+readonly javaVersion
+if [[ "$javaVersion" -ne "$targetJavaVersion" ]]; then
+  echo "Invalid Java version $javaVersion must be $targetJavaVersion."
+  exit 3
+fi
+
+./gradlew --stacktrace "-PmainClassName=$mainClass" ":$projectName:jlink"
+
+vcsRef="$(git rev-parse --short HEAD)"
+readonly vcsRef
+readonly javaExe="$projectDirectory/build/$vcsRef/bin/java"
+
 javaArgs+=("-D$moduleName.baseDelayMillis=$baseDelayMillis")
 javaArgs+=("-D$moduleName.basePackageName=$basePackageName")
 javaArgs+=("-D$moduleName.outputModuleName=$outputModuleName")
@@ -88,43 +101,11 @@ javaArgs+=("-D$moduleName.programsCSV=$programsCSV")
 javaArgs+=("-D$moduleName.rpc=$rpc")
 javaArgs+=("-D$moduleName.sourceDirectory=$sourceDirectory")
 javaArgs+=("-D$moduleName.tabLength=$tabLength")
-
-javaVersion=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}' | grep -oEi '^[0-9]+')
-readonly javaVersion
-if [[ "$javaVersion" -ne "$targetJavaVersion" ]]; then
-  echo "Invalid Java version $javaVersion must be $targetJavaVersion."
-  exit 3
-fi
-
-osName="$(uname)"
-readonly osName
-if [[ "$osName" == "Linux" ]]; then
-  memTotalKB=$(grep MemTotal /proc/meminfo | awk '{print $2}')
-  readonly memTotalKB
-  if (( memTotalKB < 2000000 )); then
-    javaArgs+=(
-      '-Xms128M'
-      '-Xmx384M'
-    )
-    gradleArgs+=('--no-daemon')
-    ./gradlew --no-daemon --stop
-  else
-    javaArgs+=(
-      '-Xms256M'
-      '-Xmx1024M'
-    )
-  fi
-else
-  gradleArgs+=('clean')
-fi
-
-./gradlew --no-daemon "-PmainClassName=$mainClass" "${gradleArgs[@]}" ":$projectName:jlink"
-
+javaArgs+=(
+  '-Xms256M'
+  '-Xmx1024M'
+)
 javaArgs+=('-m' "$moduleName/$mainClass")
-
-vcsRef="$(git rev-parse --short HEAD)"
-readonly vcsRef
-readonly javaExe="$projectDirectory/build/$vcsRef/bin/java"
 
 if [[ "$screen" == 0 ]]; then
   set -x
