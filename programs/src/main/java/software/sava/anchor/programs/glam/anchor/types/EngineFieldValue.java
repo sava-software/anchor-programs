@@ -31,18 +31,18 @@ public sealed interface EngineFieldValue extends RustEnum permits
     final int ordinal = _data[offset] & 0xFF;
     final int i = offset + 1;
     return switch (ordinal) {
-      case 0 -> new Boolean(_data[i] == 1);
+      case 0 -> Boolean.read(_data, i);
       case 1 -> Date.read(_data, i);
-      case 2 -> new Double(getInt64LE(_data, i));
-      case 3 -> new Integer(getInt32LE(_data, i));
+      case 2 -> Double.read(_data, i);
+      case 3 -> Integer.read(_data, i);
       case 4 -> String.read(_data, i);
       case 5 -> Time.read(_data, i);
-      case 6 -> new U8(_data[i] & 0xFF);
-      case 7 -> new U64(getInt64LE(_data, i));
-      case 8 -> new Pubkey(readPubKey(_data, i));
-      case 9 -> new Percentage(getInt32LE(_data, i));
+      case 6 -> U8.read(_data, i);
+      case 7 -> U64.read(_data, i);
+      case 8 -> Pubkey.read(_data, i);
+      case 9 -> Percentage.read(_data, i);
       case 10 -> URI.read(_data, i);
-      case 11 -> new Timestamp(getInt64LE(_data, i));
+      case 11 -> Timestamp.read(_data, i);
       case 12 -> VecPubkey.read(_data, i);
       case 13 -> VecU32.read(_data, i);
       case 14 -> VecAcl.read(_data, i);
@@ -54,8 +54,11 @@ public sealed interface EngineFieldValue extends RustEnum permits
 
   record Boolean(boolean val) implements EnumBool, EngineFieldValue {
 
+    public static final Boolean TRUE = new Boolean(true);
+    public static final Boolean FALSE = new Boolean(false);
+
     public static Boolean read(final byte[] _data, int i) {
-      return new Boolean(_data[i] == 1);
+      return _data[i] == 1 ? Boolean.TRUE : Boolean.FALSE;
     }
 
     @Override
