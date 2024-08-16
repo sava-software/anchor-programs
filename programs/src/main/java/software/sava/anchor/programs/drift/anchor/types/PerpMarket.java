@@ -4,6 +4,7 @@ import java.util.function.BiFunction;
 
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
+import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
@@ -16,7 +17,7 @@ import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record PerpMarket(PublicKey _address,
-                         byte[] discriminator,
+                         Discriminator discriminator,
                          // The perp market's address. It is a pda of the market index
                          PublicKey pubkey,
                          // The automated market maker
@@ -116,8 +117,8 @@ public record PerpMarket(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], PerpMarket> FACTORY = PerpMarket::read;
 
   public static PerpMarket read(final PublicKey _address, final byte[] _data, final int offset) {
-    final byte[] discriminator = parseDiscriminator(_data, offset);
-    int i = offset + discriminator.length;
+    final var discriminator = parseDiscriminator(_data, offset);
+    int i = offset + discriminator.length();
     final var pubkey = readPubKey(_data, i);
     i += 32;
     final var amm = AMM.read(_data, i);
@@ -210,8 +211,7 @@ public record PerpMarket(PublicKey _address,
 
   @Override
   public int write(final byte[] _data, final int offset) {
-    System.arraycopy(discriminator, 0, _data, offset, discriminator.length);
-    int i = offset + discriminator.length;
+    int i = offset + discriminator.write(_data, offset);
     pubkey.write(_data, i);
     i += 32;
     i += Borsh.write(amm, _data, i);

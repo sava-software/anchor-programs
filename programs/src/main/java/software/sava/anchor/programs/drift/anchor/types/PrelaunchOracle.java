@@ -4,6 +4,7 @@ import java.util.function.BiFunction;
 
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
+import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
@@ -13,7 +14,7 @@ import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record PrelaunchOracle(PublicKey _address,
-                              byte[] discriminator,
+                              Discriminator discriminator,
                               long price,
                               long maxPrice,
                               long confidence,
@@ -80,8 +81,8 @@ public record PrelaunchOracle(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], PrelaunchOracle> FACTORY = PrelaunchOracle::read;
 
   public static PrelaunchOracle read(final PublicKey _address, final byte[] _data, final int offset) {
-    final byte[] discriminator = parseDiscriminator(_data, offset);
-    int i = offset + discriminator.length;
+    final var discriminator = parseDiscriminator(_data, offset);
+    int i = offset + discriminator.length();
     final var price = getInt64LE(_data, i);
     i += 8;
     final var maxPrice = getInt64LE(_data, i);
@@ -108,8 +109,7 @@ public record PrelaunchOracle(PublicKey _address,
 
   @Override
   public int write(final byte[] _data, final int offset) {
-    System.arraycopy(discriminator, 0, _data, offset, discriminator.length);
-    int i = offset + discriminator.length;
+    int i = offset + discriminator.write(_data, offset);
     putInt64LE(_data, i, price);
     i += 8;
     putInt64LE(_data, i, maxPrice);

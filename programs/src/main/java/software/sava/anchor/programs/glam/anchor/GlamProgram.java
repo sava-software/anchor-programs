@@ -7,6 +7,7 @@ import software.sava.anchor.programs.glam.anchor.types.ShareClassModel;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.borsh.Borsh;
+import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -16,11 +17,11 @@ import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
-import static software.sava.core.programs.ProgramUtil.toDiscriminator;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class GlamProgram {
 
-  public static final byte[] INITIALIZE_FUND_DISCRIMINATOR = toDiscriminator(212, 42, 24, 245, 146, 141, 78, 198);
+  public static final Discriminator INITIALIZE_FUND_DISCRIMINATOR = toDiscriminator(212, 42, 24, 245, 146, 141, 78, 198);
 
   public static Instruction initializeFund(final AccountMeta invokedGlamProgramMeta,
                                            final AccountMeta managerKey,
@@ -44,7 +45,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] ADD_SHARE_CLASS_DISCRIMINATOR = toDiscriminator(34, 49, 47, 6, 204, 166, 51, 204);
+  public static final Discriminator ADD_SHARE_CLASS_DISCRIMINATOR = toDiscriminator(34, 49, 47, 6, 204, 166, 51, 204);
 
   public static Instruction addShareClass(final AccountMeta invokedGlamProgramMeta,
                                           final AccountMeta managerKey,
@@ -70,7 +71,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] UPDATE_FUND_DISCRIMINATOR = toDiscriminator(132, 171, 13, 83, 34, 122, 82, 155);
+  public static final Discriminator UPDATE_FUND_DISCRIMINATOR = toDiscriminator(132, 171, 13, 83, 34, 122, 82, 155);
 
   public static Instruction updateFund(final AccountMeta invokedGlamProgramMeta,
                                        final AccountMeta signerKey,
@@ -88,7 +89,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] CLOSE_FUND_DISCRIMINATOR = toDiscriminator(230, 183, 3, 112, 236, 252, 5, 185);
+  public static final Discriminator CLOSE_FUND_DISCRIMINATOR = toDiscriminator(230, 183, 3, 112, 236, 252, 5, 185);
 
   public static Instruction closeFund(final AccountMeta invokedGlamProgramMeta, final AccountMeta managerKey, final PublicKey fundKey) {
     final var keys = List.of(
@@ -99,7 +100,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, CLOSE_FUND_DISCRIMINATOR);
   }
 
-  public static final byte[] SUBSCRIBE_DISCRIMINATOR = toDiscriminator(254, 28, 191, 138, 156, 179, 183, 53);
+  public static final Discriminator SUBSCRIBE_DISCRIMINATOR = toDiscriminator(254, 28, 191, 138, 156, 179, 183, 53);
 
   public static Instruction subscribe(final AccountMeta invokedGlamProgramMeta,
                                       final AccountMeta signerKey,
@@ -140,7 +141,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] REDEEM_DISCRIMINATOR = toDiscriminator(184, 12, 86, 149, 70, 196, 97, 225);
+  public static final Discriminator REDEEM_DISCRIMINATOR = toDiscriminator(184, 12, 86, 149, 70, 196, 97, 225);
 
   public static Instruction redeem(final AccountMeta invokedGlamProgramMeta,
                                    final AccountMeta signerKey,
@@ -176,7 +177,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] DRIFT_INITIALIZE_DISCRIMINATOR = toDiscriminator(21, 21, 69, 55, 41, 129, 44, 198);
+  public static final Discriminator DRIFT_INITIALIZE_DISCRIMINATOR = toDiscriminator(21, 21, 69, 55, 41, 129, 44, 198);
 
   public static Instruction driftInitialize(final AccountMeta invokedGlamProgramMeta,
                                             final AccountMeta managerKey,
@@ -208,7 +209,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] DRIFT_UPDATE_DELEGATED_TRADER_DISCRIMINATOR = toDiscriminator(98, 66, 206, 146, 109, 215, 206, 57);
+  public static final Discriminator DRIFT_UPDATE_DELEGATED_TRADER_DISCRIMINATOR = toDiscriminator(98, 66, 206, 146, 109, 215, 206, 57);
 
   public static Instruction driftUpdateDelegatedTrader(final AccountMeta invokedGlamProgramMeta,
                                                        final AccountMeta managerKey,
@@ -232,7 +233,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] DRIFT_DEPOSIT_DISCRIMINATOR = toDiscriminator(252, 63, 250, 201, 98, 55, 130, 12);
+  public static final Discriminator DRIFT_DEPOSIT_DISCRIMINATOR = toDiscriminator(252, 63, 250, 201, 98, 55, 130, 12);
 
   public static Instruction driftDeposit(final AccountMeta invokedGlamProgramMeta,
                                          final AccountMeta managerKey,
@@ -266,7 +267,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] DRIFT_WITHDRAW_DISCRIMINATOR = toDiscriminator(86, 59, 186, 123, 183, 181, 234, 137);
+  public static final Discriminator DRIFT_WITHDRAW_DISCRIMINATOR = toDiscriminator(86, 59, 186, 123, 183, 181, 234, 137);
 
   public static Instruction driftWithdraw(final AccountMeta invokedGlamProgramMeta,
                                           final AccountMeta managerKey,
@@ -302,7 +303,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] DRIFT_CLOSE_DISCRIMINATOR = toDiscriminator(23, 133, 219, 157, 137, 34, 93, 58);
+  public static final Discriminator DRIFT_CLOSE_DISCRIMINATOR = toDiscriminator(23, 133, 219, 157, 137, 34, 93, 58);
 
   public static Instruction driftClose(final AccountMeta invokedGlamProgramMeta,
                                        final AccountMeta managerKey,
@@ -327,7 +328,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, DRIFT_CLOSE_DISCRIMINATOR);
   }
 
-  public static final byte[] MARINADE_DEPOSIT_SOL_DISCRIMINATOR = toDiscriminator(64, 140, 200, 40, 56, 218, 181, 68);
+  public static final Discriminator MARINADE_DEPOSIT_SOL_DISCRIMINATOR = toDiscriminator(64, 140, 200, 40, 56, 218, 181, 68);
 
   public static Instruction marinadeDepositSol(final AccountMeta invokedGlamProgramMeta,
                                                final AccountMeta managerKey,
@@ -371,7 +372,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] MARINADE_DEPOSIT_STAKE_DISCRIMINATOR = toDiscriminator(69, 207, 194, 211, 186, 55, 199, 130);
+  public static final Discriminator MARINADE_DEPOSIT_STAKE_DISCRIMINATOR = toDiscriminator(69, 207, 194, 211, 186, 55, 199, 130);
 
   public static Instruction marinadeDepositStake(final AccountMeta invokedGlamProgramMeta,
                                                  final AccountMeta managerKey,
@@ -421,7 +422,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] MARINADE_LIQUID_UNSTAKE_DISCRIMINATOR = toDiscriminator(29, 146, 34, 21, 26, 68, 141, 161);
+  public static final Discriminator MARINADE_LIQUID_UNSTAKE_DISCRIMINATOR = toDiscriminator(29, 146, 34, 21, 26, 68, 141, 161);
 
   public static Instruction marinadeLiquidUnstake(final AccountMeta invokedGlamProgramMeta,
                                                   final AccountMeta managerKey,
@@ -461,7 +462,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] MARINADE_DELAYED_UNSTAKE_DISCRIMINATOR = toDiscriminator(117, 66, 3, 222, 230, 94, 129, 95);
+  public static final Discriminator MARINADE_DELAYED_UNSTAKE_DISCRIMINATOR = toDiscriminator(117, 66, 3, 222, 230, 94, 129, 95);
 
   public static Instruction marinadeDelayedUnstake(final AccountMeta invokedGlamProgramMeta,
                                                    final AccountMeta managerKey,
@@ -507,7 +508,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] MARINADE_CLAIM_TICKETS_DISCRIMINATOR = toDiscriminator(14, 146, 182, 30, 205, 47, 134, 189);
+  public static final Discriminator MARINADE_CLAIM_TICKETS_DISCRIMINATOR = toDiscriminator(14, 146, 182, 30, 205, 47, 134, 189);
 
   public static Instruction marinadeClaimTickets(final AccountMeta invokedGlamProgramMeta,
                                                  final AccountMeta managerKey,
@@ -536,7 +537,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, MARINADE_CLAIM_TICKETS_DISCRIMINATOR);
   }
 
-  public static final byte[] STAKE_POOL_DEPOSIT_SOL_DISCRIMINATOR = toDiscriminator(147, 187, 91, 151, 158, 187, 247, 79);
+  public static final Discriminator STAKE_POOL_DEPOSIT_SOL_DISCRIMINATOR = toDiscriminator(147, 187, 91, 151, 158, 187, 247, 79);
 
   public static Instruction stakePoolDepositSol(final AccountMeta invokedGlamProgramMeta,
                                                 final AccountMeta managerKey,
@@ -576,7 +577,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] STAKE_POOL_DEPOSIT_STAKE_DISCRIMINATOR = toDiscriminator(212, 158, 195, 174, 179, 105, 9, 97);
+  public static final Discriminator STAKE_POOL_DEPOSIT_STAKE_DISCRIMINATOR = toDiscriminator(212, 158, 195, 174, 179, 105, 9, 97);
 
   public static Instruction stakePoolDepositStake(final AccountMeta invokedGlamProgramMeta,
                                                   final AccountMeta managerKey,
@@ -625,7 +626,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, STAKE_POOL_DEPOSIT_STAKE_DISCRIMINATOR);
   }
 
-  public static final byte[] STAKE_POOL_WITHDRAW_SOL_DISCRIMINATOR = toDiscriminator(179, 100, 204, 0, 192, 46, 233, 181);
+  public static final Discriminator STAKE_POOL_WITHDRAW_SOL_DISCRIMINATOR = toDiscriminator(179, 100, 204, 0, 192, 46, 233, 181);
 
   public static Instruction stakePoolWithdrawSol(final AccountMeta invokedGlamProgramMeta,
                                                  final AccountMeta managerKey,
@@ -669,7 +670,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] STAKE_POOL_WITHDRAW_STAKE_DISCRIMINATOR = toDiscriminator(7, 70, 250, 22, 49, 1, 143, 1);
+  public static final Discriminator STAKE_POOL_WITHDRAW_STAKE_DISCRIMINATOR = toDiscriminator(7, 70, 250, 22, 49, 1, 143, 1);
 
   public static Instruction stakePoolWithdrawStake(final AccountMeta invokedGlamProgramMeta,
                                                    final AccountMeta managerKey,
@@ -721,7 +722,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] INITIALIZE_AND_DELEGATE_STAKE_DISCRIMINATOR = toDiscriminator(71, 101, 230, 157, 50, 23, 47, 1);
+  public static final Discriminator INITIALIZE_AND_DELEGATE_STAKE_DISCRIMINATOR = toDiscriminator(71, 101, 230, 157, 50, 23, 47, 1);
 
   public static Instruction initializeAndDelegateStake(final AccountMeta invokedGlamProgramMeta,
                                                        final AccountMeta managerKey,
@@ -763,7 +764,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] DEACTIVATE_STAKE_ACCOUNTS_DISCRIMINATOR = toDiscriminator(58, 18, 6, 22, 226, 216, 161, 193);
+  public static final Discriminator DEACTIVATE_STAKE_ACCOUNTS_DISCRIMINATOR = toDiscriminator(58, 18, 6, 22, 226, 216, 161, 193);
 
   public static Instruction deactivateStakeAccounts(final AccountMeta invokedGlamProgramMeta,
                                                     final AccountMeta managerKey,
@@ -782,7 +783,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, DEACTIVATE_STAKE_ACCOUNTS_DISCRIMINATOR);
   }
 
-  public static final byte[] WITHDRAW_FROM_STAKE_ACCOUNTS_DISCRIMINATOR = toDiscriminator(93, 209, 100, 231, 169, 160, 192, 197);
+  public static final Discriminator WITHDRAW_FROM_STAKE_ACCOUNTS_DISCRIMINATOR = toDiscriminator(93, 209, 100, 231, 169, 160, 192, 197);
 
   public static Instruction withdrawFromStakeAccounts(final AccountMeta invokedGlamProgramMeta,
                                                       final AccountMeta managerKey,
@@ -803,7 +804,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, WITHDRAW_FROM_STAKE_ACCOUNTS_DISCRIMINATOR);
   }
 
-  public static final byte[] JUPITER_SWAP_DISCRIMINATOR = toDiscriminator(116, 207, 0, 196, 252, 120, 243, 18);
+  public static final Discriminator JUPITER_SWAP_DISCRIMINATOR = toDiscriminator(116, 207, 0, 196, 252, 120, 243, 18);
 
   public static Instruction jupiterSwap(final AccountMeta invokedGlamProgramMeta,
                                         final AccountMeta signerKey,
@@ -849,7 +850,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] WSOL_WRAP_DISCRIMINATOR = toDiscriminator(26, 2, 139, 159, 239, 195, 193, 9);
+  public static final Discriminator WSOL_WRAP_DISCRIMINATOR = toDiscriminator(26, 2, 139, 159, 239, 195, 193, 9);
 
   public static Instruction wsolWrap(final AccountMeta invokedGlamProgramMeta,
                                      final AccountMeta signerKey,
@@ -879,7 +880,7 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public static final byte[] WSOL_UNWRAP_DISCRIMINATOR = toDiscriminator(123, 189, 16, 96, 233, 186, 54, 215);
+  public static final Discriminator WSOL_UNWRAP_DISCRIMINATOR = toDiscriminator(123, 189, 16, 96, 233, 186, 54, 215);
 
   public static Instruction wsolUnwrap(final AccountMeta invokedGlamProgramMeta,
                                        final AccountMeta signerKey,

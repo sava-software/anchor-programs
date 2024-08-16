@@ -6,6 +6,7 @@ import java.util.function.BiFunction;
 
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
+import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
@@ -20,7 +21,7 @@ import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record SpotMarket(PublicKey _address,
-                         byte[] discriminator,
+                         Discriminator discriminator,
                          // The address of the spot market. It is a pda of the market index
                          PublicKey pubkey,
                          // The oracle used to price the markets deposits/borrows
@@ -217,8 +218,8 @@ public record SpotMarket(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], SpotMarket> FACTORY = SpotMarket::read;
 
   public static SpotMarket read(final PublicKey _address, final byte[] _data, final int offset) {
-    final byte[] discriminator = parseDiscriminator(_data, offset);
-    int i = offset + discriminator.length;
+    final var discriminator = parseDiscriminator(_data, offset);
+    int i = offset + discriminator.length();
     final var pubkey = readPubKey(_data, i);
     i += 32;
     final var oracle = readPubKey(_data, i);
@@ -395,8 +396,7 @@ public record SpotMarket(PublicKey _address,
 
   @Override
   public int write(final byte[] _data, final int offset) {
-    System.arraycopy(discriminator, 0, _data, offset, discriminator.length);
-    int i = offset + discriminator.length;
+    int i = offset + discriminator.write(_data, offset);
     pubkey.write(_data, i);
     i += 32;
     oracle.write(_data, i);

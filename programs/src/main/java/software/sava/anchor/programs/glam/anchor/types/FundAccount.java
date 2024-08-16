@@ -6,6 +6,7 @@ import java.util.function.BiFunction;
 
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
+import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
@@ -15,7 +16,7 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 
 public record FundAccount(PublicKey _address,
-                          byte[] discriminator,
+                          Discriminator discriminator,
                           String name, byte[] _name,
                           String uri, byte[] _uri,
                           PublicKey treasury,
@@ -36,7 +37,7 @@ public record FundAccount(PublicKey _address,
   }
 
   public static FundAccount createRecord(final PublicKey _address,
-                                         final byte[] discriminator,
+                                         final Discriminator discriminator,
                                          final String name,
                                          final String uri,
                                          final PublicKey treasury,
@@ -70,8 +71,8 @@ public record FundAccount(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], FundAccount> FACTORY = FundAccount::read;
 
   public static FundAccount read(final PublicKey _address, final byte[] _data, final int offset) {
-    final byte[] discriminator = parseDiscriminator(_data, offset);
-    int i = offset + discriminator.length;
+    final var discriminator = parseDiscriminator(_data, offset);
+    int i = offset + discriminator.length();
     final var name = Borsh.string(_data, i);
     i += (Integer.BYTES + getInt32LE(_data, i));
     final var uri = Borsh.string(_data, i);
@@ -104,8 +105,7 @@ public record FundAccount(PublicKey _address,
 
   @Override
   public int write(final byte[] _data, final int offset) {
-    System.arraycopy(discriminator, 0, _data, offset, discriminator.length);
-    int i = offset + discriminator.length;
+    int i = offset + discriminator.write(_data, offset);
     i += Borsh.write(_name, _data, i);
     i += Borsh.write(_uri, _data, i);
     treasury.write(_data, i);

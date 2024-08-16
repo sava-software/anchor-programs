@@ -4,6 +4,7 @@ import java.util.function.BiFunction;
 
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
+import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
@@ -12,7 +13,7 @@ import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 
 public record PhoenixV1FulfillmentConfig(PublicKey _address,
-                                         byte[] discriminator,
+                                         Discriminator discriminator,
                                          PublicKey pubkey,
                                          PublicKey phoenixProgramId,
                                          PublicKey phoenixLogAuthority,
@@ -87,8 +88,8 @@ public record PhoenixV1FulfillmentConfig(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], PhoenixV1FulfillmentConfig> FACTORY = PhoenixV1FulfillmentConfig::read;
 
   public static PhoenixV1FulfillmentConfig read(final PublicKey _address, final byte[] _data, final int offset) {
-    final byte[] discriminator = parseDiscriminator(_data, offset);
-    int i = offset + discriminator.length;
+    final var discriminator = parseDiscriminator(_data, offset);
+    int i = offset + discriminator.length();
     final var pubkey = readPubKey(_data, i);
     i += 32;
     final var phoenixProgramId = readPubKey(_data, i);
@@ -124,8 +125,7 @@ public record PhoenixV1FulfillmentConfig(PublicKey _address,
 
   @Override
   public int write(final byte[] _data, final int offset) {
-    System.arraycopy(discriminator, 0, _data, offset, discriminator.length);
-    int i = offset + discriminator.length;
+    int i = offset + discriminator.write(_data, offset);
     pubkey.write(_data, i);
     i += 32;
     phoenixProgramId.write(_data, i);

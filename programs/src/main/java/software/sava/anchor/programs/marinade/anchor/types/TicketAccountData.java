@@ -4,6 +4,7 @@ import java.util.function.BiFunction;
 
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
+import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
@@ -12,7 +13,7 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record TicketAccountData(PublicKey _address,
-                                byte[] discriminator,
+                                Discriminator discriminator,
                                 PublicKey stateAddress,
                                 PublicKey beneficiary,
                                 long lamportsAmount,
@@ -57,8 +58,8 @@ public record TicketAccountData(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], TicketAccountData> FACTORY = TicketAccountData::read;
 
   public static TicketAccountData read(final PublicKey _address, final byte[] _data, final int offset) {
-    final byte[] discriminator = parseDiscriminator(_data, offset);
-    int i = offset + discriminator.length;
+    final var discriminator = parseDiscriminator(_data, offset);
+    int i = offset + discriminator.length();
     final var stateAddress = readPubKey(_data, i);
     i += 32;
     final var beneficiary = readPubKey(_data, i);
@@ -76,8 +77,7 @@ public record TicketAccountData(PublicKey _address,
 
   @Override
   public int write(final byte[] _data, final int offset) {
-    System.arraycopy(discriminator, 0, _data, offset, discriminator.length);
-    int i = offset + discriminator.length;
+    int i = offset + discriminator.write(_data, offset);
     stateAddress.write(_data, i);
     i += 32;
     beneficiary.write(_data, i);

@@ -6,6 +6,7 @@ import java.util.function.BiFunction;
 
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
+import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
@@ -15,7 +16,7 @@ import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record ProtocolIfSharesTransferConfig(PublicKey _address,
-                                             byte[] discriminator,
+                                             Discriminator discriminator,
                                              PublicKey[] whitelistedSigners,
                                              BigInteger maxTransferPerEpoch,
                                              BigInteger currentEpochTransfer,
@@ -60,8 +61,8 @@ public record ProtocolIfSharesTransferConfig(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], ProtocolIfSharesTransferConfig> FACTORY = ProtocolIfSharesTransferConfig::read;
 
   public static ProtocolIfSharesTransferConfig read(final PublicKey _address, final byte[] _data, final int offset) {
-    final byte[] discriminator = parseDiscriminator(_data, offset);
-    int i = offset + discriminator.length;
+    final var discriminator = parseDiscriminator(_data, offset);
+    int i = offset + discriminator.length();
     final var whitelistedSigners = Borsh.readArray(new PublicKey[4], _data, i);
     i += Borsh.fixedLen(whitelistedSigners);
     final var maxTransferPerEpoch = getInt128LE(_data, i);
@@ -82,8 +83,7 @@ public record ProtocolIfSharesTransferConfig(PublicKey _address,
 
   @Override
   public int write(final byte[] _data, final int offset) {
-    System.arraycopy(discriminator, 0, _data, offset, discriminator.length);
-    int i = offset + discriminator.length;
+    int i = offset + discriminator.write(_data, offset);
     i += Borsh.fixedWrite(whitelistedSigners, _data, i);
     putInt128LE(_data, i, maxTransferPerEpoch);
     i += 16;
