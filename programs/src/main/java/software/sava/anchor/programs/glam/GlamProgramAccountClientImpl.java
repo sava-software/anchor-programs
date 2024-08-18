@@ -469,16 +469,23 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public Instruction deactivateStakeAccounts(final Collection<PublicKey> stakeAccounts) {
-    return deactivateStakeAccounts().extraAccounts(stakeAccounts, AccountMeta.CREATE_WRITE);
+  public Instruction deactivateStakeAccount(final StakeAccount stakeAccount) {
+    return deactivateStakeAccounts().extraAccount(stakeAccount.address(), AccountMeta.CREATE_WRITE);
   }
 
   @Override
-  public Instruction deactivateStakeAccount(final PublicKey stakeAccount) {
-    return deactivateStakeAccounts().extraAccount(stakeAccount, AccountMeta.CREATE_WRITE);
+  public List<Instruction> deactivateStakeAccountInfos(final Collection<AccountInfo<StakeAccount>> stakeAccounts) {
+    final var extraAccounts = stakeAccounts.stream().map(AccountInfo::pubKey).toList();
+    return List.of(deactivateStakeAccounts().extraAccounts(extraAccounts, AccountMeta.CREATE_WRITE));
   }
 
-  private Instruction withdrawFromStakeAccounts() {
+  @Override
+  public List<Instruction> deactivateStakeAccounts(final Collection<StakeAccount> stakeAccounts) {
+    final var extraAccounts = stakeAccounts.stream().map(StakeAccount::address).toList();
+    return List.of(deactivateStakeAccounts().extraAccounts(extraAccounts, AccountMeta.CREATE_WRITE));
+  }
+
+  private Instruction closeStakeAccounts() {
     return GlamProgram.withdrawFromStakeAccounts(
         invokedProgram,
         manager.publicKey(),
@@ -491,13 +498,14 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public Instruction withdrawFromStakeAccounts(final Collection<PublicKey> stakeAccounts) {
-    return withdrawFromStakeAccounts().extraAccounts(stakeAccounts, AccountMeta.CREATE_WRITE);
+  public Instruction closeStakeAccount(final AccountInfo<StakeAccount> stakeAccountInfo) {
+    return closeStakeAccounts().extraAccount(stakeAccountInfo.pubKey(), AccountMeta.CREATE_WRITE);
   }
 
   @Override
-  public Instruction withdrawFromStakeAccount(final PublicKey stakeAccount) {
-    return withdrawFromStakeAccounts().extraAccount(stakeAccount, AccountMeta.CREATE_WRITE);
+  public List<Instruction> closeStakeAccounts(final Collection<AccountInfo<StakeAccount>> stakeAccounts) {
+    final var extraAccounts = stakeAccounts.stream().map(AccountInfo::pubKey).toList();
+    return List.of(closeStakeAccounts().extraAccounts(extraAccounts, AccountMeta.CREATE_WRITE));
   }
 
   @Override

@@ -8,7 +8,6 @@ import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -67,12 +66,4 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
   Instruction initializeAndDelegateStake(final FundPDA stakeAccountPDA,
                                          final PublicKey validatorVoteAccount,
                                          final long lamports);
-
-  Instruction deactivateStakeAccounts(final Collection<PublicKey> stakeAccounts);
-
-  Instruction withdrawFromStakeAccounts(final Collection<PublicKey> stakeAccounts);
-
-  Instruction deactivateStakeAccount(final PublicKey stakeAccount);
-
-  Instruction withdrawFromStakeAccount(final PublicKey stakeAccount);
 }
