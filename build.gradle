@@ -37,11 +37,11 @@ ext {
   bouncycastleMinor = 'jdk18on'
   bouncycastlePatch = '1.78.1' // https://www.bouncycastle.org/latest_releases.html#LATEST
 
-  jsoniter = '2.11.+'
+  jsoniter = '[2,)'
 
-  sava = '1.2.3'
-  sava_solana_programs = '1.1.0'
-  sava_anchor_src_gen = '1.1.7'
+  sava = '[1,)'
+  sava_solana_programs = '[1,)'
+  sava_anchor_src_gen = '[1,)'
 }
 
 subprojects {

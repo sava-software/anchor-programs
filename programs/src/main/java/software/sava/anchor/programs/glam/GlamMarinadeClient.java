@@ -1,18 +1,18 @@
 package software.sava.anchor.programs.glam;
 
+import software.sava.anchor.programs.marinade.MarinadeAccounts;
+import software.sava.anchor.programs.marinade.MarinadeProgramClient;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.tx.Instruction;
-import software.sava.anchor.programs.marinade.MarinadeAccounts;
-import software.sava.anchor.programs.marinade.MarinadeProgramClient;
 
 public interface GlamMarinadeClient extends MarinadeProgramClient {
 
-  static GlamMarinadeClient createClient(final GlamNativeClient glamClient, final MarinadeAccounts marinadeAccounts) {
+  static GlamMarinadeClient createClient(final GlamProgramAccountClient glamClient, final MarinadeAccounts marinadeAccounts) {
     return new GlamMarinadeClientImpl(glamClient, marinadeAccounts);
   }
 
-  static GlamMarinadeClient createClient(final GlamNativeClient glamClient) {
+  static GlamMarinadeClient createClient(final GlamProgramAccountClient glamClient) {
     return new GlamMarinadeClientImpl(glamClient, MarinadeAccounts.MAIN_NET);
   }
 
@@ -38,7 +38,9 @@ public interface GlamMarinadeClient extends MarinadeProgramClient {
   }
 
   @Override
-  default Instruction orderUnstake(final PublicKey mSolTokenAccount, final PublicKey ticketAccount, final long lamports) {
+  default Instruction orderUnstake(final PublicKey mSolTokenAccount,
+                                   final PublicKey ticketAccount,
+                                   final long lamports) {
     throw new IllegalStateException("TicketPDA is needed for the program to create the ticket account.");
   }
 

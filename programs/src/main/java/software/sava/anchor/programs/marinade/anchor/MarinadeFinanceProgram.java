@@ -14,6 +14,8 @@ import software.sava.core.tx.Instruction;
 
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
+import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
+import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
@@ -58,12 +60,12 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator CHANGE_AUTHORITY_DISCRIMINATOR = toDiscriminator(50, 106, 66, 104, 99, 118, 145, 88);
 
   public static Instruction changeAuthority(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                            final AccountMeta adminAuthorityKey,
                                             final PublicKey stateKey,
+                                            final PublicKey adminAuthorityKey,
                                             final ChangeAuthorityData data) {
     final var keys = List.of(
       createWrite(stateKey),
-      adminAuthorityKey
+      createReadOnlySigner(adminAuthorityKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(data)];
@@ -76,24 +78,24 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator ADD_VALIDATOR_DISCRIMINATOR = toDiscriminator(250, 113, 53, 54, 141, 117, 215, 185);
 
   public static Instruction addValidator(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                         final AccountMeta managerAuthorityKey,
-                                         final AccountMeta rentPayerKey,
                                          final PublicKey stateKey,
+                                         final PublicKey managerAuthorityKey,
                                          final PublicKey validatorListKey,
                                          final PublicKey validatorVoteKey,
                                          // by initializing this account we mark the validator as added
                                          final PublicKey duplicationFlagKey,
+                                         final PublicKey rentPayerKey,
                                          final PublicKey clockKey,
                                          final PublicKey rentKey,
                                          final PublicKey systemProgramKey,
                                          final int score) {
     final var keys = List.of(
       createWrite(stateKey),
-      managerAuthorityKey,
+      createReadOnlySigner(managerAuthorityKey),
       createWrite(validatorListKey),
       createRead(validatorVoteKey),
       createWrite(duplicationFlagKey),
-      rentPayerKey,
+      createWritableSigner(rentPayerKey),
       createRead(clockKey),
       createRead(rentKey),
       createRead(systemProgramKey)
@@ -109,8 +111,8 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator REMOVE_VALIDATOR_DISCRIMINATOR = toDiscriminator(25, 96, 211, 155, 161, 14, 168, 188);
 
   public static Instruction removeValidator(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                            final AccountMeta managerAuthorityKey,
                                             final PublicKey stateKey,
+                                            final PublicKey managerAuthorityKey,
                                             final PublicKey validatorListKey,
                                             final PublicKey duplicationFlagKey,
                                             final PublicKey operationalSolAccountKey,
@@ -118,7 +120,7 @@ public final class MarinadeFinanceProgram {
                                             final PublicKey validatorVote) {
     final var keys = List.of(
       createWrite(stateKey),
-      managerAuthorityKey,
+      createReadOnlySigner(managerAuthorityKey),
       createWrite(validatorListKey),
       createWrite(duplicationFlagKey),
       createWrite(operationalSolAccountKey)
@@ -136,15 +138,15 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator SET_VALIDATOR_SCORE_DISCRIMINATOR = toDiscriminator(101, 41, 206, 33, 216, 111, 25, 78);
 
   public static Instruction setValidatorScore(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                              final AccountMeta managerAuthorityKey,
                                               final PublicKey stateKey,
+                                              final PublicKey managerAuthorityKey,
                                               final PublicKey validatorListKey,
                                               final int index,
                                               final PublicKey validatorVote,
                                               final int score) {
     final var keys = List.of(
       createWrite(stateKey),
-      managerAuthorityKey,
+      createReadOnlySigner(managerAuthorityKey),
       createWrite(validatorListKey)
     );
 
@@ -162,12 +164,12 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator CONFIG_VALIDATOR_SYSTEM_DISCRIMINATOR = toDiscriminator(27, 90, 97, 209, 17, 115, 7, 40);
 
   public static Instruction configValidatorSystem(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                                  final AccountMeta managerAuthorityKey,
                                                   final PublicKey stateKey,
+                                                  final PublicKey managerAuthorityKey,
                                                   final int extraRuns) {
     final var keys = List.of(
       createWrite(stateKey),
-      managerAuthorityKey
+      createReadOnlySigner(managerAuthorityKey)
     );
 
     final byte[] _data = new byte[12];
@@ -180,13 +182,13 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator DEPOSIT_DISCRIMINATOR = toDiscriminator(242, 35, 198, 137, 82, 225, 242, 182);
 
   public static Instruction deposit(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                    final AccountMeta transferFromKey,
                                     final PublicKey stateKey,
                                     final PublicKey msolMintKey,
                                     final PublicKey liqPoolSolLegPdaKey,
                                     final PublicKey liqPoolMsolLegKey,
                                     final PublicKey liqPoolMsolLegAuthorityKey,
                                     final PublicKey reservePdaKey,
+                                    final PublicKey transferFromKey,
                                     // user mSOL Token account to send the mSOL
                                     final PublicKey mintToKey,
                                     final PublicKey msolMintAuthorityKey,
@@ -200,7 +202,7 @@ public final class MarinadeFinanceProgram {
       createWrite(liqPoolMsolLegKey),
       createRead(liqPoolMsolLegAuthorityKey),
       createWrite(reservePdaKey),
-      transferFromKey,
+      createWritableSigner(transferFromKey),
       createWrite(mintToKey),
       createRead(msolMintAuthorityKey),
       createRead(systemProgramKey),
@@ -217,13 +219,13 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator DEPOSIT_STAKE_ACCOUNT_DISCRIMINATOR = toDiscriminator(110, 130, 115, 41, 164, 102, 2, 59);
 
   public static Instruction depositStakeAccount(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                                final AccountMeta stakeAuthorityKey,
-                                                final AccountMeta rentPayerKey,
                                                 final PublicKey stateKey,
                                                 final PublicKey validatorListKey,
                                                 final PublicKey stakeListKey,
                                                 final PublicKey stakeAccountKey,
+                                                final PublicKey stakeAuthorityKey,
                                                 final PublicKey duplicationFlagKey,
+                                                final PublicKey rentPayerKey,
                                                 final PublicKey msolMintKey,
                                                 // user mSOL Token account to send the mSOL
                                                 final PublicKey mintToKey,
@@ -239,9 +241,9 @@ public final class MarinadeFinanceProgram {
       createWrite(validatorListKey),
       createWrite(stakeListKey),
       createWrite(stakeAccountKey),
-      stakeAuthorityKey,
+      createReadOnlySigner(stakeAuthorityKey),
       createWrite(duplicationFlagKey),
-      rentPayerKey,
+      createWritableSigner(rentPayerKey),
       createWrite(msolMintKey),
       createWrite(mintToKey),
       createRead(msolMintAuthorityKey),
@@ -262,13 +264,13 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator LIQUID_UNSTAKE_DISCRIMINATOR = toDiscriminator(30, 30, 119, 240, 191, 227, 12, 16);
 
   public static Instruction liquidUnstake(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                          final AccountMeta getMsolFromAuthorityKey,
                                           final PublicKey stateKey,
                                           final PublicKey msolMintKey,
                                           final PublicKey liqPoolSolLegPdaKey,
                                           final PublicKey liqPoolMsolLegKey,
                                           final PublicKey treasuryMsolAccountKey,
                                           final PublicKey getMsolFromKey,
+                                          final PublicKey getMsolFromAuthorityKey,
                                           final PublicKey transferSolToKey,
                                           final PublicKey systemProgramKey,
                                           final PublicKey tokenProgramKey,
@@ -280,7 +282,7 @@ public final class MarinadeFinanceProgram {
       createWrite(liqPoolMsolLegKey),
       createWrite(treasuryMsolAccountKey),
       createWrite(getMsolFromKey),
-      getMsolFromAuthorityKey,
+      createReadOnlySigner(getMsolFromAuthorityKey),
       createWrite(transferSolToKey),
       createRead(systemProgramKey),
       createRead(tokenProgramKey)
@@ -296,12 +298,12 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator ADD_LIQUIDITY_DISCRIMINATOR = toDiscriminator(181, 157, 89, 67, 143, 182, 52, 72);
 
   public static Instruction addLiquidity(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                         final AccountMeta transferFromKey,
                                          final PublicKey stateKey,
                                          final PublicKey lpMintKey,
                                          final PublicKey lpMintAuthorityKey,
                                          final PublicKey liqPoolMsolLegKey,
                                          final PublicKey liqPoolSolLegPdaKey,
+                                         final PublicKey transferFromKey,
                                          final PublicKey mintToKey,
                                          final PublicKey systemProgramKey,
                                          final PublicKey tokenProgramKey,
@@ -312,7 +314,7 @@ public final class MarinadeFinanceProgram {
       createRead(lpMintAuthorityKey),
       createRead(liqPoolMsolLegKey),
       createWrite(liqPoolSolLegPdaKey),
-      transferFromKey,
+      createWritableSigner(transferFromKey),
       createWrite(mintToKey),
       createRead(systemProgramKey),
       createRead(tokenProgramKey)
@@ -328,10 +330,10 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator REMOVE_LIQUIDITY_DISCRIMINATOR = toDiscriminator(80, 85, 209, 72, 24, 206, 177, 108);
 
   public static Instruction removeLiquidity(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                            final AccountMeta burnFromAuthorityKey,
                                             final PublicKey stateKey,
                                             final PublicKey lpMintKey,
                                             final PublicKey burnFromKey,
+                                            final PublicKey burnFromAuthorityKey,
                                             final PublicKey transferSolToKey,
                                             final PublicKey transferMsolToKey,
                                             final PublicKey liqPoolSolLegPdaKey,
@@ -344,7 +346,7 @@ public final class MarinadeFinanceProgram {
       createWrite(stateKey),
       createWrite(lpMintKey),
       createWrite(burnFromKey),
-      burnFromAuthorityKey,
+      createReadOnlySigner(burnFromAuthorityKey),
       createWrite(transferSolToKey),
       createWrite(transferMsolToKey),
       createWrite(liqPoolSolLegPdaKey),
@@ -364,12 +366,12 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator CONFIG_LP_DISCRIMINATOR = toDiscriminator(10, 24, 168, 119, 86, 48, 225, 17);
 
   public static Instruction configLp(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                     final AccountMeta adminAuthorityKey,
                                      final PublicKey stateKey,
+                                     final PublicKey adminAuthorityKey,
                                      final ConfigLpParams params) {
     final var keys = List.of(
       createWrite(stateKey),
-      adminAuthorityKey
+      createReadOnlySigner(adminAuthorityKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
@@ -382,12 +384,12 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator CONFIG_MARINADE_DISCRIMINATOR = toDiscriminator(67, 3, 34, 114, 190, 185, 17, 62);
 
   public static Instruction configMarinade(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                           final AccountMeta adminAuthorityKey,
                                            final PublicKey stateKey,
+                                           final PublicKey adminAuthorityKey,
                                            final ConfigMarinadeParams params) {
     final var keys = List.of(
       createWrite(stateKey),
-      adminAuthorityKey
+      createReadOnlySigner(adminAuthorityKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
@@ -400,10 +402,10 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator ORDER_UNSTAKE_DISCRIMINATOR = toDiscriminator(97, 167, 144, 107, 117, 190, 128, 36);
 
   public static Instruction orderUnstake(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                         final AccountMeta burnMsolAuthorityKey,
                                          final PublicKey stateKey,
                                          final PublicKey msolMintKey,
                                          final PublicKey burnMsolFromKey,
+                                         final PublicKey burnMsolAuthorityKey,
                                          final PublicKey newTicketAccountKey,
                                          final PublicKey clockKey,
                                          final PublicKey rentKey,
@@ -413,7 +415,7 @@ public final class MarinadeFinanceProgram {
       createWrite(stateKey),
       createWrite(msolMintKey),
       createWrite(burnMsolFromKey),
-      burnMsolAuthorityKey,
+      createReadOnlySigner(burnMsolAuthorityKey),
       createWrite(newTicketAccountKey),
       createRead(clockKey),
       createRead(rentKey),
@@ -451,14 +453,14 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator STAKE_RESERVE_DISCRIMINATOR = toDiscriminator(87, 217, 23, 179, 205, 25, 113, 129);
 
   public static Instruction stakeReserve(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                         final AccountMeta stakeAccountKey,
-                                         final AccountMeta rentPayerKey,
                                          final PublicKey stateKey,
                                          final PublicKey validatorListKey,
                                          final PublicKey stakeListKey,
                                          final PublicKey validatorVoteKey,
                                          final PublicKey reservePdaKey,
+                                         final PublicKey stakeAccountKey,
                                          final PublicKey stakeDepositAuthorityKey,
+                                         final PublicKey rentPayerKey,
                                          final PublicKey clockKey,
                                          final PublicKey epochScheduleKey,
                                          final PublicKey rentKey,
@@ -473,9 +475,9 @@ public final class MarinadeFinanceProgram {
       createWrite(stakeListKey),
       createWrite(validatorVoteKey),
       createWrite(reservePdaKey),
-      stakeAccountKey,
+      createWritableSigner(stakeAccountKey),
       createRead(stakeDepositAuthorityKey),
-      rentPayerKey,
+      createWritableSigner(rentPayerKey),
       createRead(clockKey),
       createRead(epochScheduleKey),
       createRead(rentKey),
@@ -536,14 +538,14 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator DEACTIVATE_STAKE_DISCRIMINATOR = toDiscriminator(165, 158, 229, 97, 168, 220, 187, 225);
 
   public static Instruction deactivateStake(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                            final AccountMeta splitStakeAccountKey,
-                                            final AccountMeta splitStakeRentPayerKey,
                                             final PublicKey stateKey,
                                             final PublicKey reservePdaKey,
                                             final PublicKey validatorListKey,
                                             final PublicKey stakeListKey,
                                             final PublicKey stakeAccountKey,
                                             final PublicKey stakeDepositAuthorityKey,
+                                            final PublicKey splitStakeAccountKey,
+                                            final PublicKey splitStakeRentPayerKey,
                                             final PublicKey clockKey,
                                             final PublicKey rentKey,
                                             final PublicKey epochScheduleKey,
@@ -559,8 +561,8 @@ public final class MarinadeFinanceProgram {
       createWrite(stakeListKey),
       createWrite(stakeAccountKey),
       createRead(stakeDepositAuthorityKey),
-      splitStakeAccountKey,
-      splitStakeRentPayerKey,
+      createWritableSigner(splitStakeAccountKey),
+      createWritableSigner(splitStakeRentPayerKey),
       createRead(clockKey),
       createRead(rentKey),
       createRead(epochScheduleKey),
@@ -581,8 +583,8 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator EMERGENCY_UNSTAKE_DISCRIMINATOR = toDiscriminator(123, 69, 168, 195, 183, 213, 199, 214);
 
   public static Instruction emergencyUnstake(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                             final AccountMeta validatorManagerAuthorityKey,
                                              final PublicKey stateKey,
+                                             final PublicKey validatorManagerAuthorityKey,
                                              final PublicKey validatorListKey,
                                              final PublicKey stakeListKey,
                                              final PublicKey stakeAccountKey,
@@ -593,7 +595,7 @@ public final class MarinadeFinanceProgram {
                                              final int validatorIndex) {
     final var keys = List.of(
       createWrite(stateKey),
-      validatorManagerAuthorityKey,
+      createReadOnlySigner(validatorManagerAuthorityKey),
       createWrite(validatorListKey),
       createWrite(stakeListKey),
       createWrite(stakeAccountKey),
@@ -614,15 +616,15 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator PARTIAL_UNSTAKE_DISCRIMINATOR = toDiscriminator(55, 241, 205, 221, 45, 114, 205, 163);
 
   public static Instruction partialUnstake(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                           final AccountMeta validatorManagerAuthorityKey,
-                                           final AccountMeta splitStakeAccountKey,
-                                           final AccountMeta splitStakeRentPayerKey,
                                            final PublicKey stateKey,
+                                           final PublicKey validatorManagerAuthorityKey,
                                            final PublicKey validatorListKey,
                                            final PublicKey stakeListKey,
                                            final PublicKey stakeAccountKey,
                                            final PublicKey stakeDepositAuthorityKey,
                                            final PublicKey reservePdaKey,
+                                           final PublicKey splitStakeAccountKey,
+                                           final PublicKey splitStakeRentPayerKey,
                                            final PublicKey clockKey,
                                            final PublicKey rentKey,
                                            final PublicKey stakeHistoryKey,
@@ -633,14 +635,14 @@ public final class MarinadeFinanceProgram {
                                            final long desiredUnstakeAmount) {
     final var keys = List.of(
       createWrite(stateKey),
-      validatorManagerAuthorityKey,
+      createReadOnlySigner(validatorManagerAuthorityKey),
       createWrite(validatorListKey),
       createWrite(stakeListKey),
       createWrite(stakeAccountKey),
       createRead(stakeDepositAuthorityKey),
       createRead(reservePdaKey),
-      splitStakeAccountKey,
-      splitStakeRentPayerKey,
+      createWritableSigner(splitStakeAccountKey),
+      createWritableSigner(splitStakeRentPayerKey),
       createRead(clockKey),
       createRead(rentKey),
       createRead(stakeHistoryKey),
@@ -704,16 +706,16 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator REDELEGATE_DISCRIMINATOR = toDiscriminator(212, 82, 51, 160, 228, 80, 116, 35);
 
   public static Instruction redelegate(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                       final AccountMeta splitStakeAccountKey,
-                                       final AccountMeta splitStakeRentPayerKey,
-                                       final AccountMeta redelegateStakeAccountKey,
                                        final PublicKey stateKey,
                                        final PublicKey validatorListKey,
                                        final PublicKey stakeListKey,
                                        final PublicKey stakeAccountKey,
                                        final PublicKey stakeDepositAuthorityKey,
                                        final PublicKey reservePdaKey,
+                                       final PublicKey splitStakeAccountKey,
+                                       final PublicKey splitStakeRentPayerKey,
                                        final PublicKey destValidatorAccountKey,
+                                       final PublicKey redelegateStakeAccountKey,
                                        final PublicKey clockKey,
                                        final PublicKey stakeHistoryKey,
                                        final PublicKey stakeConfigKey,
@@ -729,10 +731,10 @@ public final class MarinadeFinanceProgram {
       createWrite(stakeAccountKey),
       createRead(stakeDepositAuthorityKey),
       createRead(reservePdaKey),
-      splitStakeAccountKey,
-      splitStakeRentPayerKey,
+      createWritableSigner(splitStakeAccountKey),
+      createWritableSigner(splitStakeRentPayerKey),
       createRead(destValidatorAccountKey),
-      redelegateStakeAccountKey,
+      createWritableSigner(redelegateStakeAccountKey),
       createRead(clockKey),
       createRead(stakeHistoryKey),
       createRead(stakeConfigKey),
@@ -753,10 +755,10 @@ public final class MarinadeFinanceProgram {
 
   public static final Discriminator PAUSE_DISCRIMINATOR = toDiscriminator(211, 22, 221, 251, 74, 121, 193, 47);
 
-  public static Instruction pause(final AccountMeta invokedMarinadeFinanceProgramMeta, final AccountMeta pauseAuthorityKey, final PublicKey stateKey) {
+  public static Instruction pause(final AccountMeta invokedMarinadeFinanceProgramMeta, final PublicKey stateKey, final PublicKey pauseAuthorityKey) {
     final var keys = List.of(
       createWrite(stateKey),
-      pauseAuthorityKey
+      createReadOnlySigner(pauseAuthorityKey)
     );
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, PAUSE_DISCRIMINATOR);
@@ -764,10 +766,10 @@ public final class MarinadeFinanceProgram {
 
   public static final Discriminator RESUME_DISCRIMINATOR = toDiscriminator(1, 166, 51, 170, 127, 32, 141, 206);
 
-  public static Instruction resume(final AccountMeta invokedMarinadeFinanceProgramMeta, final AccountMeta pauseAuthorityKey, final PublicKey stateKey) {
+  public static Instruction resume(final AccountMeta invokedMarinadeFinanceProgramMeta, final PublicKey stateKey, final PublicKey pauseAuthorityKey) {
     final var keys = List.of(
       createWrite(stateKey),
-      pauseAuthorityKey
+      createReadOnlySigner(pauseAuthorityKey)
     );
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, RESUME_DISCRIMINATOR);
@@ -776,18 +778,18 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator WITHDRAW_STAKE_ACCOUNT_DISCRIMINATOR = toDiscriminator(211, 85, 184, 65, 183, 177, 233, 217);
 
   public static Instruction withdrawStakeAccount(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                                 final AccountMeta burnMsolAuthorityKey,
-                                                 final AccountMeta splitStakeAccountKey,
-                                                 final AccountMeta splitStakeRentPayerKey,
                                                  final PublicKey stateKey,
                                                  final PublicKey msolMintKey,
                                                  final PublicKey burnMsolFromKey,
+                                                 final PublicKey burnMsolAuthorityKey,
                                                  final PublicKey treasuryMsolAccountKey,
                                                  final PublicKey validatorListKey,
                                                  final PublicKey stakeListKey,
                                                  final PublicKey stakeWithdrawAuthorityKey,
                                                  final PublicKey stakeDepositAuthorityKey,
                                                  final PublicKey stakeAccountKey,
+                                                 final PublicKey splitStakeAccountKey,
+                                                 final PublicKey splitStakeRentPayerKey,
                                                  final PublicKey clockKey,
                                                  final PublicKey systemProgramKey,
                                                  final PublicKey tokenProgramKey,
@@ -800,15 +802,15 @@ public final class MarinadeFinanceProgram {
       createWrite(stateKey),
       createWrite(msolMintKey),
       createWrite(burnMsolFromKey),
-      burnMsolAuthorityKey,
+      createWritableSigner(burnMsolAuthorityKey),
       createWrite(treasuryMsolAccountKey),
       createWrite(validatorListKey),
       createWrite(stakeListKey),
       createRead(stakeWithdrawAuthorityKey),
       createRead(stakeDepositAuthorityKey),
       createWrite(stakeAccountKey),
-      splitStakeAccountKey,
-      splitStakeRentPayerKey,
+      createWritableSigner(splitStakeAccountKey),
+      createWritableSigner(splitStakeRentPayerKey),
       createRead(clockKey),
       createRead(systemProgramKey),
       createRead(tokenProgramKey),
@@ -831,17 +833,17 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator REALLOC_VALIDATOR_LIST_DISCRIMINATOR = toDiscriminator(215, 59, 218, 133, 93, 138, 60, 123);
 
   public static Instruction reallocValidatorList(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                                 final AccountMeta adminAuthorityKey,
-                                                 final AccountMeta rentFundsKey,
                                                  final PublicKey stateKey,
+                                                 final PublicKey adminAuthorityKey,
                                                  final PublicKey validatorListKey,
+                                                 final PublicKey rentFundsKey,
                                                  final PublicKey systemProgramKey,
                                                  final int capacity) {
     final var keys = List.of(
       createWrite(stateKey),
-      adminAuthorityKey,
+      createReadOnlySigner(adminAuthorityKey),
       createWrite(validatorListKey),
-      rentFundsKey,
+      createWritableSigner(rentFundsKey),
       createRead(systemProgramKey)
     );
 
@@ -855,17 +857,17 @@ public final class MarinadeFinanceProgram {
   public static final Discriminator REALLOC_STAKE_LIST_DISCRIMINATOR = toDiscriminator(12, 36, 124, 27, 128, 96, 85, 199);
 
   public static Instruction reallocStakeList(final AccountMeta invokedMarinadeFinanceProgramMeta,
-                                             final AccountMeta adminAuthorityKey,
-                                             final AccountMeta rentFundsKey,
                                              final PublicKey stateKey,
+                                             final PublicKey adminAuthorityKey,
                                              final PublicKey stakeListKey,
+                                             final PublicKey rentFundsKey,
                                              final PublicKey systemProgramKey,
                                              final int capacity) {
     final var keys = List.of(
       createWrite(stateKey),
-      adminAuthorityKey,
+      createReadOnlySigner(adminAuthorityKey),
       createWrite(stakeListKey),
-      rentFundsKey,
+      createWritableSigner(rentFundsKey),
       createRead(systemProgramKey)
     );
 

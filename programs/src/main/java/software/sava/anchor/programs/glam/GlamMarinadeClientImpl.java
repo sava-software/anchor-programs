@@ -25,17 +25,15 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   private final GlamFundAccounts glamFundAccounts;
   private final AccountMeta invokedProgram;
   private final AccountMeta feePayer;
-  private final GlamNativeClient glamClient;
   private final MarinadeProgramClient marinadeProgramClient;
 
-  GlamMarinadeClientImpl(final GlamNativeClient glamClient, final MarinadeAccounts marinadeAccounts) {
+  GlamMarinadeClientImpl(final GlamProgramAccountClient glamClient, final MarinadeAccounts marinadeAccounts) {
     this.solanaAccounts = glamClient.solanaAccounts();
     this.marinadeAccounts = marinadeAccounts;
     this.glamFundAccounts = glamClient.fundAccounts();
     this.invokedProgram = glamFundAccounts.glamAccounts().invokedProgram();
     this.feePayer = glamClient.feePayer();
-    this.glamClient = glamClient;
-    this.marinadeProgramClient = MarinadeProgramClient.createClient(solanaAccounts, marinadeAccounts, feePayer);
+    this.marinadeProgramClient = MarinadeProgramClient.createClient(glamClient, marinadeAccounts);
   }
 
   @Override
@@ -49,20 +47,25 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   }
 
   @Override
-  public CompletableFuture<List<AccountInfo<TokenAccount>>> fetchMSolTokenAccounts(final SolanaRpcClient rpcClient) {
-    return glamClient.fetchTokenAccounts(rpcClient, marinadeAccounts.mSolTokenMint());
+  public FundPDA createMarinadeTicket() {
+    return FundPDA.createPDA("ticket", glamFundAccounts.fundPublicKey(), invokedProgram.publicKey());
   }
 
   @Override
-  public FundPDA createMarinadeTicket() {
-    return FundPDA.createPDA("ticket", glamFundAccounts.fundPublicKey(), invokedProgram.publicKey());
+  public CompletableFuture<List<AccountInfo<TokenAccount>>> fetchMSolTokenAccounts(final SolanaRpcClient rpcClient) {
+    return marinadeProgramClient.fetchMSolTokenAccounts(rpcClient);
+  }
+
+  @Override
+  public CompletableFuture<List<AccountInfo<TicketAccountData>>> fetchTicketAccounts(final SolanaRpcClient rpcClient) {
+    return marinadeProgramClient.fetchTicketAccounts(rpcClient);
   }
 
   @Override
   public Instruction marinadeDeposit(final PublicKey mSolTokenAccount, final long lamports) {
     return GlamProgram.marinadeDepositSol(
         invokedProgram,
-        feePayer,
+        feePayer.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         marinadeAccounts.stateProgram(),
@@ -97,7 +100,28 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
                                          final PublicKey mSolTokenAccount,
                                          final PublicKey validatorPublicKey,
                                          final int validatorIndex) {
-    throw new UnsupportedOperationException("TODO: depositStakeAccount");
+    return GlamProgram.marinadeDepositStake(
+        invokedProgram,
+        feePayer.publicKey(),
+        glamFundAccounts.fundPublicKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        marinadeAccounts.stateProgram(),
+        marinadeProgramState.validatorSystem().validatorList().account(),
+        marinadeProgramState.stakeSystem().stakeList().account(),
+        stakeAccount,
+        findDuplicationKey(validatorPublicKey).publicKey(),
+        marinadeAccounts.mSolTokenMint(),
+        marinadeAccounts.mSolTokenMintAuthorityPDA(),
+        mSolTokenAccount,
+        solanaAccounts.clockSysVar(),
+        solanaAccounts.rentSysVar(),
+        marinadeAccounts.marinadeProgram(),
+        solanaAccounts.associatedTokenAccountProgram(),
+        solanaAccounts.systemProgram(),
+        solanaAccounts.tokenProgram(),
+        solanaAccounts.stakeProgram(),
+        validatorIndex
+    );
   }
 
   @Override
@@ -107,7 +131,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
     final var ticketPDA = ticketAccount.pda();
     return GlamProgram.marinadeDelayedUnstake(
         invokedProgram,
-        feePayer,
+        feePayer.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         ticketPDA.publicKey(),
@@ -126,15 +150,10 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
     );
   }
 
-  @Override
-  public CompletableFuture<List<AccountInfo<TicketAccountData>>> fetchTicketAccounts(final SolanaRpcClient rpcClient) {
-    return MarinadeProgramClient.fetchTicketAccounts(rpcClient, marinadeAccounts.marinadeProgram(), glamFundAccounts.treasuryPublicKey());
-  }
-
-  private Instruction marinadeClaim() {
+  private Instruction claimTickets() {
     return GlamProgram.marinadeClaimTickets(
         glamFundAccounts.glamAccounts().invokedProgram(),
-        feePayer,
+        feePayer.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         marinadeAccounts.stateProgram(),
@@ -149,11 +168,11 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
 
   @Override
   public Instruction claimTicket(final PublicKey ticketAccount) {
-    return marinadeClaim().extraAccount(AccountMeta.createWrite(ticketAccount));
+    return claimTickets().extraAccount(AccountMeta.createWrite(ticketAccount));
   }
 
   @Override
   public List<Instruction> claimTickets(final Collection<PublicKey> ticketAccounts) {
-    return List.of(marinadeClaim().extraAccounts(ticketAccounts, AccountMeta.CREATE_WRITE));
+    return List.of(claimTickets().extraAccounts(ticketAccounts, AccountMeta.CREATE_WRITE));
   }
 }

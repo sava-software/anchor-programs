@@ -87,7 +87,7 @@ if [[ "$javaVersion" -ne "$targetJavaVersion" ]]; then
   exit 3
 fi
 
-./gradlew --stacktrace "-PmainClassName=$mainClass" ":$projectName:jlink"
+./gradlew --stacktrace "-PmainClassName=$mainClass" clean ":$projectName:jlink"
 
 vcsRef="$(git rev-parse --short HEAD)"
 readonly vcsRef

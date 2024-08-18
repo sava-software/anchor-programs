@@ -2,6 +2,7 @@ package software.sava.anchor.programs.glam;
 
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
+import software.sava.core.accounts.meta.AccountMeta;
 
 import static software.sava.anchor.programs.glam.GlamFundAccountsRecord.deriveAddress;
 
@@ -17,6 +18,7 @@ public interface GlamFundAccounts {
         signerPublicKey,
         fundPublicKey,
         treasuryPDA,
+        AccountMeta.createWrite(treasuryPDA.publicKey()),
         openFundsPDA
     );
   }
@@ -36,6 +38,8 @@ public interface GlamFundAccounts {
   default PublicKey treasuryPublicKey() {
     return treasuryPDA().publicKey();
   }
+
+  AccountMeta treasuryWriteMeta();
 
   ProgramDerivedAddress openFundsPDA();
 

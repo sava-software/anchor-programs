@@ -2,6 +2,7 @@ package software.sava.anchor.programs.glam;
 
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
+import software.sava.core.accounts.meta.AccountMeta;
 
 import java.util.List;
 
@@ -11,6 +12,7 @@ record GlamFundAccountsRecord(GlamAccounts glamAccounts,
                               PublicKey signerPublicKey,
                               PublicKey fundPublicKey,
                               ProgramDerivedAddress treasuryPDA,
+                              AccountMeta treasuryWriteMeta,
                               ProgramDerivedAddress openFundsPDA) implements GlamFundAccounts {
 
   public static ProgramDerivedAddress deriveAddress(final String name, final PublicKey parent, final PublicKey program) {

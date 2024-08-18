@@ -6,7 +6,6 @@ import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
-import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.accounts.token.TokenAccount;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
@@ -19,27 +18,13 @@ import java.util.concurrent.CompletableFuture;
 
 public interface MarinadeProgramClient {
 
-  static MarinadeProgramClient createClient(final SolanaAccounts solanaAccounts,
-                                            final MarinadeAccounts marinadeAccounts,
-                                            final AccountMeta owner) {
-    return new MarinadeProgramClientImpl(solanaAccounts, marinadeAccounts, owner);
-  }
-
-  static MarinadeProgramClient createClient(final AccountMeta owner) {
-    return createClient(
-        SolanaAccounts.MAIN_NET,
-        MarinadeAccounts.MAIN_NET,
-        owner
-    );
-  }
-
-  static MarinadeProgramClient createClient(final PublicKey owner) {
-    return createClient(AccountMeta.createFeePayer(owner));
-  }
-
-  static MarinadeProgramClient createClient(final NativeProgramAccountClient nativeProgramClient,
+  static MarinadeProgramClient createClient(final NativeProgramAccountClient nativeProgramAccountClient,
                                             final MarinadeAccounts marinadeAccounts) {
-    return createClient(nativeProgramClient.accounts(), marinadeAccounts, nativeProgramClient.owner());
+    return new MarinadeProgramClientImpl(nativeProgramAccountClient, marinadeAccounts);
+  }
+
+  static MarinadeProgramClient createClient(final NativeProgramAccountClient nativeProgramAccountClient) {
+    return createClient(nativeProgramAccountClient, MarinadeAccounts.MAIN_NET);
   }
 
   static CompletableFuture<Long> getMinimumBalanceForTicketAccount(final SolanaRpcClient rpcClient) {

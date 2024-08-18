@@ -1,33 +1,47 @@
 package software.sava.anchor.programs.glam;
 
+import software.sava.anchor.programs.glam.anchor.GlamProgram;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.response.AccountInfo;
+import software.sava.solana.programs.clients.NativeProgramAccountClient;
 import software.sava.solana.programs.stakepool.StakePoolAccounts;
+import software.sava.solana.programs.stakepool.StakePoolProgramClient;
 import software.sava.solana.programs.stakepool.StakePoolState;
-import software.sava.anchor.programs.glam.anchor.GlamProgram;
 
 import static software.sava.solana.programs.stakepool.StakePoolProgramClient.findStakePoolWithdrawAuthority;
 
 final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient {
 
-  private final GlamNativeClient glamNativeClient;
+  private final GlamProgramAccountClient glamProgramAccountClient;
   private final GlamFundAccounts glamFundAccounts;
   private final AccountMeta invokedProgram;
-  private final AccountMeta feePayer;
-  private final SolanaAccounts accounts;
+  private final AccountMeta manager;
+  private final SolanaAccounts solanaAccounts;
   private final StakePoolAccounts stakePoolAccounts;
+  private final StakePoolProgramClient stakePoolProgramClient;
 
-  GlamStakePoolProgramClientImpl(final GlamNativeClient glamNativeClient,
+  GlamStakePoolProgramClientImpl(final GlamProgramAccountClient glamProgramAccountClient,
                                  final StakePoolAccounts stakePoolAccounts) {
-    this.glamNativeClient = glamNativeClient;
-    this.glamFundAccounts = glamNativeClient.fundAccounts();
+    this.glamProgramAccountClient = glamProgramAccountClient;
+    this.glamFundAccounts = glamProgramAccountClient.fundAccounts();
     this.invokedProgram = glamFundAccounts.glamAccounts().invokedProgram();
-    this.feePayer = glamNativeClient.feePayer();
-    this.accounts = glamNativeClient.solanaAccounts();
+    this.manager = glamProgramAccountClient.feePayer();
+    this.solanaAccounts = glamProgramAccountClient.solanaAccounts();
     this.stakePoolAccounts = stakePoolAccounts;
+    this.stakePoolProgramClient = StakePoolProgramClient.createClient(glamProgramAccountClient, stakePoolAccounts);
+  }
+
+  @Override
+  public NativeProgramAccountClient nativeProgramAccountClient() {
+    return glamProgramAccountClient;
+  }
+
+  @Override
+  public StakePoolAccounts stakePoolAccounts() {
+    return stakePoolAccounts;
   }
 
   @Override
@@ -38,7 +52,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
     final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
     return GlamProgram.stakePoolDepositSol(
         invokedProgram,
-        feePayer,
+        manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         stakePoolStateAccountInfo.owner(),
@@ -48,11 +62,60 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         stakePoolState.poolMint(),
         stakePoolState.managerFeeAccount(),
         poolTokenATA,
-        accounts.associatedTokenAccountProgram(),
-        accounts.systemProgram(),
+        solanaAccounts.associatedTokenAccountProgram(),
+        solanaAccounts.systemProgram(),
         stakePoolState.tokenProgramId(),
         lamportsIn
     );
+  }
+
+  @Override
+  public Instruction depositSolWithSlippage(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+                                            final PublicKey poolTokenATA,
+                                            final long lamportsIn,
+                                            final long minimumPoolTokensOut) {
+    throw new UnsupportedOperationException("TODO: depositSolWithSlippage");
+  }
+
+  @Override
+  public Instruction depositStake(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+                                  final PublicKey depositStakeAccount,
+                                  final PublicKey validatorStakeAccount,
+                                  final PublicKey poolTokenATA) {
+    final var stakePoolState = stakePoolStateAccountInfo.data();
+    final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
+    return GlamProgram.stakePoolDepositStake(
+        invokedProgram,
+        manager.publicKey(),
+        glamFundAccounts.fundPublicKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        depositStakeAccount,
+        poolTokenATA,
+        stakePoolState.poolMint(),
+        stakePoolState.managerFeeAccount(),
+        stakePoolState.address(),
+        stakePoolState.stakeDepositAuthority(),
+        stakePoolWithdrawAuthority.publicKey(),
+        stakePoolState.validatorList(),
+        validatorStakeAccount,
+        stakePoolState.reserveStake(),
+        stakePoolStateAccountInfo.owner(),
+        solanaAccounts.clockSysVar(),
+        solanaAccounts.stakeHistorySysVar(),
+        solanaAccounts.associatedTokenAccountProgram(),
+        solanaAccounts.systemProgram(),
+        solanaAccounts.tokenProgram(),
+        solanaAccounts.stakeProgram()
+    );
+  }
+
+  @Override
+  public Instruction depositStakeWithSlippage(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+                                              final PublicKey depositStakeAccount,
+                                              final PublicKey validatorStakeAccount,
+                                              final PublicKey poolTokenATA,
+                                              final long minimumPoolTokensOut) {
+    throw new UnsupportedOperationException("TODO: depositStakeWithSlippage");
   }
 
   @Override
@@ -63,7 +126,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
     final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
     return GlamProgram.stakePoolWithdrawSol(
         invokedProgram,
-        feePayer,
+        manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         stakePoolStateAccountInfo.owner(),
@@ -73,13 +136,40 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         stakePoolState.poolMint(),
         stakePoolState.managerFeeAccount(),
         poolTokenATA,
-        accounts.clockSysVar(),
-        accounts.stakeHistorySysVar(),
-        accounts.systemProgram(),
+        solanaAccounts.clockSysVar(),
+        solanaAccounts.stakeHistorySysVar(),
+        solanaAccounts.systemProgram(),
         stakePoolState.tokenProgramId(),
-        accounts.stakeProgram(),
+        solanaAccounts.stakeProgram(),
         poolTokenAmount
     );
+  }
+
+  @Override
+  public Instruction withdrawSolWithSlippage(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+                                             final PublicKey poolTokenATA,
+                                             final long poolTokenAmount,
+                                             final long lamportsOut) {
+    throw new UnsupportedOperationException("TODO: withdrawSolWithSlippage");
+  }
+
+  @Override
+  public Instruction withdrawStake(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+                                   final PublicKey validatorOrReserveStakeAccount,
+                                   final PublicKey uninitializedStakeAccount,
+                                   final PublicKey stakeAccountWithdrawalAuthority,
+                                   final PublicKey poolTokenATA,
+                                   final long poolTokenAmount) {
+    throw new UnsupportedOperationException("Use withdrawStake with a provided FundPDA stake account.");
+  }
+
+  @Override
+  public Instruction withdrawStake(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+                                   final PublicKey validatorOrReserveStakeAccount,
+                                   final PublicKey uninitializedStakeAccount,
+                                   final PublicKey poolTokenATA,
+                                   final long poolTokenAmount) {
+    throw new UnsupportedOperationException("Use withdrawStake with a provided FundPDA stake account.");
   }
 
   @Override
@@ -92,7 +182,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
     final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
     return GlamProgram.stakePoolWithdrawStake(
         invokedProgram,
-        feePayer,
+        manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         stakeAccountPDA.pda().publicKey(),
@@ -104,13 +194,39 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         validatorOrReserveStakeAccount,
         poolTokenATA,
         stakePoolStateAccountInfo.owner(),
-        accounts.clockSysVar(),
-        accounts.systemProgram(),
+        solanaAccounts.clockSysVar(),
+        solanaAccounts.systemProgram(),
         stakePoolState.tokenProgramId(),
-        accounts.stakeProgram(),
+        solanaAccounts.stakeProgram(),
         poolTokenAmount,
         stakeAccountPDA.accountId(),
         stakeAccountPDA.pda().nonce()
     );
+  }
+
+  @Override
+  public Instruction withdrawStakeWithSlippage(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+                                               final PublicKey validatorOrReserveStakeAccount,
+                                               final PublicKey uninitializedStakeAccount,
+                                               final PublicKey stakeAccountWithdrawalAuthority,
+                                               final PublicKey poolTokenATA,
+                                               final long poolTokenAmount,
+                                               final long lamportsOut) {
+    throw new UnsupportedOperationException("TODO: withdrawStakeWithSlippage");
+  }
+
+  @Override
+  public Instruction withdrawStakeWithSlippage(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+                                               final PublicKey validatorOrReserveStakeAccount,
+                                               final PublicKey uninitializedStakeAccount,
+                                               final PublicKey poolTokenATA,
+                                               final long poolTokenAmount,
+                                               final long lamportsOut) {
+    throw new UnsupportedOperationException("TODO: withdrawStakeWithSlippage");
+  }
+
+  @Override
+  public Instruction updateStakePoolBalance(final AccountInfo<StakePoolState> stakePoolStateAccountInfo) {
+    return stakePoolProgramClient.updateStakePoolBalance(stakePoolStateAccountInfo);
   }
 }

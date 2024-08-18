@@ -7,7 +7,6 @@ import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
-import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.accounts.token.TokenAccount;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
@@ -21,18 +20,17 @@ import java.util.concurrent.CompletableFuture;
 
 final class MarinadeProgramClientImpl implements MarinadeProgramClient {
 
-  private final NativeProgramAccountClient nativeProgramClient;
+  private final NativeProgramAccountClient nativeProgramAccountClient;
   private final SolanaAccounts solanaAccounts;
   private final MarinadeAccounts marinadeAccounts;
-  private final AccountMeta owner;
+  private final PublicKey owner;
 
-  MarinadeProgramClientImpl(final SolanaAccounts solanaAccounts,
-                            final MarinadeAccounts marinadeAccounts,
-                            final AccountMeta owner) {
-    this.nativeProgramClient = NativeProgramAccountClient.createClient(solanaAccounts, owner.publicKey());
-    this.solanaAccounts = solanaAccounts;
+  MarinadeProgramClientImpl(final NativeProgramAccountClient nativeProgramAccountClient,
+                            final MarinadeAccounts marinadeAccounts) {
+    this.nativeProgramAccountClient = nativeProgramAccountClient;
+    this.solanaAccounts = nativeProgramAccountClient.solanaAccounts();
     this.marinadeAccounts = marinadeAccounts;
-    this.owner = owner;
+    this.owner = nativeProgramAccountClient.ownerPublicKey();
   }
 
   @Override
@@ -47,7 +45,7 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
 
   @Override
   public CompletableFuture<List<AccountInfo<TokenAccount>>> fetchMSolTokenAccounts(final SolanaRpcClient rpcClient) {
-    return rpcClient.getTokenAccountsForTokenMintByOwner(owner.publicKey(), marinadeAccounts.mSolTokenMint());
+    return rpcClient.getTokenAccountsForTokenMintByOwner(owner, marinadeAccounts.mSolTokenMint());
   }
 
   @Override
@@ -112,7 +110,7 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
 
   @Override
   public Instruction createTicketAccountIx(final PublicKey ticketAccount, final long minRentLamports) {
-    return nativeProgramClient.createAccount(
+    return nativeProgramAccountClient.createAccount(
         ticketAccount,
         minRentLamports,
         TicketAccountData.BYTES,
@@ -123,7 +121,7 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
   @Override
   public AccountWithSeed createOffCurveAccountWithSeed(final String asciiSeed) {
     return PublicKey.createOffCurveAccountWithAsciiSeed(
-        owner.publicKey(),
+        owner,
         asciiSeed,
         marinadeAccounts.marinadeProgram()
     );
@@ -131,7 +129,7 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
 
   @Override
   public Instruction createTicketAccountWithSeedIx(final AccountWithSeed accountWithSeed, final long minRentLamports) {
-    return nativeProgramClient.createAccountWithSeed(
+    return nativeProgramAccountClient.createAccountWithSeed(
         accountWithSeed,
         minRentLamports,
         TicketAccountData.BYTES,
@@ -159,7 +157,7 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
 
   @Override
   public CompletableFuture<List<AccountInfo<TicketAccountData>>> fetchTicketAccounts(final SolanaRpcClient rpcClient) {
-    return MarinadeProgramClient.fetchTicketAccounts(rpcClient, marinadeAccounts.marinadeProgram(), owner.publicKey());
+    return MarinadeProgramClient.fetchTicketAccounts(rpcClient, marinadeAccounts.marinadeProgram(), owner);
   }
 
   @Override
@@ -169,7 +167,7 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
         marinadeAccounts.stateProgram(),
         marinadeAccounts.treasuryReserveSolPDA(),
         ticketAccount,
-        owner.publicKey(),
+        owner,
         solanaAccounts.clockSysVar(),
         solanaAccounts.systemProgram()
     );

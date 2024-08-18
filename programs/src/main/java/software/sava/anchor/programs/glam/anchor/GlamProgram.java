@@ -14,6 +14,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
+import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
+import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
@@ -24,17 +26,17 @@ public final class GlamProgram {
   public static final Discriminator INITIALIZE_FUND_DISCRIMINATOR = toDiscriminator(212, 42, 24, 245, 146, 141, 78, 198);
 
   public static Instruction initializeFund(final AccountMeta invokedGlamProgramMeta,
-                                           final AccountMeta managerKey,
                                            final PublicKey fundKey,
                                            final PublicKey openfundsKey,
                                            final PublicKey treasuryKey,
+                                           final PublicKey managerKey,
                                            final PublicKey systemProgramKey,
                                            final FundModel fund) {
     final var keys = List.of(
       createWrite(fundKey),
       createWrite(openfundsKey),
       createWrite(treasuryKey),
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(systemProgramKey)
     );
 
@@ -48,10 +50,10 @@ public final class GlamProgram {
   public static final Discriminator ADD_SHARE_CLASS_DISCRIMINATOR = toDiscriminator(34, 49, 47, 6, 204, 166, 51, 204);
 
   public static Instruction addShareClass(final AccountMeta invokedGlamProgramMeta,
-                                          final AccountMeta managerKey,
                                           final PublicKey shareClassMintKey,
                                           final PublicKey fundKey,
                                           final PublicKey openfundsKey,
+                                          final PublicKey managerKey,
                                           final PublicKey systemProgramKey,
                                           final PublicKey tokenProgramKey,
                                           final ShareClassModel shareClassMetadata) {
@@ -59,7 +61,7 @@ public final class GlamProgram {
       createWrite(shareClassMintKey),
       createWrite(fundKey),
       createWrite(openfundsKey),
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(systemProgramKey),
       createRead(tokenProgramKey)
     );
@@ -74,12 +76,12 @@ public final class GlamProgram {
   public static final Discriminator UPDATE_FUND_DISCRIMINATOR = toDiscriminator(132, 171, 13, 83, 34, 122, 82, 155);
 
   public static Instruction updateFund(final AccountMeta invokedGlamProgramMeta,
-                                       final AccountMeta signerKey,
                                        final PublicKey fundKey,
+                                       final PublicKey signerKey,
                                        final FundModel fund) {
     final var keys = List.of(
       createWrite(fundKey),
-      signerKey
+      createWritableSigner(signerKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(fund)];
@@ -91,10 +93,10 @@ public final class GlamProgram {
 
   public static final Discriminator CLOSE_FUND_DISCRIMINATOR = toDiscriminator(230, 183, 3, 112, 236, 252, 5, 185);
 
-  public static Instruction closeFund(final AccountMeta invokedGlamProgramMeta, final AccountMeta managerKey, final PublicKey fundKey) {
+  public static Instruction closeFund(final AccountMeta invokedGlamProgramMeta, final PublicKey fundKey, final PublicKey managerKey) {
     final var keys = List.of(
       createWrite(fundKey),
-      managerKey
+      createWritableSigner(managerKey)
     );
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, CLOSE_FUND_DISCRIMINATOR);
@@ -103,7 +105,6 @@ public final class GlamProgram {
   public static final Discriminator SUBSCRIBE_DISCRIMINATOR = toDiscriminator(254, 28, 191, 138, 156, 179, 183, 53);
 
   public static Instruction subscribe(final AccountMeta invokedGlamProgramMeta,
-                                      final AccountMeta signerKey,
                                       final PublicKey fundKey,
                                       final PublicKey treasuryKey,
                                       final PublicKey shareClassKey,
@@ -111,6 +112,7 @@ public final class GlamProgram {
                                       final PublicKey assetKey,
                                       final PublicKey treasuryAtaKey,
                                       final PublicKey signerAssetAtaKey,
+                                      final PublicKey signerKey,
                                       final PublicKey systemProgramKey,
                                       final PublicKey associatedTokenProgramKey,
                                       final PublicKey tokenProgramKey,
@@ -125,7 +127,7 @@ public final class GlamProgram {
       createRead(assetKey),
       createWrite(treasuryAtaKey),
       createWrite(signerAssetAtaKey),
-      signerKey,
+      createWritableSigner(signerKey),
       createRead(systemProgramKey),
       createRead(associatedTokenProgramKey),
       createRead(tokenProgramKey),
@@ -144,10 +146,10 @@ public final class GlamProgram {
   public static final Discriminator REDEEM_DISCRIMINATOR = toDiscriminator(184, 12, 86, 149, 70, 196, 97, 225);
 
   public static Instruction redeem(final AccountMeta invokedGlamProgramMeta,
-                                   final AccountMeta signerKey,
                                    final PublicKey fundKey,
                                    final PublicKey shareClassKey,
                                    final PublicKey signerShareAtaKey,
+                                   final PublicKey signerKey,
                                    final PublicKey treasuryKey,
                                    final PublicKey systemProgramKey,
                                    final PublicKey tokenProgramKey,
@@ -159,7 +161,7 @@ public final class GlamProgram {
       createRead(fundKey),
       createWrite(shareClassKey),
       createWrite(signerShareAtaKey),
-      signerKey,
+      createWritableSigner(signerKey),
       createWrite(treasuryKey),
       createRead(systemProgramKey),
       createRead(tokenProgramKey),
@@ -180,12 +182,12 @@ public final class GlamProgram {
   public static final Discriminator DRIFT_INITIALIZE_DISCRIMINATOR = toDiscriminator(21, 21, 69, 55, 41, 129, 44, 198);
 
   public static Instruction driftInitialize(final AccountMeta invokedGlamProgramMeta,
-                                            final AccountMeta managerKey,
                                             final PublicKey fundKey,
                                             final PublicKey treasuryKey,
                                             final PublicKey userStatsKey,
                                             final PublicKey userKey,
                                             final PublicKey stateKey,
+                                            final PublicKey managerKey,
                                             final PublicKey driftProgramKey,
                                             final PublicKey rentKey,
                                             final PublicKey systemProgramKey,
@@ -196,7 +198,7 @@ public final class GlamProgram {
       createWrite(userStatsKey),
       createWrite(userKey),
       createWrite(stateKey),
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(driftProgramKey),
       createRead(rentKey),
       createRead(systemProgramKey)
@@ -212,17 +214,17 @@ public final class GlamProgram {
   public static final Discriminator DRIFT_UPDATE_DELEGATED_TRADER_DISCRIMINATOR = toDiscriminator(98, 66, 206, 146, 109, 215, 206, 57);
 
   public static Instruction driftUpdateDelegatedTrader(final AccountMeta invokedGlamProgramMeta,
-                                                       final AccountMeta managerKey,
                                                        final PublicKey fundKey,
                                                        final PublicKey treasuryKey,
                                                        final PublicKey userKey,
+                                                       final PublicKey managerKey,
                                                        final PublicKey driftProgramKey,
                                                        final PublicKey trader) {
     final var keys = List.of(
       createRead(fundKey),
       createRead(treasuryKey),
       createWrite(userKey),
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(driftProgramKey)
     );
 
@@ -236,7 +238,6 @@ public final class GlamProgram {
   public static final Discriminator DRIFT_DEPOSIT_DISCRIMINATOR = toDiscriminator(252, 63, 250, 201, 98, 55, 130, 12);
 
   public static Instruction driftDeposit(final AccountMeta invokedGlamProgramMeta,
-                                         final AccountMeta managerKey,
                                          final PublicKey fundKey,
                                          final PublicKey treasuryKey,
                                          final PublicKey userStatsKey,
@@ -244,6 +245,7 @@ public final class GlamProgram {
                                          final PublicKey stateKey,
                                          final PublicKey treasuryAtaKey,
                                          final PublicKey driftAtaKey,
+                                         final PublicKey managerKey,
                                          final PublicKey driftProgramKey,
                                          final PublicKey tokenProgramKey,
                                          final long amount) {
@@ -255,7 +257,7 @@ public final class GlamProgram {
       createWrite(stateKey),
       createWrite(treasuryAtaKey),
       createWrite(driftAtaKey),
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(driftProgramKey),
       createRead(tokenProgramKey)
     );
@@ -270,7 +272,6 @@ public final class GlamProgram {
   public static final Discriminator DRIFT_WITHDRAW_DISCRIMINATOR = toDiscriminator(86, 59, 186, 123, 183, 181, 234, 137);
 
   public static Instruction driftWithdraw(final AccountMeta invokedGlamProgramMeta,
-                                          final AccountMeta managerKey,
                                           final PublicKey fundKey,
                                           final PublicKey treasuryKey,
                                           final PublicKey userStatsKey,
@@ -279,6 +280,7 @@ public final class GlamProgram {
                                           final PublicKey driftSignerKey,
                                           final PublicKey treasuryAtaKey,
                                           final PublicKey driftAtaKey,
+                                          final PublicKey managerKey,
                                           final PublicKey driftProgramKey,
                                           final PublicKey tokenProgramKey,
                                           final long amount) {
@@ -291,7 +293,7 @@ public final class GlamProgram {
       createRead(driftSignerKey),
       createWrite(treasuryAtaKey),
       createWrite(driftAtaKey),
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(driftProgramKey),
       createRead(tokenProgramKey)
     );
@@ -306,12 +308,12 @@ public final class GlamProgram {
   public static final Discriminator DRIFT_CLOSE_DISCRIMINATOR = toDiscriminator(23, 133, 219, 157, 137, 34, 93, 58);
 
   public static Instruction driftClose(final AccountMeta invokedGlamProgramMeta,
-                                       final AccountMeta managerKey,
                                        final PublicKey fundKey,
                                        final PublicKey treasuryKey,
                                        final PublicKey userStatsKey,
                                        final PublicKey userKey,
                                        final PublicKey stateKey,
+                                       final PublicKey managerKey,
                                        final PublicKey driftProgramKey,
                                        final PublicKey systemProgramKey) {
     final var keys = List.of(
@@ -320,7 +322,7 @@ public final class GlamProgram {
       createWrite(userStatsKey),
       createWrite(userKey),
       createWrite(stateKey),
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(driftProgramKey),
       createRead(systemProgramKey)
     );
@@ -331,7 +333,7 @@ public final class GlamProgram {
   public static final Discriminator MARINADE_DEPOSIT_SOL_DISCRIMINATOR = toDiscriminator(64, 140, 200, 40, 56, 218, 181, 68);
 
   public static Instruction marinadeDepositSol(final AccountMeta invokedGlamProgramMeta,
-                                               final AccountMeta managerKey,
+                                               final PublicKey managerKey,
                                                final PublicKey fundKey,
                                                final PublicKey treasuryKey,
                                                final PublicKey marinadeStateKey,
@@ -348,7 +350,7 @@ public final class GlamProgram {
                                                final PublicKey tokenProgramKey,
                                                final long lamports) {
     final var keys = List.of(
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createWrite(marinadeStateKey),
@@ -375,7 +377,7 @@ public final class GlamProgram {
   public static final Discriminator MARINADE_DEPOSIT_STAKE_DISCRIMINATOR = toDiscriminator(69, 207, 194, 211, 186, 55, 199, 130);
 
   public static Instruction marinadeDepositStake(final AccountMeta invokedGlamProgramMeta,
-                                                 final AccountMeta managerKey,
+                                                 final PublicKey managerKey,
                                                  final PublicKey fundKey,
                                                  final PublicKey treasuryKey,
                                                  final PublicKey marinadeStateKey,
@@ -395,7 +397,7 @@ public final class GlamProgram {
                                                  final PublicKey stakeProgramKey,
                                                  final int validatorIdx) {
     final var keys = List.of(
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createWrite(marinadeStateKey),
@@ -425,7 +427,7 @@ public final class GlamProgram {
   public static final Discriminator MARINADE_LIQUID_UNSTAKE_DISCRIMINATOR = toDiscriminator(29, 146, 34, 21, 26, 68, 141, 161);
 
   public static Instruction marinadeLiquidUnstake(final AccountMeta invokedGlamProgramMeta,
-                                                  final AccountMeta managerKey,
+                                                  final PublicKey managerKey,
                                                   final PublicKey fundKey,
                                                   final PublicKey treasuryKey,
                                                   final PublicKey marinadeStateKey,
@@ -440,7 +442,7 @@ public final class GlamProgram {
                                                   final PublicKey systemProgramKey,
                                                   final long msolAmount) {
     final var keys = List.of(
-      managerKey,
+      createReadOnlySigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createWrite(marinadeStateKey),
@@ -465,7 +467,7 @@ public final class GlamProgram {
   public static final Discriminator MARINADE_DELAYED_UNSTAKE_DISCRIMINATOR = toDiscriminator(117, 66, 3, 222, 230, 94, 129, 95);
 
   public static Instruction marinadeDelayedUnstake(final AccountMeta invokedGlamProgramMeta,
-                                                   final AccountMeta managerKey,
+                                                   final PublicKey managerKey,
                                                    final PublicKey fundKey,
                                                    final PublicKey treasuryKey,
                                                    final PublicKey ticketKey,
@@ -482,7 +484,7 @@ public final class GlamProgram {
                                                    final String ticketId,
                                                    final int bump) {
     final var keys = List.of(
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createWrite(ticketKey),
@@ -511,7 +513,7 @@ public final class GlamProgram {
   public static final Discriminator MARINADE_CLAIM_TICKETS_DISCRIMINATOR = toDiscriminator(14, 146, 182, 30, 205, 47, 134, 189);
 
   public static Instruction marinadeClaimTickets(final AccountMeta invokedGlamProgramMeta,
-                                                 final AccountMeta managerKey,
+                                                 final PublicKey managerKey,
                                                  final PublicKey fundKey,
                                                  final PublicKey treasuryKey,
                                                  final PublicKey marinadeStateKey,
@@ -522,7 +524,7 @@ public final class GlamProgram {
                                                  final PublicKey tokenProgramKey,
                                                  final PublicKey marinadeProgramKey) {
     final var keys = List.of(
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createWrite(marinadeStateKey),
@@ -540,7 +542,7 @@ public final class GlamProgram {
   public static final Discriminator STAKE_POOL_DEPOSIT_SOL_DISCRIMINATOR = toDiscriminator(147, 187, 91, 151, 158, 187, 247, 79);
 
   public static Instruction stakePoolDepositSol(final AccountMeta invokedGlamProgramMeta,
-                                                final AccountMeta managerKey,
+                                                final PublicKey managerKey,
                                                 final PublicKey fundKey,
                                                 final PublicKey treasuryKey,
                                                 final PublicKey stakePoolProgramKey,
@@ -555,7 +557,7 @@ public final class GlamProgram {
                                                 final PublicKey tokenProgramKey,
                                                 final long lamports) {
     final var keys = List.of(
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createRead(stakePoolProgramKey),
@@ -580,7 +582,7 @@ public final class GlamProgram {
   public static final Discriminator STAKE_POOL_DEPOSIT_STAKE_DISCRIMINATOR = toDiscriminator(212, 158, 195, 174, 179, 105, 9, 97);
 
   public static Instruction stakePoolDepositStake(final AccountMeta invokedGlamProgramMeta,
-                                                  final AccountMeta managerKey,
+                                                  final PublicKey managerKey,
                                                   final PublicKey fundKey,
                                                   final PublicKey treasuryKey,
                                                   final PublicKey treasuryStakeAccountKey,
@@ -601,7 +603,7 @@ public final class GlamProgram {
                                                   final PublicKey tokenProgramKey,
                                                   final PublicKey stakeProgramKey) {
     final var keys = List.of(
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createWrite(treasuryStakeAccountKey),
@@ -629,7 +631,7 @@ public final class GlamProgram {
   public static final Discriminator STAKE_POOL_WITHDRAW_SOL_DISCRIMINATOR = toDiscriminator(179, 100, 204, 0, 192, 46, 233, 181);
 
   public static Instruction stakePoolWithdrawSol(final AccountMeta invokedGlamProgramMeta,
-                                                 final AccountMeta managerKey,
+                                                 final PublicKey managerKey,
                                                  final PublicKey fundKey,
                                                  final PublicKey treasuryKey,
                                                  final PublicKey stakePoolProgramKey,
@@ -646,7 +648,7 @@ public final class GlamProgram {
                                                  final PublicKey stakeProgramKey,
                                                  final long poolTokenAmount) {
     final var keys = List.of(
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createRead(stakePoolProgramKey),
@@ -673,7 +675,7 @@ public final class GlamProgram {
   public static final Discriminator STAKE_POOL_WITHDRAW_STAKE_DISCRIMINATOR = toDiscriminator(7, 70, 250, 22, 49, 1, 143, 1);
 
   public static Instruction stakePoolWithdrawStake(final AccountMeta invokedGlamProgramMeta,
-                                                   final AccountMeta managerKey,
+                                                   final PublicKey managerKey,
                                                    final PublicKey fundKey,
                                                    final PublicKey treasuryKey,
                                                    final PublicKey treasuryStakeAccountKey,
@@ -693,7 +695,7 @@ public final class GlamProgram {
                                                    final String stakeAccountId,
                                                    final int stakeAccountBump) {
     final var keys = List.of(
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createWrite(treasuryStakeAccountKey),
@@ -725,7 +727,7 @@ public final class GlamProgram {
   public static final Discriminator INITIALIZE_AND_DELEGATE_STAKE_DISCRIMINATOR = toDiscriminator(71, 101, 230, 157, 50, 23, 47, 1);
 
   public static Instruction initializeAndDelegateStake(final AccountMeta invokedGlamProgramMeta,
-                                                       final AccountMeta managerKey,
+                                                       final PublicKey managerKey,
                                                        final PublicKey fundKey,
                                                        final PublicKey treasuryKey,
                                                        final PublicKey treasuryStakeAccountKey,
@@ -740,7 +742,7 @@ public final class GlamProgram {
                                                        final String stakeAccountId,
                                                        final int stakeAccountBump) {
     final var keys = List.of(
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createWrite(treasuryStakeAccountKey),
@@ -767,13 +769,13 @@ public final class GlamProgram {
   public static final Discriminator DEACTIVATE_STAKE_ACCOUNTS_DISCRIMINATOR = toDiscriminator(58, 18, 6, 22, 226, 216, 161, 193);
 
   public static Instruction deactivateStakeAccounts(final AccountMeta invokedGlamProgramMeta,
-                                                    final AccountMeta managerKey,
+                                                    final PublicKey managerKey,
                                                     final PublicKey fundKey,
                                                     final PublicKey treasuryKey,
                                                     final PublicKey clockKey,
                                                     final PublicKey stakeProgramKey) {
     final var keys = List.of(
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createRead(clockKey),
@@ -786,14 +788,14 @@ public final class GlamProgram {
   public static final Discriminator WITHDRAW_FROM_STAKE_ACCOUNTS_DISCRIMINATOR = toDiscriminator(93, 209, 100, 231, 169, 160, 192, 197);
 
   public static Instruction withdrawFromStakeAccounts(final AccountMeta invokedGlamProgramMeta,
-                                                      final AccountMeta managerKey,
+                                                      final PublicKey managerKey,
                                                       final PublicKey fundKey,
                                                       final PublicKey treasuryKey,
                                                       final PublicKey clockKey,
                                                       final PublicKey stakeHistoryKey,
                                                       final PublicKey stakeProgramKey) {
     final var keys = List.of(
-      managerKey,
+      createWritableSigner(managerKey),
       createRead(fundKey),
       createWrite(treasuryKey),
       createRead(clockKey),
@@ -807,7 +809,6 @@ public final class GlamProgram {
   public static final Discriminator JUPITER_SWAP_DISCRIMINATOR = toDiscriminator(116, 207, 0, 196, 252, 120, 243, 18);
 
   public static Instruction jupiterSwap(final AccountMeta invokedGlamProgramMeta,
-                                        final AccountMeta signerKey,
                                         final PublicKey fundKey,
                                         final PublicKey treasuryKey,
                                         // input_treasury_ata to input_signer_ata
@@ -817,6 +818,7 @@ public final class GlamProgram {
                                         final PublicKey outputTreasuryAtaKey,
                                         final PublicKey inputMintKey,
                                         final PublicKey outputMintKey,
+                                        final PublicKey signerKey,
                                         final PublicKey systemProgramKey,
                                         final PublicKey jupiterProgramKey,
                                         final PublicKey associatedTokenProgramKey,
@@ -833,7 +835,7 @@ public final class GlamProgram {
       createWrite(outputTreasuryAtaKey),
       createRead(inputMintKey),
       createRead(outputMintKey),
-      signerKey,
+      createWritableSigner(signerKey),
       createRead(systemProgramKey),
       createRead(jupiterProgramKey),
       createRead(associatedTokenProgramKey),
@@ -853,11 +855,11 @@ public final class GlamProgram {
   public static final Discriminator WSOL_WRAP_DISCRIMINATOR = toDiscriminator(26, 2, 139, 159, 239, 195, 193, 9);
 
   public static Instruction wsolWrap(final AccountMeta invokedGlamProgramMeta,
-                                     final AccountMeta signerKey,
                                      final PublicKey fundKey,
                                      final PublicKey treasuryKey,
                                      final PublicKey treasuryWsolAtaKey,
                                      final PublicKey wsolMintKey,
+                                     final PublicKey signerKey,
                                      final PublicKey systemProgramKey,
                                      final PublicKey tokenProgramKey,
                                      final PublicKey associatedTokenProgramKey,
@@ -867,7 +869,7 @@ public final class GlamProgram {
       createWrite(treasuryKey),
       createWrite(treasuryWsolAtaKey),
       createRead(wsolMintKey),
-      signerKey,
+      createWritableSigner(signerKey),
       createRead(systemProgramKey),
       createRead(tokenProgramKey),
       createRead(associatedTokenProgramKey)
@@ -883,18 +885,18 @@ public final class GlamProgram {
   public static final Discriminator WSOL_UNWRAP_DISCRIMINATOR = toDiscriminator(123, 189, 16, 96, 233, 186, 54, 215);
 
   public static Instruction wsolUnwrap(final AccountMeta invokedGlamProgramMeta,
-                                       final AccountMeta signerKey,
                                        final PublicKey fundKey,
                                        final PublicKey treasuryKey,
                                        final PublicKey treasuryWsolAtaKey,
                                        final PublicKey wsolMintKey,
+                                       final PublicKey signerKey,
                                        final PublicKey tokenProgramKey) {
     final var keys = List.of(
       createRead(fundKey),
       createWrite(treasuryKey),
       createWrite(treasuryWsolAtaKey),
       createRead(wsolMintKey),
-      signerKey,
+      createWritableSigner(signerKey),
       createRead(tokenProgramKey)
     );
 

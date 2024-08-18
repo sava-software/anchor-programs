@@ -1,15 +1,12 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.core.accounts.ProgramDerivedAddress;
+import software.sava.anchor.programs.glam.anchor.types.FundAccount;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
-import software.sava.core.accounts.meta.AccountMeta;
-import software.sava.core.accounts.token.TokenAccount;
 import software.sava.core.tx.Instruction;
-import software.sava.core.tx.Transaction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
-import software.sava.anchor.programs.glam.anchor.types.FundAccount;
+import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 import java.util.Collection;
 import java.util.List;
@@ -17,17 +14,17 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
-public interface GlamNativeClient {
+public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
-  static GlamNativeClient createClient(final SolanaAccounts solanaAccounts,
-                                       final GlamAccounts glamAccounts,
-                                       final PublicKey signerPublicKey,
-                                       final PublicKey fundPublicKey) {
-    return new GlamNativeClientImpl(solanaAccounts, GlamFundAccounts.createAccounts(glamAccounts, signerPublicKey, fundPublicKey));
+  static GlamProgramAccountClient createClient(final SolanaAccounts solanaAccounts,
+                                               final GlamAccounts glamAccounts,
+                                               final PublicKey signerPublicKey,
+                                               final PublicKey fundPublicKey) {
+    return new GlamProgramAccountClientImpl(solanaAccounts, GlamFundAccounts.createAccounts(glamAccounts, signerPublicKey, fundPublicKey));
   }
 
-  static GlamNativeClient createClient(final PublicKey signerPublicKey,
-                                       final PublicKey fundPublicKey) {
+  static GlamProgramAccountClient createClient(final PublicKey signerPublicKey,
+                                               final PublicKey fundPublicKey) {
     return createClient(SolanaAccounts.MAIN_NET, GlamAccounts.MAIN_NET, signerPublicKey, fundPublicKey);
   }
 
@@ -63,34 +60,7 @@ public interface GlamNativeClient {
         .collect(Collectors.toMap(AccountInfo::pubKey, AccountInfo::data));
   }
 
-  SolanaAccounts solanaAccounts();
-
   GlamFundAccounts fundAccounts();
-
-  AccountMeta feePayer();
-
-  ProgramDerivedAddress wrappedSolPDA();
-
-  ProgramDerivedAddress findAssociatedTokenProgramAddress(final PublicKey tokenMintAddress);
-
-  Transaction createTransaction(final Instruction instruction);
-
-  Transaction createTransaction(final List<Instruction> instructions);
-
-  Transaction createTransaction(final int computeUnitLimit,
-                                final long microLamportComputeUnitPrice,
-                                final Instruction instruction);
-
-  CompletableFuture<List<AccountInfo<TokenAccount>>> fetchTokenAccounts(final SolanaRpcClient rpcClient,
-                                                                        final PublicKey tokenMintAddress);
-
-  CompletableFuture<List<AccountInfo<TokenAccount>>> fetchTokenAccounts(final SolanaRpcClient rpcClient);
-
-  Instruction wrapSol(final long lamports);
-
-  Instruction unWrapSol();
-
-  Instruction createTreasuryATA(final PublicKey programDerivedAddress, final PublicKey mint);
 
   FundPDA createStakeAccountPDA();
 
