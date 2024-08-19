@@ -16,6 +16,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Checkout Anchor Source Generator
+        uses: actions/checkout@v4
+        with:
+          repository: sava-software/anchor-src-gen
+          token: ${{ secrets.GH_READ_PROJECTS }}
+          path: anchor-src-gen
+
       - uses: oracle-actions/setup-java@v1
         if: ${{ vars.GRADLE_JAVA_VERSION != vars.JAVA_VERSION }}
         with:
@@ -24,6 +31,7 @@ jobs:
 
       - run: |
           printf "org.gradle.java.home=%s" "$JAVA_HOME" > gradle.properties
+          printf "org.gradle.java.home=%s" "$JAVA_HOME" > anchor-src-gen/gradle.properties
           java --version
         if: ${{ vars.GRADLE_JAVA_VERSION != vars.JAVA_VERSION }}
 
@@ -31,13 +39,6 @@ jobs:
         with:
           website: jdk.java.net
           release: ${{ vars.JAVA_VERSION }}
-
-      - name: Checkout Anchor Source Generator
-        uses: actions/checkout@v4
-        with:
-          repository: sava-software/anchor-src-gen
-          token: ${{ secrets.GH_READ_PROJECTS }}
-          path: anchor-src-gen
 
       - uses: gradle/actions/wrapper-validation@v3
 
