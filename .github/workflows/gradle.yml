@@ -43,7 +43,9 @@ jobs:
 
       - name: Generate Source & Check
         run: |
-          ./anchor-src-gen/genSrc.sh --tjv="${{ vars.JAVA_VERSION }}" --tl=2 --bdm=200 --nt=5 --sd="programs/src/main/java" --bp="software.sava.anchor.programs" --mn="software.sava.anchor_programs" --rpc="${{ secrets.RPC_URL }}"
+          cd ./anchor-src-gen
+          ./genSrc.sh --tjv="${{ vars.JAVA_VERSION }}" --tl=2 --bdm=200 --nt=5 --sd="../programs/src/main/java" --bp="software.sava.anchor.programs" --mn="software.sava.anchor_programs" --rpc="${{ secrets.RPC_URL }}"
+          cd ..
           ./gradlew -PtargetJava=${{ vars.JAVA_VERSION }} check --stacktrace
         env:
           GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
