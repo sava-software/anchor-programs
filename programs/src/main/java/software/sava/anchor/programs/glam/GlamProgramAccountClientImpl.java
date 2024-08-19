@@ -277,7 +277,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction authorizeStakeAccount(final PublicKey stakeAccount,
                                            final PublicKey stakeOrWithdrawAuthority,
                                            final StakeProgram.StakeAuthorize stakeAuthorize) {
-    return nativeProgramAccountClient.authorizeStakeAccount(stakeAccount, stakeOrWithdrawAuthority,  stakeAuthorize);
+    return nativeProgramAccountClient.authorizeStakeAccount(stakeAccount, stakeOrWithdrawAuthority, stakeAuthorize);
   }
 
   @Override
@@ -285,14 +285,14 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                                   final PublicKey stakeOrWithdrawAuthority,
                                                   final PublicKey newStakeOrWithdrawAuthority,
                                                   final StakeProgram.StakeAuthorize stakeAuthorize) {
-    return nativeProgramAccountClient.authorizeStakeAccountChecked(stakeAccount, stakeOrWithdrawAuthority,  stakeAuthorize);
+    return nativeProgramAccountClient.authorizeStakeAccountChecked(stakeAccount, stakeOrWithdrawAuthority, stakeAuthorize);
   }
 
   @Override
   public Instruction authorizeStakeAccountChecked(final PublicKey stakeAccount,
                                                   final PublicKey stakeOrWithdrawAuthority,
                                                   final StakeProgram.StakeAuthorize stakeAuthorize) {
-    return nativeProgramAccountClient.authorizeStakeAccountChecked(stakeAccount, stakeOrWithdrawAuthority,  stakeAuthorize);
+    return nativeProgramAccountClient.authorizeStakeAccountChecked(stakeAccount, stakeOrWithdrawAuthority, stakeAuthorize);
   }
 
   @Override
@@ -500,8 +500,13 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
+  public Instruction deactivateStakeAccount(final PublicKey stakeAccount) {
+    return deactivateStakeAccounts().extraAccount(stakeAccount, AccountMeta.CREATE_WRITE);
+  }
+
+  @Override
   public Instruction deactivateStakeAccount(final StakeAccount stakeAccount) {
-    return deactivateStakeAccounts().extraAccount(stakeAccount.address(), AccountMeta.CREATE_WRITE);
+    return deactivateStakeAccount(stakeAccount.address());
   }
 
   @Override
