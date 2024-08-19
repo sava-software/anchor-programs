@@ -15,6 +15,22 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - run: |
+         ls
+         pwd
+
+      - name: Checkout Anchor Source Generator
+        uses: actions/checkout@v4
+        with:
+          repository: sava-software/anchor-src-gen
+          token: ${{ secrets.GH_READ_PROJECTS }}
+          path: anchor-src-gen
+
+      - run: |
+          ls
+          pwd
+
       - uses: gradle/actions/wrapper-validation@v3
 
       - uses: oracle-actions/setup-java@v1

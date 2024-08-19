@@ -12,8 +12,10 @@ readonly projectDirectory
 readonly mainClass="$package.Entrypoint"
 
 javaArgs=(
-  '-XX:+UseZGC'
   '--enable-preview'
+  '-XX:+UseZGC'
+  '-Xms256M'
+  '-Xmx1024M'
 )
 
 screen=0;
@@ -93,19 +95,17 @@ vcsRef="$(git rev-parse --short HEAD)"
 readonly vcsRef
 readonly javaExe="$projectDirectory/build/$vcsRef/bin/java"
 
-javaArgs+=("-D$moduleName.baseDelayMillis=$baseDelayMillis")
-javaArgs+=("-D$moduleName.basePackageName=$basePackageName")
-javaArgs+=("-D$moduleName.outputModuleName=$outputModuleName")
-javaArgs+=("-D$moduleName.numThreads=$numThreads")
-javaArgs+=("-D$moduleName.programsCSV=$programsCSV")
-javaArgs+=("-D$moduleName.rpc=$rpc")
-javaArgs+=("-D$moduleName.sourceDirectory=$sourceDirectory")
-javaArgs+=("-D$moduleName.tabLength=$tabLength")
 javaArgs+=(
-  '-Xms256M'
-  '-Xmx1024M'
+  "-D$moduleName.baseDelayMillis=$baseDelayMillis"
+  "-D$moduleName.basePackageName=$basePackageName"
+  "-D$moduleName.outputModuleName=$outputModuleName"
+  "-D$moduleName.numThreads=$numThreads"
+  "-D$moduleName.programsCSV=$programsCSV"
+  "-D$moduleName.rpc=$rpc"
+  "-D$moduleName.sourceDirectory=$sourceDirectory"
+  "-D$moduleName.tabLength=$tabLength"
+  '-m' "$moduleName/$mainClass"
 )
-javaArgs+=('-m' "$moduleName/$mainClass")
 
 if [[ "$screen" == 0 ]]; then
   set -x
