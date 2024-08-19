@@ -32,12 +32,12 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
     return rpcClient.getProgramAccounts(programPublicKey, FundAccount.FACTORY);
   }
 
-  static CompletableFuture<List<AccountInfo<FundAccount>>> fetchFundAccount(final SolanaRpcClient rpcClient,
-                                                                            final String fundName,
-                                                                            final PublicKey programPublicKey) {
+  static CompletableFuture<List<AccountInfo<FundAccount>>> fetchFundAccountsByManager(final SolanaRpcClient rpcClient,
+                                                                                      final PublicKey managerPublicKey,
+                                                                                      final PublicKey programPublicKey) {
     return rpcClient.getProgramAccounts(
         programPublicKey,
-        List.of(FundAccount.createNameFilter(fundName)),
+        List.of(FundAccount.createManagerFilter(managerPublicKey)),
         FundAccount.FACTORY
     );
   }

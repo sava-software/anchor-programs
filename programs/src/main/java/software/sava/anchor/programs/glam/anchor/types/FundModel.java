@@ -20,7 +20,8 @@ public record FundModel(PublicKey id,
                         CompanyModel company,
                         ManagerModel manager,
                         CreatedModel created,
-                        Acl[] acls,
+                        DelegateAcl[] delegateAcls,
+                        IntegrationAcl[] integrationAcls,
                         Boolean isRawOpenfunds,
                         FundOpenfundsModel rawOpenfunds) implements Borsh {
 
@@ -35,7 +36,8 @@ public record FundModel(PublicKey id,
                                        final CompanyModel company,
                                        final ManagerModel manager,
                                        final CreatedModel created,
-                                       final Acl[] acls,
+                                       final DelegateAcl[] delegateAcls,
+                                       final IntegrationAcl[] integrationAcls,
                                        final Boolean isRawOpenfunds,
                                        final FundOpenfundsModel rawOpenfunds) {
     return new FundModel(id,
@@ -49,7 +51,8 @@ public record FundModel(PublicKey id,
                          company,
                          manager,
                          created,
-                         acls,
+                         delegateAcls,
+                         integrationAcls,
                          isRawOpenfunds,
                          rawOpenfunds);
   }
@@ -94,8 +97,10 @@ public record FundModel(PublicKey id,
     if (created != null) {
       i += Borsh.len(created);
     }
-    final var acls = Borsh.readVector(Acl.class, Acl::read, _data, i);
-    i += Borsh.len(acls);
+    final var delegateAcls = Borsh.readVector(DelegateAcl.class, DelegateAcl::read, _data, i);
+    i += Borsh.len(delegateAcls);
+    final var integrationAcls = Borsh.readVector(IntegrationAcl.class, IntegrationAcl::read, _data, i);
+    i += Borsh.len(integrationAcls);
     final var isRawOpenfunds = _data[i++] == 0 ? null : _data[i] == 1;
     if (isRawOpenfunds != null) {
       ++i;
@@ -112,7 +117,8 @@ public record FundModel(PublicKey id,
                          company,
                          manager,
                          created,
-                         acls,
+                         delegateAcls,
+                         integrationAcls,
                          isRawOpenfunds,
                          rawOpenfunds);
   }
@@ -131,7 +137,8 @@ public record FundModel(PublicKey id,
     i += Borsh.writeOptional(company, _data, i);
     i += Borsh.writeOptional(manager, _data, i);
     i += Borsh.writeOptional(created, _data, i);
-    i += Borsh.write(acls, _data, i);
+    i += Borsh.write(delegateAcls, _data, i);
+    i += Borsh.write(integrationAcls, _data, i);
     i += Borsh.writeOptional(isRawOpenfunds, _data, i);
     i += Borsh.writeOptional(rawOpenfunds, _data, i);
     return i - offset;
@@ -150,7 +157,8 @@ public record FundModel(PublicKey id,
          + Borsh.lenOptional(company)
          + Borsh.lenOptional(manager)
          + Borsh.lenOptional(created)
-         + Borsh.len(acls)
+         + Borsh.len(delegateAcls)
+         + Borsh.len(integrationAcls)
          + 2
          + Borsh.lenOptional(rawOpenfunds);
   }

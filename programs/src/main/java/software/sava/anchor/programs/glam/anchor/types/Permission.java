@@ -2,6 +2,7 @@ package software.sava.anchor.programs.glam.anchor.types;
 
 import software.sava.core.borsh.Borsh;
 
+// * Delegate ACL
 public enum Permission implements Borsh.Enum {
 
   DriftDeposit,

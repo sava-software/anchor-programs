@@ -10,7 +10,8 @@ public enum EngineFieldName implements Borsh.Enum {
   AssetsWeights,
   ShareClassAllowlist,
   ShareClassBlocklist,
-  Acls;
+  DelegateAcls,
+  IntegrationAcls;
 
   public static EngineFieldName read(final byte[] _data, final int offset) {
     return Borsh.read(EngineFieldName.values(), _data, offset);

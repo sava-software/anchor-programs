@@ -93,13 +93,43 @@ public final class GlamProgram {
 
   public static final Discriminator CLOSE_FUND_DISCRIMINATOR = toDiscriminator(230, 183, 3, 112, 236, 252, 5, 185);
 
-  public static Instruction closeFund(final AccountMeta invokedGlamProgramMeta, final PublicKey fundKey, final PublicKey managerKey) {
+  public static Instruction closeFund(final AccountMeta invokedGlamProgramMeta,
+                                      final PublicKey fundKey,
+                                      final PublicKey openfundsKey,
+                                      final PublicKey treasuryKey,
+                                      final PublicKey managerKey,
+                                      final PublicKey systemProgramKey) {
     final var keys = List.of(
       createWrite(fundKey),
-      createWritableSigner(managerKey)
+      createWrite(openfundsKey),
+      createWrite(treasuryKey),
+      createWritableSigner(managerKey),
+      createRead(systemProgramKey)
     );
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, CLOSE_FUND_DISCRIMINATOR);
+  }
+
+  public static final Discriminator CLOSE_SHARE_CLASS_DISCRIMINATOR = toDiscriminator(35, 248, 168, 150, 244, 251, 61, 91);
+
+  public static Instruction closeShareClass(final AccountMeta invokedGlamProgramMeta,
+                                            final PublicKey fundKey,
+                                            final PublicKey shareClassKey,
+                                            final PublicKey managerKey,
+                                            final PublicKey token2022ProgramKey,
+                                            final int shareClassId) {
+    final var keys = List.of(
+      createWrite(fundKey),
+      createWrite(shareClassKey),
+      createWritableSigner(managerKey),
+      createRead(token2022ProgramKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(CLOSE_SHARE_CLASS_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) shareClassId;
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
   public static final Discriminator SUBSCRIBE_DISCRIMINATOR = toDiscriminator(254, 28, 191, 138, 156, 179, 183, 53);

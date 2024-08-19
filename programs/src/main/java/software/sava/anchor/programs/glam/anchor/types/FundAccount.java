@@ -17,46 +17,59 @@ import static software.sava.core.encoding.ByteUtil.getInt32LE;
 
 public record FundAccount(PublicKey _address,
                           Discriminator discriminator,
+                          PublicKey manager,
+                          PublicKey treasury,
+                          PublicKey openfunds,
+                          PublicKey engine,
+                          PublicKey[] shareClasses,
                           String name, byte[] _name,
                           String uri, byte[] _uri,
-                          PublicKey treasury,
-                          PublicKey[] shareClasses,
-                          PublicKey openfunds,
                           String openfundsUri, byte[] _openfundsUri,
-                          PublicKey manager,
-                          PublicKey engine,
                           EngineField[][] params) implements Borsh {
 
-  public static final int NAME_OFFSET = 8;
+  public static final int MANAGER_OFFSET = 8;
+  public static final int TREASURY_OFFSET = 40;
+  public static final int OPENFUNDS_OFFSET = 72;
+  public static final int ENGINE_OFFSET = 104;
+  public static final int SHARE_CLASSES_OFFSET = 136;
 
-  public static Filter createNameFilter(final String name) {
-    final byte[] bytes = name.getBytes(UTF_8);
-    final byte[] _data = new byte[4 + bytes.length];
-    Borsh.write(bytes, _data, 0);
-    return Filter.createMemCompFilter(NAME_OFFSET, _data);
+  public static Filter createManagerFilter(final PublicKey manager) {
+    return Filter.createMemCompFilter(MANAGER_OFFSET, manager);
+  }
+
+  public static Filter createTreasuryFilter(final PublicKey treasury) {
+    return Filter.createMemCompFilter(TREASURY_OFFSET, treasury);
+  }
+
+  public static Filter createOpenfundsFilter(final PublicKey openfunds) {
+    return Filter.createMemCompFilter(OPENFUNDS_OFFSET, openfunds);
+  }
+
+  public static Filter createEngineFilter(final PublicKey engine) {
+    return Filter.createMemCompFilter(ENGINE_OFFSET, engine);
   }
 
   public static FundAccount createRecord(final PublicKey _address,
                                          final Discriminator discriminator,
+                                         final PublicKey manager,
+                                         final PublicKey treasury,
+                                         final PublicKey openfunds,
+                                         final PublicKey engine,
+                                         final PublicKey[] shareClasses,
                                          final String name,
                                          final String uri,
-                                         final PublicKey treasury,
-                                         final PublicKey[] shareClasses,
-                                         final PublicKey openfunds,
                                          final String openfundsUri,
-                                         final PublicKey manager,
-                                         final PublicKey engine,
                                          final EngineField[][] params) {
     return new FundAccount(_address,
                            discriminator,
+                           manager,
+                           treasury,
+                           openfunds,
+                           engine,
+                           shareClasses,
                            name, name.getBytes(UTF_8),
                            uri, uri.getBytes(UTF_8),
-                           treasury,
-                           shareClasses,
-                           openfunds,
                            openfundsUri, openfundsUri.getBytes(UTF_8),
-                           manager,
-                           engine,
                            params);
   }
 
@@ -73,65 +86,65 @@ public record FundAccount(PublicKey _address,
   public static FundAccount read(final PublicKey _address, final byte[] _data, final int offset) {
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
+    final var manager = readPubKey(_data, i);
+    i += 32;
+    final var treasury = readPubKey(_data, i);
+    i += 32;
+    final var openfunds = readPubKey(_data, i);
+    i += 32;
+    final var engine = readPubKey(_data, i);
+    i += 32;
+    final var shareClasses = Borsh.readPublicKeyVector(_data, i);
+    i += Borsh.len(shareClasses);
     final var name = Borsh.string(_data, i);
     i += (Integer.BYTES + getInt32LE(_data, i));
     final var uri = Borsh.string(_data, i);
     i += (Integer.BYTES + getInt32LE(_data, i));
-    final var treasury = readPubKey(_data, i);
-    i += 32;
-    final var shareClasses = Borsh.readPublicKeyVector(_data, i);
-    i += Borsh.len(shareClasses);
-    final var openfunds = readPubKey(_data, i);
-    i += 32;
     final var openfundsUri = Borsh.string(_data, i);
     i += (Integer.BYTES + getInt32LE(_data, i));
-    final var manager = readPubKey(_data, i);
-    i += 32;
-    final var engine = readPubKey(_data, i);
-    i += 32;
     final var params = Borsh.readMultiDimensionVector(EngineField.class, EngineField::read, _data, i);
     return new FundAccount(_address,
                            discriminator,
+                           manager,
+                           treasury,
+                           openfunds,
+                           engine,
+                           shareClasses,
                            name, name.getBytes(UTF_8),
                            uri, uri.getBytes(UTF_8),
-                           treasury,
-                           shareClasses,
-                           openfunds,
                            openfundsUri, openfundsUri.getBytes(UTF_8),
-                           manager,
-                           engine,
                            params);
   }
 
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.write(_name, _data, i);
-    i += Borsh.write(_uri, _data, i);
+    manager.write(_data, i);
+    i += 32;
     treasury.write(_data, i);
     i += 32;
-    i += Borsh.write(shareClasses, _data, i);
     openfunds.write(_data, i);
-    i += 32;
-    i += Borsh.write(_openfundsUri, _data, i);
-    manager.write(_data, i);
     i += 32;
     engine.write(_data, i);
     i += 32;
+    i += Borsh.write(shareClasses, _data, i);
+    i += Borsh.write(_name, _data, i);
+    i += Borsh.write(_uri, _data, i);
+    i += Borsh.write(_openfundsUri, _data, i);
     i += Borsh.write(params, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return 8 + Borsh.len(_name)
-         + Borsh.len(_uri)
+    return 8 + 32
+         + 32
+         + 32
          + 32
          + Borsh.len(shareClasses)
-         + 32
+         + Borsh.len(_name)
+         + Borsh.len(_uri)
          + Borsh.len(_openfundsUri)
-         + 32
-         + 32
          + Borsh.len(params);
   }
 }

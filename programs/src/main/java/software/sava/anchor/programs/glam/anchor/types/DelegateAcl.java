@@ -5,14 +5,14 @@ import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 
-public record Acl(PublicKey pubkey, Permission[] permissions) implements Borsh {
+public record DelegateAcl(PublicKey pubkey, Permission[] permissions) implements Borsh {
 
-  public static Acl read(final byte[] _data, final int offset) {
+  public static DelegateAcl read(final byte[] _data, final int offset) {
     int i = offset;
     final var pubkey = readPubKey(_data, i);
     i += 32;
     final var permissions = Borsh.readVector(Permission.class, Permission::read, _data, i);
-    return new Acl(pubkey, permissions);
+    return new DelegateAcl(pubkey, permissions);
   }
 
   @Override
