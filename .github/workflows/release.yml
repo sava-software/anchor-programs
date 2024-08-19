@@ -33,12 +33,18 @@ jobs:
           website: jdk.java.net
           release: ${{ vars.JAVA_VERSION }}
 
-      - run: printf "org.gradle.java.home=%s" "$JAVA_HOME" > gradle.properties
-        if: ${{ vars.GRADLE_JAVA_VERSION == vars.JAVA_VERSION }}
+      - name: Checkout Anchor Source Generator
+        uses: actions/checkout@v4
+        with:
+          repository: sava-software/anchor-src-gen
+          token: ${{ secrets.GH_READ_PROJECTS }}
+          path: anchor-src-gen
+
+      - uses: gradle/actions/wrapper-validation@v3
 
       - name: Generate Source, Check & Publish
         run: |
-          ./genSrc.sh --tjv="${{ vars.JAVA_VERSION }}" --log="INFO" --tl=2 --bdm=200 --nt=5 --sd="programs/src/main/java" --rpc="${{ secrets.RPC_URL }}"
+          ./anchor-src-gen/genSrc.sh --tjv="${{ vars.JAVA_VERSION }}" --tl=2 --bdm=200 --nt=5 --sd="programs/src/main/java" --bp="software.sava.anchor.programs" --mn="software.sava.anchor_programs" --rpc="${{ secrets.RPC_URL }}"
           ./gradlew --stacktrace -PtargetJava=${{ vars.JAVA_VERSION }} check :anchor-programs:publish
         env:
           GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}

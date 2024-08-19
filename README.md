@@ -2,24 +2,6 @@
 
 # Anchor Programs [![Build](https://github.com/sava-software/anchor-programs/actions/workflows/gradle.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/gradle.yml) [![Release](https://github.com/sava-software/anchor-programs/actions/workflows/release.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/release.yml)
 
-## Generate Source
-
-Replace the values below to fit your needs.
-
-```bash
-./genSrc.sh \
- --log=[INFO|WARN|DEBUG] \
- --tabLength=2 \
- --sourceDirectory="programs/src/main/java" \
- --moduleName="software.sava.anchor_programs" \
- --basePackageName="software.sava.anchor.programs" \
- --rpc="https://rpc.com" \
- --programsCSV="generator/main_net_programs.csv" \
- --baseDelayMillis=200 \
- --numThreads=5 \
- --screen=[0|1]
-```
-
 ## Requirements
 
 - The latest generally available JDK. This project will continue to move to the latest and will not maintain
