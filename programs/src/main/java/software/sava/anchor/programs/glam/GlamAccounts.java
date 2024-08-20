@@ -6,7 +6,7 @@ import software.sava.core.accounts.meta.AccountMeta;
 public interface GlamAccounts {
 
   GlamAccounts MAIN_NET = createAccounts(
-      "Gco1pcjxCMYjKJjSNJ7mKV7qezeUTE7arXJgy7PAPNRc"
+      "GLAMpLuXu78TA4ao3DPZvT1zQ7woxoQ8ahdYbhnqY9mP"
   );
 
   static GlamAccounts createAccounts(final PublicKey program) {

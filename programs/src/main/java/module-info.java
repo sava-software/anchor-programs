@@ -4,6 +4,10 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.glam.anchor.types;
   exports software.sava.anchor.programs.glam.anchor;
   exports software.sava.anchor.programs.glam;
+  exports software.sava.anchor.programs.jupiter.dca.anchor.types;
+  exports software.sava.anchor.programs.jupiter.dca.anchor;
+  exports software.sava.anchor.programs.jupiter.swap.anchor.types;
+  exports software.sava.anchor.programs.jupiter.swap.anchor;
   exports software.sava.anchor.programs.marinade.anchor.types;
   exports software.sava.anchor.programs.marinade.anchor;
   exports software.sava.anchor.programs.marinade;

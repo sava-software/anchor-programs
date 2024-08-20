@@ -30,7 +30,7 @@ ext {
 
   sava = '1.3.1'
   sava_solana_programs = '1.3.6'
-  sava_anchor_src_gen = '1.2.4'
+  sava_anchor_src_gen = '1.3.0'
 }
 
 subprojects {
