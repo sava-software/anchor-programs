@@ -1,6 +1,8 @@
 package software.sava.anchor.programs.glam;
 
 import software.sava.anchor.programs.glam.anchor.GlamProgram;
+import software.sava.anchor.programs.glam.anchor.types.FundModel;
+import software.sava.anchor.programs.glam.anchor.types.ShareClassModel;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -547,5 +549,139 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   @Override
   public Instruction withdrawStakeAccount(final StakeAccount stakeAccount, final long lamports) {
     throw new UnsupportedOperationException("TODO: withdrawStakeAccount with specific amount of lamports");
+  }
+
+  @Override
+  public Instruction initializeFund(final FundModel fundModel) {
+    return GlamProgram.initializeFund(
+        invokedProgram,
+        glamFundAccounts.fundPublicKey(),
+        glamFundAccounts.openFundsPDA().publicKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        manager.publicKey(),
+        solanaAccounts.systemProgram(),
+        fundModel
+    );
+  }
+
+  @Override
+  public Instruction addShareClass(final ShareClassModel shareClassModel) {
+    return GlamProgram.addShareClass(
+        invokedProgram,
+        glamFundAccounts.fundPublicKey(),
+        glamFundAccounts.openFundsPDA().publicKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        manager.publicKey(),
+        solanaAccounts.systemProgram(),
+        solanaAccounts.tokenProgram(),
+        shareClassModel
+    );
+  }
+
+  @Override
+  public Instruction updateFund(final FundModel fundModel) {
+    return GlamProgram.updateFund(
+        invokedProgram,
+        glamFundAccounts.fundPublicKey(),
+        manager.publicKey(),
+        fundModel
+    );
+  }
+
+  @Override
+  public Instruction closeFund() {
+    return GlamProgram.closeFund(
+        invokedProgram,
+        glamFundAccounts.fundPublicKey(),
+        glamFundAccounts.openFundsPDA().publicKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        manager.publicKey(),
+        solanaAccounts.systemProgram()
+    );
+  }
+
+  @Override
+  public Instruction closeShareClass(final PublicKey shareClassKey, final int shareClassId) {
+    return GlamProgram.closeShareClass(
+        invokedProgram,
+        glamFundAccounts.fundPublicKey(),
+        shareClassKey,
+        manager.publicKey(),
+        solanaAccounts.token2022Program(),
+        shareClassId
+    );
+  }
+
+  @Override
+  public Instruction subscribe(final PublicKey shareClassKey,
+                               final PublicKey shareClassATAKey,
+                               final PublicKey assetKey,
+                               final PublicKey treasuryAssetATAKey,
+                               final PublicKey assetATAKey,
+                               final long amount) {
+    return GlamProgram.subscribe(
+        invokedProgram,
+        glamFundAccounts.fundPublicKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        shareClassKey,
+        shareClassATAKey,
+        assetKey,
+        treasuryAssetATAKey,
+        assetATAKey,
+        manager.publicKey(),
+        solanaAccounts.systemProgram(),
+        solanaAccounts.associatedTokenAccountProgram(),
+        solanaAccounts.tokenProgram(),
+        solanaAccounts.token2022Program(),
+        amount,
+        true
+    );
+  }
+
+  @Override
+  public Instruction redeem(final PublicKey shareClassKey,
+                            final PublicKey shareClassATAKey,
+                            final long amount,
+                            final boolean inKind) {
+    return GlamProgram.redeem(
+        invokedProgram,
+        glamFundAccounts.fundPublicKey(),
+        shareClassKey,
+        shareClassATAKey,
+        manager.publicKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        solanaAccounts.systemProgram(),
+        solanaAccounts.tokenProgram(),
+        solanaAccounts.token2022Program(),
+        amount,
+        inKind,
+        true
+    );
+  }
+
+  public Instruction jupiterSwap(final PublicKey inputTreasuryAtaKey,
+                                 final PublicKey inputSignerAtaKey,
+                                 final PublicKey outputSignerAtaKey,
+                                 final PublicKey outputTreasuryAtaKey,
+                                 final PublicKey inputMintKey,
+                                 final PublicKey outputMintKey,
+                                 final long amount,
+                                 final byte[] data) {
+    return GlamProgram.jupiterSwap(
+        invokedProgram,
+        glamFundAccounts.fundPublicKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        inputTreasuryAtaKey, inputSignerAtaKey,
+        outputSignerAtaKey, outputTreasuryAtaKey,
+        inputMintKey, outputMintKey,
+        manager.publicKey(),
+        solanaAccounts.systemProgram(),
+        null,
+        solanaAccounts.associatedTokenAccountProgram(),
+        solanaAccounts.tokenProgram(),
+        solanaAccounts.token2022Program(),
+        amount,
+        data
+    );
   }
 }

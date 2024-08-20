@@ -1,6 +1,8 @@
 package software.sava.anchor.programs.glam;
 
 import software.sava.anchor.programs.glam.anchor.types.FundAccount;
+import software.sava.anchor.programs.glam.anchor.types.FundModel;
+import software.sava.anchor.programs.glam.anchor.types.ShareClassModel;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
@@ -66,4 +68,26 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
   Instruction initializeAndDelegateStake(final FundPDA stakeAccountPDA,
                                          final PublicKey validatorVoteAccount,
                                          final long lamports);
+
+  Instruction initializeFund(final FundModel fundModel);
+
+  Instruction addShareClass(final ShareClassModel shareClassModel);
+
+  Instruction updateFund(final FundModel fundModel);
+
+  Instruction closeFund();
+
+  Instruction closeShareClass(final PublicKey shareClassKey, final int shareClassId);
+
+  Instruction subscribe(final PublicKey shareClassKey,
+                        final PublicKey shareClassATAKey,
+                        final PublicKey assetKey,
+                        final PublicKey treasuryAssetATAKey,
+                        final PublicKey assetATAKey,
+                        final long amount);
+
+  Instruction redeem(final PublicKey shareClassKey,
+                     final PublicKey shareClassATAKey,
+                     final long amount,
+                     final boolean inKind);
 }
