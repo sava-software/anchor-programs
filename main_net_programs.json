@@ -13,6 +13,11 @@
     "package": "jupiter.dca"
   },
   {
+    "name": "Jupiter Limit Order",
+    "program": "jupoNjAxXgZ4rjzxzPMP4oxduvQsQtZzyknqvzYNrNu",
+    "package": "jupiter.limit"
+  },
+  {
     "name": "Jupiter Swap",
     "program": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
     "package": "jupiter.swap"
