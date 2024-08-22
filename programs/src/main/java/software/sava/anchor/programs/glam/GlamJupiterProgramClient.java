@@ -24,43 +24,43 @@ public interface GlamJupiterProgramClient {
 
   JupiterAccounts jupiterAccounts();
 
-  List<Instruction> jupiterSwapChecked(final PublicKey inputMintKey,
-                                       final AccountMeta inputTokenProgram,
-                                       final PublicKey outputMintKey,
-                                       final AccountMeta outputTokenProgram,
-                                       final long amount,
-                                       final Instruction swapInstruction,
-                                       final boolean wrapSOL);
+  List<Instruction> swapChecked(final PublicKey inputMintKey,
+                                final AccountMeta inputTokenProgram,
+                                final PublicKey outputMintKey,
+                                final AccountMeta outputTokenProgram,
+                                final long amount,
+                                final Instruction swapInstruction,
+                                final boolean wrapSOL);
 
-  default List<Instruction> jupiterSwapChecked(final PublicKey inputMintKey,
-                                               final PublicKey outputMintKey,
-                                               final long amount,
-                                               final Instruction swapInstruction,
-                                               final boolean wrapSOL) {
+  default List<Instruction> swapChecked(final PublicKey inputMintKey,
+                                        final PublicKey outputMintKey,
+                                        final long amount,
+                                        final Instruction swapInstruction,
+                                        final boolean wrapSOL) {
     final var tokenProgram = solanaAccounts().readTokenProgram();
-    return jupiterSwapChecked(inputMintKey, tokenProgram, outputMintKey, tokenProgram, amount, swapInstruction, wrapSOL);
+    return swapChecked(inputMintKey, tokenProgram, outputMintKey, tokenProgram, amount, swapInstruction, wrapSOL);
   }
 
-  default List<Instruction> jupiterSwapChecked(final PublicKey inputMintKey,
-                                               final PublicKey outputMintKey,
-                                               final long amount,
-                                               final Instruction swapInstruction) {
-    return jupiterSwapChecked(inputMintKey, outputMintKey, amount, swapInstruction, true);
+  default List<Instruction> swapChecked(final PublicKey inputMintKey,
+                                        final PublicKey outputMintKey,
+                                        final long amount,
+                                        final Instruction swapInstruction) {
+    return swapChecked(inputMintKey, outputMintKey, amount, swapInstruction, true);
   }
 
-  Instruction jupiterSwapUncheckedAndNoWrap(final PublicKey inputMintKey,
-                                            final AccountMeta inputTokenProgram,
-                                            final PublicKey outputMintKey,
-                                            final AccountMeta outputTokenProgram,
-                                            final long amount,
-                                            final Instruction swapInstruction);
+  Instruction swapUncheckedAndNoWrap(final PublicKey inputMintKey,
+                                     final AccountMeta inputTokenProgram,
+                                     final PublicKey outputMintKey,
+                                     final AccountMeta outputTokenProgram,
+                                     final long amount,
+                                     final Instruction swapInstruction);
 
-  default Instruction jupiterSwapUncheckedAndNoWrap(final PublicKey inputMintKey,
-                                                    final PublicKey outputMintKey,
-                                                    final long amount,
-                                                    final Instruction swapInstruction) {
+  default Instruction swapUncheckedAndNoWrap(final PublicKey inputMintKey,
+                                             final PublicKey outputMintKey,
+                                             final long amount,
+                                             final Instruction swapInstruction) {
     final var tokenProgram = solanaAccounts().readTokenProgram();
-    return jupiterSwapUncheckedAndNoWrap(
+    return swapUncheckedAndNoWrap(
         inputMintKey, tokenProgram,
         outputMintKey, tokenProgram,
         amount,
@@ -68,28 +68,28 @@ public interface GlamJupiterProgramClient {
     );
   }
 
-  List<Instruction> jupiterSwapUnchecked(final PublicKey inputMintKey,
-                                         final AccountMeta inputTokenProgram,
-                                         final PublicKey outputMintKey,
-                                         final AccountMeta outputTokenProgram,
-                                         final long amount,
-                                         final Instruction swapInstruction,
-                                         final boolean wrapSOL);
+  List<Instruction> swapUnchecked(final PublicKey inputMintKey,
+                                  final AccountMeta inputTokenProgram,
+                                  final PublicKey outputMintKey,
+                                  final AccountMeta outputTokenProgram,
+                                  final long amount,
+                                  final Instruction swapInstruction,
+                                  final boolean wrapSOL);
 
-  default List<Instruction> jupiterSwapUnchecked(final PublicKey inputMintKey,
-                                                 final PublicKey outputMintKey,
-                                                 final long amount,
-                                                 final Instruction swapInstruction,
-                                                 final boolean wrapSOL) {
+  default List<Instruction> swapUnchecked(final PublicKey inputMintKey,
+                                          final PublicKey outputMintKey,
+                                          final long amount,
+                                          final Instruction swapInstruction,
+                                          final boolean wrapSOL) {
     final var tokenProgram = solanaAccounts().readTokenProgram();
-    return jupiterSwapUnchecked(inputMintKey, tokenProgram, outputMintKey, tokenProgram, amount, swapInstruction, wrapSOL);
+    return swapUnchecked(inputMintKey, tokenProgram, outputMintKey, tokenProgram, amount, swapInstruction, wrapSOL);
   }
 
-  default List<Instruction> jupiterSwapUnchecked(final PublicKey inputMintKey,
-                                                 final PublicKey outputMintKey,
-                                                 final long amount,
-                                                 final Instruction swapInstruction) {
+  default List<Instruction> swapUnchecked(final PublicKey inputMintKey,
+                                          final PublicKey outputMintKey,
+                                          final long amount,
+                                          final Instruction swapInstruction) {
     final var tokenProgram = solanaAccounts().readTokenProgram();
-    return jupiterSwapUnchecked(inputMintKey, tokenProgram, outputMintKey, tokenProgram, amount, swapInstruction, true);
+    return swapUnchecked(inputMintKey, tokenProgram, outputMintKey, tokenProgram, amount, swapInstruction, true);
   }
 }

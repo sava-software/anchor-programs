@@ -69,13 +69,13 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
   }
 
   @Override
-  public List<Instruction> jupiterSwapChecked(final PublicKey inputMintKey,
-                                              final AccountMeta inputTokenProgram,
-                                              final PublicKey outputMintKey,
-                                              final AccountMeta outputTokenProgram,
-                                              final long amount,
-                                              final Instruction swapInstruction,
-                                              final boolean wrapSOL) {
+  public List<Instruction> swapChecked(final PublicKey inputMintKey,
+                                       final AccountMeta inputTokenProgram,
+                                       final PublicKey outputMintKey,
+                                       final AccountMeta outputTokenProgram,
+                                       final long amount,
+                                       final Instruction swapInstruction,
+                                       final boolean wrapSOL) {
     final var inputTreasuryAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddress(inputMintKey, inputTokenProgram.publicKey()).publicKey();
 
     final var inputSignerAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(inputMintKey, inputTokenProgram.publicKey()).publicKey();
@@ -138,12 +138,12 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
   }
 
   @Override
-  public Instruction jupiterSwapUncheckedAndNoWrap(final PublicKey inputMintKey,
-                                                   final AccountMeta inputTokenProgram,
-                                                   final PublicKey outputMintKey,
-                                                   final AccountMeta outputTokenProgram,
-                                                   final long amount,
-                                                   final Instruction swapInstruction) {
+  public Instruction swapUncheckedAndNoWrap(final PublicKey inputMintKey,
+                                            final AccountMeta inputTokenProgram,
+                                            final PublicKey outputMintKey,
+                                            final AccountMeta outputTokenProgram,
+                                            final long amount,
+                                            final Instruction swapInstruction) {
     final var inputTreasuryAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddress(inputMintKey, inputTokenProgram.publicKey()).publicKey();
     final var inputSignerAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(inputMintKey, inputTokenProgram.publicKey()).publicKey();
     final var outputSignerAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(outputMintKey, outputTokenProgram.publicKey()).publicKey();
@@ -161,14 +161,14 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
   }
 
   @Override
-  public List<Instruction> jupiterSwapUnchecked(final PublicKey inputMintKey,
-                                                final AccountMeta inputTokenProgram,
-                                                final PublicKey outputMintKey,
-                                                final AccountMeta outputTokenProgram,
-                                                final long amount,
-                                                final Instruction swapInstruction,
-                                                final boolean wrapSOL) {
-    final var glamJupiterSwap = jupiterSwapUncheckedAndNoWrap(
+  public List<Instruction> swapUnchecked(final PublicKey inputMintKey,
+                                         final AccountMeta inputTokenProgram,
+                                         final PublicKey outputMintKey,
+                                         final AccountMeta outputTokenProgram,
+                                         final long amount,
+                                         final Instruction swapInstruction,
+                                         final boolean wrapSOL) {
+    final var glamJupiterSwap = swapUncheckedAndNoWrap(
         inputMintKey, inputTokenProgram,
         outputMintKey, outputTokenProgram,
         amount,
