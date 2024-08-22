@@ -61,7 +61,11 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
         .collect(Collectors.toMap(AccountInfo::pubKey, AccountInfo::data));
   }
 
+  NativeProgramAccountClient delegatedNativeProgramAccountClient();
+
   GlamFundAccounts fundAccounts();
+
+  Instruction transferLamportsAndSyncNative(final long lamports);
 
   FundPDA createStakeAccountPDA();
 

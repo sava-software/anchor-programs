@@ -18,7 +18,7 @@ import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 import software.sava.solana.programs.clients.NativeProgramClient;
 import software.sava.solana.programs.stake.StakeAccount;
-import software.sava.solana.programs.stake.StakeProgram;
+import software.sava.solana.programs.stake.StakeAuthorize;
 import software.sava.solana.programs.stake.StakeState;
 
 import java.util.Collection;
@@ -43,6 +43,11 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     this.invokedProgram = glamFundAccounts.glamAccounts().invokedProgram();
     this.manager = createFeePayer(glamFundAccounts.signerPublicKey());
     this.nativeProgramAccountClient = nativeProgramClient.createAccountClient(glamFundAccounts.treasuryPublicKey(), manager);
+  }
+
+  @Override
+  public NativeProgramAccountClient delegatedNativeProgramAccountClient() {
+    return nativeProgramAccountClient;
   }
 
   @Override
@@ -238,16 +243,6 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public Instruction createATA(final boolean idempotent, final PublicKey programDerivedAddress, final PublicKey mint) {
-    return nativeProgramAccountClient.createATA(idempotent, programDerivedAddress, mint);
-  }
-
-  @Override
-  public Instruction createATA(final boolean idempotent, final PublicKey mint) {
-    return nativeProgramAccountClient.createATA(idempotent, mint);
-  }
-
-  @Override
   public Instruction initializeStakeAccount(final PublicKey unInitializedStakeAccount, final PublicKey staker) {
     return nativeProgramAccountClient.initializeStakeAccount(unInitializedStakeAccount, staker);
   }
@@ -271,14 +266,14 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction authorizeStakeAccount(final PublicKey stakeAccount,
                                            final PublicKey stakeOrWithdrawAuthority,
                                            final PublicKey lockupAuthority,
-                                           final StakeProgram.StakeAuthorize stakeAuthorize) {
+                                           final StakeAuthorize stakeAuthorize) {
     return nativeProgramAccountClient.authorizeStakeAccount(stakeAccount, stakeOrWithdrawAuthority, lockupAuthority, stakeAuthorize);
   }
 
   @Override
   public Instruction authorizeStakeAccount(final PublicKey stakeAccount,
                                            final PublicKey stakeOrWithdrawAuthority,
-                                           final StakeProgram.StakeAuthorize stakeAuthorize) {
+                                           final StakeAuthorize stakeAuthorize) {
     return nativeProgramAccountClient.authorizeStakeAccount(stakeAccount, stakeOrWithdrawAuthority, stakeAuthorize);
   }
 
@@ -286,14 +281,14 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction authorizeStakeAccountChecked(final PublicKey stakeAccount,
                                                   final PublicKey stakeOrWithdrawAuthority,
                                                   final PublicKey newStakeOrWithdrawAuthority,
-                                                  final StakeProgram.StakeAuthorize stakeAuthorize) {
+                                                  final StakeAuthorize stakeAuthorize) {
     return nativeProgramAccountClient.authorizeStakeAccountChecked(stakeAccount, stakeOrWithdrawAuthority, stakeAuthorize);
   }
 
   @Override
   public Instruction authorizeStakeAccountChecked(final PublicKey stakeAccount,
                                                   final PublicKey stakeOrWithdrawAuthority,
-                                                  final StakeProgram.StakeAuthorize stakeAuthorize) {
+                                                  final StakeAuthorize stakeAuthorize) {
     return nativeProgramAccountClient.authorizeStakeAccountChecked(stakeAccount, stakeOrWithdrawAuthority, stakeAuthorize);
   }
 
@@ -328,8 +323,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public List<Instruction> wrapSOL(final long lamports) {
-    return List.of(GlamProgram.wsolWrap(
+  public Instruction transferLamportsAndSyncNative(final long lamports) {
+    return GlamProgram.wsolWrap(
         invokedProgram,
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
@@ -340,7 +335,12 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         solanaAccounts.tokenProgram(),
         solanaAccounts.associatedTokenAccountProgram(),
         lamports
-    ));
+    );
+  }
+
+  @Override
+  public List<Instruction> wrapSOL(final long lamports) {
+    return List.of(transferLamportsAndSyncNative(lamports));
   }
 
   @Override
@@ -445,21 +445,6 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   @Override
   public Instruction closeTokenAccount(final PublicKey tokenAccount) {
     throw new UnsupportedOperationException("TODO: closeTokenAccount");
-  }
-
-  @Override
-  public Instruction createATAFor(final boolean idempotent,
-                                  final PublicKey tokenAccountOwner,
-                                  final PublicKey programDerivedAddress,
-                                  final PublicKey mint) {
-    return nativeProgramAccountClient.createATAFor(idempotent, tokenAccountOwner, programDerivedAddress, mint);
-  }
-
-  @Override
-  public Instruction createATAFor(final boolean idempotent,
-                                  final PublicKey tokenAccountOwner,
-                                  final PublicKey mint) {
-    return nativeProgramAccountClient.createATAFor(idempotent, tokenAccountOwner, mint);
   }
 
   @Override
@@ -656,32 +641,6 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         amount,
         inKind,
         true
-    );
-  }
-
-  public Instruction jupiterSwap(final PublicKey inputTreasuryAtaKey,
-                                 final PublicKey inputSignerAtaKey,
-                                 final PublicKey outputSignerAtaKey,
-                                 final PublicKey outputTreasuryAtaKey,
-                                 final PublicKey inputMintKey,
-                                 final PublicKey outputMintKey,
-                                 final long amount,
-                                 final byte[] data) {
-    return GlamProgram.jupiterSwap(
-        invokedProgram,
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
-        inputTreasuryAtaKey, inputSignerAtaKey,
-        outputSignerAtaKey, outputTreasuryAtaKey,
-        inputMintKey, outputMintKey,
-        manager.publicKey(),
-        solanaAccounts.systemProgram(),
-        null,
-        solanaAccounts.associatedTokenAccountProgram(),
-        solanaAccounts.tokenProgram(),
-        solanaAccounts.token2022Program(),
-        amount,
-        data
     );
   }
 }

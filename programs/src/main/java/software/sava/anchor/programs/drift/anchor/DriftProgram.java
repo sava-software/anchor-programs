@@ -1259,6 +1259,17 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
+  public static final Discriminator SET_USER_STATUS_TO_BEING_LIQUIDATED_DISCRIMINATOR = toDiscriminator(106, 133, 160, 206, 193, 171, 192, 194);
+
+  public static Instruction setUserStatusToBeingLiquidated(final AccountMeta invokedDriftProgramMeta, final PublicKey stateKey, final PublicKey userKey) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWrite(userKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, SET_USER_STATUS_TO_BEING_LIQUIDATED_DISCRIMINATOR);
+  }
+
   public static final Discriminator RESOLVE_PERP_PNL_DEFICIT_DISCRIMINATOR = toDiscriminator(168, 204, 68, 150, 159, 126, 95, 148);
 
   public static Instruction resolvePerpPnlDeficit(final AccountMeta invokedDriftProgramMeta,
@@ -1505,7 +1516,7 @@ public final class DriftProgram {
                                                                final PublicKey insuranceFundVaultKey) {
     final var keys = List.of(
       createRead(stateKey),
-      createRead(spotMarketKey),
+      createWrite(spotMarketKey),
       createWrite(insuranceFundStakeKey),
       createWrite(userStatsKey),
       createReadOnlySigner(signerKey),
@@ -1526,7 +1537,7 @@ public final class DriftProgram {
                                                              final PublicKey insuranceFundVaultKey) {
     final var keys = List.of(
       createRead(stateKey),
-      createRead(spotMarketKey),
+      createWrite(spotMarketKey),
       createWrite(insuranceFundStakeKey),
       createWrite(userStatsKey),
       createReadOnlySigner(signerKey),

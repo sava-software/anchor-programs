@@ -45,7 +45,7 @@ jobs:
       - name: Generate Source, Check & Publish
         run: |
           cd ./anchor-src-gen
-          ./genSrc.sh --tjv="${{ vars.JAVA_VERSION }}" --tl=2 --bdm=200 --nt=5 --sd="../programs/src/main/java" --bp="software.sava.anchor.programs" --mn="software.sava.anchor_programs" --pcsv="../main_net_programs.csv" --rpc="${{ secrets.RPC_URL }}"
+          ./genSrc.sh --tjv="${{ vars.JAVA_VERSION }}" --tl=2 --bdm=200 --nt=5 --sd="../programs/src/main/java" --bp="software.sava.anchor.programs" --mn="software.sava.anchor_programs" --p="../main_net_programs.json" --rpc="${{ secrets.RPC_URL }}"
           cd ..
           ./gradlew --stacktrace -PtargetJava=${{ vars.JAVA_VERSION }} check :anchor-programs:publish
         env:
