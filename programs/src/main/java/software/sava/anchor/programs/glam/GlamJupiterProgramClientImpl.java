@@ -81,13 +81,28 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
     final var inputTreasuryAtaKey = findAssociatedTokenProgramAddress(solanaAccounts, inputTokenProgram.publicKey(), glamFundAccounts.treasuryPublicKey(), inputMintKey).publicKey();
 
     final var inputSignerAtaKey = findAssociatedTokenProgramAddress(solanaAccounts, inputTokenProgram.publicKey(), manager.publicKey(), inputMintKey).publicKey();
-    final var createManagerInputATA = nativeProgramAccountClient.createATAForFeePayerFundedByFeePayer(true, inputTokenProgram, inputSignerAtaKey, inputMintKey);
+    final var createManagerInputATA = nativeProgramAccountClient.createATAForFeePayerFundedByFeePayer(
+        true,
+        inputTokenProgram,
+        inputSignerAtaKey,
+        inputMintKey
+    );
 
     final var outputSignerAtaKey = findAssociatedTokenProgramAddress(solanaAccounts, outputTokenProgram.publicKey(), manager.publicKey(), outputMintKey).publicKey();
-    final var createManagerOutputATA = nativeProgramAccountClient.createATAForFeePayerFundedByFeePayer(true, outputTokenProgram, manager.publicKey(), outputMintKey);
+    final var createManagerOutputATA = nativeProgramAccountClient.createATAForFeePayerFundedByFeePayer(
+        true,
+        outputTokenProgram,
+        outputSignerAtaKey,
+        outputMintKey
+    );
 
     final var outputTreasuryAtaKey = findAssociatedTokenProgramAddress(solanaAccounts, outputTokenProgram.publicKey(), glamFundAccounts.treasuryPublicKey(), outputMintKey).publicKey();
-    final var createTreasuryOutputATA = nativeProgramAccountClient.createATAForOwnerFundedByFeePayer(true, outputTokenProgram, outputMintKey);
+    final var createTreasuryOutputATA = nativeProgramAccountClient.createATAForOwnerFundedByFeePayer(
+        true,
+        outputTokenProgram,
+        outputTreasuryAtaKey,
+        outputMintKey
+    );
 
     final var glamJupiterSwap = jupiterSwap(
         inputTreasuryAtaKey,
@@ -102,7 +117,12 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
 
     if (wrapSOL && inputMintKey.equals(solanaAccounts.wrappedSolTokenMint())) {
       return List.of(
-          nativeProgramAccountClient.createATAForOwnerFundedByFeePayer(true, inputMintKey),
+          nativeProgramAccountClient.createATAForOwnerFundedByFeePayer(
+              true,
+              inputTokenProgram,
+              nativeProgramAccountClient.wrappedSolPDA().publicKey(),
+              inputMintKey
+          ),
           glamProgramAccountClient.transferLamportsAndSyncNative(amount),
           createManagerInputATA,
           createManagerOutputATA,
