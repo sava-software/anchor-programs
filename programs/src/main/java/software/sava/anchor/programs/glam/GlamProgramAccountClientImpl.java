@@ -223,6 +223,21 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
+  public ProgramDerivedAddress findAssociatedTokenProgramAddress(final PublicKey mint, final PublicKey tokenProgram) {
+    return nativeProgramAccountClient.findAssociatedTokenProgramAddress(mint, tokenProgram);
+  }
+
+  @Override
+  public ProgramDerivedAddress findAssociatedTokenProgramAddressForFeePayer(final PublicKey mint) {
+    return nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(mint);
+  }
+
+  @Override
+  public ProgramDerivedAddress findAssociatedTokenProgramAddressForFeePayer(final PublicKey mint, final PublicKey tokenProgram) {
+    return nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(mint, tokenProgram);
+  }
+
+  @Override
   public CompletableFuture<List<AccountInfo<TokenAccount>>> fetchTokenAccounts(final SolanaRpcClient rpcClient, final PublicKey tokenMintAddress) {
     return nativeProgramAccountClient.fetchTokenAccounts(rpcClient, tokenMintAddress);
   }
