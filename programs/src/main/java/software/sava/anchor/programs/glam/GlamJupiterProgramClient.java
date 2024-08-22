@@ -90,6 +90,6 @@ public interface GlamJupiterProgramClient {
                                                  final long amount,
                                                  final Instruction swapInstruction) {
     final var tokenProgram = solanaAccounts().readTokenProgram();
-    return jupiterSwapUnchecked(inputMintKey, outputMintKey, amount, swapInstruction, true);
+    return jupiterSwapUnchecked(inputMintKey, tokenProgram, outputMintKey, tokenProgram, amount, swapInstruction, true);
   }
 }
