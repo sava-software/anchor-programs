@@ -45,7 +45,7 @@ public interface GlamJupiterProgramClient {
                                                final PublicKey outputMintKey,
                                                final long amount,
                                                final Instruction swapInstruction) {
-    return jupiterSwapChecked(inputMintKey, outputMintKey, amount, swapInstruction, false);
+    return jupiterSwapChecked(inputMintKey, outputMintKey, amount, swapInstruction, true);
   }
 
   Instruction jupiterSwapUncheckedAndNoWrap(final PublicKey inputMintKey,
@@ -90,6 +90,6 @@ public interface GlamJupiterProgramClient {
                                                  final long amount,
                                                  final Instruction swapInstruction) {
     final var tokenProgram = solanaAccounts().readTokenProgram();
-    return jupiterSwapUnchecked(inputMintKey, outputMintKey, amount, swapInstruction, false);
+    return jupiterSwapUnchecked(inputMintKey, outputMintKey, amount, swapInstruction, true);
   }
 }
