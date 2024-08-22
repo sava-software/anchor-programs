@@ -20,7 +20,8 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
   private final AccountMeta manager;
   private final JupiterAccounts jupiterAccounts;
 
-  GlamJupiterProgramClientImpl(final GlamProgramAccountClient glamProgramAccountClient, final JupiterAccounts jupiterAccounts) {
+  GlamJupiterProgramClientImpl(final GlamProgramAccountClient glamProgramAccountClient,
+                               final JupiterAccounts jupiterAccounts) {
     this.glamProgramAccountClient = glamProgramAccountClient;
     this.solanaAccounts = glamProgramAccountClient.solanaAccounts();
     this.nativeProgramAccountClient = glamProgramAccountClient.delegatedNativeProgramAccountClient();
@@ -40,10 +41,10 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
     return jupiterAccounts;
   }
 
-  private Instruction jupiterSwap(final PublicKey inputTreasuryAtaKey,
-                                  final PublicKey inputSignerAtaKey,
-                                  final PublicKey outputSignerAtaKey,
-                                  final PublicKey outputTreasuryAtaKey,
+  private Instruction jupiterSwap(final PublicKey inputTreasuryATA,
+                                  final PublicKey inputSignerATA,
+                                  final PublicKey outputSignerATA,
+                                  final PublicKey outputTreasuryATA,
                                   final PublicKey inputMintKey,
                                   final PublicKey outputMintKey,
                                   final long amount,
@@ -52,10 +53,10 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         invokedProgram,
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
-        inputTreasuryAtaKey,
-        inputSignerAtaKey,
-        outputSignerAtaKey,
-        outputTreasuryAtaKey,
+        inputTreasuryATA,
+        inputSignerATA,
+        outputSignerATA,
+        outputTreasuryATA,
         inputMintKey, outputMintKey,
         manager.publicKey(),
         solanaAccounts.systemProgram(),
@@ -76,37 +77,52 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                        final long amount,
                                        final Instruction swapInstruction,
                                        final boolean wrapSOL) {
-    final var inputTreasuryAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddress(inputMintKey, inputTokenProgram.publicKey()).publicKey();
+    final var inputTokenProgramKey = inputTokenProgram.publicKey();
+    final var outputTokenProgramKey = outputTokenProgram.publicKey();
 
-    final var inputSignerAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(inputMintKey, inputTokenProgram.publicKey()).publicKey();
+    final var inputTreasuryATA = nativeProgramAccountClient.findAssociatedTokenProgramAddress(
+        inputMintKey,
+        inputTokenProgramKey
+    ).publicKey();
+
+    final var inputSignerATA = nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(
+        inputMintKey,
+        inputTokenProgramKey
+    ).publicKey();
     final var createManagerInputATA = nativeProgramAccountClient.createATAForFeePayerFundedByFeePayer(
         true,
         inputTokenProgram,
-        inputSignerAtaKey,
+        inputSignerATA,
         inputMintKey
     );
 
-    final var outputSignerAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(outputMintKey, outputTokenProgram.publicKey()).publicKey();
+    final var outputSignerATA = nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(
+        outputMintKey,
+        outputTokenProgramKey
+    ).publicKey();
     final var createManagerOutputATA = nativeProgramAccountClient.createATAForFeePayerFundedByFeePayer(
         true,
         outputTokenProgram,
-        outputSignerAtaKey,
+        outputSignerATA,
         outputMintKey
     );
 
-    final var outputTreasuryAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddress(outputMintKey, outputTokenProgram.publicKey()).publicKey();
+    final var outputTreasuryATA = nativeProgramAccountClient.findAssociatedTokenProgramAddress(
+        outputMintKey,
+        outputTokenProgramKey
+    ).publicKey();
     final var createTreasuryOutputATA = nativeProgramAccountClient.createATAForOwnerFundedByFeePayer(
         true,
         outputTokenProgram,
-        outputTreasuryAtaKey,
+        outputTreasuryATA,
         outputMintKey
     );
 
     final var glamJupiterSwap = jupiterSwap(
-        inputTreasuryAtaKey,
-        inputSignerAtaKey,
-        outputSignerAtaKey,
-        outputTreasuryAtaKey,
+        inputTreasuryATA,
+        inputSignerATA,
+        outputSignerATA,
+        outputTreasuryATA,
         inputMintKey,
         outputMintKey,
         amount,
@@ -118,7 +134,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
           nativeProgramAccountClient.createATAForOwnerFundedByFeePayer(
               true,
               inputTokenProgram,
-              inputTreasuryAtaKey,
+              inputTreasuryATA,
               inputMintKey
           ),
           glamProgramAccountClient.transferLamportsAndSyncNative(amount),
@@ -144,15 +160,31 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                             final AccountMeta outputTokenProgram,
                                             final long amount,
                                             final Instruction swapInstruction) {
-    final var inputTreasuryAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddress(inputMintKey, inputTokenProgram.publicKey()).publicKey();
-    final var inputSignerAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(inputMintKey, inputTokenProgram.publicKey()).publicKey();
-    final var outputSignerAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(outputMintKey, outputTokenProgram.publicKey()).publicKey();
-    final var outputTreasuryAtaKey = nativeProgramAccountClient.findAssociatedTokenProgramAddress(outputMintKey, outputTokenProgram.publicKey()).publicKey();
+    final var inputTokenProgramKey = inputTokenProgram.publicKey();
+    final var outputTokenProgramKey = outputTokenProgram.publicKey();
+
+    final var inputTreasuryATA = nativeProgramAccountClient.findAssociatedTokenProgramAddress(
+        inputMintKey,
+        inputTokenProgramKey
+    ).publicKey();
+    final var inputSignerATA = nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(
+        inputMintKey,
+        inputTokenProgramKey
+    ).publicKey();
+    final var outputSignerATA = nativeProgramAccountClient.findAssociatedTokenProgramAddressForFeePayer(
+        outputMintKey,
+        outputTokenProgramKey
+    ).publicKey();
+    final var outputTreasuryATA = nativeProgramAccountClient.findAssociatedTokenProgramAddress(
+        outputMintKey,
+        outputTokenProgramKey
+    ).publicKey();
+
     return jupiterSwap(
-        inputTreasuryAtaKey,
-        inputSignerAtaKey,
-        outputSignerAtaKey,
-        outputTreasuryAtaKey,
+        inputTreasuryATA,
+        inputSignerATA,
+        outputSignerATA,
+        outputTreasuryATA,
         inputMintKey,
         outputMintKey,
         amount,
@@ -174,6 +206,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         amount,
         swapInstruction
     );
+
     return wrapSOL && inputMintKey.equals(solanaAccounts.wrappedSolTokenMint())
         ? List.of(glamProgramAccountClient.transferLamportsAndSyncNative(amount), glamJupiterSwap)
         : List.of(glamJupiterSwap);
