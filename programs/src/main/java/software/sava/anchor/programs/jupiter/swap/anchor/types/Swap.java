@@ -62,7 +62,9 @@ public sealed interface Swap extends RustEnum permits
   Swap.PumpdotfunWrappedSell,
   Swap.PerpsV2,
   Swap.PerpsV2AddLiquidity,
-  Swap.PerpsV2RemoveLiquidity {
+  Swap.PerpsV2RemoveLiquidity,
+  Swap.MoonshotWrappedBuy,
+  Swap.MoonshotWrappedSell {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -122,6 +124,8 @@ public sealed interface Swap extends RustEnum permits
       case 51 -> PerpsV2.INSTANCE;
       case 52 -> PerpsV2AddLiquidity.INSTANCE;
       case 53 -> PerpsV2RemoveLiquidity.INSTANCE;
+      case 54 -> MoonshotWrappedBuy.INSTANCE;
+      case 55 -> MoonshotWrappedSell.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -863,6 +867,26 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 53;
+    }
+  }
+
+  record MoonshotWrappedBuy() implements EnumNone, Swap {
+
+    public static final MoonshotWrappedBuy INSTANCE = new MoonshotWrappedBuy();
+
+    @Override
+    public int ordinal() {
+      return 54;
+    }
+  }
+
+  record MoonshotWrappedSell() implements EnumNone, Swap {
+
+    public static final MoonshotWrappedSell INSTANCE = new MoonshotWrappedSell();
+
+    @Override
+    public int ordinal() {
+      return 55;
     }
   }
 }

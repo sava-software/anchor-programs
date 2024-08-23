@@ -30,8 +30,6 @@ public final class JupiterProgram {
                                   final PublicKey destinationTokenAccountKey,
                                   final PublicKey destinationMintKey,
                                   final PublicKey platformFeeAccountKey,
-                                  final PublicKey eventAuthorityKey,
-                                  final PublicKey programKey,
                                   final RoutePlanStep[] routePlan,
                                   final long inAmount,
                                   final long quotedOutAmount,
@@ -44,9 +42,7 @@ public final class JupiterProgram {
       createWrite(userDestinationTokenAccountKey),
       createWrite(destinationTokenAccountKey),
       createRead(destinationMintKey),
-      createWrite(platformFeeAccountKey),
-      createRead(eventAuthorityKey),
-      createRead(programKey)
+      createWrite(platformFeeAccountKey)
     );
 
     final byte[] _data = new byte[27 + Borsh.len(routePlan)];
@@ -74,8 +70,6 @@ public final class JupiterProgram {
                                                  final PublicKey destinationMintKey,
                                                  final PublicKey platformFeeAccountKey,
                                                  final PublicKey tokenLedgerKey,
-                                                 final PublicKey eventAuthorityKey,
-                                                 final PublicKey programKey,
                                                  final RoutePlanStep[] routePlan,
                                                  final long quotedOutAmount,
                                                  final int slippageBps,
@@ -88,9 +82,7 @@ public final class JupiterProgram {
       createWrite(destinationTokenAccountKey),
       createRead(destinationMintKey),
       createWrite(platformFeeAccountKey),
-      createRead(tokenLedgerKey),
-      createRead(eventAuthorityKey),
-      createRead(programKey)
+      createRead(tokenLedgerKey)
     );
 
     final byte[] _data = new byte[19 + Borsh.len(routePlan)];
@@ -119,8 +111,6 @@ public final class JupiterProgram {
                                                 final PublicKey destinationMintKey,
                                                 final PublicKey platformFeeAccountKey,
                                                 final PublicKey token2022ProgramKey,
-                                                final PublicKey eventAuthorityKey,
-                                                final PublicKey programKey,
                                                 final int id,
                                                 final RoutePlanStep[] routePlan,
                                                 final long inAmount,
@@ -138,9 +128,7 @@ public final class JupiterProgram {
       createRead(sourceMintKey),
       createRead(destinationMintKey),
       createWrite(platformFeeAccountKey),
-      createRead(token2022ProgramKey),
-      createRead(eventAuthorityKey),
-      createRead(programKey)
+      createRead(token2022ProgramKey)
     );
 
     final byte[] _data = new byte[28 + Borsh.len(routePlan)];
@@ -174,8 +162,6 @@ public final class JupiterProgram {
                                                                final PublicKey platformFeeAccountKey,
                                                                final PublicKey token2022ProgramKey,
                                                                final PublicKey tokenLedgerKey,
-                                                               final PublicKey eventAuthorityKey,
-                                                               final PublicKey programKey,
                                                                final int id,
                                                                final RoutePlanStep[] routePlan,
                                                                final long quotedOutAmount,
@@ -193,9 +179,7 @@ public final class JupiterProgram {
       createRead(destinationMintKey),
       createWrite(platformFeeAccountKey),
       createRead(token2022ProgramKey),
-      createRead(tokenLedgerKey),
-      createRead(eventAuthorityKey),
-      createRead(programKey)
+      createRead(tokenLedgerKey)
     );
 
     final byte[] _data = new byte[20 + Borsh.len(routePlan)];
@@ -224,8 +208,6 @@ public final class JupiterProgram {
                                           final PublicKey destinationMintKey,
                                           final PublicKey platformFeeAccountKey,
                                           final PublicKey token2022ProgramKey,
-                                          final PublicKey eventAuthorityKey,
-                                          final PublicKey programKey,
                                           final RoutePlanStep[] routePlan,
                                           final long outAmount,
                                           final long quotedInAmount,
@@ -240,9 +222,7 @@ public final class JupiterProgram {
       createRead(sourceMintKey),
       createRead(destinationMintKey),
       createWrite(platformFeeAccountKey),
-      createRead(token2022ProgramKey),
-      createRead(eventAuthorityKey),
-      createRead(programKey)
+      createRead(token2022ProgramKey)
     );
 
     final byte[] _data = new byte[27 + Borsh.len(routePlan)];
@@ -273,8 +253,6 @@ public final class JupiterProgram {
                                                         final PublicKey destinationMintKey,
                                                         final PublicKey platformFeeAccountKey,
                                                         final PublicKey token2022ProgramKey,
-                                                        final PublicKey eventAuthorityKey,
-                                                        final PublicKey programKey,
                                                         final int id,
                                                         final RoutePlanStep[] routePlan,
                                                         final long outAmount,
@@ -292,9 +270,7 @@ public final class JupiterProgram {
       createRead(sourceMintKey),
       createRead(destinationMintKey),
       createWrite(platformFeeAccountKey),
-      createRead(token2022ProgramKey),
-      createRead(eventAuthorityKey),
-      createRead(programKey)
+      createRead(token2022ProgramKey)
     );
 
     final byte[] _data = new byte[28 + Borsh.len(routePlan)];
@@ -343,6 +319,30 @@ public final class JupiterProgram {
     );
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, CREATE_OPEN_ORDERS_DISCRIMINATOR);
+  }
+
+  public static final Discriminator CREATE_TOKEN_ACCOUNT_DISCRIMINATOR = toDiscriminator(147, 241, 123, 100, 244, 132, 174, 118);
+
+  public static Instruction createTokenAccount(final AccountMeta invokedJupiterProgramMeta,
+                                               final PublicKey tokenAccountKey,
+                                               final PublicKey userKey,
+                                               final PublicKey mintKey,
+                                               final PublicKey tokenProgramKey,
+                                               final PublicKey systemProgramKey,
+                                               final int bump) {
+    final var keys = List.of(
+      createWrite(tokenAccountKey),
+      createWritableSigner(userKey),
+      createRead(mintKey),
+      createRead(tokenProgramKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(CREATE_TOKEN_ACCOUNT_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) bump;
+
+    return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
   public static final Discriminator CREATE_PROGRAM_OPEN_ORDERS_DISCRIMINATOR = toDiscriminator(28, 226, 32, 148, 188, 136, 113, 171);

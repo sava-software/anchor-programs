@@ -7,8 +7,6 @@ public record RoutePlanStep(Swap swap,
                             int inputIndex,
                             int outputIndex) implements Borsh {
 
-  public static final int BYTES = 4;
-
   public static RoutePlanStep read(final byte[] _data, final int offset) {
     int i = offset;
     final var swap = Swap.read(_data, i);
@@ -39,6 +37,6 @@ public record RoutePlanStep(Swap swap,
 
   @Override
   public int l() {
-    return BYTES;
+    return Borsh.len(swap) + 1 + 1 + 1;
   }
 }

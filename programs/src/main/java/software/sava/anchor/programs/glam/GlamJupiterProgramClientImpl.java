@@ -184,5 +184,4 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         ? List.of(glamProgramAccountClient.transferLamportsAndSyncNative(amount), glamJupiterSwap)
         : List.of(glamJupiterSwap);
   }
-
 }
