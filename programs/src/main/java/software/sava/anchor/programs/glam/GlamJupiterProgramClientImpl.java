@@ -121,9 +121,9 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
 
     if (wrapSOL && inputMintKey.equals(solanaAccounts.wrappedSolTokenMint())) {
       return List.of(
-          glamProgramAccountClient.createATAForOwnerFundedByFeePayer(
-              true, inputTreasuryATA, inputMintKey, inputTokenProgram
-          ),
+//          glamProgramAccountClient.createATAForOwnerFundedByFeePayer(
+//              true, inputTreasuryATA, inputMintKey, inputTokenProgram
+//          ),
           glamProgramAccountClient.transferLamportsAndSyncNative(amount),
           createManagerInputATA,
           createManagerOutputATA,
