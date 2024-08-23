@@ -218,13 +218,13 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public ProgramDerivedAddress findATA(final PublicKey tokenMintAddress) {
-    return nativeProgramAccountClient.findATA(tokenMintAddress);
+  public ProgramDerivedAddress findATA(final PublicKey mint) {
+    return nativeProgramAccountClient.findATA(mint);
   }
 
   @Override
-  public ProgramDerivedAddress findATA(final PublicKey mint, final PublicKey tokenProgram) {
-    return nativeProgramAccountClient.findATA(mint, tokenProgram);
+  public ProgramDerivedAddress findATA(final PublicKey tokenProgram, final PublicKey mint) {
+    return nativeProgramAccountClient.findATA(tokenProgram, mint);
   }
 
   @Override
@@ -233,8 +233,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public ProgramDerivedAddress findATAForFeePayer(final PublicKey mint, final PublicKey tokenProgram) {
-    return nativeProgramAccountClient.findATAForFeePayer(mint, tokenProgram);
+  public ProgramDerivedAddress findATAForFeePayer(final PublicKey tokenProgram, final PublicKey mint) {
+    return nativeProgramAccountClient.findATAForFeePayer(tokenProgram, mint);
   }
 
   @Override
