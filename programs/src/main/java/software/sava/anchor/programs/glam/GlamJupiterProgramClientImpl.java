@@ -46,20 +46,6 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                   final PublicKey outputMintKey,
                                   final long amount,
                                   final Instruction swapInstruction) {
-//    AccountMeta[publicKey=G8NKLJ2Y3TFrjXpfkpGJQZLXvbKKyvNDzc84C8P3DDU8, isFeePayer=false, isSigner=false, isWritable=false, invoked=false]
-//    AccountMeta[publicKey=5SVdBngSHNGtYaQxkzJxso4S7ggaVb3vaKy5LSqbrFpZ, isFeePayer=false, isSigner=false, isWritable=true, invoked=false]
-//    AccountMeta[publicKey=DLNBFTZwUWfSSophxasbvA9e9BEvrHFP1XLGGnkQB7P1, isFeePayer=false, isSigner=false, isWritable=true, invoked=false]
-//    AccountMeta[publicKey=864DgJCAMKuJrMk2Tf9P8R9oix7Mf13rtzn7RbdtiJ2c, isFeePayer=false, isSigner=false, isWritable=true, invoked=false]
-//    AccountMeta[publicKey=BJqhkcnEmZUbyDn3WNNBF9QJDBs1RuE7ZB9GhT6MEeDH, isFeePayer=false, isSigner=false, isWritable=true, invoked=false]
-//    AccountMeta[publicKey=ApAZ5291cCG1xQMQ4dysN2wx1RzpvynAK31K4WVE8Ge4, isFeePayer=false, isSigner=false, isWritable=true, invoked=false]
-//    AccountMeta[publicKey=So11111111111111111111111111111111111111112, isFeePayer=false, isSigner=false, isWritable=false, invoked=false]
-//    AccountMeta[publicKey=mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So, isFeePayer=false, isSigner=false, isWritable=false, invoked=false]
-//    AccountMeta[publicKey=gLJHKPrZLGBiBZ33hFgZh6YnsEhTVxuRT17UCqNp6ff, isFeePayer=false, isSigner=true, isWritable=true, invoked=false]
-//    AccountMeta[publicKey=11111111111111111111111111111111, isFeePayer=false, isSigner=false, isWritable=false, invoked=false]
-//    AccountMeta[publicKey=JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4, isFeePayer=false, isSigner=false, isWritable=false, invoked=false]
-//    AccountMeta[publicKey=ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL, isFeePayer=false, isSigner=false, isWritable=false, invoked=false]
-//    AccountMeta[publicKey=TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA, isFeePayer=false, isSigner=false, isWritable=false, invoked=false]
-//    AccountMeta[publicKey=TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb, isFeePayer=false, isSigner=false, isWritable=false, invoked=false]
     return GlamProgram.jupiterSwap(
         invokedProgram,
         glamFundAccounts.fundPublicKey(),
@@ -77,7 +63,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         solanaAccounts.token2022Program(),
         amount,
         swapInstruction.data()
-    );
+    ).extraAccounts(swapInstruction.accounts());
   }
 
   @Override
@@ -121,9 +107,9 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
 
     if (wrapSOL && inputMintKey.equals(solanaAccounts.wrappedSolTokenMint())) {
       return List.of(
-//          glamProgramAccountClient.createATAForOwnerFundedByFeePayer(
-//              true, inputTreasuryATA, inputMintKey, inputTokenProgram
-//          ),
+          glamProgramAccountClient.createATAForOwnerFundedByFeePayer(
+              true, inputTreasuryATA, inputMintKey
+          ),
           glamProgramAccountClient.transferLamportsAndSyncNative(amount),
           createManagerInputATA,
           createManagerOutputATA,
