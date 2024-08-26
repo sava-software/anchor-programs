@@ -36,6 +36,9 @@ public record FundMetadataAccount(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], FundMetadataAccount> FACTORY = FundMetadataAccount::read;
 
   public static FundMetadataAccount read(final PublicKey _address, final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var fundPubkey = readPubKey(_data, i);

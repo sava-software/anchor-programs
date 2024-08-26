@@ -88,6 +88,9 @@ public record PhoenixV1FulfillmentConfig(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], PhoenixV1FulfillmentConfig> FACTORY = PhoenixV1FulfillmentConfig::read;
 
   public static PhoenixV1FulfillmentConfig read(final PublicKey _address, final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var pubkey = readPubKey(_data, i);

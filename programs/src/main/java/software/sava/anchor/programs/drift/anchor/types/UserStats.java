@@ -98,6 +98,9 @@ public record UserStats(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], UserStats> FACTORY = UserStats::read;
 
   public static UserStats read(final PublicKey _address, final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var authority = readPubKey(_data, i);

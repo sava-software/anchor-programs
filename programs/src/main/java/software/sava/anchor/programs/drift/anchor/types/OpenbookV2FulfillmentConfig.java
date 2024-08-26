@@ -106,6 +106,9 @@ public record OpenbookV2FulfillmentConfig(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], OpenbookV2FulfillmentConfig> FACTORY = OpenbookV2FulfillmentConfig::read;
 
   public static OpenbookV2FulfillmentConfig read(final PublicKey _address, final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var pubkey = readPubKey(_data, i);

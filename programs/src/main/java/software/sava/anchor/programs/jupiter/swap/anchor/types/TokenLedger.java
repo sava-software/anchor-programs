@@ -41,6 +41,9 @@ public record TokenLedger(PublicKey _address, Discriminator discriminator, Publi
   public static final BiFunction<PublicKey, byte[], TokenLedger> FACTORY = TokenLedger::read;
 
   public static TokenLedger read(final PublicKey _address, final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var tokenAccount = readPubKey(_data, i);

@@ -107,6 +107,9 @@ public record User(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], User> FACTORY = User::read;
 
   public static User read(final PublicKey _address, final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var authority = readPubKey(_data, i);

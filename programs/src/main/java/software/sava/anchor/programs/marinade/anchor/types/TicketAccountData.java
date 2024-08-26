@@ -58,6 +58,9 @@ public record TicketAccountData(PublicKey _address,
   public static final BiFunction<PublicKey, byte[], TicketAccountData> FACTORY = TicketAccountData::read;
 
   public static TicketAccountData read(final PublicKey _address, final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var stateAddress = readPubKey(_data, i);
