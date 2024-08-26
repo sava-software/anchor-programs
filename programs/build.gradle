@@ -1,9 +1,8 @@
 dependencies {
-  implementation "systems.comodal:json-iterator:$jsoniter"
-
-  implementation "software.sava:sava-core:$sava"
-  implementation "software.sava:sava-rpc:$sava"
-
-  implementation "software.sava:solana-programs:$sava_solana_programs"
-  implementation "software.sava:anchor-src-gen:$sava_anchor_src_gen"
+  implementation libs.bouncycastle
+  implementation libs.json.iterator
+  implementation libs.sava.core
+  implementation libs.sava.rpc
+  implementation libs.sava.solana.programs
+  implementation libs.sava.anchor.src.gen
 }

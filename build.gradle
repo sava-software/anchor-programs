@@ -22,15 +22,6 @@ def getAppVersion = { ->
 ext {
   VERSION = getAppVersion()
   VCS_URL = 'https://github.com/sava-software/anchor-programs'
-
-  bouncycastleMinor = 'jdk18on'
-  bouncycastlePatch = '1.78.1' // https://www.bouncycastle.org/latest_releases.html#LATEST
-
-  jsoniter = '2.11.0'
-
-  sava = '1.4.6'
-  sava_solana_programs = '1.4.5'
-  sava_anchor_src_gen = '1.3.4'
 }
 
 subprojects {
@@ -91,9 +82,8 @@ subprojects {
   }
 
   dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter-api:+'
-    testImplementation 'org.junit.jupiter:junit-jupiter-params:+'
-    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:+'
+    testImplementation libs.junit.jupiter
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   }
 
   test {
