@@ -82,6 +82,13 @@ subprojects {
   }
 
   dependencies {
+    implementation libs.bouncycastle
+    implementation libs.json.iterator
+    implementation libs.sava.core
+    implementation libs.sava.rpc
+    implementation libs.sava.solana.programs
+    implementation libs.sava.anchor.src.gen
+
     testImplementation libs.junit.jupiter
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
   }
