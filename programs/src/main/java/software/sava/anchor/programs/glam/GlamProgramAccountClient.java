@@ -69,6 +69,12 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
   FundPDA createStakeAccountPDA();
 
+  Instruction mergeStakeAccounts(final PublicKey fromStakeAccount, final PublicKey toStakeAccount);
+
+  Instruction splitStakeAccount(final PublicKey existingStakeAccount,
+                                final FundPDA newStakeAccountPDA,
+                                final long lamports);
+
   Instruction initializeAndDelegateStake(final FundPDA stakeAccountPDA,
                                          final PublicKey validatorVoteAccount,
                                          final long lamports);

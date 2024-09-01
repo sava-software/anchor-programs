@@ -490,6 +490,42 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     );
   }
 
+  @Override
+  public Instruction mergeStakeAccounts(final PublicKey fromStakeAccount, final PublicKey toStakeAccount) {
+    return GlamProgram.mergeStakeAccounts(
+        invokedProgram,
+        manager.publicKey(),
+        glamFundAccounts.fundPublicKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        toStakeAccount,
+        fromStakeAccount,
+        solanaAccounts.clockSysVar(),
+        solanaAccounts.stakeHistorySysVar(),
+        solanaAccounts.systemProgram(),
+        solanaAccounts.systemProgram()
+    );
+  }
+
+  @Override
+  public Instruction splitStakeAccount(final PublicKey existingStakeAccount,
+                                       final FundPDA newStakeAccountPDA,
+                                       final long lamports) {
+    return GlamProgram.splitStakeAccount(
+        invokedProgram,
+        manager.publicKey(),
+        glamFundAccounts.fundPublicKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        existingStakeAccount,
+        newStakeAccountPDA.pda().publicKey(),
+        solanaAccounts.clockSysVar(),
+        solanaAccounts.stakeProgram(),
+        solanaAccounts.systemProgram(),
+        lamports,
+        newStakeAccountPDA.accountId(),
+        newStakeAccountPDA.pda().nonce()
+    );
+  }
+
   private Instruction deactivateStakeAccounts() {
     return GlamProgram.deactivateStakeAccounts(
         invokedProgram,
