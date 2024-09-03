@@ -74,13 +74,6 @@ subprojects {
     mavenCentral()
   }
 
-  configurations.configureEach {
-    resolutionStrategy {
-      cacheDynamicVersionsFor 15, 'minutes'
-      cacheChangingModulesFor 15, 'minutes'
-    }
-  }
-
   dependencies {
     implementation libs.bouncycastle
     implementation libs.json.iterator
