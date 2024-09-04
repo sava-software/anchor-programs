@@ -341,14 +341,11 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction transferLamportsAndSyncNative(final long lamports) {
     return GlamProgram.wsolWrap(
         invokedProgram,
+        solanaAccounts,
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         wrappedSolPDA().publicKey(),
-        solanaAccounts.wrappedSolTokenMint(),
         manager.publicKey(),
-        solanaAccounts.systemProgram(),
-        solanaAccounts.tokenProgram(),
-        solanaAccounts.associatedTokenAccountProgram(),
         lamports
     );
   }
@@ -362,12 +359,11 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction unwrapSOL() {
     return GlamProgram.wsolUnwrap(
         invokedProgram,
+        solanaAccounts,
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         wrappedSolPDA().publicKey(),
-        solanaAccounts.wrappedSolTokenMint(),
-        manager.publicKey(),
-        solanaAccounts.tokenProgram()
+        manager.publicKey()
     );
   }
 
@@ -473,17 +469,13 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                                 final long lamports) {
     return GlamProgram.initializeAndDelegateStake(
         invokedProgram,
+        solanaAccounts,
         manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         stakeAccountPDA.pda().publicKey(),
         validatorVoteAccount,
         solanaAccounts.stakeConfig(),
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.rentSysVar(),
-        solanaAccounts.stakeHistorySysVar(),
-        solanaAccounts.stakeProgram(),
-        solanaAccounts.systemProgram(),
         lamports,
         stakeAccountPDA.accountId(),
         stakeAccountPDA.pda().nonce()
@@ -494,15 +486,12 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction mergeStakeAccounts(final PublicKey fromStakeAccount, final PublicKey toStakeAccount) {
     return GlamProgram.mergeStakeAccounts(
         invokedProgram,
+        solanaAccounts,
         manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         toStakeAccount,
-        fromStakeAccount,
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.stakeHistorySysVar(),
-        solanaAccounts.systemProgram(),
-        solanaAccounts.systemProgram()
+        fromStakeAccount
     );
   }
 
@@ -512,14 +501,12 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                        final long lamports) {
     return GlamProgram.splitStakeAccount(
         invokedProgram,
+        solanaAccounts,
         manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         existingStakeAccount,
         newStakeAccountPDA.pda().publicKey(),
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.stakeProgram(),
-        solanaAccounts.systemProgram(),
         lamports,
         newStakeAccountPDA.accountId(),
         newStakeAccountPDA.pda().nonce()
@@ -529,11 +516,10 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   private Instruction deactivateStakeAccounts() {
     return GlamProgram.deactivateStakeAccounts(
         invokedProgram,
+        solanaAccounts,
         manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.stakeProgram()
+        glamFundAccounts.treasuryPublicKey()
     );
   }
 
@@ -562,12 +548,10 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   private Instruction closeStakeAccounts() {
     return GlamProgram.withdrawFromStakeAccounts(
         invokedProgram,
+        solanaAccounts,
         manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.stakeHistorySysVar(),
-        solanaAccounts.stakeProgram()
+        glamFundAccounts.treasuryPublicKey()
     );
   }
 
@@ -591,11 +575,11 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction initializeFund(final FundModel fundModel) {
     return GlamProgram.initializeFund(
         invokedProgram,
+        solanaAccounts,
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.openFundsPDA().publicKey(),
         glamFundAccounts.treasuryPublicKey(),
         manager.publicKey(),
-        solanaAccounts.systemProgram(),
         fundModel
     );
   }
@@ -604,12 +588,11 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction addShareClass(final ShareClassModel shareClassModel) {
     return GlamProgram.addShareClass(
         invokedProgram,
+        solanaAccounts,
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.openFundsPDA().publicKey(),
         glamFundAccounts.treasuryPublicKey(),
         manager.publicKey(),
-        solanaAccounts.systemProgram(),
-        solanaAccounts.tokenProgram(),
         shareClassModel
     );
   }
@@ -628,11 +611,11 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction closeFund() {
     return GlamProgram.closeFund(
         invokedProgram,
+        solanaAccounts,
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.openFundsPDA().publicKey(),
         glamFundAccounts.treasuryPublicKey(),
-        manager.publicKey(),
-        solanaAccounts.systemProgram()
+        manager.publicKey()
     );
   }
 
@@ -640,10 +623,10 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction closeShareClass(final PublicKey shareClassKey, final int shareClassId) {
     return GlamProgram.closeShareClass(
         invokedProgram,
+        solanaAccounts,
         glamFundAccounts.fundPublicKey(),
         shareClassKey,
         manager.publicKey(),
-        solanaAccounts.token2022Program(),
         shareClassId
     );
   }
@@ -657,6 +640,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                final long amount) {
     return GlamProgram.subscribe(
         invokedProgram,
+        solanaAccounts,
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         shareClassKey,
@@ -665,10 +649,6 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         treasuryAssetATAKey,
         assetATAKey,
         manager.publicKey(),
-        solanaAccounts.systemProgram(),
-        solanaAccounts.associatedTokenAccountProgram(),
-        solanaAccounts.tokenProgram(),
-        solanaAccounts.token2022Program(),
         amount,
         true
     );
@@ -681,14 +661,12 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                             final boolean inKind) {
     return GlamProgram.redeem(
         invokedProgram,
+        solanaAccounts,
         glamFundAccounts.fundPublicKey(),
         shareClassKey,
         shareClassATAKey,
         manager.publicKey(),
         glamFundAccounts.treasuryPublicKey(),
-        solanaAccounts.systemProgram(),
-        solanaAccounts.tokenProgram(),
-        solanaAccounts.token2022Program(),
         amount,
         inKind,
         true

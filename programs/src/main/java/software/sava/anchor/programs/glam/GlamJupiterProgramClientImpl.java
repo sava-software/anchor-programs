@@ -48,6 +48,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                   final Instruction swapInstruction) {
     return GlamProgram.jupiterSwap(
         invokedProgram,
+        solanaAccounts,
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         inputTreasuryATA,
@@ -56,11 +57,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         outputTreasuryATA,
         inputMintKey, outputMintKey,
         manager.publicKey(),
-        solanaAccounts.systemProgram(),
         jupiterAccounts.swapProgram(),
-        solanaAccounts.associatedTokenAccountProgram(),
-        solanaAccounts.tokenProgram(),
-        solanaAccounts.token2022Program(),
         amount,
         swapInstruction.data()
     ).extraAccounts(swapInstruction.accounts());

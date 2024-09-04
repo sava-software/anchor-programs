@@ -52,6 +52,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
     final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
     return GlamProgram.stakePoolDepositSol(
         invokedProgram,
+        solanaAccounts,
         manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
@@ -62,8 +63,6 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         stakePoolState.poolMint(),
         stakePoolState.managerFeeAccount(),
         poolTokenATA,
-        solanaAccounts.associatedTokenAccountProgram(),
-        solanaAccounts.systemProgram(),
         stakePoolState.tokenProgramId(),
         lamportsIn
     );
@@ -86,6 +85,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
     final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
     return GlamProgram.stakePoolDepositStake(
         invokedProgram,
+        solanaAccounts,
         manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
@@ -100,12 +100,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         validatorStakeAccount,
         stakePoolState.reserveStake(),
         stakePoolStateAccountInfo.owner(),
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.stakeHistorySysVar(),
-        solanaAccounts.associatedTokenAccountProgram(),
-        solanaAccounts.systemProgram(),
-        solanaAccounts.tokenProgram(),
-        solanaAccounts.stakeProgram()
+        stakePoolState.tokenProgramId()
     );
   }
 
@@ -126,6 +121,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
     final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
     return GlamProgram.stakePoolWithdrawSol(
         invokedProgram,
+        solanaAccounts,
         manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
@@ -136,11 +132,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         stakePoolState.poolMint(),
         stakePoolState.managerFeeAccount(),
         poolTokenATA,
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.stakeHistorySysVar(),
-        solanaAccounts.systemProgram(),
         stakePoolState.tokenProgramId(),
-        solanaAccounts.stakeProgram(),
         poolTokenAmount
     );
   }
@@ -182,6 +174,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
     final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
     return GlamProgram.stakePoolWithdrawStake(
         invokedProgram,
+        solanaAccounts,
         manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
@@ -194,10 +187,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         validatorOrReserveStakeAccount,
         poolTokenATA,
         stakePoolStateAccountInfo.owner(),
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.systemProgram(),
         stakePoolState.tokenProgramId(),
-        solanaAccounts.stakeProgram(),
         poolTokenAmount,
         stakeAccountPDA.accountId(),
         stakeAccountPDA.pda().nonce()

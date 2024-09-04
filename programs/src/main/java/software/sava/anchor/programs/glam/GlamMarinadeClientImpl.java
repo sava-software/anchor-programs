@@ -65,6 +65,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   public Instruction marinadeDeposit(final PublicKey mSolTokenAccount, final long lamports) {
     return GlamProgram.marinadeDepositSol(
         invokedProgram,
+        solanaAccounts,
         feePayer.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
@@ -77,9 +78,6 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         marinadeAccounts.liquidityPoolSolLegAccount(),
         mSolTokenAccount,
         marinadeAccounts.marinadeProgram(),
-        solanaAccounts.associatedTokenAccountProgram(),
-        solanaAccounts.systemProgram(),
-        solanaAccounts.tokenProgram(),
         lamports
     );
   }
@@ -102,6 +100,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
                                          final int validatorIndex) {
     return GlamProgram.marinadeDepositStake(
         invokedProgram,
+        solanaAccounts,
         feePayer.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
@@ -113,13 +112,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         marinadeAccounts.mSolTokenMint(),
         marinadeAccounts.mSolTokenMintAuthorityPDA(),
         mSolTokenAccount,
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.rentSysVar(),
         marinadeAccounts.marinadeProgram(),
-        solanaAccounts.associatedTokenAccountProgram(),
-        solanaAccounts.systemProgram(),
-        solanaAccounts.tokenProgram(),
-        solanaAccounts.stakeProgram(),
         validatorIndex
     );
   }
@@ -131,6 +124,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
     final var ticketPDA = ticketAccount.pda();
     return GlamProgram.marinadeDelayedUnstake(
         invokedProgram,
+        solanaAccounts,
         feePayer.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
@@ -139,10 +133,6 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         mSolTokenAccount,
         marinadeAccounts.stateProgram(),
         marinadeAccounts.treasuryReserveSolPDA(),
-        solanaAccounts.rentSysVar(),
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.systemProgram(),
-        solanaAccounts.tokenProgram(),
         marinadeAccounts.marinadeProgram(),
         lamports,
         ticketAccount.accountId(),
@@ -153,15 +143,12 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   private Instruction claimTickets() {
     return GlamProgram.marinadeClaimTickets(
         glamFundAccounts.glamAccounts().invokedProgram(),
+        solanaAccounts,
         feePayer.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
         marinadeAccounts.stateProgram(),
         marinadeAccounts.treasuryReserveSolPDA(),
-        solanaAccounts.rentSysVar(),
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.systemProgram(),
-        solanaAccounts.tokenProgram(),
         marinadeAccounts.marinadeProgram()
     );
   }
