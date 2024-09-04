@@ -14,6 +14,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record FundAccount(PublicKey _address,
                           Discriminator discriminator,
@@ -26,6 +27,9 @@ public record FundAccount(PublicKey _address,
                           String uri, byte[] _uri,
                           String openfundsUri, byte[] _openfundsUri,
                           EngineField[][] params) implements Borsh {
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(49, 104, 168, 214, 134, 180, 173, 154);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int MANAGER_OFFSET = 8;
   public static final int TREASURY_OFFSET = 40;

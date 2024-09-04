@@ -9,6 +9,7 @@ import software.sava.core.rpc.Filter;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record FundMetadataAccount(PublicKey _address,
                                   Discriminator discriminator,
@@ -17,6 +18,9 @@ public record FundMetadataAccount(PublicKey _address,
                                   FundField[] fund,
                                   ShareClassField[][] shareClasses,
                                   FundManagerField[][] fundManagers) implements Borsh {
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(214, 24, 35, 92, 16, 104, 166, 6);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int FUND_PUBKEY_OFFSET = 8;
   public static final int COMPANY_OFFSET = 40;

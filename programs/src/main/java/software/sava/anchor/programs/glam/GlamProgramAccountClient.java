@@ -39,7 +39,10 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
                                                                                       final PublicKey programPublicKey) {
     return rpcClient.getProgramAccounts(
         programPublicKey,
-        List.of(FundAccount.createManagerFilter(managerPublicKey)),
+        List.of(
+            FundAccount.DISCRIMINATOR_FILTER,
+            FundAccount.createManagerFilter(managerPublicKey)
+        ),
         FundAccount.FACTORY
     );
   }
