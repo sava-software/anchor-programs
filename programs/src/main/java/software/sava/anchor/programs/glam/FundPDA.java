@@ -9,7 +9,7 @@ import java.util.List;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.time.ZoneOffset.UTC;
 
-public record FundPDA(ProgramDerivedAddress pda, String accountId) {
+public record FundPDA(ProgramDerivedAddress pda, String id) {
 
   public static FundPDA createPDA(final String baseId,
                                   final String id,

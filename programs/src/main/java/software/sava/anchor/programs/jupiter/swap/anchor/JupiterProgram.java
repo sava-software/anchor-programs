@@ -439,7 +439,7 @@ public final class JupiterProgram {
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, CREATE_TOKEN_LEDGER_DISCRIMINATOR);
   }
-  
+
   private JupiterProgram() {
   }
 }

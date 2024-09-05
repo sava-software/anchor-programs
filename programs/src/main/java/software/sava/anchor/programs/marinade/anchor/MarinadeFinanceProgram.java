@@ -877,7 +877,7 @@ public final class MarinadeFinanceProgram {
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
-  
+
   private MarinadeFinanceProgram() {
   }
 }

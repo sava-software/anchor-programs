@@ -135,7 +135,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         marinadeAccounts.treasuryReserveSolPDA(),
         marinadeAccounts.marinadeProgram(),
         lamports,
-        ticketAccount.accountId(),
+        ticketAccount.id(),
         ticketPDA.nonce()
     );
   }

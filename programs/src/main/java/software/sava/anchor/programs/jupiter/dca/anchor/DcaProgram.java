@@ -497,7 +497,7 @@ public final class DcaProgram {
 
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, END_AND_CLOSE_DISCRIMINATOR);
   }
-  
+
   private DcaProgram() {
   }
 }
