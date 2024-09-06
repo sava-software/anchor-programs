@@ -308,6 +308,12 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
+  public Instruction delegateStakeAccount(final PublicKey initializedStakeAccount,
+                                          final PublicKey validatorVoteAccount) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public ProgramDerivedAddress findLookupTableAddress(final long recentSlot) {
     return nativeProgramAccountClient.findLookupTableAddress(recentSlot);
   }

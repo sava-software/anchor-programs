@@ -229,6 +229,13 @@ public class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   }
 
   @Override
+  public Instruction delegateStakeAccount(final PublicKey initializedStakeAccount,
+                                          final PublicKey validatorVoteAccount,
+                                          final PublicKey stakeAuthority) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
   public Instruction delegateStakeAccount(final StakeAccount initializedStakeAccount,
                                           final PublicKey validatorVoteAccount) {
     throw new UnsupportedOperationException();
