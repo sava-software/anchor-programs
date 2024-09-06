@@ -17,15 +17,18 @@ import java.util.stream.Collectors;
 
 public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
+  static GlamProgramAccountClient createClient(final SolanaAccounts solanaAccounts, final GlamFundAccounts glamFundAccounts) {
+    return new GlamProgramAccountClientImpl(solanaAccounts, glamFundAccounts);
+  }
+
   static GlamProgramAccountClient createClient(final SolanaAccounts solanaAccounts,
                                                final GlamAccounts glamAccounts,
                                                final PublicKey signerPublicKey,
                                                final PublicKey fundPublicKey) {
-    return new GlamProgramAccountClientImpl(solanaAccounts, GlamFundAccounts.createAccounts(glamAccounts, signerPublicKey, fundPublicKey));
+    return createClient(solanaAccounts, GlamFundAccounts.createAccounts(glamAccounts, signerPublicKey, fundPublicKey));
   }
 
-  static GlamProgramAccountClient createClient(final PublicKey signerPublicKey,
-                                               final PublicKey fundPublicKey) {
+  static GlamProgramAccountClient createClient(final PublicKey signerPublicKey, final PublicKey fundPublicKey) {
     return createClient(SolanaAccounts.MAIN_NET, GlamAccounts.MAIN_NET, signerPublicKey, fundPublicKey);
   }
 
@@ -71,8 +74,6 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
   Instruction transferLamportsAndSyncNative(final long lamports);
 
   FundPDA createStakeAccountPDA();
-
-  Instruction mergeStakeAccounts(final PublicKey fromStakeAccount, final PublicKey toStakeAccount);
 
   Instruction splitStakeAccount(final PublicKey existingStakeAccount,
                                 final FundPDA newStakeAccountPDA,

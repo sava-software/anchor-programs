@@ -259,22 +259,22 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction initializeStakeAccount(final PublicKey unInitializedStakeAccount, final PublicKey staker) {
-    return nativeProgramAccountClient.initializeStakeAccount(unInitializedStakeAccount, staker);
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public Instruction initializeStakeAccount(final PublicKey unInitializedStakeAccount) {
-    return nativeProgramAccountClient.initializeStakeAccount(unInitializedStakeAccount);
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public Instruction initializeStakeAccountChecked(final PublicKey unInitializedStakeAccount, final PublicKey staker) {
-    return nativeProgramAccountClient.initializeStakeAccountChecked(unInitializedStakeAccount, staker);
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public Instruction initializeStakeAccountChecked(final PublicKey unInitializedStakeAccount) {
-    return nativeProgramAccountClient.initializeStakeAccountChecked(unInitializedStakeAccount);
+    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -282,14 +282,14 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                            final PublicKey stakeOrWithdrawAuthority,
                                            final PublicKey lockupAuthority,
                                            final StakeAuthorize stakeAuthorize) {
-    return nativeProgramAccountClient.authorizeStakeAccount(stakeAccount, stakeOrWithdrawAuthority, lockupAuthority, stakeAuthorize);
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public Instruction authorizeStakeAccount(final PublicKey stakeAccount,
                                            final PublicKey stakeOrWithdrawAuthority,
                                            final StakeAuthorize stakeAuthorize) {
-    return nativeProgramAccountClient.authorizeStakeAccount(stakeAccount, stakeOrWithdrawAuthority, stakeAuthorize);
+    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -297,14 +297,14 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                                   final PublicKey stakeOrWithdrawAuthority,
                                                   final PublicKey newStakeOrWithdrawAuthority,
                                                   final StakeAuthorize stakeAuthorize) {
-    return nativeProgramAccountClient.authorizeStakeAccountChecked(stakeAccount, stakeOrWithdrawAuthority, stakeAuthorize);
+    throw new UnsupportedOperationException();
   }
 
   @Override
   public Instruction authorizeStakeAccountChecked(final PublicKey stakeAccount,
                                                   final PublicKey stakeOrWithdrawAuthority,
                                                   final StakeAuthorize stakeAuthorize) {
-    return nativeProgramAccountClient.authorizeStakeAccountChecked(stakeAccount, stakeOrWithdrawAuthority, stakeAuthorize);
+    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -467,31 +467,19 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction initializeAndDelegateStake(final FundPDA stakeAccountPDA,
                                                 final PublicKey validatorVoteAccount,
                                                 final long lamports) {
+    final var pda = stakeAccountPDA.pda();
     return GlamProgram.initializeAndDelegateStake(
         invokedProgram,
         solanaAccounts,
         manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
-        stakeAccountPDA.pda().publicKey(),
+        pda.publicKey(),
         validatorVoteAccount,
         solanaAccounts.stakeConfig(),
         lamports,
         stakeAccountPDA.id(),
-        stakeAccountPDA.pda().nonce()
-    );
-  }
-
-  @Override
-  public Instruction mergeStakeAccounts(final PublicKey fromStakeAccount, final PublicKey toStakeAccount) {
-    return GlamProgram.mergeStakeAccounts(
-        invokedProgram,
-        solanaAccounts,
-        manager.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
-        toStakeAccount,
-        fromStakeAccount
+        pda.nonce()
     );
   }
 
@@ -513,37 +501,11 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     );
   }
 
-  private Instruction deactivateStakeAccounts() {
-    return GlamProgram.deactivateStakeAccounts(
-        invokedProgram,
-        solanaAccounts,
-        manager.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey()
-    );
-  }
-
   @Override
   public Instruction deactivateStakeAccount(final PublicKey stakeAccount) {
-    return deactivateStakeAccounts().extraAccount(stakeAccount, AccountMeta.CREATE_WRITE);
+    return nativeProgramClient.deactivateStakeAccount(stakeAccount, null);
   }
 
-  @Override
-  public Instruction deactivateStakeAccount(final StakeAccount stakeAccount) {
-    return deactivateStakeAccount(stakeAccount.address());
-  }
-
-  @Override
-  public List<Instruction> deactivateStakeAccountInfos(final Collection<AccountInfo<StakeAccount>> stakeAccounts) {
-    final var extraAccounts = stakeAccounts.stream().map(AccountInfo::pubKey).toList();
-    return List.of(deactivateStakeAccounts().extraAccounts(extraAccounts, AccountMeta.CREATE_WRITE));
-  }
-
-  @Override
-  public List<Instruction> deactivateStakeAccounts(final Collection<StakeAccount> stakeAccounts) {
-    final var extraAccounts = stakeAccounts.stream().map(StakeAccount::address).toList();
-    return List.of(deactivateStakeAccounts().extraAccounts(extraAccounts, AccountMeta.CREATE_WRITE));
-  }
 
   private Instruction closeStakeAccounts() {
     return GlamProgram.withdrawFromStakeAccounts(
