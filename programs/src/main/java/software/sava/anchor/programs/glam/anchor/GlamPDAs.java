@@ -4,6 +4,7 @@ import java.util.List;
 
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
+import software.sava.core.accounts.SolanaAccounts;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
@@ -21,33 +22,33 @@ public final class GlamPDAs {
 
   public static ProgramDerivedAddress inputSignerAtaPDA(final PublicKey program,
                                                         final PublicKey signerAccount,
-                                                        final byte[] seed1,
+                                                        final SolanaAccounts solanaAccounts,
                                                         final PublicKey inputMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       signerAccount.toByteArray(),
-      seed1,
+      solanaAccounts.tokenProgram().toByteArray(),
       inputMintAccount.toByteArray()
     ), program);
   }
 
   public static ProgramDerivedAddress mintToPDA(final PublicKey program,
                                                 final PublicKey treasuryAccount,
-                                                final byte[] seed1,
+                                                final SolanaAccounts solanaAccounts,
                                                 final PublicKey msolMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       treasuryAccount.toByteArray(),
-      seed1,
+      solanaAccounts.tokenProgram().toByteArray(),
       msolMintAccount.toByteArray()
     ), program);
   }
 
   public static ProgramDerivedAddress mintTo1PDA(final PublicKey program,
                                                  final PublicKey treasuryAccount,
-                                                 final byte[] seed1,
+                                                 final SolanaAccounts solanaAccounts,
                                                  final PublicKey poolMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       treasuryAccount.toByteArray(),
-      seed1,
+      solanaAccounts.tokenProgram().toByteArray(),
       poolMintAccount.toByteArray()
     ), program);
   }
@@ -62,11 +63,11 @@ public final class GlamPDAs {
 
   public static ProgramDerivedAddress outputTreasuryAtaPDA(final PublicKey program,
                                                            final PublicKey treasuryAccount,
-                                                           final byte[] seed1,
+                                                           final SolanaAccounts solanaAccounts,
                                                            final PublicKey outputMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       treasuryAccount.toByteArray(),
-      seed1,
+      solanaAccounts.tokenProgram().toByteArray(),
       outputMintAccount.toByteArray()
     ), program);
   }
@@ -92,11 +93,11 @@ public final class GlamPDAs {
 
   public static ProgramDerivedAddress treasuryWsolAtaPDA(final PublicKey program,
                                                          final PublicKey treasuryAccount,
-                                                         final byte[] seed1,
+                                                         final SolanaAccounts solanaAccounts,
                                                          final PublicKey wsolMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       treasuryAccount.toByteArray(),
-      seed1,
+      solanaAccounts.tokenProgram().toByteArray(),
       wsolMintAccount.toByteArray()
     ), program);
   }
