@@ -7,8 +7,11 @@
 - The latest generally available JDK. This project will continue to move to the latest and will not maintain
   versions released against previous JDK's.
 
-## Dependencies
+## [Dependencies](programs/src/main/java/module-info.java)
 
+- [JSON Iterator](https://github.com/comodal/json-iterator?tab=readme-ov-file#json-iterator)
+- [sava-core](https://github.com/sava-software/sava)
+- [sava-rpc](https://github.com/sava-software/sava)
 - [solana-programs](https://github.com/sava-software/solana-programs)
 - [anchor-src-gen](https://github.com/sava-software/anchor-src-gen)
 
