@@ -17,6 +17,9 @@ public record FeeTier(int feeNumerator,
   public static final int BYTES = 32;
 
   public static FeeTier read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var feeNumerator = getInt32LE(_data, i);
     i += 4;

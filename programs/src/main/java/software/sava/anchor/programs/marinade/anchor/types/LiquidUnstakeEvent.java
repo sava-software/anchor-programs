@@ -26,6 +26,9 @@ public record LiquidUnstakeEvent(PublicKey state,
                                  Fee treasuryCut) implements Borsh {
 
   public static LiquidUnstakeEvent read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var state = readPubKey(_data, i);
     i += 32;

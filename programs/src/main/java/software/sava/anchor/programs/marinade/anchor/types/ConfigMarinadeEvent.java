@@ -19,6 +19,9 @@ public record ConfigMarinadeEvent(PublicKey state,
                                   FeeValueChange maxStakeMovedPerEpochChange) implements Borsh {
 
   public static ConfigMarinadeEvent read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var state = readPubKey(_data, i);
     i += 32;

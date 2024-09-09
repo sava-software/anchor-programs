@@ -19,6 +19,9 @@ public record ManagerModel(String portfolioManagerName, byte[] _portfolioManager
   }
 
   public static ManagerModel read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var portfolioManagerName = _data[i++] == 0 ? null : Borsh.string(_data, i);
     if (portfolioManagerName != null) {

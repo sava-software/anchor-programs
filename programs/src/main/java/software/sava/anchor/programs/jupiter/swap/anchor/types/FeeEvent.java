@@ -14,6 +14,9 @@ public record FeeEvent(PublicKey account,
   public static final int BYTES = 72;
 
   public static FeeEvent read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var account = readPubKey(_data, i);
     i += 32;

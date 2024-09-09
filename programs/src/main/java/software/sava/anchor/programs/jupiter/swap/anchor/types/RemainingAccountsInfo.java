@@ -5,6 +5,9 @@ import software.sava.core.borsh.Borsh;
 public record RemainingAccountsInfo(RemainingAccountsSlice[] slices) implements Borsh {
 
   public static RemainingAccountsInfo read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     final var slices = Borsh.readVector(RemainingAccountsSlice.class, RemainingAccountsSlice::read, _data, offset);
     return new RemainingAccountsInfo(slices);
   }

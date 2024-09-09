@@ -5,6 +5,9 @@ import software.sava.core.borsh.Borsh;
 public record EngineField(EngineFieldName name, EngineFieldValue value) implements Borsh {
 
   public static EngineField read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var name = EngineFieldName.read(_data, i);
     i += Borsh.len(name);

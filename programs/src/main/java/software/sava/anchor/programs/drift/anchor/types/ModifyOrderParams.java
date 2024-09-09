@@ -26,6 +26,9 @@ public record ModifyOrderParams(PositionDirection direction,
                                 ModifyOrderPolicy policy) implements Borsh {
 
   public static ModifyOrderParams read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var direction = _data[i++] == 0 ? null : PositionDirection.read(_data, i);
     if (direction != null) {

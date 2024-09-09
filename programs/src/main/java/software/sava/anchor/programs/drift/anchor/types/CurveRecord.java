@@ -37,6 +37,9 @@ public record CurveRecord(long ts,
   public static final int BYTES = 270;
 
   public static CurveRecord read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var ts = getInt64LE(_data, i);
     i += 8;

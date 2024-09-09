@@ -13,6 +13,9 @@ public record FundManagerField(FundManagerFieldName name, String value, byte[] _
   }
 
   public static FundManagerField read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var name = FundManagerFieldName.read(_data, i);
     i += Borsh.len(name);

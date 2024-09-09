@@ -18,6 +18,9 @@ public record InitializeEvent(PublicKey state,
   public static final int BYTES = 400;
 
   public static InitializeEvent read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var state = readPubKey(_data, i);
     i += 32;

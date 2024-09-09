@@ -21,6 +21,9 @@ public record HistoricalOracleData(// precision: PRICE_PRECISION
   public static final int BYTES = 48;
 
   public static HistoricalOracleData read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var lastOraclePrice = getInt64LE(_data, i);
     i += 8;

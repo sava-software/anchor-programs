@@ -231,6 +231,9 @@ public record AMM(// oracle price data public key
   public static final int BYTES = 936;
 
   public static AMM read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var oracle = readPubKey(_data, i);
     i += 32;

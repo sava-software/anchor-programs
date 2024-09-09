@@ -17,6 +17,9 @@ public record TradeEvent(PublicKey orderKey,
   public static final int BYTES = 96;
 
   public static TradeEvent read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var orderKey = readPubKey(_data, i);
     i += 32;

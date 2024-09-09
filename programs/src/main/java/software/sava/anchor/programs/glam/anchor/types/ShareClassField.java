@@ -13,6 +13,9 @@ public record ShareClassField(ShareClassFieldName name, String value, byte[] _va
   }
 
   public static ShareClassField read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var name = ShareClassFieldName.read(_data, i);
     i += Borsh.len(name);

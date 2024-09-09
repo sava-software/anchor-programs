@@ -12,6 +12,9 @@ public record SplitStakeAccountInfo(PublicKey account, int index) implements Bor
   public static final int BYTES = 36;
 
   public static SplitStakeAccountInfo read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var account = readPubKey(_data, i);
     i += 32;

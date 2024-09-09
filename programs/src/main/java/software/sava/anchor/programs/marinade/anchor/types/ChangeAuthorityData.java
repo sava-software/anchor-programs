@@ -12,6 +12,9 @@ public record ChangeAuthorityData(PublicKey admin,
                                   PublicKey pauseAuthority) implements Borsh {
 
   public static ChangeAuthorityData read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var admin = _data[i++] == 0 ? null : readPubKey(_data, i);
     if (admin != null) {

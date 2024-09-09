@@ -13,6 +13,9 @@ public record FeeStructure(FeeTier[] feeTiers,
   public static final int BYTES = 360;
 
   public static FeeStructure read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var feeTiers = Borsh.readArray(new FeeTier[10], FeeTier::read, _data, i);
     i += Borsh.fixedLen(feeTiers);

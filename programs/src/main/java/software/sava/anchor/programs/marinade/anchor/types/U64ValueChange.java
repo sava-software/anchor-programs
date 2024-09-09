@@ -10,6 +10,9 @@ public record U64ValueChange(long old, long _new) implements Borsh {
   public static final int BYTES = 16;
 
   public static U64ValueChange read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var old = getInt64LE(_data, i);
     i += 8;

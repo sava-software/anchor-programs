@@ -7,6 +7,9 @@ public record BoolValueChange(boolean old, boolean _new) implements Borsh {
   public static final int BYTES = 2;
 
   public static BoolValueChange read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var old = _data[i] == 1;
     ++i;

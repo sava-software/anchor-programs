@@ -5,6 +5,9 @@ import software.sava.core.borsh.Borsh;
 public record IntegrationAcl(IntegrationName name, IntegrationFeature[] features) implements Borsh {
 
   public static IntegrationAcl read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var name = IntegrationName.read(_data, i);
     i += Borsh.len(name);

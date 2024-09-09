@@ -10,6 +10,9 @@ public record WithdrawParams(long withdrawAmount, Withdrawal withdrawal) impleme
   public static final int BYTES = 9;
 
   public static WithdrawParams read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var withdrawAmount = getInt64LE(_data, i);
     i += 8;

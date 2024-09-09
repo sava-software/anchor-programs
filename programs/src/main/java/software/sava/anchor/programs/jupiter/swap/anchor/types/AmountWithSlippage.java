@@ -12,6 +12,9 @@ public record AmountWithSlippage(long amount, int slippageBps) implements Borsh 
   public static final int BYTES = 10;
 
   public static AmountWithSlippage read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var amount = getInt64LE(_data, i);
     i += 8;

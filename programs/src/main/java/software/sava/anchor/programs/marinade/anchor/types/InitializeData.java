@@ -22,6 +22,9 @@ public record InitializeData(PublicKey adminAuthority,
   public static final int BYTES = 144;
 
   public static InitializeData read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var adminAuthority = readPubKey(_data, i);
     i += 32;

@@ -27,6 +27,9 @@ public record LiqPool(PublicKey lpMint,
   public static final int BYTES = 111;
 
   public static LiqPool read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var lpMint = readPubKey(_data, i);
     i += 32;

@@ -26,6 +26,9 @@ public record LiquidatePerpRecord(int marketIndex,
   public static final int BYTES = 66;
 
   public static LiquidatePerpRecord read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var marketIndex = getInt16LE(_data, i);
     i += 2;

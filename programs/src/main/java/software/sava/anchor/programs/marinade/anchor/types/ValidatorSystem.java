@@ -20,6 +20,9 @@ public record ValidatorSystem(List validatorList,
   public static final int BYTES = 121;
 
   public static ValidatorSystem read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var validatorList = List.read(_data, i);
     i += Borsh.len(validatorList);

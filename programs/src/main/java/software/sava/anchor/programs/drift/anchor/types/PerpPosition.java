@@ -61,6 +61,9 @@ public record PerpPosition(// The perp market's last cumulative funding rate. Us
   public static final int BYTES = 96;
 
   public static PerpPosition read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var lastCumulativeFundingRate = getInt64LE(_data, i);
     i += 8;

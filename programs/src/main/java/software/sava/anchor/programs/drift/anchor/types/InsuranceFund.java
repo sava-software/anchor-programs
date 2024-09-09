@@ -26,6 +26,9 @@ public record InsuranceFund(PublicKey vault,
   public static final int BYTES = 112;
 
   public static InsuranceFund read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var vault = readPubKey(_data, i);
     i += 32;

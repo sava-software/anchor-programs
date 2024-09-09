@@ -58,6 +58,9 @@ public record FundModel(PublicKey id,
   }
 
   public static FundModel read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var id = _data[i++] == 0 ? null : readPubKey(_data, i);
     if (id != null) {

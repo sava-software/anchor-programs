@@ -20,6 +20,9 @@ public record PoolBalance(// To get the pool's token amount, you must multiply t
   public static final int BYTES = 24;
 
   public static PoolBalance read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var scaledBalance = getInt128LE(_data, i);
     i += 16;

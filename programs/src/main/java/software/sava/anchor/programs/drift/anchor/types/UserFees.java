@@ -27,6 +27,9 @@ public record UserFees(// Total taker fee paid
   public static final int BYTES = 48;
 
   public static UserFees read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var totalFeePaid = getInt64LE(_data, i);
     i += 8;

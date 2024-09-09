@@ -25,6 +25,9 @@ public record StakeSystem(List stakeList,
   public static final int BYTES = 114;
 
   public static StakeSystem read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var stakeList = List.read(_data, i);
     i += Borsh.len(stakeList);

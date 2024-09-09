@@ -13,6 +13,9 @@ public record ValidityGuardRails(long slotsBeforeStaleForAmm,
   public static final int BYTES = 32;
 
   public static ValidityGuardRails read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var slotsBeforeStaleForAmm = getInt64LE(_data, i);
     i += 8;

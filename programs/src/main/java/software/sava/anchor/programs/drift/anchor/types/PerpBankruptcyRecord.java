@@ -19,6 +19,9 @@ public record PerpBankruptcyRecord(int marketIndex,
                                    BigInteger cumulativeFundingRateDelta) implements Borsh {
 
   public static PerpBankruptcyRecord read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var marketIndex = getInt16LE(_data, i);
     i += 2;

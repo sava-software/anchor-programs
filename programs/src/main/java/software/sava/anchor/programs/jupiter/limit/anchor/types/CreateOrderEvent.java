@@ -18,6 +18,9 @@ public record CreateOrderEvent(PublicKey orderKey,
                                OptionalLong expiredAt) implements Borsh {
 
   public static CreateOrderEvent read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var orderKey = readPubKey(_data, i);
     i += 32;

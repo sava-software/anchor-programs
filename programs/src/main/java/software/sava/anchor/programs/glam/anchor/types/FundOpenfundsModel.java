@@ -59,6 +59,9 @@ public record FundOpenfundsModel(String fundDomicileAlpha2, byte[] _fundDomicile
   }
 
   public static FundOpenfundsModel read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var fundDomicileAlpha2 = _data[i++] == 0 ? null : Borsh.string(_data, i);
     if (fundDomicileAlpha2 != null) {

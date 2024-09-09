@@ -459,6 +459,9 @@ public sealed interface Swap extends RustEnum permits
     public static final int BYTES = 16;
 
     public static Symmetry read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
       int i = offset;
       final var fromTokenId = getInt64LE(_data, i);
       i += 8;
@@ -608,6 +611,9 @@ public sealed interface Swap extends RustEnum permits
     public static final int BYTES = 3;
 
     public static Clone read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
       int i = offset;
       final var poolIndex = _data[i] & 0xFF;
       ++i;
@@ -643,6 +649,9 @@ public sealed interface Swap extends RustEnum permits
   record WhirlpoolSwapV2(boolean aToB, RemainingAccountsInfo remainingAccountsInfo) implements Swap {
 
     public static WhirlpoolSwapV2 read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
       int i = offset;
       final var aToB = _data[i] == 1;
       ++i;

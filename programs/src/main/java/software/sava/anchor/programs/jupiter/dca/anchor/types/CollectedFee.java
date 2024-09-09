@@ -15,6 +15,9 @@ public record CollectedFee(PublicKey userKey,
   public static final int BYTES = 104;
 
   public static CollectedFee read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var userKey = readPubKey(_data, i);
     i += 32;

@@ -12,6 +12,9 @@ public record Deposit(PublicKey dcaKey, long amount) implements Borsh {
   public static final int BYTES = 40;
 
   public static Deposit read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var dcaKey = readPubKey(_data, i);
     i += 32;

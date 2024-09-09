@@ -7,6 +7,9 @@ public record OracleGuardRails(PriceDivergenceGuardRails priceDivergence, Validi
   public static final int BYTES = 48;
 
   public static OracleGuardRails read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var priceDivergence = PriceDivergenceGuardRails.read(_data, i);
     i += Borsh.len(priceDivergence);

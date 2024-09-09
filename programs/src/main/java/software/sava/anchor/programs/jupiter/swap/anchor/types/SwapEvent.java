@@ -16,6 +16,9 @@ public record SwapEvent(PublicKey amm,
   public static final int BYTES = 112;
 
   public static SwapEvent read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var amm = readPubKey(_data, i);
     i += 32;

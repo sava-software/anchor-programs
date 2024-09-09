@@ -8,6 +8,9 @@ public record RoutePlanStep(Swap swap,
                             int outputIndex) implements Borsh {
 
   public static RoutePlanStep read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var swap = Swap.read(_data, i);
     i += Borsh.len(swap);

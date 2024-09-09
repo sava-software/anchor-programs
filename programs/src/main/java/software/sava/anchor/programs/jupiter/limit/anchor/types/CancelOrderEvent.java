@@ -10,6 +10,9 @@ public record CancelOrderEvent(PublicKey orderKey) implements Borsh {
   public static final int BYTES = 32;
 
   public static CancelOrderEvent read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     final var orderKey = readPubKey(_data, offset);
     return new CancelOrderEvent(orderKey);
   }

@@ -10,6 +10,9 @@ public record PubkeyValueChange(PublicKey old, PublicKey _new) implements Borsh 
   public static final int BYTES = 64;
 
   public static PubkeyValueChange read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var old = readPubKey(_data, i);
     i += 32;

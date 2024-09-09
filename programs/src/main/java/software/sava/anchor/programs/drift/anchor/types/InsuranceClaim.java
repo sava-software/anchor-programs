@@ -25,6 +25,9 @@ public record InsuranceClaim(// The amount of revenue last settled
   public static final int BYTES = 40;
 
   public static InsuranceClaim read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var revenueWithdrawSinceLastSettle = getInt64LE(_data, i);
     i += 8;

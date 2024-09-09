@@ -12,6 +12,9 @@ public record ConfigLpParams(Fee minFee,
                              Fee treasuryCut) implements Borsh {
 
   public static ConfigLpParams read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var minFee = _data[i++] == 0 ? null : Fee.read(_data, i);
     if (minFee != null) {

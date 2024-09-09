@@ -95,6 +95,9 @@ public record ShareClassOpenfundsModel(String isin, byte[] _isin,
   }
 
   public static ShareClassOpenfundsModel read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var isin = _data[i++] == 0 ? null : Borsh.string(_data, i);
     if (isin != null) {

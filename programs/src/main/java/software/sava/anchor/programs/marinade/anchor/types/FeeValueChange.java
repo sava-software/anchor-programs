@@ -7,6 +7,9 @@ public record FeeValueChange(Fee old, Fee _new) implements Borsh {
   public static final int BYTES = 8;
 
   public static FeeValueChange read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var old = Fee.read(_data, i);
     i += Borsh.len(old);

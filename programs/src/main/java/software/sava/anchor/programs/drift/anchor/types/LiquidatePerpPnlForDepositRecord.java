@@ -21,6 +21,9 @@ public record LiquidatePerpPnlForDepositRecord(int perpMarketIndex,
   public static final int BYTES = 52;
 
   public static LiquidatePerpPnlForDepositRecord read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var perpMarketIndex = getInt16LE(_data, i);
     i += 2;

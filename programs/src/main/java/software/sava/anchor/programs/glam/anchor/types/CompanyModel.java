@@ -25,6 +25,9 @@ public record CompanyModel(String fundGroupName, byte[] _fundGroupName,
   }
 
   public static CompanyModel read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var fundGroupName = _data[i++] == 0 ? null : Borsh.string(_data, i);
     if (fundGroupName != null) {

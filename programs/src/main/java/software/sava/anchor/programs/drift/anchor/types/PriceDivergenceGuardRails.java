@@ -10,6 +10,9 @@ public record PriceDivergenceGuardRails(long markOraclePercentDivergence, long o
   public static final int BYTES = 16;
 
   public static PriceDivergenceGuardRails read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var markOraclePercentDivergence = getInt64LE(_data, i);
     i += 8;

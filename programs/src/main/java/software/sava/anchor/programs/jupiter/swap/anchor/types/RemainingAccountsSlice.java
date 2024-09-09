@@ -7,6 +7,9 @@ public record RemainingAccountsSlice(AccountsType accountsType, int length) impl
   public static final int BYTES = 2;
 
   public static RemainingAccountsSlice read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var accountsType = AccountsType.read(_data, i);
     i += Borsh.len(accountsType);

@@ -10,6 +10,9 @@ public record MarketIdentifier(MarketType marketType, int marketIndex) implement
   public static final int BYTES = 3;
 
   public static MarketIdentifier read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var marketType = MarketType.read(_data, i);
     i += Borsh.len(marketType);

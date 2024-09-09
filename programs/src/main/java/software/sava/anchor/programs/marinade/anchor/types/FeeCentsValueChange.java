@@ -7,6 +7,9 @@ public record FeeCentsValueChange(FeeCents old, FeeCents _new) implements Borsh 
   public static final int BYTES = 8;
 
   public static FeeCentsValueChange read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var old = FeeCents.read(_data, i);
     i += Borsh.len(old);

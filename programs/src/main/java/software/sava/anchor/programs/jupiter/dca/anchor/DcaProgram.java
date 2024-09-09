@@ -12,6 +12,7 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
+import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -79,79 +80,84 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
+  public record OpenDcaData(Discriminator discriminator,
+                            long applicationIdx,
+                            long inAmount,
+                            long inAmountPerCycle,
+                            long cycleFrequency,
+                            OptionalLong minOutAmount,
+                            OptionalLong maxOutAmount,
+                            OptionalLong startAt,
+                            Boolean closeWsolInAta) implements Borsh {
 
-public record OpenDcaData(long applicationIdx,
-                          long inAmount,
-                          long inAmountPerCycle,
-                          long cycleFrequency,
-                          OptionalLong minOutAmount,
-                          OptionalLong maxOutAmount,
-                          OptionalLong startAt,
-                          Boolean closeWsolInAta) implements Borsh {
-
-  public static OpenDcaData read(final byte[] _data, final int offset) {
-    int i = offset;
-    final var applicationIdx = getInt64LE(_data, i);
-    i += 8;
-    final var inAmount = getInt64LE(_data, i);
-    i += 8;
-    final var inAmountPerCycle = getInt64LE(_data, i);
-    i += 8;
-    final var cycleFrequency = getInt64LE(_data, i);
-    i += 8;
-    final var minOutAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
-    if (minOutAmount.isPresent()) {
+    public static OpenDcaData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var applicationIdx = getInt64LE(_data, i);
       i += 8;
-    }
-    final var maxOutAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
-    if (maxOutAmount.isPresent()) {
+      final var inAmount = getInt64LE(_data, i);
       i += 8;
-    }
-    final var startAt = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
-    if (startAt.isPresent()) {
+      final var inAmountPerCycle = getInt64LE(_data, i);
       i += 8;
+      final var cycleFrequency = getInt64LE(_data, i);
+      i += 8;
+      final var minOutAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+      if (minOutAmount.isPresent()) {
+        i += 8;
+      }
+      final var maxOutAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+      if (maxOutAmount.isPresent()) {
+        i += 8;
+      }
+      final var startAt = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+      if (startAt.isPresent()) {
+        i += 8;
+      }
+      final var closeWsolInAta = _data[i++] == 0 ? null : _data[i] == 1;
+      return new OpenDcaData(discriminator,
+                             applicationIdx,
+                             inAmount,
+                             inAmountPerCycle,
+                             cycleFrequency,
+                             minOutAmount,
+                             maxOutAmount,
+                             startAt,
+                             closeWsolInAta);
     }
-    final var closeWsolInAta = _data[i++] == 0 ? null : _data[i] == 1;
-    return new OpenDcaData(applicationIdx,
-                           inAmount,
-                           inAmountPerCycle,
-                           cycleFrequency,
-                           minOutAmount,
-                           maxOutAmount,
-                           startAt,
-                           closeWsolInAta);
-  }
 
-  @Override
-  public int write(final byte[] _data, final int offset) {
-    int i = offset;
-    putInt64LE(_data, i, applicationIdx);
-    i += 8;
-    putInt64LE(_data, i, inAmount);
-    i += 8;
-    putInt64LE(_data, i, inAmountPerCycle);
-    i += 8;
-    putInt64LE(_data, i, cycleFrequency);
-    i += 8;
-    i += Borsh.writeOptional(minOutAmount, _data, i);
-    i += Borsh.writeOptional(maxOutAmount, _data, i);
-    i += Borsh.writeOptional(startAt, _data, i);
-    i += Borsh.writeOptional(closeWsolInAta, _data, i);
-    return i - offset;
-  }
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, applicationIdx);
+      i += 8;
+      putInt64LE(_data, i, inAmount);
+      i += 8;
+      putInt64LE(_data, i, inAmountPerCycle);
+      i += 8;
+      putInt64LE(_data, i, cycleFrequency);
+      i += 8;
+      i += Borsh.writeOptional(minOutAmount, _data, i);
+      i += Borsh.writeOptional(maxOutAmount, _data, i);
+      i += Borsh.writeOptional(startAt, _data, i);
+      i += Borsh.writeOptional(closeWsolInAta, _data, i);
+      return i - offset;
+    }
 
-  @Override
-  public int l() {
-    return 8
-         + 8
-         + 8
-         + 8
-         + 9
-         + 9
-         + 9
-         + 2;
+    @Override
+    public int l() {
+      return 8 + 8
+           + 8
+           + 8
+           + 8
+           + 9
+           + 9
+           + 9
+           + 2;
+    }
   }
-}
 
   public static final Discriminator OPEN_DCA_V2_DISCRIMINATOR = toDiscriminator(142, 119, 43, 109, 162, 52, 11, 177);
 
@@ -209,71 +215,76 @@ public record OpenDcaData(long applicationIdx,
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
+  public record OpenDcaV2Data(Discriminator discriminator,
+                              long applicationIdx,
+                              long inAmount,
+                              long inAmountPerCycle,
+                              long cycleFrequency,
+                              OptionalLong minOutAmount,
+                              OptionalLong maxOutAmount,
+                              OptionalLong startAt) implements Borsh {
 
-public record OpenDcaV2Data(long applicationIdx,
-                            long inAmount,
-                            long inAmountPerCycle,
-                            long cycleFrequency,
-                            OptionalLong minOutAmount,
-                            OptionalLong maxOutAmount,
-                            OptionalLong startAt) implements Borsh {
-
-  public static OpenDcaV2Data read(final byte[] _data, final int offset) {
-    int i = offset;
-    final var applicationIdx = getInt64LE(_data, i);
-    i += 8;
-    final var inAmount = getInt64LE(_data, i);
-    i += 8;
-    final var inAmountPerCycle = getInt64LE(_data, i);
-    i += 8;
-    final var cycleFrequency = getInt64LE(_data, i);
-    i += 8;
-    final var minOutAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
-    if (minOutAmount.isPresent()) {
+    public static OpenDcaV2Data read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var applicationIdx = getInt64LE(_data, i);
       i += 8;
-    }
-    final var maxOutAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
-    if (maxOutAmount.isPresent()) {
+      final var inAmount = getInt64LE(_data, i);
       i += 8;
+      final var inAmountPerCycle = getInt64LE(_data, i);
+      i += 8;
+      final var cycleFrequency = getInt64LE(_data, i);
+      i += 8;
+      final var minOutAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+      if (minOutAmount.isPresent()) {
+        i += 8;
+      }
+      final var maxOutAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+      if (maxOutAmount.isPresent()) {
+        i += 8;
+      }
+      final var startAt = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+      return new OpenDcaV2Data(discriminator,
+                               applicationIdx,
+                               inAmount,
+                               inAmountPerCycle,
+                               cycleFrequency,
+                               minOutAmount,
+                               maxOutAmount,
+                               startAt);
     }
-    final var startAt = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
-    return new OpenDcaV2Data(applicationIdx,
-                             inAmount,
-                             inAmountPerCycle,
-                             cycleFrequency,
-                             minOutAmount,
-                             maxOutAmount,
-                             startAt);
-  }
 
-  @Override
-  public int write(final byte[] _data, final int offset) {
-    int i = offset;
-    putInt64LE(_data, i, applicationIdx);
-    i += 8;
-    putInt64LE(_data, i, inAmount);
-    i += 8;
-    putInt64LE(_data, i, inAmountPerCycle);
-    i += 8;
-    putInt64LE(_data, i, cycleFrequency);
-    i += 8;
-    i += Borsh.writeOptional(minOutAmount, _data, i);
-    i += Borsh.writeOptional(maxOutAmount, _data, i);
-    i += Borsh.writeOptional(startAt, _data, i);
-    return i - offset;
-  }
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, applicationIdx);
+      i += 8;
+      putInt64LE(_data, i, inAmount);
+      i += 8;
+      putInt64LE(_data, i, inAmountPerCycle);
+      i += 8;
+      putInt64LE(_data, i, cycleFrequency);
+      i += 8;
+      i += Borsh.writeOptional(minOutAmount, _data, i);
+      i += Borsh.writeOptional(maxOutAmount, _data, i);
+      i += Borsh.writeOptional(startAt, _data, i);
+      return i - offset;
+    }
 
-  @Override
-  public int l() {
-    return 8
-         + 8
-         + 8
-         + 8
-         + 9
-         + 9
-         + 9;
+    @Override
+    public int l() {
+      return 8 + 8
+           + 8
+           + 8
+           + 8
+           + 9
+           + 9
+           + 9;
+    }
   }
-}
 
   public static final Discriminator CLOSE_DCA_DISCRIMINATOR = toDiscriminator(22, 7, 33, 98, 168, 183, 34, 243);
 
@@ -348,28 +359,32 @@ public record OpenDcaV2Data(long applicationIdx,
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
+  public record WithdrawData(Discriminator discriminator, WithdrawParams withdrawParams) implements Borsh {
 
-public record WithdrawData(WithdrawParams withdrawParams) implements Borsh {
+    public static final int BYTES = 25;
 
-  public static final int BYTES = 9;
+    public static WithdrawData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var withdrawParams = WithdrawParams.read(_data, i);
+      return new WithdrawData(discriminator, withdrawParams);
+    }
 
-  public static WithdrawData read(final byte[] _data, final int offset) {
-    final var withdrawParams = WithdrawParams.read(_data, offset);
-    return new WithdrawData(withdrawParams);
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(withdrawParams, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
   }
-
-  @Override
-  public int write(final byte[] _data, final int offset) {
-    int i = offset;
-    i += Borsh.write(withdrawParams, _data, i);
-    return i - offset;
-  }
-
-  @Override
-  public int l() {
-    return BYTES;
-  }
-}
 
   public static final Discriminator DEPOSIT_DISCRIMINATOR = toDiscriminator(242, 35, 198, 137, 82, 225, 242, 182);
 
@@ -399,29 +414,33 @@ public record WithdrawData(WithdrawParams withdrawParams) implements Borsh {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
+  public record DepositData(Discriminator discriminator, long depositIn) implements Borsh {
 
-public record DepositData(long depositIn) implements Borsh {
+    public static final int BYTES = 16;
 
-  public static final int BYTES = 8;
+    public static DepositData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var depositIn = getInt64LE(_data, i);
+      return new DepositData(discriminator, depositIn);
+    }
 
-  public static DepositData read(final byte[] _data, final int offset) {
-    final var depositIn = getInt64LE(_data, offset);
-    return new DepositData(depositIn);
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, depositIn);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
   }
-
-  @Override
-  public int write(final byte[] _data, final int offset) {
-    int i = offset;
-    putInt64LE(_data, i, depositIn);
-    i += 8;
-    return i - offset;
-  }
-
-  @Override
-  public int l() {
-    return BYTES;
-  }
-}
 
   public static final Discriminator WITHDRAW_FEES_DISCRIMINATOR = toDiscriminator(198, 212, 171, 109, 144, 215, 174, 89);
 
@@ -454,29 +473,33 @@ public record DepositData(long depositIn) implements Borsh {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
+  public record WithdrawFeesData(Discriminator discriminator, long amount) implements Borsh {
 
-public record WithdrawFeesData(long amount) implements Borsh {
+    public static final int BYTES = 16;
 
-  public static final int BYTES = 8;
+    public static WithdrawFeesData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new WithdrawFeesData(discriminator, amount);
+    }
 
-  public static WithdrawFeesData read(final byte[] _data, final int offset) {
-    final var amount = getInt64LE(_data, offset);
-    return new WithdrawFeesData(amount);
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
   }
-
-  @Override
-  public int write(final byte[] _data, final int offset) {
-    int i = offset;
-    putInt64LE(_data, i, amount);
-    i += 8;
-    return i - offset;
-  }
-
-  @Override
-  public int l() {
-    return BYTES;
-  }
-}
 
   public static final Discriminator INITIATE_FLASH_FILL_DISCRIMINATOR = toDiscriminator(143, 205, 3, 191, 162, 215, 245, 49);
 
@@ -558,29 +581,33 @@ public record WithdrawFeesData(long amount) implements Borsh {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
+  public record FulfillFlashFillData(Discriminator discriminator, long repayAmount) implements Borsh {
 
-public record FulfillFlashFillData(long repayAmount) implements Borsh {
+    public static final int BYTES = 16;
 
-  public static final int BYTES = 8;
+    public static FulfillFlashFillData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var repayAmount = getInt64LE(_data, i);
+      return new FulfillFlashFillData(discriminator, repayAmount);
+    }
 
-  public static FulfillFlashFillData read(final byte[] _data, final int offset) {
-    final var repayAmount = getInt64LE(_data, offset);
-    return new FulfillFlashFillData(repayAmount);
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, repayAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
   }
-
-  @Override
-  public int write(final byte[] _data, final int offset) {
-    int i = offset;
-    putInt64LE(_data, i, repayAmount);
-    i += 8;
-    return i - offset;
-  }
-
-  @Override
-  public int l() {
-    return BYTES;
-  }
-}
 
   public static final Discriminator INITIATE_DLMM_FILL_DISCRIMINATOR = toDiscriminator(155, 193, 80, 121, 91, 147, 254, 187);
 
@@ -662,29 +689,33 @@ public record FulfillFlashFillData(long repayAmount) implements Borsh {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
+  public record FulfillDlmmFillData(Discriminator discriminator, long repayAmount) implements Borsh {
 
-public record FulfillDlmmFillData(long repayAmount) implements Borsh {
+    public static final int BYTES = 16;
 
-  public static final int BYTES = 8;
+    public static FulfillDlmmFillData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var repayAmount = getInt64LE(_data, i);
+      return new FulfillDlmmFillData(discriminator, repayAmount);
+    }
 
-  public static FulfillDlmmFillData read(final byte[] _data, final int offset) {
-    final var repayAmount = getInt64LE(_data, offset);
-    return new FulfillDlmmFillData(repayAmount);
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, repayAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
   }
-
-  @Override
-  public int write(final byte[] _data, final int offset) {
-    int i = offset;
-    putInt64LE(_data, i, repayAmount);
-    i += 8;
-    return i - offset;
-  }
-
-  @Override
-  public int l() {
-    return BYTES;
-  }
-}
 
   public static final Discriminator TRANSFER_DISCRIMINATOR = toDiscriminator(163, 52, 200, 231, 140, 3, 69, 186);
 

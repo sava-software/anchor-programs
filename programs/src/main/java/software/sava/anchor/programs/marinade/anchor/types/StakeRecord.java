@@ -15,6 +15,9 @@ public record StakeRecord(PublicKey stakeAccount,
   public static final int BYTES = 49;
 
   public static StakeRecord read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var stakeAccount = readPubKey(_data, i);
     i += 32;

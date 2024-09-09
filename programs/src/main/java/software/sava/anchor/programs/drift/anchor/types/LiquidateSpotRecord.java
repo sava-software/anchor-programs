@@ -24,6 +24,9 @@ public record LiquidateSpotRecord(int assetMarketIndex,
   public static final int BYTES = 60;
 
   public static LiquidateSpotRecord read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var assetMarketIndex = getInt16LE(_data, i);
     i += 2;

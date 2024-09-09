@@ -43,6 +43,9 @@ public record ShareClassModel(String symbol, byte[] _symbol,
   }
 
   public static ShareClassModel read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var symbol = _data[i++] == 0 ? null : Borsh.string(_data, i);
     if (symbol != null) {

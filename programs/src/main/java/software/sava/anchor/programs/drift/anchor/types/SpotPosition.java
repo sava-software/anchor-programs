@@ -31,6 +31,9 @@ public record SpotPosition(// The scaled balance of the position. To get the tok
   public static final int BYTES = 40;
 
   public static SpotPosition read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var scaledBalance = getInt64LE(_data, i);
     i += 8;

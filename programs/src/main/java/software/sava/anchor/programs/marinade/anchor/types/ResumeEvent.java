@@ -10,6 +10,9 @@ public record ResumeEvent(PublicKey state) implements Borsh {
   public static final int BYTES = 32;
 
   public static ResumeEvent read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     final var state = readPubKey(_data, offset);
     return new ResumeEvent(state);
   }

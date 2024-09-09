@@ -220,6 +220,9 @@ public sealed interface EngineFieldValue extends RustEnum permits
   record VecPubkey(PublicKey[] val) implements EngineFieldValue {
 
     public static VecPubkey read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
       final var val = Borsh.readPublicKeyVector(_data, offset);
       return new VecPubkey(val);
     }
@@ -245,6 +248,9 @@ public sealed interface EngineFieldValue extends RustEnum permits
   record VecU32(int[] val) implements EngineFieldValue {
 
     public static VecU32 read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
       final var val = Borsh.readintVector(_data, offset);
       return new VecU32(val);
     }
@@ -270,6 +276,9 @@ public sealed interface EngineFieldValue extends RustEnum permits
   record VecDelegateAcl(DelegateAcl[] val) implements EngineFieldValue {
 
     public static VecDelegateAcl read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
       final var val = Borsh.readVector(DelegateAcl.class, DelegateAcl::read, _data, offset);
       return new VecDelegateAcl(val);
     }
@@ -295,6 +304,9 @@ public sealed interface EngineFieldValue extends RustEnum permits
   record VecIntegrationAcl(IntegrationAcl[] val) implements EngineFieldValue {
 
     public static VecIntegrationAcl read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
       final var val = Borsh.readVector(IntegrationAcl.class, IntegrationAcl::read, _data, offset);
       return new VecIntegrationAcl(val);
     }

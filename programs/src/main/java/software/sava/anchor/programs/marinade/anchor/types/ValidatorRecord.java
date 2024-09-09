@@ -20,6 +20,9 @@ public record ValidatorRecord(// Validator vote pubkey
   public static final int BYTES = 53;
 
   public static ValidatorRecord read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
     int i = offset;
     final var validatorAccount = readPubKey(_data, i);
     i += 32;
