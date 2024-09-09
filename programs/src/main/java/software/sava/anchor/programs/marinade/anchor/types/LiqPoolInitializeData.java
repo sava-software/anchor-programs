@@ -10,6 +10,8 @@ public record LiqPoolInitializeData(long lpLiquidityTarget,
                                     Fee lpMinFee,
                                     Fee lpTreasuryCut) implements Borsh {
 
+  public static final int BYTES = 20;
+
   public static LiqPoolInitializeData read(final byte[] _data, final int offset) {
     int i = offset;
     final var lpLiquidityTarget = getInt64LE(_data, i);
@@ -38,6 +40,6 @@ public record LiqPoolInitializeData(long lpLiquidityTarget,
 
   @Override
   public int l() {
-    return 8 + Borsh.len(lpMaxFee) + Borsh.len(lpMinFee) + Borsh.len(lpTreasuryCut);
+    return BYTES;
   }
 }

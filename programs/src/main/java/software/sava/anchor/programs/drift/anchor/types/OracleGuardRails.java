@@ -4,6 +4,8 @@ import software.sava.core.borsh.Borsh;
 
 public record OracleGuardRails(PriceDivergenceGuardRails priceDivergence, ValidityGuardRails validity) implements Borsh {
 
+  public static final int BYTES = 48;
+
   public static OracleGuardRails read(final byte[] _data, final int offset) {
     int i = offset;
     final var priceDivergence = PriceDivergenceGuardRails.read(_data, i);
@@ -22,6 +24,6 @@ public record OracleGuardRails(PriceDivergenceGuardRails priceDivergence, Validi
 
   @Override
   public int l() {
-    return Borsh.len(priceDivergence) + Borsh.len(validity);
+    return BYTES;
   }
 }

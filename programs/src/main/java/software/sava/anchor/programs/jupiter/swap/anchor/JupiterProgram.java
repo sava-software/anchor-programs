@@ -14,6 +14,8 @@ import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
+import static software.sava.core.encoding.ByteUtil.getInt16LE;
+import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
@@ -63,6 +65,56 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
+
+public record RouteData(RoutePlanStep[] routePlan,
+                        long inAmount,
+                        long quotedOutAmount,
+                        int slippageBps,
+                        int platformFeeBps) implements Borsh {
+
+  public static RouteData read(final byte[] _data, final int offset) {
+    int i = offset;
+    final var routePlan = Borsh.readVector(RoutePlanStep.class, RoutePlanStep::read, _data, i);
+    i += Borsh.len(routePlan);
+    final var inAmount = getInt64LE(_data, i);
+    i += 8;
+    final var quotedOutAmount = getInt64LE(_data, i);
+    i += 8;
+    final var slippageBps = getInt16LE(_data, i);
+    i += 2;
+    final var platformFeeBps = _data[i] & 0xFF;
+    return new RouteData(routePlan,
+                         inAmount,
+                         quotedOutAmount,
+                         slippageBps,
+                         platformFeeBps);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    i += Borsh.write(routePlan, _data, i);
+    putInt64LE(_data, i, inAmount);
+    i += 8;
+    putInt64LE(_data, i, quotedOutAmount);
+    i += 8;
+    putInt16LE(_data, i, slippageBps);
+    i += 2;
+    _data[i] = (byte) platformFeeBps;
+    ++i;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return Borsh.len(routePlan)
+         + 8
+         + 8
+         + 2
+         + 1;
+  }
+}
+
   public static final Discriminator ROUTE_WITH_TOKEN_LEDGER_DISCRIMINATOR = toDiscriminator(150, 86, 71, 116, 167, 93, 14, 104);
 
   public static Instruction routeWithTokenLedger(final AccountMeta invokedJupiterProgramMeta,
@@ -104,6 +156,46 @@ public final class JupiterProgram {
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
+
+
+public record RouteWithTokenLedgerData(RoutePlanStep[] routePlan,
+                                       long quotedOutAmount,
+                                       int slippageBps,
+                                       int platformFeeBps) implements Borsh {
+
+  public static RouteWithTokenLedgerData read(final byte[] _data, final int offset) {
+    int i = offset;
+    final var routePlan = Borsh.readVector(RoutePlanStep.class, RoutePlanStep::read, _data, i);
+    i += Borsh.len(routePlan);
+    final var quotedOutAmount = getInt64LE(_data, i);
+    i += 8;
+    final var slippageBps = getInt16LE(_data, i);
+    i += 2;
+    final var platformFeeBps = _data[i] & 0xFF;
+    return new RouteWithTokenLedgerData(routePlan,
+                                        quotedOutAmount,
+                                        slippageBps,
+                                        platformFeeBps);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    i += Borsh.write(routePlan, _data, i);
+    putInt64LE(_data, i, quotedOutAmount);
+    i += 8;
+    putInt16LE(_data, i, slippageBps);
+    i += 2;
+    _data[i] = (byte) platformFeeBps;
+    ++i;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return Borsh.len(routePlan) + 8 + 2 + 1;
+  }
+}
 
   public static final Discriminator EXACT_OUT_ROUTE_DISCRIMINATOR = toDiscriminator(208, 51, 239, 151, 123, 43, 237, 92);
 
@@ -151,6 +243,56 @@ public final class JupiterProgram {
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
+
+
+public record ExactOutRouteData(RoutePlanStep[] routePlan,
+                                long outAmount,
+                                long quotedInAmount,
+                                int slippageBps,
+                                int platformFeeBps) implements Borsh {
+
+  public static ExactOutRouteData read(final byte[] _data, final int offset) {
+    int i = offset;
+    final var routePlan = Borsh.readVector(RoutePlanStep.class, RoutePlanStep::read, _data, i);
+    i += Borsh.len(routePlan);
+    final var outAmount = getInt64LE(_data, i);
+    i += 8;
+    final var quotedInAmount = getInt64LE(_data, i);
+    i += 8;
+    final var slippageBps = getInt16LE(_data, i);
+    i += 2;
+    final var platformFeeBps = _data[i] & 0xFF;
+    return new ExactOutRouteData(routePlan,
+                                 outAmount,
+                                 quotedInAmount,
+                                 slippageBps,
+                                 platformFeeBps);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    i += Borsh.write(routePlan, _data, i);
+    putInt64LE(_data, i, outAmount);
+    i += 8;
+    putInt64LE(_data, i, quotedInAmount);
+    i += 8;
+    putInt16LE(_data, i, slippageBps);
+    i += 2;
+    _data[i] = (byte) platformFeeBps;
+    ++i;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return Borsh.len(routePlan)
+         + 8
+         + 8
+         + 2
+         + 1;
+  }
+}
 
   public static final Discriminator SHARED_ACCOUNTS_ROUTE_DISCRIMINATOR = toDiscriminator(193, 32, 155, 51, 65, 214, 156, 129);
 
@@ -206,6 +348,63 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
+
+public record SharedAccountsRouteData(int id,
+                                      RoutePlanStep[] routePlan,
+                                      long inAmount,
+                                      long quotedOutAmount,
+                                      int slippageBps,
+                                      int platformFeeBps) implements Borsh {
+
+  public static SharedAccountsRouteData read(final byte[] _data, final int offset) {
+    int i = offset;
+    final var id = _data[i] & 0xFF;
+    ++i;
+    final var routePlan = Borsh.readVector(RoutePlanStep.class, RoutePlanStep::read, _data, i);
+    i += Borsh.len(routePlan);
+    final var inAmount = getInt64LE(_data, i);
+    i += 8;
+    final var quotedOutAmount = getInt64LE(_data, i);
+    i += 8;
+    final var slippageBps = getInt16LE(_data, i);
+    i += 2;
+    final var platformFeeBps = _data[i] & 0xFF;
+    return new SharedAccountsRouteData(id,
+                                       routePlan,
+                                       inAmount,
+                                       quotedOutAmount,
+                                       slippageBps,
+                                       platformFeeBps);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    _data[i] = (byte) id;
+    ++i;
+    i += Borsh.write(routePlan, _data, i);
+    putInt64LE(_data, i, inAmount);
+    i += 8;
+    putInt64LE(_data, i, quotedOutAmount);
+    i += 8;
+    putInt16LE(_data, i, slippageBps);
+    i += 2;
+    _data[i] = (byte) platformFeeBps;
+    ++i;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return 1
+         + Borsh.len(routePlan)
+         + 8
+         + 8
+         + 2
+         + 1;
+  }
+}
+
   public static final Discriminator SHARED_ACCOUNTS_ROUTE_WITH_TOKEN_LEDGER_DISCRIMINATOR = toDiscriminator(230, 121, 143, 80, 119, 159, 106, 170);
 
   public static Instruction sharedAccountsRouteWithTokenLedger(final AccountMeta invokedJupiterProgramMeta,
@@ -258,6 +457,56 @@ public final class JupiterProgram {
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
+
+
+public record SharedAccountsRouteWithTokenLedgerData(int id,
+                                                     RoutePlanStep[] routePlan,
+                                                     long quotedOutAmount,
+                                                     int slippageBps,
+                                                     int platformFeeBps) implements Borsh {
+
+  public static SharedAccountsRouteWithTokenLedgerData read(final byte[] _data, final int offset) {
+    int i = offset;
+    final var id = _data[i] & 0xFF;
+    ++i;
+    final var routePlan = Borsh.readVector(RoutePlanStep.class, RoutePlanStep::read, _data, i);
+    i += Borsh.len(routePlan);
+    final var quotedOutAmount = getInt64LE(_data, i);
+    i += 8;
+    final var slippageBps = getInt16LE(_data, i);
+    i += 2;
+    final var platformFeeBps = _data[i] & 0xFF;
+    return new SharedAccountsRouteWithTokenLedgerData(id,
+                                                      routePlan,
+                                                      quotedOutAmount,
+                                                      slippageBps,
+                                                      platformFeeBps);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    _data[i] = (byte) id;
+    ++i;
+    i += Borsh.write(routePlan, _data, i);
+    putInt64LE(_data, i, quotedOutAmount);
+    i += 8;
+    putInt16LE(_data, i, slippageBps);
+    i += 2;
+    _data[i] = (byte) platformFeeBps;
+    ++i;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return 1
+         + Borsh.len(routePlan)
+         + 8
+         + 2
+         + 1;
+  }
+}
 
   public static final Discriminator SHARED_ACCOUNTS_EXACT_OUT_ROUTE_DISCRIMINATOR = toDiscriminator(176, 209, 105, 168, 154, 125, 69, 62);
 
@@ -312,6 +561,63 @@ public final class JupiterProgram {
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
+
+
+public record SharedAccountsExactOutRouteData(int id,
+                                              RoutePlanStep[] routePlan,
+                                              long outAmount,
+                                              long quotedInAmount,
+                                              int slippageBps,
+                                              int platformFeeBps) implements Borsh {
+
+  public static SharedAccountsExactOutRouteData read(final byte[] _data, final int offset) {
+    int i = offset;
+    final var id = _data[i] & 0xFF;
+    ++i;
+    final var routePlan = Borsh.readVector(RoutePlanStep.class, RoutePlanStep::read, _data, i);
+    i += Borsh.len(routePlan);
+    final var outAmount = getInt64LE(_data, i);
+    i += 8;
+    final var quotedInAmount = getInt64LE(_data, i);
+    i += 8;
+    final var slippageBps = getInt16LE(_data, i);
+    i += 2;
+    final var platformFeeBps = _data[i] & 0xFF;
+    return new SharedAccountsExactOutRouteData(id,
+                                               routePlan,
+                                               outAmount,
+                                               quotedInAmount,
+                                               slippageBps,
+                                               platformFeeBps);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    _data[i] = (byte) id;
+    ++i;
+    i += Borsh.write(routePlan, _data, i);
+    putInt64LE(_data, i, outAmount);
+    i += 8;
+    putInt64LE(_data, i, quotedInAmount);
+    i += 8;
+    putInt16LE(_data, i, slippageBps);
+    i += 2;
+    _data[i] = (byte) platformFeeBps;
+    ++i;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return 1
+         + Borsh.len(routePlan)
+         + 8
+         + 8
+         + 2
+         + 1;
+  }
+}
 
   public static final Discriminator SET_TOKEN_LEDGER_DISCRIMINATOR = toDiscriminator(228, 85, 185, 112, 78, 79, 77, 2);
 
@@ -369,6 +675,30 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
+
+public record CreateTokenAccountData(int bump) implements Borsh {
+
+  public static final int BYTES = 1;
+
+  public static CreateTokenAccountData read(final byte[] _data, final int offset) {
+    final var bump = _data[offset] & 0xFF;
+    return new CreateTokenAccountData(bump);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    _data[i] = (byte) bump;
+    ++i;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return BYTES;
+  }
+}
+
   public static final Discriminator CREATE_PROGRAM_OPEN_ORDERS_DISCRIMINATOR = toDiscriminator(28, 226, 32, 148, 188, 136, 113, 171);
 
   public static Instruction createProgramOpenOrders(final AccountMeta invokedJupiterProgramMeta,
@@ -397,6 +727,30 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
+
+public record CreateProgramOpenOrdersData(int id) implements Borsh {
+
+  public static final int BYTES = 1;
+
+  public static CreateProgramOpenOrdersData read(final byte[] _data, final int offset) {
+    final var id = _data[offset] & 0xFF;
+    return new CreateProgramOpenOrdersData(id);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    _data[i] = (byte) id;
+    ++i;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return BYTES;
+  }
+}
+
   public static final Discriminator CLAIM_DISCRIMINATOR = toDiscriminator(62, 198, 214, 193, 213, 159, 108, 210);
 
   public static Instruction claim(final AccountMeta invokedJupiterProgramMeta,
@@ -416,6 +770,30 @@ public final class JupiterProgram {
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
+
+
+public record ClaimData(int id) implements Borsh {
+
+  public static final int BYTES = 1;
+
+  public static ClaimData read(final byte[] _data, final int offset) {
+    final var id = _data[offset] & 0xFF;
+    return new ClaimData(id);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    _data[i] = (byte) id;
+    ++i;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return BYTES;
+  }
+}
 
   public static final Discriminator CLAIM_TOKEN_DISCRIMINATOR = toDiscriminator(116, 206, 27, 191, 166, 19, 0, 73);
 
@@ -448,6 +826,30 @@ public final class JupiterProgram {
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
+
+
+public record ClaimTokenData(int id) implements Borsh {
+
+  public static final int BYTES = 1;
+
+  public static ClaimTokenData read(final byte[] _data, final int offset) {
+    final var id = _data[offset] & 0xFF;
+    return new ClaimTokenData(id);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    _data[i] = (byte) id;
+    ++i;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return BYTES;
+  }
+}
 
   public static final Discriminator CREATE_TOKEN_LEDGER_DISCRIMINATOR = toDiscriminator(232, 242, 197, 253, 240, 143, 129, 52);
 

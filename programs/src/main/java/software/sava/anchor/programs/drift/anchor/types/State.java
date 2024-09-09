@@ -44,7 +44,7 @@ public record State(PublicKey _address,
                     int maxInitializeUserFee,
                     int[] padding) implements Borsh {
 
-  public static final int BYTES = 488;
+  public static final int BYTES = 1208;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int ADMIN_OFFSET = 8;
@@ -53,25 +53,25 @@ public record State(PublicKey _address,
   public static final int SIGNER_OFFSET = 104;
   public static final int SRM_VAULT_OFFSET = 136;
   public static final int PERP_FEE_STRUCTURE_OFFSET = 168;
-  public static final int SPOT_FEE_STRUCTURE_OFFSET = 264;
-  public static final int ORACLE_GUARD_RAILS_OFFSET = 360;
-  public static final int NUMBER_OF_AUTHORITIES_OFFSET = 432;
-  public static final int NUMBER_OF_SUB_ACCOUNTS_OFFSET = 440;
-  public static final int LP_COOLDOWN_TIME_OFFSET = 448;
-  public static final int LIQUIDATION_MARGIN_BUFFER_RATIO_OFFSET = 456;
-  public static final int SETTLEMENT_DURATION_OFFSET = 460;
-  public static final int NUMBER_OF_MARKETS_OFFSET = 462;
-  public static final int NUMBER_OF_SPOT_MARKETS_OFFSET = 464;
-  public static final int SIGNER_NONCE_OFFSET = 466;
-  public static final int MIN_PERP_AUCTION_DURATION_OFFSET = 467;
-  public static final int DEFAULT_MARKET_ORDER_TIME_IN_FORCE_OFFSET = 468;
-  public static final int DEFAULT_SPOT_AUCTION_DURATION_OFFSET = 469;
-  public static final int EXCHANGE_STATUS_OFFSET = 470;
-  public static final int LIQUIDATION_DURATION_OFFSET = 471;
-  public static final int INITIAL_PCT_TO_LIQUIDATE_OFFSET = 472;
-  public static final int MAX_NUMBER_OF_SUB_ACCOUNTS_OFFSET = 474;
-  public static final int MAX_INITIALIZE_USER_FEE_OFFSET = 476;
-  public static final int PADDING_OFFSET = 478;
+  public static final int SPOT_FEE_STRUCTURE_OFFSET = 624;
+  public static final int ORACLE_GUARD_RAILS_OFFSET = 1080;
+  public static final int NUMBER_OF_AUTHORITIES_OFFSET = 1152;
+  public static final int NUMBER_OF_SUB_ACCOUNTS_OFFSET = 1160;
+  public static final int LP_COOLDOWN_TIME_OFFSET = 1168;
+  public static final int LIQUIDATION_MARGIN_BUFFER_RATIO_OFFSET = 1176;
+  public static final int SETTLEMENT_DURATION_OFFSET = 1180;
+  public static final int NUMBER_OF_MARKETS_OFFSET = 1182;
+  public static final int NUMBER_OF_SPOT_MARKETS_OFFSET = 1184;
+  public static final int SIGNER_NONCE_OFFSET = 1186;
+  public static final int MIN_PERP_AUCTION_DURATION_OFFSET = 1187;
+  public static final int DEFAULT_MARKET_ORDER_TIME_IN_FORCE_OFFSET = 1188;
+  public static final int DEFAULT_SPOT_AUCTION_DURATION_OFFSET = 1189;
+  public static final int EXCHANGE_STATUS_OFFSET = 1190;
+  public static final int LIQUIDATION_DURATION_OFFSET = 1191;
+  public static final int INITIAL_PCT_TO_LIQUIDATE_OFFSET = 1192;
+  public static final int MAX_NUMBER_OF_SUB_ACCOUNTS_OFFSET = 1194;
+  public static final int MAX_INITIALIZE_USER_FEE_OFFSET = 1196;
+  public static final int PADDING_OFFSET = 1198;
 
   public static Filter createAdminFilter(final PublicKey admin) {
     return Filter.createMemCompFilter(ADMIN_OFFSET, admin);
@@ -91,14 +91,6 @@ public record State(PublicKey _address,
 
   public static Filter createSrmVaultFilter(final PublicKey srmVault) {
     return Filter.createMemCompFilter(SRM_VAULT_OFFSET, srmVault);
-  }
-
-  public static Filter createPerpFeeStructureFilter(final FeeStructure perpFeeStructure) {
-    return Filter.createMemCompFilter(PERP_FEE_STRUCTURE_OFFSET, perpFeeStructure.write());
-  }
-
-  public static Filter createSpotFeeStructureFilter(final FeeStructure spotFeeStructure) {
-    return Filter.createMemCompFilter(SPOT_FEE_STRUCTURE_OFFSET, spotFeeStructure.write());
   }
 
   public static Filter createOracleGuardRailsFilter(final OracleGuardRails oracleGuardRails) {

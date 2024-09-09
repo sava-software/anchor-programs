@@ -47,6 +47,9 @@ public record State(PublicKey _address,
                     long stakeMoved,
                     Fee maxStakeMovedPerEpoch) implements Borsh {
 
+  public static final int BYTES = 734;
+  public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
   public static final int MSOL_MINT_OFFSET = 8;
   public static final int ADMIN_AUTHORITY_OFFSET = 40;
   public static final int OPERATIONAL_SOL_ACCOUNT_OFFSET = 72;
@@ -55,6 +58,27 @@ public record State(PublicKey _address,
   public static final int MSOL_MINT_AUTHORITY_BUMP_SEED_OFFSET = 137;
   public static final int RENT_EXEMPT_FOR_TOKEN_ACC_OFFSET = 138;
   public static final int REWARD_FEE_OFFSET = 146;
+  public static final int STAKE_SYSTEM_OFFSET = 158;
+  public static final int VALIDATOR_SYSTEM_OFFSET = 288;
+  public static final int LIQ_POOL_OFFSET = 425;
+  public static final int AVAILABLE_RESERVE_BALANCE_OFFSET = 568;
+  public static final int MSOL_SUPPLY_OFFSET = 576;
+  public static final int MSOL_PRICE_OFFSET = 584;
+  public static final int CIRCULATING_TICKET_COUNT_OFFSET = 592;
+  public static final int CIRCULATING_TICKET_BALANCE_OFFSET = 600;
+  public static final int LENT_FROM_RESERVE_OFFSET = 608;
+  public static final int MIN_DEPOSIT_OFFSET = 616;
+  public static final int MIN_WITHDRAW_OFFSET = 624;
+  public static final int STAKING_SOL_CAP_OFFSET = 632;
+  public static final int EMERGENCY_COOLING_DOWN_OFFSET = 640;
+  public static final int PAUSE_AUTHORITY_OFFSET = 648;
+  public static final int PAUSED_OFFSET = 680;
+  public static final int DELAYED_UNSTAKE_FEE_OFFSET = 681;
+  public static final int WITHDRAW_STAKE_ACCOUNT_FEE_OFFSET = 693;
+  public static final int WITHDRAW_STAKE_ACCOUNT_ENABLED_OFFSET = 705;
+  public static final int LAST_STAKE_MOVE_EPOCH_OFFSET = 706;
+  public static final int STAKE_MOVED_OFFSET = 714;
+  public static final int MAX_STAKE_MOVED_PER_EPOCH_OFFSET = 722;
 
   public static Filter createMsolMintFilter(final PublicKey msolMint) {
     return Filter.createMemCompFilter(MSOL_MINT_OFFSET, msolMint);
@@ -88,6 +112,102 @@ public record State(PublicKey _address,
 
   public static Filter createRewardFeeFilter(final Fee rewardFee) {
     return Filter.createMemCompFilter(REWARD_FEE_OFFSET, rewardFee.write());
+  }
+
+  public static Filter createAvailableReserveBalanceFilter(final long availableReserveBalance) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, availableReserveBalance);
+    return Filter.createMemCompFilter(AVAILABLE_RESERVE_BALANCE_OFFSET, _data);
+  }
+
+  public static Filter createMsolSupplyFilter(final long msolSupply) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, msolSupply);
+    return Filter.createMemCompFilter(MSOL_SUPPLY_OFFSET, _data);
+  }
+
+  public static Filter createMsolPriceFilter(final long msolPrice) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, msolPrice);
+    return Filter.createMemCompFilter(MSOL_PRICE_OFFSET, _data);
+  }
+
+  public static Filter createCirculatingTicketCountFilter(final long circulatingTicketCount) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, circulatingTicketCount);
+    return Filter.createMemCompFilter(CIRCULATING_TICKET_COUNT_OFFSET, _data);
+  }
+
+  public static Filter createCirculatingTicketBalanceFilter(final long circulatingTicketBalance) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, circulatingTicketBalance);
+    return Filter.createMemCompFilter(CIRCULATING_TICKET_BALANCE_OFFSET, _data);
+  }
+
+  public static Filter createLentFromReserveFilter(final long lentFromReserve) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, lentFromReserve);
+    return Filter.createMemCompFilter(LENT_FROM_RESERVE_OFFSET, _data);
+  }
+
+  public static Filter createMinDepositFilter(final long minDeposit) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, minDeposit);
+    return Filter.createMemCompFilter(MIN_DEPOSIT_OFFSET, _data);
+  }
+
+  public static Filter createMinWithdrawFilter(final long minWithdraw) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, minWithdraw);
+    return Filter.createMemCompFilter(MIN_WITHDRAW_OFFSET, _data);
+  }
+
+  public static Filter createStakingSolCapFilter(final long stakingSolCap) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, stakingSolCap);
+    return Filter.createMemCompFilter(STAKING_SOL_CAP_OFFSET, _data);
+  }
+
+  public static Filter createEmergencyCoolingDownFilter(final long emergencyCoolingDown) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, emergencyCoolingDown);
+    return Filter.createMemCompFilter(EMERGENCY_COOLING_DOWN_OFFSET, _data);
+  }
+
+  public static Filter createPauseAuthorityFilter(final PublicKey pauseAuthority) {
+    return Filter.createMemCompFilter(PAUSE_AUTHORITY_OFFSET, pauseAuthority);
+  }
+
+  public static Filter createPausedFilter(final boolean paused) {
+    return Filter.createMemCompFilter(PAUSED_OFFSET, new byte[]{(byte) (paused ? 1 : 0)});
+  }
+
+  public static Filter createDelayedUnstakeFeeFilter(final FeeCents delayedUnstakeFee) {
+    return Filter.createMemCompFilter(DELAYED_UNSTAKE_FEE_OFFSET, delayedUnstakeFee.write());
+  }
+
+  public static Filter createWithdrawStakeAccountFeeFilter(final FeeCents withdrawStakeAccountFee) {
+    return Filter.createMemCompFilter(WITHDRAW_STAKE_ACCOUNT_FEE_OFFSET, withdrawStakeAccountFee.write());
+  }
+
+  public static Filter createWithdrawStakeAccountEnabledFilter(final boolean withdrawStakeAccountEnabled) {
+    return Filter.createMemCompFilter(WITHDRAW_STAKE_ACCOUNT_ENABLED_OFFSET, new byte[]{(byte) (withdrawStakeAccountEnabled ? 1 : 0)});
+  }
+
+  public static Filter createLastStakeMoveEpochFilter(final long lastStakeMoveEpoch) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, lastStakeMoveEpoch);
+    return Filter.createMemCompFilter(LAST_STAKE_MOVE_EPOCH_OFFSET, _data);
+  }
+
+  public static Filter createStakeMovedFilter(final long stakeMoved) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, stakeMoved);
+    return Filter.createMemCompFilter(STAKE_MOVED_OFFSET, _data);
+  }
+
+  public static Filter createMaxStakeMovedPerEpochFilter(final Fee maxStakeMovedPerEpoch) {
+    return Filter.createMemCompFilter(MAX_STAKE_MOVED_PER_EPOCH_OFFSET, maxStakeMovedPerEpoch.write());
   }
 
   public static State read(final byte[] _data, final int offset) {
@@ -255,34 +375,6 @@ public record State(PublicKey _address,
 
   @Override
   public int l() {
-    return 8 + 32
-         + 32
-         + 32
-         + 32
-         + 1
-         + 1
-         + 8
-         + Borsh.len(rewardFee)
-         + Borsh.len(stakeSystem)
-         + Borsh.len(validatorSystem)
-         + Borsh.len(liqPool)
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 32
-         + 1
-         + Borsh.len(delayedUnstakeFee)
-         + Borsh.len(withdrawStakeAccountFee)
-         + 1
-         + 8
-         + 8
-         + Borsh.len(maxStakeMovedPerEpoch);
+    return BYTES;
   }
 }

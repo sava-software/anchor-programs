@@ -24,6 +24,8 @@ public record LiqPool(PublicKey lpMint,
                       long lentFromSolLeg,
                       long liquiditySolCap) implements Borsh {
 
+  public static final int BYTES = 111;
+
   public static LiqPool read(final byte[] _data, final int offset) {
     int i = offset;
     final var lpMint = readPubKey(_data, i);
@@ -92,17 +94,6 @@ public record LiqPool(PublicKey lpMint,
 
   @Override
   public int l() {
-    return 32
-         + 1
-         + 1
-         + 1
-         + 32
-         + 8
-         + Borsh.len(lpMaxFee)
-         + Borsh.len(lpMinFee)
-         + Borsh.len(treasuryCut)
-         + 8
-         + 8
-         + 8;
+    return BYTES;
   }
 }

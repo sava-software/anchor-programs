@@ -4,6 +4,8 @@ import software.sava.core.borsh.Borsh;
 
 public record FeeValueChange(Fee old, Fee _new) implements Borsh {
 
+  public static final int BYTES = 8;
+
   public static FeeValueChange read(final byte[] _data, final int offset) {
     int i = offset;
     final var old = Fee.read(_data, i);
@@ -22,6 +24,6 @@ public record FeeValueChange(Fee old, Fee _new) implements Borsh {
 
   @Override
   public int l() {
-    return Borsh.len(old) + Borsh.len(_new);
+    return BYTES;
   }
 }

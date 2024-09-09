@@ -12,6 +12,8 @@ public record SetValidatorScoreEvent(PublicKey state,
                                      int index,
                                      U32ValueChange scoreChange) implements Borsh {
 
+  public static final int BYTES = 76;
+
   public static SetValidatorScoreEvent read(final byte[] _data, final int offset) {
     int i = offset;
     final var state = readPubKey(_data, i);
@@ -42,6 +44,6 @@ public record SetValidatorScoreEvent(PublicKey state,
 
   @Override
   public int l() {
-    return 32 + 32 + 4 + Borsh.len(scoreChange);
+    return BYTES;
   }
 }

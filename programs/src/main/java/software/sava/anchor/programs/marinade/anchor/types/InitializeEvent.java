@@ -15,7 +15,7 @@ public record InitializeEvent(PublicKey state,
                               PublicKey lpMsolLeg,
                               PublicKey treasuryMsolAccount) implements Borsh {
 
-  public static final int BYTES = 448;
+  public static final int BYTES = 400;
 
   public static InitializeEvent read(final byte[] _data, final int offset) {
     int i = offset;

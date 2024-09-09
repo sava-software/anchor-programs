@@ -22,6 +22,8 @@ public record StakeSystem(List stakeList,
                           // so we maximize user's rewards
                           int extraStakeDeltaRuns) implements Borsh {
 
+  public static final int BYTES = 114;
+
   public static StakeSystem read(final byte[] _data, final int offset) {
     int i = offset;
     final var stakeList = List.read(_data, i);
@@ -72,13 +74,6 @@ public record StakeSystem(List stakeList,
 
   @Override
   public int l() {
-    return Borsh.len(stakeList)
-         + 8
-         + 1
-         + 1
-         + 8
-         + 8
-         + 8
-         + 4;
+    return BYTES;
   }
 }

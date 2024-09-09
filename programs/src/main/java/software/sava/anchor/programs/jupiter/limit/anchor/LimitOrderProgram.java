@@ -14,6 +14,7 @@ import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
+import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
@@ -64,6 +65,38 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
+
+public record InitializeOrderData(long makingAmount,
+                                  long takingAmount,
+                                  OptionalLong expiredAt) implements Borsh {
+
+  public static InitializeOrderData read(final byte[] _data, final int offset) {
+    int i = offset;
+    final var makingAmount = getInt64LE(_data, i);
+    i += 8;
+    final var takingAmount = getInt64LE(_data, i);
+    i += 8;
+    final var expiredAt = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+    return new InitializeOrderData(makingAmount, takingAmount, expiredAt);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    putInt64LE(_data, i, makingAmount);
+    i += 8;
+    putInt64LE(_data, i, takingAmount);
+    i += 8;
+    i += Borsh.writeOptional(expiredAt, _data, i);
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return 8 + 8 + 9;
+  }
+}
+
   public static final Discriminator FILL_ORDER_DISCRIMINATOR = toDiscriminator(232, 122, 115, 25, 199, 143, 136, 162);
 
   public static Instruction fillOrder(final AccountMeta invokedLimitOrderProgramMeta,
@@ -105,6 +138,35 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
+
+public record FillOrderData(long makingAmount, long maxTakingAmount) implements Borsh {
+
+  public static final int BYTES = 16;
+
+  public static FillOrderData read(final byte[] _data, final int offset) {
+    int i = offset;
+    final var makingAmount = getInt64LE(_data, i);
+    i += 8;
+    final var maxTakingAmount = getInt64LE(_data, i);
+    return new FillOrderData(makingAmount, maxTakingAmount);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    putInt64LE(_data, i, makingAmount);
+    i += 8;
+    putInt64LE(_data, i, maxTakingAmount);
+    i += 8;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return BYTES;
+  }
+}
+
   public static final Discriminator PRE_FLASH_FILL_ORDER_DISCRIMINATOR = toDiscriminator(240, 47, 153, 68, 13, 190, 225, 42);
 
   public static Instruction preFlashFillOrder(final AccountMeta invokedLimitOrderProgramMeta,
@@ -134,6 +196,30 @@ public final class LimitOrderProgram {
 
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
+
+
+public record PreFlashFillOrderData(long makingAmount) implements Borsh {
+
+  public static final int BYTES = 8;
+
+  public static PreFlashFillOrderData read(final byte[] _data, final int offset) {
+    final var makingAmount = getInt64LE(_data, offset);
+    return new PreFlashFillOrderData(makingAmount);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    putInt64LE(_data, i, makingAmount);
+    i += 8;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return BYTES;
+  }
+}
 
   public static final Discriminator FLASH_FILL_ORDER_DISCRIMINATOR = toDiscriminator(252, 104, 18, 134, 164, 78, 18, 140);
 
@@ -176,6 +262,30 @@ public final class LimitOrderProgram {
 
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
+
+
+public record FlashFillOrderData(long maxTakingAmount) implements Borsh {
+
+  public static final int BYTES = 8;
+
+  public static FlashFillOrderData read(final byte[] _data, final int offset) {
+    final var maxTakingAmount = getInt64LE(_data, offset);
+    return new FlashFillOrderData(maxTakingAmount);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    putInt64LE(_data, i, maxTakingAmount);
+    i += 8;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return BYTES;
+  }
+}
 
   public static final Discriminator CANCEL_ORDER_DISCRIMINATOR = toDiscriminator(95, 129, 237, 240, 8, 49, 223, 132);
 
@@ -254,6 +364,30 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
+
+public record WithdrawFeeData(long amount) implements Borsh {
+
+  public static final int BYTES = 8;
+
+  public static WithdrawFeeData read(final byte[] _data, final int offset) {
+    final var amount = getInt64LE(_data, offset);
+    return new WithdrawFeeData(amount);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    putInt64LE(_data, i, amount);
+    i += 8;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return BYTES;
+  }
+}
+
   public static final Discriminator INIT_FEE_DISCRIMINATOR = toDiscriminator(13, 9, 211, 107, 62, 172, 224, 67);
 
   public static Instruction initFee(final AccountMeta invokedLimitOrderProgramMeta,
@@ -283,6 +417,49 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
+
+public record InitFeeData(long makerFee,
+                          long makerStableFee,
+                          long takerFee,
+                          long takerStableFee) implements Borsh {
+
+  public static final int BYTES = 32;
+
+  public static InitFeeData read(final byte[] _data, final int offset) {
+    int i = offset;
+    final var makerFee = getInt64LE(_data, i);
+    i += 8;
+    final var makerStableFee = getInt64LE(_data, i);
+    i += 8;
+    final var takerFee = getInt64LE(_data, i);
+    i += 8;
+    final var takerStableFee = getInt64LE(_data, i);
+    return new InitFeeData(makerFee,
+                           makerStableFee,
+                           takerFee,
+                           takerStableFee);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    putInt64LE(_data, i, makerFee);
+    i += 8;
+    putInt64LE(_data, i, makerStableFee);
+    i += 8;
+    putInt64LE(_data, i, takerFee);
+    i += 8;
+    putInt64LE(_data, i, takerStableFee);
+    i += 8;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return BYTES;
+  }
+}
+
   public static final Discriminator UPDATE_FEE_DISCRIMINATOR = toDiscriminator(232, 253, 195, 247, 148, 212, 73, 222);
 
   public static Instruction updateFee(final AccountMeta invokedLimitOrderProgramMeta,
@@ -309,6 +486,49 @@ public final class LimitOrderProgram {
 
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
+
+
+public record UpdateFeeData(long makerFee,
+                            long makerStableFee,
+                            long takerFee,
+                            long takerStableFee) implements Borsh {
+
+  public static final int BYTES = 32;
+
+  public static UpdateFeeData read(final byte[] _data, final int offset) {
+    int i = offset;
+    final var makerFee = getInt64LE(_data, i);
+    i += 8;
+    final var makerStableFee = getInt64LE(_data, i);
+    i += 8;
+    final var takerFee = getInt64LE(_data, i);
+    i += 8;
+    final var takerStableFee = getInt64LE(_data, i);
+    return new UpdateFeeData(makerFee,
+                             makerStableFee,
+                             takerFee,
+                             takerStableFee);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    putInt64LE(_data, i, makerFee);
+    i += 8;
+    putInt64LE(_data, i, makerStableFee);
+    i += 8;
+    putInt64LE(_data, i, takerFee);
+    i += 8;
+    putInt64LE(_data, i, takerStableFee);
+    i += 8;
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return BYTES;
+  }
+}
 
   private LimitOrderProgram() {
   }

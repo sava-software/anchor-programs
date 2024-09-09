@@ -11,6 +11,8 @@ public record OrderRecord(long ts,
                           PublicKey user,
                           Order order) implements Borsh {
 
+  public static final int BYTES = 136;
+
   public static OrderRecord read(final byte[] _data, final int offset) {
     int i = offset;
     final var ts = getInt64LE(_data, i);
@@ -34,6 +36,6 @@ public record OrderRecord(long ts,
 
   @Override
   public int l() {
-    return 8 + 32 + Borsh.len(order);
+    return BYTES;
   }
 }

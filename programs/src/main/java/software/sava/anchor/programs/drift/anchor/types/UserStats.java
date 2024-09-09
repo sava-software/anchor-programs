@@ -71,9 +71,34 @@ public record UserStats(PublicKey _address,
                         int lastFuelIfBonusUpdateTs,
                         int[] padding) implements Borsh {
 
+  public static final int BYTES = 248;
+  public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
   public static final int AUTHORITY_OFFSET = 8;
   public static final int REFERRER_OFFSET = 40;
   public static final int FEES_OFFSET = 72;
+  public static final int NEXT_EPOCH_TS_OFFSET = 128;
+  public static final int MAKER_VOLUME30D_OFFSET = 136;
+  public static final int TAKER_VOLUME30D_OFFSET = 144;
+  public static final int FILLER_VOLUME30D_OFFSET = 152;
+  public static final int LAST_MAKER_VOLUME30D_TS_OFFSET = 160;
+  public static final int LAST_TAKER_VOLUME30D_TS_OFFSET = 168;
+  public static final int LAST_FILLER_VOLUME30D_TS_OFFSET = 176;
+  public static final int IF_STAKED_QUOTE_ASSET_AMOUNT_OFFSET = 184;
+  public static final int NUMBER_OF_SUB_ACCOUNTS_OFFSET = 192;
+  public static final int NUMBER_OF_SUB_ACCOUNTS_CREATED_OFFSET = 194;
+  public static final int IS_REFERRER_OFFSET = 196;
+  public static final int DISABLE_UPDATE_PERP_BID_ASK_TWAP_OFFSET = 197;
+  public static final int PADDING1_OFFSET = 198;
+  public static final int FUEL_INSURANCE_OFFSET = 200;
+  public static final int FUEL_DEPOSITS_OFFSET = 204;
+  public static final int FUEL_BORROWS_OFFSET = 208;
+  public static final int FUEL_POSITIONS_OFFSET = 212;
+  public static final int FUEL_TAKER_OFFSET = 216;
+  public static final int FUEL_MAKER_OFFSET = 220;
+  public static final int IF_STAKED_GOV_TOKEN_AMOUNT_OFFSET = 224;
+  public static final int LAST_FUEL_IF_BONUS_UPDATE_TS_OFFSET = 232;
+  public static final int PADDING_OFFSET = 236;
 
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);
@@ -85,6 +110,122 @@ public record UserStats(PublicKey _address,
 
   public static Filter createFeesFilter(final UserFees fees) {
     return Filter.createMemCompFilter(FEES_OFFSET, fees.write());
+  }
+
+  public static Filter createNextEpochTsFilter(final long nextEpochTs) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, nextEpochTs);
+    return Filter.createMemCompFilter(NEXT_EPOCH_TS_OFFSET, _data);
+  }
+
+  public static Filter createMakerVolume30dFilter(final long makerVolume30d) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, makerVolume30d);
+    return Filter.createMemCompFilter(MAKER_VOLUME30D_OFFSET, _data);
+  }
+
+  public static Filter createTakerVolume30dFilter(final long takerVolume30d) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, takerVolume30d);
+    return Filter.createMemCompFilter(TAKER_VOLUME30D_OFFSET, _data);
+  }
+
+  public static Filter createFillerVolume30dFilter(final long fillerVolume30d) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, fillerVolume30d);
+    return Filter.createMemCompFilter(FILLER_VOLUME30D_OFFSET, _data);
+  }
+
+  public static Filter createLastMakerVolume30dTsFilter(final long lastMakerVolume30dTs) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, lastMakerVolume30dTs);
+    return Filter.createMemCompFilter(LAST_MAKER_VOLUME30D_TS_OFFSET, _data);
+  }
+
+  public static Filter createLastTakerVolume30dTsFilter(final long lastTakerVolume30dTs) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, lastTakerVolume30dTs);
+    return Filter.createMemCompFilter(LAST_TAKER_VOLUME30D_TS_OFFSET, _data);
+  }
+
+  public static Filter createLastFillerVolume30dTsFilter(final long lastFillerVolume30dTs) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, lastFillerVolume30dTs);
+    return Filter.createMemCompFilter(LAST_FILLER_VOLUME30D_TS_OFFSET, _data);
+  }
+
+  public static Filter createIfStakedQuoteAssetAmountFilter(final long ifStakedQuoteAssetAmount) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, ifStakedQuoteAssetAmount);
+    return Filter.createMemCompFilter(IF_STAKED_QUOTE_ASSET_AMOUNT_OFFSET, _data);
+  }
+
+  public static Filter createNumberOfSubAccountsFilter(final int numberOfSubAccounts) {
+    final byte[] _data = new byte[2];
+    putInt16LE(_data, 0, numberOfSubAccounts);
+    return Filter.createMemCompFilter(NUMBER_OF_SUB_ACCOUNTS_OFFSET, _data);
+  }
+
+  public static Filter createNumberOfSubAccountsCreatedFilter(final int numberOfSubAccountsCreated) {
+    final byte[] _data = new byte[2];
+    putInt16LE(_data, 0, numberOfSubAccountsCreated);
+    return Filter.createMemCompFilter(NUMBER_OF_SUB_ACCOUNTS_CREATED_OFFSET, _data);
+  }
+
+  public static Filter createIsReferrerFilter(final boolean isReferrer) {
+    return Filter.createMemCompFilter(IS_REFERRER_OFFSET, new byte[]{(byte) (isReferrer ? 1 : 0)});
+  }
+
+  public static Filter createDisableUpdatePerpBidAskTwapFilter(final boolean disableUpdatePerpBidAskTwap) {
+    return Filter.createMemCompFilter(DISABLE_UPDATE_PERP_BID_ASK_TWAP_OFFSET, new byte[]{(byte) (disableUpdatePerpBidAskTwap ? 1 : 0)});
+  }
+
+  public static Filter createFuelInsuranceFilter(final int fuelInsurance) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, fuelInsurance);
+    return Filter.createMemCompFilter(FUEL_INSURANCE_OFFSET, _data);
+  }
+
+  public static Filter createFuelDepositsFilter(final int fuelDeposits) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, fuelDeposits);
+    return Filter.createMemCompFilter(FUEL_DEPOSITS_OFFSET, _data);
+  }
+
+  public static Filter createFuelBorrowsFilter(final int fuelBorrows) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, fuelBorrows);
+    return Filter.createMemCompFilter(FUEL_BORROWS_OFFSET, _data);
+  }
+
+  public static Filter createFuelPositionsFilter(final int fuelPositions) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, fuelPositions);
+    return Filter.createMemCompFilter(FUEL_POSITIONS_OFFSET, _data);
+  }
+
+  public static Filter createFuelTakerFilter(final int fuelTaker) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, fuelTaker);
+    return Filter.createMemCompFilter(FUEL_TAKER_OFFSET, _data);
+  }
+
+  public static Filter createFuelMakerFilter(final int fuelMaker) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, fuelMaker);
+    return Filter.createMemCompFilter(FUEL_MAKER_OFFSET, _data);
+  }
+
+  public static Filter createIfStakedGovTokenAmountFilter(final long ifStakedGovTokenAmount) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, ifStakedGovTokenAmount);
+    return Filter.createMemCompFilter(IF_STAKED_GOV_TOKEN_AMOUNT_OFFSET, _data);
+  }
+
+  public static Filter createLastFuelIfBonusUpdateTsFilter(final int lastFuelIfBonusUpdateTs) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, lastFuelIfBonusUpdateTs);
+    return Filter.createMemCompFilter(LAST_FUEL_IF_BONUS_UPDATE_TS_OFFSET, _data);
   }
 
   public static UserStats read(final byte[] _data, final int offset) {
@@ -236,30 +377,6 @@ public record UserStats(PublicKey _address,
 
   @Override
   public int l() {
-    return 8 + 32
-         + 32
-         + Borsh.len(fees)
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 2
-         + 2
-         + 1
-         + 1
-         + Borsh.fixedLen(padding1)
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 8
-         + 4
-         + Borsh.fixedLen(padding);
+    return BYTES;
   }
 }

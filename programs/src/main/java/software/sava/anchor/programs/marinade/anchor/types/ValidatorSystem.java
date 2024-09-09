@@ -17,6 +17,8 @@ public record ValidatorSystem(List validatorList,
                               // DEPRECATED, no longer used
                               int autoAddValidatorEnabled) implements Borsh {
 
+  public static final int BYTES = 121;
+
   public static ValidatorSystem read(final byte[] _data, final int offset) {
     int i = offset;
     final var validatorList = List.read(_data, i);
@@ -52,10 +54,6 @@ public record ValidatorSystem(List validatorList,
 
   @Override
   public int l() {
-    return Borsh.len(validatorList)
-         + 32
-         + 4
-         + 8
-         + 1;
+    return BYTES;
   }
 }

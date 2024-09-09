@@ -83,10 +83,38 @@ public record User(PublicKey _address,
                    int lastFuelBonusUpdateTs,
                    int[] padding) implements Borsh {
 
+  public static final int BYTES = 4760;
+  public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
   public static final int AUTHORITY_OFFSET = 8;
   public static final int DELEGATE_OFFSET = 40;
   public static final int NAME_OFFSET = 72;
   public static final int SPOT_POSITIONS_OFFSET = 104;
+  public static final int PERP_POSITIONS_OFFSET = 488;
+  public static final int ORDERS_OFFSET = 1320;
+  public static final int LAST_ADD_PERP_LP_SHARES_TS_OFFSET = 4648;
+  public static final int TOTAL_DEPOSITS_OFFSET = 4656;
+  public static final int TOTAL_WITHDRAWS_OFFSET = 4664;
+  public static final int TOTAL_SOCIAL_LOSS_OFFSET = 4672;
+  public static final int SETTLED_PERP_PNL_OFFSET = 4680;
+  public static final int CUMULATIVE_SPOT_FEES_OFFSET = 4688;
+  public static final int CUMULATIVE_PERP_FUNDING_OFFSET = 4696;
+  public static final int LIQUIDATION_MARGIN_FREED_OFFSET = 4704;
+  public static final int LAST_ACTIVE_SLOT_OFFSET = 4712;
+  public static final int NEXT_ORDER_ID_OFFSET = 4720;
+  public static final int MAX_MARGIN_RATIO_OFFSET = 4724;
+  public static final int NEXT_LIQUIDATION_ID_OFFSET = 4728;
+  public static final int SUB_ACCOUNT_ID_OFFSET = 4730;
+  public static final int STATUS_OFFSET = 4732;
+  public static final int IS_MARGIN_TRADING_ENABLED_OFFSET = 4733;
+  public static final int IDLE_OFFSET = 4734;
+  public static final int OPEN_ORDERS_OFFSET = 4735;
+  public static final int HAS_OPEN_ORDER_OFFSET = 4736;
+  public static final int OPEN_AUCTIONS_OFFSET = 4737;
+  public static final int HAS_OPEN_AUCTION_OFFSET = 4738;
+  public static final int PADDING1_OFFSET = 4739;
+  public static final int LAST_FUEL_BONUS_UPDATE_TS_OFFSET = 4744;
+  public static final int PADDING_OFFSET = 4748;
 
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);
@@ -94,6 +122,118 @@ public record User(PublicKey _address,
 
   public static Filter createDelegateFilter(final PublicKey delegate) {
     return Filter.createMemCompFilter(DELEGATE_OFFSET, delegate);
+  }
+
+  public static Filter createLastAddPerpLpSharesTsFilter(final long lastAddPerpLpSharesTs) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, lastAddPerpLpSharesTs);
+    return Filter.createMemCompFilter(LAST_ADD_PERP_LP_SHARES_TS_OFFSET, _data);
+  }
+
+  public static Filter createTotalDepositsFilter(final long totalDeposits) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, totalDeposits);
+    return Filter.createMemCompFilter(TOTAL_DEPOSITS_OFFSET, _data);
+  }
+
+  public static Filter createTotalWithdrawsFilter(final long totalWithdraws) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, totalWithdraws);
+    return Filter.createMemCompFilter(TOTAL_WITHDRAWS_OFFSET, _data);
+  }
+
+  public static Filter createTotalSocialLossFilter(final long totalSocialLoss) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, totalSocialLoss);
+    return Filter.createMemCompFilter(TOTAL_SOCIAL_LOSS_OFFSET, _data);
+  }
+
+  public static Filter createSettledPerpPnlFilter(final long settledPerpPnl) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, settledPerpPnl);
+    return Filter.createMemCompFilter(SETTLED_PERP_PNL_OFFSET, _data);
+  }
+
+  public static Filter createCumulativeSpotFeesFilter(final long cumulativeSpotFees) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, cumulativeSpotFees);
+    return Filter.createMemCompFilter(CUMULATIVE_SPOT_FEES_OFFSET, _data);
+  }
+
+  public static Filter createCumulativePerpFundingFilter(final long cumulativePerpFunding) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, cumulativePerpFunding);
+    return Filter.createMemCompFilter(CUMULATIVE_PERP_FUNDING_OFFSET, _data);
+  }
+
+  public static Filter createLiquidationMarginFreedFilter(final long liquidationMarginFreed) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, liquidationMarginFreed);
+    return Filter.createMemCompFilter(LIQUIDATION_MARGIN_FREED_OFFSET, _data);
+  }
+
+  public static Filter createLastActiveSlotFilter(final long lastActiveSlot) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, lastActiveSlot);
+    return Filter.createMemCompFilter(LAST_ACTIVE_SLOT_OFFSET, _data);
+  }
+
+  public static Filter createNextOrderIdFilter(final int nextOrderId) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, nextOrderId);
+    return Filter.createMemCompFilter(NEXT_ORDER_ID_OFFSET, _data);
+  }
+
+  public static Filter createMaxMarginRatioFilter(final int maxMarginRatio) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, maxMarginRatio);
+    return Filter.createMemCompFilter(MAX_MARGIN_RATIO_OFFSET, _data);
+  }
+
+  public static Filter createNextLiquidationIdFilter(final int nextLiquidationId) {
+    final byte[] _data = new byte[2];
+    putInt16LE(_data, 0, nextLiquidationId);
+    return Filter.createMemCompFilter(NEXT_LIQUIDATION_ID_OFFSET, _data);
+  }
+
+  public static Filter createSubAccountIdFilter(final int subAccountId) {
+    final byte[] _data = new byte[2];
+    putInt16LE(_data, 0, subAccountId);
+    return Filter.createMemCompFilter(SUB_ACCOUNT_ID_OFFSET, _data);
+  }
+
+  public static Filter createStatusFilter(final int status) {
+    return Filter.createMemCompFilter(STATUS_OFFSET, new byte[]{(byte) status});
+  }
+
+  public static Filter createIsMarginTradingEnabledFilter(final boolean isMarginTradingEnabled) {
+    return Filter.createMemCompFilter(IS_MARGIN_TRADING_ENABLED_OFFSET, new byte[]{(byte) (isMarginTradingEnabled ? 1 : 0)});
+  }
+
+  public static Filter createIdleFilter(final boolean idle) {
+    return Filter.createMemCompFilter(IDLE_OFFSET, new byte[]{(byte) (idle ? 1 : 0)});
+  }
+
+  public static Filter createOpenOrdersFilter(final int openOrders) {
+    return Filter.createMemCompFilter(OPEN_ORDERS_OFFSET, new byte[]{(byte) openOrders});
+  }
+
+  public static Filter createHasOpenOrderFilter(final boolean hasOpenOrder) {
+    return Filter.createMemCompFilter(HAS_OPEN_ORDER_OFFSET, new byte[]{(byte) (hasOpenOrder ? 1 : 0)});
+  }
+
+  public static Filter createOpenAuctionsFilter(final int openAuctions) {
+    return Filter.createMemCompFilter(OPEN_AUCTIONS_OFFSET, new byte[]{(byte) openAuctions});
+  }
+
+  public static Filter createHasOpenAuctionFilter(final boolean hasOpenAuction) {
+    return Filter.createMemCompFilter(HAS_OPEN_AUCTION_OFFSET, new byte[]{(byte) (hasOpenAuction ? 1 : 0)});
+  }
+
+  public static Filter createLastFuelBonusUpdateTsFilter(final int lastFuelBonusUpdateTs) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, lastFuelBonusUpdateTs);
+    return Filter.createMemCompFilter(LAST_FUEL_BONUS_UPDATE_TS_OFFSET, _data);
   }
 
   public static User read(final byte[] _data, final int offset) {
@@ -262,34 +402,6 @@ public record User(PublicKey _address,
 
   @Override
   public int l() {
-    return 8 + 32
-         + 32
-         + Borsh.fixedLen(name)
-         + Borsh.fixedLen(spotPositions)
-         + Borsh.fixedLen(perpPositions)
-         + Borsh.fixedLen(orders)
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 4
-         + 4
-         + 2
-         + 2
-         + 1
-         + 1
-         + 1
-         + 1
-         + 1
-         + 1
-         + 1
-         + Borsh.fixedLen(padding1)
-         + 4
-         + Borsh.fixedLen(padding);
+    return BYTES;
   }
 }

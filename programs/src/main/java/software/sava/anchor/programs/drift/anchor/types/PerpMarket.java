@@ -103,9 +103,41 @@ public record PerpMarket(PublicKey _address,
                          int fuelBoostMaker,
                          int[] padding) implements Borsh {
 
+  public static final int BYTES = 1256;
+  public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
   public static final int PUBKEY_OFFSET = 8;
   public static final int AMM_OFFSET = 40;
   public static final int PNL_POOL_OFFSET = 1000;
+  public static final int NAME_OFFSET = 1032;
+  public static final int INSURANCE_CLAIM_OFFSET = 1064;
+  public static final int UNREALIZED_PNL_MAX_IMBALANCE_OFFSET = 1112;
+  public static final int EXPIRY_TS_OFFSET = 1120;
+  public static final int EXPIRY_PRICE_OFFSET = 1128;
+  public static final int NEXT_FILL_RECORD_ID_OFFSET = 1136;
+  public static final int NEXT_FUNDING_RATE_RECORD_ID_OFFSET = 1144;
+  public static final int NEXT_CURVE_RECORD_ID_OFFSET = 1152;
+  public static final int IMF_FACTOR_OFFSET = 1160;
+  public static final int UNREALIZED_PNL_IMF_FACTOR_OFFSET = 1164;
+  public static final int LIQUIDATOR_FEE_OFFSET = 1168;
+  public static final int IF_LIQUIDATION_FEE_OFFSET = 1172;
+  public static final int MARGIN_RATIO_INITIAL_OFFSET = 1176;
+  public static final int MARGIN_RATIO_MAINTENANCE_OFFSET = 1180;
+  public static final int UNREALIZED_PNL_INITIAL_ASSET_WEIGHT_OFFSET = 1184;
+  public static final int UNREALIZED_PNL_MAINTENANCE_ASSET_WEIGHT_OFFSET = 1188;
+  public static final int NUMBER_OF_USERS_WITH_BASE_OFFSET = 1192;
+  public static final int NUMBER_OF_USERS_OFFSET = 1196;
+  public static final int MARKET_INDEX_OFFSET = 1200;
+  public static final int STATUS_OFFSET = 1202;
+  public static final int CONTRACT_TYPE_OFFSET = 1203;
+  public static final int CONTRACT_TIER_OFFSET = 1204;
+  public static final int PAUSED_OPERATIONS_OFFSET = 1205;
+  public static final int QUOTE_SPOT_MARKET_INDEX_OFFSET = 1206;
+  public static final int FEE_ADJUSTMENT_OFFSET = 1208;
+  public static final int FUEL_BOOST_POSITION_OFFSET = 1210;
+  public static final int FUEL_BOOST_TAKER_OFFSET = 1211;
+  public static final int FUEL_BOOST_MAKER_OFFSET = 1212;
+  public static final int PADDING_OFFSET = 1213;
 
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);
@@ -113,6 +145,152 @@ public record PerpMarket(PublicKey _address,
 
   public static Filter createPnlPoolFilter(final PoolBalance pnlPool) {
     return Filter.createMemCompFilter(PNL_POOL_OFFSET, pnlPool.write());
+  }
+
+  public static Filter createInsuranceClaimFilter(final InsuranceClaim insuranceClaim) {
+    return Filter.createMemCompFilter(INSURANCE_CLAIM_OFFSET, insuranceClaim.write());
+  }
+
+  public static Filter createUnrealizedPnlMaxImbalanceFilter(final long unrealizedPnlMaxImbalance) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, unrealizedPnlMaxImbalance);
+    return Filter.createMemCompFilter(UNREALIZED_PNL_MAX_IMBALANCE_OFFSET, _data);
+  }
+
+  public static Filter createExpiryTsFilter(final long expiryTs) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, expiryTs);
+    return Filter.createMemCompFilter(EXPIRY_TS_OFFSET, _data);
+  }
+
+  public static Filter createExpiryPriceFilter(final long expiryPrice) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, expiryPrice);
+    return Filter.createMemCompFilter(EXPIRY_PRICE_OFFSET, _data);
+  }
+
+  public static Filter createNextFillRecordIdFilter(final long nextFillRecordId) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, nextFillRecordId);
+    return Filter.createMemCompFilter(NEXT_FILL_RECORD_ID_OFFSET, _data);
+  }
+
+  public static Filter createNextFundingRateRecordIdFilter(final long nextFundingRateRecordId) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, nextFundingRateRecordId);
+    return Filter.createMemCompFilter(NEXT_FUNDING_RATE_RECORD_ID_OFFSET, _data);
+  }
+
+  public static Filter createNextCurveRecordIdFilter(final long nextCurveRecordId) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, nextCurveRecordId);
+    return Filter.createMemCompFilter(NEXT_CURVE_RECORD_ID_OFFSET, _data);
+  }
+
+  public static Filter createImfFactorFilter(final int imfFactor) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, imfFactor);
+    return Filter.createMemCompFilter(IMF_FACTOR_OFFSET, _data);
+  }
+
+  public static Filter createUnrealizedPnlImfFactorFilter(final int unrealizedPnlImfFactor) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, unrealizedPnlImfFactor);
+    return Filter.createMemCompFilter(UNREALIZED_PNL_IMF_FACTOR_OFFSET, _data);
+  }
+
+  public static Filter createLiquidatorFeeFilter(final int liquidatorFee) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, liquidatorFee);
+    return Filter.createMemCompFilter(LIQUIDATOR_FEE_OFFSET, _data);
+  }
+
+  public static Filter createIfLiquidationFeeFilter(final int ifLiquidationFee) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, ifLiquidationFee);
+    return Filter.createMemCompFilter(IF_LIQUIDATION_FEE_OFFSET, _data);
+  }
+
+  public static Filter createMarginRatioInitialFilter(final int marginRatioInitial) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, marginRatioInitial);
+    return Filter.createMemCompFilter(MARGIN_RATIO_INITIAL_OFFSET, _data);
+  }
+
+  public static Filter createMarginRatioMaintenanceFilter(final int marginRatioMaintenance) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, marginRatioMaintenance);
+    return Filter.createMemCompFilter(MARGIN_RATIO_MAINTENANCE_OFFSET, _data);
+  }
+
+  public static Filter createUnrealizedPnlInitialAssetWeightFilter(final int unrealizedPnlInitialAssetWeight) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, unrealizedPnlInitialAssetWeight);
+    return Filter.createMemCompFilter(UNREALIZED_PNL_INITIAL_ASSET_WEIGHT_OFFSET, _data);
+  }
+
+  public static Filter createUnrealizedPnlMaintenanceAssetWeightFilter(final int unrealizedPnlMaintenanceAssetWeight) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, unrealizedPnlMaintenanceAssetWeight);
+    return Filter.createMemCompFilter(UNREALIZED_PNL_MAINTENANCE_ASSET_WEIGHT_OFFSET, _data);
+  }
+
+  public static Filter createNumberOfUsersWithBaseFilter(final int numberOfUsersWithBase) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, numberOfUsersWithBase);
+    return Filter.createMemCompFilter(NUMBER_OF_USERS_WITH_BASE_OFFSET, _data);
+  }
+
+  public static Filter createNumberOfUsersFilter(final int numberOfUsers) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, numberOfUsers);
+    return Filter.createMemCompFilter(NUMBER_OF_USERS_OFFSET, _data);
+  }
+
+  public static Filter createMarketIndexFilter(final int marketIndex) {
+    final byte[] _data = new byte[2];
+    putInt16LE(_data, 0, marketIndex);
+    return Filter.createMemCompFilter(MARKET_INDEX_OFFSET, _data);
+  }
+
+  public static Filter createStatusFilter(final MarketStatus status) {
+    return Filter.createMemCompFilter(STATUS_OFFSET, status.write());
+  }
+
+  public static Filter createContractTypeFilter(final ContractType contractType) {
+    return Filter.createMemCompFilter(CONTRACT_TYPE_OFFSET, contractType.write());
+  }
+
+  public static Filter createContractTierFilter(final ContractTier contractTier) {
+    return Filter.createMemCompFilter(CONTRACT_TIER_OFFSET, contractTier.write());
+  }
+
+  public static Filter createPausedOperationsFilter(final int pausedOperations) {
+    return Filter.createMemCompFilter(PAUSED_OPERATIONS_OFFSET, new byte[]{(byte) pausedOperations});
+  }
+
+  public static Filter createQuoteSpotMarketIndexFilter(final int quoteSpotMarketIndex) {
+    final byte[] _data = new byte[2];
+    putInt16LE(_data, 0, quoteSpotMarketIndex);
+    return Filter.createMemCompFilter(QUOTE_SPOT_MARKET_INDEX_OFFSET, _data);
+  }
+
+  public static Filter createFeeAdjustmentFilter(final int feeAdjustment) {
+    final byte[] _data = new byte[2];
+    putInt16LE(_data, 0, feeAdjustment);
+    return Filter.createMemCompFilter(FEE_ADJUSTMENT_OFFSET, _data);
+  }
+
+  public static Filter createFuelBoostPositionFilter(final int fuelBoostPosition) {
+    return Filter.createMemCompFilter(FUEL_BOOST_POSITION_OFFSET, new byte[]{(byte) fuelBoostPosition});
+  }
+
+  public static Filter createFuelBoostTakerFilter(final int fuelBoostTaker) {
+    return Filter.createMemCompFilter(FUEL_BOOST_TAKER_OFFSET, new byte[]{(byte) fuelBoostTaker});
+  }
+
+  public static Filter createFuelBoostMakerFilter(final int fuelBoostMaker) {
+    return Filter.createMemCompFilter(FUEL_BOOST_MAKER_OFFSET, new byte[]{(byte) fuelBoostMaker});
   }
 
   public static PerpMarket read(final byte[] _data, final int offset) {
@@ -294,37 +472,6 @@ public record PerpMarket(PublicKey _address,
 
   @Override
   public int l() {
-    return 8 + 32
-         + Borsh.len(amm)
-         + Borsh.len(pnlPool)
-         + Borsh.fixedLen(name)
-         + Borsh.len(insuranceClaim)
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 2
-         + Borsh.len(status)
-         + Borsh.len(contractType)
-         + Borsh.len(contractTier)
-         + 1
-         + 2
-         + 2
-         + 1
-         + 1
-         + 1
-         + Borsh.fixedLen(padding);
+    return BYTES;
   }
 }

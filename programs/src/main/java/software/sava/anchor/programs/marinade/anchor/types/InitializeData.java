@@ -19,6 +19,8 @@ public record InitializeData(PublicKey adminAuthority,
                              long slotsForStakeDelta,
                              PublicKey pauseAuthority) implements Borsh {
 
+  public static final int BYTES = 144;
+
   public static InitializeData read(final byte[] _data, final int offset) {
     int i = offset;
     final var adminAuthority = readPubKey(_data, i);
@@ -73,14 +75,6 @@ public record InitializeData(PublicKey adminAuthority,
 
   @Override
   public int l() {
-    return 32
-         + 32
-         + 8
-         + Borsh.len(rewardsFee)
-         + Borsh.len(liqPool)
-         + 4
-         + 4
-         + 8
-         + 32;
+    return BYTES;
   }
 }

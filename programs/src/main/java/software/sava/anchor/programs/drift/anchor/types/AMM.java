@@ -228,6 +228,8 @@ public record AMM(// oracle price data public key
                   int referencePriceOffset,
                   int[] padding) implements Borsh {
 
+  public static final int BYTES = 936;
+
   public static AMM read(final byte[] _data, final int offset) {
     int i = offset;
     final var oracle = readPubKey(_data, i);
@@ -655,89 +657,6 @@ public record AMM(// oracle price data public key
 
   @Override
   public int l() {
-    return 32
-         + Borsh.len(historicalOracleData)
-         + 16
-         + 16
-         + Borsh.len(feePool)
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 8
-         + 8
-         + 8
-         + 8
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 16
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 8
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 4
-         + 2
-         + 2
-         + 1
-         + 1
-         + Borsh.len(oracleSource)
-         + 1
-         + 4
-         + 1
-         + 1
-         + 2
-         + 8
-         + 8
-         + 8
-         + 4
-         + Borsh.fixedLen(padding);
+    return BYTES;
   }
 }
