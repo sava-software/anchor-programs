@@ -52,7 +52,7 @@ public record UserStats(PublicKey _address,
                         // Whether the user is a referrer. Sub account 0 can not be deleted if user is a referrer
                         boolean isReferrer,
                         boolean disableUpdatePerpBidAskTwap,
-                        int[] padding1,
+                        byte[] padding1,
                         // accumulated fuel for token amounts of insurance
                         int fuelInsurance,
                         // accumulated fuel for notional of deposits
@@ -69,7 +69,7 @@ public record UserStats(PublicKey _address,
                         long ifStakedGovTokenAmount,
                         // last unix ts user stats data was used to update if fuel (u32 to save space)
                         int lastFuelIfBonusUpdateTs,
-                        int[] padding) implements Borsh {
+                        byte[] padding) implements Borsh {
 
   public static final int BYTES = 248;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -274,7 +274,7 @@ public record UserStats(PublicKey _address,
     ++i;
     final var disableUpdatePerpBidAskTwap = _data[i] == 1;
     ++i;
-    final var padding1 = Borsh.readArray(new int[2], _data, i);
+    final var padding1 = Borsh.readArray(new byte[2], _data, i);
     i += Borsh.fixedLen(padding1);
     final var fuelInsurance = getInt32LE(_data, i);
     i += 4;
@@ -292,7 +292,7 @@ public record UserStats(PublicKey _address,
     i += 8;
     final var lastFuelIfBonusUpdateTs = getInt32LE(_data, i);
     i += 4;
-    final var padding = Borsh.readArray(new int[12], _data, i);
+    final var padding = Borsh.readArray(new byte[12], _data, i);
     return new UserStats(_address,
                          discriminator,
                          authority,

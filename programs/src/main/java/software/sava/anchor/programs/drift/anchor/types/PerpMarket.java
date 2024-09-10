@@ -26,7 +26,7 @@ public record PerpMarket(PublicKey _address,
                          // When users settle positive pnl, the balance decreases. Can not go negative.
                          PoolBalance pnlPool,
                          // Encoded display name for the perp market e.g. SOL-PERP
-                         int[] name,
+                         byte[] name,
                          // The perp market's claim on the insurance fund
                          InsuranceClaim insuranceClaim,
                          // The max pnl imbalance before positive pnl asset weight is discounted
@@ -101,7 +101,7 @@ public record PerpMarket(PublicKey _address,
                          // fuel multiplier for perp maker
                          // precision: 10
                          int fuelBoostMaker,
-                         int[] padding) implements Borsh {
+                         byte[] padding) implements Borsh {
 
   public static final int BYTES = 1256;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -315,7 +315,7 @@ public record PerpMarket(PublicKey _address,
     i += Borsh.len(amm);
     final var pnlPool = PoolBalance.read(_data, i);
     i += Borsh.len(pnlPool);
-    final var name = Borsh.readArray(new int[32], _data, i);
+    final var name = Borsh.readArray(new byte[32], _data, i);
     i += Borsh.fixedLen(name);
     final var insuranceClaim = InsuranceClaim.read(_data, i);
     i += Borsh.len(insuranceClaim);
@@ -371,7 +371,7 @@ public record PerpMarket(PublicKey _address,
     ++i;
     final var fuelBoostMaker = _data[i] & 0xFF;
     ++i;
-    final var padding = Borsh.readArray(new int[43], _data, i);
+    final var padding = Borsh.readArray(new byte[43], _data, i);
     return new PerpMarket(_address,
                           discriminator,
                           pubkey,

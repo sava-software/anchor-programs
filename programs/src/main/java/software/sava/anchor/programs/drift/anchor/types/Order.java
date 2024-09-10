@@ -66,7 +66,7 @@ public record Order(// The slot the order was placed
                     OrderTriggerCondition triggerCondition,
                     // How many slots the auction lasts
                     int auctionDuration,
-                    int[] padding) implements Borsh {
+                    byte[] padding) implements Borsh {
 
   public static final int BYTES = 96;
 
@@ -121,7 +121,7 @@ public record Order(// The slot the order was placed
     i += Borsh.len(triggerCondition);
     final var auctionDuration = _data[i] & 0xFF;
     ++i;
-    final var padding = Borsh.readArray(new int[3], _data, i);
+    final var padding = Borsh.readArray(new byte[3], _data, i);
     return new Order(slot,
                      price,
                      baseAssetAmount,

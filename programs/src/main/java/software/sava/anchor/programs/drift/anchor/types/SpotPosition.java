@@ -26,7 +26,7 @@ public record SpotPosition(// The scaled balance of the position. To get the tok
                            SpotBalanceType balanceType,
                            // Number of open orders
                            int openOrders,
-                           int[] padding) implements Borsh {
+                           byte[] padding) implements Borsh {
 
   public static final int BYTES = 40;
 
@@ -49,7 +49,7 @@ public record SpotPosition(// The scaled balance of the position. To get the tok
     i += Borsh.len(balanceType);
     final var openOrders = _data[i] & 0xFF;
     ++i;
-    final var padding = Borsh.readArray(new int[4], _data, i);
+    final var padding = Borsh.readArray(new byte[4], _data, i);
     return new SpotPosition(scaledBalance,
                             openBids,
                             openAsks,

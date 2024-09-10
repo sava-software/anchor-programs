@@ -58,7 +58,7 @@ public final class DriftProgram {
                                            final PublicKey rentKey,
                                            final PublicKey systemProgramKey,
                                            final int subAccountId,
-                                           final int[] name) {
+                                           final byte[] name) {
     final var keys = List.of(
       createWrite(userKey),
       createWrite(userStatsKey),
@@ -78,7 +78,7 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record InitializeUserData(Discriminator discriminator, int subAccountId, int[] name) implements Borsh {
+  public record InitializeUserData(Discriminator discriminator, int subAccountId, byte[] name) implements Borsh {
 
     public static final int BYTES = 42;
 
@@ -90,7 +90,7 @@ public final class DriftProgram {
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
-      final var name = Borsh.readArray(new int[32], _data, i);
+      final var name = Borsh.readArray(new byte[32], _data, i);
       return new InitializeUserData(discriminator, subAccountId, name);
     }
 
@@ -140,7 +140,7 @@ public final class DriftProgram {
                                                    final PublicKey payerKey,
                                                    final PublicKey rentKey,
                                                    final PublicKey systemProgramKey,
-                                                   final int[] name) {
+                                                   final byte[] name) {
     final var keys = List.of(
       createWrite(referrerNameKey),
       createWrite(userKey),
@@ -158,7 +158,7 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record InitializeReferrerNameData(Discriminator discriminator, int[] name) implements Borsh {
+  public record InitializeReferrerNameData(Discriminator discriminator, byte[] name) implements Borsh {
 
     public static final int BYTES = 40;
 
@@ -168,7 +168,7 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var name = Borsh.readArray(new int[32], _data, i);
+      final var name = Borsh.readArray(new byte[32], _data, i);
       return new InitializeReferrerNameData(discriminator, name);
     }
 
@@ -1412,7 +1412,7 @@ public final class DriftProgram {
                                            final PublicKey userKey,
                                            final PublicKey authorityKey,
                                            final int subAccountId,
-                                           final int[] name) {
+                                           final byte[] name) {
     final var keys = List.of(
       createWrite(userKey),
       createReadOnlySigner(authorityKey)
@@ -1427,7 +1427,7 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record UpdateUserNameData(Discriminator discriminator, int subAccountId, int[] name) implements Borsh {
+  public record UpdateUserNameData(Discriminator discriminator, int subAccountId, byte[] name) implements Borsh {
 
     public static final int BYTES = 42;
 
@@ -1439,7 +1439,7 @@ public final class DriftProgram {
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
-      final var name = Borsh.readArray(new int[32], _data, i);
+      final var name = Borsh.readArray(new byte[32], _data, i);
       return new UpdateUserNameData(discriminator, subAccountId, name);
     }
 
@@ -2108,7 +2108,7 @@ public final class DriftProgram {
                                                final PublicKey userKey,
                                                final PublicKey authorityKey,
                                                final PublicKey spotMarketVaultKey,
-                                               final int[] marketIndexes,
+                                               final short[] marketIndexes,
                                                final SettlePnlMode mode) {
     final var keys = List.of(
       createRead(stateKey),
@@ -2125,7 +2125,7 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record SettleMultiplePnlsData(Discriminator discriminator, int[] marketIndexes, SettlePnlMode mode) implements Borsh {
+  public record SettleMultiplePnlsData(Discriminator discriminator, short[] marketIndexes, SettlePnlMode mode) implements Borsh {
 
     public static SettleMultiplePnlsData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -2133,7 +2133,7 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var marketIndexes = Borsh.readintVector(_data, i);
+      final var marketIndexes = Borsh.readshortVector(_data, i);
       i += Borsh.len(marketIndexes);
       final var mode = SettlePnlMode.read(_data, i);
       return new SettleMultiplePnlsData(discriminator, marketIndexes, mode);
@@ -2979,7 +2979,7 @@ public final class DriftProgram {
   public static Instruction updateAmms(final AccountMeta invokedDriftProgramMeta,
                                        final PublicKey stateKey,
                                        final PublicKey authorityKey,
-                                       final int[] marketIndexes) {
+                                       final short[] marketIndexes) {
     final var keys = List.of(
       createRead(stateKey),
       createReadOnlySigner(authorityKey)
@@ -2992,7 +2992,7 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record UpdateAmmsData(Discriminator discriminator, int[] marketIndexes) implements Borsh {
+  public record UpdateAmmsData(Discriminator discriminator, short[] marketIndexes) implements Borsh {
 
     public static final int BYTES = 18;
 
@@ -3002,7 +3002,7 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var marketIndexes = Borsh.readArray(new int[5], _data, i);
+      final var marketIndexes = Borsh.readArray(new short[5], _data, i);
       return new UpdateAmmsData(discriminator, marketIndexes);
     }
 
@@ -3479,7 +3479,7 @@ public final class DriftProgram {
                                                  final PublicKey pythSolanaReceiverKey,
                                                  final PublicKey encodedVaaKey,
                                                  final PublicKey priceFeedKey,
-                                                 final int[] feedId,
+                                                 final byte[] feedId,
                                                  final byte[] params) {
     final var keys = List.of(
       createWritableSigner(keeperKey),
@@ -3496,7 +3496,7 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record UpdatePythPullOracleData(Discriminator discriminator, int[] feedId, byte[] params) implements Borsh {
+  public record UpdatePythPullOracleData(Discriminator discriminator, byte[] feedId, byte[] params) implements Borsh {
 
     public static UpdatePythPullOracleData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -3504,7 +3504,7 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var feedId = Borsh.readArray(new int[32], _data, i);
+      final var feedId = Borsh.readArray(new byte[32], _data, i);
       i += Borsh.fixedLen(feedId);
       final byte[] params = Borsh.read(_data, i);
       return new UpdatePythPullOracleData(discriminator, feedId, params);
@@ -3531,7 +3531,7 @@ public final class DriftProgram {
                                                            final PublicKey pythSolanaReceiverKey,
                                                            final PublicKey guardianSetKey,
                                                            final PublicKey priceFeedKey,
-                                                           final int[] feedId,
+                                                           final byte[] feedId,
                                                            final byte[] params) {
     final var keys = List.of(
       createWritableSigner(keeperKey),
@@ -3548,7 +3548,7 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record PostPythPullOracleUpdateAtomicData(Discriminator discriminator, int[] feedId, byte[] params) implements Borsh {
+  public record PostPythPullOracleUpdateAtomicData(Discriminator discriminator, byte[] feedId, byte[] params) implements Borsh {
 
     public static PostPythPullOracleUpdateAtomicData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -3556,7 +3556,7 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var feedId = Borsh.readArray(new int[32], _data, i);
+      final var feedId = Borsh.readArray(new byte[32], _data, i);
       i += Borsh.fixedLen(feedId);
       final byte[] params = Borsh.read(_data, i);
       return new PostPythPullOracleUpdateAtomicData(discriminator, feedId, params);
@@ -3676,7 +3676,7 @@ public final class DriftProgram {
                                                  final long orderTickSize,
                                                  final long orderStepSize,
                                                  final int ifTotalFactor,
-                                                 final int[] name) {
+                                                 final byte[] name) {
     final var keys = List.of(
       createWrite(spotMarketKey),
       createRead(spotMarketMintKey),
@@ -3751,7 +3751,7 @@ public final class DriftProgram {
                                          long orderTickSize,
                                          long orderStepSize,
                                          int ifTotalFactor,
-                                         int[] name) implements Borsh {
+                                         byte[] name) implements Borsh {
 
     public static final int BYTES = 119;
 
@@ -3797,7 +3797,7 @@ public final class DriftProgram {
       i += 8;
       final var ifTotalFactor = getInt32LE(_data, i);
       i += 4;
-      final var name = Borsh.readArray(new int[32], _data, i);
+      final var name = Borsh.readArray(new byte[32], _data, i);
       return new InitializeSpotMarketData(discriminator,
                                           optimalUtilization,
                                           optimalBorrowRate,
@@ -4300,7 +4300,7 @@ public final class DriftProgram {
                                                  final BigInteger concentrationCoefScale,
                                                  final int curveUpdateIntensity,
                                                  final int ammJitIntensity,
-                                                 final int[] name) {
+                                                 final byte[] name) {
     final var keys = List.of(
       createWritableSigner(adminKey),
       createWrite(stateKey),
@@ -4388,7 +4388,7 @@ public final class DriftProgram {
                                          BigInteger concentrationCoefScale,
                                          int curveUpdateIntensity,
                                          int ammJitIntensity,
-                                         int[] name) implements Borsh {
+                                         byte[] name) implements Borsh {
 
     public static final int BYTES = 203;
 
@@ -4446,7 +4446,7 @@ public final class DriftProgram {
       ++i;
       final var ammJitIntensity = _data[i] & 0xFF;
       ++i;
-      final var name = Borsh.readArray(new int[32], _data, i);
+      final var name = Borsh.readArray(new byte[32], _data, i);
       return new InitializePerpMarketData(discriminator,
                                           marketIndex,
                                           ammBaseAssetReserve,
@@ -6325,7 +6325,7 @@ public final class DriftProgram {
                                                  final PublicKey adminKey,
                                                  final PublicKey stateKey,
                                                  final PublicKey spotMarketKey,
-                                                 final int[] name) {
+                                                 final byte[] name) {
     final var keys = List.of(
       createReadOnlySigner(adminKey),
       createRead(stateKey),
@@ -6339,7 +6339,7 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record UpdateSpotMarketNameData(Discriminator discriminator, int[] name) implements Borsh {
+  public record UpdateSpotMarketNameData(Discriminator discriminator, byte[] name) implements Borsh {
 
     public static final int BYTES = 40;
 
@@ -6349,7 +6349,7 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var name = Borsh.readArray(new int[32], _data, i);
+      final var name = Borsh.readArray(new byte[32], _data, i);
       return new UpdateSpotMarketNameData(discriminator, name);
     }
 
@@ -7528,7 +7528,7 @@ public final class DriftProgram {
                                                  final PublicKey adminKey,
                                                  final PublicKey stateKey,
                                                  final PublicKey perpMarketKey,
-                                                 final int[] name) {
+                                                 final byte[] name) {
     final var keys = List.of(
       createReadOnlySigner(adminKey),
       createRead(stateKey),
@@ -7542,7 +7542,7 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record UpdatePerpMarketNameData(Discriminator discriminator, int[] name) implements Borsh {
+  public record UpdatePerpMarketNameData(Discriminator discriminator, byte[] name) implements Borsh {
 
     public static final int BYTES = 40;
 
@@ -7552,7 +7552,7 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var name = Borsh.readArray(new int[32], _data, i);
+      final var name = Borsh.readArray(new byte[32], _data, i);
       return new UpdatePerpMarketNameData(discriminator, name);
     }
 
@@ -8648,7 +8648,7 @@ public final class DriftProgram {
                                                      final PublicKey priceFeedKey,
                                                      final PublicKey systemProgramKey,
                                                      final PublicKey stateKey,
-                                                     final int[] feedId) {
+                                                     final byte[] feedId) {
     final var keys = List.of(
       createWritableSigner(adminKey),
       createRead(pythSolanaReceiverKey),
@@ -8664,7 +8664,7 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record InitializePythPullOracleData(Discriminator discriminator, int[] feedId) implements Borsh {
+  public record InitializePythPullOracleData(Discriminator discriminator, byte[] feedId) implements Borsh {
 
     public static final int BYTES = 40;
 
@@ -8674,7 +8674,7 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var feedId = Borsh.readArray(new int[32], _data, i);
+      final var feedId = Borsh.readArray(new byte[32], _data, i);
       return new InitializePythPullOracleData(discriminator, feedId);
     }
 

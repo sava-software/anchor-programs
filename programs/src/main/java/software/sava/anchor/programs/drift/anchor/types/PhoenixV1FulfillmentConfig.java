@@ -23,7 +23,7 @@ public record PhoenixV1FulfillmentConfig(PublicKey _address,
                                          int marketIndex,
                                          SpotFulfillmentType fulfillmentType,
                                          SpotFulfillmentConfigStatus status,
-                                         int[] padding) implements Borsh {
+                                         byte[] padding) implements Borsh {
 
   public static final int BYTES = 208;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -111,7 +111,7 @@ public record PhoenixV1FulfillmentConfig(PublicKey _address,
     i += Borsh.len(fulfillmentType);
     final var status = SpotFulfillmentConfigStatus.read(_data, i);
     i += Borsh.len(status);
-    final var padding = Borsh.readArray(new int[4], _data, i);
+    final var padding = Borsh.readArray(new byte[4], _data, i);
     return new PhoenixV1FulfillmentConfig(_address,
                                           discriminator,
                                           pubkey,

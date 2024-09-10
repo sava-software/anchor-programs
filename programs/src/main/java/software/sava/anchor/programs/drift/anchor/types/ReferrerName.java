@@ -15,7 +15,7 @@ public record ReferrerName(PublicKey _address,
                            PublicKey authority,
                            PublicKey user,
                            PublicKey userStats,
-                           int[] name) implements Borsh {
+                           byte[] name) implements Borsh {
 
   public static final int BYTES = 136;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -59,7 +59,7 @@ public record ReferrerName(PublicKey _address,
     i += 32;
     final var userStats = readPubKey(_data, i);
     i += 32;
-    final var name = Borsh.readArray(new int[32], _data, i);
+    final var name = Borsh.readArray(new byte[32], _data, i);
     return new ReferrerName(_address,
                             discriminator,
                             authority,

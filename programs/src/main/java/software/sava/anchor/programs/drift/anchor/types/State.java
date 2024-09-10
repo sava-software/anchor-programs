@@ -42,7 +42,7 @@ public record State(PublicKey _address,
                     int initialPctToLiquidate,
                     int maxNumberOfSubAccounts,
                     int maxInitializeUserFee,
-                    int[] padding) implements Borsh {
+                    byte[] padding) implements Borsh {
 
   public static final int BYTES = 1208;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -245,7 +245,7 @@ public record State(PublicKey _address,
     i += 2;
     final var maxInitializeUserFee = getInt16LE(_data, i);
     i += 2;
-    final var padding = Borsh.readArray(new int[10], _data, i);
+    final var padding = Borsh.readArray(new byte[10], _data, i);
     return new State(_address,
                      discriminator,
                      admin,

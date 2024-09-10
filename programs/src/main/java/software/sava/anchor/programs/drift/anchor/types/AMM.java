@@ -226,7 +226,7 @@ public record AMM(// oracle price data public key
                   long netUnsettledFundingPnl,
                   long quoteAssetAmountWithUnsettledLp,
                   int referencePriceOffset,
-                  int[] padding) implements Borsh {
+                  byte[] padding) implements Borsh {
 
   public static final int BYTES = 936;
 
@@ -401,7 +401,7 @@ public record AMM(// oracle price data public key
     i += 8;
     final var referencePriceOffset = getInt32LE(_data, i);
     i += 4;
-    final var padding = Borsh.readArray(new int[12], _data, i);
+    final var padding = Borsh.readArray(new byte[12], _data, i);
     return new AMM(oracle,
                    historicalOracleData,
                    baseAssetAmountPerLp,

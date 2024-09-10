@@ -21,7 +21,7 @@ public record PrelaunchOracle(PublicKey _address,
                               long lastUpdateSlot,
                               long ammLastUpdateSlot,
                               int perpMarketIndex,
-                              int[] padding) implements Borsh {
+                              byte[] padding) implements Borsh {
 
   public static final int BYTES = 120;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -98,7 +98,7 @@ public record PrelaunchOracle(PublicKey _address,
     i += 8;
     final var perpMarketIndex = getInt16LE(_data, i);
     i += 2;
-    final var padding = Borsh.readArray(new int[70], _data, i);
+    final var padding = Borsh.readArray(new byte[70], _data, i);
     return new PrelaunchOracle(_address,
                                discriminator,
                                price,

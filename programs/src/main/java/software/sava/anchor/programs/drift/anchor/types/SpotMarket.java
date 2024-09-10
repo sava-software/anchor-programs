@@ -32,7 +32,7 @@ public record SpotMarket(PublicKey _address,
                          // The amount in the vault should be equal to or greater than deposits - borrows
                          PublicKey vault,
                          // The encoded display name for the market e.g. SOL
-                         int[] name,
+                         byte[] name,
                          HistoricalOracleData historicalOracleData,
                          HistoricalIndexData historicalIndexData,
                          // Revenue the protocol has collected in this markets token
@@ -194,7 +194,7 @@ public record SpotMarket(PublicKey _address,
                          // precision: 10
                          int fuelBoostInsurance,
                          int tokenProgram,
-                         int[] padding) implements Borsh {
+                         byte[] padding) implements Borsh {
 
   public static final int BYTES = 816;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -609,7 +609,7 @@ public record SpotMarket(PublicKey _address,
     i += 32;
     final var vault = readPubKey(_data, i);
     i += 32;
-    final var name = Borsh.readArray(new int[32], _data, i);
+    final var name = Borsh.readArray(new byte[32], _data, i);
     i += Borsh.fixedLen(name);
     final var historicalOracleData = HistoricalOracleData.read(_data, i);
     i += Borsh.len(historicalOracleData);
@@ -725,7 +725,7 @@ public record SpotMarket(PublicKey _address,
     ++i;
     final var tokenProgram = _data[i] & 0xFF;
     ++i;
-    final var padding = Borsh.readArray(new int[41], _data, i);
+    final var padding = Borsh.readArray(new byte[41], _data, i);
     return new SpotMarket(_address,
                           discriminator,
                           pubkey,

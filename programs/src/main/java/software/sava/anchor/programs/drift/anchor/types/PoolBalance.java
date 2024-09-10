@@ -15,7 +15,7 @@ public record PoolBalance(// To get the pool's token amount, you must multiply t
                           BigInteger scaledBalance,
                           // The spot market the pool is for
                           int marketIndex,
-                          int[] padding) implements Borsh {
+                          byte[] padding) implements Borsh {
 
   public static final int BYTES = 24;
 
@@ -28,7 +28,7 @@ public record PoolBalance(// To get the pool's token amount, you must multiply t
     i += 16;
     final var marketIndex = getInt16LE(_data, i);
     i += 2;
-    final var padding = Borsh.readArray(new int[6], _data, i);
+    final var padding = Borsh.readArray(new byte[6], _data, i);
     return new PoolBalance(scaledBalance, marketIndex, padding);
   }
 

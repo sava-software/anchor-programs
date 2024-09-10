@@ -29,7 +29,7 @@ public record InsuranceFundStake(PublicKey _address,
                                  long lastWithdrawRequestTs,
                                  long costBasis,
                                  int marketIndex,
-                                 int[] padding) implements Borsh {
+                                 byte[] padding) implements Borsh {
 
   public static final int BYTES = 136;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -131,7 +131,7 @@ public record InsuranceFundStake(PublicKey _address,
     i += 8;
     final var marketIndex = getInt16LE(_data, i);
     i += 2;
-    final var padding = Borsh.readArray(new int[14], _data, i);
+    final var padding = Borsh.readArray(new byte[14], _data, i);
     return new InsuranceFundStake(_address,
                                   discriminator,
                                   authority,

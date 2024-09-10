@@ -5,14 +5,14 @@ import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 
-public record CreatedModel(int[] key, PublicKey manager) implements Borsh {
+public record CreatedModel(byte[] key, PublicKey manager) implements Borsh {
 
   public static CreatedModel read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
     int i = offset;
-    final var key = Borsh.readArray(new int[8], _data, i);
+    final var key = Borsh.readArray(new byte[8], _data, i);
     i += Borsh.fixedLen(key);
     final var manager = _data[i++] == 0 ? null : readPubKey(_data, i);
     return new CreatedModel(key, manager);

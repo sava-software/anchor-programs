@@ -23,7 +23,7 @@ public record User(PublicKey _address,
                    // An addresses that can control the account on the authority's behalf. Has limited power, cant withdraw
                    PublicKey delegate,
                    // Encoded display name e.g. "toly"
-                   int[] name,
+                   byte[] name,
                    // The user's spot positions
                    SpotPosition[] spotPositions,
                    // The user's perp positions
@@ -79,9 +79,9 @@ public record User(PublicKey _address,
                    int openAuctions,
                    // Whether or not user has open order with auction
                    boolean hasOpenAuction,
-                   int[] padding1,
+                   byte[] padding1,
                    int lastFuelBonusUpdateTs,
-                   int[] padding) implements Borsh {
+                   byte[] padding) implements Borsh {
 
   public static final int BYTES = 4760;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -256,7 +256,7 @@ public record User(PublicKey _address,
     i += 32;
     final var delegate = readPubKey(_data, i);
     i += 32;
-    final var name = Borsh.readArray(new int[32], _data, i);
+    final var name = Borsh.readArray(new byte[32], _data, i);
     i += Borsh.fixedLen(name);
     final var spotPositions = Borsh.readArray(new SpotPosition[8], SpotPosition::read, _data, i);
     i += Borsh.fixedLen(spotPositions);
@@ -304,11 +304,11 @@ public record User(PublicKey _address,
     ++i;
     final var hasOpenAuction = _data[i] == 1;
     ++i;
-    final var padding1 = Borsh.readArray(new int[5], _data, i);
+    final var padding1 = Borsh.readArray(new byte[5], _data, i);
     i += Borsh.fixedLen(padding1);
     final var lastFuelBonusUpdateTs = getInt32LE(_data, i);
     i += 4;
-    final var padding = Borsh.readArray(new int[12], _data, i);
+    final var padding = Borsh.readArray(new byte[12], _data, i);
     return new User(_address,
                     discriminator,
                     authority,

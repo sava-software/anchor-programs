@@ -13,7 +13,7 @@ public record NewUserRecord(long ts,
                             PublicKey userAuthority,
                             PublicKey user,
                             int subAccountId,
-                            int[] name,
+                            byte[] name,
                             PublicKey referrer) implements Borsh {
 
   public static final int BYTES = 138;
@@ -31,7 +31,7 @@ public record NewUserRecord(long ts,
     i += 32;
     final var subAccountId = getInt16LE(_data, i);
     i += 2;
-    final var name = Borsh.readArray(new int[32], _data, i);
+    final var name = Borsh.readArray(new byte[32], _data, i);
     i += Borsh.fixedLen(name);
     final var referrer = readPubKey(_data, i);
     return new NewUserRecord(ts,
