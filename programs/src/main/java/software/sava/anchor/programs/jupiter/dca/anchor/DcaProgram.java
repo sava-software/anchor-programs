@@ -80,17 +80,17 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record OpenDcaData(Discriminator discriminator,
-                            long applicationIdx,
-                            long inAmount,
-                            long inAmountPerCycle,
-                            long cycleFrequency,
-                            OptionalLong minOutAmount,
-                            OptionalLong maxOutAmount,
-                            OptionalLong startAt,
-                            Boolean closeWsolInAta) implements Borsh {
+  public record OpenDcaIxData(Discriminator discriminator,
+                              long applicationIdx,
+                              long inAmount,
+                              long inAmountPerCycle,
+                              long cycleFrequency,
+                              OptionalLong minOutAmount,
+                              OptionalLong maxOutAmount,
+                              OptionalLong startAt,
+                              Boolean closeWsolInAta) implements Borsh {
 
-    public static OpenDcaData read(final byte[] _data, final int offset) {
+    public static OpenDcaIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -117,15 +117,15 @@ public final class DcaProgram {
         i += 8;
       }
       final var closeWsolInAta = _data[i++] == 0 ? null : _data[i] == 1;
-      return new OpenDcaData(discriminator,
-                             applicationIdx,
-                             inAmount,
-                             inAmountPerCycle,
-                             cycleFrequency,
-                             minOutAmount,
-                             maxOutAmount,
-                             startAt,
-                             closeWsolInAta);
+      return new OpenDcaIxData(discriminator,
+                               applicationIdx,
+                               inAmount,
+                               inAmountPerCycle,
+                               cycleFrequency,
+                               minOutAmount,
+                               maxOutAmount,
+                               startAt,
+                               closeWsolInAta);
     }
 
     @Override
@@ -215,16 +215,16 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record OpenDcaV2Data(Discriminator discriminator,
-                              long applicationIdx,
-                              long inAmount,
-                              long inAmountPerCycle,
-                              long cycleFrequency,
-                              OptionalLong minOutAmount,
-                              OptionalLong maxOutAmount,
-                              OptionalLong startAt) implements Borsh {
+  public record OpenDcaV2IxData(Discriminator discriminator,
+                                long applicationIdx,
+                                long inAmount,
+                                long inAmountPerCycle,
+                                long cycleFrequency,
+                                OptionalLong minOutAmount,
+                                OptionalLong maxOutAmount,
+                                OptionalLong startAt) implements Borsh {
 
-    public static OpenDcaV2Data read(final byte[] _data, final int offset) {
+    public static OpenDcaV2IxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -247,14 +247,14 @@ public final class DcaProgram {
         i += 8;
       }
       final var startAt = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
-      return new OpenDcaV2Data(discriminator,
-                               applicationIdx,
-                               inAmount,
-                               inAmountPerCycle,
-                               cycleFrequency,
-                               minOutAmount,
-                               maxOutAmount,
-                               startAt);
+      return new OpenDcaV2IxData(discriminator,
+                                 applicationIdx,
+                                 inAmount,
+                                 inAmountPerCycle,
+                                 cycleFrequency,
+                                 minOutAmount,
+                                 maxOutAmount,
+                                 startAt);
     }
 
     @Override
@@ -359,18 +359,18 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record WithdrawData(Discriminator discriminator, WithdrawParams withdrawParams) implements Borsh {
+  public record WithdrawIxData(Discriminator discriminator, WithdrawParams withdrawParams) implements Borsh {
 
     public static final int BYTES = 17;
 
-    public static WithdrawData read(final byte[] _data, final int offset) {
+    public static WithdrawIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var withdrawParams = WithdrawParams.read(_data, i);
-      return new WithdrawData(discriminator, withdrawParams);
+      return new WithdrawIxData(discriminator, withdrawParams);
     }
 
     @Override
@@ -414,18 +414,18 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record DepositData(Discriminator discriminator, long depositIn) implements Borsh {
+  public record DepositIxData(Discriminator discriminator, long depositIn) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static DepositData read(final byte[] _data, final int offset) {
+    public static DepositIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var depositIn = getInt64LE(_data, i);
-      return new DepositData(discriminator, depositIn);
+      return new DepositIxData(discriminator, depositIn);
     }
 
     @Override
@@ -473,18 +473,18 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record WithdrawFeesData(Discriminator discriminator, long amount) implements Borsh {
+  public record WithdrawFeesIxData(Discriminator discriminator, long amount) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static WithdrawFeesData read(final byte[] _data, final int offset) {
+    public static WithdrawFeesIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
-      return new WithdrawFeesData(discriminator, amount);
+      return new WithdrawFeesIxData(discriminator, amount);
     }
 
     @Override
@@ -581,18 +581,18 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record FulfillFlashFillData(Discriminator discriminator, long repayAmount) implements Borsh {
+  public record FulfillFlashFillIxData(Discriminator discriminator, long repayAmount) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static FulfillFlashFillData read(final byte[] _data, final int offset) {
+    public static FulfillFlashFillIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var repayAmount = getInt64LE(_data, i);
-      return new FulfillFlashFillData(discriminator, repayAmount);
+      return new FulfillFlashFillIxData(discriminator, repayAmount);
     }
 
     @Override
@@ -689,18 +689,18 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record FulfillDlmmFillData(Discriminator discriminator, long repayAmount) implements Borsh {
+  public record FulfillDlmmFillIxData(Discriminator discriminator, long repayAmount) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static FulfillDlmmFillData read(final byte[] _data, final int offset) {
+    public static FulfillDlmmFillIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var repayAmount = getInt64LE(_data, i);
-      return new FulfillDlmmFillData(discriminator, repayAmount);
+      return new FulfillDlmmFillIxData(discriminator, repayAmount);
     }
 
     @Override

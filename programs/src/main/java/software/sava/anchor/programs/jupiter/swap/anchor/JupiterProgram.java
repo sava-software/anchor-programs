@@ -66,14 +66,14 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record RouteData(Discriminator discriminator,
-                          RoutePlanStep[] routePlan,
-                          long inAmount,
-                          long quotedOutAmount,
-                          int slippageBps,
-                          int platformFeeBps) implements Borsh {
+  public record RouteIxData(Discriminator discriminator,
+                            RoutePlanStep[] routePlan,
+                            long inAmount,
+                            long quotedOutAmount,
+                            int slippageBps,
+                            int platformFeeBps) implements Borsh {
 
-    public static RouteData read(final byte[] _data, final int offset) {
+    public static RouteIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -88,12 +88,12 @@ public final class JupiterProgram {
       final var slippageBps = getInt16LE(_data, i);
       i += 2;
       final var platformFeeBps = _data[i] & 0xFF;
-      return new RouteData(discriminator,
-                           routePlan,
-                           inAmount,
-                           quotedOutAmount,
-                           slippageBps,
-                           platformFeeBps);
+      return new RouteIxData(discriminator,
+                             routePlan,
+                             inAmount,
+                             quotedOutAmount,
+                             slippageBps,
+                             platformFeeBps);
     }
 
     @Override
@@ -163,13 +163,13 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record RouteWithTokenLedgerData(Discriminator discriminator,
-                                         RoutePlanStep[] routePlan,
-                                         long quotedOutAmount,
-                                         int slippageBps,
-                                         int platformFeeBps) implements Borsh {
+  public record RouteWithTokenLedgerIxData(Discriminator discriminator,
+                                           RoutePlanStep[] routePlan,
+                                           long quotedOutAmount,
+                                           int slippageBps,
+                                           int platformFeeBps) implements Borsh {
 
-    public static RouteWithTokenLedgerData read(final byte[] _data, final int offset) {
+    public static RouteWithTokenLedgerIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -182,11 +182,11 @@ public final class JupiterProgram {
       final var slippageBps = getInt16LE(_data, i);
       i += 2;
       final var platformFeeBps = _data[i] & 0xFF;
-      return new RouteWithTokenLedgerData(discriminator,
-                                          routePlan,
-                                          quotedOutAmount,
-                                          slippageBps,
-                                          platformFeeBps);
+      return new RouteWithTokenLedgerIxData(discriminator,
+                                            routePlan,
+                                            quotedOutAmount,
+                                            slippageBps,
+                                            platformFeeBps);
     }
 
     @Override
@@ -255,14 +255,14 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record ExactOutRouteData(Discriminator discriminator,
-                                  RoutePlanStep[] routePlan,
-                                  long outAmount,
-                                  long quotedInAmount,
-                                  int slippageBps,
-                                  int platformFeeBps) implements Borsh {
+  public record ExactOutRouteIxData(Discriminator discriminator,
+                                    RoutePlanStep[] routePlan,
+                                    long outAmount,
+                                    long quotedInAmount,
+                                    int slippageBps,
+                                    int platformFeeBps) implements Borsh {
 
-    public static ExactOutRouteData read(final byte[] _data, final int offset) {
+    public static ExactOutRouteIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -277,12 +277,12 @@ public final class JupiterProgram {
       final var slippageBps = getInt16LE(_data, i);
       i += 2;
       final var platformFeeBps = _data[i] & 0xFF;
-      return new ExactOutRouteData(discriminator,
-                                   routePlan,
-                                   outAmount,
-                                   quotedInAmount,
-                                   slippageBps,
-                                   platformFeeBps);
+      return new ExactOutRouteIxData(discriminator,
+                                     routePlan,
+                                     outAmount,
+                                     quotedInAmount,
+                                     slippageBps,
+                                     platformFeeBps);
     }
 
     @Override
@@ -364,15 +364,15 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record SharedAccountsRouteData(Discriminator discriminator,
-                                        int id,
-                                        RoutePlanStep[] routePlan,
-                                        long inAmount,
-                                        long quotedOutAmount,
-                                        int slippageBps,
-                                        int platformFeeBps) implements Borsh {
+  public record SharedAccountsRouteIxData(Discriminator discriminator,
+                                          int id,
+                                          RoutePlanStep[] routePlan,
+                                          long inAmount,
+                                          long quotedOutAmount,
+                                          int slippageBps,
+                                          int platformFeeBps) implements Borsh {
 
-    public static SharedAccountsRouteData read(final byte[] _data, final int offset) {
+    public static SharedAccountsRouteIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -389,13 +389,13 @@ public final class JupiterProgram {
       final var slippageBps = getInt16LE(_data, i);
       i += 2;
       final var platformFeeBps = _data[i] & 0xFF;
-      return new SharedAccountsRouteData(discriminator,
-                                         id,
-                                         routePlan,
-                                         inAmount,
-                                         quotedOutAmount,
-                                         slippageBps,
-                                         platformFeeBps);
+      return new SharedAccountsRouteIxData(discriminator,
+                                           id,
+                                           routePlan,
+                                           inAmount,
+                                           quotedOutAmount,
+                                           slippageBps,
+                                           platformFeeBps);
     }
 
     @Override
@@ -479,14 +479,14 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record SharedAccountsRouteWithTokenLedgerData(Discriminator discriminator,
-                                                       int id,
-                                                       RoutePlanStep[] routePlan,
-                                                       long quotedOutAmount,
-                                                       int slippageBps,
-                                                       int platformFeeBps) implements Borsh {
+  public record SharedAccountsRouteWithTokenLedgerIxData(Discriminator discriminator,
+                                                         int id,
+                                                         RoutePlanStep[] routePlan,
+                                                         long quotedOutAmount,
+                                                         int slippageBps,
+                                                         int platformFeeBps) implements Borsh {
 
-    public static SharedAccountsRouteWithTokenLedgerData read(final byte[] _data, final int offset) {
+    public static SharedAccountsRouteWithTokenLedgerIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -501,12 +501,12 @@ public final class JupiterProgram {
       final var slippageBps = getInt16LE(_data, i);
       i += 2;
       final var platformFeeBps = _data[i] & 0xFF;
-      return new SharedAccountsRouteWithTokenLedgerData(discriminator,
-                                                        id,
-                                                        routePlan,
-                                                        quotedOutAmount,
-                                                        slippageBps,
-                                                        platformFeeBps);
+      return new SharedAccountsRouteWithTokenLedgerIxData(discriminator,
+                                                          id,
+                                                          routePlan,
+                                                          quotedOutAmount,
+                                                          slippageBps,
+                                                          platformFeeBps);
     }
 
     @Override
@@ -588,15 +588,15 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record SharedAccountsExactOutRouteData(Discriminator discriminator,
-                                                int id,
-                                                RoutePlanStep[] routePlan,
-                                                long outAmount,
-                                                long quotedInAmount,
-                                                int slippageBps,
-                                                int platformFeeBps) implements Borsh {
+  public record SharedAccountsExactOutRouteIxData(Discriminator discriminator,
+                                                  int id,
+                                                  RoutePlanStep[] routePlan,
+                                                  long outAmount,
+                                                  long quotedInAmount,
+                                                  int slippageBps,
+                                                  int platformFeeBps) implements Borsh {
 
-    public static SharedAccountsExactOutRouteData read(final byte[] _data, final int offset) {
+    public static SharedAccountsExactOutRouteIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -613,13 +613,13 @@ public final class JupiterProgram {
       final var slippageBps = getInt16LE(_data, i);
       i += 2;
       final var platformFeeBps = _data[i] & 0xFF;
-      return new SharedAccountsExactOutRouteData(discriminator,
-                                                 id,
-                                                 routePlan,
-                                                 outAmount,
-                                                 quotedInAmount,
-                                                 slippageBps,
-                                                 platformFeeBps);
+      return new SharedAccountsExactOutRouteIxData(discriminator,
+                                                   id,
+                                                   routePlan,
+                                                   outAmount,
+                                                   quotedInAmount,
+                                                   slippageBps,
+                                                   platformFeeBps);
     }
 
     @Override
@@ -706,18 +706,18 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record CreateTokenAccountData(Discriminator discriminator, int bump) implements Borsh {
+  public record CreateTokenAccountIxData(Discriminator discriminator, int bump) implements Borsh {
 
     public static final int BYTES = 9;
 
-    public static CreateTokenAccountData read(final byte[] _data, final int offset) {
+    public static CreateTokenAccountIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var bump = _data[i] & 0xFF;
-      return new CreateTokenAccountData(discriminator, bump);
+      return new CreateTokenAccountIxData(discriminator, bump);
     }
 
     @Override
@@ -762,18 +762,18 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record CreateProgramOpenOrdersData(Discriminator discriminator, int id) implements Borsh {
+  public record CreateProgramOpenOrdersIxData(Discriminator discriminator, int id) implements Borsh {
 
     public static final int BYTES = 9;
 
-    public static CreateProgramOpenOrdersData read(final byte[] _data, final int offset) {
+    public static CreateProgramOpenOrdersIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var id = _data[i] & 0xFF;
-      return new CreateProgramOpenOrdersData(discriminator, id);
+      return new CreateProgramOpenOrdersIxData(discriminator, id);
     }
 
     @Override
@@ -810,18 +810,18 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record ClaimData(Discriminator discriminator, int id) implements Borsh {
+  public record ClaimIxData(Discriminator discriminator, int id) implements Borsh {
 
     public static final int BYTES = 9;
 
-    public static ClaimData read(final byte[] _data, final int offset) {
+    public static ClaimIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var id = _data[i] & 0xFF;
-      return new ClaimData(discriminator, id);
+      return new ClaimIxData(discriminator, id);
     }
 
     @Override
@@ -870,18 +870,18 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record ClaimTokenData(Discriminator discriminator, int id) implements Borsh {
+  public record ClaimTokenIxData(Discriminator discriminator, int id) implements Borsh {
 
     public static final int BYTES = 9;
 
-    public static ClaimTokenData read(final byte[] _data, final int offset) {
+    public static ClaimTokenIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var id = _data[i] & 0xFF;
-      return new ClaimTokenData(discriminator, id);
+      return new ClaimTokenIxData(discriminator, id);
     }
 
     @Override

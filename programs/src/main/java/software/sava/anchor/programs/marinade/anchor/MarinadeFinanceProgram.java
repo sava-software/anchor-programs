@@ -61,18 +61,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record InitializeData(Discriminator discriminator, InitializeData data) implements Borsh {
+  public record InitializeIxData(Discriminator discriminator, InitializeData data) implements Borsh {
 
     public static final int BYTES = 152;
 
-    public static InitializeData read(final byte[] _data, final int offset) {
+    public static InitializeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var data = InitializeData.read(_data, i);
-      return new InitializeData(discriminator, data);
+      return new InitializeIxData(discriminator, data);
     }
 
     @Override
@@ -106,16 +106,16 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record ChangeAuthorityData(Discriminator discriminator, ChangeAuthorityData data) implements Borsh {
+  public record ChangeAuthorityIxData(Discriminator discriminator, ChangeAuthorityData data) implements Borsh {
 
-    public static ChangeAuthorityData read(final byte[] _data, final int offset) {
+    public static ChangeAuthorityIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var data = ChangeAuthorityData.read(_data, i);
-      return new ChangeAuthorityData(discriminator, data);
+      return new ChangeAuthorityIxData(discriminator, data);
     }
 
     @Override
@@ -164,18 +164,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record AddValidatorData(Discriminator discriminator, int score) implements Borsh {
+  public record AddValidatorIxData(Discriminator discriminator, int score) implements Borsh {
 
     public static final int BYTES = 12;
 
-    public static AddValidatorData read(final byte[] _data, final int offset) {
+    public static AddValidatorIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var score = getInt32LE(_data, i);
-      return new AddValidatorData(discriminator, score);
+      return new AddValidatorIxData(discriminator, score);
     }
 
     @Override
@@ -219,11 +219,11 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record RemoveValidatorData(Discriminator discriminator, int index, PublicKey validatorVote) implements Borsh {
+  public record RemoveValidatorIxData(Discriminator discriminator, int index, PublicKey validatorVote) implements Borsh {
 
     public static final int BYTES = 44;
 
-    public static RemoveValidatorData read(final byte[] _data, final int offset) {
+    public static RemoveValidatorIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -232,7 +232,7 @@ public final class MarinadeFinanceProgram {
       final var index = getInt32LE(_data, i);
       i += 4;
       final var validatorVote = readPubKey(_data, i);
-      return new RemoveValidatorData(discriminator, index, validatorVote);
+      return new RemoveValidatorIxData(discriminator, index, validatorVote);
     }
 
     @Override
@@ -277,14 +277,14 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record SetValidatorScoreData(Discriminator discriminator,
-                                      int index,
-                                      PublicKey validatorVote,
-                                      int score) implements Borsh {
+  public record SetValidatorScoreIxData(Discriminator discriminator,
+                                        int index,
+                                        PublicKey validatorVote,
+                                        int score) implements Borsh {
 
     public static final int BYTES = 48;
 
-    public static SetValidatorScoreData read(final byte[] _data, final int offset) {
+    public static SetValidatorScoreIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -295,7 +295,7 @@ public final class MarinadeFinanceProgram {
       final var validatorVote = readPubKey(_data, i);
       i += 32;
       final var score = getInt32LE(_data, i);
-      return new SetValidatorScoreData(discriminator, index, validatorVote, score);
+      return new SetValidatorScoreIxData(discriminator, index, validatorVote, score);
     }
 
     @Override
@@ -334,18 +334,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record ConfigValidatorSystemData(Discriminator discriminator, int extraRuns) implements Borsh {
+  public record ConfigValidatorSystemIxData(Discriminator discriminator, int extraRuns) implements Borsh {
 
     public static final int BYTES = 12;
 
-    public static ConfigValidatorSystemData read(final byte[] _data, final int offset) {
+    public static ConfigValidatorSystemIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var extraRuns = getInt32LE(_data, i);
-      return new ConfigValidatorSystemData(discriminator, extraRuns);
+      return new ConfigValidatorSystemIxData(discriminator, extraRuns);
     }
 
     @Override
@@ -399,18 +399,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record DepositData(Discriminator discriminator, long lamports) implements Borsh {
+  public record DepositIxData(Discriminator discriminator, long lamports) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static DepositData read(final byte[] _data, final int offset) {
+    public static DepositIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
-      return new DepositData(discriminator, lamports);
+      return new DepositIxData(discriminator, lamports);
     }
 
     @Override
@@ -472,18 +472,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record DepositStakeAccountData(Discriminator discriminator, int validatorIndex) implements Borsh {
+  public record DepositStakeAccountIxData(Discriminator discriminator, int validatorIndex) implements Borsh {
 
     public static final int BYTES = 12;
 
-    public static DepositStakeAccountData read(final byte[] _data, final int offset) {
+    public static DepositStakeAccountIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var validatorIndex = getInt32LE(_data, i);
-      return new DepositStakeAccountData(discriminator, validatorIndex);
+      return new DepositStakeAccountIxData(discriminator, validatorIndex);
     }
 
     @Override
@@ -534,18 +534,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record LiquidUnstakeData(Discriminator discriminator, long msolAmount) implements Borsh {
+  public record LiquidUnstakeIxData(Discriminator discriminator, long msolAmount) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static LiquidUnstakeData read(final byte[] _data, final int offset) {
+    public static LiquidUnstakeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var msolAmount = getInt64LE(_data, i);
-      return new LiquidUnstakeData(discriminator, msolAmount);
+      return new LiquidUnstakeIxData(discriminator, msolAmount);
     }
 
     @Override
@@ -594,18 +594,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record AddLiquidityData(Discriminator discriminator, long lamports) implements Borsh {
+  public record AddLiquidityIxData(Discriminator discriminator, long lamports) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static AddLiquidityData read(final byte[] _data, final int offset) {
+    public static AddLiquidityIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
-      return new AddLiquidityData(discriminator, lamports);
+      return new AddLiquidityIxData(discriminator, lamports);
     }
 
     @Override
@@ -658,18 +658,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record RemoveLiquidityData(Discriminator discriminator, long tokens) implements Borsh {
+  public record RemoveLiquidityIxData(Discriminator discriminator, long tokens) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static RemoveLiquidityData read(final byte[] _data, final int offset) {
+    public static RemoveLiquidityIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tokens = getInt64LE(_data, i);
-      return new RemoveLiquidityData(discriminator, tokens);
+      return new RemoveLiquidityIxData(discriminator, tokens);
     }
 
     @Override
@@ -704,16 +704,16 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record ConfigLpData(Discriminator discriminator, ConfigLpParams params) implements Borsh {
+  public record ConfigLpIxData(Discriminator discriminator, ConfigLpParams params) implements Borsh {
 
-    public static ConfigLpData read(final byte[] _data, final int offset) {
+    public static ConfigLpIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ConfigLpParams.read(_data, i);
-      return new ConfigLpData(discriminator, params);
+      return new ConfigLpIxData(discriminator, params);
     }
 
     @Override
@@ -747,16 +747,16 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record ConfigMarinadeData(Discriminator discriminator, ConfigMarinadeParams params) implements Borsh {
+  public record ConfigMarinadeIxData(Discriminator discriminator, ConfigMarinadeParams params) implements Borsh {
 
-    public static ConfigMarinadeData read(final byte[] _data, final int offset) {
+    public static ConfigMarinadeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ConfigMarinadeParams.read(_data, i);
-      return new ConfigMarinadeData(discriminator, params);
+      return new ConfigMarinadeIxData(discriminator, params);
     }
 
     @Override
@@ -802,18 +802,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record OrderUnstakeData(Discriminator discriminator, long msolAmount) implements Borsh {
+  public record OrderUnstakeIxData(Discriminator discriminator, long msolAmount) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static OrderUnstakeData read(final byte[] _data, final int offset) {
+    public static OrderUnstakeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var msolAmount = getInt64LE(_data, i);
-      return new OrderUnstakeData(discriminator, msolAmount);
+      return new OrderUnstakeIxData(discriminator, msolAmount);
     }
 
     @Override
@@ -895,18 +895,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record StakeReserveData(Discriminator discriminator, int validatorIndex) implements Borsh {
+  public record StakeReserveIxData(Discriminator discriminator, int validatorIndex) implements Borsh {
 
     public static final int BYTES = 12;
 
-    public static StakeReserveData read(final byte[] _data, final int offset) {
+    public static StakeReserveIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var validatorIndex = getInt32LE(_data, i);
-      return new StakeReserveData(discriminator, validatorIndex);
+      return new StakeReserveIxData(discriminator, validatorIndex);
     }
 
     @Override
@@ -944,11 +944,11 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record UpdateActiveData(Discriminator discriminator, int stakeIndex, int validatorIndex) implements Borsh {
+  public record UpdateActiveIxData(Discriminator discriminator, int stakeIndex, int validatorIndex) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static UpdateActiveData read(final byte[] _data, final int offset) {
+    public static UpdateActiveIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -957,7 +957,7 @@ public final class MarinadeFinanceProgram {
       final var stakeIndex = getInt32LE(_data, i);
       i += 4;
       final var validatorIndex = getInt32LE(_data, i);
-      return new UpdateActiveData(discriminator, stakeIndex, validatorIndex);
+      return new UpdateActiveIxData(discriminator, stakeIndex, validatorIndex);
     }
 
     @Override
@@ -996,18 +996,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record UpdateDeactivatedData(Discriminator discriminator, int stakeIndex) implements Borsh {
+  public record UpdateDeactivatedIxData(Discriminator discriminator, int stakeIndex) implements Borsh {
 
     public static final int BYTES = 12;
 
-    public static UpdateDeactivatedData read(final byte[] _data, final int offset) {
+    public static UpdateDeactivatedIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stakeIndex = getInt32LE(_data, i);
-      return new UpdateDeactivatedData(discriminator, stakeIndex);
+      return new UpdateDeactivatedIxData(discriminator, stakeIndex);
     }
 
     @Override
@@ -1069,11 +1069,11 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record DeactivateStakeData(Discriminator discriminator, int stakeIndex, int validatorIndex) implements Borsh {
+  public record DeactivateStakeIxData(Discriminator discriminator, int stakeIndex, int validatorIndex) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static DeactivateStakeData read(final byte[] _data, final int offset) {
+    public static DeactivateStakeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -1082,7 +1082,7 @@ public final class MarinadeFinanceProgram {
       final var stakeIndex = getInt32LE(_data, i);
       i += 4;
       final var validatorIndex = getInt32LE(_data, i);
-      return new DeactivateStakeData(discriminator, stakeIndex, validatorIndex);
+      return new DeactivateStakeIxData(discriminator, stakeIndex, validatorIndex);
     }
 
     @Override
@@ -1134,11 +1134,11 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record EmergencyUnstakeData(Discriminator discriminator, int stakeIndex, int validatorIndex) implements Borsh {
+  public record EmergencyUnstakeIxData(Discriminator discriminator, int stakeIndex, int validatorIndex) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static EmergencyUnstakeData read(final byte[] _data, final int offset) {
+    public static EmergencyUnstakeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -1147,7 +1147,7 @@ public final class MarinadeFinanceProgram {
       final var stakeIndex = getInt32LE(_data, i);
       i += 4;
       final var validatorIndex = getInt32LE(_data, i);
-      return new EmergencyUnstakeData(discriminator, stakeIndex, validatorIndex);
+      return new EmergencyUnstakeIxData(discriminator, stakeIndex, validatorIndex);
     }
 
     @Override
@@ -1214,14 +1214,14 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record PartialUnstakeData(Discriminator discriminator,
-                                   int stakeIndex,
-                                   int validatorIndex,
-                                   long desiredUnstakeAmount) implements Borsh {
+  public record PartialUnstakeIxData(Discriminator discriminator,
+                                     int stakeIndex,
+                                     int validatorIndex,
+                                     long desiredUnstakeAmount) implements Borsh {
 
     public static final int BYTES = 24;
 
-    public static PartialUnstakeData read(final byte[] _data, final int offset) {
+    public static PartialUnstakeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -1232,7 +1232,7 @@ public final class MarinadeFinanceProgram {
       final var validatorIndex = getInt32LE(_data, i);
       i += 4;
       final var desiredUnstakeAmount = getInt64LE(_data, i);
-      return new PartialUnstakeData(discriminator, stakeIndex, validatorIndex, desiredUnstakeAmount);
+      return new PartialUnstakeIxData(discriminator, stakeIndex, validatorIndex, desiredUnstakeAmount);
     }
 
     @Override
@@ -1295,14 +1295,14 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record MergeStakesData(Discriminator discriminator,
-                                int destinationStakeIndex,
-                                int sourceStakeIndex,
-                                int validatorIndex) implements Borsh {
+  public record MergeStakesIxData(Discriminator discriminator,
+                                  int destinationStakeIndex,
+                                  int sourceStakeIndex,
+                                  int validatorIndex) implements Borsh {
 
     public static final int BYTES = 20;
 
-    public static MergeStakesData read(final byte[] _data, final int offset) {
+    public static MergeStakesIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -1313,7 +1313,7 @@ public final class MarinadeFinanceProgram {
       final var sourceStakeIndex = getInt32LE(_data, i);
       i += 4;
       final var validatorIndex = getInt32LE(_data, i);
-      return new MergeStakesData(discriminator, destinationStakeIndex, sourceStakeIndex, validatorIndex);
+      return new MergeStakesIxData(discriminator, destinationStakeIndex, sourceStakeIndex, validatorIndex);
     }
 
     @Override
@@ -1384,14 +1384,14 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record RedelegateData(Discriminator discriminator,
-                               int stakeIndex,
-                               int sourceValidatorIndex,
-                               int destValidatorIndex) implements Borsh {
+  public record RedelegateIxData(Discriminator discriminator,
+                                 int stakeIndex,
+                                 int sourceValidatorIndex,
+                                 int destValidatorIndex) implements Borsh {
 
     public static final int BYTES = 20;
 
-    public static RedelegateData read(final byte[] _data, final int offset) {
+    public static RedelegateIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -1402,7 +1402,7 @@ public final class MarinadeFinanceProgram {
       final var sourceValidatorIndex = getInt32LE(_data, i);
       i += 4;
       final var destValidatorIndex = getInt32LE(_data, i);
-      return new RedelegateData(discriminator, stakeIndex, sourceValidatorIndex, destValidatorIndex);
+      return new RedelegateIxData(discriminator, stakeIndex, sourceValidatorIndex, destValidatorIndex);
     }
 
     @Override
@@ -1500,15 +1500,15 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record WithdrawStakeAccountData(Discriminator discriminator,
-                                         int stakeIndex,
-                                         int validatorIndex,
-                                         long msolAmount,
-                                         PublicKey beneficiary) implements Borsh {
+  public record WithdrawStakeAccountIxData(Discriminator discriminator,
+                                           int stakeIndex,
+                                           int validatorIndex,
+                                           long msolAmount,
+                                           PublicKey beneficiary) implements Borsh {
 
     public static final int BYTES = 56;
 
-    public static WithdrawStakeAccountData read(final byte[] _data, final int offset) {
+    public static WithdrawStakeAccountIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -1521,11 +1521,11 @@ public final class MarinadeFinanceProgram {
       final var msolAmount = getInt64LE(_data, i);
       i += 8;
       final var beneficiary = readPubKey(_data, i);
-      return new WithdrawStakeAccountData(discriminator,
-                                          stakeIndex,
-                                          validatorIndex,
-                                          msolAmount,
-                                          beneficiary);
+      return new WithdrawStakeAccountIxData(discriminator,
+                                            stakeIndex,
+                                            validatorIndex,
+                                            msolAmount,
+                                            beneficiary);
     }
 
     @Override
@@ -1572,18 +1572,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record ReallocValidatorListData(Discriminator discriminator, int capacity) implements Borsh {
+  public record ReallocValidatorListIxData(Discriminator discriminator, int capacity) implements Borsh {
 
     public static final int BYTES = 12;
 
-    public static ReallocValidatorListData read(final byte[] _data, final int offset) {
+    public static ReallocValidatorListIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var capacity = getInt32LE(_data, i);
-      return new ReallocValidatorListData(discriminator, capacity);
+      return new ReallocValidatorListIxData(discriminator, capacity);
     }
 
     @Override
@@ -1624,18 +1624,18 @@ public final class MarinadeFinanceProgram {
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
   }
 
-  public record ReallocStakeListData(Discriminator discriminator, int capacity) implements Borsh {
+  public record ReallocStakeListIxData(Discriminator discriminator, int capacity) implements Borsh {
 
     public static final int BYTES = 12;
 
-    public static ReallocStakeListData read(final byte[] _data, final int offset) {
+    public static ReallocStakeListIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var capacity = getInt32LE(_data, i);
-      return new ReallocStakeListData(discriminator, capacity);
+      return new ReallocStakeListIxData(discriminator, capacity);
     }
 
     @Override

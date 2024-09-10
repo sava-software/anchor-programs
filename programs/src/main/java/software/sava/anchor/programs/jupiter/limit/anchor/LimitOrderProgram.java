@@ -66,12 +66,12 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
-  public record InitializeOrderData(Discriminator discriminator,
-                                    long makingAmount,
-                                    long takingAmount,
-                                    OptionalLong expiredAt) implements Borsh {
+  public record InitializeOrderIxData(Discriminator discriminator,
+                                      long makingAmount,
+                                      long takingAmount,
+                                      OptionalLong expiredAt) implements Borsh {
 
-    public static InitializeOrderData read(final byte[] _data, final int offset) {
+    public static InitializeOrderIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -82,7 +82,7 @@ public final class LimitOrderProgram {
       final var takingAmount = getInt64LE(_data, i);
       i += 8;
       final var expiredAt = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
-      return new InitializeOrderData(discriminator, makingAmount, takingAmount, expiredAt);
+      return new InitializeOrderIxData(discriminator, makingAmount, takingAmount, expiredAt);
     }
 
     @Override
@@ -143,11 +143,11 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
-  public record FillOrderData(Discriminator discriminator, long makingAmount, long maxTakingAmount) implements Borsh {
+  public record FillOrderIxData(Discriminator discriminator, long makingAmount, long maxTakingAmount) implements Borsh {
 
     public static final int BYTES = 24;
 
-    public static FillOrderData read(final byte[] _data, final int offset) {
+    public static FillOrderIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -156,7 +156,7 @@ public final class LimitOrderProgram {
       final var makingAmount = getInt64LE(_data, i);
       i += 8;
       final var maxTakingAmount = getInt64LE(_data, i);
-      return new FillOrderData(discriminator, makingAmount, maxTakingAmount);
+      return new FillOrderIxData(discriminator, makingAmount, maxTakingAmount);
     }
 
     @Override
@@ -205,18 +205,18 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
-  public record PreFlashFillOrderData(Discriminator discriminator, long makingAmount) implements Borsh {
+  public record PreFlashFillOrderIxData(Discriminator discriminator, long makingAmount) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static PreFlashFillOrderData read(final byte[] _data, final int offset) {
+    public static PreFlashFillOrderIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var makingAmount = getInt64LE(_data, i);
-      return new PreFlashFillOrderData(discriminator, makingAmount);
+      return new PreFlashFillOrderIxData(discriminator, makingAmount);
     }
 
     @Override
@@ -275,18 +275,18 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
-  public record FlashFillOrderData(Discriminator discriminator, long maxTakingAmount) implements Borsh {
+  public record FlashFillOrderIxData(Discriminator discriminator, long maxTakingAmount) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static FlashFillOrderData read(final byte[] _data, final int offset) {
+    public static FlashFillOrderIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxTakingAmount = getInt64LE(_data, i);
-      return new FlashFillOrderData(discriminator, maxTakingAmount);
+      return new FlashFillOrderIxData(discriminator, maxTakingAmount);
     }
 
     @Override
@@ -380,18 +380,18 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
-  public record WithdrawFeeData(Discriminator discriminator, long amount) implements Borsh {
+  public record WithdrawFeeIxData(Discriminator discriminator, long amount) implements Borsh {
 
     public static final int BYTES = 16;
 
-    public static WithdrawFeeData read(final byte[] _data, final int offset) {
+    public static WithdrawFeeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
-      return new WithdrawFeeData(discriminator, amount);
+      return new WithdrawFeeIxData(discriminator, amount);
     }
 
     @Override
@@ -437,15 +437,15 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
-  public record InitFeeData(Discriminator discriminator,
-                            long makerFee,
-                            long makerStableFee,
-                            long takerFee,
-                            long takerStableFee) implements Borsh {
+  public record InitFeeIxData(Discriminator discriminator,
+                              long makerFee,
+                              long makerStableFee,
+                              long takerFee,
+                              long takerStableFee) implements Borsh {
 
     public static final int BYTES = 40;
 
-    public static InitFeeData read(final byte[] _data, final int offset) {
+    public static InitFeeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -458,11 +458,11 @@ public final class LimitOrderProgram {
       final var takerFee = getInt64LE(_data, i);
       i += 8;
       final var takerStableFee = getInt64LE(_data, i);
-      return new InitFeeData(discriminator,
-                             makerFee,
-                             makerStableFee,
-                             takerFee,
-                             takerStableFee);
+      return new InitFeeIxData(discriminator,
+                               makerFee,
+                               makerStableFee,
+                               takerFee,
+                               takerStableFee);
     }
 
     @Override
@@ -512,15 +512,15 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
-  public record UpdateFeeData(Discriminator discriminator,
-                              long makerFee,
-                              long makerStableFee,
-                              long takerFee,
-                              long takerStableFee) implements Borsh {
+  public record UpdateFeeIxData(Discriminator discriminator,
+                                long makerFee,
+                                long makerStableFee,
+                                long takerFee,
+                                long takerStableFee) implements Borsh {
 
     public static final int BYTES = 40;
 
-    public static UpdateFeeData read(final byte[] _data, final int offset) {
+    public static UpdateFeeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -533,11 +533,11 @@ public final class LimitOrderProgram {
       final var takerFee = getInt64LE(_data, i);
       i += 8;
       final var takerStableFee = getInt64LE(_data, i);
-      return new UpdateFeeData(discriminator,
-                               makerFee,
-                               makerStableFee,
-                               takerFee,
-                               takerStableFee);
+      return new UpdateFeeIxData(discriminator,
+                                 makerFee,
+                                 makerStableFee,
+                                 takerFee,
+                                 takerStableFee);
     }
 
     @Override
