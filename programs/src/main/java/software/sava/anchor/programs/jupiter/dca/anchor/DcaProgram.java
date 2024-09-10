@@ -361,7 +361,7 @@ public final class DcaProgram {
 
   public record WithdrawData(Discriminator discriminator, WithdrawParams withdrawParams) implements Borsh {
 
-    public static final int BYTES = 25;
+    public static final int BYTES = 17;
 
     public static WithdrawData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

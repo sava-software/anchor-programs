@@ -6876,7 +6876,7 @@ public final class DriftProgram {
 
   public record UpdatePerpFeeStructureData(Discriminator discriminator, FeeStructure feeStructure) implements Borsh {
 
-    public static final int BYTES = 464;
+    public static final int BYTES = 368;
 
     public static UpdatePerpFeeStructureData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -6921,7 +6921,7 @@ public final class DriftProgram {
 
   public record UpdateSpotFeeStructureData(Discriminator discriminator, FeeStructure feeStructure) implements Borsh {
 
-    public static final int BYTES = 464;
+    public static final int BYTES = 368;
 
     public static UpdateSpotFeeStructureData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -7104,7 +7104,7 @@ public final class DriftProgram {
 
   public record UpdateOracleGuardRailsData(Discriminator discriminator, OracleGuardRails oracleGuardRails) implements Borsh {
 
-    public static final int BYTES = 80;
+    public static final int BYTES = 56;
 
     public static UpdateOracleGuardRailsData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

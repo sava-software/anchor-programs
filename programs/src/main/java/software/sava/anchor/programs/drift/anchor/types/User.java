@@ -83,38 +83,38 @@ public record User(PublicKey _address,
                    int lastFuelBonusUpdateTs,
                    byte[] padding) implements Borsh {
 
-  public static final int BYTES = 4760;
+  public static final int BYTES = 4376;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int AUTHORITY_OFFSET = 8;
   public static final int DELEGATE_OFFSET = 40;
   public static final int NAME_OFFSET = 72;
   public static final int SPOT_POSITIONS_OFFSET = 104;
-  public static final int PERP_POSITIONS_OFFSET = 488;
-  public static final int ORDERS_OFFSET = 1320;
-  public static final int LAST_ADD_PERP_LP_SHARES_TS_OFFSET = 4648;
-  public static final int TOTAL_DEPOSITS_OFFSET = 4656;
-  public static final int TOTAL_WITHDRAWS_OFFSET = 4664;
-  public static final int TOTAL_SOCIAL_LOSS_OFFSET = 4672;
-  public static final int SETTLED_PERP_PNL_OFFSET = 4680;
-  public static final int CUMULATIVE_SPOT_FEES_OFFSET = 4688;
-  public static final int CUMULATIVE_PERP_FUNDING_OFFSET = 4696;
-  public static final int LIQUIDATION_MARGIN_FREED_OFFSET = 4704;
-  public static final int LAST_ACTIVE_SLOT_OFFSET = 4712;
-  public static final int NEXT_ORDER_ID_OFFSET = 4720;
-  public static final int MAX_MARGIN_RATIO_OFFSET = 4724;
-  public static final int NEXT_LIQUIDATION_ID_OFFSET = 4728;
-  public static final int SUB_ACCOUNT_ID_OFFSET = 4730;
-  public static final int STATUS_OFFSET = 4732;
-  public static final int IS_MARGIN_TRADING_ENABLED_OFFSET = 4733;
-  public static final int IDLE_OFFSET = 4734;
-  public static final int OPEN_ORDERS_OFFSET = 4735;
-  public static final int HAS_OPEN_ORDER_OFFSET = 4736;
-  public static final int OPEN_AUCTIONS_OFFSET = 4737;
-  public static final int HAS_OPEN_AUCTION_OFFSET = 4738;
-  public static final int PADDING1_OFFSET = 4739;
-  public static final int LAST_FUEL_BONUS_UPDATE_TS_OFFSET = 4744;
-  public static final int PADDING_OFFSET = 4748;
+  public static final int PERP_POSITIONS_OFFSET = 424;
+  public static final int ORDERS_OFFSET = 1192;
+  public static final int LAST_ADD_PERP_LP_SHARES_TS_OFFSET = 4264;
+  public static final int TOTAL_DEPOSITS_OFFSET = 4272;
+  public static final int TOTAL_WITHDRAWS_OFFSET = 4280;
+  public static final int TOTAL_SOCIAL_LOSS_OFFSET = 4288;
+  public static final int SETTLED_PERP_PNL_OFFSET = 4296;
+  public static final int CUMULATIVE_SPOT_FEES_OFFSET = 4304;
+  public static final int CUMULATIVE_PERP_FUNDING_OFFSET = 4312;
+  public static final int LIQUIDATION_MARGIN_FREED_OFFSET = 4320;
+  public static final int LAST_ACTIVE_SLOT_OFFSET = 4328;
+  public static final int NEXT_ORDER_ID_OFFSET = 4336;
+  public static final int MAX_MARGIN_RATIO_OFFSET = 4340;
+  public static final int NEXT_LIQUIDATION_ID_OFFSET = 4344;
+  public static final int SUB_ACCOUNT_ID_OFFSET = 4346;
+  public static final int STATUS_OFFSET = 4348;
+  public static final int IS_MARGIN_TRADING_ENABLED_OFFSET = 4349;
+  public static final int IDLE_OFFSET = 4350;
+  public static final int OPEN_ORDERS_OFFSET = 4351;
+  public static final int HAS_OPEN_ORDER_OFFSET = 4352;
+  public static final int OPEN_AUCTIONS_OFFSET = 4353;
+  public static final int HAS_OPEN_AUCTION_OFFSET = 4354;
+  public static final int PADDING1_OFFSET = 4355;
+  public static final int LAST_FUEL_BONUS_UPDATE_TS_OFFSET = 4360;
+  public static final int PADDING_OFFSET = 4364;
 
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);

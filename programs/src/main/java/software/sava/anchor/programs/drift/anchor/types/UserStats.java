@@ -71,34 +71,34 @@ public record UserStats(PublicKey _address,
                         int lastFuelIfBonusUpdateTs,
                         byte[] padding) implements Borsh {
 
-  public static final int BYTES = 248;
+  public static final int BYTES = 240;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int AUTHORITY_OFFSET = 8;
   public static final int REFERRER_OFFSET = 40;
   public static final int FEES_OFFSET = 72;
-  public static final int NEXT_EPOCH_TS_OFFSET = 128;
-  public static final int MAKER_VOLUME30D_OFFSET = 136;
-  public static final int TAKER_VOLUME30D_OFFSET = 144;
-  public static final int FILLER_VOLUME30D_OFFSET = 152;
-  public static final int LAST_MAKER_VOLUME30D_TS_OFFSET = 160;
-  public static final int LAST_TAKER_VOLUME30D_TS_OFFSET = 168;
-  public static final int LAST_FILLER_VOLUME30D_TS_OFFSET = 176;
-  public static final int IF_STAKED_QUOTE_ASSET_AMOUNT_OFFSET = 184;
-  public static final int NUMBER_OF_SUB_ACCOUNTS_OFFSET = 192;
-  public static final int NUMBER_OF_SUB_ACCOUNTS_CREATED_OFFSET = 194;
-  public static final int IS_REFERRER_OFFSET = 196;
-  public static final int DISABLE_UPDATE_PERP_BID_ASK_TWAP_OFFSET = 197;
-  public static final int PADDING1_OFFSET = 198;
-  public static final int FUEL_INSURANCE_OFFSET = 200;
-  public static final int FUEL_DEPOSITS_OFFSET = 204;
-  public static final int FUEL_BORROWS_OFFSET = 208;
-  public static final int FUEL_POSITIONS_OFFSET = 212;
-  public static final int FUEL_TAKER_OFFSET = 216;
-  public static final int FUEL_MAKER_OFFSET = 220;
-  public static final int IF_STAKED_GOV_TOKEN_AMOUNT_OFFSET = 224;
-  public static final int LAST_FUEL_IF_BONUS_UPDATE_TS_OFFSET = 232;
-  public static final int PADDING_OFFSET = 236;
+  public static final int NEXT_EPOCH_TS_OFFSET = 120;
+  public static final int MAKER_VOLUME30D_OFFSET = 128;
+  public static final int TAKER_VOLUME30D_OFFSET = 136;
+  public static final int FILLER_VOLUME30D_OFFSET = 144;
+  public static final int LAST_MAKER_VOLUME30D_TS_OFFSET = 152;
+  public static final int LAST_TAKER_VOLUME30D_TS_OFFSET = 160;
+  public static final int LAST_FILLER_VOLUME30D_TS_OFFSET = 168;
+  public static final int IF_STAKED_QUOTE_ASSET_AMOUNT_OFFSET = 176;
+  public static final int NUMBER_OF_SUB_ACCOUNTS_OFFSET = 184;
+  public static final int NUMBER_OF_SUB_ACCOUNTS_CREATED_OFFSET = 186;
+  public static final int IS_REFERRER_OFFSET = 188;
+  public static final int DISABLE_UPDATE_PERP_BID_ASK_TWAP_OFFSET = 189;
+  public static final int PADDING1_OFFSET = 190;
+  public static final int FUEL_INSURANCE_OFFSET = 192;
+  public static final int FUEL_DEPOSITS_OFFSET = 196;
+  public static final int FUEL_BORROWS_OFFSET = 200;
+  public static final int FUEL_POSITIONS_OFFSET = 204;
+  public static final int FUEL_TAKER_OFFSET = 208;
+  public static final int FUEL_MAKER_OFFSET = 212;
+  public static final int IF_STAKED_GOV_TOKEN_AMOUNT_OFFSET = 216;
+  public static final int LAST_FUEL_IF_BONUS_UPDATE_TS_OFFSET = 224;
+  public static final int PADDING_OFFSET = 228;
 
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);

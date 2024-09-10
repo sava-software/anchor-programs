@@ -47,7 +47,7 @@ public record State(PublicKey _address,
                     long stakeMoved,
                     Fee maxStakeMovedPerEpoch) implements Borsh {
 
-  public static final int BYTES = 734;
+  public static final int BYTES = 638;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int MSOL_MINT_OFFSET = 8;
@@ -58,27 +58,27 @@ public record State(PublicKey _address,
   public static final int MSOL_MINT_AUTHORITY_BUMP_SEED_OFFSET = 137;
   public static final int RENT_EXEMPT_FOR_TOKEN_ACC_OFFSET = 138;
   public static final int REWARD_FEE_OFFSET = 146;
-  public static final int STAKE_SYSTEM_OFFSET = 158;
-  public static final int VALIDATOR_SYSTEM_OFFSET = 288;
-  public static final int LIQ_POOL_OFFSET = 425;
-  public static final int AVAILABLE_RESERVE_BALANCE_OFFSET = 568;
-  public static final int MSOL_SUPPLY_OFFSET = 576;
-  public static final int MSOL_PRICE_OFFSET = 584;
-  public static final int CIRCULATING_TICKET_COUNT_OFFSET = 592;
-  public static final int CIRCULATING_TICKET_BALANCE_OFFSET = 600;
-  public static final int LENT_FROM_RESERVE_OFFSET = 608;
-  public static final int MIN_DEPOSIT_OFFSET = 616;
-  public static final int MIN_WITHDRAW_OFFSET = 624;
-  public static final int STAKING_SOL_CAP_OFFSET = 632;
-  public static final int EMERGENCY_COOLING_DOWN_OFFSET = 640;
-  public static final int PAUSE_AUTHORITY_OFFSET = 648;
-  public static final int PAUSED_OFFSET = 680;
-  public static final int DELAYED_UNSTAKE_FEE_OFFSET = 681;
-  public static final int WITHDRAW_STAKE_ACCOUNT_FEE_OFFSET = 693;
-  public static final int WITHDRAW_STAKE_ACCOUNT_ENABLED_OFFSET = 705;
-  public static final int LAST_STAKE_MOVE_EPOCH_OFFSET = 706;
-  public static final int STAKE_MOVED_OFFSET = 714;
-  public static final int MAX_STAKE_MOVED_PER_EPOCH_OFFSET = 722;
+  public static final int STAKE_SYSTEM_OFFSET = 150;
+  public static final int VALIDATOR_SYSTEM_OFFSET = 264;
+  public static final int LIQ_POOL_OFFSET = 385;
+  public static final int AVAILABLE_RESERVE_BALANCE_OFFSET = 496;
+  public static final int MSOL_SUPPLY_OFFSET = 504;
+  public static final int MSOL_PRICE_OFFSET = 512;
+  public static final int CIRCULATING_TICKET_COUNT_OFFSET = 520;
+  public static final int CIRCULATING_TICKET_BALANCE_OFFSET = 528;
+  public static final int LENT_FROM_RESERVE_OFFSET = 536;
+  public static final int MIN_DEPOSIT_OFFSET = 544;
+  public static final int MIN_WITHDRAW_OFFSET = 552;
+  public static final int STAKING_SOL_CAP_OFFSET = 560;
+  public static final int EMERGENCY_COOLING_DOWN_OFFSET = 568;
+  public static final int PAUSE_AUTHORITY_OFFSET = 576;
+  public static final int PAUSED_OFFSET = 608;
+  public static final int DELAYED_UNSTAKE_FEE_OFFSET = 609;
+  public static final int WITHDRAW_STAKE_ACCOUNT_FEE_OFFSET = 613;
+  public static final int WITHDRAW_STAKE_ACCOUNT_ENABLED_OFFSET = 617;
+  public static final int LAST_STAKE_MOVE_EPOCH_OFFSET = 618;
+  public static final int STAKE_MOVED_OFFSET = 626;
+  public static final int MAX_STAKE_MOVED_PER_EPOCH_OFFSET = 634;
 
   public static Filter createMsolMintFilter(final PublicKey msolMint) {
     return Filter.createMemCompFilter(MSOL_MINT_OFFSET, msolMint);
@@ -112,6 +112,18 @@ public record State(PublicKey _address,
 
   public static Filter createRewardFeeFilter(final Fee rewardFee) {
     return Filter.createMemCompFilter(REWARD_FEE_OFFSET, rewardFee.write());
+  }
+
+  public static Filter createStakeSystemFilter(final StakeSystem stakeSystem) {
+    return Filter.createMemCompFilter(STAKE_SYSTEM_OFFSET, stakeSystem.write());
+  }
+
+  public static Filter createValidatorSystemFilter(final ValidatorSystem validatorSystem) {
+    return Filter.createMemCompFilter(VALIDATOR_SYSTEM_OFFSET, validatorSystem.write());
+  }
+
+  public static Filter createLiqPoolFilter(final LiqPool liqPool) {
+    return Filter.createMemCompFilter(LIQ_POOL_OFFSET, liqPool.write());
   }
 
   public static Filter createAvailableReserveBalanceFilter(final long availableReserveBalance) {

@@ -63,7 +63,7 @@ public final class MarinadeFinanceProgram {
 
   public record InitializeData(Discriminator discriminator, InitializeData data) implements Borsh {
 
-    public static final int BYTES = 200;
+    public static final int BYTES = 152;
 
     public static InitializeData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

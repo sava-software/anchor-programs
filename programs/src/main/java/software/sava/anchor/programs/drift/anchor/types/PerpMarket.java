@@ -103,41 +103,41 @@ public record PerpMarket(PublicKey _address,
                          int fuelBoostMaker,
                          byte[] padding) implements Borsh {
 
-  public static final int BYTES = 1256;
+  public static final int BYTES = 1216;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int PUBKEY_OFFSET = 8;
   public static final int AMM_OFFSET = 40;
-  public static final int PNL_POOL_OFFSET = 1000;
-  public static final int NAME_OFFSET = 1032;
-  public static final int INSURANCE_CLAIM_OFFSET = 1064;
-  public static final int UNREALIZED_PNL_MAX_IMBALANCE_OFFSET = 1112;
-  public static final int EXPIRY_TS_OFFSET = 1120;
-  public static final int EXPIRY_PRICE_OFFSET = 1128;
-  public static final int NEXT_FILL_RECORD_ID_OFFSET = 1136;
-  public static final int NEXT_FUNDING_RATE_RECORD_ID_OFFSET = 1144;
-  public static final int NEXT_CURVE_RECORD_ID_OFFSET = 1152;
-  public static final int IMF_FACTOR_OFFSET = 1160;
-  public static final int UNREALIZED_PNL_IMF_FACTOR_OFFSET = 1164;
-  public static final int LIQUIDATOR_FEE_OFFSET = 1168;
-  public static final int IF_LIQUIDATION_FEE_OFFSET = 1172;
-  public static final int MARGIN_RATIO_INITIAL_OFFSET = 1176;
-  public static final int MARGIN_RATIO_MAINTENANCE_OFFSET = 1180;
-  public static final int UNREALIZED_PNL_INITIAL_ASSET_WEIGHT_OFFSET = 1184;
-  public static final int UNREALIZED_PNL_MAINTENANCE_ASSET_WEIGHT_OFFSET = 1188;
-  public static final int NUMBER_OF_USERS_WITH_BASE_OFFSET = 1192;
-  public static final int NUMBER_OF_USERS_OFFSET = 1196;
-  public static final int MARKET_INDEX_OFFSET = 1200;
-  public static final int STATUS_OFFSET = 1202;
-  public static final int CONTRACT_TYPE_OFFSET = 1203;
-  public static final int CONTRACT_TIER_OFFSET = 1204;
-  public static final int PAUSED_OPERATIONS_OFFSET = 1205;
-  public static final int QUOTE_SPOT_MARKET_INDEX_OFFSET = 1206;
-  public static final int FEE_ADJUSTMENT_OFFSET = 1208;
-  public static final int FUEL_BOOST_POSITION_OFFSET = 1210;
-  public static final int FUEL_BOOST_TAKER_OFFSET = 1211;
-  public static final int FUEL_BOOST_MAKER_OFFSET = 1212;
-  public static final int PADDING_OFFSET = 1213;
+  public static final int PNL_POOL_OFFSET = 976;
+  public static final int NAME_OFFSET = 1000;
+  public static final int INSURANCE_CLAIM_OFFSET = 1032;
+  public static final int UNREALIZED_PNL_MAX_IMBALANCE_OFFSET = 1072;
+  public static final int EXPIRY_TS_OFFSET = 1080;
+  public static final int EXPIRY_PRICE_OFFSET = 1088;
+  public static final int NEXT_FILL_RECORD_ID_OFFSET = 1096;
+  public static final int NEXT_FUNDING_RATE_RECORD_ID_OFFSET = 1104;
+  public static final int NEXT_CURVE_RECORD_ID_OFFSET = 1112;
+  public static final int IMF_FACTOR_OFFSET = 1120;
+  public static final int UNREALIZED_PNL_IMF_FACTOR_OFFSET = 1124;
+  public static final int LIQUIDATOR_FEE_OFFSET = 1128;
+  public static final int IF_LIQUIDATION_FEE_OFFSET = 1132;
+  public static final int MARGIN_RATIO_INITIAL_OFFSET = 1136;
+  public static final int MARGIN_RATIO_MAINTENANCE_OFFSET = 1140;
+  public static final int UNREALIZED_PNL_INITIAL_ASSET_WEIGHT_OFFSET = 1144;
+  public static final int UNREALIZED_PNL_MAINTENANCE_ASSET_WEIGHT_OFFSET = 1148;
+  public static final int NUMBER_OF_USERS_WITH_BASE_OFFSET = 1152;
+  public static final int NUMBER_OF_USERS_OFFSET = 1156;
+  public static final int MARKET_INDEX_OFFSET = 1160;
+  public static final int STATUS_OFFSET = 1162;
+  public static final int CONTRACT_TYPE_OFFSET = 1163;
+  public static final int CONTRACT_TIER_OFFSET = 1164;
+  public static final int PAUSED_OPERATIONS_OFFSET = 1165;
+  public static final int QUOTE_SPOT_MARKET_INDEX_OFFSET = 1166;
+  public static final int FEE_ADJUSTMENT_OFFSET = 1168;
+  public static final int FUEL_BOOST_POSITION_OFFSET = 1170;
+  public static final int FUEL_BOOST_TAKER_OFFSET = 1171;
+  public static final int FUEL_BOOST_MAKER_OFFSET = 1172;
+  public static final int PADDING_OFFSET = 1173;
 
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);
