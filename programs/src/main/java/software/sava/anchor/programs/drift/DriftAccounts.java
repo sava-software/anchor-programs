@@ -8,29 +8,27 @@ import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 public interface DriftAccounts {
 
   DriftAccounts MAIN_NET = createAddressConstants(
-      "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
-      "5zpq7DvB6UdFFvpmBPspGPNfUGoBRRCE2HHg5u3gxcsN"
+      "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
   );
 
   AccountMeta invokedDriftProgram();
 
+  default PublicKey driftProgram() {
+    return invokedDriftProgram().publicKey();
+  }
+
   PublicKey stateKey();
 
-  static DriftAccounts createAddressConstants(
-      final PublicKey driftProgram,
-      final PublicKey stateKey) {
+  static DriftAccounts createAddressConstants(final PublicKey driftProgram) {
     return new DriftAccountsRecord(
         AccountMeta.createInvoked(driftProgram),
-        stateKey
+        DriftPDAs.deriveStateAccount(driftProgram).publicKey()
     );
   }
 
-  static DriftAccounts createAddressConstants(
-      final String driftProgram,
-      final String stateKey) {
+  static DriftAccounts createAddressConstants(final String driftProgram) {
     return createAddressConstants(
-        fromBase58Encoded(driftProgram),
-        fromBase58Encoded(stateKey)
+        fromBase58Encoded(driftProgram)
     );
   }
 }
