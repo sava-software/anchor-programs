@@ -10,6 +10,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -19,6 +20,10 @@ import java.util.stream.Collectors;
 import static java.nio.file.StandardOpenOption.*;
 
 final class GenerateMarketConstants {
+
+  private static String quoteJson(final String javascript) {
+    return javascript.replaceAll("(\\w+):\\s+", "\"$1\": ");
+  }
 
   private static void parseConfigsAndWriteSrc(final String devNetKey,
                                               final String mainNetKey,
@@ -31,8 +36,7 @@ final class GenerateMarketConstants {
     from = response.indexOf('[', from + devNetKey.length());
     int to = response.indexOf("];", from) + 1;
 
-    final var devNetJson = response.substring(from, to)
-        .replaceAll("(\\w+):\\s+", "\"$1\": ");
+    final var devNetJson = quoteJson(response.substring(from, to));
     var ji = JsonIterator.parse(devNetJson);
     final var devNetConfigs = configParser.apply(ji);
 
@@ -40,8 +44,7 @@ final class GenerateMarketConstants {
     from = response.indexOf('[', from + mainNetKey.length());
     to = response.indexOf("];", from) + 1;
 
-    final var mainNetJson = response.substring(from, to)
-        .replaceAll("(\\w+):\\s+", "\"$1\": ");
+    final var mainNetJson = quoteJson(response.substring(from, to));
 
     ji = JsonIterator.parse(mainNetJson);
     final var mainNetConfigs = configParser.apply(ji);
@@ -103,7 +106,13 @@ final class GenerateMarketConstants {
     final var src = new StringBuilder(4_096);
     src.append("package ").append(GenerateMarketConstants.class.getPackageName()).append(';');
 
-    final var importLines = imports.isEmpty() ? "" : imports.stream()
+    final var allImports = new HashSet<>(imports);
+    allImports.add(java.util.Arrays.class);
+    allImports.add(java.util.Map.class);
+    allImports.add(java.util.function.Function.class);
+    allImports.add(java.util.stream.Collectors.class);
+
+    final var importLines = allImports.stream()
         .map(Class::getName)
         .map(name -> String.format("import %s;", name))
         .collect(Collectors.joining("\n", "\n", "\n"));
@@ -119,13 +128,23 @@ final class GenerateMarketConstants {
     ));
 
     final var simpleClassName = clas.getSimpleName();
-    appendSrc(src, "DEV", devNetConfigs, simpleClassName);
-    appendSrc(src, "MAIN", mainNetConfigs, simpleClassName);
+    appendSrc(src, "MAIN", DriftAccounts.MAIN_NET, mainNetConfigs, simpleClassName);
+    appendSrc(src, "DEV", DriftAccounts.DEV_NET, devNetConfigs, simpleClassName);
+
 
     src.append(String.format("""
-          private %s() {
-          }
-        }""", fileName));
+              public static final Map<String, %s> MAIN_NET_BY_SYMBOL = Arrays.stream(MAIN_NET)
+                  .collect(Collectors.toUnmodifiableMap(%s::symbol, Function.identity()));
+            
+              public static final Map<String, %s> DEV_NET_BY_SYMBOL = Arrays.stream(DEV_NET)
+                  .collect(Collectors.toUnmodifiableMap(%s::symbol, Function.identity()));
+            
+              private %s() {
+              }
+            }""",
+        simpleClassName, simpleClassName, simpleClassName, simpleClassName,
+        fileName)
+    );
 
     final var sourceCode = src.toString();
     try {
@@ -141,6 +160,7 @@ final class GenerateMarketConstants {
 
   private static void appendSrc(final StringBuilder src,
                                 final String network,
+                                final DriftAccounts driftAccounts,
                                 final List<? extends SrcGen> configs,
                                 final String simpleClassName) {
     src.append(String.format("""
@@ -150,9 +170,9 @@ final class GenerateMarketConstants {
     ));
 
     final var configsInit = configs.stream()
-        .map(SrcGen::toSrc)
+        .map(srcGen -> srcGen.toSrc(driftAccounts))
         .collect(Collectors.joining(",\n"))
-        .indent(4);
+        .indent(6);
     src.append(configsInit);
     src.append("""
           };

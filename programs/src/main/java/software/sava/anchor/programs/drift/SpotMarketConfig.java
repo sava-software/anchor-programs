@@ -23,7 +23,9 @@ public record SpotMarketConfig(String symbol,
                                PublicKey serumMarket,
                                PublicKey phoenixMarket,
                                PublicKey openbookMarket,
-                               PublicKey pythFeedId) implements SrcGen {
+                               PublicKey pythFeedId,
+                               PublicKey pythPullOraclePDA,
+                               PublicKey marketPDA) implements SrcGen {
 
   static SpotMarketConfig createConfig(final String symbol,
                                        final int marketIndex,
@@ -43,17 +45,48 @@ public record SpotMarketConfig(String symbol,
         SrcGen.fromBase58Encoded(serumMarket),
         SrcGen.fromBase58Encoded(phoenixMarket),
         SrcGen.fromBase58Encoded(openbookMarket),
-        SrcGen.fromBase58Encoded(pythFeedId)
+        SrcGen.fromBase58Encoded(pythFeedId),
+        null,
+        null
+    );
+  }
+
+
+  static SpotMarketConfig createConfig(final String symbol,
+                                       final int marketIndex,
+                                       final long launchTs,
+                                       final String oracle,
+                                       final String mint,
+                                       final String serumMarket,
+                                       final String phoenixMarket,
+                                       final String openbookMarket,
+                                       final String pythFeedId,
+                                       final String pythPullOraclePDA,
+                                       final String marketPDA) {
+    return new SpotMarketConfig(
+        symbol,
+        marketIndex,
+        launchTs <= 0 ? null : Instant.ofEpochMilli(launchTs),
+        SrcGen.fromBase58Encoded(oracle),
+        SrcGen.fromBase58Encoded(mint),
+        SrcGen.fromBase58Encoded(serumMarket),
+        SrcGen.fromBase58Encoded(phoenixMarket),
+        SrcGen.fromBase58Encoded(openbookMarket),
+        SrcGen.fromBase58Encoded(pythFeedId),
+        SrcGen.fromBase58Encoded(pythPullOraclePDA),
+        SrcGen.fromBase58Encoded(marketPDA)
     );
   }
 
   @Override
-  public String toSrc() {
+  public String toSrc(final DriftAccounts driftAccounts) {
     return String.format("""
             createConfig(
                 "%s",
                 %d,
                 %dL,
+                %s,
+                %s,
                 %s,
                 %s,
                 %s,
@@ -69,7 +102,10 @@ public record SpotMarketConfig(String symbol,
         SrcGen.pubKeyConstant(serumMarket),
         SrcGen.pubKeyConstant(phoenixMarket),
         SrcGen.pubKeyConstant(openbookMarket),
-        SrcGen.pubKeyConstant(pythFeedId)
+        SrcGen.pubKeyConstant(pythFeedId),
+        pythFeedId == null ? null : SrcGen.pubKeyConstant(DriftPDAs
+            .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey()),
+        SrcGen.pubKeyConstant(DriftPDAs.deriveSpotMarketAccount(driftAccounts, marketIndex).publicKey())
     );
   }
 
@@ -131,7 +167,9 @@ public record SpotMarketConfig(String symbol,
           serumMarket,
           phoenixMarket,
           openbookMarket,
-          pythFeedId
+          pythFeedId,
+          null,
+          null
       );
     }
   }

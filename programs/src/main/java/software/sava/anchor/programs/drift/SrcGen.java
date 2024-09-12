@@ -17,5 +17,5 @@ interface SrcGen {
     return base58 == null ? null : PublicKey.fromBase58Encoded(base58);
   }
 
-  String toSrc();
+  String toSrc(final DriftAccounts driftAccounts);
 }

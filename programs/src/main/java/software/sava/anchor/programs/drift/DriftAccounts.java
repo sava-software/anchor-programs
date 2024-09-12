@@ -11,6 +11,10 @@ public interface DriftAccounts {
       "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
   );
 
+  DriftAccounts DEV_NET = createAddressConstants(
+      "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
+  );
+
   AccountMeta invokedDriftProgram();
 
   default PublicKey driftProgram() {

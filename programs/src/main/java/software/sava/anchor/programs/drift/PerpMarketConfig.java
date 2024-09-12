@@ -21,7 +21,9 @@ public record PerpMarketConfig(String fullName,
                                int marketIndex,
                                Instant launchTs,
                                PublicKey oracle,
-                               PublicKey pythFeedId) implements SrcGen {
+                               PublicKey pythFeedId,
+                               PublicKey pythPullOraclePDA,
+                               PublicKey marketPDA) implements SrcGen {
 
   static PerpMarketConfig createConfig(final String fullName,
                                        final Set<String> categories,
@@ -30,7 +32,9 @@ public record PerpMarketConfig(String fullName,
                                        final int marketIndex,
                                        final long launchTs,
                                        final String oracle,
-                                       final String pythFeedId) {
+                                       final String pythFeedId,
+                                       final String pythPullOraclePDA,
+                                       final String marketPDA) {
     return new PerpMarketConfig(
         fullName,
         categories,
@@ -39,12 +43,14 @@ public record PerpMarketConfig(String fullName,
         marketIndex,
         Instant.ofEpochMilli(launchTs),
         PublicKey.fromBase58Encoded(oracle),
-        SrcGen.fromBase58Encoded(pythFeedId)
+        SrcGen.fromBase58Encoded(pythFeedId),
+        SrcGen.fromBase58Encoded(pythPullOraclePDA),
+        SrcGen.fromBase58Encoded(marketPDA)
     );
   }
 
   @Override
-  public String toSrc() {
+  public String toSrc(final DriftAccounts driftAccounts) {
     return String.format("""
             createConfig(
                 "%s",
@@ -53,6 +59,8 @@ public record PerpMarketConfig(String fullName,
                 "%s",
                 %d,
                 %dL,
+                %s,
+                %s,
                 %s,
                 %s
             )""",
@@ -63,7 +71,10 @@ public record PerpMarketConfig(String fullName,
         marketIndex,
         launchTs.toEpochMilli(),
         SrcGen.pubKeyConstant(oracle),
-        SrcGen.pubKeyConstant(pythFeedId)
+        SrcGen.pubKeyConstant(pythFeedId),
+        pythFeedId == null ? null : SrcGen.pubKeyConstant(DriftPDAs
+            .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey()),
+        SrcGen.pubKeyConstant(DriftPDAs.derivePerpMarketAccount(driftAccounts, marketIndex).publicKey())
     );
   }
 
@@ -123,7 +134,9 @@ public record PerpMarketConfig(String fullName,
           marketIndex,
           launchTs,
           oracle,
-          pythFeedId
+          pythFeedId,
+          null,
+          null
       );
     }
   }
