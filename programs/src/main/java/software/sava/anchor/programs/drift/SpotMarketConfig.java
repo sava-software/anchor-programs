@@ -19,12 +19,12 @@ public record SpotMarketConfig(String symbol,
                                int marketIndex,
                                Instant launchTs,
                                PublicKey oracle,
+                               PublicKey pythPullOraclePDA,
                                PublicKey mint,
                                PublicKey serumMarket,
                                PublicKey phoenixMarket,
                                PublicKey openbookMarket,
                                PublicKey pythFeedId,
-                               PublicKey pythPullOraclePDA,
                                PublicKey marketPDA) implements SrcGen {
 
   static SpotMarketConfig createConfig(final String symbol,
@@ -98,13 +98,13 @@ public record SpotMarketConfig(String symbol,
         marketIndex,
         launchTs == null ? Long.MIN_VALUE : launchTs.toEpochMilli(),
         SrcGen.pubKeyConstant(oracle),
+        pythFeedId == null ? null : SrcGen.pubKeyConstant(DriftPDAs
+            .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey()),
         SrcGen.pubKeyConstant(mint),
         SrcGen.pubKeyConstant(serumMarket),
         SrcGen.pubKeyConstant(phoenixMarket),
         SrcGen.pubKeyConstant(openbookMarket),
         SrcGen.pubKeyConstant(pythFeedId),
-        pythFeedId == null ? null : SrcGen.pubKeyConstant(DriftPDAs
-            .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey()),
         SrcGen.pubKeyConstant(DriftPDAs.deriveSpotMarketAccount(driftAccounts, marketIndex).publicKey())
     );
   }
@@ -163,12 +163,12 @@ public record SpotMarketConfig(String symbol,
           marketIndex,
           launchTs,
           oracle,
+          null,
           mint,
           serumMarket,
           phoenixMarket,
           openbookMarket,
           pythFeedId,
-          null,
           null
       );
     }

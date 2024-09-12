@@ -21,8 +21,8 @@ public record PerpMarketConfig(String fullName,
                                int marketIndex,
                                Instant launchTs,
                                PublicKey oracle,
-                               PublicKey pythFeedId,
                                PublicKey pythPullOraclePDA,
+                               PublicKey pythFeedId,
                                PublicKey marketPDA) implements SrcGen {
 
   static PerpMarketConfig createConfig(final String fullName,
@@ -32,8 +32,8 @@ public record PerpMarketConfig(String fullName,
                                        final int marketIndex,
                                        final long launchTs,
                                        final String oracle,
-                                       final String pythFeedId,
                                        final String pythPullOraclePDA,
+                                       final String pythFeedId,
                                        final String marketPDA) {
     return new PerpMarketConfig(
         fullName,
@@ -43,8 +43,8 @@ public record PerpMarketConfig(String fullName,
         marketIndex,
         Instant.ofEpochMilli(launchTs),
         PublicKey.fromBase58Encoded(oracle),
-        SrcGen.fromBase58Encoded(pythFeedId),
         SrcGen.fromBase58Encoded(pythPullOraclePDA),
+        SrcGen.fromBase58Encoded(pythFeedId),
         SrcGen.fromBase58Encoded(marketPDA)
     );
   }
@@ -134,8 +134,8 @@ public record PerpMarketConfig(String fullName,
           marketIndex,
           launchTs,
           oracle,
-          pythFeedId,
           null,
+          pythFeedId,
           null
       );
     }
