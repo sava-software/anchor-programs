@@ -56,24 +56,24 @@ public record SpotMarketConfig(String symbol,
                                        final int marketIndex,
                                        final long launchTs,
                                        final String oracle,
+                                       final String pythPullOraclePDA,
                                        final String mint,
                                        final String serumMarket,
                                        final String phoenixMarket,
                                        final String openbookMarket,
                                        final String pythFeedId,
-                                       final String pythPullOraclePDA,
                                        final String marketPDA) {
     return new SpotMarketConfig(
         symbol,
         marketIndex,
         launchTs <= 0 ? null : Instant.ofEpochMilli(launchTs),
         SrcGen.fromBase58Encoded(oracle),
+        SrcGen.fromBase58Encoded(pythPullOraclePDA),
         SrcGen.fromBase58Encoded(mint),
         SrcGen.fromBase58Encoded(serumMarket),
         SrcGen.fromBase58Encoded(phoenixMarket),
         SrcGen.fromBase58Encoded(openbookMarket),
         SrcGen.fromBase58Encoded(pythFeedId),
-        SrcGen.fromBase58Encoded(pythPullOraclePDA),
         SrcGen.fromBase58Encoded(marketPDA)
     );
   }

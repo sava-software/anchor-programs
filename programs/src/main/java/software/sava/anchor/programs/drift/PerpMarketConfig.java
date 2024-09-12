@@ -71,9 +71,9 @@ public record PerpMarketConfig(String fullName,
         marketIndex,
         launchTs.toEpochMilli(),
         SrcGen.pubKeyConstant(oracle),
-        SrcGen.pubKeyConstant(pythFeedId),
         pythFeedId == null ? null : SrcGen.pubKeyConstant(DriftPDAs
             .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey()),
+        SrcGen.pubKeyConstant(pythFeedId),
         SrcGen.pubKeyConstant(DriftPDAs.derivePerpMarketAccount(driftAccounts, marketIndex).publicKey())
     );
   }
