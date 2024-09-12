@@ -107,12 +107,8 @@ final class GenerateMarketConstants {
     src.append("package ").append(GenerateMarketConstants.class.getPackageName()).append(';');
 
     final var allImports = new HashSet<>(imports);
-    allImports.add(java.util.Arrays.class);
-    allImports.add(java.util.Map.class);
-    allImports.add(java.util.function.Function.class);
-    allImports.add(java.util.stream.Collectors.class);
 
-    final var importLines = allImports.stream()
+    final var importLines = allImports.isEmpty() ? "" : allImports.stream()
         .map(Class::getName)
         .map(name -> String.format("import %s;", name))
         .collect(Collectors.joining("\n", "\n", "\n"));
@@ -133,18 +129,9 @@ final class GenerateMarketConstants {
 
 
     src.append(String.format("""
-              public static final Map<String, %s> MAIN_NET_BY_SYMBOL = Arrays.stream(MAIN_NET)
-                  .collect(Collectors.toUnmodifiableMap(%s::symbol, Function.identity()));
-            
-              public static final Map<String, %s> DEV_NET_BY_SYMBOL = Arrays.stream(DEV_NET)
-                  .collect(Collectors.toUnmodifiableMap(%s::symbol, Function.identity()));
-            
-              private %s() {
-              }
-            }""",
-        simpleClassName, simpleClassName, simpleClassName, simpleClassName,
-        fileName)
-    );
+          private %s() {
+          }
+        }""", fileName));
 
     final var sourceCode = src.toString();
     try {
@@ -164,7 +151,7 @@ final class GenerateMarketConstants {
                                 final List<? extends SrcGen> configs,
                                 final String simpleClassName) {
     src.append(String.format("""
-              public static final %s[] %s_NET = new %s[] {
+              public static final Markets<%s> %s_NET = Markets.createRecord(new %s[]{
             """,
         simpleClassName, network, simpleClassName
     ));
@@ -175,7 +162,7 @@ final class GenerateMarketConstants {
         .indent(6);
     src.append(configsInit);
     src.append("""
-          };
+          });
         
         """);
   }

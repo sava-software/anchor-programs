@@ -8,11 +8,15 @@ import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 public interface DriftAccounts {
 
   DriftAccounts MAIN_NET = createAddressConstants(
-      "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
+      "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+      SpotMarkets.MAIN_NET,
+      PerpMarkets.MAIN_NET
   );
 
   DriftAccounts DEV_NET = createAddressConstants(
-      "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
+      "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+      SpotMarkets.DEV_NET,
+      PerpMarkets.DEV_NET
   );
 
   AccountMeta invokedDriftProgram();
@@ -23,16 +27,32 @@ public interface DriftAccounts {
 
   PublicKey stateKey();
 
-  static DriftAccounts createAddressConstants(final PublicKey driftProgram) {
+  Markets<SpotMarketConfig> spotMarkets();
+
+  SpotMarketConfig spotMarketConfig(final int index);
+
+  Markets<PerpMarketConfig> perpMarkets();
+
+  PerpMarketConfig perpMarketConfig(final int index);
+
+  static DriftAccounts createAddressConstants(final PublicKey driftProgram,
+                                              Markets<SpotMarketConfig> spotMarkets,
+                                              Markets<PerpMarketConfig> perpMarkets) {
     return new DriftAccountsRecord(
         AccountMeta.createInvoked(driftProgram),
-        DriftPDAs.deriveStateAccount(driftProgram).publicKey()
+        DriftPDAs.deriveStateAccount(driftProgram).publicKey(),
+        spotMarkets,
+        perpMarkets
     );
   }
 
-  static DriftAccounts createAddressConstants(final String driftProgram) {
+  static DriftAccounts createAddressConstants(final String driftProgram,
+                                              Markets<SpotMarketConfig> spotMarkets,
+                                              Markets<PerpMarketConfig> perpMarkets) {
     return createAddressConstants(
-        fromBase58Encoded(driftProgram)
+        fromBase58Encoded(driftProgram),
+        spotMarkets,
+        perpMarkets
     );
   }
 }

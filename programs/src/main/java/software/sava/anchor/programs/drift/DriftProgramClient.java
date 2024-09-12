@@ -90,6 +90,16 @@ public interface DriftProgramClient {
                           final PublicKey authority,
                           final PublicKey user);
 
+  CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient);
+
+  default CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient, final User user) {
+    return rpcClient.getAccountInfo(user._address(), User.FACTORY);
+  }
+
+  default CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient, final PublicKey user) {
+    return rpcClient.getAccountInfo(user, User.FACTORY);
+  }
+
   CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient);
 
   CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient,

@@ -1,35 +1,32 @@
 package software.sava.anchor.programs.drift;
 
 import software.sava.core.accounts.PublicKey;
+import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.rpc.json.PublicKeyEncoding;
 import systems.comodal.jsoniter.ContextFieldBufferPredicate;
 import systems.comodal.jsoniter.JsonIterator;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import static software.sava.anchor.programs.drift.SpotMarkets.MAIN_NET;
 import static systems.comodal.jsoniter.JsonIterator.fieldEquals;
 
 public record SpotMarketConfig(String symbol,
                                int marketIndex,
                                Instant launchTs,
-                               PublicKey oracle,
+                               AccountMeta readOracle,
                                PublicKey pythPullOraclePDA,
                                PublicKey mint,
                                PublicKey serumMarket,
                                PublicKey phoenixMarket,
                                PublicKey openbookMarket,
                                PublicKey pythFeedId,
-                               PublicKey marketPDA) implements SrcGen {
+                               AccountMeta readMarketPDA) implements SrcGen, MarketConfig {
 
   static SpotMarketConfig createConfig(final String symbol,
                                        final int marketIndex,
-                                       final long launchTs,
+                                       final String launchTs,
                                        final String oracle,
                                        final String pythPullOraclePDA,
                                        final String mint,
@@ -41,15 +38,15 @@ public record SpotMarketConfig(String symbol,
     return new SpotMarketConfig(
         symbol,
         marketIndex,
-        launchTs <= 0 ? null : Instant.ofEpochMilli(launchTs),
-        SrcGen.fromBase58Encoded(oracle),
+        launchTs == null ? null : Instant.parse(launchTs),
+        SrcGen.readMetaFromBase58Encoded(oracle),
         SrcGen.fromBase58Encoded(pythPullOraclePDA),
         SrcGen.fromBase58Encoded(mint),
         SrcGen.fromBase58Encoded(serumMarket),
         SrcGen.fromBase58Encoded(phoenixMarket),
         SrcGen.fromBase58Encoded(openbookMarket),
         SrcGen.fromBase58Encoded(pythFeedId),
-        SrcGen.fromBase58Encoded(marketPDA)
+        SrcGen.readMetaFromBase58Encoded(marketPDA)
     );
   }
 
@@ -59,7 +56,7 @@ public record SpotMarketConfig(String symbol,
             createConfig(
                 "%s",
                 %d,
-                %dL,
+                %s,
                 %s,
                 %s,
                 %s,
@@ -71,8 +68,8 @@ public record SpotMarketConfig(String symbol,
             )""",
         symbol,
         marketIndex,
-        launchTs == null ? 0 : launchTs.toEpochMilli(),
-        SrcGen.pubKeyConstant(oracle),
+        launchTs == null ? null : '"' + launchTs.toString() + '"',
+        SrcGen.pubKeyConstant(readOracle.publicKey()),
         pythFeedId == null ? null : SrcGen.pubKeyConstant(DriftPDAs
             .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey()),
         SrcGen.pubKeyConstant(mint),
@@ -137,7 +134,7 @@ public record SpotMarketConfig(String symbol,
           symbol,
           marketIndex,
           launchTs,
-          oracle,
+          oracle == null ? null : AccountMeta.createRead(oracle),
           null,
           mint,
           serumMarket,
@@ -146,16 +143,6 @@ public record SpotMarketConfig(String symbol,
           pythFeedId,
           null
       );
-    }
-  }
-
-  public static void main(final String[] args) {
-    final var accounts = DriftAccounts.MAIN_NET;
-    final var byAsset = Arrays.stream(MAIN_NET)
-        .collect(Collectors.toUnmodifiableMap(SpotMarketConfig::symbol, Function.identity()));
-
-    for (final var c : MAIN_NET) {
-      System.out.format("%s: %d: %s%n", c.symbol, c.marketIndex, DriftPDAs.deriveSpotMarketAccount(accounts, c.marketIndex).publicKey());
     }
   }
 }

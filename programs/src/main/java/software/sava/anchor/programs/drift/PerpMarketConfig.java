@@ -1,6 +1,7 @@
 package software.sava.anchor.programs.drift;
 
 import software.sava.core.accounts.PublicKey;
+import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.rpc.json.PublicKeyEncoding;
 import systems.comodal.jsoniter.ContextFieldBufferPredicate;
 import systems.comodal.jsoniter.JsonIterator;
@@ -20,17 +21,17 @@ public record PerpMarketConfig(String fullName,
                                String baseAssetSymbol,
                                int marketIndex,
                                Instant launchTs,
-                               PublicKey oracle,
+                               AccountMeta readOracle,
                                PublicKey pythPullOraclePDA,
                                PublicKey pythFeedId,
-                               PublicKey marketPDA) implements SrcGen {
+                               AccountMeta readMarketPDA) implements SrcGen, MarketConfig {
 
   static PerpMarketConfig createConfig(final String fullName,
                                        final Set<String> categories,
                                        final String symbol,
                                        final String baseAssetSymbol,
                                        final int marketIndex,
-                                       final long launchTs,
+                                       final String launchTs,
                                        final String oracle,
                                        final String pythPullOraclePDA,
                                        final String pythFeedId,
@@ -41,11 +42,11 @@ public record PerpMarketConfig(String fullName,
         symbol,
         baseAssetSymbol,
         marketIndex,
-        Instant.ofEpochMilli(launchTs),
-        PublicKey.fromBase58Encoded(oracle),
+        Instant.parse(launchTs),
+        SrcGen.readMetaFromBase58Encoded(oracle),
         SrcGen.fromBase58Encoded(pythPullOraclePDA),
         SrcGen.fromBase58Encoded(pythFeedId),
-        SrcGen.fromBase58Encoded(marketPDA)
+        SrcGen.readMetaFromBase58Encoded(marketPDA)
     );
   }
 
@@ -58,19 +59,19 @@ public record PerpMarketConfig(String fullName,
                 "%s",
                 "%s",
                 %d,
-                %dL,
+                %s,
                 %s,
                 %s,
                 %s,
                 %s
             )""",
         fullName,
-        categories.isEmpty() ? "" : categories.stream().collect(Collectors.joining("\", \"", "\"", "\"")),
+        categories.isEmpty() ? null : categories.stream().collect(Collectors.joining("\", \"", "\"", "\"")),
         symbol,
         baseAssetSymbol,
         marketIndex,
-        launchTs.toEpochMilli(),
-        SrcGen.pubKeyConstant(oracle),
+        launchTs == null ? null : '"' + launchTs.toString() + '"',
+        SrcGen.pubKeyConstant(readOracle.publicKey()),
         pythFeedId == null ? null : SrcGen.pubKeyConstant(DriftPDAs
             .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey()),
         SrcGen.pubKeyConstant(pythFeedId),
@@ -133,7 +134,7 @@ public record PerpMarketConfig(String fullName,
           baseAssetSymbol,
           marketIndex,
           launchTs,
-          oracle,
+          oracle == null ? null : AccountMeta.createRead(oracle),
           null,
           pythFeedId,
           null

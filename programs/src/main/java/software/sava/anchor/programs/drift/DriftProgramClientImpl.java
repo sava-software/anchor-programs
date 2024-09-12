@@ -80,6 +80,11 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
+  public CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient) {
+    return fetchUser(rpcClient, user);
+  }
+
+  @Override
   public CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient) {
     return fetchUsersByAuthority(rpcClient, authority);
   }
