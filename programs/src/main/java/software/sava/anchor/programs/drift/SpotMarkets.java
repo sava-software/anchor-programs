@@ -13,7 +13,7 @@ public final class SpotMarkets {
       createConfig(
           "USDC",
           0,
-          -9223372036854775808L,
+          0L,
           "En8hkHLkRe9d9DraYmBTrus518BvmVH448YcvmrFM6Ce",
           "En8hkHLkRe9d9DraYmBTrus518BvmVH448YcvmrFM6Ce",
           "EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v",
@@ -26,7 +26,7 @@ public final class SpotMarkets {
       createConfig(
           "SOL",
           1,
-          -9223372036854775808L,
+          0L,
           "BAtFj4kQttZRVep3UZS2aZRDixkGYgWsbqTBVDbnSsPF",
           "BAtFj4kQttZRVep3UZS2aZRDixkGYgWsbqTBVDbnSsPF",
           "So11111111111111111111111111111111111111112",
@@ -39,7 +39,7 @@ public final class SpotMarkets {
       createConfig(
           "mSOL",
           2,
-          -9223372036854775808L,
+          0L,
           "FAq7hqjn7FWGXKDwJHzsXGgBcydGTcK4kziJpAGWXjDb",
           "FAq7hqjn7FWGXKDwJHzsXGgBcydGTcK4kziJpAGWXjDb",
           "mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So",
@@ -52,7 +52,7 @@ public final class SpotMarkets {
       createConfig(
           "wBTC",
           3,
-          -9223372036854775808L,
+          0L,
           "9Tq8iN5WnMX2PcZGj4iSFEAgHCi8cM6x8LsDUbuzq8uw",
           "486kr3pmFPfTsS4aZgcsQ7kS4i9rjMsYYZup6HQNSTT4",
           "3NZ9JMVBmGAqocybic2c7LQCJScmgsAZ6vQqTDzcqmJh",
@@ -65,7 +65,7 @@ public final class SpotMarkets {
       createConfig(
           "wETH",
           4,
-          -9223372036854775808L,
+          0L,
           "6bEp2MiyoiiiDxcVqE8rUHQWwHirXUXtKfAEATTVqNzT",
           "6bEp2MiyoiiiDxcVqE8rUHQWwHirXUXtKfAEATTVqNzT",
           "7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs",
@@ -78,7 +78,7 @@ public final class SpotMarkets {
       createConfig(
           "USDT",
           5,
-          -9223372036854775808L,
+          0L,
           "BekJ3P5G3iFeC97sXHuKnUHofCFj9Sbo7uyF2fkKwvit",
           "BekJ3P5G3iFeC97sXHuKnUHofCFj9Sbo7uyF2fkKwvit",
           "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB",
@@ -91,7 +91,7 @@ public final class SpotMarkets {
       createConfig(
           "jitoSOL",
           6,
-          -9223372036854775808L,
+          0L,
           "9QE1P5EfzthYDgoQ9oPeTByCEKaRJeZbVVqKJfgU9iau",
           "9QE1P5EfzthYDgoQ9oPeTByCEKaRJeZbVVqKJfgU9iau",
           "J1toso1uCk3RLmjorhTtrVwY9HJ7X8V9yYac6Y7kGCPn",
@@ -104,7 +104,7 @@ public final class SpotMarkets {
       createConfig(
           "PYTH",
           7,
-          -9223372036854775808L,
+          0L,
           "GqkCu7CbsPVz1H6W6AAHuReqbJckYG59TXz7Y5HDV7hr",
           "GqkCu7CbsPVz1H6W6AAHuReqbJckYG59TXz7Y5HDV7hr",
           "HZ1JovNiVvGrGNiiYvEozEVgZ58xaU3RKwX8eACQBCt3",
@@ -117,7 +117,7 @@ public final class SpotMarkets {
       createConfig(
           "bSOL",
           8,
-          -9223372036854775808L,
+          0L,
           "BmDWPMsytWmYkh9n6o7m79eVshVYf2B5GVaqQ2EWKnGH",
           "BmDWPMsytWmYkh9n6o7m79eVshVYf2B5GVaqQ2EWKnGH",
           "bSo13r4TkiE4KumL71LsHTPpL2euBYLFx6h9HP3piy1",
@@ -130,7 +130,7 @@ public final class SpotMarkets {
       createConfig(
           "JTO",
           9,
-          -9223372036854775808L,
+          0L,
           "Ffq6ACJ17NAgaxC6ocfMzVXL3K61qxB2xHg6WUawWPfP",
           "Ffq6ACJ17NAgaxC6ocfMzVXL3K61qxB2xHg6WUawWPfP",
           "jtojtomepa8beP8AuQc6eXt5FriJwfFMwQx2v2f9mCL",
@@ -143,7 +143,7 @@ public final class SpotMarkets {
       createConfig(
           "WIF",
           10,
-          -9223372036854775808L,
+          0L,
           "6x6KfE7nY2xoLCRSMPT1u83wQ5fpGXoKNBqFjrCwzsCQ",
           "6x6KfE7nY2xoLCRSMPT1u83wQ5fpGXoKNBqFjrCwzsCQ",
           "EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm",
@@ -299,7 +299,7 @@ public final class SpotMarkets {
       createConfig(
           "PYUSD",
           22,
-          -9223372036854775808L,
+          0L,
           "HpMoKp3TCd3QT4MWYUKk2zCBwmhr5Df45fB6wdxYqEeh",
           "HpMoKp3TCd3QT4MWYUKk2zCBwmhr5Df45fB6wdxYqEeh",
           "2b1kV6DkPAnxd5ixfnxCpjxmKwqjjaYmCZfHsFu24GXo",
@@ -312,7 +312,7 @@ public final class SpotMarkets {
       createConfig(
           "USDe",
           23,
-          -9223372036854775808L,
+          0L,
           "BXej5boX2nWudwAfZQedo212B9XJxhjTeeF3GbCwXmYa",
           "BXej5boX2nWudwAfZQedo212B9XJxhjTeeF3GbCwXmYa",
           "DEkqHyPN7GMRJ5cArtQFAWefqbZb33Hyf6s5iCwjEonT",
@@ -325,7 +325,7 @@ public final class SpotMarkets {
       createConfig(
           "sUSDe",
           24,
-          -9223372036854775808L,
+          0L,
           "BRuNuzLAPHHGSSVAJPKMcmJMdgDfrekvnSxkxPDGdeqp",
           "BRuNuzLAPHHGSSVAJPKMcmJMdgDfrekvnSxkxPDGdeqp",
           "Eh6XEPhSwoLv5wFApukmnaVSHQ6sAnoD9BmgmwQoN2sN",
@@ -338,7 +338,7 @@ public final class SpotMarkets {
       createConfig(
           "BNSOL",
           25,
-          -9223372036854775808L,
+          0L,
           "BAtFj4kQttZRVep3UZS2aZRDixkGYgWsbqTBVDbnSsPF",
           "BAtFj4kQttZRVep3UZS2aZRDixkGYgWsbqTBVDbnSsPF",
           "BNso1VUJnh4zcfpZa6986Ea66P6TCp59hvtNJ8b1X85",
@@ -354,7 +354,7 @@ public final class SpotMarkets {
       createConfig(
           "USDC",
           0,
-          -9223372036854775808L,
+          0L,
           "5SSkXsEKQepHHAewytPVwdej4epN1nxgLVM84L4KXgy7",
           "En8hkHLkRe9d9DraYmBTrus518BvmVH448YcvmrFM6Ce",
           "8zGuJQqwhZafTah7Uc7Z4tXRnguqkn5KLFAP8oV6PHe2",
@@ -367,7 +367,7 @@ public final class SpotMarkets {
       createConfig(
           "SOL",
           1,
-          -9223372036854775808L,
+          0L,
           "J83w4HKfqxwcq3BEMMkPFSppX3gqekLyLJBexebFVkix",
           "BAtFj4kQttZRVep3UZS2aZRDixkGYgWsbqTBVDbnSsPF",
           "So11111111111111111111111111111111111111112",
@@ -380,7 +380,7 @@ public final class SpotMarkets {
       createConfig(
           "BTC",
           2,
-          -9223372036854775808L,
+          0L,
           "HovQMDrbAgAYPCmHVSrezcSmkMtXSSUsLDFANExrZh2J",
           "486kr3pmFPfTsS4aZgcsQ7kS4i9rjMsYYZup6HQNSTT4",
           "3BZPwbcqB5kKScF3TEXxwNfx5ipV13kbRVDvfVp5c6fv",
@@ -393,7 +393,7 @@ public final class SpotMarkets {
       createConfig(
           "PYUSD",
           3,
-          -9223372036854775808L,
+          0L,
           "HpMoKp3TCd3QT4MWYUKk2zCBwmhr5Df45fB6wdxYqEeh",
           "HpMoKp3TCd3QT4MWYUKk2zCBwmhr5Df45fB6wdxYqEeh",
           "GLfF72ZCUnS6N9iDJw8kedHzd6WFVf3VbpwdKKy76FRk",

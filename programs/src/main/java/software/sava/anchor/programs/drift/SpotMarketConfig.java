@@ -31,31 +31,6 @@ public record SpotMarketConfig(String symbol,
                                        final int marketIndex,
                                        final long launchTs,
                                        final String oracle,
-                                       final String mint,
-                                       final String serumMarket,
-                                       final String phoenixMarket,
-                                       final String openbookMarket,
-                                       final String pythFeedId) {
-    return new SpotMarketConfig(
-        symbol,
-        marketIndex,
-        launchTs <= 0 ? null : Instant.ofEpochMilli(launchTs),
-        SrcGen.fromBase58Encoded(oracle),
-        SrcGen.fromBase58Encoded(mint),
-        SrcGen.fromBase58Encoded(serumMarket),
-        SrcGen.fromBase58Encoded(phoenixMarket),
-        SrcGen.fromBase58Encoded(openbookMarket),
-        SrcGen.fromBase58Encoded(pythFeedId),
-        null,
-        null
-    );
-  }
-
-
-  static SpotMarketConfig createConfig(final String symbol,
-                                       final int marketIndex,
-                                       final long launchTs,
-                                       final String oracle,
                                        final String pythPullOraclePDA,
                                        final String mint,
                                        final String serumMarket,
@@ -96,7 +71,7 @@ public record SpotMarketConfig(String symbol,
             )""",
         symbol,
         marketIndex,
-        launchTs == null ? Long.MIN_VALUE : launchTs.toEpochMilli(),
+        launchTs == null ? 0 : launchTs.toEpochMilli(),
         SrcGen.pubKeyConstant(oracle),
         pythFeedId == null ? null : SrcGen.pubKeyConstant(DriftPDAs
             .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey()),
