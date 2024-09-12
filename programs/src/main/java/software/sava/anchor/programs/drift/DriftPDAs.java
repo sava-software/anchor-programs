@@ -22,7 +22,6 @@ public final class DriftPDAs {
     return findProgramAddress(List.of("drift_signer".getBytes(UTF_8)), programId);
   }
 
-
   public static ProgramDerivedAddress deriveMainUserAccount(final DriftAccounts driftAccounts,
                                                             final PublicKey authority) {
     return deriveUserAccount(driftAccounts, authority, 0);
@@ -32,11 +31,7 @@ public final class DriftPDAs {
                                                         final PublicKey authority,
                                                         final int subAccountId) {
     return findProgramAddress(
-        List.of(
-            "user".getBytes(UTF_8),
-            authority.toByteArray(),
-            lowerTwoLE(subAccountId)
-        ),
+        List.of("user".getBytes(UTF_8), authority.toByteArray(), lowerTwoLE(subAccountId)),
         driftAccounts.driftProgram()
     );
   }
@@ -44,10 +39,7 @@ public final class DriftPDAs {
   public static ProgramDerivedAddress deriveUserStatsAccount(final DriftAccounts driftAccounts,
                                                              final PublicKey authority) {
     return findProgramAddress(
-        List.of(
-            "user_stats".getBytes(UTF_8),
-            authority.toByteArray()
-        ),
+        List.of("user_stats".getBytes(UTF_8), authority.toByteArray()),
         driftAccounts.driftProgram()
     );
   }
@@ -56,9 +48,7 @@ public final class DriftPDAs {
                                                          final String namespace,
                                                          final int index) {
     return findProgramAddress(
-        List.of(
-            namespace.getBytes(UTF_8), lowerTwoLE(index)
-        ),
+        List.of(namespace.getBytes(UTF_8), lowerTwoLE(index)),
         driftAccounts.driftProgram()
     );
   }

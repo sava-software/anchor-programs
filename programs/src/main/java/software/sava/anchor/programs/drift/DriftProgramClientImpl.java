@@ -3,7 +3,6 @@ package software.sava.anchor.programs.drift;
 import software.sava.anchor.programs.drift.anchor.DriftProgram;
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
 import software.sava.anchor.programs.drift.anchor.types.User;
-import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
@@ -11,13 +10,11 @@ import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 final class DriftProgramClientImpl implements DriftProgramClient {
 
-  private final NativeProgramAccountClient nativeProgramAccountClient;
   private final SolanaAccounts solanaAccounts;
   private final DriftAccounts accounts;
   private final PublicKey authority;
@@ -25,7 +22,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
 
   DriftProgramClientImpl(final NativeProgramAccountClient nativeProgramAccountClient,
                          final DriftAccounts accounts) {
-    this.nativeProgramAccountClient = nativeProgramAccountClient;
     this.solanaAccounts = nativeProgramAccountClient.solanaAccounts();
     this.accounts = accounts;
     this.authority = nativeProgramAccountClient.ownerPublicKey();
@@ -45,18 +41,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   @Override
   public PublicKey authority() {
     return authority;
-  }
-
-  @Override
-  public ProgramDerivedAddress deriveUserAccount(final PublicKey authority, final int subAccountId) {
-    return PublicKey.findProgramAddress(
-        List.of(
-            "user".getBytes(StandardCharsets.US_ASCII),
-            authority.toByteArray(),
-            new byte[]{(byte) (subAccountId & 0xFF), (byte) (subAccountId & 0xFF00)}
-        ),
-        accounts.driftProgram()
-    );
   }
 
   @Override

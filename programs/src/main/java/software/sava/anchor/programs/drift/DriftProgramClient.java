@@ -58,7 +58,17 @@ public interface DriftProgramClient {
     return deriveUserAccount(authority(), subAccountId);
   }
 
-  ProgramDerivedAddress deriveUserAccount(final PublicKey authority, final int subAccountId);
+  default ProgramDerivedAddress deriveUserAccount(final PublicKey authority, final int subAccountId) {
+    return DriftPDAs.deriveUserAccount(accounts(), authority, subAccountId);
+  }
+
+  default ProgramDerivedAddress deriveSpotMarketAccount(final int marketIndex) {
+    return DriftPDAs.deriveSpotMarketAccount(accounts(), marketIndex);
+  }
+
+  default ProgramDerivedAddress derivePerpMarketAccount(final int marketIndex) {
+    return DriftPDAs.derivePerpMarketAccount(accounts(), marketIndex);
+  }
 
   Instruction placePerpOrder(final OrderParams orderParams);
 
