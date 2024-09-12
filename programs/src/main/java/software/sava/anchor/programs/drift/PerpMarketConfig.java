@@ -1,9 +1,7 @@
 package software.sava.anchor.programs.drift;
 
-import org.bouncycastle.util.encoders.Hex;
 import software.sava.core.accounts.PublicKey;
 import software.sava.rpc.json.PublicKeyEncoding;
-import systems.comodal.jsoniter.CharBufferFunction;
 import systems.comodal.jsoniter.ContextFieldBufferPredicate;
 import systems.comodal.jsoniter.JsonIterator;
 
@@ -23,7 +21,7 @@ public record PerpMarketConfig(String fullName,
                                int marketIndex,
                                Instant launchTs,
                                PublicKey oracle,
-                               PublicKey pythFeedId) {
+                               PublicKey pythFeedId) implements SrcGen {
 
   static PerpMarketConfig createConfig(final String fullName,
                                        final Set<String> categories,
@@ -41,21 +39,22 @@ public record PerpMarketConfig(String fullName,
         marketIndex,
         Instant.ofEpochMilli(launchTs),
         PublicKey.fromBase58Encoded(oracle),
-        pythFeedId == null ? null : PublicKey.fromBase58Encoded(pythFeedId)
+        SrcGen.fromBase58Encoded(pythFeedId)
     );
   }
 
+  @Override
   public String toSrc() {
     return String.format("""
             createConfig(
-              "%s",
-              Set.of(%s),
-              "%s",
-              "%s",
-              %d,
-              %dL,
-              "%s",
-              %s
+                "%s",
+                Set.of(%s),
+                "%s",
+                "%s",
+                %d,
+                %dL,
+                %s,
+                %s
             )""",
         fullName,
         categories.isEmpty() ? "" : categories.stream().collect(Collectors.joining("\", \"", "\"", "\"")),
@@ -63,8 +62,8 @@ public record PerpMarketConfig(String fullName,
         baseAssetSymbol,
         marketIndex,
         launchTs.toEpochMilli(),
-        oracle.toBase58(),
-        pythFeedId == null ? "null" : '"' + pythFeedId.toBase58() + '"'
+        SrcGen.pubKeyConstant(oracle),
+        SrcGen.pubKeyConstant(pythFeedId)
     );
   }
 
@@ -76,9 +75,6 @@ public record PerpMarketConfig(String fullName,
     }
     return configs;
   }
-
-  private static final CharBufferFunction<PublicKey> DECODE_HEX = (buf, offset, len) -> PublicKey
-      .createPubKey(Hex.decode(new String(buf, offset + 2, len - 2)));
 
   private static final ContextFieldBufferPredicate<PerpMarketConfig.Builder> PARSER = (builder, buf, offset, len, ji) -> {
     if (fieldEquals("fullName", buf, offset, len)) {
