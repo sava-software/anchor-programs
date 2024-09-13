@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,7 +50,13 @@ final class GenerateMarketConstants {
     ji = JsonIterator.parse(mainNetJson);
     final var mainNetConfigs = configParser.apply(ji);
 
-    writeSrc(devNetConfigs, mainNetConfigs, clas, imports, fileName);
+    writeMarketConfigsSrc(devNetConfigs, mainNetConfigs, clas, imports, fileName);
+
+    if (clas.equals(SpotMarketConfig.class)) {
+      writeAssetsSrc(devNetConfigs, mainNetConfigs);
+    } else {
+      writeProductsSrc(devNetConfigs, mainNetConfigs);
+    }
   }
 
   private static String convertJson(final String javascript) {
@@ -78,7 +85,7 @@ final class GenerateMarketConstants {
         SpotMarketConfig.class,
         Set.of(),
         response,
-        "SpotMarkets"
+        "SpotMarketConfigs"
     );
   }
 
@@ -94,15 +101,72 @@ final class GenerateMarketConstants {
         PerpMarketConfig.class,
         Set.of(Set.class),
         response,
-        "PerpMarkets"
+        "PerpMarketConfigs"
     );
   }
 
-  private static void writeSrc(final List<? extends SrcGen> devNetConfigs,
-                               final List<? extends SrcGen> mainNetConfigs,
-                               final Class<?> clas,
-                               final Set<Class<?>> imports,
-                               final String fileName) {
+  private static void writeProductsSrc(final List<? extends SrcGen> devNetConfigs, final List<? extends SrcGen> mainNetConfigs) {
+    final var distinct = HashSet.<String>newHashSet(devNetConfigs.size() + mainNetConfigs.size());
+    devNetConfigs.stream().map(SrcGen::symbol).forEach(distinct::add);
+    mainNetConfigs.stream().map(SrcGen::symbol).forEach(distinct::add);
+
+    final var sourceCode = String.format("""
+            package %s;
+            
+            public enum DriftProduct {
+            
+            %s}
+            """,
+        GenerateMarketConstants.class.getPackageName(),
+        distinct.stream()
+            .map(symbol -> symbol.replace('-', '_'))
+            .map(symbol -> Character.isAlphabetic(symbol.charAt(0)) ? symbol : '_' + symbol)
+            .sorted()
+            .collect(Collectors.joining(",\n"))
+            .indent(4)
+    );
+    try {
+      Files.writeString(Path.of(
+              "programs/src/main/java/" + GenerateMarketConstants.class.getPackageName().replace('.', '/') + '/' + "DriftProduct.java"),
+          sourceCode,
+          CREATE, WRITE, TRUNCATE_EXISTING
+      );
+    } catch (final IOException e) {
+      throw new UncheckedIOException("Failed to write DriftProduct", e);
+    }
+  }
+
+  private static void writeAssetsSrc(final List<? extends SrcGen> devNetConfigs, final List<? extends SrcGen> mainNetConfigs) {
+    final var distinct = new TreeSet<String>();
+    devNetConfigs.stream().map(SrcGen::symbol).forEach(distinct::add);
+    mainNetConfigs.stream().map(SrcGen::symbol).forEach(distinct::add);
+
+    final var sourceCode = String.format("""
+            package %s;
+            
+            public enum DriftAsset {
+            
+            %s}
+            """,
+        GenerateMarketConstants.class.getPackageName(),
+        String.join(",\n", distinct).indent(4)
+    );
+    try {
+      Files.writeString(Path.of(
+              "programs/src/main/java/" + GenerateMarketConstants.class.getPackageName().replace('.', '/') + '/' + "DriftAsset.java"),
+          sourceCode,
+          CREATE, WRITE, TRUNCATE_EXISTING
+      );
+    } catch (final IOException e) {
+      throw new UncheckedIOException("Failed to write " + DriftAsset.class.getSimpleName(), e);
+    }
+  }
+
+  private static void writeMarketConfigsSrc(final List<? extends SrcGen> devNetConfigs,
+                                            final List<? extends SrcGen> mainNetConfigs,
+                                            final Class<?> clas,
+                                            final Set<Class<?>> imports,
+                                            final String fileName) {
     final var src = new StringBuilder(4_096);
     src.append("package ").append(GenerateMarketConstants.class.getPackageName()).append(';');
 
@@ -124,9 +188,9 @@ final class GenerateMarketConstants {
     ));
 
     final var simpleClassName = clas.getSimpleName();
-    appendSrc(src, "MAIN", DriftAccounts.MAIN_NET, mainNetConfigs, simpleClassName);
-    appendSrc(src, "DEV", DriftAccounts.DEV_NET, devNetConfigs, simpleClassName);
-
+    final var marketsClas = clas.equals(SpotMarketConfig.class) ? SpotMarkets.class : PerpMarkets.class;
+    appendSrc(src, "MAIN", DriftAccounts.MAIN_NET, mainNetConfigs, simpleClassName, marketsClas);
+    appendSrc(src, "DEV", DriftAccounts.DEV_NET, devNetConfigs, simpleClassName, marketsClas);
 
     src.append(String.format("""
           private %s() {
@@ -149,11 +213,12 @@ final class GenerateMarketConstants {
                                 final String network,
                                 final DriftAccounts driftAccounts,
                                 final List<? extends SrcGen> configs,
-                                final String simpleClassName) {
+                                final String simpleClassName,
+                                final Class<?> marketsClass) {
     src.append(String.format("""
-              public static final Markets<%s> %s_NET = Markets.createRecord(new %s[]{
+              public static final %s %s_NET = %s.createRecord(new %s[]{
             """,
-        simpleClassName, network, simpleClassName
+        marketsClass.getSimpleName(), network, marketsClass.getSimpleName(), simpleClassName
     ));
 
     final var configsInit = configs.stream()

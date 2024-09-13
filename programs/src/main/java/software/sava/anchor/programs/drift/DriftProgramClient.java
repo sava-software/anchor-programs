@@ -50,7 +50,7 @@ public interface DriftProgramClient {
 
   DriftExtraAccounts extraAccounts();
 
-  PerpMarketConfig perpMarket(final String symbol);
+  PerpMarketConfig perpMarket(final DriftProduct product);
 
   PublicKey authority();
 

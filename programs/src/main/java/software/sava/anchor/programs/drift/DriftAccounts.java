@@ -3,20 +3,21 @@ package software.sava.anchor.programs.drift;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 
+import static software.sava.anchor.programs.drift.DriftAsset.USDC;
 import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 
 public interface DriftAccounts {
 
   DriftAccounts MAIN_NET = createAddressConstants(
       "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
-      SpotMarkets.MAIN_NET,
-      PerpMarkets.MAIN_NET
+      SpotMarketsConfigs.MAIN_NET,
+      PerpMarketConfigs.MAIN_NET
   );
 
   DriftAccounts DEV_NET = createAddressConstants(
       "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
-      SpotMarkets.DEV_NET,
-      PerpMarkets.DEV_NET
+      SpotMarketsConfigs.DEV_NET,
+      PerpMarketConfigs.DEV_NET
   );
 
   AccountMeta invokedDriftProgram();
@@ -29,33 +30,33 @@ public interface DriftAccounts {
 
   SpotMarketConfig defaultQuoteMarket();
 
-  Markets<SpotMarketConfig> spotMarkets();
+  SpotMarkets spotMarkets();
 
   SpotMarketConfig spotMarketConfig(final int index);
 
-  SpotMarketConfig spotMarketConfig(final String symbol);
+  SpotMarketConfig spotMarketConfig(final DriftAsset symbol);
 
-  Markets<PerpMarketConfig> perpMarkets();
+  PerpMarkets perpMarkets();
 
   PerpMarketConfig perpMarketConfig(final int index);
 
-  PerpMarketConfig perpMarketConfig(final String symbol);
+  PerpMarketConfig perpMarketConfig(final DriftProduct product);
 
   static DriftAccounts createAddressConstants(final PublicKey driftProgram,
-                                              final Markets<SpotMarketConfig> spotMarkets,
-                                              final Markets<PerpMarketConfig> perpMarkets) {
+                                              final SpotMarkets spotMarkets,
+                                              final PerpMarkets perpMarkets) {
     return new DriftAccountsRecord(
         AccountMeta.createInvoked(driftProgram),
         DriftPDAs.deriveStateAccount(driftProgram).publicKey(),
-        spotMarkets.forSymbol("USDC"),
+        spotMarkets.forAsset(USDC),
         spotMarkets,
         perpMarkets
     );
   }
 
   static DriftAccounts createAddressConstants(final String driftProgram,
-                                              Markets<SpotMarketConfig> spotMarkets,
-                                              Markets<PerpMarketConfig> perpMarkets) {
+                                              final SpotMarkets spotMarkets,
+                                              final PerpMarkets perpMarkets) {
     return createAddressConstants(
         fromBase58Encoded(driftProgram),
         spotMarkets,

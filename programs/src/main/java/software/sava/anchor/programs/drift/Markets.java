@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public interface Markets<T extends MarketConfig> {
 
-  static <T extends MarketConfig> Markets<T> createRecord(T[] marketConfigs) {
+  static <T extends MarketConfig> Markets<T> createRecord(final T[] marketConfigs) {
     final var bySymbol = Arrays.stream(marketConfigs)
         .collect(Collectors.toUnmodifiableMap(MarketConfig::symbol, Function.identity()));
     return new MarketsRecord<>(marketConfigs, bySymbol);

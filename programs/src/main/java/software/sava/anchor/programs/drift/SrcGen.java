@@ -23,4 +23,6 @@ interface SrcGen {
   }
 
   String toSrc(final DriftAccounts driftAccounts);
+
+  String symbol();
 }

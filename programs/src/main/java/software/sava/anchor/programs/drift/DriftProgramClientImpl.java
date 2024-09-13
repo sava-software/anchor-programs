@@ -44,13 +44,36 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public PerpMarketConfig perpMarket(final String symbol) {
-    return accounts.perpMarketConfig(symbol);
+  public PerpMarketConfig perpMarket(final DriftProduct product) {
+    return accounts.perpMarketConfig(product);
   }
 
   @Override
   public PublicKey authority() {
     return authority;
+  }
+
+  @Override
+  public CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient) {
+    return fetchUser(rpcClient, user);
+  }
+
+  @Override
+  public CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient) {
+    return fetchUsersByAuthority(rpcClient, authority);
+  }
+
+  @Override
+  public CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient,
+                                                                          final PublicKey authority) {
+    return rpcClient.getProgramAccounts(
+        accounts.driftProgram(),
+        List.of(
+            User.SIZE_FILTER,
+            User.createAuthorityFilter(authority)
+        ),
+        User.FACTORY
+    );
   }
 
   @Override
@@ -86,29 +109,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         user,
         authority,
         orderParams
-    );
-  }
-
-  @Override
-  public CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient) {
-    return fetchUser(rpcClient, user);
-  }
-
-  @Override
-  public CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient) {
-    return fetchUsersByAuthority(rpcClient, authority);
-  }
-
-  @Override
-  public CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient,
-                                                                          final PublicKey authority) {
-    return rpcClient.getProgramAccounts(
-        accounts.driftProgram(),
-        List.of(
-            User.SIZE_FILTER,
-            User.createAuthorityFilter(authority)
-        ),
-        User.FACTORY
     );
   }
 }

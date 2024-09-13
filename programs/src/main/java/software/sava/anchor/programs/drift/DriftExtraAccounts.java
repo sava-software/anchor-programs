@@ -12,7 +12,7 @@ public interface DriftExtraAccounts {
   static DriftExtraAccounts createExtraAccounts(final DriftAccounts driftAccounts) {
     final var oracles = HashMap.<PublicKey, AccountMeta>newHashMap(32);
     final var spotMarkets = HashMap.<PublicKey, AccountMeta>newHashMap(32);
-    final var perpMarkets = HashMap.<PublicKey, AccountMeta>newHashMap(32);
+    final var perpMarkets = HashMap.<PublicKey, AccountMeta>newHashMap(8);
     return new DriftExtraAccountsRecord(driftAccounts, oracles, spotMarkets, perpMarkets);
   }
 

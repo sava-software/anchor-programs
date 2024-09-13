@@ -6,16 +6,16 @@ import software.sava.core.accounts.meta.AccountMeta;
 record DriftAccountsRecord(AccountMeta invokedDriftProgram,
                            PublicKey stateKey,
                            SpotMarketConfig defaultQuoteMarket,
-                           Markets<SpotMarketConfig> spotMarkets,
-                           Markets<PerpMarketConfig> perpMarkets) implements DriftAccounts {
+                           SpotMarkets spotMarkets,
+                           PerpMarkets perpMarkets) implements DriftAccounts {
   @Override
   public SpotMarketConfig spotMarketConfig(final int index) {
     return spotMarkets.marketConfig(index);
   }
 
   @Override
-  public SpotMarketConfig spotMarketConfig(final String symbol) {
-    return spotMarkets.forSymbol(symbol);
+  public SpotMarketConfig spotMarketConfig(final DriftAsset symbol) {
+    return spotMarkets.forAsset(symbol);
   }
 
   @Override
@@ -24,7 +24,7 @@ record DriftAccountsRecord(AccountMeta invokedDriftProgram,
   }
 
   @Override
-  public PerpMarketConfig perpMarketConfig(final String symbol) {
-    return perpMarkets.forSymbol(symbol);
+  public PerpMarketConfig perpMarketConfig(final DriftProduct product) {
+    return perpMarkets.forProduct(product);
   }
 }
