@@ -48,6 +48,10 @@ public interface DriftProgramClient {
 
   DriftAccounts accounts();
 
+  DriftExtraAccounts extraAccounts();
+
+  PerpMarketConfig perpMarket(final String symbol);
+
   PublicKey authority();
 
   default ProgramDerivedAddress deriveUserAccount() {

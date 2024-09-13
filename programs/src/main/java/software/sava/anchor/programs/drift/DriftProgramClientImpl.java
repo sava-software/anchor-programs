@@ -39,6 +39,16 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
+  public DriftExtraAccounts extraAccounts() {
+    return DriftExtraAccounts.createExtraAccounts(accounts);
+  }
+
+  @Override
+  public PerpMarketConfig perpMarket(final String symbol) {
+    return accounts.perpMarketConfig(symbol);
+  }
+
+  @Override
   public PublicKey authority() {
     return authority;
   }

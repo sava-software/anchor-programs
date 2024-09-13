@@ -27,20 +27,27 @@ public interface DriftAccounts {
 
   PublicKey stateKey();
 
+  SpotMarketConfig defaultQuoteMarket();
+
   Markets<SpotMarketConfig> spotMarkets();
 
   SpotMarketConfig spotMarketConfig(final int index);
+
+  SpotMarketConfig spotMarketConfig(final String symbol);
 
   Markets<PerpMarketConfig> perpMarkets();
 
   PerpMarketConfig perpMarketConfig(final int index);
 
+  PerpMarketConfig perpMarketConfig(final String symbol);
+
   static DriftAccounts createAddressConstants(final PublicKey driftProgram,
-                                              Markets<SpotMarketConfig> spotMarkets,
-                                              Markets<PerpMarketConfig> perpMarkets) {
+                                              final Markets<SpotMarketConfig> spotMarkets,
+                                              final Markets<PerpMarketConfig> perpMarkets) {
     return new DriftAccountsRecord(
         AccountMeta.createInvoked(driftProgram),
         DriftPDAs.deriveStateAccount(driftProgram).publicKey(),
+        spotMarkets.forSymbol("USDC"),
         spotMarkets,
         perpMarkets
     );
