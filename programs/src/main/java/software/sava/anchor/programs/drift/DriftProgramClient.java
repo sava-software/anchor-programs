@@ -89,21 +89,21 @@ public interface DriftProgramClient {
   CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient,
                                                                    final PublicKey authority);
 
+  Instruction placeOrder(final OrderParams orderParams);
+
+  Instruction placeOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user);
+
   Instruction placePerpOrder(final OrderParams orderParams);
 
   default Instruction placePerpOrder(final OrderParams orderParams, final PublicKey authority) {
     return placePerpOrder(orderParams, authority, DriftPDAs.deriveMainUserAccount(accounts(), authority).publicKey());
   }
 
-  Instruction placePerpOrder(final OrderParams orderParams,
-                             final PublicKey authority,
-                             final PublicKey user);
+  Instruction placePerpOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user);
 
   Instruction placeOrders(final OrderParams[] orderParams);
 
-  Instruction placeOrders(final OrderParams[] orderParams,
-                          final PublicKey authority,
-                          final PublicKey user);
+  Instruction placeOrders(final OrderParams[] orderParams, final PublicKey authority, final PublicKey user);
 
   Instruction cancelOrder(final int orderId);
 
@@ -111,26 +111,19 @@ public interface DriftProgramClient {
     return cancelOrder(authority, DriftPDAs.deriveMainUserAccount(accounts(), authority).publicKey(), orderId);
   }
 
-  Instruction cancelOrder(final PublicKey authority,
-                          final PublicKey user,
-                          final int orderId);
+  Instruction cancelOrder(final PublicKey authority, final PublicKey user, final int orderId);
 
   Instruction cancelOrders(final int[] orderIds);
 
-  Instruction cancelOrders(final PublicKey authority,
-                           final PublicKey user,
-                           final int[] orderIds);
+  Instruction cancelOrders(final PublicKey authority, final PublicKey user, final int[] orderIds);
 
   Instruction cancelOrderByUserOrderId(final int orderId);
 
-  Instruction cancelOrderByUserOrderId(final PublicKey authority,
-                                       final PublicKey user,
-                                       final int orderId);
+  Instruction cancelOrderByUserOrderId(final PublicKey authority, final PublicKey user, final int orderId);
 
   Instruction cancelAllOrders();
 
-  Instruction cancelAllOrders(final PublicKey authority,
-                              final PublicKey user);
+  Instruction cancelAllOrders(final PublicKey authority, final PublicKey user);
 
   Instruction cancelAllSpotOrders();
 
@@ -142,7 +135,5 @@ public interface DriftProgramClient {
 
   Instruction cancelAllOrders(final MarketConfig marketConfig);
 
-  Instruction cancelAllOrders(final PublicKey authority,
-                              final PublicKey user,
-                              final MarketConfig marketConfig);
+  Instruction cancelAllOrders(final PublicKey authority, final PublicKey user, final MarketConfig marketConfig);
 }

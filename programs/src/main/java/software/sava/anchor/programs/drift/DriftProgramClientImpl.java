@@ -81,14 +81,39 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
+  public Instruction placeOrder(final OrderParams orderParams) {
+    return placeOrder(orderParams, authority, user);
+  }
+
+  @Override
+  public Instruction placeOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user) {
+    return switch (orderParams.marketType()) {
+      case Spot -> placeSpotOrder(orderParams, authority, user);
+      case Perp -> placePerpOrder(orderParams, authority, user);
+    };
+  }
+
+  public Instruction placeSpotOrder(final OrderParams orderParams) {
+    return placeSpotOrder(orderParams, authority, user);
+  }
+
+  public Instruction placeSpotOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user) {
+    return DriftProgram.placeSpotOrder(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        orderParams
+    );
+  }
+
+  @Override
   public Instruction placePerpOrder(final OrderParams orderParams) {
     return placePerpOrder(orderParams, authority, user);
   }
 
   @Override
-  public Instruction placePerpOrder(final OrderParams orderParams,
-                                    final PublicKey authority,
-                                    final PublicKey user) {
+  public Instruction placePerpOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user) {
     return DriftProgram.placePerpOrder(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
@@ -104,9 +129,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction placeOrders(final OrderParams[] orderParams,
-                                 final PublicKey authority,
-                                 final PublicKey user) {
+  public Instruction placeOrders(final OrderParams[] orderParams, final PublicKey authority, final PublicKey user) {
     return DriftProgram.placeOrders(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
@@ -122,9 +145,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction cancelOrder(final PublicKey authority,
-                                 final PublicKey user,
-                                 final int orderId) {
+  public Instruction cancelOrder(final PublicKey authority, final PublicKey user, final int orderId) {
     return DriftProgram.cancelOrder(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
@@ -140,9 +161,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction cancelOrders(final PublicKey authority,
-                                  final PublicKey user,
-                                  final int[] orderIds) {
+  public Instruction cancelOrders(final PublicKey authority, final PublicKey user, final int[] orderIds) {
     return DriftProgram.cancelOrdersByIds(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
@@ -158,9 +177,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction cancelOrderByUserOrderId(final PublicKey authority,
-                                              final PublicKey user,
-                                              final int orderId) {
+  public Instruction cancelOrderByUserOrderId(final PublicKey authority, final PublicKey user, final int orderId) {
     return DriftProgram.cancelOrderByUserId(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
@@ -176,8 +193,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction cancelAllOrders(final PublicKey authority,
-                                     final PublicKey user) {
+  public Instruction cancelAllOrders(final PublicKey authority, final PublicKey user) {
     return DriftProgram.cancelOrders(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
