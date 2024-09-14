@@ -16,10 +16,10 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.marinade.anchor;
   exports software.sava.anchor.programs.marinade;
   requires java.net.http;
+  requires org.bouncycastle.provider;
   requires software.sava.anchor_src_gen;
   requires software.sava.core;
   requires software.sava.rpc;
   requires software.sava.solana_programs;
   requires systems.comodal.json_iterator;
-  requires org.bouncycastle.provider;
 }

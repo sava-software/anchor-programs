@@ -11,7 +11,11 @@ import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.concurrent.CompletableFuture;
+
+import static software.sava.anchor.programs.drift.anchor.types.MarketType.Perp;
+import static software.sava.anchor.programs.drift.anchor.types.MarketType.Spot;
 
 final class DriftProgramClientImpl implements DriftProgramClient {
 
@@ -109,6 +113,135 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         user,
         authority,
         orderParams
+    );
+  }
+
+  @Override
+  public Instruction cancelOrder(final int orderId) {
+    return cancelOrder(authority, user, orderId);
+  }
+
+  @Override
+  public Instruction cancelOrder(final PublicKey authority,
+                                 final PublicKey user,
+                                 final int orderId) {
+    return DriftProgram.cancelOrder(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        OptionalInt.of(orderId)
+    );
+  }
+
+  @Override
+  public Instruction cancelOrders(final int[] orderIds) {
+    return cancelOrders(authority, user, orderIds);
+  }
+
+  @Override
+  public Instruction cancelOrders(final PublicKey authority,
+                                  final PublicKey user,
+                                  final int[] orderIds) {
+    return DriftProgram.cancelOrdersByIds(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        orderIds
+    );
+  }
+
+  @Override
+  public Instruction cancelOrderByUserId(final int orderId) {
+    return cancelOrderByUserId(authority, user, orderId);
+  }
+
+  @Override
+  public Instruction cancelOrderByUserId(final PublicKey authority,
+                                         final PublicKey user,
+                                         final int orderId) {
+    return DriftProgram.cancelOrderByUserId(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        orderId
+    );
+  }
+
+  @Override
+  public Instruction cancelAllOrders() {
+    return cancelAllOrders(authority, user);
+  }
+
+  @Override
+  public Instruction cancelAllOrders(final PublicKey authority,
+                                     final PublicKey user) {
+    return DriftProgram.cancelOrders(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        null,
+        OptionalInt.empty(),
+        null
+    );
+  }
+
+  @Override
+  public Instruction cancelAllSpotOrders() {
+    return cancelAllSpotOrders(authority, user);
+  }
+
+  @Override
+  public Instruction cancelAllSpotOrders(final PublicKey authority, final PublicKey user) {
+    return DriftProgram.cancelOrders(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        Spot,
+        OptionalInt.empty(),
+        null
+    );
+  }
+
+  @Override
+  public Instruction cancelAllPerpOrders() {
+    return cancelAllPerpOrders(authority, user);
+  }
+
+  @Override
+  public Instruction cancelAllPerpOrders(final PublicKey authority, final PublicKey user) {
+    return DriftProgram.cancelOrders(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        Perp,
+        OptionalInt.empty(),
+        null
+    );
+  }
+
+  @Override
+  public Instruction cancelAllOrders(final MarketConfig marketConfig) {
+    return cancelAllOrders(authority, user, marketConfig);
+  }
+
+  @Override
+  public Instruction cancelAllOrders(final PublicKey authority,
+                                     final PublicKey user,
+                                     final MarketConfig marketConfig) {
+    return DriftProgram.cancelOrders(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        marketConfig instanceof PerpMarketConfig ? Perp : Spot,
+        OptionalInt.of(marketConfig.marketIndex()),
+        null
     );
   }
 }

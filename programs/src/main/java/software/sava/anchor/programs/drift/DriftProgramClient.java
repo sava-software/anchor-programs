@@ -74,26 +74,6 @@ public interface DriftProgramClient {
     return DriftPDAs.derivePerpMarketAccount(accounts(), marketIndex);
   }
 
-  Instruction placePerpOrder(final OrderParams orderParams);
-
-  default Instruction placePerpOrder(final OrderParams orderParams, final PublicKey authority) {
-    return placePerpOrder(orderParams, authority, DriftPDAs.deriveMainUserAccount(accounts(), authority).publicKey());
-  }
-
-  Instruction placePerpOrder(final OrderParams orderParams,
-                             final PublicKey authority,
-                             final PublicKey user);
-
-  Instruction placeOrders(final OrderParams[] orderParams);
-
-  default Instruction placeOrders(final OrderParams[] orderParams, final PublicKey authority) {
-    return placeOrders(orderParams, authority, DriftPDAs.deriveMainUserAccount(accounts(), authority).publicKey());
-  }
-
-  Instruction placeOrders(final OrderParams[] orderParams,
-                          final PublicKey authority,
-                          final PublicKey user);
-
   CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient);
 
   default CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient, final User user) {
@@ -108,4 +88,61 @@ public interface DriftProgramClient {
 
   CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient,
                                                                    final PublicKey authority);
+
+  Instruction placePerpOrder(final OrderParams orderParams);
+
+  default Instruction placePerpOrder(final OrderParams orderParams, final PublicKey authority) {
+    return placePerpOrder(orderParams, authority, DriftPDAs.deriveMainUserAccount(accounts(), authority).publicKey());
+  }
+
+  Instruction placePerpOrder(final OrderParams orderParams,
+                             final PublicKey authority,
+                             final PublicKey user);
+
+  Instruction placeOrders(final OrderParams[] orderParams);
+
+  Instruction placeOrders(final OrderParams[] orderParams,
+                          final PublicKey authority,
+                          final PublicKey user);
+
+  Instruction cancelOrder(final int orderId);
+
+  default Instruction cancelOrder(final int orderId, final PublicKey authority) {
+    return cancelOrder(authority, DriftPDAs.deriveMainUserAccount(accounts(), authority).publicKey(), orderId);
+  }
+
+  Instruction cancelOrder(final PublicKey authority,
+                          final PublicKey user,
+                          final int orderId);
+
+  Instruction cancelOrders(final int[] orderIds);
+
+  Instruction cancelOrders(final PublicKey authority,
+                           final PublicKey user,
+                           final int[] orderIds);
+
+  Instruction cancelOrderByUserId(final int orderId);
+
+  Instruction cancelOrderByUserId(final PublicKey authority,
+                                  final PublicKey user,
+                                  final int orderId);
+
+  Instruction cancelAllOrders();
+
+  Instruction cancelAllOrders(final PublicKey authority,
+                              final PublicKey user);
+
+  Instruction cancelAllSpotOrders();
+
+  Instruction cancelAllSpotOrders(final PublicKey authority, final PublicKey user);
+
+  Instruction cancelAllPerpOrders();
+
+  Instruction cancelAllPerpOrders(final PublicKey authority, final PublicKey user);
+
+  Instruction cancelAllOrders(final MarketConfig marketConfig);
+
+  Instruction cancelAllOrders(final PublicKey authority,
+                              final PublicKey user,
+                              final MarketConfig marketConfig);
 }
