@@ -35,6 +35,12 @@ public interface DriftProgramClient {
 
   DriftExtraAccounts extraAccounts();
 
+  default SpotMarketConfig spotMarket(final String asset) {
+    return spotMarket(DriftAsset.valueOf(asset));
+  }
+
+  SpotMarketConfig spotMarket(final DriftAsset asset);
+
   PerpMarketConfig perpMarket(final DriftProduct product);
 
   PublicKey authority();

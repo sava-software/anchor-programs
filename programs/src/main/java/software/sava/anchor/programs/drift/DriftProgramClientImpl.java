@@ -48,6 +48,11 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
+  public SpotMarketConfig spotMarket(final DriftAsset asset) {
+    return accounts.spotMarketConfig(asset);
+  }
+
+  @Override
   public PerpMarketConfig perpMarket(final DriftProduct product) {
     return accounts.perpMarketConfig(product);
   }
