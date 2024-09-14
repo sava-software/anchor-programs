@@ -20,21 +20,6 @@ public interface DriftProgramClient {
   BigInteger FUNDING_RATE_BUFFER = BigInteger.valueOf(10).pow(3);
   BigDecimal FUNDING_RATE_BUFFER_BD = new BigDecimal(FUNDING_RATE_BUFFER);
 
-  BigInteger QUOTE_PRECISION = BigInteger.valueOf(10).pow(6);
-  BigDecimal QUOTE_PRECISION_BD = new BigDecimal(QUOTE_PRECISION);
-
-  BigInteger PEG_PRECISION = QUOTE_PRECISION;
-  BigDecimal PEG_PRECISION_BD = QUOTE_PRECISION_BD;
-
-  BigInteger PRICE_PRECISION = QUOTE_PRECISION;
-  BigDecimal PRICE_PRECISION_BD = QUOTE_PRECISION_BD;
-
-  BigInteger AMM_RESERVE_PRECISION = BigInteger.valueOf(10).pow(9);
-  BigDecimal AMM_RESERVE_PRECISION_BD = new BigDecimal(AMM_RESERVE_PRECISION);
-
-  BigInteger BASE_PRECISION = AMM_RESERVE_PRECISION;
-  BigDecimal BASE_PRECISION_BD = AMM_RESERVE_PRECISION_BD;
-
   static DriftProgramClient createClient(final NativeProgramAccountClient nativeProgramAccountClient,
                                          final DriftAccounts accounts) {
     return new DriftProgramClientImpl(nativeProgramAccountClient, accounts);
