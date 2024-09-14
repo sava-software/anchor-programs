@@ -153,14 +153,14 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction cancelOrderByUserId(final int orderId) {
-    return cancelOrderByUserId(authority, user, orderId);
+  public Instruction cancelOrderByUserOrderId(final int orderId) {
+    return cancelOrderByUserOrderId(authority, user, orderId);
   }
 
   @Override
-  public Instruction cancelOrderByUserId(final PublicKey authority,
-                                         final PublicKey user,
-                                         final int orderId) {
+  public Instruction cancelOrderByUserOrderId(final PublicKey authority,
+                                              final PublicKey user,
+                                              final int orderId) {
     return DriftProgram.cancelOrderByUserId(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),

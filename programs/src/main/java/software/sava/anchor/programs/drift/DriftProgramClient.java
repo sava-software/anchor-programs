@@ -121,11 +121,11 @@ public interface DriftProgramClient {
                            final PublicKey user,
                            final int[] orderIds);
 
-  Instruction cancelOrderByUserId(final int orderId);
+  Instruction cancelOrderByUserOrderId(final int orderId);
 
-  Instruction cancelOrderByUserId(final PublicKey authority,
-                                  final PublicKey user,
-                                  final int orderId);
+  Instruction cancelOrderByUserOrderId(final PublicKey authority,
+                                       final PublicKey user,
+                                       final int orderId);
 
   Instruction cancelAllOrders();
 
