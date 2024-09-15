@@ -57,7 +57,7 @@ public final class LimitOrderProgram {
 
     final byte[] _data = new byte[
         24
-        + (expiredAt.isEmpty() ? 1 : 9)
+        + (expiredAt == null || expiredAt.isEmpty() ? 1 : 9)
     ];
     int i = writeDiscriminator(INITIALIZE_ORDER_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, makingAmount);
@@ -101,7 +101,7 @@ public final class LimitOrderProgram {
 
     @Override
     public int l() {
-      return 8 + 8 + 8 + (expiredAt.isEmpty() ? 1 : 9);
+      return 8 + 8 + 8 + (expiredAt == null || expiredAt.isEmpty() ? 1 : 9);
     }
   }
 

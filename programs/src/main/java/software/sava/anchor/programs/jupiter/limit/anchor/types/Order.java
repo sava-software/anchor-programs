@@ -224,7 +224,7 @@ public record Order(PublicKey _address,
          + 32
          + 32
          + 8
-         + (expiredAt.isEmpty() ? 1 : 9)
+         + (expiredAt == null || expiredAt.isEmpty() ? 1 : 9)
          + 32
          + Borsh.lenOptional(referral, 32);
   }

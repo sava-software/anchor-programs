@@ -71,6 +71,6 @@ public record CreateOrderEvent(PublicKey orderKey,
          + 32
          + 8
          + 8
-         + (expiredAt.isEmpty() ? 1 : 9);
+         + (expiredAt == null || expiredAt.isEmpty() ? 1 : 9);
   }
 }

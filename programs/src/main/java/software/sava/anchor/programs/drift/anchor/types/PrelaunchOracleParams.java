@@ -39,6 +39,6 @@ public record PrelaunchOracleParams(int perpMarketIndex,
 
   @Override
   public int l() {
-    return 2 + (price.isEmpty() ? 1 : 9) + (maxPrice.isEmpty() ? 1 : 9);
+    return 2 + (price == null || price.isEmpty() ? 1 : 9) + (maxPrice == null || maxPrice.isEmpty() ? 1 : 9);
   }
 }

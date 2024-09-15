@@ -99,12 +99,12 @@ public record ConfigMarinadeParams(Fee rewardsFee,
   @Override
   public int l() {
     return Borsh.lenOptional(rewardsFee)
-         + (slotsForStakeDelta.isEmpty() ? 1 : 9)
-         + (minStake.isEmpty() ? 1 : 9)
-         + (minDeposit.isEmpty() ? 1 : 9)
-         + (minWithdraw.isEmpty() ? 1 : 9)
-         + (stakingSolCap.isEmpty() ? 1 : 9)
-         + (liquiditySolCap.isEmpty() ? 1 : 9)
+         + (slotsForStakeDelta == null || slotsForStakeDelta.isEmpty() ? 1 : 9)
+         + (minStake == null || minStake.isEmpty() ? 1 : 9)
+         + (minDeposit == null || minDeposit.isEmpty() ? 1 : 9)
+         + (minWithdraw == null || minWithdraw.isEmpty() ? 1 : 9)
+         + (stakingSolCap == null || stakingSolCap.isEmpty() ? 1 : 9)
+         + (liquiditySolCap == null || liquiditySolCap.isEmpty() ? 1 : 9)
          + (withdrawStakeAccountEnabled == null ? 1 : 2)
          + Borsh.lenOptional(delayedUnstakeFee)
          + Borsh.lenOptional(withdrawStakeAccountFee)

@@ -122,18 +122,18 @@ public record ModifyOrderParams(PositionDirection direction,
   @Override
   public int l() {
     return Borsh.lenOptional(direction)
-         + (baseAssetAmount.isEmpty() ? 1 : 9)
-         + (price.isEmpty() ? 1 : 9)
+         + (baseAssetAmount == null || baseAssetAmount.isEmpty() ? 1 : 9)
+         + (price == null || price.isEmpty() ? 1 : 9)
          + (reduceOnly == null ? 1 : 2)
          + Borsh.lenOptional(postOnly)
          + (immediateOrCancel == null ? 1 : 2)
-         + (maxTs.isEmpty() ? 1 : 9)
-         + (triggerPrice.isEmpty() ? 1 : 9)
+         + (maxTs == null || maxTs.isEmpty() ? 1 : 9)
+         + (triggerPrice == null || triggerPrice.isEmpty() ? 1 : 9)
          + Borsh.lenOptional(triggerCondition)
-         + (oraclePriceOffset.isEmpty() ? 1 : 5)
-         + (auctionDuration.isEmpty() ? 1 : 2)
-         + (auctionStartPrice.isEmpty() ? 1 : 9)
-         + (auctionEndPrice.isEmpty() ? 1 : 9)
+         + (oraclePriceOffset == null || oraclePriceOffset.isEmpty() ? 1 : 5)
+         + (auctionDuration == null || auctionDuration.isEmpty() ? 1 : 2)
+         + (auctionStartPrice == null || auctionStartPrice.isEmpty() ? 1 : 9)
+         + (auctionEndPrice == null || auctionEndPrice.isEmpty() ? 1 : 9)
          + Borsh.lenOptional(policy);
   }
 }

@@ -116,7 +116,7 @@ public record LiquidUnstakeEvent(PublicKey state,
          + 32
          + 8
          + 8
-         + (treasuryMsolBalance.isEmpty() ? 1 : 9)
+         + (treasuryMsolBalance == null || treasuryMsolBalance.isEmpty() ? 1 : 9)
          + 8
          + 8
          + 8
