@@ -58,7 +58,7 @@ record DriftExtraAccountsRecord(DriftAccounts driftAccounts,
   }
 
   @Override
-  public void placeOrder(final User user, final MarketConfig marketConfig) {
+  public void userAndMarket(final User user, final MarketConfig marketConfig) {
     userAccounts(user);
     market(marketConfig);
   }

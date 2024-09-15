@@ -25,5 +25,10 @@
   {
     "name": "Marinade",
     "program": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD"
+  },
+  {
+    "name": "Meteora DLMM",
+    "program": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
+    "package": "meteora.dlmm"
   }
 ]

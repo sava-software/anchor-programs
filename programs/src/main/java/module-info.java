@@ -15,6 +15,8 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.marinade.anchor.types;
   exports software.sava.anchor.programs.marinade.anchor;
   exports software.sava.anchor.programs.marinade;
+  exports software.sava.anchor.programs.meteora.dlmm.anchor.types;
+  exports software.sava.anchor.programs.meteora.dlmm.anchor;
   requires java.base;
   requires java.net.http;
   requires org.bouncycastle.provider;
