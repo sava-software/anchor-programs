@@ -14,4 +14,6 @@ public interface SpotMarkets {
   SpotMarketConfig marketConfig(final int index);
 
   SpotMarketConfig forAsset(final DriftAsset asset);
+
+  int numMarkets();
 }

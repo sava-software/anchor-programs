@@ -14,4 +14,9 @@ record SpotMarketsRecord(SpotMarketConfig[] marketConfigs,
   public SpotMarketConfig forAsset(final DriftAsset asset) {
     return byAsset.get(asset);
   }
+
+  @Override
+  public int numMarkets() {
+    return marketConfigs.length;
+  }
 }
