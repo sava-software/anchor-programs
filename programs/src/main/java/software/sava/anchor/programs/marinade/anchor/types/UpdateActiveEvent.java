@@ -128,9 +128,9 @@ public record UpdateActiveEvent(PublicKey state,
          + 4
          + 32
          + Borsh.len(delegationChange)
-         + 9
+         + (delegationGrowthMsolFees.isEmpty() ? 1 : 9)
          + 8
-         + 9
+         + (extraMsolFees.isEmpty() ? 1 : 9)
          + 8
          + 8
          + Borsh.len(msolPriceChange)

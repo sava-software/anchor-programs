@@ -47,6 +47,6 @@ public record ConfigLpParams(Fee minFee,
 
   @Override
   public int l() {
-    return Borsh.lenOptional(minFee) + Borsh.lenOptional(maxFee) + 9 + Borsh.lenOptional(treasuryCut);
+    return Borsh.lenOptional(minFee) + Borsh.lenOptional(maxFee) + (liquidityTarget.isEmpty() ? 1 : 9) + Borsh.lenOptional(treasuryCut);
   }
 }

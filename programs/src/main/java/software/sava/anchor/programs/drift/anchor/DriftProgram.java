@@ -452,7 +452,10 @@ public final class DriftProgram {
       createReadOnlySigner(authorityKey)
     );
 
-    final byte[] _data = new byte[13];
+    final byte[] _data = new byte[
+        8
+        + (orderId.isEmpty() ? 1 : 5)
+    ];
     int i = writeDiscriminator(CANCEL_ORDER_DISCRIMINATOR, _data, 0);
     Borsh.writeOptional(orderId, _data, i);
 
@@ -480,7 +483,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + 5;
+      return 8 + (orderId.isEmpty() ? 1 : 5);
     }
   }
 
@@ -547,10 +550,15 @@ public final class DriftProgram {
       createReadOnlySigner(authorityKey)
     );
 
-    final byte[] _data = new byte[13 + (marketType == null ? 0 : Borsh.len(marketType)) + (direction == null ? 0 : Borsh.len(direction))];
+    final byte[] _data = new byte[
+        8
+        + (marketType == null ? 1 : (1 + Borsh.len(marketType)))
+        + (marketIndex.isEmpty() ? 1 : 3)
+        + (direction == null ? 1 : (1 + Borsh.len(direction)))
+    ];
     int i = writeDiscriminator(CANCEL_ORDERS_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptional(marketType, _data, i);
-    i += Borsh.writeOptional(marketIndex, _data, i);
+    i += Borsh.writeOptionalShort(marketIndex, _data, i);
     Borsh.writeOptional(direction, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -583,14 +591,14 @@ public final class DriftProgram {
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.writeOptional(marketType, _data, i);
-      i += Borsh.writeOptional(marketIndex, _data, i);
+      i += Borsh.writeOptionalShort(marketIndex, _data, i);
       i += Borsh.writeOptional(direction, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + Borsh.lenOptional(marketType) + 3 + Borsh.lenOptional(direction);
+      return 8 + Borsh.lenOptional(marketType) + (marketIndex.isEmpty() ? 1 : 3) + Borsh.lenOptional(direction);
     }
   }
 
@@ -653,7 +661,10 @@ public final class DriftProgram {
       createReadOnlySigner(authorityKey)
     );
 
-    final byte[] _data = new byte[13 + Borsh.len(modifyOrderParams)];
+    final byte[] _data = new byte[
+        8
+        + (orderId.isEmpty() ? 1 : 5) + Borsh.len(modifyOrderParams)
+    ];
     int i = writeDiscriminator(MODIFY_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptional(orderId, _data, i);
     Borsh.write(modifyOrderParams, _data, i);
@@ -687,7 +698,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + 5 + Borsh.len(modifyOrderParams);
+      return 8 + (orderId.isEmpty() ? 1 : 5) + Borsh.len(modifyOrderParams);
     }
   }
 
@@ -759,7 +770,10 @@ public final class DriftProgram {
       createReadOnlySigner(authorityKey)
     );
 
-    final byte[] _data = new byte[13 + Borsh.len(params)];
+    final byte[] _data = new byte[
+        8 + Borsh.len(params)
+        + (makerOrderId.isEmpty() ? 1 : 5)
+    ];
     int i = writeDiscriminator(PLACE_AND_TAKE_PERP_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.write(params, _data, i);
     Borsh.writeOptional(makerOrderId, _data, i);
@@ -791,7 +805,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + Borsh.len(params) + 5;
+      return 8 + Borsh.len(params) + (makerOrderId.isEmpty() ? 1 : 5);
     }
   }
 
@@ -914,7 +928,11 @@ public final class DriftProgram {
       createReadOnlySigner(authorityKey)
     );
 
-    final byte[] _data = new byte[14 + Borsh.len(params) + (fulfillmentType == null ? 0 : Borsh.len(fulfillmentType))];
+    final byte[] _data = new byte[
+        8 + Borsh.len(params)
+        + (fulfillmentType == null ? 1 : (1 + Borsh.len(fulfillmentType)))
+        + (makerOrderId.isEmpty() ? 1 : 5)
+    ];
     int i = writeDiscriminator(PLACE_AND_TAKE_SPOT_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.write(params, _data, i);
     i += Borsh.writeOptional(fulfillmentType, _data, i);
@@ -955,7 +973,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + Borsh.len(params) + Borsh.lenOptional(fulfillmentType) + 5;
+      return 8 + Borsh.len(params) + Borsh.lenOptional(fulfillmentType) + (makerOrderId.isEmpty() ? 1 : 5);
     }
   }
 
@@ -980,7 +998,10 @@ public final class DriftProgram {
       createReadOnlySigner(authorityKey)
     );
 
-    final byte[] _data = new byte[13 + Borsh.len(params) + (fulfillmentType == null ? 0 : Borsh.len(fulfillmentType))];
+    final byte[] _data = new byte[
+        12 + Borsh.len(params)
+        + (fulfillmentType == null ? 1 : (1 + Borsh.len(fulfillmentType)))
+    ];
     int i = writeDiscriminator(PLACE_AND_MAKE_SPOT_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.write(params, _data, i);
     putInt32LE(_data, i, takerOrderId);
@@ -1185,7 +1206,11 @@ public final class DriftProgram {
       createRead(instructionsKey)
     );
 
-    final byte[] _data = new byte[22 + (reduceOnly == null ? 0 : Borsh.len(reduceOnly))];
+    final byte[] _data = new byte[
+        12
+        + (limitPrice.isEmpty() ? 1 : 9)
+        + (reduceOnly == null ? 1 : (1 + Borsh.len(reduceOnly)))
+    ];
     int i = writeDiscriminator(END_SWAP_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, inMarketIndex);
     i += 2;
@@ -1239,7 +1264,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + 2 + 2 + 9 + Borsh.lenOptional(reduceOnly);
+      return 8 + 2 + 2 + (limitPrice.isEmpty() ? 1 : 9) + Borsh.lenOptional(reduceOnly);
     }
   }
 
@@ -1779,7 +1804,11 @@ public final class DriftProgram {
       createWrite(userStatsKey)
     );
 
-    final byte[] _data = new byte[18];
+    final byte[] _data = new byte[
+        8
+        + (orderId.isEmpty() ? 1 : 5)
+        + (makerOrderId.isEmpty() ? 1 : 5)
+    ];
     int i = writeDiscriminator(FILL_PERP_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptional(orderId, _data, i);
     Borsh.writeOptional(makerOrderId, _data, i);
@@ -1813,7 +1842,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + 5 + 5;
+      return 8 + (orderId.isEmpty() ? 1 : 5) + (makerOrderId.isEmpty() ? 1 : 5);
     }
   }
 
@@ -1855,7 +1884,12 @@ public final class DriftProgram {
       createWrite(userStatsKey)
     );
 
-    final byte[] _data = new byte[19 + (fulfillmentType == null ? 0 : Borsh.len(fulfillmentType))];
+    final byte[] _data = new byte[
+        8
+        + (orderId.isEmpty() ? 1 : 5)
+        + (fulfillmentType == null ? 1 : (1 + Borsh.len(fulfillmentType)))
+        + (makerOrderId.isEmpty() ? 1 : 5)
+    ];
     int i = writeDiscriminator(FILL_SPOT_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptional(orderId, _data, i);
     i += Borsh.writeOptional(fulfillmentType, _data, i);
@@ -1898,7 +1932,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + 5 + Borsh.lenOptional(fulfillmentType) + 5;
+      return 8 + (orderId.isEmpty() ? 1 : 5) + Borsh.lenOptional(fulfillmentType) + (makerOrderId.isEmpty() ? 1 : 5);
     }
   }
 
@@ -2277,7 +2311,10 @@ public final class DriftProgram {
       createWrite(userStatsKey)
     );
 
-    final byte[] _data = new byte[27];
+    final byte[] _data = new byte[
+        18
+        + (limitPrice.isEmpty() ? 1 : 9)
+    ];
     int i = writeDiscriminator(LIQUIDATE_PERP_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
@@ -2320,7 +2357,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + 2 + 8 + 9;
+      return 8 + 2 + 8 + (limitPrice.isEmpty() ? 1 : 9);
     }
   }
 
@@ -2400,7 +2437,10 @@ public final class DriftProgram {
       createWrite(userStatsKey)
     );
 
-    final byte[] _data = new byte[37];
+    final byte[] _data = new byte[
+        28
+        + (limitPrice.isEmpty() ? 1 : 9)
+    ];
     int i = writeDiscriminator(LIQUIDATE_SPOT_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, assetMarketIndex);
     i += 2;
@@ -2454,7 +2494,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + 2 + 2 + 16 + 9;
+      return 8 + 2 + 2 + 16 + (limitPrice.isEmpty() ? 1 : 9);
     }
   }
 
@@ -2480,7 +2520,10 @@ public final class DriftProgram {
       createWrite(userStatsKey)
     );
 
-    final byte[] _data = new byte[37];
+    final byte[] _data = new byte[
+        28
+        + (limitPrice.isEmpty() ? 1 : 9)
+    ];
     int i = writeDiscriminator(LIQUIDATE_BORROW_FOR_PERP_PNL_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, perpMarketIndex);
     i += 2;
@@ -2534,7 +2577,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + 2 + 2 + 16 + 9;
+      return 8 + 2 + 2 + 16 + (limitPrice.isEmpty() ? 1 : 9);
     }
   }
 
@@ -2560,7 +2603,10 @@ public final class DriftProgram {
       createWrite(userStatsKey)
     );
 
-    final byte[] _data = new byte[37];
+    final byte[] _data = new byte[
+        28
+        + (limitPrice.isEmpty() ? 1 : 9)
+    ];
     int i = writeDiscriminator(LIQUIDATE_PERP_PNL_FOR_DEPOSIT_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, perpMarketIndex);
     i += 2;
@@ -2614,7 +2660,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + 2 + 2 + 16 + 9;
+      return 8 + 2 + 2 + 16 + (limitPrice.isEmpty() ? 1 : 9);
     }
   }
 
@@ -5862,7 +5908,10 @@ public final class DriftProgram {
       createWrite(spotMarketKey)
     );
 
-    final byte[] _data = new byte[22];
+    final byte[] _data = new byte[
+        20
+        + (minBorrowRate.isEmpty() ? 1 : 2)
+    ];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_BORROW_RATE_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, optimalUtilization);
     i += 4;
@@ -5870,7 +5919,7 @@ public final class DriftProgram {
     i += 4;
     putInt32LE(_data, i, maxBorrowRate);
     i += 4;
-    Borsh.writeOptional(minBorrowRate, _data, i);
+    Borsh.writeOptionalByte(minBorrowRate, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -5910,13 +5959,13 @@ public final class DriftProgram {
       i += 4;
       putInt32LE(_data, i, maxBorrowRate);
       i += 4;
-      i += Borsh.writeOptional(minBorrowRate, _data, i);
+      i += Borsh.writeOptionalByte(minBorrowRate, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 4 + 4 + 4 + 2;
+      return 8 + 4 + 4 + 4 + (minBorrowRate.isEmpty() ? 1 : 2);
     }
   }
 
@@ -7775,7 +7824,11 @@ public final class DriftProgram {
       createWrite(perpMarketKey)
     );
 
-    final byte[] _data = new byte[18];
+    final byte[] _data = new byte[
+        8
+        + (numberOfUsers.isEmpty() ? 1 : 5)
+        + (numberOfUsersWithBase.isEmpty() ? 1 : 5)
+    ];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_NUMBER_OF_USERS_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptional(numberOfUsers, _data, i);
     Borsh.writeOptional(numberOfUsersWithBase, _data, i);
@@ -7809,7 +7862,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + 5 + 5;
+      return 8 + (numberOfUsers.isEmpty() ? 1 : 5) + (numberOfUsersWithBase.isEmpty() ? 1 : 5);
     }
   }
 
@@ -7924,11 +7977,16 @@ public final class DriftProgram {
       createWrite(perpMarketKey)
     );
 
-    final byte[] _data = new byte[14];
+    final byte[] _data = new byte[
+        8
+        + (fuelBoostTaker.isEmpty() ? 1 : 2)
+        + (fuelBoostMaker.isEmpty() ? 1 : 2)
+        + (fuelBoostPosition.isEmpty() ? 1 : 2)
+    ];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_FUEL_DISCRIMINATOR, _data, 0);
-    i += Borsh.writeOptional(fuelBoostTaker, _data, i);
-    i += Borsh.writeOptional(fuelBoostMaker, _data, i);
-    Borsh.writeOptional(fuelBoostPosition, _data, i);
+    i += Borsh.writeOptionalByte(fuelBoostTaker, _data, i);
+    i += Borsh.writeOptionalByte(fuelBoostMaker, _data, i);
+    Borsh.writeOptionalByte(fuelBoostPosition, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -7959,15 +8017,15 @@ public final class DriftProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeOptional(fuelBoostTaker, _data, i);
-      i += Borsh.writeOptional(fuelBoostMaker, _data, i);
-      i += Borsh.writeOptional(fuelBoostPosition, _data, i);
+      i += Borsh.writeOptionalByte(fuelBoostTaker, _data, i);
+      i += Borsh.writeOptionalByte(fuelBoostMaker, _data, i);
+      i += Borsh.writeOptionalByte(fuelBoostPosition, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 2 + 2 + 2;
+      return 8 + (fuelBoostTaker.isEmpty() ? 1 : 2) + (fuelBoostMaker.isEmpty() ? 1 : 2) + (fuelBoostPosition.isEmpty() ? 1 : 2);
     }
   }
 
@@ -7988,13 +8046,20 @@ public final class DriftProgram {
       createWrite(spotMarketKey)
     );
 
-    final byte[] _data = new byte[18];
+    final byte[] _data = new byte[
+        8
+        + (fuelBoostDeposits.isEmpty() ? 1 : 2)
+        + (fuelBoostBorrows.isEmpty() ? 1 : 2)
+        + (fuelBoostTaker.isEmpty() ? 1 : 2)
+        + (fuelBoostMaker.isEmpty() ? 1 : 2)
+        + (fuelBoostInsurance.isEmpty() ? 1 : 2)
+    ];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_FUEL_DISCRIMINATOR, _data, 0);
-    i += Borsh.writeOptional(fuelBoostDeposits, _data, i);
-    i += Borsh.writeOptional(fuelBoostBorrows, _data, i);
-    i += Borsh.writeOptional(fuelBoostTaker, _data, i);
-    i += Borsh.writeOptional(fuelBoostMaker, _data, i);
-    Borsh.writeOptional(fuelBoostInsurance, _data, i);
+    i += Borsh.writeOptionalByte(fuelBoostDeposits, _data, i);
+    i += Borsh.writeOptionalByte(fuelBoostBorrows, _data, i);
+    i += Borsh.writeOptionalByte(fuelBoostTaker, _data, i);
+    i += Borsh.writeOptionalByte(fuelBoostMaker, _data, i);
+    Borsh.writeOptionalByte(fuelBoostInsurance, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -8040,21 +8105,21 @@ public final class DriftProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeOptional(fuelBoostDeposits, _data, i);
-      i += Borsh.writeOptional(fuelBoostBorrows, _data, i);
-      i += Borsh.writeOptional(fuelBoostTaker, _data, i);
-      i += Borsh.writeOptional(fuelBoostMaker, _data, i);
-      i += Borsh.writeOptional(fuelBoostInsurance, _data, i);
+      i += Borsh.writeOptionalByte(fuelBoostDeposits, _data, i);
+      i += Borsh.writeOptionalByte(fuelBoostBorrows, _data, i);
+      i += Borsh.writeOptionalByte(fuelBoostTaker, _data, i);
+      i += Borsh.writeOptionalByte(fuelBoostMaker, _data, i);
+      i += Borsh.writeOptionalByte(fuelBoostInsurance, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 2
-           + 2
-           + 2
-           + 2
-           + 2;
+      return 8 + (fuelBoostDeposits.isEmpty() ? 1 : 2)
+           + (fuelBoostBorrows.isEmpty() ? 1 : 2)
+           + (fuelBoostTaker.isEmpty() ? 1 : 2)
+           + (fuelBoostMaker.isEmpty() ? 1 : 2)
+           + (fuelBoostInsurance.isEmpty() ? 1 : 2);
     }
   }
 
@@ -8077,7 +8142,14 @@ public final class DriftProgram {
       createWrite(userStatsKey)
     );
 
-    final byte[] _data = new byte[33];
+    final byte[] _data = new byte[
+        8
+        + (fuelBoostDeposits.isEmpty() ? 1 : 5)
+        + (fuelBoostBorrows.isEmpty() ? 1 : 5)
+        + (fuelBoostTaker.isEmpty() ? 1 : 5)
+        + (fuelBoostMaker.isEmpty() ? 1 : 5)
+        + (fuelBoostInsurance.isEmpty() ? 1 : 5)
+    ];
     int i = writeDiscriminator(INIT_USER_FUEL_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptional(fuelBoostDeposits, _data, i);
     i += Borsh.writeOptional(fuelBoostBorrows, _data, i);
@@ -8139,11 +8211,11 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + 5
-           + 5
-           + 5
-           + 5
-           + 5;
+      return 8 + (fuelBoostDeposits.isEmpty() ? 1 : 5)
+           + (fuelBoostBorrows.isEmpty() ? 1 : 5)
+           + (fuelBoostTaker.isEmpty() ? 1 : 5)
+           + (fuelBoostMaker.isEmpty() ? 1 : 5)
+           + (fuelBoostInsurance.isEmpty() ? 1 : 5);
     }
   }
 
@@ -8456,7 +8528,11 @@ public final class DriftProgram {
       createRead(stateKey)
     );
 
-    final byte[] _data = new byte[26 + (whitelistedSigners == null || whitelistedSigners.length == 0 ? 0 : Borsh.fixedLen(whitelistedSigners))];
+    final byte[] _data = new byte[
+        8
+        + (whitelistedSigners == null || whitelistedSigners.length == 0 ? 1 : (1 + Borsh.fixedLen(whitelistedSigners)))
+        + (maxTransferPerEpoch == null ? 1 : 17)
+    ];
     int i = writeDiscriminator(UPDATE_PROTOCOL_IF_SHARES_TRANSFER_CONFIG_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptional(whitelistedSigners, _data, i);
     Borsh.writeOptional(maxTransferPerEpoch, _data, i);

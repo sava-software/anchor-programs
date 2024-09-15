@@ -172,11 +172,11 @@ public record FundOpenfundsModel(String fundDomicileAlpha2, byte[] _fundDomicile
          + Borsh.lenOptional(_fundCurrency)
          + Borsh.lenOptional(_fundLaunchDate)
          + Borsh.lenOptional(_investmentObjective)
-         + 2
-         + 2
-         + 2
-         + 2
-         + 2
+         + (isEtc == null ? 1 : 2)
+         + (isEuDirectiveRelevant == null ? 1 : 2)
+         + (isFundOfFunds == null ? 1 : 2)
+         + (isPassiveFund == null ? 1 : 2)
+         + (isReit == null ? 1 : 2)
          + Borsh.lenOptional(_legalForm)
          + Borsh.lenOptional(_legalFundNameOnly)
          + Borsh.lenOptional(_openEndedOrClosedEndedFundStructure)

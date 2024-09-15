@@ -55,7 +55,10 @@ public final class LimitOrderProgram {
       createRead(rentKey)
     );
 
-    final byte[] _data = new byte[33];
+    final byte[] _data = new byte[
+        24
+        + (expiredAt.isEmpty() ? 1 : 9)
+    ];
     int i = writeDiscriminator(INITIALIZE_ORDER_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, makingAmount);
     i += 8;
@@ -98,7 +101,7 @@ public final class LimitOrderProgram {
 
     @Override
     public int l() {
-      return 8 + 8 + 8 + 9;
+      return 8 + 8 + 8 + (expiredAt.isEmpty() ? 1 : 9);
     }
   }
 

@@ -118,7 +118,7 @@ public record ShareClassModel(String symbol, byte[] _symbol,
          + Borsh.lenOptional(fundId, 32)
          + Borsh.lenOptional(asset, 32)
          + Borsh.lenOptional(_imageUri)
-         + 2
+         + (isRawOpenfunds == null ? 1 : 2)
          + Borsh.lenOptional(rawOpenfunds)
          + Borsh.len(allowlist)
          + Borsh.len(blocklist);

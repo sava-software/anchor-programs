@@ -278,7 +278,10 @@ public final class GlamProgram {
       createRead(solanaAccounts.systemProgram())
     );
 
-    final byte[] _data = new byte[41];
+    final byte[] _data = new byte[
+        8
+        + (trader == null ? 1 : 33)
+    ];
     int i = writeDiscriminator(DRIFT_INITIALIZE_DISCRIMINATOR, _data, 0);
     Borsh.writeOptional(trader, _data, i);
 
@@ -327,7 +330,10 @@ public final class GlamProgram {
       createRead(driftProgramKey)
     );
 
-    final byte[] _data = new byte[41];
+    final byte[] _data = new byte[
+        8
+        + (trader == null ? 1 : 33)
+    ];
     int i = writeDiscriminator(DRIFT_UPDATE_DELEGATED_TRADER_DISCRIMINATOR, _data, 0);
     Borsh.writeOptional(trader, _data, i);
 

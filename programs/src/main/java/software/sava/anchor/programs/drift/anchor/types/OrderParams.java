@@ -119,7 +119,7 @@ public record OrderParams(OrderType orderType,
     i += Borsh.writeOptional(triggerPrice, _data, i);
     i += Borsh.write(triggerCondition, _data, i);
     i += Borsh.writeOptional(oraclePriceOffset, _data, i);
-    i += Borsh.writeOptional(auctionDuration, _data, i);
+    i += Borsh.writeOptionalByte(auctionDuration, _data, i);
     i += Borsh.writeOptional(auctionStartPrice, _data, i);
     i += Borsh.writeOptional(auctionEndPrice, _data, i);
     return i - offset;
@@ -137,12 +137,12 @@ public record OrderParams(OrderType orderType,
          + 1
          + Borsh.len(postOnly)
          + 1
-         + 9
-         + 9
+         + (maxTs.isEmpty() ? 1 : 9)
+         + (triggerPrice.isEmpty() ? 1 : 9)
          + Borsh.len(triggerCondition)
-         + 5
-         + 2
-         + 9
-         + 9;
+         + (oraclePriceOffset.isEmpty() ? 1 : 5)
+         + (auctionDuration.isEmpty() ? 1 : 2)
+         + (auctionStartPrice.isEmpty() ? 1 : 9)
+         + (auctionEndPrice.isEmpty() ? 1 : 9);
   }
 }

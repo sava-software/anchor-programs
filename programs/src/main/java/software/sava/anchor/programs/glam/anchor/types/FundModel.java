@@ -153,7 +153,7 @@ public record FundModel(PublicKey id,
          + Borsh.lenOptional(_name)
          + Borsh.lenOptional(_uri)
          + Borsh.lenOptional(_openfundsUri)
-         + 2
+         + (isEnabled == null ? 1 : 2)
          + Borsh.len(assets)
          + Borsh.len(assetsWeights)
          + Borsh.len(shareClasses)
@@ -162,7 +162,7 @@ public record FundModel(PublicKey id,
          + Borsh.lenOptional(created)
          + Borsh.len(delegateAcls)
          + Borsh.len(integrationAcls)
-         + 2
+         + (isRawOpenfunds == null ? 1 : 2)
          + Borsh.lenOptional(rawOpenfunds);
   }
 }

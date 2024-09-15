@@ -40,6 +40,6 @@ public record UpdatePerpMarketSummaryStatsParams(OptionalLong quoteAssetAmountWi
 
   @Override
   public int l() {
-    return 9 + 9 + 2;
+    return (quoteAssetAmountWithUnsettledLp.isEmpty() ? 1 : 9) + (netUnsettledFundingPnl.isEmpty() ? 1 : 9) + (updateAmmSummaryStats == null ? 1 : 2);
   }
 }

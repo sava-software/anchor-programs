@@ -290,8 +290,8 @@ public record ShareClassOpenfundsModel(String isin, byte[] _isin,
          + Borsh.lenOptional(_launchPriceCurrency)
          + Borsh.lenOptional(_launchPriceDate)
          + Borsh.lenOptional(_currencyOfMinimalOrMaximumRedemption)
-         + 2
-         + 2
+         + (hasLockUpForRedemption == null ? 1 : 2)
+         + (isValidIsin == null ? 1 : 2)
          + Borsh.lenOptional(_lockUpComment)
          + Borsh.lenOptional(_lockUpPeriodInDays)
          + Borsh.lenOptional(_maximumInitialRedemptionInAmount)

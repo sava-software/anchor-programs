@@ -103,7 +103,7 @@ public record UpdateDeactivatedEvent(PublicKey state,
          + 32
          + 8
          + 8
-         + 9
+         + (msolFees.isEmpty() ? 1 : 9)
          + Borsh.len(msolPriceChange)
          + Borsh.len(rewardFeeUsed)
          + 8

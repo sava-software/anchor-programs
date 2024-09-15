@@ -62,7 +62,13 @@ public final class DcaProgram {
       createRead(programKey)
     );
 
-    final byte[] _data = new byte[69];
+    final byte[] _data = new byte[
+        40
+        + (minOutAmount.isEmpty() ? 1 : 9)
+        + (maxOutAmount.isEmpty() ? 1 : 9)
+        + (startAt.isEmpty() ? 1 : 9)
+        + (closeWsolInAta == null ? 1 : 2)
+    ];
     int i = writeDiscriminator(OPEN_DCA_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, applicationIdx);
     i += 8;
@@ -152,10 +158,10 @@ public final class DcaProgram {
            + 8
            + 8
            + 8
-           + 9
-           + 9
-           + 9
-           + 2;
+           + (minOutAmount.isEmpty() ? 1 : 9)
+           + (maxOutAmount.isEmpty() ? 1 : 9)
+           + (startAt.isEmpty() ? 1 : 9)
+           + (closeWsolInAta == null ? 1 : 2);
     }
   }
 
@@ -198,7 +204,12 @@ public final class DcaProgram {
       createRead(programKey)
     );
 
-    final byte[] _data = new byte[67];
+    final byte[] _data = new byte[
+        40
+        + (minOutAmount.isEmpty() ? 1 : 9)
+        + (maxOutAmount.isEmpty() ? 1 : 9)
+        + (startAt.isEmpty() ? 1 : 9)
+    ];
     int i = writeDiscriminator(OPEN_DCA_V2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, applicationIdx);
     i += 8;
@@ -280,9 +291,9 @@ public final class DcaProgram {
            + 8
            + 8
            + 8
-           + 9
-           + 9
-           + 9;
+           + (minOutAmount.isEmpty() ? 1 : 9)
+           + (maxOutAmount.isEmpty() ? 1 : 9)
+           + (startAt.isEmpty() ? 1 : 9);
     }
   }
 

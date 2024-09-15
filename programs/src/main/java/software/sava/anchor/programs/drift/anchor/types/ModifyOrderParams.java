@@ -112,7 +112,7 @@ public record ModifyOrderParams(PositionDirection direction,
     i += Borsh.writeOptional(triggerPrice, _data, i);
     i += Borsh.writeOptional(triggerCondition, _data, i);
     i += Borsh.writeOptional(oraclePriceOffset, _data, i);
-    i += Borsh.writeOptional(auctionDuration, _data, i);
+    i += Borsh.writeOptionalByte(auctionDuration, _data, i);
     i += Borsh.writeOptional(auctionStartPrice, _data, i);
     i += Borsh.writeOptional(auctionEndPrice, _data, i);
     i += Borsh.writeOptional(policy, _data, i);
@@ -122,18 +122,18 @@ public record ModifyOrderParams(PositionDirection direction,
   @Override
   public int l() {
     return Borsh.lenOptional(direction)
-         + 9
-         + 9
-         + 2
+         + (baseAssetAmount.isEmpty() ? 1 : 9)
+         + (price.isEmpty() ? 1 : 9)
+         + (reduceOnly == null ? 1 : 2)
          + Borsh.lenOptional(postOnly)
-         + 2
-         + 9
-         + 9
+         + (immediateOrCancel == null ? 1 : 2)
+         + (maxTs.isEmpty() ? 1 : 9)
+         + (triggerPrice.isEmpty() ? 1 : 9)
          + Borsh.lenOptional(triggerCondition)
-         + 5
-         + 2
-         + 9
-         + 9
+         + (oraclePriceOffset.isEmpty() ? 1 : 5)
+         + (auctionDuration.isEmpty() ? 1 : 2)
+         + (auctionStartPrice.isEmpty() ? 1 : 9)
+         + (auctionEndPrice.isEmpty() ? 1 : 9)
          + Borsh.lenOptional(policy);
   }
 }

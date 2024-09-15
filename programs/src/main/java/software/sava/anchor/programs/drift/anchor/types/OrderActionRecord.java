@@ -221,27 +221,27 @@ public record OrderActionRecord(long ts,
          + 2
          + Borsh.len(marketType)
          + Borsh.lenOptional(filler, 32)
-         + 9
-         + 9
-         + 9
-         + 9
-         + 9
-         + 9
-         + 5
-         + 9
-         + 9
+         + (fillerReward.isEmpty() ? 1 : 9)
+         + (fillRecordId.isEmpty() ? 1 : 9)
+         + (baseAssetAmountFilled.isEmpty() ? 1 : 9)
+         + (quoteAssetAmountFilled.isEmpty() ? 1 : 9)
+         + (takerFee.isEmpty() ? 1 : 9)
+         + (makerFee.isEmpty() ? 1 : 9)
+         + (referrerReward.isEmpty() ? 1 : 5)
+         + (quoteAssetAmountSurplus.isEmpty() ? 1 : 9)
+         + (spotFulfillmentMethodFee.isEmpty() ? 1 : 9)
          + Borsh.lenOptional(taker, 32)
-         + 5
+         + (takerOrderId.isEmpty() ? 1 : 5)
          + Borsh.lenOptional(takerOrderDirection)
-         + 9
-         + 9
-         + 9
+         + (takerOrderBaseAssetAmount.isEmpty() ? 1 : 9)
+         + (takerOrderCumulativeBaseAssetAmountFilled.isEmpty() ? 1 : 9)
+         + (takerOrderCumulativeQuoteAssetAmountFilled.isEmpty() ? 1 : 9)
          + Borsh.lenOptional(maker, 32)
-         + 5
+         + (makerOrderId.isEmpty() ? 1 : 5)
          + Borsh.lenOptional(makerOrderDirection)
-         + 9
-         + 9
-         + 9
+         + (makerOrderBaseAssetAmount.isEmpty() ? 1 : 9)
+         + (makerOrderCumulativeBaseAssetAmountFilled.isEmpty() ? 1 : 9)
+         + (makerOrderCumulativeQuoteAssetAmountFilled.isEmpty() ? 1 : 9)
          + 8;
   }
 }
