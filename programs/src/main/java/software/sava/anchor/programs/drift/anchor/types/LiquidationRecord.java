@@ -54,7 +54,7 @@ public record LiquidationRecord(long ts,
     final var bankrupt = _data[i] == 1;
     ++i;
     final var canceledOrderIds = Borsh.readintVector(_data, i);
-    i += Borsh.len(canceledOrderIds);
+    i += Borsh.lenVector(canceledOrderIds);
     final var liquidatePerp = LiquidatePerpRecord.read(_data, i);
     i += Borsh.len(liquidatePerp);
     final var liquidateSpot = LiquidateSpotRecord.read(_data, i);
@@ -104,7 +104,7 @@ public record LiquidationRecord(long ts,
     i += 2;
     _data[i] = (byte) (bankrupt ? 1 : 0);
     ++i;
-    i += Borsh.write(canceledOrderIds, _data, i);
+    i += Borsh.writeVector(canceledOrderIds, _data, i);
     i += Borsh.write(liquidatePerp, _data, i);
     i += Borsh.write(liquidateSpot, _data, i);
     i += Borsh.write(liquidateBorrowForPerpPnl, _data, i);
@@ -125,7 +125,7 @@ public record LiquidationRecord(long ts,
          + 8
          + 2
          + 1
-         + Borsh.len(canceledOrderIds)
+         + Borsh.lenVector(canceledOrderIds)
          + Borsh.len(liquidatePerp)
          + Borsh.len(liquidateSpot)
          + Borsh.len(liquidateBorrowForPerpPnl)

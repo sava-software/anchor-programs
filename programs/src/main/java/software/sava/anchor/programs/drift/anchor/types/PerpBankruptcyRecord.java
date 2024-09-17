@@ -67,8 +67,8 @@ public record PerpBankruptcyRecord(int marketIndex,
     return 2
          + 16
          + 16
-         + Borsh.lenOptional(clawbackUser, 32)
-         + Borsh.lenOptional(clawbackUserPayment, 16)
+         + (clawbackUser == null ? 1 : (1 + 32))
+         + (clawbackUserPayment == null ? 1 : (1 + 16))
          + 16;
   }
 }

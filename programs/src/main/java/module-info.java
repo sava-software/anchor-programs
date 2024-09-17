@@ -15,6 +15,8 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.marinade.anchor.types;
   exports software.sava.anchor.programs.marinade.anchor;
   exports software.sava.anchor.programs.marinade;
+  exports software.sava.anchor.programs.meteora.alpha_vault.anchor.types;
+  exports software.sava.anchor.programs.meteora.alpha_vault.anchor;
   exports software.sava.anchor.programs.meteora.dlmm.anchor.types;
   exports software.sava.anchor.programs.meteora.dlmm.anchor;
   requires java.base;

@@ -158,10 +158,10 @@ public final class DcaProgram {
            + 8
            + 8
            + 8
-           + (minOutAmount == null || minOutAmount.isEmpty() ? 1 : 9)
-           + (maxOutAmount == null || maxOutAmount.isEmpty() ? 1 : 9)
-           + (startAt == null || startAt.isEmpty() ? 1 : 9)
-           + (closeWsolInAta == null ? 1 : 2);
+           + (minOutAmount == null || minOutAmount.isEmpty() ? 1 : (1 + 8))
+           + (maxOutAmount == null || maxOutAmount.isEmpty() ? 1 : (1 + 8))
+           + (startAt == null || startAt.isEmpty() ? 1 : (1 + 8))
+           + (closeWsolInAta == null ? 1 : (1 + 1));
     }
   }
 
@@ -291,9 +291,9 @@ public final class DcaProgram {
            + 8
            + 8
            + 8
-           + (minOutAmount == null || minOutAmount.isEmpty() ? 1 : 9)
-           + (maxOutAmount == null || maxOutAmount.isEmpty() ? 1 : 9)
-           + (startAt == null || startAt.isEmpty() ? 1 : 9);
+           + (minOutAmount == null || minOutAmount.isEmpty() ? 1 : (1 + 8))
+           + (maxOutAmount == null || maxOutAmount.isEmpty() ? 1 : (1 + 8))
+           + (startAt == null || startAt.isEmpty() ? 1 : (1 + 8));
     }
   }
 

@@ -35,11 +35,12 @@ public record VariableParameters(// Volatility accumulator measure the number of
     i += 4;
     final var indexReference = getInt32LE(_data, i);
     i += 4;
-    final var padding = Borsh.readArray(new byte[4], _data, i);
-    i += Borsh.fixedLen(padding);
+    final var padding = new byte[4];
+    i += Borsh.readArray(padding, _data, i);
     final var lastUpdateTimestamp = getInt64LE(_data, i);
     i += 8;
-    final var padding1 = Borsh.readArray(new byte[8], _data, i);
+    final var padding1 = new byte[8];
+    Borsh.readArray(padding1, _data, i);
     return new VariableParameters(volatilityAccumulator,
                                   volatilityReference,
                                   indexReference,
@@ -57,10 +58,10 @@ public record VariableParameters(// Volatility accumulator measure the number of
     i += 4;
     putInt32LE(_data, i, indexReference);
     i += 4;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     putInt64LE(_data, i, lastUpdateTimestamp);
     i += 8;
-    i += Borsh.fixedWrite(padding1, _data, i);
+    i += Borsh.writeArray(padding1, _data, i);
     return i - offset;
   }
 

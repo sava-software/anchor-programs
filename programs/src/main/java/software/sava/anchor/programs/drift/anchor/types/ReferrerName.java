@@ -59,7 +59,8 @@ public record ReferrerName(PublicKey _address,
     i += 32;
     final var userStats = readPubKey(_data, i);
     i += 32;
-    final var name = Borsh.readArray(new byte[32], _data, i);
+    final var name = new byte[32];
+    Borsh.readArray(name, _data, i);
     return new ReferrerName(_address,
                             discriminator,
                             authority,
@@ -77,7 +78,7 @@ public record ReferrerName(PublicKey _address,
     i += 32;
     userStats.write(_data, i);
     i += 32;
-    i += Borsh.fixedWrite(name, _data, i);
+    i += Borsh.writeArray(name, _data, i);
     return i - offset;
   }
 

@@ -609,8 +609,8 @@ public record SpotMarket(PublicKey _address,
     i += 32;
     final var vault = readPubKey(_data, i);
     i += 32;
-    final var name = Borsh.readArray(new byte[32], _data, i);
-    i += Borsh.fixedLen(name);
+    final var name = new byte[32];
+    i += Borsh.readArray(name, _data, i);
     final var historicalOracleData = HistoricalOracleData.read(_data, i);
     i += Borsh.len(historicalOracleData);
     final var historicalIndexData = HistoricalIndexData.read(_data, i);
@@ -725,7 +725,8 @@ public record SpotMarket(PublicKey _address,
     ++i;
     final var tokenProgram = _data[i] & 0xFF;
     ++i;
-    final var padding = Borsh.readArray(new byte[41], _data, i);
+    final var padding = new byte[41];
+    Borsh.readArray(padding, _data, i);
     return new SpotMarket(_address,
                           discriminator,
                           pubkey,
@@ -804,7 +805,7 @@ public record SpotMarket(PublicKey _address,
     i += 32;
     vault.write(_data, i);
     i += 32;
-    i += Borsh.fixedWrite(name, _data, i);
+    i += Borsh.writeArray(name, _data, i);
     i += Borsh.write(historicalOracleData, _data, i);
     i += Borsh.write(historicalIndexData, _data, i);
     i += Borsh.write(revenuePool, _data, i);
@@ -911,7 +912,7 @@ public record SpotMarket(PublicKey _address,
     ++i;
     _data[i] = (byte) tokenProgram;
     ++i;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

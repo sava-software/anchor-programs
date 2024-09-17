@@ -28,7 +28,8 @@ public record PoolBalance(// To get the pool's token amount, you must multiply t
     i += 16;
     final var marketIndex = getInt16LE(_data, i);
     i += 2;
-    final var padding = Borsh.readArray(new byte[6], _data, i);
+    final var padding = new byte[6];
+    Borsh.readArray(padding, _data, i);
     return new PoolBalance(scaledBalance, marketIndex, padding);
   }
 
@@ -39,7 +40,7 @@ public record PoolBalance(// To get the pool's token amount, you must multiply t
     i += 16;
     putInt16LE(_data, i, marketIndex);
     i += 2;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

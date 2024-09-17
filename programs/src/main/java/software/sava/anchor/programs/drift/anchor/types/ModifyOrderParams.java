@@ -112,7 +112,7 @@ public record ModifyOrderParams(PositionDirection direction,
     i += Borsh.writeOptional(triggerPrice, _data, i);
     i += Borsh.writeOptional(triggerCondition, _data, i);
     i += Borsh.writeOptional(oraclePriceOffset, _data, i);
-    i += Borsh.writeOptionalByte(auctionDuration, _data, i);
+    i += Borsh.writeOptionalbyte(auctionDuration, _data, i);
     i += Borsh.writeOptional(auctionStartPrice, _data, i);
     i += Borsh.writeOptional(auctionEndPrice, _data, i);
     i += Borsh.writeOptional(policy, _data, i);
@@ -121,19 +121,19 @@ public record ModifyOrderParams(PositionDirection direction,
 
   @Override
   public int l() {
-    return Borsh.lenOptional(direction)
-         + (baseAssetAmount == null || baseAssetAmount.isEmpty() ? 1 : 9)
-         + (price == null || price.isEmpty() ? 1 : 9)
-         + (reduceOnly == null ? 1 : 2)
-         + Borsh.lenOptional(postOnly)
-         + (immediateOrCancel == null ? 1 : 2)
-         + (maxTs == null || maxTs.isEmpty() ? 1 : 9)
-         + (triggerPrice == null || triggerPrice.isEmpty() ? 1 : 9)
-         + Borsh.lenOptional(triggerCondition)
-         + (oraclePriceOffset == null || oraclePriceOffset.isEmpty() ? 1 : 5)
-         + (auctionDuration == null || auctionDuration.isEmpty() ? 1 : 2)
-         + (auctionStartPrice == null || auctionStartPrice.isEmpty() ? 1 : 9)
-         + (auctionEndPrice == null || auctionEndPrice.isEmpty() ? 1 : 9)
-         + Borsh.lenOptional(policy);
+    return (direction == null ? 1 : (1 + Borsh.len(direction)))
+         + (baseAssetAmount == null || baseAssetAmount.isEmpty() ? 1 : (1 + 8))
+         + (price == null || price.isEmpty() ? 1 : (1 + 8))
+         + (reduceOnly == null ? 1 : (1 + 1))
+         + (postOnly == null ? 1 : (1 + Borsh.len(postOnly)))
+         + (immediateOrCancel == null ? 1 : (1 + 1))
+         + (maxTs == null || maxTs.isEmpty() ? 1 : (1 + 8))
+         + (triggerPrice == null || triggerPrice.isEmpty() ? 1 : (1 + 8))
+         + (triggerCondition == null ? 1 : (1 + Borsh.len(triggerCondition)))
+         + (oraclePriceOffset == null || oraclePriceOffset.isEmpty() ? 1 : (1 + 4))
+         + (auctionDuration == null || auctionDuration.isEmpty() ? 1 : (1 + 1))
+         + (auctionStartPrice == null || auctionStartPrice.isEmpty() ? 1 : (1 + 8))
+         + (auctionEndPrice == null || auctionEndPrice.isEmpty() ? 1 : (1 + 8))
+         + (policy == null ? 1 : (1 + Borsh.len(policy)));
   }
 }

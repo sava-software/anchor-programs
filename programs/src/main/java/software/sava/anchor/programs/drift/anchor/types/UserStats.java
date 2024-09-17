@@ -274,8 +274,8 @@ public record UserStats(PublicKey _address,
     ++i;
     final var disableUpdatePerpBidAskTwap = _data[i] == 1;
     ++i;
-    final var padding1 = Borsh.readArray(new byte[2], _data, i);
-    i += Borsh.fixedLen(padding1);
+    final var padding1 = new byte[2];
+    i += Borsh.readArray(padding1, _data, i);
     final var fuelInsurance = getInt32LE(_data, i);
     i += 4;
     final var fuelDeposits = getInt32LE(_data, i);
@@ -292,7 +292,8 @@ public record UserStats(PublicKey _address,
     i += 8;
     final var lastFuelIfBonusUpdateTs = getInt32LE(_data, i);
     i += 4;
-    final var padding = Borsh.readArray(new byte[12], _data, i);
+    final var padding = new byte[12];
+    Borsh.readArray(padding, _data, i);
     return new UserStats(_address,
                          discriminator,
                          authority,
@@ -354,7 +355,7 @@ public record UserStats(PublicKey _address,
     ++i;
     _data[i] = (byte) (disableUpdatePerpBidAskTwap ? 1 : 0);
     ++i;
-    i += Borsh.fixedWrite(padding1, _data, i);
+    i += Borsh.writeArray(padding1, _data, i);
     putInt32LE(_data, i, fuelInsurance);
     i += 4;
     putInt32LE(_data, i, fuelDeposits);
@@ -371,7 +372,7 @@ public record UserStats(PublicKey _address,
     i += 8;
     putInt32LE(_data, i, lastFuelIfBonusUpdateTs);
     i += 4;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

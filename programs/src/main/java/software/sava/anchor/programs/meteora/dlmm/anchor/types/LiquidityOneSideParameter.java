@@ -43,12 +43,12 @@ public record LiquidityOneSideParameter(// Amount of X token or Y token to depos
     i += 4;
     putInt32LE(_data, i, maxActiveBinSlippage);
     i += 4;
-    i += Borsh.write(binLiquidityDist, _data, i);
+    i += Borsh.writeVector(binLiquidityDist, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return 8 + 4 + 4 + Borsh.len(binLiquidityDist);
+    return 8 + 4 + 4 + Borsh.lenVector(binLiquidityDist);
   }
 }

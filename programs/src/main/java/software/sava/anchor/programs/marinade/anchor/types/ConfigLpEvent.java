@@ -53,9 +53,9 @@ public record ConfigLpEvent(PublicKey state,
   @Override
   public int l() {
     return 32
-         + Borsh.lenOptional(minFeeChange)
-         + Borsh.lenOptional(maxFeeChange)
-         + Borsh.lenOptional(liquidityTargetChange)
-         + Borsh.lenOptional(treasuryCutChange);
+         + (minFeeChange == null ? 1 : (1 + Borsh.len(minFeeChange)))
+         + (maxFeeChange == null ? 1 : (1 + Borsh.len(maxFeeChange)))
+         + (liquidityTargetChange == null ? 1 : (1 + Borsh.len(liquidityTargetChange)))
+         + (treasuryCutChange == null ? 1 : (1 + Borsh.len(treasuryCutChange)));
   }
 }

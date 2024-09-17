@@ -230,13 +230,13 @@ public sealed interface EngineFieldValue extends RustEnum permits
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = writeOrdinal(_data, offset);
-      i += Borsh.write(val, _data, i);
+      i += Borsh.writeVector(val, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 1 + Borsh.len(val);
+      return 1 + Borsh.lenVector(val);
     }
 
     @Override
@@ -258,13 +258,13 @@ public sealed interface EngineFieldValue extends RustEnum permits
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = writeOrdinal(_data, offset);
-      i += Borsh.write(val, _data, i);
+      i += Borsh.writeVector(val, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 1 + Borsh.len(val);
+      return 1 + Borsh.lenVector(val);
     }
 
     @Override
@@ -286,13 +286,13 @@ public sealed interface EngineFieldValue extends RustEnum permits
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = writeOrdinal(_data, offset);
-      i += Borsh.write(val, _data, i);
+      i += Borsh.writeVector(val, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 1 + Borsh.len(val);
+      return 1 + Borsh.lenVector(val);
     }
 
     @Override
@@ -314,13 +314,13 @@ public sealed interface EngineFieldValue extends RustEnum permits
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = writeOrdinal(_data, offset);
-      i += Borsh.write(val, _data, i);
+      i += Borsh.writeVector(val, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 1 + Borsh.len(val);
+      return 1 + Borsh.lenVector(val);
     }
 
     @Override

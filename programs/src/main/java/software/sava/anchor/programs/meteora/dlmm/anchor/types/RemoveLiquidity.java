@@ -26,8 +26,8 @@ public record RemoveLiquidity(PublicKey lbPair,
     i += 32;
     final var position = readPubKey(_data, i);
     i += 32;
-    final var amounts = Borsh.readArray(new long[2], _data, i);
-    i += Borsh.fixedLen(amounts);
+    final var amounts = new long[2];
+    i += Borsh.readArray(amounts, _data, i);
     final var activeBinId = getInt32LE(_data, i);
     return new RemoveLiquidity(lbPair,
                                from,
@@ -45,7 +45,7 @@ public record RemoveLiquidity(PublicKey lbPair,
     i += 32;
     position.write(_data, i);
     i += 32;
-    i += Borsh.fixedWrite(amounts, _data, i);
+    i += Borsh.writeArray(amounts, _data, i);
     putInt32LE(_data, i, activeBinId);
     i += 4;
     return i - offset;

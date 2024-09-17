@@ -309,7 +309,7 @@ public final class GlamProgram {
 
     @Override
     public int l() {
-      return 8 + Borsh.lenOptional(trader, 32);
+      return 8 + (trader == null ? 1 : (1 + 32));
     }
   }
 
@@ -361,7 +361,7 @@ public final class GlamProgram {
 
     @Override
     public int l() {
-      return 8 + Borsh.lenOptional(trader, 32);
+      return 8 + (trader == null ? 1 : (1 + 32));
     }
   }
 
@@ -457,11 +457,11 @@ public final class GlamProgram {
     );
 
     final byte[] _stakeAccountId = stakeAccountId.getBytes(UTF_8);
-    final byte[] _data = new byte[21 + Borsh.len(_stakeAccountId)];
+    final byte[] _data = new byte[21 + Borsh.lenVector(_stakeAccountId)];
     int i = writeDiscriminator(INITIALIZE_AND_DELEGATE_STAKE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, lamports);
     i += 8;
-    i += Borsh.write(_stakeAccountId, _data, i);
+    i += Borsh.writeVector(_stakeAccountId, _data, i);
     _data[i] = (byte) stakeAccountBump;
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
@@ -498,7 +498,7 @@ public final class GlamProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, lamports);
       i += 8;
-      i += Borsh.write(_stakeAccountId, _data, i);
+      i += Borsh.writeVector(_stakeAccountId, _data, i);
       _data[i] = (byte) stakeAccountBump;
       ++i;
       return i - offset;
@@ -506,7 +506,7 @@ public final class GlamProgram {
 
     @Override
     public int l() {
-      return 8 + 8 + Borsh.len(_stakeAccountId) + 1;
+      return 8 + 8 + Borsh.lenVector(_stakeAccountId) + 1;
     }
   }
 
@@ -593,11 +593,11 @@ public final class GlamProgram {
       createRead(solanaAccounts.token2022Program())
     );
 
-    final byte[] _data = new byte[20 + Borsh.len(data)];
+    final byte[] _data = new byte[20 + Borsh.lenVector(data)];
     int i = writeDiscriminator(JUPITER_SWAP_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amount);
     i += 8;
-    Borsh.write(data, _data, i);
+    Borsh.writeVector(data, _data, i);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
@@ -612,7 +612,7 @@ public final class GlamProgram {
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       i += 8;
-      final byte[] data = Borsh.read(_data, i);
+      final byte[] data = Borsh.readbyteVector(_data, i);
       return new JupiterSwapIxData(discriminator, amount, data);
     }
 
@@ -621,13 +621,13 @@ public final class GlamProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, amount);
       i += 8;
-      i += Borsh.write(data, _data, i);
+      i += Borsh.writeVector(data, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 8 + Borsh.len(data);
+      return 8 + 8 + Borsh.lenVector(data);
     }
   }
 
@@ -690,11 +690,11 @@ public final class GlamProgram {
     );
 
     final byte[] _ticketId = ticketId.getBytes(UTF_8);
-    final byte[] _data = new byte[21 + Borsh.len(_ticketId)];
+    final byte[] _data = new byte[21 + Borsh.lenVector(_ticketId)];
     int i = writeDiscriminator(MARINADE_DELAYED_UNSTAKE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, msolAmount);
     i += 8;
-    i += Borsh.write(_ticketId, _data, i);
+    i += Borsh.writeVector(_ticketId, _data, i);
     _data[i] = (byte) bump;
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
@@ -731,7 +731,7 @@ public final class GlamProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, msolAmount);
       i += 8;
-      i += Borsh.write(_ticketId, _data, i);
+      i += Borsh.writeVector(_ticketId, _data, i);
       _data[i] = (byte) bump;
       ++i;
       return i - offset;
@@ -739,7 +739,7 @@ public final class GlamProgram {
 
     @Override
     public int l() {
-      return 8 + 8 + Borsh.len(_ticketId) + 1;
+      return 8 + 8 + Borsh.lenVector(_ticketId) + 1;
     }
   }
 
@@ -1074,11 +1074,11 @@ public final class GlamProgram {
     );
 
     final byte[] _newStakeAccountId = newStakeAccountId.getBytes(UTF_8);
-    final byte[] _data = new byte[21 + Borsh.len(_newStakeAccountId)];
+    final byte[] _data = new byte[21 + Borsh.lenVector(_newStakeAccountId)];
     int i = writeDiscriminator(SPLIT_STAKE_ACCOUNT_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, lamports);
     i += 8;
-    i += Borsh.write(_newStakeAccountId, _data, i);
+    i += Borsh.writeVector(_newStakeAccountId, _data, i);
     _data[i] = (byte) newStakeAccountBump;
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
@@ -1115,7 +1115,7 @@ public final class GlamProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, lamports);
       i += 8;
-      i += Borsh.write(_newStakeAccountId, _data, i);
+      i += Borsh.writeVector(_newStakeAccountId, _data, i);
       _data[i] = (byte) newStakeAccountBump;
       ++i;
       return i - offset;
@@ -1123,7 +1123,7 @@ public final class GlamProgram {
 
     @Override
     public int l() {
-      return 8 + 8 + Borsh.len(_newStakeAccountId) + 1;
+      return 8 + 8 + Borsh.lenVector(_newStakeAccountId) + 1;
     }
   }
 
@@ -1348,11 +1348,11 @@ public final class GlamProgram {
     );
 
     final byte[] _stakeAccountId = stakeAccountId.getBytes(UTF_8);
-    final byte[] _data = new byte[21 + Borsh.len(_stakeAccountId)];
+    final byte[] _data = new byte[21 + Borsh.lenVector(_stakeAccountId)];
     int i = writeDiscriminator(STAKE_POOL_WITHDRAW_STAKE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, poolTokenAmount);
     i += 8;
-    i += Borsh.write(_stakeAccountId, _data, i);
+    i += Borsh.writeVector(_stakeAccountId, _data, i);
     _data[i] = (byte) stakeAccountBump;
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
@@ -1389,7 +1389,7 @@ public final class GlamProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, poolTokenAmount);
       i += 8;
-      i += Borsh.write(_stakeAccountId, _data, i);
+      i += Borsh.writeVector(_stakeAccountId, _data, i);
       _data[i] = (byte) stakeAccountBump;
       ++i;
       return i - offset;
@@ -1397,7 +1397,7 @@ public final class GlamProgram {
 
     @Override
     public int l() {
-      return 8 + 8 + Borsh.len(_stakeAccountId) + 1;
+      return 8 + 8 + Borsh.lenVector(_stakeAccountId) + 1;
     }
   }
 

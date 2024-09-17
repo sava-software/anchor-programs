@@ -68,11 +68,12 @@ public record BinArray(PublicKey _address,
     i += 8;
     final var version = _data[i] & 0xFF;
     ++i;
-    final var padding = Borsh.readArray(new byte[7], _data, i);
-    i += Borsh.fixedLen(padding);
+    final var padding = new byte[7];
+    i += Borsh.readArray(padding, _data, i);
     final var lbPair = readPubKey(_data, i);
     i += 32;
-    final var bins = Borsh.readArray(new Bin[70], Bin::read, _data, i);
+    final var bins = new Bin[70];
+    Borsh.readArray(bins, Bin::read, _data, i);
     return new BinArray(_address,
                         discriminator,
                         index,
@@ -89,10 +90,10 @@ public record BinArray(PublicKey _address,
     i += 8;
     _data[i] = (byte) version;
     ++i;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     lbPair.write(_data, i);
     i += 32;
-    i += Borsh.fixedWrite(bins, _data, i);
+    i += Borsh.writeArray(bins, _data, i);
     return i - offset;
   }
 

@@ -131,7 +131,8 @@ public record InsuranceFundStake(PublicKey _address,
     i += 8;
     final var marketIndex = getInt16LE(_data, i);
     i += 2;
-    final var padding = Borsh.readArray(new byte[14], _data, i);
+    final var padding = new byte[14];
+    Borsh.readArray(padding, _data, i);
     return new InsuranceFundStake(_address,
                                   discriminator,
                                   authority,
@@ -167,7 +168,7 @@ public record InsuranceFundStake(PublicKey _address,
     i += 8;
     putInt16LE(_data, i, marketIndex);
     i += 2;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

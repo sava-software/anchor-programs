@@ -237,10 +237,10 @@ public record LbPair(PublicKey _address,
     i += Borsh.len(parameters);
     final var vParameters = VariableParameters.read(_data, i);
     i += Borsh.len(vParameters);
-    final var bumpSeed = Borsh.readArray(new byte[1], _data, i);
-    i += Borsh.fixedLen(bumpSeed);
-    final var binStepSeed = Borsh.readArray(new byte[2], _data, i);
-    i += Borsh.fixedLen(binStepSeed);
+    final var bumpSeed = new byte[1];
+    i += Borsh.readArray(bumpSeed, _data, i);
+    final var binStepSeed = new byte[2];
+    i += Borsh.readArray(binStepSeed, _data, i);
     final var pairType = _data[i] & 0xFF;
     ++i;
     final var activeId = getInt32LE(_data, i);
@@ -251,8 +251,8 @@ public record LbPair(PublicKey _address,
     ++i;
     final var requireBaseFactorSeed = _data[i] & 0xFF;
     ++i;
-    final var baseFactorSeed = Borsh.readArray(new byte[2], _data, i);
-    i += Borsh.fixedLen(baseFactorSeed);
+    final var baseFactorSeed = new byte[2];
+    i += Borsh.readArray(baseFactorSeed, _data, i);
     final var activationType = _data[i] & 0xFF;
     ++i;
     final var padding0 = _data[i] & 0xFF;
@@ -267,14 +267,14 @@ public record LbPair(PublicKey _address,
     i += 32;
     final var protocolFee = ProtocolFee.read(_data, i);
     i += Borsh.len(protocolFee);
-    final var padding1 = Borsh.readArray(new byte[32], _data, i);
-    i += Borsh.fixedLen(padding1);
-    final var rewardInfos = Borsh.readArray(new RewardInfo[2], RewardInfo::read, _data, i);
-    i += Borsh.fixedLen(rewardInfos);
+    final var padding1 = new byte[32];
+    i += Borsh.readArray(padding1, _data, i);
+    final var rewardInfos = new RewardInfo[2];
+    i += Borsh.readArray(rewardInfos, RewardInfo::read, _data, i);
     final var oracle = readPubKey(_data, i);
     i += 32;
-    final var binArrayBitmap = Borsh.readArray(new long[16], _data, i);
-    i += Borsh.fixedLen(binArrayBitmap);
+    final var binArrayBitmap = new long[16];
+    i += Borsh.readArray(binArrayBitmap, _data, i);
     final var lastUpdatedAt = getInt64LE(_data, i);
     i += 8;
     final var whitelistedWallet = readPubKey(_data, i);
@@ -287,13 +287,14 @@ public record LbPair(PublicKey _address,
     i += 8;
     final var preActivationDuration = getInt64LE(_data, i);
     i += 8;
-    final var padding2 = Borsh.readArray(new byte[8], _data, i);
-    i += Borsh.fixedLen(padding2);
+    final var padding2 = new byte[8];
+    i += Borsh.readArray(padding2, _data, i);
     final var lockDuration = getInt64LE(_data, i);
     i += 8;
     final var creator = readPubKey(_data, i);
     i += 32;
-    final var reserved = Borsh.readArray(new byte[24], _data, i);
+    final var reserved = new byte[24];
+    Borsh.readArray(reserved, _data, i);
     return new LbPair(_address,
                       discriminator,
                       parameters,
@@ -334,8 +335,8 @@ public record LbPair(PublicKey _address,
     int i = offset + discriminator.write(_data, offset);
     i += Borsh.write(parameters, _data, i);
     i += Borsh.write(vParameters, _data, i);
-    i += Borsh.fixedWrite(bumpSeed, _data, i);
-    i += Borsh.fixedWrite(binStepSeed, _data, i);
+    i += Borsh.writeArray(bumpSeed, _data, i);
+    i += Borsh.writeArray(binStepSeed, _data, i);
     _data[i] = (byte) pairType;
     ++i;
     putInt32LE(_data, i, activeId);
@@ -346,7 +347,7 @@ public record LbPair(PublicKey _address,
     ++i;
     _data[i] = (byte) requireBaseFactorSeed;
     ++i;
-    i += Borsh.fixedWrite(baseFactorSeed, _data, i);
+    i += Borsh.writeArray(baseFactorSeed, _data, i);
     _data[i] = (byte) activationType;
     ++i;
     _data[i] = (byte) padding0;
@@ -360,11 +361,11 @@ public record LbPair(PublicKey _address,
     reserveY.write(_data, i);
     i += 32;
     i += Borsh.write(protocolFee, _data, i);
-    i += Borsh.fixedWrite(padding1, _data, i);
-    i += Borsh.fixedWrite(rewardInfos, _data, i);
+    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArray(rewardInfos, _data, i);
     oracle.write(_data, i);
     i += 32;
-    i += Borsh.fixedWrite(binArrayBitmap, _data, i);
+    i += Borsh.writeArray(binArrayBitmap, _data, i);
     putInt64LE(_data, i, lastUpdatedAt);
     i += 8;
     whitelistedWallet.write(_data, i);
@@ -377,12 +378,12 @@ public record LbPair(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, preActivationDuration);
     i += 8;
-    i += Borsh.fixedWrite(padding2, _data, i);
+    i += Borsh.writeArray(padding2, _data, i);
     putInt64LE(_data, i, lockDuration);
     i += 8;
     creator.write(_data, i);
     i += 32;
-    i += Borsh.fixedWrite(reserved, _data, i);
+    i += Borsh.writeArray(reserved, _data, i);
     return i - offset;
   }
 

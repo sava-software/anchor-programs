@@ -19,12 +19,12 @@ public record IntegrationAcl(IntegrationName name, IntegrationFeature[] features
   public int write(final byte[] _data, final int offset) {
     int i = offset;
     i += Borsh.write(name, _data, i);
-    i += Borsh.write(features, _data, i);
+    i += Borsh.writeVector(features, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return Borsh.len(name) + Borsh.len(features);
+    return Borsh.len(name) + Borsh.lenVector(features);
   }
 }

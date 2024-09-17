@@ -101,7 +101,7 @@ public final class LimitOrderProgram {
 
     @Override
     public int l() {
-      return 8 + 8 + 8 + (expiredAt == null || expiredAt.isEmpty() ? 1 : 9);
+      return 8 + 8 + 8 + (expiredAt == null || expiredAt.isEmpty() ? 1 : (1 + 8));
     }
   }
 

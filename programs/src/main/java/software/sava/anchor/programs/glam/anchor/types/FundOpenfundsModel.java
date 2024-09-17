@@ -145,42 +145,42 @@ public record FundOpenfundsModel(String fundDomicileAlpha2, byte[] _fundDomicile
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeOptional(_fundDomicileAlpha2, _data, i);
-    i += Borsh.writeOptional(_legalFundNameIncludingUmbrella, _data, i);
-    i += Borsh.writeOptional(_fiscalYearEnd, _data, i);
-    i += Borsh.writeOptional(_fundCurrency, _data, i);
-    i += Borsh.writeOptional(_fundLaunchDate, _data, i);
-    i += Borsh.writeOptional(_investmentObjective, _data, i);
+    i += Borsh.writeOptionalVector(_fundDomicileAlpha2, _data, i);
+    i += Borsh.writeOptionalVector(_legalFundNameIncludingUmbrella, _data, i);
+    i += Borsh.writeOptionalVector(_fiscalYearEnd, _data, i);
+    i += Borsh.writeOptionalVector(_fundCurrency, _data, i);
+    i += Borsh.writeOptionalVector(_fundLaunchDate, _data, i);
+    i += Borsh.writeOptionalVector(_investmentObjective, _data, i);
     i += Borsh.writeOptional(isEtc, _data, i);
     i += Borsh.writeOptional(isEuDirectiveRelevant, _data, i);
     i += Borsh.writeOptional(isFundOfFunds, _data, i);
     i += Borsh.writeOptional(isPassiveFund, _data, i);
     i += Borsh.writeOptional(isReit, _data, i);
-    i += Borsh.writeOptional(_legalForm, _data, i);
-    i += Borsh.writeOptional(_legalFundNameOnly, _data, i);
-    i += Borsh.writeOptional(_openEndedOrClosedEndedFundStructure, _data, i);
-    i += Borsh.writeOptional(_typeOfEuDirective, _data, i);
-    i += Borsh.writeOptional(_ucitsVersion, _data, i);
+    i += Borsh.writeOptionalVector(_legalForm, _data, i);
+    i += Borsh.writeOptionalVector(_legalFundNameOnly, _data, i);
+    i += Borsh.writeOptionalVector(_openEndedOrClosedEndedFundStructure, _data, i);
+    i += Borsh.writeOptionalVector(_typeOfEuDirective, _data, i);
+    i += Borsh.writeOptionalVector(_ucitsVersion, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return Borsh.lenOptional(_fundDomicileAlpha2)
-         + Borsh.lenOptional(_legalFundNameIncludingUmbrella)
-         + Borsh.lenOptional(_fiscalYearEnd)
-         + Borsh.lenOptional(_fundCurrency)
-         + Borsh.lenOptional(_fundLaunchDate)
-         + Borsh.lenOptional(_investmentObjective)
-         + (isEtc == null ? 1 : 2)
-         + (isEuDirectiveRelevant == null ? 1 : 2)
-         + (isFundOfFunds == null ? 1 : 2)
-         + (isPassiveFund == null ? 1 : 2)
-         + (isReit == null ? 1 : 2)
-         + Borsh.lenOptional(_legalForm)
-         + Borsh.lenOptional(_legalFundNameOnly)
-         + Borsh.lenOptional(_openEndedOrClosedEndedFundStructure)
-         + Borsh.lenOptional(_typeOfEuDirective)
-         + Borsh.lenOptional(_ucitsVersion);
+    return (_fundDomicileAlpha2 == null || _fundDomicileAlpha2.length == 0 ? 1 : (1 + Borsh.lenVector(_fundDomicileAlpha2)))
+         + (_legalFundNameIncludingUmbrella == null || _legalFundNameIncludingUmbrella.length == 0 ? 1 : (1 + Borsh.lenVector(_legalFundNameIncludingUmbrella)))
+         + (_fiscalYearEnd == null || _fiscalYearEnd.length == 0 ? 1 : (1 + Borsh.lenVector(_fiscalYearEnd)))
+         + (_fundCurrency == null || _fundCurrency.length == 0 ? 1 : (1 + Borsh.lenVector(_fundCurrency)))
+         + (_fundLaunchDate == null || _fundLaunchDate.length == 0 ? 1 : (1 + Borsh.lenVector(_fundLaunchDate)))
+         + (_investmentObjective == null || _investmentObjective.length == 0 ? 1 : (1 + Borsh.lenVector(_investmentObjective)))
+         + (isEtc == null ? 1 : (1 + 1))
+         + (isEuDirectiveRelevant == null ? 1 : (1 + 1))
+         + (isFundOfFunds == null ? 1 : (1 + 1))
+         + (isPassiveFund == null ? 1 : (1 + 1))
+         + (isReit == null ? 1 : (1 + 1))
+         + (_legalForm == null || _legalForm.length == 0 ? 1 : (1 + Borsh.lenVector(_legalForm)))
+         + (_legalFundNameOnly == null || _legalFundNameOnly.length == 0 ? 1 : (1 + Borsh.lenVector(_legalFundNameOnly)))
+         + (_openEndedOrClosedEndedFundStructure == null || _openEndedOrClosedEndedFundStructure.length == 0 ? 1 : (1 + Borsh.lenVector(_openEndedOrClosedEndedFundStructure)))
+         + (_typeOfEuDirective == null || _typeOfEuDirective.length == 0 ? 1 : (1 + Borsh.lenVector(_typeOfEuDirective)))
+         + (_ucitsVersion == null || _ucitsVersion.length == 0 ? 1 : (1 + Borsh.lenVector(_ucitsVersion)));
   }
 }

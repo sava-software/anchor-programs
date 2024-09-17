@@ -115,12 +115,12 @@ public record Position(PublicKey _address,
     i += 32;
     final var owner = readPubKey(_data, i);
     i += 32;
-    final var liquidityShares = Borsh.readArray(new long[70], _data, i);
-    i += Borsh.fixedLen(liquidityShares);
-    final var rewardInfos = Borsh.readArray(new UserRewardInfo[70], UserRewardInfo::read, _data, i);
-    i += Borsh.fixedLen(rewardInfos);
-    final var feeInfos = Borsh.readArray(new FeeInfo[70], FeeInfo::read, _data, i);
-    i += Borsh.fixedLen(feeInfos);
+    final var liquidityShares = new long[70];
+    i += Borsh.readArray(liquidityShares, _data, i);
+    final var rewardInfos = new UserRewardInfo[70];
+    i += Borsh.readArray(rewardInfos, UserRewardInfo::read, _data, i);
+    final var feeInfos = new FeeInfo[70];
+    i += Borsh.readArray(feeInfos, FeeInfo::read, _data, i);
     final var lowerBinId = getInt32LE(_data, i);
     i += 4;
     final var upperBinId = getInt32LE(_data, i);
@@ -131,9 +131,10 @@ public record Position(PublicKey _address,
     i += 8;
     final var totalClaimedFeeYAmount = getInt64LE(_data, i);
     i += 8;
-    final var totalClaimedRewards = Borsh.readArray(new long[2], _data, i);
-    i += Borsh.fixedLen(totalClaimedRewards);
-    final var reserved = Borsh.readArray(new byte[160], _data, i);
+    final var totalClaimedRewards = new long[2];
+    i += Borsh.readArray(totalClaimedRewards, _data, i);
+    final var reserved = new byte[160];
+    Borsh.readArray(reserved, _data, i);
     return new Position(_address,
                         discriminator,
                         lbPair,
@@ -157,9 +158,9 @@ public record Position(PublicKey _address,
     i += 32;
     owner.write(_data, i);
     i += 32;
-    i += Borsh.fixedWrite(liquidityShares, _data, i);
-    i += Borsh.fixedWrite(rewardInfos, _data, i);
-    i += Borsh.fixedWrite(feeInfos, _data, i);
+    i += Borsh.writeArray(liquidityShares, _data, i);
+    i += Borsh.writeArray(rewardInfos, _data, i);
+    i += Borsh.writeArray(feeInfos, _data, i);
     putInt32LE(_data, i, lowerBinId);
     i += 4;
     putInt32LE(_data, i, upperBinId);
@@ -170,8 +171,8 @@ public record Position(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, totalClaimedFeeYAmount);
     i += 8;
-    i += Borsh.fixedWrite(totalClaimedRewards, _data, i);
-    i += Borsh.fixedWrite(reserved, _data, i);
+    i += Borsh.writeArray(totalClaimedRewards, _data, i);
+    i += Borsh.writeArray(reserved, _data, i);
     return i - offset;
   }
 

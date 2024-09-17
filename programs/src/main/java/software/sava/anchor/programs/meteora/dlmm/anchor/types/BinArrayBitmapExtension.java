@@ -47,9 +47,10 @@ public record BinArrayBitmapExtension(PublicKey _address,
     int i = offset + discriminator.length();
     final var lbPair = readPubKey(_data, i);
     i += 32;
-    final var positiveBinArrayBitmap = Borsh.readArray(new long[12][8], _data, i);
-    i += Borsh.fixedLen(positiveBinArrayBitmap);
-    final var negativeBinArrayBitmap = Borsh.readArray(new long[12][8], _data, i);
+    final var positiveBinArrayBitmap = new long[12][8];
+    i += Borsh.readArray(positiveBinArrayBitmap, _data, i);
+    final var negativeBinArrayBitmap = new long[12][8];
+    Borsh.readArray(negativeBinArrayBitmap, _data, i);
     return new BinArrayBitmapExtension(_address, discriminator, lbPair, positiveBinArrayBitmap, negativeBinArrayBitmap);
   }
 
@@ -58,8 +59,8 @@ public record BinArrayBitmapExtension(PublicKey _address,
     int i = offset + discriminator.write(_data, offset);
     lbPair.write(_data, i);
     i += 32;
-    i += Borsh.fixedWrite(positiveBinArrayBitmap, _data, i);
-    i += Borsh.fixedWrite(negativeBinArrayBitmap, _data, i);
+    i += Borsh.writeArray(positiveBinArrayBitmap, _data, i);
+    i += Borsh.writeArray(negativeBinArrayBitmap, _data, i);
     return i - offset;
   }
 

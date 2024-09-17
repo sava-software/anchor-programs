@@ -60,10 +60,10 @@ public record ChangeAuthorityEvent(PublicKey state,
   @Override
   public int l() {
     return 32
-         + Borsh.lenOptional(adminChange)
-         + Borsh.lenOptional(validatorManagerChange)
-         + Borsh.lenOptional(operationalSolAccountChange)
-         + Borsh.lenOptional(treasuryMsolAccountChange)
-         + Borsh.lenOptional(pauseAuthorityChange);
+         + (adminChange == null ? 1 : (1 + Borsh.len(adminChange)))
+         + (validatorManagerChange == null ? 1 : (1 + Borsh.len(validatorManagerChange)))
+         + (operationalSolAccountChange == null ? 1 : (1 + Borsh.len(operationalSolAccountChange)))
+         + (treasuryMsolAccountChange == null ? 1 : (1 + Borsh.len(treasuryMsolAccountChange)))
+         + (pauseAuthorityChange == null ? 1 : (1 + Borsh.len(pauseAuthorityChange)));
   }
 }

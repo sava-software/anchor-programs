@@ -136,6 +136,6 @@ public record DepositRecord(long ts,
          + 8
          + 8
          + Borsh.len(explanation)
-         + Borsh.lenOptional(transferUser, 32);
+         + (transferUser == null ? 1 : (1 + 32));
   }
 }

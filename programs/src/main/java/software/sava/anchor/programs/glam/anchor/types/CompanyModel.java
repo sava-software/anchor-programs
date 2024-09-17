@@ -56,20 +56,20 @@ public record CompanyModel(String fundGroupName, byte[] _fundGroupName,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeOptional(_fundGroupName, _data, i);
-    i += Borsh.writeOptional(_manCo, _data, i);
-    i += Borsh.writeOptional(_domicileOfManCo, _data, i);
-    i += Borsh.writeOptional(_emailAddressOfManCo, _data, i);
-    i += Borsh.writeOptional(_fundWebsiteOfManCo, _data, i);
+    i += Borsh.writeOptionalVector(_fundGroupName, _data, i);
+    i += Borsh.writeOptionalVector(_manCo, _data, i);
+    i += Borsh.writeOptionalVector(_domicileOfManCo, _data, i);
+    i += Borsh.writeOptionalVector(_emailAddressOfManCo, _data, i);
+    i += Borsh.writeOptionalVector(_fundWebsiteOfManCo, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return Borsh.lenOptional(_fundGroupName)
-         + Borsh.lenOptional(_manCo)
-         + Borsh.lenOptional(_domicileOfManCo)
-         + Borsh.lenOptional(_emailAddressOfManCo)
-         + Borsh.lenOptional(_fundWebsiteOfManCo);
+    return (_fundGroupName == null || _fundGroupName.length == 0 ? 1 : (1 + Borsh.lenVector(_fundGroupName)))
+         + (_manCo == null || _manCo.length == 0 ? 1 : (1 + Borsh.lenVector(_manCo)))
+         + (_domicileOfManCo == null || _domicileOfManCo.length == 0 ? 1 : (1 + Borsh.lenVector(_domicileOfManCo)))
+         + (_emailAddressOfManCo == null || _emailAddressOfManCo.length == 0 ? 1 : (1 + Borsh.lenVector(_emailAddressOfManCo)))
+         + (_fundWebsiteOfManCo == null || _fundWebsiteOfManCo.length == 0 ? 1 : (1 + Borsh.lenVector(_fundWebsiteOfManCo)));
   }
 }

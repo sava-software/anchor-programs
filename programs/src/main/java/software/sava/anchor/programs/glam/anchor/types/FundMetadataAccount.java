@@ -48,11 +48,11 @@ public record FundMetadataAccount(PublicKey _address,
     final var fundPubkey = readPubKey(_data, i);
     i += 32;
     final var company = Borsh.readVector(CompanyField.class, CompanyField::read, _data, i);
-    i += Borsh.len(company);
+    i += Borsh.lenVector(company);
     final var fund = Borsh.readVector(FundField.class, FundField::read, _data, i);
-    i += Borsh.len(fund);
+    i += Borsh.lenVector(fund);
     final var shareClasses = Borsh.readMultiDimensionVector(ShareClassField.class, ShareClassField::read, _data, i);
-    i += Borsh.len(shareClasses);
+    i += Borsh.lenVector(shareClasses);
     final var fundManagers = Borsh.readMultiDimensionVector(FundManagerField.class, FundManagerField::read, _data, i);
     return new FundMetadataAccount(_address,
                                    discriminator,
@@ -68,19 +68,19 @@ public record FundMetadataAccount(PublicKey _address,
     int i = offset + discriminator.write(_data, offset);
     fundPubkey.write(_data, i);
     i += 32;
-    i += Borsh.write(company, _data, i);
-    i += Borsh.write(fund, _data, i);
-    i += Borsh.write(shareClasses, _data, i);
-    i += Borsh.write(fundManagers, _data, i);
+    i += Borsh.writeVector(company, _data, i);
+    i += Borsh.writeVector(fund, _data, i);
+    i += Borsh.writeVector(shareClasses, _data, i);
+    i += Borsh.writeVector(fundManagers, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
     return 8 + 32
-         + Borsh.len(company)
-         + Borsh.len(fund)
-         + Borsh.len(shareClasses)
-         + Borsh.len(fundManagers);
+         + Borsh.lenVector(company)
+         + Borsh.lenVector(fund)
+         + Borsh.lenVector(shareClasses)
+         + Borsh.lenVector(fundManagers);
   }
 }

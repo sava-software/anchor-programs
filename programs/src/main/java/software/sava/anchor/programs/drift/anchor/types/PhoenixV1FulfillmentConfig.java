@@ -111,7 +111,8 @@ public record PhoenixV1FulfillmentConfig(PublicKey _address,
     i += Borsh.len(fulfillmentType);
     final var status = SpotFulfillmentConfigStatus.read(_data, i);
     i += Borsh.len(status);
-    final var padding = Borsh.readArray(new byte[4], _data, i);
+    final var padding = new byte[4];
+    Borsh.readArray(padding, _data, i);
     return new PhoenixV1FulfillmentConfig(_address,
                                           discriminator,
                                           pubkey,
@@ -145,7 +146,7 @@ public record PhoenixV1FulfillmentConfig(PublicKey _address,
     i += 2;
     i += Borsh.write(fulfillmentType, _data, i);
     i += Borsh.write(status, _data, i);
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

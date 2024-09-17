@@ -102,16 +102,16 @@ public record ConfigMarinadeEvent(PublicKey state,
   @Override
   public int l() {
     return 32
-         + Borsh.lenOptional(rewardsFeeChange)
-         + Borsh.lenOptional(slotsForStakeDeltaChange)
-         + Borsh.lenOptional(minStakeChange)
-         + Borsh.lenOptional(minDepositChange)
-         + Borsh.lenOptional(minWithdrawChange)
-         + Borsh.lenOptional(stakingSolCapChange)
-         + Borsh.lenOptional(liquiditySolCapChange)
-         + Borsh.lenOptional(withdrawStakeAccountEnabledChange)
-         + Borsh.lenOptional(delayedUnstakeFeeChange)
-         + Borsh.lenOptional(withdrawStakeAccountFeeChange)
-         + Borsh.lenOptional(maxStakeMovedPerEpochChange);
+         + (rewardsFeeChange == null ? 1 : (1 + Borsh.len(rewardsFeeChange)))
+         + (slotsForStakeDeltaChange == null ? 1 : (1 + Borsh.len(slotsForStakeDeltaChange)))
+         + (minStakeChange == null ? 1 : (1 + Borsh.len(minStakeChange)))
+         + (minDepositChange == null ? 1 : (1 + Borsh.len(minDepositChange)))
+         + (minWithdrawChange == null ? 1 : (1 + Borsh.len(minWithdrawChange)))
+         + (stakingSolCapChange == null ? 1 : (1 + Borsh.len(stakingSolCapChange)))
+         + (liquiditySolCapChange == null ? 1 : (1 + Borsh.len(liquiditySolCapChange)))
+         + (withdrawStakeAccountEnabledChange == null ? 1 : (1 + Borsh.len(withdrawStakeAccountEnabledChange)))
+         + (delayedUnstakeFeeChange == null ? 1 : (1 + Borsh.len(delayedUnstakeFeeChange)))
+         + (withdrawStakeAccountFeeChange == null ? 1 : (1 + Borsh.len(withdrawStakeAccountFeeChange)))
+         + (maxStakeMovedPerEpochChange == null ? 1 : (1 + Borsh.len(maxStakeMovedPerEpochChange)));
   }
 }

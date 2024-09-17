@@ -49,7 +49,8 @@ public record SpotPosition(// The scaled balance of the position. To get the tok
     i += Borsh.len(balanceType);
     final var openOrders = _data[i] & 0xFF;
     ++i;
-    final var padding = Borsh.readArray(new byte[4], _data, i);
+    final var padding = new byte[4];
+    Borsh.readArray(padding, _data, i);
     return new SpotPosition(scaledBalance,
                             openBids,
                             openAsks,
@@ -76,7 +77,7 @@ public record SpotPosition(// The scaled balance of the position. To get the tok
     i += Borsh.write(balanceType, _data, i);
     _data[i] = (byte) openOrders;
     ++i;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

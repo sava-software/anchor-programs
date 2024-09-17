@@ -256,14 +256,14 @@ public record User(PublicKey _address,
     i += 32;
     final var delegate = readPubKey(_data, i);
     i += 32;
-    final var name = Borsh.readArray(new byte[32], _data, i);
-    i += Borsh.fixedLen(name);
-    final var spotPositions = Borsh.readArray(new SpotPosition[8], SpotPosition::read, _data, i);
-    i += Borsh.fixedLen(spotPositions);
-    final var perpPositions = Borsh.readArray(new PerpPosition[8], PerpPosition::read, _data, i);
-    i += Borsh.fixedLen(perpPositions);
-    final var orders = Borsh.readArray(new Order[32], Order::read, _data, i);
-    i += Borsh.fixedLen(orders);
+    final var name = new byte[32];
+    i += Borsh.readArray(name, _data, i);
+    final var spotPositions = new SpotPosition[8];
+    i += Borsh.readArray(spotPositions, SpotPosition::read, _data, i);
+    final var perpPositions = new PerpPosition[8];
+    i += Borsh.readArray(perpPositions, PerpPosition::read, _data, i);
+    final var orders = new Order[32];
+    i += Borsh.readArray(orders, Order::read, _data, i);
     final var lastAddPerpLpSharesTs = getInt64LE(_data, i);
     i += 8;
     final var totalDeposits = getInt64LE(_data, i);
@@ -304,11 +304,12 @@ public record User(PublicKey _address,
     ++i;
     final var hasOpenAuction = _data[i] == 1;
     ++i;
-    final var padding1 = Borsh.readArray(new byte[5], _data, i);
-    i += Borsh.fixedLen(padding1);
+    final var padding1 = new byte[5];
+    i += Borsh.readArray(padding1, _data, i);
     final var lastFuelBonusUpdateTs = getInt32LE(_data, i);
     i += 4;
-    final var padding = Borsh.readArray(new byte[12], _data, i);
+    final var padding = new byte[12];
+    Borsh.readArray(padding, _data, i);
     return new User(_address,
                     discriminator,
                     authority,
@@ -349,10 +350,10 @@ public record User(PublicKey _address,
     i += 32;
     delegate.write(_data, i);
     i += 32;
-    i += Borsh.fixedWrite(name, _data, i);
-    i += Borsh.fixedWrite(spotPositions, _data, i);
-    i += Borsh.fixedWrite(perpPositions, _data, i);
-    i += Borsh.fixedWrite(orders, _data, i);
+    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArray(spotPositions, _data, i);
+    i += Borsh.writeArray(perpPositions, _data, i);
+    i += Borsh.writeArray(orders, _data, i);
     putInt64LE(_data, i, lastAddPerpLpSharesTs);
     i += 8;
     putInt64LE(_data, i, totalDeposits);
@@ -393,10 +394,10 @@ public record User(PublicKey _address,
     ++i;
     _data[i] = (byte) (hasOpenAuction ? 1 : 0);
     ++i;
-    i += Borsh.fixedWrite(padding1, _data, i);
+    i += Borsh.writeArray(padding1, _data, i);
     putInt32LE(_data, i, lastFuelBonusUpdateTs);
     i += 4;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

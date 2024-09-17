@@ -634,9 +634,9 @@ public final class LbClmmProgram {
       createRead(programKey)
     );
 
-    final byte[] _data = new byte[8 + Borsh.len(binLiquidityRemoval)];
+    final byte[] _data = new byte[8 + Borsh.lenVector(binLiquidityRemoval)];
     int i = writeDiscriminator(REMOVE_LIQUIDITY_DISCRIMINATOR, _data, 0);
-    Borsh.write(binLiquidityRemoval, _data, i);
+    Borsh.writeVector(binLiquidityRemoval, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
@@ -656,13 +656,13 @@ public final class LbClmmProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(binLiquidityRemoval, _data, i);
+      i += Borsh.writeVector(binLiquidityRemoval, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + Borsh.len(binLiquidityRemoval);
+      return 8 + Borsh.lenVector(binLiquidityRemoval);
     }
   }
 
@@ -1183,7 +1183,7 @@ public final class LbClmmProgram {
 
     @Override
     public int l() {
-      return 8 + 8 + (activeId == null || activeId.isEmpty() ? 1 : 5) + 2;
+      return 8 + 8 + (activeId == null || activeId.isEmpty() ? 1 : (1 + 4)) + 2;
     }
   }
 

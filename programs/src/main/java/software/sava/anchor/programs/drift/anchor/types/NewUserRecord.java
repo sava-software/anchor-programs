@@ -31,8 +31,8 @@ public record NewUserRecord(long ts,
     i += 32;
     final var subAccountId = getInt16LE(_data, i);
     i += 2;
-    final var name = Borsh.readArray(new byte[32], _data, i);
-    i += Borsh.fixedLen(name);
+    final var name = new byte[32];
+    i += Borsh.readArray(name, _data, i);
     final var referrer = readPubKey(_data, i);
     return new NewUserRecord(ts,
                              userAuthority,
@@ -53,7 +53,7 @@ public record NewUserRecord(long ts,
     i += 32;
     putInt16LE(_data, i, subAccountId);
     i += 2;
-    i += Borsh.fixedWrite(name, _data, i);
+    i += Borsh.writeArray(name, _data, i);
     referrer.write(_data, i);
     i += 32;
     return i - offset;

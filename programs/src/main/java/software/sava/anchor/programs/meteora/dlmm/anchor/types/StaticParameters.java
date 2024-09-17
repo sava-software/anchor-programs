@@ -54,7 +54,8 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
     i += 4;
     final var protocolShare = getInt16LE(_data, i);
     i += 2;
-    final var padding = Borsh.readArray(new byte[6], _data, i);
+    final var padding = new byte[6];
+    Borsh.readArray(padding, _data, i);
     return new StaticParameters(baseFactor,
                                 filterPeriod,
                                 decayPeriod,
@@ -88,7 +89,7 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
     i += 4;
     putInt16LE(_data, i, protocolShare);
     i += 2;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

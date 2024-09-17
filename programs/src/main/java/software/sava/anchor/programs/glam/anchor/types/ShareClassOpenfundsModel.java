@@ -241,66 +241,66 @@ public record ShareClassOpenfundsModel(String isin, byte[] _isin,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeOptional(_isin, _data, i);
-    i += Borsh.writeOptional(_shareClassCurrency, _data, i);
-    i += Borsh.writeOptional(_currencyOfMinimalSubscription, _data, i);
-    i += Borsh.writeOptional(_fullShareClassName, _data, i);
-    i += Borsh.writeOptional(_investmentStatus, _data, i);
-    i += Borsh.writeOptional(_minimalInitialSubscriptionCategory, _data, i);
-    i += Borsh.writeOptional(_minimalInitialSubscriptionInAmount, _data, i);
-    i += Borsh.writeOptional(_minimalInitialSubscriptionInShares, _data, i);
-    i += Borsh.writeOptional(_shareClassDistributionPolicy, _data, i);
-    i += Borsh.writeOptional(_shareClassExtension, _data, i);
-    i += Borsh.writeOptional(_shareClassLaunchDate, _data, i);
-    i += Borsh.writeOptional(_shareClassLifecycle, _data, i);
-    i += Borsh.writeOptional(_launchPrice, _data, i);
-    i += Borsh.writeOptional(_launchPriceCurrency, _data, i);
-    i += Borsh.writeOptional(_launchPriceDate, _data, i);
-    i += Borsh.writeOptional(_currencyOfMinimalOrMaximumRedemption, _data, i);
+    i += Borsh.writeOptionalVector(_isin, _data, i);
+    i += Borsh.writeOptionalVector(_shareClassCurrency, _data, i);
+    i += Borsh.writeOptionalVector(_currencyOfMinimalSubscription, _data, i);
+    i += Borsh.writeOptionalVector(_fullShareClassName, _data, i);
+    i += Borsh.writeOptionalVector(_investmentStatus, _data, i);
+    i += Borsh.writeOptionalVector(_minimalInitialSubscriptionCategory, _data, i);
+    i += Borsh.writeOptionalVector(_minimalInitialSubscriptionInAmount, _data, i);
+    i += Borsh.writeOptionalVector(_minimalInitialSubscriptionInShares, _data, i);
+    i += Borsh.writeOptionalVector(_shareClassDistributionPolicy, _data, i);
+    i += Borsh.writeOptionalVector(_shareClassExtension, _data, i);
+    i += Borsh.writeOptionalVector(_shareClassLaunchDate, _data, i);
+    i += Borsh.writeOptionalVector(_shareClassLifecycle, _data, i);
+    i += Borsh.writeOptionalVector(_launchPrice, _data, i);
+    i += Borsh.writeOptionalVector(_launchPriceCurrency, _data, i);
+    i += Borsh.writeOptionalVector(_launchPriceDate, _data, i);
+    i += Borsh.writeOptionalVector(_currencyOfMinimalOrMaximumRedemption, _data, i);
     i += Borsh.writeOptional(hasLockUpForRedemption, _data, i);
     i += Borsh.writeOptional(isValidIsin, _data, i);
-    i += Borsh.writeOptional(_lockUpComment, _data, i);
-    i += Borsh.writeOptional(_lockUpPeriodInDays, _data, i);
-    i += Borsh.writeOptional(_maximumInitialRedemptionInAmount, _data, i);
-    i += Borsh.writeOptional(_maximumInitialRedemptionInShares, _data, i);
-    i += Borsh.writeOptional(_minimalInitialRedemptionInAmount, _data, i);
-    i += Borsh.writeOptional(_minimalInitialRedemptionInShares, _data, i);
-    i += Borsh.writeOptional(_minimalRedemptionCategory, _data, i);
-    i += Borsh.writeOptional(_shareClassDividendType, _data, i);
-    i += Borsh.writeOptional(_cusip, _data, i);
-    i += Borsh.writeOptional(_valor, _data, i);
+    i += Borsh.writeOptionalVector(_lockUpComment, _data, i);
+    i += Borsh.writeOptionalVector(_lockUpPeriodInDays, _data, i);
+    i += Borsh.writeOptionalVector(_maximumInitialRedemptionInAmount, _data, i);
+    i += Borsh.writeOptionalVector(_maximumInitialRedemptionInShares, _data, i);
+    i += Borsh.writeOptionalVector(_minimalInitialRedemptionInAmount, _data, i);
+    i += Borsh.writeOptionalVector(_minimalInitialRedemptionInShares, _data, i);
+    i += Borsh.writeOptionalVector(_minimalRedemptionCategory, _data, i);
+    i += Borsh.writeOptionalVector(_shareClassDividendType, _data, i);
+    i += Borsh.writeOptionalVector(_cusip, _data, i);
+    i += Borsh.writeOptionalVector(_valor, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return Borsh.lenOptional(_isin)
-         + Borsh.lenOptional(_shareClassCurrency)
-         + Borsh.lenOptional(_currencyOfMinimalSubscription)
-         + Borsh.lenOptional(_fullShareClassName)
-         + Borsh.lenOptional(_investmentStatus)
-         + Borsh.lenOptional(_minimalInitialSubscriptionCategory)
-         + Borsh.lenOptional(_minimalInitialSubscriptionInAmount)
-         + Borsh.lenOptional(_minimalInitialSubscriptionInShares)
-         + Borsh.lenOptional(_shareClassDistributionPolicy)
-         + Borsh.lenOptional(_shareClassExtension)
-         + Borsh.lenOptional(_shareClassLaunchDate)
-         + Borsh.lenOptional(_shareClassLifecycle)
-         + Borsh.lenOptional(_launchPrice)
-         + Borsh.lenOptional(_launchPriceCurrency)
-         + Borsh.lenOptional(_launchPriceDate)
-         + Borsh.lenOptional(_currencyOfMinimalOrMaximumRedemption)
-         + (hasLockUpForRedemption == null ? 1 : 2)
-         + (isValidIsin == null ? 1 : 2)
-         + Borsh.lenOptional(_lockUpComment)
-         + Borsh.lenOptional(_lockUpPeriodInDays)
-         + Borsh.lenOptional(_maximumInitialRedemptionInAmount)
-         + Borsh.lenOptional(_maximumInitialRedemptionInShares)
-         + Borsh.lenOptional(_minimalInitialRedemptionInAmount)
-         + Borsh.lenOptional(_minimalInitialRedemptionInShares)
-         + Borsh.lenOptional(_minimalRedemptionCategory)
-         + Borsh.lenOptional(_shareClassDividendType)
-         + Borsh.lenOptional(_cusip)
-         + Borsh.lenOptional(_valor);
+    return (_isin == null || _isin.length == 0 ? 1 : (1 + Borsh.lenVector(_isin)))
+         + (_shareClassCurrency == null || _shareClassCurrency.length == 0 ? 1 : (1 + Borsh.lenVector(_shareClassCurrency)))
+         + (_currencyOfMinimalSubscription == null || _currencyOfMinimalSubscription.length == 0 ? 1 : (1 + Borsh.lenVector(_currencyOfMinimalSubscription)))
+         + (_fullShareClassName == null || _fullShareClassName.length == 0 ? 1 : (1 + Borsh.lenVector(_fullShareClassName)))
+         + (_investmentStatus == null || _investmentStatus.length == 0 ? 1 : (1 + Borsh.lenVector(_investmentStatus)))
+         + (_minimalInitialSubscriptionCategory == null || _minimalInitialSubscriptionCategory.length == 0 ? 1 : (1 + Borsh.lenVector(_minimalInitialSubscriptionCategory)))
+         + (_minimalInitialSubscriptionInAmount == null || _minimalInitialSubscriptionInAmount.length == 0 ? 1 : (1 + Borsh.lenVector(_minimalInitialSubscriptionInAmount)))
+         + (_minimalInitialSubscriptionInShares == null || _minimalInitialSubscriptionInShares.length == 0 ? 1 : (1 + Borsh.lenVector(_minimalInitialSubscriptionInShares)))
+         + (_shareClassDistributionPolicy == null || _shareClassDistributionPolicy.length == 0 ? 1 : (1 + Borsh.lenVector(_shareClassDistributionPolicy)))
+         + (_shareClassExtension == null || _shareClassExtension.length == 0 ? 1 : (1 + Borsh.lenVector(_shareClassExtension)))
+         + (_shareClassLaunchDate == null || _shareClassLaunchDate.length == 0 ? 1 : (1 + Borsh.lenVector(_shareClassLaunchDate)))
+         + (_shareClassLifecycle == null || _shareClassLifecycle.length == 0 ? 1 : (1 + Borsh.lenVector(_shareClassLifecycle)))
+         + (_launchPrice == null || _launchPrice.length == 0 ? 1 : (1 + Borsh.lenVector(_launchPrice)))
+         + (_launchPriceCurrency == null || _launchPriceCurrency.length == 0 ? 1 : (1 + Borsh.lenVector(_launchPriceCurrency)))
+         + (_launchPriceDate == null || _launchPriceDate.length == 0 ? 1 : (1 + Borsh.lenVector(_launchPriceDate)))
+         + (_currencyOfMinimalOrMaximumRedemption == null || _currencyOfMinimalOrMaximumRedemption.length == 0 ? 1 : (1 + Borsh.lenVector(_currencyOfMinimalOrMaximumRedemption)))
+         + (hasLockUpForRedemption == null ? 1 : (1 + 1))
+         + (isValidIsin == null ? 1 : (1 + 1))
+         + (_lockUpComment == null || _lockUpComment.length == 0 ? 1 : (1 + Borsh.lenVector(_lockUpComment)))
+         + (_lockUpPeriodInDays == null || _lockUpPeriodInDays.length == 0 ? 1 : (1 + Borsh.lenVector(_lockUpPeriodInDays)))
+         + (_maximumInitialRedemptionInAmount == null || _maximumInitialRedemptionInAmount.length == 0 ? 1 : (1 + Borsh.lenVector(_maximumInitialRedemptionInAmount)))
+         + (_maximumInitialRedemptionInShares == null || _maximumInitialRedemptionInShares.length == 0 ? 1 : (1 + Borsh.lenVector(_maximumInitialRedemptionInShares)))
+         + (_minimalInitialRedemptionInAmount == null || _minimalInitialRedemptionInAmount.length == 0 ? 1 : (1 + Borsh.lenVector(_minimalInitialRedemptionInAmount)))
+         + (_minimalInitialRedemptionInShares == null || _minimalInitialRedemptionInShares.length == 0 ? 1 : (1 + Borsh.lenVector(_minimalInitialRedemptionInShares)))
+         + (_minimalRedemptionCategory == null || _minimalRedemptionCategory.length == 0 ? 1 : (1 + Borsh.lenVector(_minimalRedemptionCategory)))
+         + (_shareClassDividendType == null || _shareClassDividendType.length == 0 ? 1 : (1 + Borsh.lenVector(_shareClassDividendType)))
+         + (_cusip == null || _cusip.length == 0 ? 1 : (1 + Borsh.lenVector(_cusip)))
+         + (_valor == null || _valor.length == 0 ? 1 : (1 + Borsh.lenVector(_valor)));
   }
 }

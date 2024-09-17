@@ -50,7 +50,7 @@ public record LiquidityParameterByWeight(// Amount of X token to deposit
     i += 4;
     putInt32LE(_data, i, maxActiveBinSlippage);
     i += 4;
-    i += Borsh.write(binLiquidityDist, _data, i);
+    i += Borsh.writeVector(binLiquidityDist, _data, i);
     return i - offset;
   }
 
@@ -60,6 +60,6 @@ public record LiquidityParameterByWeight(// Amount of X token to deposit
          + 8
          + 4
          + 4
-         + Borsh.len(binLiquidityDist);
+         + Borsh.lenVector(binLiquidityDist);
   }
 }

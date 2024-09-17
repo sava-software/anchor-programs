@@ -80,7 +80,7 @@ public record ShareClassModel(String symbol, byte[] _symbol,
       i += Borsh.len(rawOpenfunds);
     }
     final var allowlist = Borsh.readPublicKeyVector(_data, i);
-    i += Borsh.len(allowlist);
+    i += Borsh.lenVector(allowlist);
     final var blocklist = Borsh.readPublicKeyVector(_data, i);
     return new ShareClassModel(symbol, Borsh.getBytes(symbol),
                                name, Borsh.getBytes(name),
@@ -97,30 +97,30 @@ public record ShareClassModel(String symbol, byte[] _symbol,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeOptional(_symbol, _data, i);
-    i += Borsh.writeOptional(_name, _data, i);
-    i += Borsh.writeOptional(_uri, _data, i);
+    i += Borsh.writeOptionalVector(_symbol, _data, i);
+    i += Borsh.writeOptionalVector(_name, _data, i);
+    i += Borsh.writeOptionalVector(_uri, _data, i);
     i += Borsh.writeOptional(fundId, _data, i);
     i += Borsh.writeOptional(asset, _data, i);
-    i += Borsh.writeOptional(_imageUri, _data, i);
+    i += Borsh.writeOptionalVector(_imageUri, _data, i);
     i += Borsh.writeOptional(isRawOpenfunds, _data, i);
     i += Borsh.writeOptional(rawOpenfunds, _data, i);
-    i += Borsh.write(allowlist, _data, i);
-    i += Borsh.write(blocklist, _data, i);
+    i += Borsh.writeVector(allowlist, _data, i);
+    i += Borsh.writeVector(blocklist, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return Borsh.lenOptional(_symbol)
-         + Borsh.lenOptional(_name)
-         + Borsh.lenOptional(_uri)
-         + Borsh.lenOptional(fundId, 32)
-         + Borsh.lenOptional(asset, 32)
-         + Borsh.lenOptional(_imageUri)
-         + (isRawOpenfunds == null ? 1 : 2)
-         + Borsh.lenOptional(rawOpenfunds)
-         + Borsh.len(allowlist)
-         + Borsh.len(blocklist);
+    return (_symbol == null || _symbol.length == 0 ? 1 : (1 + Borsh.lenVector(_symbol)))
+         + (_name == null || _name.length == 0 ? 1 : (1 + Borsh.lenVector(_name)))
+         + (_uri == null || _uri.length == 0 ? 1 : (1 + Borsh.lenVector(_uri)))
+         + (fundId == null ? 1 : (1 + 32))
+         + (asset == null ? 1 : (1 + 32))
+         + (_imageUri == null || _imageUri.length == 0 ? 1 : (1 + Borsh.lenVector(_imageUri)))
+         + (isRawOpenfunds == null ? 1 : (1 + 1))
+         + (rawOpenfunds == null ? 1 : (1 + Borsh.len(rawOpenfunds)))
+         + Borsh.lenVector(allowlist)
+         + Borsh.lenVector(blocklist);
   }
 }

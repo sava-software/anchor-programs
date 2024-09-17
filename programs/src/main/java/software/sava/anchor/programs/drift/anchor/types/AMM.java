@@ -401,7 +401,8 @@ public record AMM(// oracle price data public key
     i += 8;
     final var referencePriceOffset = getInt32LE(_data, i);
     i += 4;
-    final var padding = Borsh.readArray(new byte[12], _data, i);
+    final var padding = new byte[12];
+    Borsh.readArray(padding, _data, i);
     return new AMM(oracle,
                    historicalOracleData,
                    baseAssetAmountPerLp,
@@ -654,7 +655,7 @@ public record AMM(// oracle price data public key
     i += 8;
     putInt32LE(_data, i, referencePriceOffset);
     i += 4;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

@@ -315,8 +315,8 @@ public record PerpMarket(PublicKey _address,
     i += Borsh.len(amm);
     final var pnlPool = PoolBalance.read(_data, i);
     i += Borsh.len(pnlPool);
-    final var name = Borsh.readArray(new byte[32], _data, i);
-    i += Borsh.fixedLen(name);
+    final var name = new byte[32];
+    i += Borsh.readArray(name, _data, i);
     final var insuranceClaim = InsuranceClaim.read(_data, i);
     i += Borsh.len(insuranceClaim);
     final var unrealizedPnlMaxImbalance = getInt64LE(_data, i);
@@ -371,7 +371,8 @@ public record PerpMarket(PublicKey _address,
     ++i;
     final var fuelBoostMaker = _data[i] & 0xFF;
     ++i;
-    final var padding = Borsh.readArray(new byte[43], _data, i);
+    final var padding = new byte[43];
+    Borsh.readArray(padding, _data, i);
     return new PerpMarket(_address,
                           discriminator,
                           pubkey,
@@ -415,7 +416,7 @@ public record PerpMarket(PublicKey _address,
     i += 32;
     i += Borsh.write(amm, _data, i);
     i += Borsh.write(pnlPool, _data, i);
-    i += Borsh.fixedWrite(name, _data, i);
+    i += Borsh.writeArray(name, _data, i);
     i += Borsh.write(insuranceClaim, _data, i);
     putInt64LE(_data, i, unrealizedPnlMaxImbalance);
     i += 8;
@@ -466,7 +467,7 @@ public record PerpMarket(PublicKey _address,
     ++i;
     _data[i] = (byte) fuelBoostMaker;
     ++i;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

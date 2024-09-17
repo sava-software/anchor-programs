@@ -38,7 +38,7 @@ public record ManagerModel(String portfolioManagerName, byte[] _portfolioManager
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeOptional(_portfolioManagerName, _data, i);
+    i += Borsh.writeOptionalVector(_portfolioManagerName, _data, i);
     i += Borsh.writeOptional(pubkey, _data, i);
     i += Borsh.writeOptional(kind, _data, i);
     return i - offset;
@@ -46,6 +46,6 @@ public record ManagerModel(String portfolioManagerName, byte[] _portfolioManager
 
   @Override
   public int l() {
-    return Borsh.lenOptional(_portfolioManagerName) + Borsh.lenOptional(pubkey, 32) + Borsh.lenOptional(kind);
+    return (_portfolioManagerName == null || _portfolioManagerName.length == 0 ? 1 : (1 + Borsh.lenVector(_portfolioManagerName))) + (pubkey == null ? 1 : (1 + 32)) + (kind == null ? 1 : (1 + Borsh.len(kind)));
   }
 }

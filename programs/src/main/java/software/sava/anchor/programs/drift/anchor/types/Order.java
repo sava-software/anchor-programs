@@ -121,7 +121,8 @@ public record Order(// The slot the order was placed
     i += Borsh.len(triggerCondition);
     final var auctionDuration = _data[i] & 0xFF;
     ++i;
-    final var padding = Borsh.readArray(new byte[3], _data, i);
+    final var padding = new byte[3];
+    Borsh.readArray(padding, _data, i);
     return new Order(slot,
                      price,
                      baseAssetAmount,
@@ -191,7 +192,7 @@ public record Order(// The slot the order was placed
     i += Borsh.write(triggerCondition, _data, i);
     _data[i] = (byte) auctionDuration;
     ++i;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

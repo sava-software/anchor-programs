@@ -102,7 +102,7 @@ public record FundAccount(PublicKey _address,
     final var engine = readPubKey(_data, i);
     i += 32;
     final var shareClasses = Borsh.readPublicKeyVector(_data, i);
-    i += Borsh.len(shareClasses);
+    i += Borsh.lenVector(shareClasses);
     final var name = Borsh.string(_data, i);
     i += (Integer.BYTES + getInt32LE(_data, i));
     final var uri = Borsh.string(_data, i);
@@ -134,11 +134,11 @@ public record FundAccount(PublicKey _address,
     i += 32;
     engine.write(_data, i);
     i += 32;
-    i += Borsh.write(shareClasses, _data, i);
-    i += Borsh.write(_name, _data, i);
-    i += Borsh.write(_uri, _data, i);
-    i += Borsh.write(_openfundsUri, _data, i);
-    i += Borsh.write(params, _data, i);
+    i += Borsh.writeVector(shareClasses, _data, i);
+    i += Borsh.writeVector(_name, _data, i);
+    i += Borsh.writeVector(_uri, _data, i);
+    i += Borsh.writeVector(_openfundsUri, _data, i);
+    i += Borsh.writeVector(params, _data, i);
     return i - offset;
   }
 
@@ -148,10 +148,10 @@ public record FundAccount(PublicKey _address,
          + 32
          + 32
          + 32
-         + Borsh.len(shareClasses)
-         + Borsh.len(_name)
-         + Borsh.len(_uri)
-         + Borsh.len(_openfundsUri)
-         + Borsh.len(params);
+         + Borsh.lenVector(shareClasses)
+         + Borsh.lenVector(_name)
+         + Borsh.lenVector(_uri)
+         + Borsh.lenVector(_openfundsUri)
+         + Borsh.lenVector(params);
   }
 }

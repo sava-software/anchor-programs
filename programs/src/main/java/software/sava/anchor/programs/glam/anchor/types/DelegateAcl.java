@@ -23,12 +23,12 @@ public record DelegateAcl(PublicKey pubkey, Permission[] permissions) implements
     int i = offset;
     pubkey.write(_data, i);
     i += 32;
-    i += Borsh.write(permissions, _data, i);
+    i += Borsh.writeVector(permissions, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return 32 + Borsh.len(permissions);
+    return 32 + Borsh.lenVector(permissions);
   }
 }

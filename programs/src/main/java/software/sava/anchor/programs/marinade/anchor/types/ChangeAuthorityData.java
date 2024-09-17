@@ -53,10 +53,10 @@ public record ChangeAuthorityData(PublicKey admin,
 
   @Override
   public int l() {
-    return Borsh.lenOptional(admin, 32)
-         + Borsh.lenOptional(validatorManager, 32)
-         + Borsh.lenOptional(operationalSolAccount, 32)
-         + Borsh.lenOptional(treasuryMsolAccount, 32)
-         + Borsh.lenOptional(pauseAuthority, 32);
+    return (admin == null ? 1 : (1 + 32))
+         + (validatorManager == null ? 1 : (1 + 32))
+         + (operationalSolAccount == null ? 1 : (1 + 32))
+         + (treasuryMsolAccount == null ? 1 : (1 + 32))
+         + (pauseAuthority == null ? 1 : (1 + 32));
   }
 }

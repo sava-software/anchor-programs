@@ -30,5 +30,10 @@
     "name": "Meteora DLMM",
     "program": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
     "package": "meteora.dlmm"
+  },
+  {
+    "name": "Meteora Alpha Vault",
+    "program": "vaU6kP7iNEGkbmPkLmZfGwiGxd4Mob24QQCie5R9kd2",
+    "package": "meteora.alpha_vault"
   }
 ]

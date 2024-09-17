@@ -32,12 +32,12 @@ public record LiquidityParameter(// Amount of X token to deposit
     i += 8;
     putInt64LE(_data, i, amountY);
     i += 8;
-    i += Borsh.write(binLiquidityDist, _data, i);
+    i += Borsh.writeVector(binLiquidityDist, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return 8 + 8 + Borsh.len(binLiquidityDist);
+    return 8 + 8 + Borsh.lenVector(binLiquidityDist);
   }
 }

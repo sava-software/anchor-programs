@@ -15,12 +15,12 @@ public record RemainingAccountsInfo(RemainingAccountsSlice[] slices) implements 
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.write(slices, _data, i);
+    i += Borsh.writeVector(slices, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return Borsh.len(slices);
+    return Borsh.lenVector(slices);
   }
 }

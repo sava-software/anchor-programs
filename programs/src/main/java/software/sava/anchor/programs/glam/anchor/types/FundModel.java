@@ -83,11 +83,11 @@ public record FundModel(PublicKey id,
       ++i;
     }
     final var assets = Borsh.readPublicKeyVector(_data, i);
-    i += Borsh.len(assets);
+    i += Borsh.lenVector(assets);
     final var assetsWeights = Borsh.readintVector(_data, i);
-    i += Borsh.len(assetsWeights);
+    i += Borsh.lenVector(assetsWeights);
     final var shareClasses = Borsh.readVector(ShareClassModel.class, ShareClassModel::read, _data, i);
-    i += Borsh.len(shareClasses);
+    i += Borsh.lenVector(shareClasses);
     final var company = _data[i++] == 0 ? null : CompanyModel.read(_data, i);
     if (company != null) {
       i += Borsh.len(company);
@@ -101,9 +101,9 @@ public record FundModel(PublicKey id,
       i += Borsh.len(created);
     }
     final var delegateAcls = Borsh.readVector(DelegateAcl.class, DelegateAcl::read, _data, i);
-    i += Borsh.len(delegateAcls);
+    i += Borsh.lenVector(delegateAcls);
     final var integrationAcls = Borsh.readVector(IntegrationAcl.class, IntegrationAcl::read, _data, i);
-    i += Borsh.len(integrationAcls);
+    i += Borsh.lenVector(integrationAcls);
     final var isRawOpenfunds = _data[i++] == 0 ? null : _data[i] == 1;
     if (isRawOpenfunds != null) {
       ++i;
@@ -130,18 +130,18 @@ public record FundModel(PublicKey id,
   public int write(final byte[] _data, final int offset) {
     int i = offset;
     i += Borsh.writeOptional(id, _data, i);
-    i += Borsh.writeOptional(_name, _data, i);
-    i += Borsh.writeOptional(_uri, _data, i);
-    i += Borsh.writeOptional(_openfundsUri, _data, i);
+    i += Borsh.writeOptionalVector(_name, _data, i);
+    i += Borsh.writeOptionalVector(_uri, _data, i);
+    i += Borsh.writeOptionalVector(_openfundsUri, _data, i);
     i += Borsh.writeOptional(isEnabled, _data, i);
-    i += Borsh.write(assets, _data, i);
-    i += Borsh.write(assetsWeights, _data, i);
-    i += Borsh.write(shareClasses, _data, i);
+    i += Borsh.writeVector(assets, _data, i);
+    i += Borsh.writeVector(assetsWeights, _data, i);
+    i += Borsh.writeVector(shareClasses, _data, i);
     i += Borsh.writeOptional(company, _data, i);
     i += Borsh.writeOptional(manager, _data, i);
     i += Borsh.writeOptional(created, _data, i);
-    i += Borsh.write(delegateAcls, _data, i);
-    i += Borsh.write(integrationAcls, _data, i);
+    i += Borsh.writeVector(delegateAcls, _data, i);
+    i += Borsh.writeVector(integrationAcls, _data, i);
     i += Borsh.writeOptional(isRawOpenfunds, _data, i);
     i += Borsh.writeOptional(rawOpenfunds, _data, i);
     return i - offset;
@@ -149,20 +149,20 @@ public record FundModel(PublicKey id,
 
   @Override
   public int l() {
-    return Borsh.lenOptional(id, 32)
-         + Borsh.lenOptional(_name)
-         + Borsh.lenOptional(_uri)
-         + Borsh.lenOptional(_openfundsUri)
-         + (isEnabled == null ? 1 : 2)
-         + Borsh.len(assets)
-         + Borsh.len(assetsWeights)
-         + Borsh.len(shareClasses)
-         + Borsh.lenOptional(company)
-         + Borsh.lenOptional(manager)
-         + Borsh.lenOptional(created)
-         + Borsh.len(delegateAcls)
-         + Borsh.len(integrationAcls)
-         + (isRawOpenfunds == null ? 1 : 2)
-         + Borsh.lenOptional(rawOpenfunds);
+    return (id == null ? 1 : (1 + 32))
+         + (_name == null || _name.length == 0 ? 1 : (1 + Borsh.lenVector(_name)))
+         + (_uri == null || _uri.length == 0 ? 1 : (1 + Borsh.lenVector(_uri)))
+         + (_openfundsUri == null || _openfundsUri.length == 0 ? 1 : (1 + Borsh.lenVector(_openfundsUri)))
+         + (isEnabled == null ? 1 : (1 + 1))
+         + Borsh.lenVector(assets)
+         + Borsh.lenVector(assetsWeights)
+         + Borsh.lenVector(shareClasses)
+         + (company == null ? 1 : (1 + Borsh.len(company)))
+         + (manager == null ? 1 : (1 + Borsh.len(manager)))
+         + (created == null ? 1 : (1 + Borsh.len(created)))
+         + Borsh.lenVector(delegateAcls)
+         + Borsh.lenVector(integrationAcls)
+         + (isRawOpenfunds == null ? 1 : (1 + 1))
+         + (rawOpenfunds == null ? 1 : (1 + Borsh.len(rawOpenfunds)));
   }
 }

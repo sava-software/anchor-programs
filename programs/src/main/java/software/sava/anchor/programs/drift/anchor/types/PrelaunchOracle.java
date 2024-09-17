@@ -98,7 +98,8 @@ public record PrelaunchOracle(PublicKey _address,
     i += 8;
     final var perpMarketIndex = getInt16LE(_data, i);
     i += 2;
-    final var padding = Borsh.readArray(new byte[70], _data, i);
+    final var padding = new byte[70];
+    Borsh.readArray(padding, _data, i);
     return new PrelaunchOracle(_address,
                                discriminator,
                                price,
@@ -125,7 +126,7 @@ public record PrelaunchOracle(PublicKey _address,
     i += 8;
     putInt16LE(_data, i, perpMarketIndex);
     i += 2;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

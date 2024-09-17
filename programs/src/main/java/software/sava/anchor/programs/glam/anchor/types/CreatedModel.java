@@ -12,8 +12,8 @@ public record CreatedModel(byte[] key, PublicKey manager) implements Borsh {
       return null;
     }
     int i = offset;
-    final var key = Borsh.readArray(new byte[8], _data, i);
-    i += Borsh.fixedLen(key);
+    final var key = new byte[8];
+    i += Borsh.readArray(key, _data, i);
     final var manager = _data[i++] == 0 ? null : readPubKey(_data, i);
     return new CreatedModel(key, manager);
   }
@@ -21,13 +21,13 @@ public record CreatedModel(byte[] key, PublicKey manager) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.fixedWrite(key, _data, i);
+    i += Borsh.writeArray(key, _data, i);
     i += Borsh.writeOptional(manager, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return Borsh.fixedLen(key) + Borsh.lenOptional(manager, 32);
+    return Borsh.lenArray(key) + (manager == null ? 1 : (1 + 32));
   }
 }

@@ -120,7 +120,7 @@ public record DeactivateStakeEvent(PublicKey state,
          + 4
          + 32
          + 8
-         + Borsh.lenOptional(splitStakeAccount)
+         + (splitStakeAccount == null ? 1 : (1 + Borsh.len(splitStakeAccount)))
          + 4
          + 32
          + 8

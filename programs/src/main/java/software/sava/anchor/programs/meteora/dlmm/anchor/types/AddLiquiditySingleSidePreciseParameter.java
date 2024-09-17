@@ -13,7 +13,7 @@ public record AddLiquiditySingleSidePreciseParameter(CompressedBinDepositAmount[
     }
     int i = offset;
     final var bins = Borsh.readVector(CompressedBinDepositAmount.class, CompressedBinDepositAmount::read, _data, i);
-    i += Borsh.len(bins);
+    i += Borsh.lenVector(bins);
     final var decompressMultiplier = getInt64LE(_data, i);
     return new AddLiquiditySingleSidePreciseParameter(bins, decompressMultiplier);
   }
@@ -21,7 +21,7 @@ public record AddLiquiditySingleSidePreciseParameter(CompressedBinDepositAmount[
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.write(bins, _data, i);
+    i += Borsh.writeVector(bins, _data, i);
     putInt64LE(_data, i, decompressMultiplier);
     i += 8;
     return i - offset;
@@ -29,6 +29,6 @@ public record AddLiquiditySingleSidePreciseParameter(CompressedBinDepositAmount[
 
   @Override
   public int l() {
-    return Borsh.len(bins) + 8;
+    return Borsh.lenVector(bins) + 8;
   }
 }

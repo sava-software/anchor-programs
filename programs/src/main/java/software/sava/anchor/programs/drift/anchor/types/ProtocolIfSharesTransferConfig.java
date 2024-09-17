@@ -66,15 +66,16 @@ public record ProtocolIfSharesTransferConfig(PublicKey _address,
     }
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
-    final var whitelistedSigners = Borsh.readArray(new PublicKey[4], _data, i);
-    i += Borsh.fixedLen(whitelistedSigners);
+    final var whitelistedSigners = new PublicKey[4];
+    i += Borsh.readArray(whitelistedSigners, _data, i);
     final var maxTransferPerEpoch = getInt128LE(_data, i);
     i += 16;
     final var currentEpochTransfer = getInt128LE(_data, i);
     i += 16;
     final var nextEpochTs = getInt64LE(_data, i);
     i += 8;
-    final var padding = Borsh.readArray(new BigInteger[8], _data, i);
+    final var padding = new BigInteger[8];
+    Borsh.readArray(padding, _data, i);
     return new ProtocolIfSharesTransferConfig(_address,
                                               discriminator,
                                               whitelistedSigners,
@@ -87,14 +88,14 @@ public record ProtocolIfSharesTransferConfig(PublicKey _address,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.fixedWrite(whitelistedSigners, _data, i);
+    i += Borsh.writeArray(whitelistedSigners, _data, i);
     putInt128LE(_data, i, maxTransferPerEpoch);
     i += 16;
     putInt128LE(_data, i, currentEpochTransfer);
     i += 16;
     putInt64LE(_data, i, nextEpochTs);
     i += 8;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

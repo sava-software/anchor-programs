@@ -245,7 +245,8 @@ public record State(PublicKey _address,
     i += 2;
     final var maxInitializeUserFee = getInt16LE(_data, i);
     i += 2;
-    final var padding = Borsh.readArray(new byte[10], _data, i);
+    final var padding = new byte[10];
+    Borsh.readArray(padding, _data, i);
     return new State(_address,
                      discriminator,
                      admin,
@@ -323,7 +324,7 @@ public record State(PublicKey _address,
     i += 2;
     putInt16LE(_data, i, maxInitializeUserFee);
     i += 2;
-    i += Borsh.fixedWrite(padding, _data, i);
+    i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
 

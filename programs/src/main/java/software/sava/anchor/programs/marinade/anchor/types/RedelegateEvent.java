@@ -155,7 +155,7 @@ public record RedelegateEvent(PublicKey state,
          + 8
          + 8
          + 8
-         + Borsh.lenOptional(splitStakeAccount)
+         + (splitStakeAccount == null ? 1 : (1 + Borsh.len(splitStakeAccount)))
          + 4
          + 32;
   }

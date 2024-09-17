@@ -17,8 +17,8 @@ public record FeeStructure(FeeTier[] feeTiers,
       return null;
     }
     int i = offset;
-    final var feeTiers = Borsh.readArray(new FeeTier[10], FeeTier::read, _data, i);
-    i += Borsh.fixedLen(feeTiers);
+    final var feeTiers = new FeeTier[10];
+    i += Borsh.readArray(feeTiers, FeeTier::read, _data, i);
     final var fillerRewardStructure = OrderFillerRewardStructure.read(_data, i);
     i += Borsh.len(fillerRewardStructure);
     final var referrerRewardEpochUpperBound = getInt64LE(_data, i);
@@ -33,7 +33,7 @@ public record FeeStructure(FeeTier[] feeTiers,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.fixedWrite(feeTiers, _data, i);
+    i += Borsh.writeArray(feeTiers, _data, i);
     i += Borsh.write(fillerRewardStructure, _data, i);
     putInt64LE(_data, i, referrerRewardEpochUpperBound);
     i += 8;

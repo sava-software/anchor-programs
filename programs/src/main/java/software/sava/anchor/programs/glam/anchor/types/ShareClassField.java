@@ -27,12 +27,12 @@ public record ShareClassField(ShareClassFieldName name, String value, byte[] _va
   public int write(final byte[] _data, final int offset) {
     int i = offset;
     i += Borsh.write(name, _data, i);
-    i += Borsh.write(_value, _data, i);
+    i += Borsh.writeVector(_value, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return Borsh.len(name) + Borsh.len(_value);
+    return Borsh.len(name) + Borsh.lenVector(_value);
   }
 }

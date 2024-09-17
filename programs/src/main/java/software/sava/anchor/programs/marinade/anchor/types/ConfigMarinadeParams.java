@@ -98,16 +98,16 @@ public record ConfigMarinadeParams(Fee rewardsFee,
 
   @Override
   public int l() {
-    return Borsh.lenOptional(rewardsFee)
-         + (slotsForStakeDelta == null || slotsForStakeDelta.isEmpty() ? 1 : 9)
-         + (minStake == null || minStake.isEmpty() ? 1 : 9)
-         + (minDeposit == null || minDeposit.isEmpty() ? 1 : 9)
-         + (minWithdraw == null || minWithdraw.isEmpty() ? 1 : 9)
-         + (stakingSolCap == null || stakingSolCap.isEmpty() ? 1 : 9)
-         + (liquiditySolCap == null || liquiditySolCap.isEmpty() ? 1 : 9)
-         + (withdrawStakeAccountEnabled == null ? 1 : 2)
-         + Borsh.lenOptional(delayedUnstakeFee)
-         + Borsh.lenOptional(withdrawStakeAccountFee)
-         + Borsh.lenOptional(maxStakeMovedPerEpoch);
+    return (rewardsFee == null ? 1 : (1 + Borsh.len(rewardsFee)))
+         + (slotsForStakeDelta == null || slotsForStakeDelta.isEmpty() ? 1 : (1 + 8))
+         + (minStake == null || minStake.isEmpty() ? 1 : (1 + 8))
+         + (minDeposit == null || minDeposit.isEmpty() ? 1 : (1 + 8))
+         + (minWithdraw == null || minWithdraw.isEmpty() ? 1 : (1 + 8))
+         + (stakingSolCap == null || stakingSolCap.isEmpty() ? 1 : (1 + 8))
+         + (liquiditySolCap == null || liquiditySolCap.isEmpty() ? 1 : (1 + 8))
+         + (withdrawStakeAccountEnabled == null ? 1 : (1 + 1))
+         + (delayedUnstakeFee == null ? 1 : (1 + Borsh.len(delayedUnstakeFee)))
+         + (withdrawStakeAccountFee == null ? 1 : (1 + Borsh.len(withdrawStakeAccountFee)))
+         + (maxStakeMovedPerEpoch == null ? 1 : (1 + Borsh.len(maxStakeMovedPerEpoch)));
   }
 }

@@ -27,7 +27,8 @@ public record StrategyParameters(// min bin id
     i += 4;
     final var strategyType = StrategyType.read(_data, i);
     i += Borsh.len(strategyType);
-    final var parameteres = Borsh.readArray(new byte[64], _data, i);
+    final var parameteres = new byte[64];
+    Borsh.readArray(parameteres, _data, i);
     return new StrategyParameters(minBinId,
                                   maxBinId,
                                   strategyType,
@@ -42,7 +43,7 @@ public record StrategyParameters(// min bin id
     putInt32LE(_data, i, maxBinId);
     i += 4;
     i += Borsh.write(strategyType, _data, i);
-    i += Borsh.fixedWrite(parameteres, _data, i);
+    i += Borsh.writeArray(parameteres, _data, i);
     return i - offset;
   }
 
