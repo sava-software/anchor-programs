@@ -35,5 +35,15 @@
     "name": "Meteora Alpha Vault",
     "program": "vaU6kP7iNEGkbmPkLmZfGwiGxd4Mob24QQCie5R9kd2",
     "package": "meteora.alpha_vault"
+  },
+  {
+    "name": "Kamino Lend",
+    "program": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
+    "package": "kamino.lend"
+  },
+  {
+    "name": "Kamino Liquidity",
+    "program": "6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc",
+    "package": "kamino.liquidity"
   }
 ]
