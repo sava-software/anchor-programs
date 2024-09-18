@@ -80,6 +80,7 @@ subprojects {
     implementation libs.sava.core
     implementation libs.sava.rpc
     implementation libs.sava.solana.programs
+    implementation libs.sava.solana.web2
     implementation libs.sava.anchor.src.gen
 
     testImplementation libs.junit.jupiter

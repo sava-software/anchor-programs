@@ -3,6 +3,8 @@ rootProject.name = 'anchor-programs'
 include 'programs'
 project(':programs').name = 'anchor-programs'
 
+include 'examples'
+
 dependencyResolutionManagement {
   repositories {
     maven {
@@ -16,7 +18,7 @@ dependencyResolutionManagement {
   }
   versionCatalogs {
     libs {
-      from("software.sava:solana-version-catalog:0.1.4")
+      from("software.sava:solana-version-catalog:0.1.6")
     }
   }
 }
