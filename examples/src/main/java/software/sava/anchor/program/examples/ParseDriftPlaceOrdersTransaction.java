@@ -64,11 +64,10 @@ public final class ParseDriftPlaceOrdersTransaction {
       // instructions[0]; // Compute Budget Limit
       // instructions[1]; // Compute Unit Price
       // instructions[2]; // Drift Place Orders
-      final var placeOrdersIx = Arrays.stream(instructions)
-          .filter(DriftProgram.PLACE_ORDERS_DISCRIMINATOR)
-          .findFirst().orElseThrow();
-
-      final var placeOrdersIxData = DriftProgram.PlaceOrdersIxData.read(placeOrdersIx);
+  final var placeOrdersIxData = Arrays.stream(instructions)
+      .filter(DriftProgram.PLACE_ORDERS_DISCRIMINATOR)
+      .map(DriftProgram.PlaceOrdersIxData::read)
+      .findFirst().orElseThrow();
 
       final OrderParams[] orderParamsArray = placeOrdersIxData.params();
       final OrderParams orderParams = orderParamsArray[0];
