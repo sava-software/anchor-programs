@@ -43,9 +43,7 @@ try (final var httpClient = HttpClient.newHttpClient()) {
 
   // Fetch a Drift placeOrders Transaction
   final var txFuture = rpcClient.getTransaction(
-          "36Wnn99Y49mJ5GKiNiT3ja2q8gzSvMNrN5A3Bcn2YfCyrwY7kgQGVAu9VNzXqmWSbgzX76oUGxYNuPGM7tpPoJJS",
-          0,
-          RpcEncoding.base64.name()
+          "36Wnn99Y49mJ5GKiNiT3ja2q8gzSvMNrN5A3Bcn2YfCyrwY7kgQGVAu9VNzXqmWSbgzX76oUGxYNuPGM7tpPoJJS"
   );
   final var tx = txFuture.join();
   final byte[] txData = tx.data();

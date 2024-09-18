@@ -13,7 +13,6 @@ import software.sava.core.tx.Instruction;
 import software.sava.core.tx.TransactionSkeleton;
 import software.sava.rpc.json.http.SolanaNetwork;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
-import software.sava.rpc.json.http.request.RpcEncoding;
 import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramClient;
 import software.sava.solana.web2.jupiter.client.http.JupiterClient;
@@ -33,9 +32,7 @@ public final class ParseDriftPlaceOrdersTransaction {
 
       // Fetch a Drift placeOrders Transaction
       final var txFuture = rpcClient.getTransaction(
-          "36Wnn99Y49mJ5GKiNiT3ja2q8gzSvMNrN5A3Bcn2YfCyrwY7kgQGVAu9VNzXqmWSbgzX76oUGxYNuPGM7tpPoJJS",
-          0,
-          RpcEncoding.base64.name()
+          "36Wnn99Y49mJ5GKiNiT3ja2q8gzSvMNrN5A3Bcn2YfCyrwY7kgQGVAu9VNzXqmWSbgzX76oUGxYNuPGM7tpPoJJS"
       );
       final var tx = txFuture.join();
       final byte[] txData = tx.data();
