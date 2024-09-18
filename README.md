@@ -74,9 +74,12 @@ try (final var httpClient = HttpClient.newHttpClient()) {
     }
   }
 
-  // instructions[0]; // Compute Budget Limit
-  // instructions[1]; // Compute Unit Price
-  final var placeOrdersIx = instructions[2];
+// instructions[0]; // Compute Budget Limit
+// instructions[1]; // Compute Unit Price
+// instructions[2]; // Drift Place Orders
+final var placeOrdersIx = Arrays.stream(instructions)
+        .filter(DriftProgram.PLACE_ORDERS_DISCRIMINATOR)
+        .findFirst().orElseThrow();
   final var placeOrdersIxData = DriftProgram.PlaceOrdersIxData
       .read(placeOrdersIx.data(), placeOrdersIx.offset());
   final OrderParams[] orderParams = placeOrdersIxData.params();
