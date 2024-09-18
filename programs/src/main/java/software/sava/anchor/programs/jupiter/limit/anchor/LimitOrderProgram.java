@@ -72,7 +72,11 @@ public final class LimitOrderProgram {
   public record InitializeOrderIxData(Discriminator discriminator,
                                       long makingAmount,
                                       long takingAmount,
-                                      OptionalLong expiredAt) implements Borsh {
+                                      OptionalLong expiredAt) implements Borsh {  
+
+    public static InitializeOrderIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static InitializeOrderIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -146,7 +150,11 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
-  public record FillOrderIxData(Discriminator discriminator, long makingAmount, long maxTakingAmount) implements Borsh {
+  public record FillOrderIxData(Discriminator discriminator, long makingAmount, long maxTakingAmount) implements Borsh {  
+
+    public static FillOrderIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -208,7 +216,11 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
-  public record PreFlashFillOrderIxData(Discriminator discriminator, long makingAmount) implements Borsh {
+  public record PreFlashFillOrderIxData(Discriminator discriminator, long makingAmount) implements Borsh {  
+
+    public static PreFlashFillOrderIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -278,7 +290,11 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
-  public record FlashFillOrderIxData(Discriminator discriminator, long maxTakingAmount) implements Borsh {
+  public record FlashFillOrderIxData(Discriminator discriminator, long maxTakingAmount) implements Borsh {  
+
+    public static FlashFillOrderIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -383,7 +399,11 @@ public final class LimitOrderProgram {
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
   }
 
-  public record WithdrawFeeIxData(Discriminator discriminator, long amount) implements Borsh {
+  public record WithdrawFeeIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static WithdrawFeeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -444,7 +464,11 @@ public final class LimitOrderProgram {
                               long makerFee,
                               long makerStableFee,
                               long takerFee,
-                              long takerStableFee) implements Borsh {
+                              long takerStableFee) implements Borsh {  
+
+    public static InitFeeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 40;
 
@@ -519,7 +543,11 @@ public final class LimitOrderProgram {
                                 long makerFee,
                                 long makerStableFee,
                                 long takerFee,
-                                long takerStableFee) implements Borsh {
+                                long takerStableFee) implements Borsh {  
+
+    public static UpdateFeeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 40;
 

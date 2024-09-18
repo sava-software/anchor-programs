@@ -81,7 +81,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record InitializeLbPairIxData(Discriminator discriminator, int activeId, int binStep) implements Borsh {
+  public record InitializeLbPairIxData(Discriminator discriminator, int activeId, int binStep) implements Borsh {  
+
+    public static InitializeLbPairIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 14;
 
@@ -155,7 +159,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record InitializePermissionLbPairIxData(Discriminator discriminator, InitPermissionPairIx ixData) implements Borsh {
+  public record InitializePermissionLbPairIxData(Discriminator discriminator, InitPermissionPairIx ixData) implements Borsh {  
+
+    public static InitializePermissionLbPairIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 33;
 
@@ -224,7 +232,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record InitializeBinArrayIxData(Discriminator discriminator, long index) implements Borsh {
+  public record InitializeBinArrayIxData(Discriminator discriminator, long index) implements Borsh {  
+
+    public static InitializeBinArrayIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -298,7 +310,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record AddLiquidityIxData(Discriminator discriminator, LiquidityParameter liquidityParameter) implements Borsh {
+  public record AddLiquidityIxData(Discriminator discriminator, LiquidityParameter liquidityParameter) implements Borsh {  
+
+    public static AddLiquidityIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static AddLiquidityIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -369,7 +385,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record AddLiquidityByWeightIxData(Discriminator discriminator, LiquidityParameterByWeight liquidityParameter) implements Borsh {
+  public record AddLiquidityByWeightIxData(Discriminator discriminator, LiquidityParameterByWeight liquidityParameter) implements Borsh {  
+
+    public static AddLiquidityByWeightIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static AddLiquidityByWeightIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -440,7 +460,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record AddLiquidityByStrategyIxData(Discriminator discriminator, LiquidityParameterByStrategy liquidityParameter) implements Borsh {
+  public record AddLiquidityByStrategyIxData(Discriminator discriminator, LiquidityParameterByStrategy liquidityParameter) implements Borsh {  
+
+    public static AddLiquidityByStrategyIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 105;
 
@@ -505,7 +529,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record AddLiquidityByStrategyOneSideIxData(Discriminator discriminator, LiquidityParameterByStrategyOneSide liquidityParameter) implements Borsh {
+  public record AddLiquidityByStrategyOneSideIxData(Discriminator discriminator, LiquidityParameterByStrategyOneSide liquidityParameter) implements Borsh {  
+
+    public static AddLiquidityByStrategyOneSideIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 97;
 
@@ -570,7 +598,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record AddLiquidityOneSideIxData(Discriminator discriminator, LiquidityOneSideParameter liquidityParameter) implements Borsh {
+  public record AddLiquidityOneSideIxData(Discriminator discriminator, LiquidityOneSideParameter liquidityParameter) implements Borsh {  
+
+    public static AddLiquidityOneSideIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static AddLiquidityOneSideIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -641,7 +673,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record RemoveLiquidityIxData(Discriminator discriminator, BinLiquidityReduction[] binLiquidityRemoval) implements Borsh {
+  public record RemoveLiquidityIxData(Discriminator discriminator, BinLiquidityReduction[] binLiquidityRemoval) implements Borsh {  
+
+    public static RemoveLiquidityIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static RemoveLiquidityIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -699,7 +735,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record InitializePositionIxData(Discriminator discriminator, int lowerBinId, int width) implements Borsh {
+  public record InitializePositionIxData(Discriminator discriminator, int lowerBinId, int width) implements Borsh {  
+
+    public static InitializePositionIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -767,7 +807,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record InitializePositionPdaIxData(Discriminator discriminator, int lowerBinId, int width) implements Borsh {
+  public record InitializePositionPdaIxData(Discriminator discriminator, int lowerBinId, int width) implements Borsh {  
+
+    public static InitializePositionPdaIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -845,7 +889,11 @@ public final class LbClmmProgram {
                                                    int lowerBinId,
                                                    int width,
                                                    PublicKey owner,
-                                                   PublicKey feeOwner) implements Borsh {
+                                                   PublicKey feeOwner) implements Borsh {  
+
+    public static InitializePositionByOperatorIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 80;
 
@@ -911,7 +959,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record UpdatePositionOperatorIxData(Discriminator discriminator, PublicKey operator) implements Borsh {
+  public record UpdatePositionOperatorIxData(Discriminator discriminator, PublicKey operator) implements Borsh {  
+
+    public static UpdatePositionOperatorIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 40;
 
@@ -986,7 +1038,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record SwapIxData(Discriminator discriminator, long amountIn, long minAmountOut) implements Borsh {
+  public record SwapIxData(Discriminator discriminator, long amountIn, long minAmountOut) implements Borsh {  
+
+    public static SwapIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -1065,7 +1121,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record SwapExactOutIxData(Discriminator discriminator, long maxInAmount, long outAmount) implements Borsh {
+  public record SwapExactOutIxData(Discriminator discriminator, long maxInAmount, long outAmount) implements Borsh {  
+
+    public static SwapExactOutIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -1152,7 +1212,11 @@ public final class LbClmmProgram {
   public record SwapWithPriceImpactIxData(Discriminator discriminator,
                                           long amountIn,
                                           OptionalInt activeId,
-                                          int maxPriceImpactBps) implements Borsh {
+                                          int maxPriceImpactBps) implements Borsh {  
+
+    public static SwapWithPriceImpactIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static SwapWithPriceImpactIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -1222,7 +1286,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record WithdrawProtocolFeeIxData(Discriminator discriminator, long amountX, long amountY) implements Borsh {
+  public record WithdrawProtocolFeeIxData(Discriminator discriminator, long amountX, long amountY) implements Borsh {  
+
+    public static WithdrawProtocolFeeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -1295,7 +1363,11 @@ public final class LbClmmProgram {
   public record InitializeRewardIxData(Discriminator discriminator,
                                        long rewardIndex,
                                        long rewardDuration,
-                                       PublicKey funder) implements Borsh {
+                                       PublicKey funder) implements Borsh {  
+
+    public static InitializeRewardIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 56;
 
@@ -1372,7 +1444,11 @@ public final class LbClmmProgram {
   public record FundRewardIxData(Discriminator discriminator,
                                  long rewardIndex,
                                  long amount,
-                                 boolean carryForward) implements Borsh {
+                                 boolean carryForward) implements Borsh {  
+
+    public static FundRewardIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 25;
 
@@ -1433,7 +1509,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record UpdateRewardFunderIxData(Discriminator discriminator, long rewardIndex, PublicKey newFunder) implements Borsh {
+  public record UpdateRewardFunderIxData(Discriminator discriminator, long rewardIndex, PublicKey newFunder) implements Borsh {  
+
+    public static UpdateRewardFunderIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 48;
 
@@ -1492,7 +1572,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record UpdateRewardDurationIxData(Discriminator discriminator, long rewardIndex, long newDuration) implements Borsh {
+  public record UpdateRewardDurationIxData(Discriminator discriminator, long rewardIndex, long newDuration) implements Borsh {  
+
+    public static UpdateRewardDurationIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -1560,7 +1644,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record ClaimRewardIxData(Discriminator discriminator, long rewardIndex) implements Borsh {
+  public record ClaimRewardIxData(Discriminator discriminator, long rewardIndex) implements Borsh {  
+
+    public static ClaimRewardIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1672,7 +1760,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record UpdateFeeParametersIxData(Discriminator discriminator, FeeParameter feeParameter) implements Borsh {
+  public record UpdateFeeParametersIxData(Discriminator discriminator, FeeParameter feeParameter) implements Borsh {  
+
+    public static UpdateFeeParametersIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 12;
 
@@ -1723,7 +1815,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record IncreaseOracleLengthIxData(Discriminator discriminator, long lengthToAdd) implements Borsh {
+  public record IncreaseOracleLengthIxData(Discriminator discriminator, long lengthToAdd) implements Borsh {  
+
+    public static IncreaseOracleLengthIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1773,7 +1869,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record InitializePresetParameterIxData(Discriminator discriminator, InitPresetParametersIx ix) implements Borsh {
+  public record InitializePresetParameterIxData(Discriminator discriminator, InitPresetParametersIx ix) implements Borsh {  
+
+    public static InitializePresetParameterIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 36;
 
@@ -1918,7 +2018,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record UpdateWhitelistedWalletIxData(Discriminator discriminator, PublicKey wallet) implements Borsh {
+  public record UpdateWhitelistedWalletIxData(Discriminator discriminator, PublicKey wallet) implements Borsh {  
+
+    public static UpdateWhitelistedWalletIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 40;
 
@@ -2036,7 +2140,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record WithdrawIneligibleRewardIxData(Discriminator discriminator, long rewardIndex) implements Borsh {
+  public record WithdrawIneligibleRewardIxData(Discriminator discriminator, long rewardIndex) implements Borsh {  
+
+    public static WithdrawIneligibleRewardIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -2082,7 +2190,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record SetActivationPointIxData(Discriminator discriminator, long activationPoint) implements Borsh {
+  public record SetActivationPointIxData(Discriminator discriminator, long activationPoint) implements Borsh {  
+
+    public static SetActivationPointIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -2134,7 +2246,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record SetLockReleasePointIxData(Discriminator discriminator, long newLockReleasePoint) implements Borsh {
+  public record SetLockReleasePointIxData(Discriminator discriminator, long newLockReleasePoint) implements Borsh {  
+
+    public static SetLockReleasePointIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -2217,7 +2333,11 @@ public final class LbClmmProgram {
   public record RemoveLiquidityByRangeIxData(Discriminator discriminator,
                                              int fromBinId,
                                              int toBinId,
-                                             int bpsToRemove) implements Borsh {
+                                             int bpsToRemove) implements Borsh {  
+
+    public static RemoveLiquidityByRangeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 18;
 
@@ -2291,7 +2411,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record AddLiquidityOneSidePreciseIxData(Discriminator discriminator, AddLiquiditySingleSidePreciseParameter parameter) implements Borsh {
+  public record AddLiquidityOneSidePreciseIxData(Discriminator discriminator, AddLiquiditySingleSidePreciseParameter parameter) implements Borsh {  
+
+    public static AddLiquidityOneSidePreciseIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static AddLiquidityOneSidePreciseIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -2342,7 +2466,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record GoToABinIxData(Discriminator discriminator, int binId) implements Borsh {
+  public record GoToABinIxData(Discriminator discriminator, int binId) implements Borsh {  
+
+    public static GoToABinIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 12;
 
@@ -2388,7 +2516,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record SetPreActivationDurationIxData(Discriminator discriminator, long preActivationDuration) implements Borsh {
+  public record SetPreActivationDurationIxData(Discriminator discriminator, long preActivationDuration) implements Borsh {  
+
+    public static SetPreActivationDurationIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -2434,7 +2566,11 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record SetPreActivationSwapAddressIxData(Discriminator discriminator, PublicKey preActivationSwapAddress) implements Borsh {
+  public record SetPreActivationSwapAddressIxData(Discriminator discriminator, PublicKey preActivationSwapAddress) implements Borsh {  
+
+    public static SetPreActivationSwapAddressIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 40;
 

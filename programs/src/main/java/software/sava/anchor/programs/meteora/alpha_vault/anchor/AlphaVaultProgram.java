@@ -56,7 +56,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record InitializeProrataVaultIxData(Discriminator discriminator, InitializeProrataVaultParams params) implements Borsh {
+  public record InitializeProrataVaultIxData(Discriminator discriminator, InitializeProrataVaultParams params) implements Borsh {  
+
+    public static InitializeProrataVaultIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 114;
 
@@ -113,7 +117,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record InitializeVaultWithProrataConfigIxData(Discriminator discriminator, InitializeVaultWithConfigParams params) implements Borsh {
+  public record InitializeVaultWithProrataConfigIxData(Discriminator discriminator, InitializeVaultWithConfigParams params) implements Borsh {  
+
+    public static InitializeVaultWithProrataConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 74;
 
@@ -164,7 +172,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record UpdateProrataVaultParametersIxData(Discriminator discriminator, UpdateProrataVaultParams params) implements Borsh {
+  public record UpdateProrataVaultParametersIxData(Discriminator discriminator, UpdateProrataVaultParams params) implements Borsh {  
+
+    public static UpdateProrataVaultParametersIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 32;
 
@@ -211,7 +223,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record CreateProrataConfigIxData(Discriminator discriminator, ProrataConfigParameters configParameters) implements Borsh {
+  public record CreateProrataConfigIxData(Discriminator discriminator, ProrataConfigParameters configParameters) implements Borsh {  
+
+    public static CreateProrataConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 48;
 
@@ -281,7 +297,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record InitializeFcfsVaultIxData(Discriminator discriminator, InitializeFcfsVaultParams params) implements Borsh {
+  public record InitializeFcfsVaultIxData(Discriminator discriminator, InitializeFcfsVaultParams params) implements Borsh {  
+
+    public static InitializeFcfsVaultIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 122;
 
@@ -338,7 +358,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record InitializeVaultWithFcfsConfigIxData(Discriminator discriminator, InitializeVaultWithConfigParams params) implements Borsh {
+  public record InitializeVaultWithFcfsConfigIxData(Discriminator discriminator, InitializeVaultWithConfigParams params) implements Borsh {  
+
+    public static InitializeVaultWithFcfsConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 74;
 
@@ -389,7 +413,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record UpdateFcfsVaultParametersIxData(Discriminator discriminator, UpdateFcfsVaultParams params) implements Borsh {
+  public record UpdateFcfsVaultParametersIxData(Discriminator discriminator, UpdateFcfsVaultParams params) implements Borsh {  
+
+    public static UpdateFcfsVaultParametersIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 48;
 
@@ -436,7 +464,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record CreateFcfsConfigIxData(Discriminator discriminator, FcfsConfigParameters configParameters) implements Borsh {
+  public record CreateFcfsConfigIxData(Discriminator discriminator, FcfsConfigParameters configParameters) implements Borsh {  
+
+    public static CreateFcfsConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 64;
 
@@ -504,7 +536,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record CreateMerkleRootConfigIxData(Discriminator discriminator, CreateMerkleRootConfigParams params) implements Borsh {
+  public record CreateMerkleRootConfigIxData(Discriminator discriminator, CreateMerkleRootConfigParams params) implements Borsh {  
+
+    public static CreateMerkleRootConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 48;
 
@@ -596,7 +632,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record CreatePermissionedEscrowIxData(Discriminator discriminator, long maxCap, byte[][] proof) implements Borsh {
+  public record CreatePermissionedEscrowIxData(Discriminator discriminator, long maxCap, byte[][] proof) implements Borsh {  
+
+    public static CreatePermissionedEscrowIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static CreatePermissionedEscrowIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -680,7 +720,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record DepositIxData(Discriminator discriminator, long maxAmount) implements Borsh {
+  public record DepositIxData(Discriminator discriminator, long maxAmount) implements Borsh {  
+
+    public static DepositIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -742,7 +786,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record WithdrawIxData(Discriminator discriminator, long amount) implements Borsh {
+  public record WithdrawIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static WithdrawIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -872,7 +920,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record FillDlmmIxData(Discriminator discriminator, long maxAmount) implements Borsh {
+  public record FillDlmmIxData(Discriminator discriminator, long maxAmount) implements Borsh {  
+
+    public static FillDlmmIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -950,7 +1002,11 @@ public final class AlphaVaultProgram {
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
 
-  public record FillDynamicAmmIxData(Discriminator discriminator, long maxAmount) implements Borsh {
+  public record FillDynamicAmmIxData(Discriminator discriminator, long maxAmount) implements Borsh {  
+
+    public static FillDynamicAmmIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 

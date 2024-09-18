@@ -78,10 +78,11 @@ try (final var httpClient = HttpClient.newHttpClient()) {
   final var placeOrdersIx = Arrays.stream(instructions)
       .filter(DriftProgram.PLACE_ORDERS_DISCRIMINATOR)
       .findFirst().orElseThrow();
-  final var placeOrdersIxData = DriftProgram.PlaceOrdersIxData
-      .read(placeOrdersIx.data(), placeOrdersIx.offset());
+
+  final var placeOrdersIxData = DriftProgram.PlaceOrdersIxData.read(placeOrdersIx);
+  
   final OrderParams[] orderParams = placeOrdersIxData.params();
-  final var order = orderParams[0];
+  final OrderParams order = orderParams[0];
 
   // Fetch token contexts to make use of convenient scaled value conversions.
   final var jupiterClient = JupiterClient.createClient(httpClient);

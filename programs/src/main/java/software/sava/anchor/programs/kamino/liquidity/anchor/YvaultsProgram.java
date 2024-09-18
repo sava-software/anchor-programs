@@ -90,7 +90,11 @@ public final class YvaultsProgram {
   public record InitializeStrategyIxData(Discriminator discriminator,
                                          long strategyType,
                                          long tokenACollateralId,
-                                         long tokenBCollateralId) implements Borsh {
+                                         long tokenBCollateralId) implements Borsh {  
+
+    public static InitializeStrategyIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 32;
 
@@ -163,7 +167,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record InitializeKaminoRewardIxData(Discriminator discriminator, long kaminoRewardIndex, long collateralToken) implements Borsh {
+  public record InitializeKaminoRewardIxData(Discriminator discriminator, long kaminoRewardIndex, long collateralToken) implements Borsh {  
+
+    public static InitializeKaminoRewardIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -226,7 +234,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record AddKaminoRewardsIxData(Discriminator discriminator, long kaminoRewardIndex, long amount) implements Borsh {
+  public record AddKaminoRewardsIxData(Discriminator discriminator, long kaminoRewardIndex, long amount) implements Borsh {  
+
+    public static AddKaminoRewardsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -319,7 +331,11 @@ public final class YvaultsProgram {
   public record UpdateCollateralInfoIxData(Discriminator discriminator,
                                            long index,
                                            long mode,
-                                           byte[] value) implements Borsh {
+                                           byte[] value) implements Borsh {  
+
+    public static UpdateCollateralInfoIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 56;
 
@@ -378,7 +394,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record InsertCollateralInfoIxData(Discriminator discriminator, long index, CollateralInfoParams params) implements Borsh {
+  public record InsertCollateralInfoIxData(Discriminator discriminator, long index, CollateralInfoParams params) implements Borsh {  
+
+    public static InsertCollateralInfoIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 161;
 
@@ -451,7 +471,11 @@ public final class YvaultsProgram {
   public record InitializeSharesMetadataIxData(Discriminator discriminator,
                                                String name, byte[] _name,
                                                String symbol, byte[] _symbol,
-                                               String uri, byte[] _uri) implements Borsh {
+                                               String uri, byte[] _uri) implements Borsh {  
+
+    public static InitializeSharesMetadataIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static InitializeSharesMetadataIxData createRecord(final Discriminator discriminator,
                                                               final String name,
@@ -527,7 +551,11 @@ public final class YvaultsProgram {
   public record UpdateSharesMetadataIxData(Discriminator discriminator,
                                            String name, byte[] _name,
                                            String symbol, byte[] _symbol,
-                                           String uri, byte[] _uri) implements Borsh {
+                                           String uri, byte[] _uri) implements Borsh {  
+
+    public static UpdateSharesMetadataIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static UpdateSharesMetadataIxData createRecord(final Discriminator discriminator,
                                                           final String name,
@@ -594,7 +622,11 @@ public final class YvaultsProgram {
   public record UpdateGlobalConfigIxData(Discriminator discriminator,
                                          int key,
                                          int index,
-                                         byte[] value) implements Borsh {
+                                         byte[] value) implements Borsh {  
+
+    public static UpdateGlobalConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 44;
 
@@ -662,7 +694,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record UpdateTreasuryFeeVaultIxData(Discriminator discriminator, int collateralId) implements Borsh {
+  public record UpdateTreasuryFeeVaultIxData(Discriminator discriminator, int collateralId) implements Borsh {  
+
+    public static UpdateTreasuryFeeVaultIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 10;
 
@@ -717,7 +753,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record UpdateStrategyConfigIxData(Discriminator discriminator, int mode, byte[] value) implements Borsh {
+  public record UpdateStrategyConfigIxData(Discriminator discriminator, int mode, byte[] value) implements Borsh {  
+
+    public static UpdateStrategyConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 138;
 
@@ -788,7 +828,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record UpdateRewardMappingIxData(Discriminator discriminator, int rewardIndex, int collateralToken) implements Borsh {
+  public record UpdateRewardMappingIxData(Discriminator discriminator, int rewardIndex, int collateralToken) implements Borsh {  
+
+    public static UpdateRewardMappingIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 10;
 
@@ -913,7 +957,11 @@ public final class YvaultsProgram {
   public record OpenLiquidityPositionIxData(Discriminator discriminator,
                                             long tickLowerIndex,
                                             long tickUpperIndex,
-                                            int bump) implements Borsh {
+                                            int bump) implements Borsh {  
+
+    public static OpenLiquidityPositionIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 25;
 
@@ -1099,7 +1147,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record DepositIxData(Discriminator discriminator, long tokenMaxA, long tokenMaxB) implements Borsh {
+  public record DepositIxData(Discriminator discriminator, long tokenMaxA, long tokenMaxB) implements Borsh {  
+
+    public static DepositIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -1272,7 +1324,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record DepositAndInvestIxData(Discriminator discriminator, long tokenMaxA, long tokenMaxB) implements Borsh {
+  public record DepositAndInvestIxData(Discriminator discriminator, long tokenMaxA, long tokenMaxB) implements Borsh {  
+
+    public static DepositAndInvestIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -1376,7 +1432,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record WithdrawIxData(Discriminator discriminator, long sharesAmount) implements Borsh {
+  public record WithdrawIxData(Discriminator discriminator, long sharesAmount) implements Borsh {  
+
+    public static WithdrawIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1468,7 +1528,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record ExecutiveWithdrawIxData(Discriminator discriminator, int action) implements Borsh {
+  public record ExecutiveWithdrawIxData(Discriminator discriminator, int action) implements Borsh {  
+
+    public static ExecutiveWithdrawIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 9;
 
@@ -1656,7 +1720,11 @@ public final class YvaultsProgram {
                                   long tokenBIn,
                                   long rewardIndex,
                                   long rewardCollateralId,
-                                  long minCollateralTokenOut) implements Borsh {
+                                  long minCollateralTokenOut) implements Borsh {  
+
+    public static SwapRewardsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 48;
 
@@ -1782,7 +1850,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record SwapUnevenVaultsIxData(Discriminator discriminator, long targetLimitBps) implements Borsh {
+  public record SwapUnevenVaultsIxData(Discriminator discriminator, long targetLimitBps) implements Borsh {  
+
+    public static SwapUnevenVaultsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1833,7 +1905,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record CheckExpectedVaultsBalancesIxData(Discriminator discriminator, long tokenAAtaBalance, long tokenBAtaBalance) implements Borsh {
+  public record CheckExpectedVaultsBalancesIxData(Discriminator discriminator, long tokenAAtaBalance, long tokenBAtaBalance) implements Borsh {  
+
+    public static CheckExpectedVaultsBalancesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -1945,7 +2021,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record SingleTokenDepositAndInvestWithMinIxData(Discriminator discriminator, long tokenAMinPostDepositBalance, long tokenBMinPostDepositBalance) implements Borsh {
+  public record SingleTokenDepositAndInvestWithMinIxData(Discriminator discriminator, long tokenAMinPostDepositBalance, long tokenBMinPostDepositBalance) implements Borsh {  
+
+    public static SingleTokenDepositAndInvestWithMinIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -2040,7 +2120,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record SingleTokenDepositWithMinIxData(Discriminator discriminator, long tokenAMinPostDepositBalance, long tokenBMinPostDepositBalance) implements Borsh {
+  public record SingleTokenDepositWithMinIxData(Discriminator discriminator, long tokenAMinPostDepositBalance, long tokenBMinPostDepositBalance) implements Borsh {  
+
+    public static SingleTokenDepositWithMinIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 24;
 
@@ -2129,7 +2213,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record FlashSwapUnevenVaultsStartIxData(Discriminator discriminator, long amount, boolean aToB) implements Borsh {
+  public record FlashSwapUnevenVaultsStartIxData(Discriminator discriminator, long amount, boolean aToB) implements Borsh {  
+
+    public static FlashSwapUnevenVaultsStartIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 17;
 
@@ -2224,7 +2312,11 @@ public final class YvaultsProgram {
   public record FlashSwapUnevenVaultsEndIxData(Discriminator discriminator,
                                                long minRepayAmount,
                                                long amountToLeaveToUser,
-                                               boolean aToB) implements Borsh {
+                                               boolean aToB) implements Borsh {  
+
+    public static FlashSwapUnevenVaultsEndIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 25;
 
@@ -2324,7 +2416,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record EmergencySwapIxData(Discriminator discriminator, boolean aToB, long targetLimitBps) implements Borsh {
+  public record EmergencySwapIxData(Discriminator discriminator, boolean aToB, long targetLimitBps) implements Borsh {  
+
+    public static EmergencySwapIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 17;
 
@@ -2388,7 +2484,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record WithdrawFromTreasuryIxData(Discriminator discriminator, long amount) implements Borsh {
+  public record WithdrawFromTreasuryIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static WithdrawFromTreasuryIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -2459,7 +2559,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record WithdrawFromTopupIxData(Discriminator discriminator, long amount) implements Borsh {
+  public record WithdrawFromTopupIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static WithdrawFromTopupIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -2596,7 +2700,11 @@ public final class YvaultsProgram {
                                long otherAmountThreshold,
                                BigInteger sqrtPriceLimit,
                                boolean amountSpecifiedIsInput,
-                               boolean aToB) implements Borsh {
+                               boolean aToB) implements Borsh {  
+
+    public static OrcaSwapIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 42;
 
@@ -2667,7 +2775,11 @@ public final class YvaultsProgram {
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
 
-  public record SignTermsIxData(Discriminator discriminator, byte[] signature) implements Borsh {
+  public record SignTermsIxData(Discriminator discriminator, byte[] signature) implements Borsh {  
+
+    public static SignTermsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 72;
 

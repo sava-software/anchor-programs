@@ -57,7 +57,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record InitLendingMarketIxData(Discriminator discriminator, byte[] quoteCurrency) implements Borsh {
+  public record InitLendingMarketIxData(Discriminator discriminator, byte[] quoteCurrency) implements Borsh {  
+
+    public static InitLendingMarketIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 40;
 
@@ -106,7 +110,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record UpdateLendingMarketIxData(Discriminator discriminator, long mode, byte[] value) implements Borsh {
+  public record UpdateLendingMarketIxData(Discriminator discriminator, long mode, byte[] value) implements Borsh {  
+
+    public static UpdateLendingMarketIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 88;
 
@@ -218,7 +226,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record InitFarmsForReserveIxData(Discriminator discriminator, int mode) implements Borsh {
+  public record InitFarmsForReserveIxData(Discriminator discriminator, int mode) implements Borsh {  
+
+    public static InitFarmsForReserveIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 9;
 
@@ -274,7 +286,11 @@ public final class KaminoLendingProgram {
   public record UpdateReserveConfigIxData(Discriminator discriminator,
                                           long mode,
                                           byte[] value,
-                                          boolean skipValidation) implements Borsh {
+                                          boolean skipValidation) implements Borsh {  
+
+    public static UpdateReserveConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static UpdateReserveConfigIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -354,7 +370,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record SocializeLossIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {
+  public record SocializeLossIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+
+    public static SocializeLossIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -412,7 +432,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record WithdrawProtocolFeeIxData(Discriminator discriminator, long amount) implements Borsh {
+  public record WithdrawProtocolFeeIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static WithdrawProtocolFeeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -473,7 +497,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record RefreshReservesBatchIxData(Discriminator discriminator, boolean skipPriceUpdates) implements Borsh {
+  public record RefreshReservesBatchIxData(Discriminator discriminator, boolean skipPriceUpdates) implements Borsh {  
+
+    public static RefreshReservesBatchIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 9;
 
@@ -539,7 +567,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record DepositReserveLiquidityIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {
+  public record DepositReserveLiquidityIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+
+    public static DepositReserveLiquidityIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -605,7 +637,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record RedeemReserveCollateralIxData(Discriminator discriminator, long collateralAmount) implements Borsh {
+  public record RedeemReserveCollateralIxData(Discriminator discriminator, long collateralAmount) implements Borsh {  
+
+    public static RedeemReserveCollateralIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -665,7 +701,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record InitObligationIxData(Discriminator discriminator, InitObligationArgs args) implements Borsh {
+  public record InitObligationIxData(Discriminator discriminator, InitObligationArgs args) implements Borsh {  
+
+    public static InitObligationIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 10;
 
@@ -728,7 +768,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record InitObligationFarmsForReserveIxData(Discriminator discriminator, int mode) implements Borsh {
+  public record InitObligationFarmsForReserveIxData(Discriminator discriminator, int mode) implements Borsh {  
+
+    public static InitObligationFarmsForReserveIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 9;
 
@@ -790,7 +834,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record RefreshObligationFarmsForReserveIxData(Discriminator discriminator, int mode) implements Borsh {
+  public record RefreshObligationFarmsForReserveIxData(Discriminator discriminator, int mode) implements Borsh {  
+
+    public static RefreshObligationFarmsForReserveIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 9;
 
@@ -859,7 +907,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record DepositObligationCollateralIxData(Discriminator discriminator, long collateralAmount) implements Borsh {
+  public record DepositObligationCollateralIxData(Discriminator discriminator, long collateralAmount) implements Borsh {  
+
+    public static DepositObligationCollateralIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -919,7 +971,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record WithdrawObligationCollateralIxData(Discriminator discriminator, long collateralAmount) implements Borsh {
+  public record WithdrawObligationCollateralIxData(Discriminator discriminator, long collateralAmount) implements Borsh {  
+
+    public static WithdrawObligationCollateralIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -985,7 +1041,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record BorrowObligationLiquidityIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {
+  public record BorrowObligationLiquidityIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+
+    public static BorrowObligationLiquidityIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1045,7 +1105,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record RepayObligationLiquidityIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {
+  public record RepayObligationLiquidityIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+
+    public static RepayObligationLiquidityIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1115,7 +1179,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record DepositReserveLiquidityAndObligationCollateralIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {
+  public record DepositReserveLiquidityAndObligationCollateralIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+
+    public static DepositReserveLiquidityAndObligationCollateralIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1185,7 +1253,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record WithdrawObligationCollateralAndRedeemReserveCollateralIxData(Discriminator discriminator, long collateralAmount) implements Borsh {
+  public record WithdrawObligationCollateralAndRedeemReserveCollateralIxData(Discriminator discriminator, long collateralAmount) implements Borsh {  
+
+    public static WithdrawObligationCollateralAndRedeemReserveCollateralIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1276,7 +1348,11 @@ public final class KaminoLendingProgram {
   public record LiquidateObligationAndRedeemReserveCollateralIxData(Discriminator discriminator,
                                                                     long liquidityAmount,
                                                                     long minAcceptableReceivedLiquidityAmount,
-                                                                    long maxAllowedLtvOverridePercent) implements Borsh {
+                                                                    long maxAllowedLtvOverridePercent) implements Borsh {  
+
+    public static LiquidateObligationAndRedeemReserveCollateralIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 32;
 
@@ -1353,7 +1429,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record FlashRepayReserveLiquidityIxData(Discriminator discriminator, long liquidityAmount, int borrowInstructionIndex) implements Borsh {
+  public record FlashRepayReserveLiquidityIxData(Discriminator discriminator, long liquidityAmount, int borrowInstructionIndex) implements Borsh {  
+
+    public static FlashRepayReserveLiquidityIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 17;
 
@@ -1423,7 +1503,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record FlashBorrowReserveLiquidityIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {
+  public record FlashBorrowReserveLiquidityIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+
+    public static FlashBorrowReserveLiquidityIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1471,7 +1555,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record RequestElevationGroupIxData(Discriminator discriminator, int elevationGroup) implements Borsh {
+  public record RequestElevationGroupIxData(Discriminator discriminator, int elevationGroup) implements Borsh {  
+
+    public static RequestElevationGroupIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 9;
 
@@ -1525,7 +1613,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record InitReferrerTokenStateIxData(Discriminator discriminator, PublicKey referrer) implements Borsh {
+  public record InitReferrerTokenStateIxData(Discriminator discriminator, PublicKey referrer) implements Borsh {  
+
+    public static InitReferrerTokenStateIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 40;
 
@@ -1579,7 +1671,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record InitUserMetadataIxData(Discriminator discriminator, PublicKey userLookupTable) implements Borsh {
+  public record InitUserMetadataIxData(Discriminator discriminator, PublicKey userLookupTable) implements Borsh {  
+
+    public static InitUserMetadataIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 40;
 
@@ -1661,7 +1757,11 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record InitReferrerStateAndShortUrlIxData(Discriminator discriminator, String shortUrl, byte[] _shortUrl) implements Borsh {
+  public record InitReferrerStateAndShortUrlIxData(Discriminator discriminator, String shortUrl, byte[] _shortUrl) implements Borsh {  
+
+    public static InitReferrerStateAndShortUrlIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static InitReferrerStateAndShortUrlIxData createRecord(final Discriminator discriminator, final String shortUrl) {
       return new InitReferrerStateAndShortUrlIxData(discriminator, shortUrl, shortUrl.getBytes(UTF_8));
@@ -1748,7 +1848,11 @@ public final class KaminoLendingProgram {
                                       ReserveStatus reserveStatus,
                                       UpdateConfigMode updateConfigMode,
                                       UpdateLendingMarketConfigValue updateLendingMarketConfigValue,
-                                      UpdateLendingMarketMode updateLendingMarketConfigMode) implements Borsh {
+                                      UpdateLendingMarketMode updateLendingMarketConfigMode) implements Borsh {  
+
+    public static IdlMissingTypesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static IdlMissingTypesIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

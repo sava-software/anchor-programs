@@ -71,7 +71,11 @@ public final class JupiterProgram {
                             long inAmount,
                             long quotedOutAmount,
                             int slippageBps,
-                            int platformFeeBps) implements Borsh {
+                            int platformFeeBps) implements Borsh {  
+
+    public static RouteIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static RouteIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -167,7 +171,11 @@ public final class JupiterProgram {
                                            RoutePlanStep[] routePlan,
                                            long quotedOutAmount,
                                            int slippageBps,
-                                           int platformFeeBps) implements Borsh {
+                                           int platformFeeBps) implements Borsh {  
+
+    public static RouteWithTokenLedgerIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static RouteWithTokenLedgerIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -260,7 +268,11 @@ public final class JupiterProgram {
                                     long outAmount,
                                     long quotedInAmount,
                                     int slippageBps,
-                                    int platformFeeBps) implements Borsh {
+                                    int platformFeeBps) implements Borsh {  
+
+    public static ExactOutRouteIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static ExactOutRouteIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -370,7 +382,11 @@ public final class JupiterProgram {
                                           long inAmount,
                                           long quotedOutAmount,
                                           int slippageBps,
-                                          int platformFeeBps) implements Borsh {
+                                          int platformFeeBps) implements Borsh {  
+
+    public static SharedAccountsRouteIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static SharedAccountsRouteIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -484,7 +500,11 @@ public final class JupiterProgram {
                                                          RoutePlanStep[] routePlan,
                                                          long quotedOutAmount,
                                                          int slippageBps,
-                                                         int platformFeeBps) implements Borsh {
+                                                         int platformFeeBps) implements Borsh {  
+
+    public static SharedAccountsRouteWithTokenLedgerIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static SharedAccountsRouteWithTokenLedgerIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -594,7 +614,11 @@ public final class JupiterProgram {
                                                   long outAmount,
                                                   long quotedInAmount,
                                                   int slippageBps,
-                                                  int platformFeeBps) implements Borsh {
+                                                  int platformFeeBps) implements Borsh {  
+
+    public static SharedAccountsExactOutRouteIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static SharedAccountsExactOutRouteIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -706,7 +730,11 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record CreateTokenAccountIxData(Discriminator discriminator, int bump) implements Borsh {
+  public record CreateTokenAccountIxData(Discriminator discriminator, int bump) implements Borsh {  
+
+    public static CreateTokenAccountIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 9;
 
@@ -762,7 +790,11 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record CreateProgramOpenOrdersIxData(Discriminator discriminator, int id) implements Borsh {
+  public record CreateProgramOpenOrdersIxData(Discriminator discriminator, int id) implements Borsh {  
+
+    public static CreateProgramOpenOrdersIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 9;
 
@@ -810,7 +842,11 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record ClaimIxData(Discriminator discriminator, int id) implements Borsh {
+  public record ClaimIxData(Discriminator discriminator, int id) implements Borsh {  
+
+    public static ClaimIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 9;
 
@@ -870,7 +906,11 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
   }
 
-  public record ClaimTokenIxData(Discriminator discriminator, int id) implements Borsh {
+  public record ClaimTokenIxData(Discriminator discriminator, int id) implements Borsh {  
+
+    public static ClaimTokenIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 9;
 

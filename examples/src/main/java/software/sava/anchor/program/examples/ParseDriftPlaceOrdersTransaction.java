@@ -67,10 +67,11 @@ public final class ParseDriftPlaceOrdersTransaction {
       final var placeOrdersIx = Arrays.stream(instructions)
           .filter(DriftProgram.PLACE_ORDERS_DISCRIMINATOR)
           .findFirst().orElseThrow();
-      final var placeOrdersIxData = DriftProgram.PlaceOrdersIxData
-          .read(placeOrdersIx.data(), placeOrdersIx.offset());
-      final OrderParams[] orderParams = placeOrdersIxData.params();
-      final var order = orderParams[0];
+
+      final var placeOrdersIxData = DriftProgram.PlaceOrdersIxData.read(placeOrdersIx);
+
+      final OrderParams[] orderParamsArray = placeOrdersIxData.params();
+      final OrderParams orderParams = orderParamsArray[0];
 
       // Fetch token contexts to make use of convenient scaled value conversions.
       final var jupiterClient = JupiterClient.createClient(httpClient);
@@ -85,13 +86,13 @@ public final class ParseDriftPlaceOrdersTransaction {
       final var driftAccounts = driftClient.accounts();
       final MarketConfig marketConfig;
       final TokenContext baseTokenContext;
-      if (order.marketType() == MarketType.Perp) {
-        final var perpMarketConfig = driftAccounts.perpMarketConfig(order.marketIndex());
+      if (orderParams.marketType() == MarketType.Perp) {
+        final var perpMarketConfig = driftAccounts.perpMarketConfig(orderParams.marketIndex());
         final var spotConfig = driftClient.spotMarket(perpMarketConfig.baseAssetSymbol());
         baseTokenContext = verifiedTokens.get(spotConfig.mint());
         marketConfig = perpMarketConfig;
       } else {
-        final var spotConfig = driftAccounts.spotMarketConfig(order.marketIndex());
+        final var spotConfig = driftAccounts.spotMarketConfig(orderParams.marketIndex());
         baseTokenContext = verifiedTokens.get(spotConfig.mint());
         marketConfig = spotConfig;
       }
@@ -103,13 +104,13 @@ public final class ParseDriftPlaceOrdersTransaction {
       System.out.format("""
               %s %s %s @ %s on %s [reduceOnly=%b] [postOnly=%s]
               """,
-          order.orderType(),
-          order.direction(),
-          baseTokenContext.toDecimal(order.baseAssetAmount()).toPlainString(),
-          usdcTokenContext.toDecimal(order.price()).toPlainString(),
+          orderParams.orderType(),
+          orderParams.direction(),
+          baseTokenContext.toDecimal(orderParams.baseAssetAmount()).toPlainString(),
+          usdcTokenContext.toDecimal(orderParams.price()).toPlainString(),
           marketConfig.symbol(),
-          order.reduceOnly(),
-          order.postOnly()
+          orderParams.reduceOnly(),
+          orderParams.postOnly()
       );
     }
   }

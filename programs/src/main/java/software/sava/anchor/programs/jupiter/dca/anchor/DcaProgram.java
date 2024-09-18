@@ -94,7 +94,11 @@ public final class DcaProgram {
                               OptionalLong minOutAmount,
                               OptionalLong maxOutAmount,
                               OptionalLong startAt,
-                              Boolean closeWsolInAta) implements Borsh {
+                              Boolean closeWsolInAta) implements Borsh {  
+
+    public static OpenDcaIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static OpenDcaIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -233,7 +237,11 @@ public final class DcaProgram {
                                 long cycleFrequency,
                                 OptionalLong minOutAmount,
                                 OptionalLong maxOutAmount,
-                                OptionalLong startAt) implements Borsh {
+                                OptionalLong startAt) implements Borsh {  
+
+    public static OpenDcaV2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static OpenDcaV2IxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -370,7 +378,11 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record WithdrawIxData(Discriminator discriminator, WithdrawParams withdrawParams) implements Borsh {
+  public record WithdrawIxData(Discriminator discriminator, WithdrawParams withdrawParams) implements Borsh {  
+
+    public static WithdrawIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 17;
 
@@ -425,7 +437,11 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record DepositIxData(Discriminator discriminator, long depositIn) implements Borsh {
+  public record DepositIxData(Discriminator discriminator, long depositIn) implements Borsh {  
+
+    public static DepositIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -484,7 +500,11 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record WithdrawFeesIxData(Discriminator discriminator, long amount) implements Borsh {
+  public record WithdrawFeesIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static WithdrawFeesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -592,7 +612,11 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record FulfillFlashFillIxData(Discriminator discriminator, long repayAmount) implements Borsh {
+  public record FulfillFlashFillIxData(Discriminator discriminator, long repayAmount) implements Borsh {  
+
+    public static FulfillFlashFillIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -700,7 +724,11 @@ public final class DcaProgram {
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
   }
 
-  public record FulfillDlmmFillIxData(Discriminator discriminator, long repayAmount) implements Borsh {
+  public record FulfillDlmmFillIxData(Discriminator discriminator, long repayAmount) implements Borsh {  
+
+    public static FulfillDlmmFillIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 

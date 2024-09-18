@@ -55,7 +55,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record AddShareClassIxData(Discriminator discriminator, ShareClassModel shareClassMetadata) implements Borsh {
+  public record AddShareClassIxData(Discriminator discriminator, ShareClassModel shareClassMetadata) implements Borsh {  
+
+    public static AddShareClassIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static AddShareClassIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -121,7 +125,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record CloseShareClassIxData(Discriminator discriminator, int shareClassId) implements Borsh {
+  public record CloseShareClassIxData(Discriminator discriminator, int shareClassId) implements Borsh {  
+
+    public static CloseShareClassIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 9;
 
@@ -226,7 +234,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record DriftDepositIxData(Discriminator discriminator, long amount) implements Borsh {
+  public record DriftDepositIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static DriftDepositIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -288,7 +300,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record DriftInitializeIxData(Discriminator discriminator, PublicKey trader) implements Borsh {
+  public record DriftInitializeIxData(Discriminator discriminator, PublicKey trader) implements Borsh {  
+
+    public static DriftInitializeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static DriftInitializeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -340,7 +356,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record DriftUpdateDelegatedTraderIxData(Discriminator discriminator, PublicKey trader) implements Borsh {
+  public record DriftUpdateDelegatedTraderIxData(Discriminator discriminator, PublicKey trader) implements Borsh {  
+
+    public static DriftUpdateDelegatedTraderIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static DriftUpdateDelegatedTraderIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -401,7 +421,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record DriftWithdrawIxData(Discriminator discriminator, long amount) implements Borsh {
+  public record DriftWithdrawIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static DriftWithdrawIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -470,7 +494,11 @@ public final class GlamProgram {
   public record InitializeAndDelegateStakeIxData(Discriminator discriminator,
                                                  long lamports,
                                                  String stakeAccountId, byte[] _stakeAccountId,
-                                                 int stakeAccountBump) implements Borsh {
+                                                 int stakeAccountBump) implements Borsh {  
+
+    public static InitializeAndDelegateStakeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static InitializeAndDelegateStakeIxData createRecord(final Discriminator discriminator,
                                                                 final long lamports,
@@ -534,7 +562,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record InitializeFundIxData(Discriminator discriminator, FundModel fund) implements Borsh {
+  public record InitializeFundIxData(Discriminator discriminator, FundModel fund) implements Borsh {  
+
+    public static InitializeFundIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static InitializeFundIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -602,7 +634,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record JupiterSwapIxData(Discriminator discriminator, long amount, byte[] data) implements Borsh {
+  public record JupiterSwapIxData(Discriminator discriminator, long amount, byte[] data) implements Borsh {  
+
+    public static JupiterSwapIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static JupiterSwapIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -703,7 +739,11 @@ public final class GlamProgram {
   public record MarinadeDelayedUnstakeIxData(Discriminator discriminator,
                                              long msolAmount,
                                              String ticketId, byte[] _ticketId,
-                                             int bump) implements Borsh {
+                                             int bump) implements Borsh {  
+
+    public static MarinadeDelayedUnstakeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static MarinadeDelayedUnstakeIxData createRecord(final Discriminator discriminator,
                                                             final long msolAmount,
@@ -785,7 +825,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record MarinadeDepositSolIxData(Discriminator discriminator, long lamports) implements Borsh {
+  public record MarinadeDepositSolIxData(Discriminator discriminator, long lamports) implements Borsh {  
+
+    public static MarinadeDepositSolIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -858,7 +902,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record MarinadeDepositStakeIxData(Discriminator discriminator, int validatorIdx) implements Borsh {
+  public record MarinadeDepositStakeIxData(Discriminator discriminator, int validatorIdx) implements Borsh {  
+
+    public static MarinadeDepositStakeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 12;
 
@@ -925,7 +973,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record MarinadeLiquidUnstakeIxData(Discriminator discriminator, long msolAmount) implements Borsh {
+  public record MarinadeLiquidUnstakeIxData(Discriminator discriminator, long msolAmount) implements Borsh {  
+
+    public static MarinadeLiquidUnstakeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1014,7 +1066,11 @@ public final class GlamProgram {
   public record RedeemIxData(Discriminator discriminator,
                              long amount,
                              boolean inKind,
-                             boolean skipState) implements Borsh {
+                             boolean skipState) implements Borsh {  
+
+    public static RedeemIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 18;
 
@@ -1087,7 +1143,11 @@ public final class GlamProgram {
   public record SplitStakeAccountIxData(Discriminator discriminator,
                                         long lamports,
                                         String newStakeAccountId, byte[] _newStakeAccountId,
-                                        int newStakeAccountBump) implements Borsh {
+                                        int newStakeAccountBump) implements Borsh {  
+
+    public static SplitStakeAccountIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static SplitStakeAccountIxData createRecord(final Discriminator discriminator,
                                                        final long lamports,
@@ -1166,7 +1226,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record StakePoolDepositSolIxData(Discriminator discriminator, long lamports) implements Borsh {
+  public record StakePoolDepositSolIxData(Discriminator discriminator, long lamports) implements Borsh {  
+
+    public static StakePoolDepositSolIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1280,7 +1344,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record StakePoolWithdrawSolIxData(Discriminator discriminator, long poolTokenAmount) implements Borsh {
+  public record StakePoolWithdrawSolIxData(Discriminator discriminator, long poolTokenAmount) implements Borsh {  
+
+    public static StakePoolWithdrawSolIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
@@ -1361,7 +1429,11 @@ public final class GlamProgram {
   public record StakePoolWithdrawStakeIxData(Discriminator discriminator,
                                              long poolTokenAmount,
                                              String stakeAccountId, byte[] _stakeAccountId,
-                                             int stakeAccountBump) implements Borsh {
+                                             int stakeAccountBump) implements Borsh {  
+
+    public static StakePoolWithdrawStakeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static StakePoolWithdrawStakeIxData createRecord(final Discriminator discriminator,
                                                             final long poolTokenAmount,
@@ -1439,7 +1511,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record SubscribeIxData(Discriminator discriminator, long amount, boolean skipState) implements Borsh {
+  public record SubscribeIxData(Discriminator discriminator, long amount, boolean skipState) implements Borsh {  
+
+    public static SubscribeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 17;
 
@@ -1489,7 +1565,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record UpdateFundIxData(Discriminator discriminator, FundModel fund) implements Borsh {
+  public record UpdateFundIxData(Discriminator discriminator, FundModel fund) implements Borsh {  
+
+    public static UpdateFundIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static UpdateFundIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -1580,7 +1660,11 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record WsolWrapIxData(Discriminator discriminator, long lamports) implements Borsh {
+  public record WsolWrapIxData(Discriminator discriminator, long lamports) implements Borsh {  
+
+    public static WsolWrapIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
 
     public static final int BYTES = 16;
 
