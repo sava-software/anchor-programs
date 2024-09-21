@@ -561,6 +561,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamFundAccounts.openFundsPDA().publicKey(),
         glamFundAccounts.treasuryPublicKey(),
         manager.publicKey(),
+        null, // TODO
         shareClassModel
     );
   }
@@ -594,6 +595,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         solanaAccounts,
         glamFundAccounts.fundPublicKey(),
         shareClassKey,
+        null,  // TODO
         manager.publicKey(),
         shareClassId
     );
@@ -616,6 +618,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         assetKey,
         treasuryAssetATAKey,
         assetATAKey,
+        null,  // TODO
         manager.publicKey(),
         amount,
         true
@@ -635,6 +638,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         shareClassATAKey,
         manager.publicKey(),
         glamFundAccounts.treasuryPublicKey(),
+        null,  // TODO
         amount,
         inKind,
         true

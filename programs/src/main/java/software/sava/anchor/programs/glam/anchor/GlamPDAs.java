@@ -10,6 +10,38 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 public final class GlamPDAs {
 
+  public static ProgramDerivedAddress dstAccountPolicyPDA(final PublicKey program,
+                                                          final PublicKey dstAccountAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "account-policy".getBytes(US_ASCII),
+      dstAccountAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress extraAccountMetaListPDA(final PublicKey program,
+                                                              final PublicKey shareClassMintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "extra-account-metas".getBytes(US_ASCII),
+      shareClassMintAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress extraAccountMetaList1PDA(final PublicKey program,
+                                                               final PublicKey shareClassAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "extra-account-metas".getBytes(US_ASCII),
+      shareClassAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress extraAccountMetaList2PDA(final PublicKey program,
+                                                               final PublicKey mintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "extra-account-metas".getBytes(US_ASCII),
+      mintAccount.toByteArray()
+    ), program);
+  }
+
   public static ProgramDerivedAddress fundPDA(final PublicKey program,
                                               final PublicKey managerAccount,
                                               final byte[] fundModelCreated) {
@@ -72,6 +104,14 @@ public final class GlamPDAs {
     ), program);
   }
 
+  public static ProgramDerivedAddress signerPolicyPDA(final PublicKey program,
+                                                      final PublicKey signerShareAtaAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "account-policy".getBytes(US_ASCII),
+      signerShareAtaAccount.toByteArray()
+    ), program);
+  }
+
   public static ProgramDerivedAddress signerShareAtaPDA(final PublicKey program,
                                                         final PublicKey signerAccount,
                                                         final PublicKey token2022ProgramAccount,
@@ -80,6 +120,14 @@ public final class GlamPDAs {
       signerAccount.toByteArray(),
       token2022ProgramAccount.toByteArray(),
       shareClassAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress srcAccountPolicyPDA(final PublicKey program,
+                                                          final PublicKey srcAccountAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "account-policy".getBytes(US_ASCII),
+      srcAccountAccount.toByteArray()
     ), program);
   }
 

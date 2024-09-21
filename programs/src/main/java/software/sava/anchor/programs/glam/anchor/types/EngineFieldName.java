@@ -11,7 +11,9 @@ public enum EngineFieldName implements Borsh.Enum {
   ShareClassAllowlist,
   ShareClassBlocklist,
   DelegateAcls,
-  IntegrationAcls;
+  IntegrationAcls,
+  ExternalTreasuryAccounts,
+  LockUp;
 
   public static EngineFieldName read(final byte[] _data, final int offset) {
     return Borsh.read(EngineFieldName.values(), _data, offset);
