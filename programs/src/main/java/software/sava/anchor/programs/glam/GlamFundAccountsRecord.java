@@ -24,11 +24,11 @@ record GlamFundAccountsRecord(GlamAccounts glamAccounts,
   }
 
   @Override
-  public ProgramDerivedAddress shareClassPDA(final long shareId) {
+  public ProgramDerivedAddress shareClassPDA(final int shareClassId) {
     return PublicKey.findProgramAddress(
         List.of(
             "share".getBytes(UTF_8),
-            new byte[]{(byte) (shareId % 256)},
+            new byte[]{(byte) (shareClassId % 256)},
             fundPublicKey.toByteArray()
         ), glamAccounts.program());
   }

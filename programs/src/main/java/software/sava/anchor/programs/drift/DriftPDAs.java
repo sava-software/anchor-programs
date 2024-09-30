@@ -8,6 +8,7 @@ import java.util.List;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static software.sava.core.accounts.PublicKey.findProgramAddress;
 
+// https://github.com/drift-labs/protocol-v2/blob/9d997937ff641e95a08cbf4c20b2ea326a5ba6be/sdk/src/addresses/pda.ts#L7
 public final class DriftPDAs {
 
   private static byte[] lowerTwoLE(final int id) {
@@ -61,6 +62,11 @@ public final class DriftPDAs {
   public static ProgramDerivedAddress deriveSpotMarketAccount(final DriftAccounts driftAccounts,
                                                               final int marketIndex) {
     return getIndexedAccount(driftAccounts, "spot_market", marketIndex);
+  }
+
+  public static ProgramDerivedAddress deriveSpotMarketVaultAccount(final DriftAccounts driftAccounts,
+                                                                   final int marketIndex) {
+    return getIndexedAccount(driftAccounts, "spot_market_vault", marketIndex);
   }
 
   public static ProgramDerivedAddress deriveInsuranceFundStakeAccount(final DriftAccounts driftAccounts,

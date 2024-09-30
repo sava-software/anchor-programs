@@ -13,6 +13,7 @@ import software.sava.solana.programs.clients.NativeProgramAccountClient;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public interface GlamProgramAccountClient extends NativeProgramAccountClient {
@@ -54,17 +55,19 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
                                                         final PublicKey managerPublicKey) {
 
     return glamFundAccounts.stream()
-        .filter(accountInfo -> accountInfo.data().manager().equals(managerPublicKey))
-        .collect(Collectors.toMap(AccountInfo::pubKey, AccountInfo::data));
+        .map(AccountInfo::data)
+        .filter(accountInfo -> accountInfo.manager().equals(managerPublicKey))
+        .collect(Collectors.toMap(FundAccount::_address, Function.identity()));
   }
 
   static Map<PublicKey, FundAccount> filterFundAccounts(final List<AccountInfo<FundAccount>> glamFundAccounts,
                                                         final PublicKey managerPublicKey,
                                                         final String fundName) {
     return glamFundAccounts.stream()
-        .filter(accountInfo -> accountInfo.data().name().equals(fundName))
-        .filter(accountInfo -> accountInfo.data().manager().equals(managerPublicKey))
-        .collect(Collectors.toMap(AccountInfo::pubKey, AccountInfo::data));
+        .map(AccountInfo::data)
+        .filter(accountInfo -> accountInfo.name().equals(fundName)
+            && accountInfo.manager().equals(managerPublicKey))
+        .collect(Collectors.toMap(FundAccount::_address, Function.identity()));
   }
 
   NativeProgramAccountClient delegatedNativeProgramAccountClient();
@@ -85,7 +88,7 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
   Instruction initializeFund(final FundModel fundModel);
 
-  Instruction addShareClass(final ShareClassModel shareClassModel);
+  Instruction addShareClass(final int shareClassId, final ShareClassModel shareClassModel);
 
   Instruction updateFund(final FundModel fundModel);
 
@@ -93,15 +96,12 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
   Instruction closeShareClass(final PublicKey shareClassKey, final int shareClassId);
 
-  Instruction subscribe(final PublicKey shareClassKey,
-                        final PublicKey shareClassATAKey,
-                        final PublicKey assetKey,
+  Instruction subscribe(final PublicKey assetKey,
                         final PublicKey treasuryAssetATAKey,
                         final PublicKey assetATAKey,
+                        final int shareClassId,
                         final long amount);
 
-  Instruction redeem(final PublicKey shareClassKey,
-                     final PublicKey shareClassATAKey,
-                     final long amount,
+  Instruction redeem(final int shareClassId, final long amount,
                      final boolean inKind);
 }
