@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.concurrent.CompletableFuture;
 
+import static software.sava.anchor.programs.drift.DriftPDAs.deriveSpotMarketVaultAccount;
+import static software.sava.anchor.programs.drift.DriftPDAs.deriveUserStatsAccount;
 import static software.sava.anchor.programs.drift.anchor.types.MarketType.Perp;
 import static software.sava.anchor.programs.drift.anchor.types.MarketType.Spot;
 
@@ -82,6 +84,52 @@ final class DriftProgramClientImpl implements DriftProgramClient {
             User.createAuthorityFilter(authority)
         ),
         User.FACTORY
+    );
+  }
+
+  @Override
+  public Instruction deposit(final PublicKey user,
+                             final PublicKey authority,
+                             final PublicKey userTokenAccountKey,
+                             final PublicKey tokenProgramKey,
+                             final int marketIndex,
+                             final long amount,
+                             final boolean reduceOnly) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    final var spotMarketVaultPDA = deriveSpotMarketVaultAccount(accounts, marketIndex);
+    return DriftProgram.deposit(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        userStatsPDA.publicKey(),
+        authority,
+        spotMarketVaultPDA.publicKey(),
+        userTokenAccountKey,
+        tokenProgramKey,
+        marketIndex,
+        amount,
+        reduceOnly
+    );
+  }
+
+  @Override
+  public Instruction transferDeposit(final PublicKey fromUser,
+                                     final PublicKey toUser,
+                                     final PublicKey authority,
+                                     final int marketIndex,
+                                     final long amount) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    final var spotMarketVaultPDA = deriveSpotMarketVaultAccount(accounts, marketIndex);
+    return DriftProgram.transferDeposit(
+        accounts.invokedDriftProgram(),
+        fromUser,
+        toUser,
+        userStatsPDA.publicKey(),
+        authority,
+        accounts.stateKey(),
+        spotMarketVaultPDA.publicKey(),
+        marketIndex,
+        amount
     );
   }
 

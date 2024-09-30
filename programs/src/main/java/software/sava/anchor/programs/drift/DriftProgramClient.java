@@ -80,6 +80,29 @@ public interface DriftProgramClient {
   CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient,
                                                                    final PublicKey authority);
 
+  Instruction deposit(final PublicKey user,
+                      final PublicKey authority,
+                      final PublicKey userTokenAccountKey,
+                      final PublicKey tokenProgramKey,
+                      final int marketIndex,
+                      final long amount,
+                      final boolean reduceOnly);
+
+  default Instruction deposit(final PublicKey user,
+                              final PublicKey authority,
+                              final PublicKey userTokenAccountKey,
+                              final PublicKey tokenProgramKey,
+                              final int marketIndex,
+                              final long amount) {
+    return deposit(user, authority, userTokenAccountKey, tokenProgramKey, marketIndex, amount, false);
+  }
+
+  Instruction transferDeposit(final PublicKey fromUser,
+                              final PublicKey toUser,
+                              final PublicKey authority,
+                              final int marketIndex,
+                              final long amount);
+
   Instruction placeOrder(final OrderParams orderParams);
 
   Instruction placeOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user);
