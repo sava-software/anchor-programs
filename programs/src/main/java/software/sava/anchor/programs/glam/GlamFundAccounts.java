@@ -43,5 +43,5 @@ public interface GlamFundAccounts {
 
   ProgramDerivedAddress openFundsPDA();
 
-  ProgramDerivedAddress shareClassPDA(final int shareClassId);
+  ProgramDerivedAddress shareClassPDA(final long shareId);
 }
