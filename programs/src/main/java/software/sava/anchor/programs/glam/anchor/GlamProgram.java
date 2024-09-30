@@ -3,8 +3,12 @@ package software.sava.anchor.programs.glam.anchor;
 import java.lang.String;
 
 import java.util.List;
+import java.util.OptionalInt;
 
 import software.sava.anchor.programs.glam.anchor.types.FundModel;
+import software.sava.anchor.programs.glam.anchor.types.MarketType;
+import software.sava.anchor.programs.glam.anchor.types.OrderParams;
+import software.sava.anchor.programs.glam.anchor.types.PositionDirection;
 import software.sava.anchor.programs.glam.anchor.types.ShareClassModel;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -181,6 +185,85 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, DEACTIVATE_STAKE_ACCOUNTS_DISCRIMINATOR);
   }
 
+  public static final Discriminator DRIFT_CANCEL_ORDERS_DISCRIMINATOR = toDiscriminator(98, 107, 48, 79, 97, 60, 99, 58);
+
+  public static Instruction driftCancelOrders(final AccountMeta invokedGlamProgramMeta,
+                                              final SolanaAccounts solanaAccounts,
+                                              final PublicKey fundKey,
+                                              final PublicKey userKey,
+                                              final PublicKey stateKey,
+                                              final PublicKey treasuryKey,
+                                              final PublicKey managerKey,
+                                              final PublicKey driftProgramKey,
+                                              final MarketType marketType,
+                                              final OptionalInt marketIndex,
+                                              final PositionDirection direction) {
+    final var keys = List.of(
+      createRead(fundKey),
+      createWrite(userKey),
+      createWrite(stateKey),
+      createRead(treasuryKey),
+      createWritableSigner(managerKey),
+      createRead(driftProgramKey),
+      createRead(solanaAccounts.tokenProgram())
+    );
+
+    final byte[] _data = new byte[
+        8
+        + (marketType == null ? 1 : (1 + Borsh.len(marketType)))
+        + (marketIndex == null || marketIndex.isEmpty() ? 1 : 3)
+        + (direction == null ? 1 : (1 + Borsh.len(direction)))
+    ];
+    int i = writeDiscriminator(DRIFT_CANCEL_ORDERS_DISCRIMINATOR, _data, 0);
+    i += Borsh.writeOptional(marketType, _data, i);
+    i += Borsh.writeOptionalshort(marketIndex, _data, i);
+    Borsh.writeOptional(direction, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record DriftCancelOrdersIxData(Discriminator discriminator,
+                                        MarketType marketType,
+                                        OptionalInt marketIndex,
+                                        PositionDirection direction) implements Borsh {  
+
+    public static DriftCancelOrdersIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static DriftCancelOrdersIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var marketType = _data[i++] == 0 ? null : MarketType.read(_data, i);
+      if (marketType != null) {
+        i += Borsh.len(marketType);
+      }
+      final var marketIndex = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt16LE(_data, i));
+      if (marketIndex.isPresent()) {
+        i += 2;
+      }
+      final var direction = _data[i++] == 0 ? null : PositionDirection.read(_data, i);
+      return new DriftCancelOrdersIxData(discriminator, marketType, marketIndex, direction);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeOptional(marketType, _data, i);
+      i += Borsh.writeOptionalshort(marketIndex, _data, i);
+      i += Borsh.writeOptional(direction, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + (marketType == null ? 1 : (1 + Borsh.len(marketType))) + (marketIndex == null || marketIndex.isEmpty() ? 1 : (1 + 2)) + (direction == null ? 1 : (1 + Borsh.len(direction)));
+    }
+  }
+
   public static final Discriminator DRIFT_DELETE_USER_DISCRIMINATOR = toDiscriminator(179, 118, 20, 212, 145, 146, 49, 130);
 
   public static Instruction driftDeleteUser(final AccountMeta invokedGlamProgramMeta,
@@ -257,6 +340,7 @@ public final class GlamProgram {
                                          final PublicKey managerKey,
                                          final PublicKey driftProgramKey,
                                          final int subAccountId,
+                                         final int marketIndex,
                                          final long amount) {
     final var keys = List.of(
       createRead(fundKey),
@@ -271,22 +355,27 @@ public final class GlamProgram {
       createRead(solanaAccounts.tokenProgram())
     );
 
-    final byte[] _data = new byte[18];
+    final byte[] _data = new byte[20];
     int i = writeDiscriminator(DRIFT_DEPOSIT_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, subAccountId);
+    i += 2;
+    putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record DriftDepositIxData(Discriminator discriminator, int subAccountId, long amount) implements Borsh {  
+  public record DriftDepositIxData(Discriminator discriminator,
+                                   int subAccountId,
+                                   int marketIndex,
+                                   long amount) implements Borsh {  
 
     public static DriftDepositIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 18;
+    public static final int BYTES = 20;
 
     public static DriftDepositIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -296,14 +385,18 @@ public final class GlamProgram {
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
+      final var marketIndex = getInt16LE(_data, i);
+      i += 2;
       final var amount = getInt64LE(_data, i);
-      return new DriftDepositIxData(discriminator, subAccountId, amount);
+      return new DriftDepositIxData(discriminator, subAccountId, marketIndex, amount);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       putInt16LE(_data, i, subAccountId);
+      i += 2;
+      putInt16LE(_data, i, marketIndex);
       i += 2;
       putInt64LE(_data, i, amount);
       i += 8;
@@ -340,6 +433,63 @@ public final class GlamProgram {
     );
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, DRIFT_INITIALIZE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator DRIFT_PLACE_ORDERS_DISCRIMINATOR = toDiscriminator(117, 18, 210, 6, 238, 174, 135, 167);
+
+  public static Instruction driftPlaceOrders(final AccountMeta invokedGlamProgramMeta,
+                                             final SolanaAccounts solanaAccounts,
+                                             final PublicKey fundKey,
+                                             final PublicKey userKey,
+                                             final PublicKey stateKey,
+                                             final PublicKey treasuryKey,
+                                             final PublicKey managerKey,
+                                             final PublicKey driftProgramKey,
+                                             final OrderParams[] orderParams) {
+    final var keys = List.of(
+      createRead(fundKey),
+      createWrite(userKey),
+      createWrite(stateKey),
+      createRead(treasuryKey),
+      createWritableSigner(managerKey),
+      createRead(driftProgramKey),
+      createRead(solanaAccounts.tokenProgram())
+    );
+
+    final byte[] _data = new byte[8 + Borsh.lenVector(orderParams)];
+    int i = writeDiscriminator(DRIFT_PLACE_ORDERS_DISCRIMINATOR, _data, 0);
+    Borsh.writeVector(orderParams, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record DriftPlaceOrdersIxData(Discriminator discriminator, OrderParams[] orderParams) implements Borsh {  
+
+    public static DriftPlaceOrdersIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static DriftPlaceOrdersIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var orderParams = Borsh.readVector(OrderParams.class, OrderParams::read, _data, i);
+      return new DriftPlaceOrdersIxData(discriminator, orderParams);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeVector(orderParams, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.lenVector(orderParams);
+    }
   }
 
   public static final Discriminator DRIFT_UPDATE_USER_CUSTOM_MARGIN_RATIO_DISCRIMINATOR = toDiscriminator(4, 47, 193, 177, 128, 62, 228, 14);

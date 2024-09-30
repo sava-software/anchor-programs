@@ -7,6 +7,8 @@ public enum Permission implements Borsh.Enum {
 
   DriftDeposit,
   DriftWithdraw,
+  DriftPlaceOrders,
+  DriftCancelOrders,
   Stake,
   Unstake,
   LiquidUnstake,

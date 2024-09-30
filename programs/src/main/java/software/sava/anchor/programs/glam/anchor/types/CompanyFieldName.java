@@ -24,7 +24,7 @@ public enum CompanyFieldName implements Borsh.Enum {
   AuditorName,
   CityofManCo,
   EmailAddressOfManCo,
-  FundWebsiteofManCo,
+  FundWebsiteOfManCo,
   IsUNPRISignatory,
   PhoneCountryCodeofManCo,
   PhoneNumberofManCo,
