@@ -82,7 +82,7 @@ public final class ParseDriftPlaceOrdersTransaction {
           .createAccountClient(AccountMeta.createFeePayer(PublicKey.NONE));
       final var driftClient = DriftProgramClient.createClient(nativeProgramAccountClient);
 
-      final var driftAccounts = driftClient.accounts();
+      final var driftAccounts = driftClient.driftAccounts();
       final MarketConfig marketConfig;
       final TokenContext baseTokenContext;
       if (orderParams.marketType() == MarketType.Perp) {

@@ -10,7 +10,6 @@ import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
-import java.util.List;
 import java.util.OptionalInt;
 import java.util.concurrent.CompletableFuture;
 
@@ -40,23 +39,8 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public DriftAccounts accounts() {
+  public DriftAccounts driftAccounts() {
     return accounts;
-  }
-
-  @Override
-  public DriftExtraAccounts extraAccounts() {
-    return DriftExtraAccounts.createExtraAccounts(accounts);
-  }
-
-  @Override
-  public SpotMarketConfig spotMarket(final DriftAsset asset) {
-    return accounts.spotMarketConfig(asset);
-  }
-
-  @Override
-  public PerpMarketConfig perpMarket(final DriftProduct product) {
-    return accounts.perpMarketConfig(product);
   }
 
   @Override
@@ -67,24 +51,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   @Override
   public CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient) {
     return fetchUser(rpcClient, user);
-  }
-
-  @Override
-  public CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient) {
-    return fetchUsersByAuthority(rpcClient, authority);
-  }
-
-  @Override
-  public CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient,
-                                                                          final PublicKey authority) {
-    return rpcClient.getProgramAccounts(
-        accounts.driftProgram(),
-        List.of(
-            User.SIZE_FILTER,
-            User.createAuthorityFilter(authority)
-        ),
-        User.FACTORY
-    );
   }
 
   @Override

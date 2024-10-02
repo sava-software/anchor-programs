@@ -31,17 +31,23 @@ public interface DriftProgramClient {
 
   SolanaAccounts solanaAccounts();
 
-  DriftAccounts accounts();
+  DriftAccounts driftAccounts();
 
-  DriftExtraAccounts extraAccounts();
+  default DriftExtraAccounts extraAccounts() {
+    return DriftExtraAccounts.createExtraAccounts(driftAccounts());
+  }
 
   default SpotMarketConfig spotMarket(final String asset) {
     return spotMarket(DriftAsset.valueOf(asset));
   }
 
-  SpotMarketConfig spotMarket(final DriftAsset asset);
+  default SpotMarketConfig spotMarket(final DriftAsset asset) {
+    return driftAccounts().spotMarketConfig(asset);
+  }
 
-  PerpMarketConfig perpMarket(final DriftProduct product);
+  default PerpMarketConfig perpMarket(final DriftProduct product) {
+    return driftAccounts().perpMarketConfig(product);
+  }
 
   PublicKey authority();
 
@@ -54,15 +60,15 @@ public interface DriftProgramClient {
   }
 
   default ProgramDerivedAddress deriveUserAccount(final PublicKey authority, final int subAccountId) {
-    return DriftPDAs.deriveUserAccount(accounts(), authority, subAccountId);
+    return DriftPDAs.deriveUserAccount(driftAccounts(), authority, subAccountId);
   }
 
   default ProgramDerivedAddress deriveSpotMarketAccount(final int marketIndex) {
-    return DriftPDAs.deriveSpotMarketAccount(accounts(), marketIndex);
+    return DriftPDAs.deriveSpotMarketAccount(driftAccounts(), marketIndex);
   }
 
   default ProgramDerivedAddress derivePerpMarketAccount(final int marketIndex) {
-    return DriftPDAs.derivePerpMarketAccount(accounts(), marketIndex);
+    return DriftPDAs.derivePerpMarketAccount(driftAccounts(), marketIndex);
   }
 
   CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient);
@@ -75,10 +81,21 @@ public interface DriftProgramClient {
     return rpcClient.getAccountInfo(user, User.FACTORY);
   }
 
-  CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient);
+  default CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient) {
+    return fetchUsersByAuthority(rpcClient, authority());
+  }
 
-  CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient,
-                                                                   final PublicKey authority);
+  default CompletableFuture<List<AccountInfo<User>>> fetchUsersByAuthority(final SolanaRpcClient rpcClient,
+                                                                           final PublicKey authority) {
+    return rpcClient.getProgramAccounts(
+        driftAccounts().driftProgram(),
+        List.of(
+            User.SIZE_FILTER,
+            User.createAuthorityFilter(authority)
+        ),
+        User.FACTORY
+    );
+  }
 
   Instruction deposit(final PublicKey user,
                       final PublicKey authority,
@@ -110,7 +127,7 @@ public interface DriftProgramClient {
   Instruction placePerpOrder(final OrderParams orderParams);
 
   default Instruction placePerpOrder(final OrderParams orderParams, final PublicKey authority) {
-    return placePerpOrder(orderParams, authority, DriftPDAs.deriveMainUserAccount(accounts(), authority).publicKey());
+    return placePerpOrder(orderParams, authority, DriftPDAs.deriveMainUserAccount(driftAccounts(), authority).publicKey());
   }
 
   Instruction placePerpOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user);
@@ -122,7 +139,7 @@ public interface DriftProgramClient {
   Instruction cancelOrder(final int orderId);
 
   default Instruction cancelOrder(final int orderId, final PublicKey authority) {
-    return cancelOrder(authority, DriftPDAs.deriveMainUserAccount(accounts(), authority).publicKey(), orderId);
+    return cancelOrder(authority, DriftPDAs.deriveMainUserAccount(driftAccounts(), authority).publicKey(), orderId);
   }
 
   Instruction cancelOrder(final PublicKey authority, final PublicKey user, final int orderId);

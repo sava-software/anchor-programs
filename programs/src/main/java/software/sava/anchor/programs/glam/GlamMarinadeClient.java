@@ -8,12 +8,13 @@ import software.sava.core.tx.Instruction;
 
 public interface GlamMarinadeClient extends MarinadeProgramClient {
 
-  static GlamMarinadeClient createClient(final GlamProgramAccountClient glamClient, final MarinadeAccounts marinadeAccounts) {
+  static GlamMarinadeClient createClient(final GlamProgramAccountClient glamClient,
+                                         final MarinadeAccounts marinadeAccounts) {
     return new GlamMarinadeClientImpl(glamClient, marinadeAccounts);
   }
 
   static GlamMarinadeClient createClient(final GlamProgramAccountClient glamClient) {
-    return new GlamMarinadeClientImpl(glamClient, MarinadeAccounts.MAIN_NET);
+    return createClient(glamClient, MarinadeAccounts.MAIN_NET);
   }
 
   FundPDA createMarinadeTicket();
