@@ -339,7 +339,6 @@ public final class GlamProgram {
                                          final PublicKey treasuryAtaKey,
                                          final PublicKey managerKey,
                                          final PublicKey driftProgramKey,
-                                         final int subAccountId,
                                          final int marketIndex,
                                          final long amount) {
     final var keys = List.of(
@@ -355,10 +354,8 @@ public final class GlamProgram {
       createRead(solanaAccounts.tokenProgram())
     );
 
-    final byte[] _data = new byte[20];
+    final byte[] _data = new byte[18];
     int i = writeDiscriminator(DRIFT_DEPOSIT_DISCRIMINATOR, _data, 0);
-    putInt16LE(_data, i, subAccountId);
-    i += 2;
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
@@ -366,16 +363,13 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record DriftDepositIxData(Discriminator discriminator,
-                                   int subAccountId,
-                                   int marketIndex,
-                                   long amount) implements Borsh {  
+  public record DriftDepositIxData(Discriminator discriminator, int marketIndex, long amount) implements Borsh {  
 
     public static DriftDepositIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 20;
+    public static final int BYTES = 18;
 
     public static DriftDepositIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -383,19 +377,15 @@ public final class GlamProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var subAccountId = getInt16LE(_data, i);
-      i += 2;
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
       final var amount = getInt64LE(_data, i);
-      return new DriftDepositIxData(discriminator, subAccountId, marketIndex, amount);
+      return new DriftDepositIxData(discriminator, marketIndex, amount);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      putInt16LE(_data, i, subAccountId);
-      i += 2;
       putInt16LE(_data, i, marketIndex);
       i += 2;
       putInt64LE(_data, i, amount);
@@ -695,7 +685,7 @@ public final class GlamProgram {
                                           final PublicKey driftSignerKey,
                                           final PublicKey managerKey,
                                           final PublicKey driftProgramKey,
-                                          final int subAccountId,
+                                          final int marketIndex,
                                           final long amount) {
     final var keys = List.of(
       createRead(fundKey),
@@ -713,14 +703,14 @@ public final class GlamProgram {
 
     final byte[] _data = new byte[18];
     int i = writeDiscriminator(DRIFT_WITHDRAW_DISCRIMINATOR, _data, 0);
-    putInt16LE(_data, i, subAccountId);
+    putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record DriftWithdrawIxData(Discriminator discriminator, int subAccountId, long amount) implements Borsh {  
+  public record DriftWithdrawIxData(Discriminator discriminator, int marketIndex, long amount) implements Borsh {  
 
     public static DriftWithdrawIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -734,16 +724,16 @@ public final class GlamProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var subAccountId = getInt16LE(_data, i);
+      final var marketIndex = getInt16LE(_data, i);
       i += 2;
       final var amount = getInt64LE(_data, i);
-      return new DriftWithdrawIxData(discriminator, subAccountId, amount);
+      return new DriftWithdrawIxData(discriminator, marketIndex, amount);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      putInt16LE(_data, i, subAccountId);
+      putInt16LE(_data, i, marketIndex);
       i += 2;
       putInt64LE(_data, i, amount);
       i += 8;

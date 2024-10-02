@@ -82,7 +82,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         userTokenAccountKey,
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
-        0,
         marketIndex,
         amount
     );
