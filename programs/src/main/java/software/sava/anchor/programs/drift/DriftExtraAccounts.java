@@ -26,9 +26,17 @@ public interface DriftExtraAccounts {
 
   void userAccounts(final User user);
 
+  void market(final SpotMarketConfig marketConfig);
+
+  void market(final PerpMarketConfig marketConfig);
+
   void market(final MarketConfig marketConfig);
 
-  void market(final MarketConfig marketConfig, final MarketConfig quoteMarket);
+  void market(final PerpMarketConfig marketConfig, final MarketConfig quoteMarket);
+
+  void userAndMarket(final User user, final SpotMarketConfig marketConfig);
+
+  void userAndMarket(final User user, final PerpMarketConfig marketConfig);
 
   void userAndMarket(final User user, final MarketConfig marketConfig);
 }
