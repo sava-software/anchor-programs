@@ -32,7 +32,7 @@ public interface DriftExtraAccounts {
 
   void market(final MarketConfig marketConfig);
 
-  void market(final PerpMarketConfig marketConfig, final MarketConfig quoteMarket);
+  void market(final PerpMarketConfig marketConfig, final SpotMarketConfig quoteMarket);
 
   void userAndMarket(final User user, final SpotMarketConfig marketConfig);
 

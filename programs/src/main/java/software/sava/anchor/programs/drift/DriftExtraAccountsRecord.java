@@ -56,7 +56,7 @@ record DriftExtraAccountsRecord(DriftAccounts driftAccounts,
   }
 
   @Override
-  public void market(final PerpMarketConfig marketConfig, final MarketConfig quoteMarket) {
+  public void market(final PerpMarketConfig marketConfig, final SpotMarketConfig quoteMarket) {
     market(quoteMarket);
     mergeAccount(perpMarkets, marketConfig);
   }
