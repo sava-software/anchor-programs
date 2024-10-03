@@ -55,8 +55,10 @@ dependencies {
   implementation "software.sava:sava-rpc:$VERSION"
   implementation "software.sava:solana-programs:$VERSION"
   implementation "software.sava:anchor-src-gen:$VERSION"
+  implementation "software.sava:anchor-programs:$VERSION"
 }
 ```
+
 ## Contribution
 
 Unit tests are needed and welcomed. Otherwise, please open an issue or send an email before working on a pull request.
