@@ -591,15 +591,17 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public Instruction closeShareClass(final PublicKey shareClassKey, final int shareClassId) {
+  public Instruction closeShareClass(final PublicKey shareClassMintKey, final int shareClassId) {
     final var shareClassPDA = glamFundAccounts.shareClassPDA(shareClassId).publicKey();
     final var extraAccountMetaListPDA = GlamPDAs.extraAccountMetaListPDA(invokedProgram.publicKey(), shareClassPDA);
+    final var openFundsPDA = GlamPDAs.openfundsPDA(invokedProgram.publicKey(), glamFundAccounts.fundPublicKey());
     return GlamProgram.closeShareClass(
         invokedProgram,
         solanaAccounts,
         glamFundAccounts.fundPublicKey(),
-        shareClassKey,
+        shareClassMintKey,
         extraAccountMetaListPDA.publicKey(),
+        openFundsPDA.publicKey(),
         manager.publicKey(),
         shareClassId
     );

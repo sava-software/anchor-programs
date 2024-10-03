@@ -116,14 +116,16 @@ public final class GlamProgram {
   public static Instruction closeShareClass(final AccountMeta invokedGlamProgramMeta,
                                             final SolanaAccounts solanaAccounts,
                                             final PublicKey fundKey,
-                                            final PublicKey shareClassKey,
+                                            final PublicKey shareClassMintKey,
                                             final PublicKey extraAccountMetaListKey,
+                                            final PublicKey openfundsKey,
                                             final PublicKey managerKey,
                                             final int shareClassId) {
     final var keys = List.of(
       createWrite(fundKey),
-      createWrite(shareClassKey),
+      createWrite(shareClassMintKey),
       createWrite(extraAccountMetaListKey),
+      createWrite(openfundsKey),
       createWritableSigner(managerKey),
       createRead(solanaAccounts.token2022Program())
     );

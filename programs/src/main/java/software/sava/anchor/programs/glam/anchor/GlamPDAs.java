@@ -27,14 +27,6 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress extraAccountMetaList1PDA(final PublicKey program,
-                                                               final PublicKey shareClassAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      "extra-account-metas".getBytes(US_ASCII),
-      shareClassAccount.toByteArray()
-    ), program);
-  }
-
-  public static ProgramDerivedAddress extraAccountMetaList2PDA(final PublicKey program,
                                                                final PublicKey mintAccount) {
     return PublicKey.findProgramAddress(List.of(
       "extra-account-metas".getBytes(US_ASCII),
