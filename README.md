@@ -149,6 +149,7 @@ try (final var httpClient = HttpClient.newHttpClient()) {
   final var usdcTokenMint = driftClient.spotMarket(DriftAsset.USDC).mint();
   final var usdcTokenContext = verifiedTokens.get(usdcTokenMint);
 
+  // Limit Long 0.1 @ 111 on SOL-PERP [reduceOnly=false] [postOnly=MustPostOnly]
   System.out.format("""
           %s %s %s @ %s on %s [reduceOnly=%b] [postOnly=%s]
           """,
