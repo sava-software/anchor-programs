@@ -120,6 +120,23 @@ public interface DriftProgramClient {
                               final int marketIndex,
                               final long amount);
 
+  Instruction withdraw(final PublicKey user,
+                       final PublicKey authority,
+                       final PublicKey userTokenAccountKey,
+                       final PublicKey tokenProgramKey,
+                       final int marketIndex,
+                       final long amount,
+                       final boolean reduceOnly);
+
+  default Instruction withdraw(final PublicKey user,
+                               final PublicKey authority,
+                               final PublicKey userTokenAccountKey,
+                               final PublicKey tokenProgramKey,
+                               final int marketIndex,
+                               final long amount) {
+    return withdraw(user, authority, userTokenAccountKey, tokenProgramKey, marketIndex, amount, false);
+  }
+
   Instruction placeOrder(final OrderParams orderParams);
 
   Instruction placeOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user);

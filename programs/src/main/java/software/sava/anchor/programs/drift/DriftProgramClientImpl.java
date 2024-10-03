@@ -13,8 +13,7 @@ import software.sava.solana.programs.clients.NativeProgramAccountClient;
 import java.util.OptionalInt;
 import java.util.concurrent.CompletableFuture;
 
-import static software.sava.anchor.programs.drift.DriftPDAs.deriveSpotMarketVaultAccount;
-import static software.sava.anchor.programs.drift.DriftPDAs.deriveUserStatsAccount;
+import static software.sava.anchor.programs.drift.DriftPDAs.*;
 import static software.sava.anchor.programs.drift.anchor.types.MarketType.Perp;
 import static software.sava.anchor.programs.drift.anchor.types.MarketType.Spot;
 
@@ -96,6 +95,33 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         spotMarketVaultPDA.publicKey(),
         marketIndex,
         amount
+    );
+  }
+
+  @Override
+  public Instruction withdraw(final PublicKey user,
+                              final PublicKey authority,
+                              final PublicKey userTokenAccountKey,
+                              final PublicKey tokenProgramKey,
+                              final int marketIndex,
+                              final long amount,
+                              final boolean reduceOnly) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    final var spotMarketVaultPDA = deriveSpotMarketVaultAccount(accounts, marketIndex);
+    final var driftSignerPDA = deriveSignerAccount(accounts.driftProgram());
+    return DriftProgram.withdraw(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        userStatsPDA.publicKey(),
+        authority,
+        spotMarketVaultPDA.publicKey(),
+        driftSignerPDA.publicKey(),
+        userTokenAccountKey,
+        tokenProgramKey,
+        marketIndex,
+        amount,
+        reduceOnly
     );
   }
 

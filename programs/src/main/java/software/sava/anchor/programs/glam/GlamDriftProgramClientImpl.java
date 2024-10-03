@@ -18,8 +18,7 @@ import software.sava.rpc.json.http.response.AccountInfo;
 import java.util.OptionalInt;
 import java.util.concurrent.CompletableFuture;
 
-import static software.sava.anchor.programs.drift.DriftPDAs.deriveSpotMarketVaultAccount;
-import static software.sava.anchor.programs.drift.DriftPDAs.deriveUserStatsAccount;
+import static software.sava.anchor.programs.drift.DriftPDAs.*;
 
 final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
@@ -93,7 +92,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                      final PublicKey authority,
                                      final int marketIndex,
                                      final long amount) {
-    throw new UnsupportedOperationException("TODO: transferDeposit");
+    return null;
   }
 
   private static software.sava.anchor.programs.glam.anchor.types.OrderParams toGlam(final OrderParams orderParams) {
@@ -140,6 +139,34 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     );
   }
 
+  public Instruction withdraw(final PublicKey user,
+                              final PublicKey authority,
+                              final PublicKey userTokenAccountKey,
+                              final PublicKey tokenProgramKey,
+                              final int marketIndex,
+                              final long amount,
+                              final boolean reduceOnly) {
+    final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
+    final var spotMarketVaultPDA = deriveSpotMarketVaultAccount(driftAccounts, marketIndex);
+    final var driftSignerPDA = deriveSignerAccount(driftAccounts.driftProgram());
+    return GlamProgram.driftWithdraw(
+        invokedProgram,
+        solanaAccounts,
+        glamFundAccounts.fundPublicKey(),
+        user,
+        userStatsKey,
+        driftAccounts.stateKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        userTokenAccountKey,
+        spotMarketVaultPDA.publicKey(),
+        driftSignerPDA.publicKey(),
+        feePayer.publicKey(),
+        driftAccounts.driftProgram(),
+        marketIndex,
+        amount
+    );
+  }
+
   private static software.sava.anchor.programs.glam.anchor.types.OrderParams[] toGlam(final OrderParams[] orderParamsArray) {
     final var glamOrderParams = new software.sava.anchor.programs.glam.anchor.types.OrderParams[orderParamsArray.length];
     for (int i = 0; i < orderParamsArray.length; ++i) {
@@ -150,7 +177,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
   @Override
   public Instruction placeOrder(final OrderParams orderParams) {
-    return placeOrder(orderParams, user, authority());
+    return placeOrder(orderParams, authority(), user);
   }
 
   @Override
@@ -160,7 +187,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
   @Override
   public Instruction placePerpOrder(final OrderParams orderParams) {
-    return placePerpOrder(orderParams, user, authority());
+    return placePerpOrder(orderParams, authority(), user);
   }
 
   @Override
