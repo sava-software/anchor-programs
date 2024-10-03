@@ -40,10 +40,13 @@ repositories {
     }
   }
   maven {
+    url = "https://maven.pkg.github.com/sava-software/solana-programs"
+  }
+  maven {
     url = "https://maven.pkg.github.com/sava-software/anchor-src-gen"
   }
   maven {
-    url = "https://maven.pkg.github.com/sava-software/solana-programs"
+    url = "https://maven.pkg.github.com/sava-software/anchor-programs"
   }
 }
 
@@ -53,7 +56,6 @@ dependencies {
   implementation "software.sava:solana-programs:$VERSION"
   implementation "software.sava:anchor-src-gen:$VERSION"
 }
-
 ```
 ## Contribution
 
