@@ -42,8 +42,10 @@ record DriftExtraAccountsRecord(DriftAccounts driftAccounts,
   public void market(final MarketConfig marketConfig) {
     final var markets = switch (marketConfig) {
       case SpotMarketConfig _ -> spotMarkets;
-      case PerpMarketConfig _ -> {
+      case PerpMarketConfig perpMarketConfig -> {
         market(driftAccounts.defaultQuoteMarket());
+        final var baseSpotMarket = driftAccounts.spotMarketConfig(DriftAsset.valueOf(perpMarketConfig.baseAssetSymbol()));
+        market(baseSpotMarket);
         yield perpMarkets;
       }
     };
@@ -51,14 +53,18 @@ record DriftExtraAccountsRecord(DriftAccounts driftAccounts,
   }
 
   @Override
-  public void market(final PerpMarketConfig marketConfig, final SpotMarketConfig quoteMarket) {
+  public void market(final PerpMarketConfig perpMarketConfig, final SpotMarketConfig quoteMarket) {
     market(quoteMarket);
-    mergeAccount(perpMarkets, marketConfig);
+    final var baseSpotMarket = driftAccounts.spotMarketConfig(DriftAsset.valueOf(perpMarketConfig.baseAssetSymbol()));
+    market(baseSpotMarket);
+    mergeAccount(perpMarkets, perpMarketConfig);
   }
 
   @Override
-  public void market(final PerpMarketConfig marketConfig) {
-    market(marketConfig, driftAccounts.defaultQuoteMarket());
+  public void market(final PerpMarketConfig perpMarketConfig) {
+    final var baseSpotMarket = driftAccounts.spotMarketConfig(DriftAsset.valueOf(perpMarketConfig.baseAssetSymbol()));
+    market(baseSpotMarket);
+    market(perpMarketConfig, driftAccounts.defaultQuoteMarket());
   }
 
   @Override
