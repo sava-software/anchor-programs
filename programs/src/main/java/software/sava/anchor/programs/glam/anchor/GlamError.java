@@ -3,91 +3,109 @@ package software.sava.anchor.programs.glam.anchor;
 import software.sava.anchor.ProgramError;
 
 public sealed interface GlamError extends ProgramError permits
-    GlamError.CloseNotEmptyError,
-    GlamError.NotAuthorizedError,
-    GlamError.InvalidFundName,
-    GlamError.InvalidFundSymbol,
-    GlamError.InvalidFundUri,
-    GlamError.InvalidAssetsLen,
-    GlamError.InvalidAssetsWeights,
-    GlamError.InvalidAssetForSwap,
-    GlamError.InvalidSwap {
+    GlamError.FundNotActive,
+    GlamError.InvalidShareClass,
+    GlamError.InvalidAssetSubscribe,
+    GlamError.InvalidPricingOracle,
+    GlamError.InvalidRemainingAccounts,
+    GlamError.InvalidTreasuryAccount,
+    GlamError.InvalidSignerAccount,
+    GlamError.InvalidAssetPrice,
+    GlamError.InvalidStableCoinPriceForSubscribe,
+    GlamError.SubscribeRedeemPaused,
+    GlamError.InvalidPolicyAccount {
 
   static GlamError getInstance(final int errorCode) {
     return switch (errorCode) {
-      case 6000 -> CloseNotEmptyError.INSTANCE;
-      case 6001 -> NotAuthorizedError.INSTANCE;
-      case 6002 -> InvalidFundName.INSTANCE;
-      case 6003 -> InvalidFundSymbol.INSTANCE;
-      case 6004 -> InvalidFundUri.INSTANCE;
-      case 6005 -> InvalidAssetsLen.INSTANCE;
-      case 6006 -> InvalidAssetsWeights.INSTANCE;
-      case 6007 -> InvalidAssetForSwap.INSTANCE;
-      case 6008 -> InvalidSwap.INSTANCE;
+      case 6000 -> FundNotActive.INSTANCE;
+      case 6001 -> InvalidShareClass.INSTANCE;
+      case 6002 -> InvalidAssetSubscribe.INSTANCE;
+      case 6003 -> InvalidPricingOracle.INSTANCE;
+      case 6004 -> InvalidRemainingAccounts.INSTANCE;
+      case 6005 -> InvalidTreasuryAccount.INSTANCE;
+      case 6006 -> InvalidSignerAccount.INSTANCE;
+      case 6007 -> InvalidAssetPrice.INSTANCE;
+      case 6008 -> InvalidStableCoinPriceForSubscribe.INSTANCE;
+      case 6009 -> SubscribeRedeemPaused.INSTANCE;
+      case 6010 -> InvalidPolicyAccount.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Glam error code: " + errorCode);
     };
   }
 
-  record CloseNotEmptyError(int code, String msg) implements GlamError {
+  record FundNotActive(int code, String msg) implements GlamError {
 
-    public static final CloseNotEmptyError INSTANCE = new CloseNotEmptyError(
-        6000, "Error closing account: not empty"
+    public static final FundNotActive INSTANCE = new FundNotActive(
+        6000, "Fund is not active"
     );
   }
 
-  record NotAuthorizedError(int code, String msg) implements GlamError {
+  record InvalidShareClass(int code, String msg) implements GlamError {
 
-    public static final NotAuthorizedError INSTANCE = new NotAuthorizedError(
-        6001, "Error: not authorized"
+    public static final InvalidShareClass INSTANCE = new InvalidShareClass(
+        6001, "Share class not allowed to subscribe"
     );
   }
 
-  record InvalidFundName(int code, String msg) implements GlamError {
+  record InvalidAssetSubscribe(int code, String msg) implements GlamError {
 
-    public static final InvalidFundName INSTANCE = new InvalidFundName(
-        6002, "Invalid fund name: max 30 chars"
+    public static final InvalidAssetSubscribe INSTANCE = new InvalidAssetSubscribe(
+        6002, "Asset not allowed to subscribe"
     );
   }
 
-  record InvalidFundSymbol(int code, String msg) implements GlamError {
+  record InvalidPricingOracle(int code, String msg) implements GlamError {
 
-    public static final InvalidFundSymbol INSTANCE = new InvalidFundSymbol(
-        6003, "Too many assets: max 50"
+    public static final InvalidPricingOracle INSTANCE = new InvalidPricingOracle(
+        6003, "Invalid oracle for asset price"
     );
   }
 
-  record InvalidFundUri(int code, String msg) implements GlamError {
+  record InvalidRemainingAccounts(int code, String msg) implements GlamError {
 
-    public static final InvalidFundUri INSTANCE = new InvalidFundUri(
-        6004, "Too many assets: max 20"
+    public static final InvalidRemainingAccounts INSTANCE = new InvalidRemainingAccounts(
+        6004, "Invalid accounts: the transaction is malformed"
     );
   }
 
-  record InvalidAssetsLen(int code, String msg) implements GlamError {
+  record InvalidTreasuryAccount(int code, String msg) implements GlamError {
 
-    public static final InvalidAssetsLen INSTANCE = new InvalidAssetsLen(
-        6005, "Too many assets: max 100"
+    public static final InvalidTreasuryAccount INSTANCE = new InvalidTreasuryAccount(
+        6005, "Invalid treasury ata"
     );
   }
 
-  record InvalidAssetsWeights(int code, String msg) implements GlamError {
+  record InvalidSignerAccount(int code, String msg) implements GlamError {
 
-    public static final InvalidAssetsWeights INSTANCE = new InvalidAssetsWeights(
-        6006, "Number of weights should match number of assets"
+    public static final InvalidSignerAccount INSTANCE = new InvalidSignerAccount(
+        6006, "Invalid signer ata"
     );
   }
 
-  record InvalidAssetForSwap(int code, String msg) implements GlamError {
+  record InvalidAssetPrice(int code, String msg) implements GlamError {
 
-    public static final InvalidAssetForSwap INSTANCE = new InvalidAssetForSwap(
-        6007, "Asset cannot be swapped"
+    public static final InvalidAssetPrice INSTANCE = new InvalidAssetPrice(
+        6007, "Invalid asset price"
     );
   }
 
-  record InvalidSwap(int code, String msg) implements GlamError {
+  record InvalidStableCoinPriceForSubscribe(int code, String msg) implements GlamError {
 
-    public static final InvalidSwap INSTANCE = new InvalidSwap(
-        6008, "Swap failed"
+    public static final InvalidStableCoinPriceForSubscribe INSTANCE = new InvalidStableCoinPriceForSubscribe(
+        6008, "Subscription not allowed: invalid stable coin price"
+    );
+  }
+
+  record SubscribeRedeemPaused(int code, String msg) implements GlamError {
+
+    public static final SubscribeRedeemPaused INSTANCE = new SubscribeRedeemPaused(
+        6009, "Fund is paused for subscription and redemption"
+    );
+  }
+
+  record InvalidPolicyAccount(int code, String msg) implements GlamError {
+
+    public static final InvalidPolicyAccount INSTANCE = new InvalidPolicyAccount(
+        6010, "Policy account is mandatory"
     );
   }
 }

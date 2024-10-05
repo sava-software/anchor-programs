@@ -22,6 +22,8 @@ public record FundModel(PublicKey id,
                         CreatedModel created,
                         DelegateAcl[] delegateAcls,
                         IntegrationAcl[] integrationAcls,
+                        int[] driftMarketIndexesPerp,
+                        int[] driftMarketIndexesSpot,
                         boolean isRawOpenfunds,
                         FundOpenfundsModel rawOpenfunds) implements Borsh {
 
@@ -38,6 +40,8 @@ public record FundModel(PublicKey id,
                                        final CreatedModel created,
                                        final DelegateAcl[] delegateAcls,
                                        final IntegrationAcl[] integrationAcls,
+                                       final int[] driftMarketIndexesPerp,
+                                       final int[] driftMarketIndexesSpot,
                                        final boolean isRawOpenfunds,
                                        final FundOpenfundsModel rawOpenfunds) {
     return new FundModel(id,
@@ -53,6 +57,8 @@ public record FundModel(PublicKey id,
                          created,
                          delegateAcls,
                          integrationAcls,
+                         driftMarketIndexesPerp,
+                         driftMarketIndexesSpot,
                          isRawOpenfunds,
                          rawOpenfunds);
   }
@@ -104,6 +110,10 @@ public record FundModel(PublicKey id,
     i += Borsh.lenVector(delegateAcls);
     final var integrationAcls = Borsh.readVector(IntegrationAcl.class, IntegrationAcl::read, _data, i);
     i += Borsh.lenVector(integrationAcls);
+    final var driftMarketIndexesPerp = Borsh.readintVector(_data, i);
+    i += Borsh.lenVector(driftMarketIndexesPerp);
+    final var driftMarketIndexesSpot = Borsh.readintVector(_data, i);
+    i += Borsh.lenVector(driftMarketIndexesSpot);
     final var isRawOpenfunds = _data[i] == 1;
     ++i;
     final var rawOpenfunds = _data[i++] == 0 ? null : FundOpenfundsModel.read(_data, i);
@@ -120,6 +130,8 @@ public record FundModel(PublicKey id,
                          created,
                          delegateAcls,
                          integrationAcls,
+                         driftMarketIndexesPerp,
+                         driftMarketIndexesSpot,
                          isRawOpenfunds,
                          rawOpenfunds);
   }
@@ -140,6 +152,8 @@ public record FundModel(PublicKey id,
     i += Borsh.writeOptional(created, _data, i);
     i += Borsh.writeVector(delegateAcls, _data, i);
     i += Borsh.writeVector(integrationAcls, _data, i);
+    i += Borsh.writeVector(driftMarketIndexesPerp, _data, i);
+    i += Borsh.writeVector(driftMarketIndexesSpot, _data, i);
     _data[i] = (byte) (isRawOpenfunds ? 1 : 0);
     ++i;
     i += Borsh.writeOptional(rawOpenfunds, _data, i);
@@ -161,6 +175,8 @@ public record FundModel(PublicKey id,
          + (created == null ? 1 : (1 + Borsh.len(created)))
          + Borsh.lenVector(delegateAcls)
          + Borsh.lenVector(integrationAcls)
+         + Borsh.lenVector(driftMarketIndexesPerp)
+         + Borsh.lenVector(driftMarketIndexesSpot)
          + 1
          + (rawOpenfunds == null ? 1 : (1 + Borsh.len(rawOpenfunds)));
   }

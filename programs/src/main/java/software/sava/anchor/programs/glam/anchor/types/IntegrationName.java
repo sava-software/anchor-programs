@@ -6,7 +6,8 @@ import software.sava.core.borsh.Borsh;
 public enum IntegrationName implements Borsh.Enum {
 
   Drift,
-  StakePool,
+  SplStakePool,
+  SanctumStakePool,
   NativeStaking,
   Marinade,
   Jupiter;

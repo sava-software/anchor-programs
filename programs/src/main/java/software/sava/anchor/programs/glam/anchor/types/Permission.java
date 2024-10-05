@@ -5,10 +5,15 @@ import software.sava.core.borsh.Borsh;
 // * Delegate ACL
 public enum Permission implements Borsh.Enum {
 
+  DriftInitialize,
+  DriftUpdateUser,
+  DriftDeleteUser,
   DriftDeposit,
   DriftWithdraw,
   DriftPlaceOrders,
   DriftCancelOrders,
+  DriftPerpMarket,
+  DriftSpotMarket,
   Stake,
   Unstake,
   LiquidUnstake,
