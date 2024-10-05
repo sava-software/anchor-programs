@@ -198,7 +198,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
   @Override
   public Instruction placeOrders(final OrderParams[] orderParams) {
-    return placeOrders(orderParams, user, authority());
+    return placeOrders(orderParams, authority(), user);
   }
 
   @Override
