@@ -92,7 +92,36 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                      final PublicKey authority,
                                      final int marketIndex,
                                      final long amount) {
-    return null;
+    throw new UnsupportedOperationException("TODO: transferDeposit");
+  }
+
+  @Override
+  public Instruction withdraw(final PublicKey user,
+                              final PublicKey authority,
+                              final PublicKey userTokenAccountKey,
+                              final PublicKey tokenProgramKey,
+                              final int marketIndex,
+                              final long amount,
+                              final boolean reduceOnly) {
+    final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
+    final var spotMarketVaultPDA = deriveSpotMarketVaultAccount(driftAccounts, marketIndex);
+    final var driftSignerPDA = deriveSignerAccount(driftAccounts.driftProgram());
+    return GlamProgram.driftWithdraw(
+        invokedProgram,
+        solanaAccounts,
+        glamFundAccounts.fundPublicKey(),
+        user,
+        userStatsKey,
+        driftAccounts.stateKey(),
+        glamFundAccounts.treasuryPublicKey(),
+        userTokenAccountKey,
+        spotMarketVaultPDA.publicKey(),
+        driftSignerPDA.publicKey(),
+        feePayer.publicKey(),
+        driftAccounts.driftProgram(),
+        marketIndex,
+        amount
+    );
   }
 
   private static software.sava.anchor.programs.glam.anchor.types.OrderParams toGlam(final OrderParams orderParams) {
@@ -136,34 +165,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         orderParams.auctionDuration(),
         orderParams.auctionStartPrice(),
         orderParams.auctionEndPrice()
-    );
-  }
-
-  public Instruction withdraw(final PublicKey user,
-                              final PublicKey authority,
-                              final PublicKey userTokenAccountKey,
-                              final PublicKey tokenProgramKey,
-                              final int marketIndex,
-                              final long amount,
-                              final boolean reduceOnly) {
-    final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
-    final var spotMarketVaultPDA = deriveSpotMarketVaultAccount(driftAccounts, marketIndex);
-    final var driftSignerPDA = deriveSignerAccount(driftAccounts.driftProgram());
-    return GlamProgram.driftWithdraw(
-        invokedProgram,
-        solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
-        user,
-        userStatsKey,
-        driftAccounts.stateKey(),
-        glamFundAccounts.treasuryPublicKey(),
-        userTokenAccountKey,
-        spotMarketVaultPDA.publicKey(),
-        driftSignerPDA.publicKey(),
-        feePayer.publicKey(),
-        driftAccounts.driftProgram(),
-        marketIndex,
-        amount
     );
   }
 

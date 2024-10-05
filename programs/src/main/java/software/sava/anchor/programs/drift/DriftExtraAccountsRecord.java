@@ -39,11 +39,6 @@ record DriftExtraAccountsRecord(DriftAccounts driftAccounts,
   }
 
   @Override
-  public void market(final PerpMarketConfig marketConfig) {
-    mergeAccount(perpMarkets, marketConfig);
-  }
-
-  @Override
   public void market(final MarketConfig marketConfig) {
     final var markets = switch (marketConfig) {
       case SpotMarketConfig _ -> spotMarkets;
@@ -59,6 +54,11 @@ record DriftExtraAccountsRecord(DriftAccounts driftAccounts,
   public void market(final PerpMarketConfig marketConfig, final SpotMarketConfig quoteMarket) {
     market(quoteMarket);
     mergeAccount(perpMarkets, marketConfig);
+  }
+
+  @Override
+  public void market(final PerpMarketConfig marketConfig) {
+    market(marketConfig, driftAccounts.defaultQuoteMarket());
   }
 
   @Override
