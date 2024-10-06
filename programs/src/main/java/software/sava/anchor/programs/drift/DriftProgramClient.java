@@ -97,6 +97,11 @@ public interface DriftProgramClient {
     );
   }
 
+  Instruction deposit(final PublicKey userTokenAccountKey,
+                      final PublicKey tokenProgramKey,
+                      final int marketIndex,
+                      final long amount);
+
   Instruction deposit(final PublicKey user,
                       final PublicKey authority,
                       final PublicKey userTokenAccountKey,
@@ -119,6 +124,11 @@ public interface DriftProgramClient {
                               final PublicKey authority,
                               final int marketIndex,
                               final long amount);
+
+  Instruction withdraw(final PublicKey userTokenAccountKey,
+                       final PublicKey tokenProgramKey,
+                       final int marketIndex,
+                       final long amount);
 
   Instruction withdraw(final PublicKey user,
                        final PublicKey authority,

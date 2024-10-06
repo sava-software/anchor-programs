@@ -52,6 +52,15 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     return fetchUser(rpcClient, user);
   }
 
+
+  @Override
+  public Instruction deposit(final PublicKey userTokenAccountKey,
+                             final PublicKey tokenProgramKey,
+                             final int marketIndex,
+                             final long amount) {
+    return deposit(user, authority, userTokenAccountKey, tokenProgramKey, marketIndex, amount);
+  }
+
   @Override
   public Instruction deposit(final PublicKey user,
                              final PublicKey authority,
@@ -96,6 +105,14 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         marketIndex,
         amount
     );
+  }
+
+  @Override
+  public Instruction withdraw(final PublicKey userTokenAccountKey,
+                              final PublicKey tokenProgramKey,
+                              final int marketIndex,
+                              final long amount) {
+    return withdraw(user, authority, userTokenAccountKey, tokenProgramKey, marketIndex, amount);
   }
 
   @Override
