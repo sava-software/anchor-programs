@@ -52,7 +52,7 @@ public final class PageMeteoraTransactions {
             final var skeleton = TransactionSkeleton.deserializeSkeleton(txData);
 
             final var instructions = skeleton.isLegacy()
-                ? skeleton.parseInstructions(skeleton.parseAccounts())
+                ? skeleton.parseLegacyInstructions()
                 : skeleton.parseInstructionsWithoutAccounts();
 
             final var addLiquidityIxParams = Arrays.stream(instructions)
