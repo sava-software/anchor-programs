@@ -11,7 +11,6 @@ import software.sava.core.accounts.lookup.AddressLookupTable;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
 import software.sava.core.tx.TransactionSkeleton;
-import software.sava.rpc.json.http.SolanaNetwork;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramClient;
@@ -23,12 +22,14 @@ import java.util.Arrays;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static software.sava.rpc.json.http.SolanaNetwork.MAIN_NET;
+
 public final class ParseDriftPlaceOrdersTransaction {
 
   public static void main(final String[] args) {
     try (final var httpClient = HttpClient.newHttpClient()) {
 
-      final var rpcClient = SolanaRpcClient.createClient(SolanaNetwork.MAIN_NET.getEndpoint(), httpClient);
+      final var rpcClient = SolanaRpcClient.createClient(MAIN_NET.getEndpoint(), httpClient);
 
       // Fetch a Drift placeOrders Transaction
       final var txFuture = rpcClient.getTransaction(
