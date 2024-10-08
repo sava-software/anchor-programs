@@ -15,7 +15,8 @@ public enum EngineFieldName implements Borsh.Enum {
   ExternalTreasuryAccounts,
   LockUp,
   DriftMarketIndexesPerp,
-  DriftMarketIndexesSpot;
+  DriftMarketIndexesSpot,
+  DriftOrderTypes;
 
   public static EngineFieldName read(final byte[] _data, final int offset) {
     return Borsh.read(EngineFieldName.values(), _data, offset);
