@@ -6,6 +6,7 @@ import software.sava.core.tx.TransactionSkeleton;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 
 import java.net.http.HttpClient;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -37,7 +38,8 @@ public final class PageMeteoraTransactions {
         for (final var txSig : signatures) {
           final var signature = txSig.signature();
           System.out.format("""
-              ------------------------------------------------------------------------------------
+              
+              _________________________________________________________________________________________
               %s
               
               """, signature);
@@ -60,9 +62,11 @@ public final class PageMeteoraTransactions {
                 .map(LbClmmProgram.AddLiquidityByStrategyIxData::read)
                 .map(LbClmmProgram.AddLiquidityByStrategyIxData::liquidityParameter)
                 .toList();
+
             for (final var addLiquidityIxParam : addLiquidityIxParams) {
+              final var blockTime = transaction.blockTime();
               System.out.format("""
-                      Found add-liquidity-by-strategy with the following params on block %d:
+                      Found add-liquidity-by-strategy with the following params at %s:
                       AmountX: %d
                       AmountY: %d
                       ActiveId: %d
@@ -73,7 +77,9 @@ public final class PageMeteoraTransactions {
                       Transaction: %s
                       
                       """,
-                  transaction.blockTime().orElse(-1),
+                  blockTime.isPresent()
+                      ? Instant.ofEpochSecond(blockTime.getAsLong())
+                      : null,
                   addLiquidityIxParam.amountX(),
                   addLiquidityIxParam.amountY(),
                   addLiquidityIxParam.activeId(),
@@ -83,6 +89,7 @@ public final class PageMeteoraTransactions {
                   addLiquidityIxParam.strategyParameters().strategyType(),
                   transaction);
             }
+
             System.out.format("Contained %d add liquidity instructions.%n", addLiquidityIxParams.size());
           } catch (final RuntimeException ex) {
             System.out.println(Base64.getEncoder().encodeToString(txData));
