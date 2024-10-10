@@ -42,21 +42,26 @@ public final class ParseDriftPlaceOrdersTransaction {
 
       final Instruction[] instructions;
       if (skeleton.isLegacy()) {
-        instructions = skeleton.parseInstructions(skeleton.parseAccounts());
+        instructions = skeleton.parseLegacyInstructions();
       } else {
         // Fetch Lookup tables to allow parsing of versioned transactions.
         final int txVersion = skeleton.version();
         if (txVersion == 0) {
-          final var tableAccountInfos = rpcClient.getMultipleAccounts(
-              Arrays.asList(skeleton.lookupTableAccounts()),
-              AddressLookupTable.FACTORY
-          ).join();
+          final var tableAccounts = skeleton.lookupTableAccounts();
+          if (tableAccounts.length == 0) {
+            instructions = skeleton.parseInstructionsWithoutTableAccounts();
+          } else {
+            final var tableAccountInfos = rpcClient.getMultipleAccounts(
+                Arrays.asList(tableAccounts),
+                AddressLookupTable.FACTORY
+            ).join();
 
-          final var lookupTables = tableAccountInfos.stream()
-              .map(AccountInfo::data)
-              .collect(Collectors.toUnmodifiableMap(AddressLookupTable::address, Function.identity()));
+            final var lookupTables = tableAccountInfos.stream()
+                .map(AccountInfo::data)
+                .collect(Collectors.toUnmodifiableMap(AddressLookupTable::address, Function.identity()));
 
-          instructions = skeleton.parseInstructions(skeleton.parseAccounts(lookupTables));
+            instructions = skeleton.parseInstructions(skeleton.parseAccounts(lookupTables));
+          }
         } else {
           throw new IllegalStateException("Unhandled tx version " + txVersion);
         }
@@ -101,6 +106,7 @@ public final class ParseDriftPlaceOrdersTransaction {
       final var usdcTokenMint = driftClient.spotMarket(DriftAsset.USDC).mint();
       final var usdcTokenContext = verifiedTokens.get(usdcTokenMint);
 
+      // Limit Long 0.1 @ 111 on SOL-PERP [reduceOnly=false] [postOnly=MustPostOnly]
       System.out.format("""
               %s %s %s @ %s on %s [reduceOnly=%b] [postOnly=%s]
               """,

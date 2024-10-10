@@ -23,9 +23,7 @@ public final class PageMeteoraTransactions {
 
       final int pageLimit = 100;
       long beginRequest = System.currentTimeMillis();
-      var signaturesFuture = rpcClient.getSignaturesForAddress(
-          meteoraProgramId, pageLimit
-      );
+      var signaturesFuture = rpcClient.getSignaturesForAddress(meteoraProgramId, pageLimit);
 
       for (long minMillisBetweenRequests = 5_000; ; ) {
         final var signatures = signaturesFuture.join();
