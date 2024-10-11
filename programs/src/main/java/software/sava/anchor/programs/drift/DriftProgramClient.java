@@ -1,6 +1,7 @@
 package software.sava.anchor.programs.drift;
 
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
+import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
 import software.sava.anchor.programs.drift.anchor.types.User;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -146,6 +147,19 @@ public interface DriftProgramClient {
                                final long amount) {
     return withdraw(user, authority, userTokenAccountKey, tokenProgramKey, marketIndex, amount, false);
   }
+
+  Instruction settlePnl(final int marketIndex);
+
+  Instruction settlePnl(final PublicKey user,
+                        final PublicKey authority,
+                        final int marketIndex);
+
+  Instruction settlePnl(final short[] marketIndexes, final SettlePnlMode mode);
+
+  Instruction settlePnl(final PublicKey user,
+                        final PublicKey authority,
+                        final short[] marketIndexes,
+                        final SettlePnlMode mode);
 
   Instruction placeOrder(final OrderParams orderParams);
 

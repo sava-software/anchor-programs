@@ -42,8 +42,7 @@ public final class PageMeteoraTransactions {
               
               """, signature);
 
-          delay(minMillisBetweenRequests, beginRequest);
-          beginRequest = System.currentTimeMillis();
+          beginRequest = delay(minMillisBetweenRequests, beginRequest);
           final var transactionFuture = rpcClient.getTransaction(signature);
           final var transaction = transactionFuture.join();
           final var txData = transaction.data();
@@ -63,6 +62,7 @@ public final class PageMeteoraTransactions {
 
             for (final var addLiquidityIxParam : addLiquidityIxParams) {
               final var blockTime = transaction.blockTime();
+              final var strategyParams = addLiquidityIxParam.strategyParameters();
               System.out.format("""
                       Found add-liquidity-by-strategy with the following params at %s:
                       AmountX: %d
@@ -82,10 +82,11 @@ public final class PageMeteoraTransactions {
                   addLiquidityIxParam.amountY(),
                   addLiquidityIxParam.activeId(),
                   addLiquidityIxParam.maxActiveBinSlippage(),
-                  addLiquidityIxParam.strategyParameters().minBinId(),
-                  addLiquidityIxParam.strategyParameters().maxBinId(),
-                  addLiquidityIxParam.strategyParameters().strategyType(),
-                  transaction);
+                  strategyParams.minBinId(),
+                  strategyParams.maxBinId(),
+                  strategyParams.strategyType(),
+                  transaction
+              );
             }
 
             System.out.format("Contained %d add liquidity instructions.%n", addLiquidityIxParams.size());
@@ -95,8 +96,7 @@ public final class PageMeteoraTransactions {
           }
         }
 
-        delay(minMillisBetweenRequests, beginRequest);
-        beginRequest = System.currentTimeMillis();
+        beginRequest = delay(minMillisBetweenRequests, beginRequest);
         signaturesFuture = rpcClient.getSignaturesForAddressBefore(
             meteoraProgramId, pageLimit, signatures.getLast().signature()
         );
@@ -104,11 +104,15 @@ public final class PageMeteoraTransactions {
     }
   }
 
-  private static void delay(final long minMillisBetweenRequests, final long beginRequest) throws InterruptedException {
-    final long millisBetweenRequests = System.currentTimeMillis() - beginRequest;
+  private static long delay(final long minMillisBetweenRequests, final long beginRequest) throws InterruptedException {
+    final long now = System.currentTimeMillis();
+    final long millisBetweenRequests = now - beginRequest;
     final long sleepMillis = minMillisBetweenRequests - millisBetweenRequests;
     if (sleepMillis > 0) {
       Thread.sleep(sleepMillis);
+      return System.currentTimeMillis();
+    } else {
+      return now;
     }
   }
 

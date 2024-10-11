@@ -2,6 +2,7 @@ package software.sava.anchor.programs.drift;
 
 import software.sava.anchor.programs.drift.anchor.DriftProgram;
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
+import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
 import software.sava.anchor.programs.drift.anchor.types.User;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -23,6 +24,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   private final DriftAccounts accounts;
   private final PublicKey authority;
   private final PublicKey user;
+  private final PublicKey quoteSpotMarketVaultAccountKey;
 
   DriftProgramClientImpl(final NativeProgramAccountClient nativeProgramAccountClient,
                          final DriftAccounts accounts) {
@@ -30,6 +32,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     this.accounts = accounts;
     this.authority = nativeProgramAccountClient.ownerPublicKey();
     this.user = DriftPDAs.deriveMainUserAccount(accounts, authority).publicKey();
+    this.quoteSpotMarketVaultAccountKey = deriveSpotMarketVaultAccount(accounts, accounts.defaultQuoteMarket().marketIndex()).publicKey();
   }
 
   @Override
@@ -139,6 +142,46 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         marketIndex,
         amount,
         reduceOnly
+    );
+  }
+
+  @Override
+  public Instruction settlePnl(final int marketIndex) {
+    return settlePnl(user, authority(), marketIndex);
+  }
+
+  @Override
+  public Instruction settlePnl(final PublicKey user,
+                               final PublicKey authority,
+                               final int marketIndex) {
+    return DriftProgram.settlePnl(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        quoteSpotMarketVaultAccountKey,
+        marketIndex
+    );
+  }
+
+  @Override
+  public Instruction settlePnl(final short[] marketIndexes, final SettlePnlMode mode) {
+    return settlePnl(user, authority(), marketIndexes, mode);
+  }
+
+  @Override
+  public Instruction settlePnl(final PublicKey user,
+                               final PublicKey authority,
+                               final short[] marketIndexes,
+                               final SettlePnlMode mode) {
+    return DriftProgram.settleMultiplePnls(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        quoteSpotMarketVaultAccountKey,
+        marketIndexes,
+        mode
     );
   }
 
