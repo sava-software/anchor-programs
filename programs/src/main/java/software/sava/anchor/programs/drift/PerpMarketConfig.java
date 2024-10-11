@@ -24,7 +24,8 @@ public record PerpMarketConfig(String fullName,
                                AccountMeta readOracle,
                                PublicKey pythPullOraclePDA,
                                PublicKey pythFeedId,
-                               AccountMeta readMarketPDA) implements SrcGen, MarketConfig {
+                               AccountMeta readMarketPDA,
+                               AccountMeta writeMarketPDA) implements SrcGen, MarketConfig {
 
   static PerpMarketConfig createConfig(final String fullName,
                                        final Set<String> categories,
@@ -36,6 +37,7 @@ public record PerpMarketConfig(String fullName,
                                        final String pythPullOraclePDA,
                                        final String pythFeedId,
                                        final String marketPDA) {
+    final var marketPDAKey = PublicKey.fromBase58Encoded(marketPDA);
     return new PerpMarketConfig(
         fullName,
         categories,
@@ -46,7 +48,8 @@ public record PerpMarketConfig(String fullName,
         SrcGen.readMetaFromBase58Encoded(oracle),
         SrcGen.fromBase58Encoded(pythPullOraclePDA),
         SrcGen.fromBase58Encoded(pythFeedId),
-        SrcGen.readMetaFromBase58Encoded(marketPDA)
+        AccountMeta.createRead(marketPDAKey),
+        AccountMeta.createWrite(marketPDAKey)
     );
   }
 
@@ -137,7 +140,7 @@ public record PerpMarketConfig(String fullName,
           oracle == null ? null : AccountMeta.createRead(oracle),
           null,
           pythFeedId,
-          null
+          null, null
       );
     }
   }

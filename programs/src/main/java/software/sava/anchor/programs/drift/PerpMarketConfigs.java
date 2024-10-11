@@ -522,6 +522,78 @@ public final class PerpMarketConfigs {
           "BNjCXrpEqjdBnuRy2SAUgm5Pq8B73wGFwsf6RYFJiLPY",
           "AFJXXYuniABNnoEE7DLtkxwqLDkcda4xG5k2F4FB86hj",
           "J5RWv9z5ore5pDXtyKho8fmm35N13Mststp8JRUaE93P"
+      ),
+      createConfig(
+          "LANDO-F1-SGP-WIN-BET",
+          Set.of("Prediction", "Sports"),
+          "LANDO-F1-SGP-WIN-BET",
+          "LANDO-F1-SGP-WIN",
+          43,
+          "2024-09-18T08:00:53Z",
+          "DpJz7rjTJLxxnuqrqZTUjMWtnaMFAEfZUv5ATdb9HTh1",
+          null,
+          null,
+          "DjTmuKjkSYzzrLMcyrNUdV6dv4tozcMRdw2tH6ERHKJr"
+      ),
+      createConfig(
+          "MOTHER",
+          Set.of("Solana", "Meme"),
+          "MOTHER-PERP",
+          "MOTHER",
+          44,
+          "2024-09-25T19:17:39Z",
+          "56ap2coZG7FPWUigVm9XrpQs3xuCwnwQaWtjWZcffEUG",
+          "56ap2coZG7FPWUigVm9XrpQs3xuCwnwQaWtjWZcffEUG",
+          "7dKhAhQpaaquHuyugjYV3U976DULY2DFnzsRHfzeJfFy",
+          "G9JHXgiDXDKENtp4hmhYfciKM2YL8tMHLLMZ3aXo21Xx"
+      ),
+      createConfig(
+          "MOODENG",
+          Set.of("Solana", "Meme"),
+          "MOODENG-PERP",
+          "MOODENG",
+          45,
+          "2024-10-03T14:31:04Z",
+          "21gjgEcuDppthwV16J1QpFzje3vmgMp2uSzh7pJsG7ob",
+          "21gjgEcuDppthwV16J1QpFzje3vmgMp2uSzh7pJsG7ob",
+          "JEJtFypgxMbKC14navaTfeVQhVkWwYJJ3b7DoXsvibg2",
+          "FQKbtupzpZ1XWcZR2axN5pjDWMyjuS4v8BjP1CVdPBE3"
+      ),
+      createConfig(
+          "WARWICK-FIGHT-WIN-BET",
+          Set.of("Sport", "Prediction"),
+          "WARWICK-FIGHT-WIN-BET",
+          "WARWICK-FIGHT-WIN",
+          46,
+          "2024-10-03T14:31:04Z",
+          "Dz5Nvxo1hv7Zfyu11hy8e97twLMRKk6heTWCDGXytj7N",
+          null,
+          null,
+          "Ey41MmrKhS5sxnbBPNcJKFpwWStqzWZqzgv59JqkC9BT"
+      ),
+      createConfig(
+          "DeBridge",
+          Set.of("Bridge"),
+          "DBR-PERP",
+          "DBR",
+          47,
+          "2024-10-10T15:34:53Z",
+          "AQzxePg2vY52Cw4di1j5xF7BqetNPxogqYPgDBL7HXWn",
+          null,
+          null,
+          "7MfxQtZFQV7yNWjfWnrbwcVSGinUqVCRRpW6X7a72mDL"
+      ),
+      createConfig(
+          "WLF-5B-1W",
+          Set.of("Prediction"),
+          "WLF-5B-1W-BET",
+          "WLF-5B-1W",
+          48,
+          "2024-10-10T15:34:53Z",
+          "7LpRfPaWR7cQqN7CMkCmZjEQpWyqso5LGuKCvDXH5ZAr",
+          null,
+          null,
+          "8YqKj1qYgSRBkMxFRMPfq6zQBW2A5szgjoGRpoLGveUL"
       )
   });
 
@@ -809,7 +881,7 @@ public final class PerpMarketConfigs {
           "W",
           23,
           "2024-03-07T23:02:17Z",
-          "4iCi4DvXrubHQne8jzbMaWL3pd7v1Fip8iTe4H9vHNXB",
+          "J9nrFWjDUeDVZ4BhhxsbQXWgLcLEgQyNBrCbwSADmJdr",
           "4HbitGsdcFbtFotmYscikQFAAKJ3nYx4t7sV7fTvsk8U",
           "H9j8CT1bFiWHaZUPMooEaxMRHdWdJ5T9CzFn41z96JHW",
           "8BbCGbxsQk1HYohgdn1TMUNs6RYcX4Hae3k8mt4rvnzf"

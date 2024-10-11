@@ -22,7 +22,8 @@ public record SpotMarketConfig(String symbol,
                                PublicKey phoenixMarket,
                                PublicKey openbookMarket,
                                PublicKey pythFeedId,
-                               AccountMeta readMarketPDA) implements SrcGen, MarketConfig {
+                               AccountMeta readMarketPDA,
+                               AccountMeta writeMarketPDA) implements SrcGen, MarketConfig {
 
   static SpotMarketConfig createConfig(final String symbol,
                                        final int marketIndex,
@@ -35,6 +36,7 @@ public record SpotMarketConfig(String symbol,
                                        final String openbookMarket,
                                        final String pythFeedId,
                                        final String marketPDA) {
+    final var marketPDAKey = PublicKey.fromBase58Encoded(marketPDA);
     return new SpotMarketConfig(
         symbol,
         marketIndex,
@@ -46,7 +48,8 @@ public record SpotMarketConfig(String symbol,
         SrcGen.fromBase58Encoded(phoenixMarket),
         SrcGen.fromBase58Encoded(openbookMarket),
         SrcGen.fromBase58Encoded(pythFeedId),
-        SrcGen.readMetaFromBase58Encoded(marketPDA)
+        AccountMeta.createRead(marketPDAKey),
+        AccountMeta.createWrite(marketPDAKey)
     );
   }
 
@@ -141,7 +144,7 @@ public record SpotMarketConfig(String symbol,
           phoenixMarket,
           openbookMarket,
           pythFeedId,
-          null
+          null, null
       );
     }
   }

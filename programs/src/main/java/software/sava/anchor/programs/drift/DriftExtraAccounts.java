@@ -24,19 +24,25 @@ public interface DriftExtraAccounts {
 
   List<AccountMeta> toList();
 
-  void userAccounts(final User user);
+  void mergeOracle(final AccountMeta accountMeta);
 
-  void market(final SpotMarketConfig marketConfig);
+  void mergeSpotMarket(final AccountMeta accountMeta);
 
-  void market(final PerpMarketConfig marketConfig);
+  void mergePerpMarket(final AccountMeta accountMeta);
 
-  void market(final MarketConfig marketConfig);
+  void userAccounts(final User user, final boolean write);
 
-  void market(final PerpMarketConfig marketConfig, final SpotMarketConfig quoteMarket);
+  void market(final SpotMarketConfig marketConfig, final boolean write);
 
-  void userAndMarket(final User user, final SpotMarketConfig marketConfig);
+  void market(final PerpMarketConfig marketConfig, final boolean write);
 
-  void userAndMarket(final User user, final PerpMarketConfig marketConfig);
+  void market(final MarketConfig marketConfig, final boolean write);
 
-  void userAndMarket(final User user, final MarketConfig marketConfig);
+  void market(final PerpMarketConfig marketConfig, final SpotMarketConfig quoteMarket, final boolean write);
+
+  void userAndMarket(final User user, final SpotMarketConfig marketConfig, final boolean write);
+
+  void userAndMarket(final User user, final PerpMarketConfig marketConfig, final boolean write);
+
+  void userAndMarket(final User user, final MarketConfig marketConfig, final boolean write);
 }

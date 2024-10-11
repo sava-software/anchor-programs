@@ -11,4 +11,6 @@ public sealed interface MarketConfig permits SpotMarketConfig, PerpMarketConfig 
   AccountMeta readOracle();
 
   AccountMeta readMarketPDA();
+
+  AccountMeta writeMarketPDA();
 }

@@ -10,6 +10,7 @@ public enum DriftAsset {
     JLP,
     JTO,
     JUP,
+    MOTHER,
     POPCAT,
     PYTH,
     PYUSD,

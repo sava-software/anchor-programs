@@ -18,65 +18,80 @@ record DriftExtraAccountsRecord(DriftAccounts driftAccounts,
     metaMap.merge(meta.publicKey(), meta, Transaction.MERGE_ACCOUNT_META);
   }
 
-  private void mergeAccount(final Map<PublicKey, AccountMeta> markets, final MarketConfig marketConfig) {
-    mergeAccount(markets, marketConfig.readMarketPDA());
+  private void mergeAccount(final Map<PublicKey, AccountMeta> markets,
+                            final MarketConfig marketConfig,
+                            final boolean write) {
+    mergeAccount(markets, write ? marketConfig.writeMarketPDA() : marketConfig.readMarketPDA());
     mergeAccount(oracles, marketConfig.readOracle());
   }
 
   @Override
-  public void userAccounts(final User user) {
+  public void mergeOracle(final AccountMeta accountMeta) {
+    mergeAccount(oracles, accountMeta);
+  }
+
+  @Override
+  public void mergeSpotMarket(final AccountMeta accountMeta) {
+    mergeAccount(spotMarkets, accountMeta);
+  }
+
+  @Override
+  public void mergePerpMarket(final AccountMeta accountMeta) {
+    mergeAccount(perpMarkets, accountMeta);
+  }
+
+  @Override
+  public void userAccounts(final User user, final boolean write) {
     for (final var position : user.spotPositions()) {
       if (position.scaledBalance() != 0) {
         final var spotMarket = driftAccounts.spotMarketConfig(position.marketIndex());
-        market(spotMarket);
+        market(spotMarket, write);
       }
     }
   }
 
   @Override
-  public void market(final SpotMarketConfig marketConfig) {
-    mergeAccount(spotMarkets, marketConfig);
+  public void market(final SpotMarketConfig marketConfig, final boolean write) {
+    mergeAccount(spotMarkets, marketConfig, write);
   }
 
   @Override
-  public void market(final MarketConfig marketConfig) {
-    final var markets = switch (marketConfig) {
-      case SpotMarketConfig _ -> spotMarkets;
-      case PerpMarketConfig perpMarketConfig -> {
-        market(driftAccounts.defaultQuoteMarket());
-        yield perpMarkets;
-      }
-    };
-    mergeAccount(markets, marketConfig);
+  public void market(final PerpMarketConfig perpMarketConfig,
+                     final SpotMarketConfig quoteMarket,
+                     final boolean write) {
+    market(quoteMarket, write);
+    mergeAccount(perpMarkets, perpMarketConfig, write);
   }
 
   @Override
-  public void market(final PerpMarketConfig perpMarketConfig, final SpotMarketConfig quoteMarket) {
-    market(quoteMarket);
-    mergeAccount(perpMarkets, perpMarketConfig);
+  public void market(final PerpMarketConfig perpMarketConfig, final boolean write) {
+    market(perpMarketConfig, driftAccounts.defaultQuoteMarket(), write);
   }
 
   @Override
-  public void market(final PerpMarketConfig perpMarketConfig) {
-    market(perpMarketConfig, driftAccounts.defaultQuoteMarket());
+  public void market(final MarketConfig marketConfig, final boolean write) {
+    switch (marketConfig) {
+      case SpotMarketConfig spotMarketConfig -> market(spotMarketConfig, write);
+      case PerpMarketConfig perpMarketConfig -> market(perpMarketConfig, write);
+    }
   }
 
   @Override
-  public void userAndMarket(final User user, final SpotMarketConfig marketConfig) {
-    userAccounts(user);
-    market(marketConfig);
+  public void userAndMarket(final User user, final SpotMarketConfig marketConfig, final boolean write) {
+    userAccounts(user, write);
+    market(marketConfig, write);
   }
 
   @Override
-  public void userAndMarket(final User user, final PerpMarketConfig marketConfig) {
-    userAccounts(user);
-    market(marketConfig);
+  public void userAndMarket(final User user, final PerpMarketConfig marketConfig, final boolean write) {
+    userAccounts(user, write);
+    market(marketConfig, write);
   }
 
   @Override
-  public void userAndMarket(final User user, final MarketConfig marketConfig) {
-    userAccounts(user);
-    market(marketConfig);
+  public void userAndMarket(final User user, final MarketConfig marketConfig, final boolean write) {
+    userAccounts(user, write);
+    market(marketConfig, write);
   }
 
   @Override

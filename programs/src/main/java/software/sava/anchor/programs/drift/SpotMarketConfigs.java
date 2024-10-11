@@ -49,12 +49,12 @@ public final class SpotMarketConfigs {
           3,
           null,
           "9Tq8iN5WnMX2PcZGj4iSFEAgHCi8cM6x8LsDUbuzq8uw",
-          "486kr3pmFPfTsS4aZgcsQ7kS4i9rjMsYYZup6HQNSTT4",
+          "9Tq8iN5WnMX2PcZGj4iSFEAgHCi8cM6x8LsDUbuzq8uw",
           "3NZ9JMVBmGAqocybic2c7LQCJScmgsAZ6vQqTDzcqmJh",
           "3BAKsQd3RuhZKES2DGysMhjBdwjZYKYmxRqnSMtZ4KSN",
           null,
           null,
-          "GVXRSBjFk6e6J3NbVPXohDJetcTjaeeuykUpbQF8UoMU",
+          "Eavb8FKNoYPbHnSS8kMi4tnUh8qK8bqxTjCojer4pZrr",
           "54Ai4NTZmPgsT4kUr1w4zFbh33JaC34ptvvvByamsaSw"
       ),
       createConfig(
@@ -257,12 +257,12 @@ public final class SpotMarketConfigs {
           19,
           "2024-06-26T15:19:17Z",
           "5Mb11e5rt1Sp6A286B145E4TmgMzsM2UX9nCF2vas5bs",
-          null,
+          "5Mb11e5rt1Sp6A286B145E4TmgMzsM2UX9nCF2vas5bs",
           "27G8MtK7VtTcCHkpASjSDdkWWYfoqT6ggEuKidVJidD4",
           null,
           null,
           null,
-          null,
+          "ETzAjoG8xfhNzUD2ARvFncRf3K2qNokqGU9f5jeo2o1T",
           "DVYXHwLhwALZm94pChALZDJ2b6a7uZTKPXntAGMQtRoM"
       ),
       createConfig(
@@ -342,6 +342,19 @@ public final class SpotMarketConfigs {
           null,
           "H6ARHf6YXhGYeQfUzQNGk6rDNnLBQKrenN712K4AQJEG",
           "9HPhFcrxmpeVHDvRNytsZ8CoNv5u2nZsajQH1ckH8JuZ"
+      ),
+      createConfig(
+          "MOTHER",
+          26,
+          null,
+          "56ap2coZG7FPWUigVm9XrpQs3xuCwnwQaWtjWZcffEUG",
+          "56ap2coZG7FPWUigVm9XrpQs3xuCwnwQaWtjWZcffEUG",
+          "3S8qX1MsMqRbiwKg2cQyx7nis1oHMgaCuc9c4VfvVdPN",
+          null,
+          null,
+          null,
+          "7dKhAhQpaaquHuyugjYV3U976DULY2DFnzsRHfzeJfFy",
+          "4gfG8qMNQ5tL8BYapMAh5BShg1Z19kDqfhVJT1UAijjK"
       )
   });
 
