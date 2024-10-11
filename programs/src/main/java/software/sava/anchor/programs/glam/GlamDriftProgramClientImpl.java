@@ -1,10 +1,8 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.drift.DriftAccounts;
-import software.sava.anchor.programs.drift.DriftPDAs;
-import software.sava.anchor.programs.drift.MarketConfig;
-import software.sava.anchor.programs.drift.PerpMarketConfig;
+import software.sava.anchor.programs.drift.*;
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
+import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
 import software.sava.anchor.programs.drift.anchor.types.User;
 import software.sava.anchor.programs.glam.anchor.GlamProgram;
 import software.sava.anchor.programs.glam.anchor.types.*;
@@ -24,6 +22,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
   private final SolanaAccounts solanaAccounts;
   private final DriftAccounts driftAccounts;
+  private final DriftProgramClient delegatedDriftClient;
   private final GlamFundAccounts glamFundAccounts;
   private final AccountMeta invokedProgram;
   private final AccountMeta feePayer;
@@ -34,6 +33,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     this.solanaAccounts = glamClient.solanaAccounts();
     this.driftAccounts = driftAccounts;
     this.glamFundAccounts = glamClient.fundAccounts();
+    this.delegatedDriftClient = DriftProgramClient.createClient(glamClient, driftAccounts);
     this.invokedProgram = glamFundAccounts.glamAccounts().invokedProgram();
     this.feePayer = glamClient.feePayer();
     this.user = DriftPDAs.deriveMainUserAccount(driftAccounts, glamFundAccounts.treasuryPublicKey()).publicKey();
@@ -146,6 +146,26 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         marketIndex,
         amount
     );
+  }
+
+  @Override
+  public Instruction settlePnl(final int marketIndex) {
+    return delegatedDriftClient.settlePnl(marketIndex);
+  }
+
+  @Override
+  public Instruction settlePnl(final PublicKey user, final PublicKey authority, final int marketIndex) {
+    return delegatedDriftClient.settlePnl(user, authority, marketIndex);
+  }
+
+  @Override
+  public Instruction settlePnl(final short[] marketIndexes, final SettlePnlMode mode) {
+    return delegatedDriftClient.settlePnl(marketIndexes, mode);
+  }
+
+  @Override
+  public Instruction settlePnl(final PublicKey user, final PublicKey authority, final short[] marketIndexes, final SettlePnlMode mode) {
+    return delegatedDriftClient.settlePnl(user, authority, marketIndexes, mode);
   }
 
   private static software.sava.anchor.programs.glam.anchor.types.OrderParams toGlam(final OrderParams orderParams) {
