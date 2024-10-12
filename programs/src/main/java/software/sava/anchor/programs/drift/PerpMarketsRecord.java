@@ -14,4 +14,9 @@ public record PerpMarketsRecord(PerpMarketConfig[] marketConfigs,
   public PerpMarketConfig forProduct(final DriftProduct product) {
     return byProduct.get(product);
   }
+
+  @Override
+  public int numMarkets() {
+    return marketConfigs.length;
+  }
 }

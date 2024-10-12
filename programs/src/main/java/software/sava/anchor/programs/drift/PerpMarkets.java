@@ -20,4 +20,6 @@ public interface PerpMarkets {
   PerpMarketConfig marketConfig(final int index);
 
   PerpMarketConfig forProduct(final DriftProduct product);
+
+  int numMarkets();
 }
