@@ -1,7 +1,9 @@
 package software.sava.anchor.programs.drift;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumMap;
+import java.util.stream.Stream;
 
 public interface SpotMarkets {
 
@@ -16,4 +18,8 @@ public interface SpotMarkets {
   SpotMarketConfig forAsset(final DriftAsset asset);
 
   int numMarkets();
+
+  Stream<SpotMarketConfig> streamMarkets();
+
+  Collection<SpotMarketConfig> markets();
 }

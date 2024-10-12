@@ -1,7 +1,9 @@
 package software.sava.anchor.programs.drift;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumMap;
+import java.util.stream.Stream;
 
 public interface PerpMarkets {
 
@@ -22,4 +24,8 @@ public interface PerpMarkets {
   PerpMarketConfig forProduct(final DriftProduct product);
 
   int numMarkets();
+
+  Stream<PerpMarketConfig> streamMarkets();
+
+  Collection<PerpMarketConfig> markets();
 }
