@@ -10,12 +10,16 @@ public interface DriftAccounts {
 
   DriftAccounts MAIN_NET = createAddressConstants(
       "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+      "D9cnvzswDikQDf53k4HpQ3KJ9y1Fv3HGGDFYMXnK5T6c",
+      "GPZkp76cJtNL2mphCvT6FXkJCVPpouidnacckR6rzKDN",
       SpotMarketsConfigs.MAIN_NET,
       PerpMarketConfigs.MAIN_NET
   );
 
   DriftAccounts DEV_NET = createAddressConstants(
       "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+      "FaMS3U4uBojvGn5FSDEPimddcXsCfwkKsFgMVVnDdxGb",
+      null,
       SpotMarketsConfigs.DEV_NET,
       PerpMarketConfigs.DEV_NET
   );
@@ -27,6 +31,10 @@ public interface DriftAccounts {
   }
 
   PublicKey stateKey();
+
+  PublicKey marketLookupTable();
+
+  PublicKey serumLookupTable();
 
   SpotMarketConfig defaultQuoteMarket();
 
@@ -43,10 +51,14 @@ public interface DriftAccounts {
   PerpMarketConfig perpMarketConfig(final DriftProduct product);
 
   static DriftAccounts createAddressConstants(final PublicKey driftProgram,
+                                              final PublicKey marketLookupTable,
+                                              final PublicKey serumLookupTable,
                                               final SpotMarkets spotMarkets,
                                               final PerpMarkets perpMarkets) {
     return new DriftAccountsRecord(
         AccountMeta.createInvoked(driftProgram),
+        marketLookupTable,
+        serumLookupTable,
         DriftPDAs.deriveStateAccount(driftProgram).publicKey(),
         spotMarkets.forAsset(USDC),
         spotMarkets,
@@ -55,10 +67,14 @@ public interface DriftAccounts {
   }
 
   static DriftAccounts createAddressConstants(final String driftProgram,
+                                              final String marketLookupTable,
+                                              final String serumLookupTable,
                                               final SpotMarkets spotMarkets,
                                               final PerpMarkets perpMarkets) {
     return createAddressConstants(
         fromBase58Encoded(driftProgram),
+        fromBase58Encoded(marketLookupTable),
+        serumLookupTable == null ? null : fromBase58Encoded(driftProgram),
         spotMarkets,
         perpMarkets
     );
