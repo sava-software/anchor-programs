@@ -46,6 +46,11 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
+  public PublicKey mainUserAccount() {
+    return user;
+  }
+
+  @Override
   public PublicKey authority() {
     return authority;
   }

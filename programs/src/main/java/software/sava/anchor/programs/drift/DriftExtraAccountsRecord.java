@@ -48,6 +48,12 @@ record DriftExtraAccountsRecord(DriftAccounts driftAccounts,
         market(spotMarket, write);
       }
     }
+    for (final var position : user.perpPositions()) {
+      if (position.quoteAssetAmount() != 0) {
+        final var perpMarket = driftAccounts.perpMarketConfig(position.marketIndex());
+        market(perpMarket, write);
+      }
+    }
   }
 
   @Override

@@ -50,6 +50,8 @@ public interface DriftProgramClient {
     return driftAccounts().perpMarketConfig(product);
   }
 
+  PublicKey mainUserAccount();
+
   PublicKey authority();
 
   default ProgramDerivedAddress deriveUserAccount() {

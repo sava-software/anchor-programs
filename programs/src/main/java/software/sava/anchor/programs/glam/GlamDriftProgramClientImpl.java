@@ -50,6 +50,11 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
+  public PublicKey mainUserAccount() {
+    return user;
+  }
+
+  @Override
   public PublicKey authority() {
     return glamFundAccounts.treasuryPublicKey();
   }
