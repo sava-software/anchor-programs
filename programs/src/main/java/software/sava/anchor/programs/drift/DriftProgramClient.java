@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.drift;
 
+import software.sava.anchor.programs.drift.anchor.DriftProgram;
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
 import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
 import software.sava.anchor.programs.drift.anchor.types.User;
@@ -162,6 +163,19 @@ public interface DriftProgramClient {
                         final PublicKey authority,
                         final short[] marketIndexes,
                         final SettlePnlMode mode);
+
+  default Instruction settleFundingPayment() {
+    return settleFundingPayment(mainUserAccount());
+  }
+
+  default Instruction settleFundingPayment(final PublicKey user) {
+    final var accounts = driftAccounts();
+    return DriftProgram.settleFundingPayment(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user
+    );
+  }
 
   Instruction placeOrder(final OrderParams orderParams);
 
