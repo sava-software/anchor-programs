@@ -155,7 +155,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
   @Override
   public Instruction settlePnl(final int marketIndex) {
-    return delegatedDriftClient.settlePnl(marketIndex);
+    return delegatedDriftClient.settlePnl(user, feePayer.publicKey(), marketIndex);
   }
 
   @Override
@@ -165,7 +165,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
   @Override
   public Instruction settlePnl(final short[] marketIndexes, final SettlePnlMode mode) {
-    return delegatedDriftClient.settlePnl(marketIndexes, mode);
+    return delegatedDriftClient.settlePnl(user, feePayer.publicKey(), marketIndexes, mode);
   }
 
   @Override
