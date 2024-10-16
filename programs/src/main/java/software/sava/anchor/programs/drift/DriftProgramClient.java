@@ -7,6 +7,7 @@ import software.sava.anchor.programs.drift.anchor.types.User;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
+import software.sava.core.accounts.lookup.AddressLookupTable;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
@@ -34,6 +35,10 @@ public interface DriftProgramClient {
   SolanaAccounts solanaAccounts();
 
   DriftAccounts driftAccounts();
+
+  default CompletableFuture<AccountInfo<AddressLookupTable>> fetchMarketsLookupTable(final SolanaRpcClient rpcClient) {
+    return rpcClient.getAccountInfo(driftAccounts().marketLookupTable(), AddressLookupTable.FACTORY);
+  }
 
   default DriftExtraAccounts extraAccounts() {
     return DriftExtraAccounts.createExtraAccounts(driftAccounts());
