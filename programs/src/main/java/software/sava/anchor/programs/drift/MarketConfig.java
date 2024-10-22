@@ -8,7 +8,13 @@ public sealed interface MarketConfig permits SpotMarketConfig, PerpMarketConfig 
 
   int marketIndex();
 
+  OracleSource oracleSource();
+
   AccountMeta readOracle();
+
+  AccountMeta writeOracle();
+
+  AccountMeta oracle(final boolean write);
 
   AccountMeta readMarketPDA();
 

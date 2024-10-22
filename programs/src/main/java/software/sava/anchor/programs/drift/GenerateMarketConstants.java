@@ -62,13 +62,13 @@ final class GenerateMarketConstants {
   private static String convertJson(final String javascript) {
     return javascript
         .replace('\'', '"')
-        .replaceAll("\\s+.*oracleSource.*", "")
         .replaceAll("\\s+.*precision.*", "")
         .replaceAll("\\s+.*precisionExp.*", "")
         .replaceAll(",\n\\s+}", "}")
         .replaceAll(",\n\\s*]", "]")
         .replaceAll("//.*", "")
         .replaceAll("\\s+", " ")
+        .replaceAll("OracleSource\\.(\\w+)", "\"$1\"")
         .replace("WRAPPED_SOL_MINT", "\"So11111111111111111111111111111111111111112\"")
         .replaceAll("new PublicKey\\( *\"(\\w+)\" *\\)", "\"$1\"");
   }

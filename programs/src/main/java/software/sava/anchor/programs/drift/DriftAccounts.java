@@ -12,7 +12,7 @@ public interface DriftAccounts {
       "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
       "D9cnvzswDikQDf53k4HpQ3KJ9y1Fv3HGGDFYMXnK5T6c",
       "GPZkp76cJtNL2mphCvT6FXkJCVPpouidnacckR6rzKDN",
-      SpotMarketsConfigs.MAIN_NET,
+      SpotMarketConfigs.MAIN_NET,
       PerpMarketConfigs.MAIN_NET
   );
 
@@ -20,7 +20,7 @@ public interface DriftAccounts {
       "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
       "FaMS3U4uBojvGn5FSDEPimddcXsCfwkKsFgMVVnDdxGb",
       null,
-      SpotMarketsConfigs.DEV_NET,
+      SpotMarketConfigs.DEV_NET,
       PerpMarketConfigs.DEV_NET
   );
 

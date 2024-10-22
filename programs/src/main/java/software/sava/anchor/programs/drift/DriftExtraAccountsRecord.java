@@ -22,7 +22,10 @@ record DriftExtraAccountsRecord(DriftAccounts driftAccounts,
                             final MarketConfig marketConfig,
                             final boolean write) {
     mergeAccount(markets, write ? marketConfig.writeMarketPDA() : marketConfig.readMarketPDA());
-    mergeAccount(oracles, marketConfig.readOracle());
+    final var oracle = marketConfig.oracle(write);
+    if (oracle != null && !oracle.publicKey().equals(PublicKey.NONE)) {
+      mergeAccount(oracles, oracle);
+    }
   }
 
   @Override

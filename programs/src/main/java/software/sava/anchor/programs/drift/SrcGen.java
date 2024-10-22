@@ -2,7 +2,6 @@ package software.sava.anchor.programs.drift;
 
 import org.bouncycastle.util.encoders.Hex;
 import software.sava.core.accounts.PublicKey;
-import software.sava.core.accounts.meta.AccountMeta;
 import systems.comodal.jsoniter.CharBufferFunction;
 
 interface SrcGen {
@@ -16,10 +15,6 @@ interface SrcGen {
 
   static PublicKey fromBase58Encoded(final String base58) {
     return base58 == null ? null : PublicKey.fromBase58Encoded(base58);
-  }
-
-  static AccountMeta readMetaFromBase58Encoded(final String base58) {
-    return base58 == null ? null : AccountMeta.createRead(PublicKey.fromBase58Encoded(base58));
   }
 
   String toSrc(final DriftAccounts driftAccounts);
