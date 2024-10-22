@@ -3,37 +3,28 @@ package software.sava.anchor.programs.glam.anchor;
 import software.sava.anchor.ProgramError;
 
 public sealed interface GlamError extends ProgramError permits
-    GlamError.TransfersDisabled,
-    GlamError.AmountTooBig,
-    GlamError.LockUp {
+    GlamError.NotAuthorized,
+    GlamError.IntegrationDisabled {
 
   static GlamError getInstance(final int errorCode) {
     return switch (errorCode) {
-      case 6000 -> TransfersDisabled.INSTANCE;
-      case 6001 -> AmountTooBig.INSTANCE;
-      case 6002 -> LockUp.INSTANCE;
+      case 6000 -> NotAuthorized.INSTANCE;
+      case 6001 -> IntegrationDisabled.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Glam error code: " + errorCode);
     };
   }
 
-  record TransfersDisabled(int code, String msg) implements GlamError {
+  record NotAuthorized(int code, String msg) implements GlamError {
 
-    public static final TransfersDisabled INSTANCE = new TransfersDisabled(
-        6000, "Policy violation: transfers disabled"
+    public static final NotAuthorized INSTANCE = new NotAuthorized(
+        6000, "Signer is not authorized"
     );
   }
 
-  record AmountTooBig(int code, String msg) implements GlamError {
+  record IntegrationDisabled(int code, String msg) implements GlamError {
 
-    public static final AmountTooBig INSTANCE = new AmountTooBig(
-        6001, "Policy violation: amount too big"
-    );
-  }
-
-  record LockUp(int code, String msg) implements GlamError {
-
-    public static final LockUp INSTANCE = new LockUp(
-        6002, "Policy violation: lock-up period"
+    public static final IntegrationDisabled INSTANCE = new IntegrationDisabled(
+        6001, "Integration is disabled"
     );
   }
 }

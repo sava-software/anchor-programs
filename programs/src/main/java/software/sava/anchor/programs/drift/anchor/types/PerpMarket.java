@@ -101,6 +101,9 @@ public record PerpMarket(PublicKey _address,
                          // fuel multiplier for perp maker
                          // precision: 10
                          int fuelBoostMaker,
+                         int padding1,
+                         int highLeverageMarginRatioInitial,
+                         int highLeverageMarginRatioMaintenance,
                          byte[] padding) implements Borsh {
 
   public static final int BYTES = 1216;
@@ -137,7 +140,10 @@ public record PerpMarket(PublicKey _address,
   public static final int FUEL_BOOST_POSITION_OFFSET = 1170;
   public static final int FUEL_BOOST_TAKER_OFFSET = 1171;
   public static final int FUEL_BOOST_MAKER_OFFSET = 1172;
-  public static final int PADDING_OFFSET = 1173;
+  public static final int PADDING1_OFFSET = 1173;
+  public static final int HIGH_LEVERAGE_MARGIN_RATIO_INITIAL_OFFSET = 1174;
+  public static final int HIGH_LEVERAGE_MARGIN_RATIO_MAINTENANCE_OFFSET = 1176;
+  public static final int PADDING_OFFSET = 1178;
 
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);
@@ -293,6 +299,22 @@ public record PerpMarket(PublicKey _address,
     return Filter.createMemCompFilter(FUEL_BOOST_MAKER_OFFSET, new byte[]{(byte) fuelBoostMaker});
   }
 
+  public static Filter createPadding1Filter(final int padding1) {
+    return Filter.createMemCompFilter(PADDING1_OFFSET, new byte[]{(byte) padding1});
+  }
+
+  public static Filter createHighLeverageMarginRatioInitialFilter(final int highLeverageMarginRatioInitial) {
+    final byte[] _data = new byte[2];
+    putInt16LE(_data, 0, highLeverageMarginRatioInitial);
+    return Filter.createMemCompFilter(HIGH_LEVERAGE_MARGIN_RATIO_INITIAL_OFFSET, _data);
+  }
+
+  public static Filter createHighLeverageMarginRatioMaintenanceFilter(final int highLeverageMarginRatioMaintenance) {
+    final byte[] _data = new byte[2];
+    putInt16LE(_data, 0, highLeverageMarginRatioMaintenance);
+    return Filter.createMemCompFilter(HIGH_LEVERAGE_MARGIN_RATIO_MAINTENANCE_OFFSET, _data);
+  }
+
   public static PerpMarket read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -371,7 +393,13 @@ public record PerpMarket(PublicKey _address,
     ++i;
     final var fuelBoostMaker = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[43];
+    final var padding1 = _data[i] & 0xFF;
+    ++i;
+    final var highLeverageMarginRatioInitial = getInt16LE(_data, i);
+    i += 2;
+    final var highLeverageMarginRatioMaintenance = getInt16LE(_data, i);
+    i += 2;
+    final var padding = new byte[38];
     Borsh.readArray(padding, _data, i);
     return new PerpMarket(_address,
                           discriminator,
@@ -406,6 +434,9 @@ public record PerpMarket(PublicKey _address,
                           fuelBoostPosition,
                           fuelBoostTaker,
                           fuelBoostMaker,
+                          padding1,
+                          highLeverageMarginRatioInitial,
+                          highLeverageMarginRatioMaintenance,
                           padding);
   }
 
@@ -467,6 +498,12 @@ public record PerpMarket(PublicKey _address,
     ++i;
     _data[i] = (byte) fuelBoostMaker;
     ++i;
+    _data[i] = (byte) padding1;
+    ++i;
+    putInt16LE(_data, i, highLeverageMarginRatioInitial);
+    i += 2;
+    putInt16LE(_data, i, highLeverageMarginRatioMaintenance);
+    i += 2;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

@@ -287,7 +287,13 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.InvalidOpenbookV2Market,
     DriftError.NonZeroTransferFee,
     DriftError.LiquidationOrderFailedToFill,
-    DriftError.InvalidPredictionMarketOrder {
+    DriftError.InvalidPredictionMarketOrder,
+    DriftError.InvalidVerificationIxIndex,
+    DriftError.SigVerificationFailed,
+    DriftError.MismatchedSwiftOrderParamsMarketIndex,
+    DriftError.InvalidSwiftOrderParam,
+    DriftError.PlaceAndTakeOrderSuccessConditionFailed,
+    DriftError.InvalidHighLeverageModeConfig {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -576,6 +582,12 @@ public sealed interface DriftError extends ProgramError permits
       case 6282 -> NonZeroTransferFee.INSTANCE;
       case 6283 -> LiquidationOrderFailedToFill.INSTANCE;
       case 6284 -> InvalidPredictionMarketOrder.INSTANCE;
+      case 6285 -> InvalidVerificationIxIndex.INSTANCE;
+      case 6286 -> SigVerificationFailed.INSTANCE;
+      case 6287 -> MismatchedSwiftOrderParamsMarketIndex.INSTANCE;
+      case 6288 -> InvalidSwiftOrderParam.INSTANCE;
+      case 6289 -> PlaceAndTakeOrderSuccessConditionFailed.INSTANCE;
+      case 6290 -> InvalidHighLeverageModeConfig.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2572,6 +2584,48 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final InvalidPredictionMarketOrder INSTANCE = new InvalidPredictionMarketOrder(
         6284, "Invalid prediction market order"
+    );
+  }
+
+  record InvalidVerificationIxIndex(int code, String msg) implements DriftError {
+
+    public static final InvalidVerificationIxIndex INSTANCE = new InvalidVerificationIxIndex(
+        6285, "Ed25519 Ix must be before place and make swift order ix"
+    );
+  }
+
+  record SigVerificationFailed(int code, String msg) implements DriftError {
+
+    public static final SigVerificationFailed INSTANCE = new SigVerificationFailed(
+        6286, "Swift message verificaiton failed"
+    );
+  }
+
+  record MismatchedSwiftOrderParamsMarketIndex(int code, String msg) implements DriftError {
+
+    public static final MismatchedSwiftOrderParamsMarketIndex INSTANCE = new MismatchedSwiftOrderParamsMarketIndex(
+        6287, "Market index mismatched b/w taker and maker swift order params"
+    );
+  }
+
+  record InvalidSwiftOrderParam(int code, String msg) implements DriftError {
+
+    public static final InvalidSwiftOrderParam INSTANCE = new InvalidSwiftOrderParam(
+        6288, "Swift only available for market/oracle perp orders"
+    );
+  }
+
+  record PlaceAndTakeOrderSuccessConditionFailed(int code, String msg) implements DriftError {
+
+    public static final PlaceAndTakeOrderSuccessConditionFailed INSTANCE = new PlaceAndTakeOrderSuccessConditionFailed(
+        6289, "Place and take order success condition failed"
+    );
+  }
+
+  record InvalidHighLeverageModeConfig(int code, String msg) implements DriftError {
+
+    public static final InvalidHighLeverageModeConfig INSTANCE = new InvalidHighLeverageModeConfig(
+        6290, "Invalid High Leverage Mode Config"
     );
   }
 }

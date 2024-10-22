@@ -812,7 +812,7 @@ public final class DriftProgram {
                                                   final PublicKey userStatsKey,
                                                   final PublicKey authorityKey,
                                                   final OrderParams params,
-                                                  final OptionalInt makerOrderId) {
+                                                  final OptionalInt successCondition) {
     final var keys = List.of(
       createRead(stateKey),
       createWrite(userKey),
@@ -822,16 +822,16 @@ public final class DriftProgram {
 
     final byte[] _data = new byte[
         8 + Borsh.len(params)
-        + (makerOrderId == null || makerOrderId.isEmpty() ? 1 : 5)
+        + (successCondition == null || successCondition.isEmpty() ? 1 : 5)
     ];
     int i = writeDiscriminator(PLACE_AND_TAKE_PERP_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.write(params, _data, i);
-    Borsh.writeOptional(makerOrderId, _data, i);
+    Borsh.writeOptional(successCondition, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record PlaceAndTakePerpOrderIxData(Discriminator discriminator, OrderParams params, OptionalInt makerOrderId) implements Borsh {  
+  public record PlaceAndTakePerpOrderIxData(Discriminator discriminator, OrderParams params, OptionalInt successCondition) implements Borsh {  
 
     public static PlaceAndTakePerpOrderIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -845,21 +845,21 @@ public final class DriftProgram {
       int i = offset + discriminator.length();
       final var params = OrderParams.read(_data, i);
       i += Borsh.len(params);
-      final var makerOrderId = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
-      return new PlaceAndTakePerpOrderIxData(discriminator, params, makerOrderId);
+      final var successCondition = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+      return new PlaceAndTakePerpOrderIxData(discriminator, params, successCondition);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.write(params, _data, i);
-      i += Borsh.writeOptional(makerOrderId, _data, i);
+      i += Borsh.writeOptional(successCondition, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + Borsh.len(params) + (makerOrderId == null || makerOrderId.isEmpty() ? 1 : (1 + 4));
+      return 8 + Borsh.len(params) + (successCondition == null || successCondition.isEmpty() ? 1 : (1 + 4));
     }
   }
 
@@ -921,6 +921,76 @@ public final class DriftProgram {
     @Override
     public int l() {
       return 8 + Borsh.len(params) + 4;
+    }
+  }
+
+  public static final Discriminator PLACE_SWIFT_TAKER_ORDER_DISCRIMINATOR = toDiscriminator(50, 89, 120, 78, 254, 15, 104, 140);
+
+  public static Instruction placeSwiftTakerOrder(final AccountMeta invokedDriftProgramMeta,
+                                                 final PublicKey stateKey,
+                                                 final PublicKey userKey,
+                                                 final PublicKey userStatsKey,
+                                                 final PublicKey authorityKey,
+                                                 // the supplied Sysvar could be anything else.
+                                                 // The Instruction Sysvar has not been implemented
+                                                 // in the Anchor framework yet, so this is the safe approach.
+                                                 final PublicKey ixSysvarKey,
+                                                 final byte[] swiftMessageBytes,
+                                                 final byte[] swiftOrderParamsMessageBytes,
+                                                 final byte[] swiftMessageSignature) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWrite(userKey),
+      createWrite(userStatsKey),
+      createReadOnlySigner(authorityKey),
+      createRead(ixSysvarKey)
+    );
+
+    final byte[] _data = new byte[16 + Borsh.lenVector(swiftMessageBytes) + Borsh.lenVector(swiftOrderParamsMessageBytes) + Borsh.lenArray(swiftMessageSignature)];
+    int i = writeDiscriminator(PLACE_SWIFT_TAKER_ORDER_DISCRIMINATOR, _data, 0);
+    i += Borsh.writeVector(swiftMessageBytes, _data, i);
+    i += Borsh.writeVector(swiftOrderParamsMessageBytes, _data, i);
+    Borsh.writeArray(swiftMessageSignature, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record PlaceSwiftTakerOrderIxData(Discriminator discriminator,
+                                           byte[] swiftMessageBytes,
+                                           byte[] swiftOrderParamsMessageBytes,
+                                           byte[] swiftMessageSignature) implements Borsh {  
+
+    public static PlaceSwiftTakerOrderIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static PlaceSwiftTakerOrderIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final byte[] swiftMessageBytes = Borsh.readbyteVector(_data, i);
+      i += Borsh.lenVector(swiftMessageBytes);
+      final byte[] swiftOrderParamsMessageBytes = Borsh.readbyteVector(_data, i);
+      i += Borsh.lenVector(swiftOrderParamsMessageBytes);
+      final var swiftMessageSignature = new byte[64];
+      Borsh.readArray(swiftMessageSignature, _data, i);
+      return new PlaceSwiftTakerOrderIxData(discriminator, swiftMessageBytes, swiftOrderParamsMessageBytes, swiftMessageSignature);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeVector(swiftMessageBytes, _data, i);
+      i += Borsh.writeVector(swiftOrderParamsMessageBytes, _data, i);
+      i += Borsh.writeArray(swiftMessageSignature, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.lenVector(swiftMessageBytes) + Borsh.lenVector(swiftOrderParamsMessageBytes) + Borsh.lenArray(swiftMessageSignature);
     }
   }
 
@@ -1903,6 +1973,60 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, RECLAIM_RENT_DISCRIMINATOR);
   }
 
+  public static final Discriminator ENABLE_USER_HIGH_LEVERAGE_MODE_DISCRIMINATOR = toDiscriminator(231, 24, 230, 112, 201, 173, 73, 184);
+
+  public static Instruction enableUserHighLeverageMode(final AccountMeta invokedDriftProgramMeta,
+                                                       final PublicKey stateKey,
+                                                       final PublicKey userKey,
+                                                       final PublicKey authorityKey,
+                                                       final PublicKey highLeverageModeConfigKey,
+                                                       final int subAccountId) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWrite(userKey),
+      createReadOnlySigner(authorityKey),
+      createWrite(highLeverageModeConfigKey)
+    );
+
+    final byte[] _data = new byte[10];
+    int i = writeDiscriminator(ENABLE_USER_HIGH_LEVERAGE_MODE_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, subAccountId);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record EnableUserHighLeverageModeIxData(Discriminator discriminator, int subAccountId) implements Borsh {  
+
+    public static EnableUserHighLeverageModeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 10;
+
+    public static EnableUserHighLeverageModeIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var subAccountId = getInt16LE(_data, i);
+      return new EnableUserHighLeverageModeIxData(discriminator, subAccountId);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, subAccountId);
+      i += 2;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator FILL_PERP_ORDER_DISCRIMINATOR = toDiscriminator(13, 188, 248, 103, 134, 217, 106, 240);
 
   public static Instruction fillPerpOrder(final AccountMeta invokedDriftProgramMeta,
@@ -2151,6 +2275,40 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_USER_IDLE_DISCRIMINATOR);
   }
 
+  public static final Discriminator DISABLE_USER_HIGH_LEVERAGE_MODE_DISCRIMINATOR = toDiscriminator(183, 155, 45, 0, 226, 85, 213, 69);
+
+  public static Instruction disableUserHighLeverageMode(final AccountMeta invokedDriftProgramMeta,
+                                                        final PublicKey stateKey,
+                                                        final PublicKey authorityKey,
+                                                        final PublicKey userKey,
+                                                        final PublicKey highLeverageModeConfigKey) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createReadOnlySigner(authorityKey),
+      createWrite(userKey),
+      createWrite(highLeverageModeConfigKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, DISABLE_USER_HIGH_LEVERAGE_MODE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator UPDATE_USER_FUEL_BONUS_DISCRIMINATOR = toDiscriminator(88, 175, 201, 190, 222, 100, 143, 57);
+
+  public static Instruction updateUserFuelBonus(final AccountMeta invokedDriftProgramMeta,
+                                                final PublicKey stateKey,
+                                                final PublicKey authorityKey,
+                                                final PublicKey userKey,
+                                                final PublicKey userStatsKey) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createReadOnlySigner(authorityKey),
+      createWrite(userKey),
+      createWrite(userStatsKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_USER_FUEL_BONUS_DISCRIMINATOR);
+  }
+
   public static final Discriminator UPDATE_USER_OPEN_ORDERS_COUNT_DISCRIMINATOR = toDiscriminator(104, 39, 65, 210, 250, 163, 100, 134);
 
   public static Instruction updateUserOpenOrdersCount(final AccountMeta invokedDriftProgramMeta,
@@ -2394,12 +2552,14 @@ public final class DriftProgram {
   public static final Discriminator SETTLE_EXPIRED_MARKET_DISCRIMINATOR = toDiscriminator(120, 89, 11, 25, 122, 77, 72, 193);
 
   public static Instruction settleExpiredMarket(final AccountMeta invokedDriftProgramMeta,
+                                                final PublicKey adminKey,
                                                 final PublicKey stateKey,
-                                                final PublicKey authorityKey,
+                                                final PublicKey perpMarketKey,
                                                 final int marketIndex) {
     final var keys = List.of(
+      createReadOnlySigner(adminKey),
       createRead(stateKey),
-      createReadOnlySigner(authorityKey)
+      createWrite(perpMarketKey)
     );
 
     final byte[] _data = new byte[10];
@@ -2837,10 +2997,14 @@ public final class DriftProgram {
 
   public static final Discriminator SET_USER_STATUS_TO_BEING_LIQUIDATED_DISCRIMINATOR = toDiscriminator(106, 133, 160, 206, 193, 171, 192, 194);
 
-  public static Instruction setUserStatusToBeingLiquidated(final AccountMeta invokedDriftProgramMeta, final PublicKey stateKey, final PublicKey userKey) {
+  public static Instruction setUserStatusToBeingLiquidated(final AccountMeta invokedDriftProgramMeta,
+                                                           final PublicKey stateKey,
+                                                           final PublicKey userKey,
+                                                           final PublicKey authorityKey) {
     final var keys = List.of(
       createRead(stateKey),
-      createWrite(userKey)
+      createWrite(userKey),
+      createReadOnlySigner(authorityKey)
     );
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, SET_USER_STATUS_TO_BEING_LIQUIDATED_DISCRIMINATOR);
@@ -5541,6 +5705,65 @@ public final class DriftProgram {
       i += 4;
       putInt32LE(_data, i, marginRatioMaintenance);
       i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_PERP_MARKET_HIGH_LEVERAGE_MARGIN_RATIO_DISCRIMINATOR = toDiscriminator(88, 112, 86, 49, 24, 116, 74, 157);
+
+  public static Instruction updatePerpMarketHighLeverageMarginRatio(final AccountMeta invokedDriftProgramMeta,
+                                                                    final PublicKey adminKey,
+                                                                    final PublicKey stateKey,
+                                                                    final PublicKey perpMarketKey,
+                                                                    final int marginRatioInitial,
+                                                                    final int marginRatioMaintenance) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[12];
+    int i = writeDiscriminator(UPDATE_PERP_MARKET_HIGH_LEVERAGE_MARGIN_RATIO_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, marginRatioInitial);
+    i += 2;
+    putInt16LE(_data, i, marginRatioMaintenance);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketHighLeverageMarginRatioIxData(Discriminator discriminator, int marginRatioInitial, int marginRatioMaintenance) implements Borsh {  
+
+    public static UpdatePerpMarketHighLeverageMarginRatioIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 12;
+
+    public static UpdatePerpMarketHighLeverageMarginRatioIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var marginRatioInitial = getInt16LE(_data, i);
+      i += 2;
+      final var marginRatioMaintenance = getInt16LE(_data, i);
+      return new UpdatePerpMarketHighLeverageMarginRatioIxData(discriminator, marginRatioInitial, marginRatioMaintenance);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, marginRatioInitial);
+      i += 2;
+      putInt16LE(_data, i, marginRatioMaintenance);
+      i += 2;
       return i - offset;
     }
 
@@ -9361,6 +9584,121 @@ public final class DriftProgram {
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.writeArray(feedId, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INITIALIZE_HIGH_LEVERAGE_MODE_CONFIG_DISCRIMINATOR = toDiscriminator(213, 167, 93, 246, 208, 130, 90, 248);
+
+  public static Instruction initializeHighLeverageModeConfig(final AccountMeta invokedDriftProgramMeta,
+                                                             final PublicKey adminKey,
+                                                             final PublicKey highLeverageModeConfigKey,
+                                                             final PublicKey stateKey,
+                                                             final PublicKey rentKey,
+                                                             final PublicKey systemProgramKey,
+                                                             final int maxUsers) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(highLeverageModeConfigKey),
+      createRead(stateKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[12];
+    int i = writeDiscriminator(INITIALIZE_HIGH_LEVERAGE_MODE_CONFIG_DISCRIMINATOR, _data, 0);
+    putInt32LE(_data, i, maxUsers);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record InitializeHighLeverageModeConfigIxData(Discriminator discriminator, int maxUsers) implements Borsh {  
+
+    public static InitializeHighLeverageModeConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 12;
+
+    public static InitializeHighLeverageModeConfigIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var maxUsers = getInt32LE(_data, i);
+      return new InitializeHighLeverageModeConfigIxData(discriminator, maxUsers);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, maxUsers);
+      i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_HIGH_LEVERAGE_MODE_CONFIG_DISCRIMINATOR = toDiscriminator(64, 122, 212, 93, 141, 217, 202, 55);
+
+  public static Instruction updateHighLeverageModeConfig(final AccountMeta invokedDriftProgramMeta,
+                                                         final PublicKey adminKey,
+                                                         final PublicKey highLeverageModeConfigKey,
+                                                         final PublicKey stateKey,
+                                                         final int maxUsers,
+                                                         final boolean reduceOnly) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(highLeverageModeConfigKey),
+      createRead(stateKey)
+    );
+
+    final byte[] _data = new byte[13];
+    int i = writeDiscriminator(UPDATE_HIGH_LEVERAGE_MODE_CONFIG_DISCRIMINATOR, _data, 0);
+    putInt32LE(_data, i, maxUsers);
+    i += 4;
+    _data[i] = (byte) (reduceOnly ? 1 : 0);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateHighLeverageModeConfigIxData(Discriminator discriminator, int maxUsers, boolean reduceOnly) implements Borsh {  
+
+    public static UpdateHighLeverageModeConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 13;
+
+    public static UpdateHighLeverageModeConfigIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var maxUsers = getInt32LE(_data, i);
+      i += 4;
+      final var reduceOnly = _data[i] == 1;
+      return new UpdateHighLeverageModeConfigIxData(discriminator, maxUsers, reduceOnly);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, maxUsers);
+      i += 4;
+      _data[i] = (byte) (reduceOnly ? 1 : 0);
+      ++i;
       return i - offset;
     }
 
