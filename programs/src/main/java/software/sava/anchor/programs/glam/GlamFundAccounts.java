@@ -4,15 +4,13 @@ import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 
-import static software.sava.anchor.programs.glam.GlamFundAccountsRecord.deriveAddress;
-
 public interface GlamFundAccounts {
 
   static GlamFundAccounts createAccounts(final GlamAccounts glamAccounts,
                                          final PublicKey signerPublicKey,
                                          final PublicKey fundPublicKey) {
-    final var treasuryPDA = deriveAddress("treasury", fundPublicKey, glamAccounts.program());
-    final var openFundsPDA = deriveAddress("openfunds", fundPublicKey, glamAccounts.program());
+    final var treasuryPDA = glamAccounts.treasuryPDA(fundPublicKey);
+    final var openFundsPDA = glamAccounts.openFundsPDA(fundPublicKey);
     return new GlamFundAccountsRecord(
         glamAccounts,
         signerPublicKey,
