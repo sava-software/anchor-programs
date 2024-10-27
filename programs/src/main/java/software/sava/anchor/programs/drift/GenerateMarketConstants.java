@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
@@ -101,18 +102,16 @@ final class GenerateMarketConstants {
 
   }
 
-  private static String fetchSpotMarkets(final HttpClient httpClient) {
+  private static CompletableFuture<HttpResponse<String>> fetchSpotMarkets(final HttpClient httpClient) {
     final var marketConstantsURI = URI.create("https://raw.githubusercontent.com/drift-labs/protocol-v2/master/sdk/src/constants/spotMarkets.ts");
     final var request = HttpRequest.newBuilder(marketConstantsURI).GET().build();
-    final var responseFuture = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    return convertJson(responseFuture.join().body());
+    return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
   }
 
-  private static String fetchPerpMarkets(final HttpClient httpClient) {
+  private static CompletableFuture<HttpResponse<String>> fetchPerpMarkets(final HttpClient httpClient) {
     final var marketConstantsURI = URI.create("https://raw.githubusercontent.com/drift-labs/protocol-v2/master/sdk/src/constants/perpMarkets.ts");
     final var request = HttpRequest.newBuilder(marketConstantsURI).GET().build();
-    final var responseFuture = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    return convertJson(responseFuture.join().body());
+    return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
   }
 
   private static final String DEV_NET_SPOT_KEY = "DevnetSpotMarkets: SpotMarketConfig[]";
@@ -120,36 +119,44 @@ final class GenerateMarketConstants {
   private static final String DEV_NET_PERP_KEY = "DevnetPerpMarkets: PerpMarketConfig[]";
   private static final String MAIN_NET_PERP_KEY = "MainnetPerpMarkets: PerpMarketConfig[]";
 
-  static DynamicSpotMarkets createSpotMarkets(final HttpClient httpClient) {
-    final var response = fetchSpotMarkets(httpClient);
-    final var configs = parseConfigs(
-        DEV_NET_SPOT_KEY,
-        MAIN_NET_SPOT_KEY,
-        SpotMarketConfig::parseConfigs,
-        response
-    );
-    return new DynamicSpotMarkets(
-        SpotMarkets.createRecord(configs.mainNet),
-        SpotMarkets.createRecord(configs.devNet)
-    );
+  static CompletableFuture<DynamicSpotMarkets> createSpotMarkets(final HttpClient httpClient) {
+    final var responseFuture = fetchSpotMarkets(httpClient);
+    return responseFuture.thenApply(response -> {
+      final var responseJson = convertJson(response.body());
+      final var configs = parseConfigs(
+          DEV_NET_SPOT_KEY,
+          MAIN_NET_SPOT_KEY,
+          SpotMarketConfig::parseConfigs,
+          responseJson
+      );
+      return new DynamicSpotMarkets(
+          SpotMarkets.createRecord(configs.mainNet),
+          SpotMarkets.createRecord(configs.devNet)
+      );
+    });
   }
 
-  static DynamicPerpMarkets createPerpMarkets(final HttpClient httpClient) {
-    final var response = fetchPerpMarkets(httpClient);
-    final var configs = parseConfigs(
-        DEV_NET_PERP_KEY,
-        MAIN_NET_PERP_KEY,
-        PerpMarketConfig::parseConfigs,
-        response
-    );
-    return new DynamicPerpMarkets(
-        PerpMarkets.createRecord(configs.mainNet),
-        PerpMarkets.createRecord(configs.devNet)
-    );
+  static CompletableFuture<DynamicPerpMarkets> createPerpMarkets(final HttpClient httpClient) {
+    final var responseFuture = fetchPerpMarkets(httpClient);
+
+    return responseFuture.thenApply(response -> {
+      final var responseJson = convertJson(response.body());
+      final var configs = parseConfigs(
+          DEV_NET_PERP_KEY,
+          MAIN_NET_PERP_KEY,
+          PerpMarketConfig::parseConfigs,
+          responseJson
+      );
+      return new DynamicPerpMarkets(
+          PerpMarkets.createRecord(configs.mainNet),
+          PerpMarkets.createRecord(configs.devNet)
+      );
+    });
   }
 
   private static void genSpotMarkets(final HttpClient httpClient) {
-    final var response = fetchSpotMarkets(httpClient);
+    final var responseFuture = fetchSpotMarkets(httpClient);
+    final var response = convertJson(responseFuture.join().body());
     parseConfigsAndWriteSrc(
         DEV_NET_SPOT_KEY,
         MAIN_NET_SPOT_KEY,
@@ -162,7 +169,8 @@ final class GenerateMarketConstants {
   }
 
   private static void genPerpMarkets(final HttpClient httpClient) {
-    final var response = fetchPerpMarkets(httpClient);
+    final var responseFuture = fetchPerpMarkets(httpClient);
+    final var response = convertJson(responseFuture.join().body());
     parseConfigsAndWriteSrc(
         DEV_NET_PERP_KEY,
         MAIN_NET_PERP_KEY,
