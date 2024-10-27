@@ -4,6 +4,7 @@ import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 
 record DriftAccountsRecord(AccountMeta invokedDriftProgram,
+                           PublicKey driftSignerPDA,
                            PublicKey marketLookupTable,
                            PublicKey serumLookupTable,
                            PublicKey stateKey,

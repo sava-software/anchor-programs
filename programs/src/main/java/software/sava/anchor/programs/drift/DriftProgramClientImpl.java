@@ -14,7 +14,8 @@ import software.sava.solana.programs.clients.NativeProgramAccountClient;
 import java.util.OptionalInt;
 import java.util.concurrent.CompletableFuture;
 
-import static software.sava.anchor.programs.drift.DriftPDAs.*;
+import static software.sava.anchor.programs.drift.DriftPDAs.deriveSpotMarketVaultAccount;
+import static software.sava.anchor.programs.drift.DriftPDAs.deriveUserStatsAccount;
 import static software.sava.anchor.programs.drift.anchor.types.MarketType.Perp;
 import static software.sava.anchor.programs.drift.anchor.types.MarketType.Spot;
 
@@ -64,9 +65,9 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   @Override
   public Instruction deposit(final PublicKey userTokenAccountKey,
                              final PublicKey tokenProgramKey,
-                             final int marketIndex,
+                             final SpotMarketConfig spotMarketConfig,
                              final long amount) {
-    return deposit(user, authority, userTokenAccountKey, tokenProgramKey, marketIndex, amount);
+    return deposit(user, authority, userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount);
   }
 
   @Override
@@ -74,21 +75,20 @@ final class DriftProgramClientImpl implements DriftProgramClient {
                              final PublicKey authority,
                              final PublicKey userTokenAccountKey,
                              final PublicKey tokenProgramKey,
-                             final int marketIndex,
+                             final SpotMarketConfig spotMarketConfig,
                              final long amount,
                              final boolean reduceOnly) {
     final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
-    final var spotMarketVaultPDA = deriveSpotMarketVaultAccount(accounts, marketIndex);
     return DriftProgram.deposit(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
         user,
         userStatsPDA.publicKey(),
         authority,
-        spotMarketVaultPDA.publicKey(),
+        spotMarketConfig.vaultPDA(),
         userTokenAccountKey,
         tokenProgramKey,
-        marketIndex,
+        spotMarketConfig.marketIndex(),
         amount,
         reduceOnly
     );
@@ -98,10 +98,9 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   public Instruction transferDeposit(final PublicKey fromUser,
                                      final PublicKey toUser,
                                      final PublicKey authority,
-                                     final int marketIndex,
+                                     final SpotMarketConfig spotMarketConfig,
                                      final long amount) {
     final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
-    final var spotMarketVaultPDA = deriveSpotMarketVaultAccount(accounts, marketIndex);
     return DriftProgram.transferDeposit(
         accounts.invokedDriftProgram(),
         fromUser,
@@ -109,8 +108,8 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         userStatsPDA.publicKey(),
         authority,
         accounts.stateKey(),
-        spotMarketVaultPDA.publicKey(),
-        marketIndex,
+        spotMarketConfig.vaultPDA(),
+        spotMarketConfig.marketIndex(),
         amount
     );
   }
@@ -118,9 +117,9 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   @Override
   public Instruction withdraw(final PublicKey userTokenAccountKey,
                               final PublicKey tokenProgramKey,
-                              final int marketIndex,
+                              final SpotMarketConfig spotMarketConfig,
                               final long amount) {
-    return withdraw(user, authority, userTokenAccountKey, tokenProgramKey, marketIndex, amount);
+    return withdraw(user, authority, userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount);
   }
 
   @Override
@@ -128,23 +127,21 @@ final class DriftProgramClientImpl implements DriftProgramClient {
                               final PublicKey authority,
                               final PublicKey userTokenAccountKey,
                               final PublicKey tokenProgramKey,
-                              final int marketIndex,
+                              final SpotMarketConfig spotMarketConfig,
                               final long amount,
                               final boolean reduceOnly) {
     final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
-    final var spotMarketVaultPDA = deriveSpotMarketVaultAccount(accounts, marketIndex);
-    final var driftSignerPDA = deriveSignerAccount(accounts.driftProgram());
     return DriftProgram.withdraw(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
         user,
         userStatsPDA.publicKey(),
         authority,
-        spotMarketVaultPDA.publicKey(),
-        driftSignerPDA.publicKey(),
+        spotMarketConfig.vaultPDA(),
+        accounts.driftSignerPDA(),
         userTokenAccountKey,
         tokenProgramKey,
-        marketIndex,
+        spotMarketConfig.marketIndex(),
         amount,
         reduceOnly
     );

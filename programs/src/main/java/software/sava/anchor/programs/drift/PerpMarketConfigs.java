@@ -669,6 +669,19 @@ public final class PerpMarketConfigs {
           null,
           null,
           "VFJMj3bLCxwq4Rfmnc8YoJJYBf5DbFbuUN2JMcJCdhK"
+      ),
+      createConfig(
+          "1KMEW",
+          Set.of("Meme"),
+          "1KMEW-PERP",
+          "1KMEW",
+          51,
+          "2024-10-23T17:01:55Z",
+          "DKGwCUcwngwmgifGxnme7zVR695LCBGk2pnuksRnbhfD",
+          OracleSource.PYTH_1K_PULL,
+          "DKGwCUcwngwmgifGxnme7zVR695LCBGk2pnuksRnbhfD",
+          "6ULHnTs1Ys2J23xKaHUJcJzYkWFrhQhZofLU5sq2CpRA",
+          "GiTjHed1gapTxjpFLdoBYtajHt9nj8DEcYHuwc3C7Mve"
       )
   });
 

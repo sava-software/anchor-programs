@@ -108,14 +108,14 @@ public interface DriftProgramClient {
 
   Instruction deposit(final PublicKey userTokenAccountKey,
                       final PublicKey tokenProgramKey,
-                      final int marketIndex,
+                      final SpotMarketConfig spotMarketConfig,
                       final long amount);
 
   Instruction deposit(final PublicKey user,
                       final PublicKey authority,
                       final PublicKey userTokenAccountKey,
                       final PublicKey tokenProgramKey,
-                      final int marketIndex,
+                      final SpotMarketConfig spotMarketConfig,
                       final long amount,
                       final boolean reduceOnly);
 
@@ -123,27 +123,27 @@ public interface DriftProgramClient {
                               final PublicKey authority,
                               final PublicKey userTokenAccountKey,
                               final PublicKey tokenProgramKey,
-                              final int marketIndex,
+                              final SpotMarketConfig spotMarketConfig,
                               final long amount) {
-    return deposit(user, authority, userTokenAccountKey, tokenProgramKey, marketIndex, amount, false);
+    return deposit(user, authority, userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount, false);
   }
 
   Instruction transferDeposit(final PublicKey fromUser,
                               final PublicKey toUser,
                               final PublicKey authority,
-                              final int marketIndex,
+                              final SpotMarketConfig spotMarketConfig,
                               final long amount);
 
   Instruction withdraw(final PublicKey userTokenAccountKey,
                        final PublicKey tokenProgramKey,
-                       final int marketIndex,
+                       final SpotMarketConfig spotMarketConfig,
                        final long amount);
 
   Instruction withdraw(final PublicKey user,
                        final PublicKey authority,
                        final PublicKey userTokenAccountKey,
                        final PublicKey tokenProgramKey,
-                       final int marketIndex,
+                       final SpotMarketConfig spotMarketConfig,
                        final long amount,
                        final boolean reduceOnly);
 
@@ -151,9 +151,9 @@ public interface DriftProgramClient {
                                final PublicKey authority,
                                final PublicKey userTokenAccountKey,
                                final PublicKey tokenProgramKey,
-                               final int marketIndex,
+                               final SpotMarketConfig spotMarketConfig,
                                final long amount) {
-    return withdraw(user, authority, userTokenAccountKey, tokenProgramKey, marketIndex, amount, false);
+    return withdraw(user, authority, userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount, false);
   }
 
   Instruction settlePnl(final int marketIndex);

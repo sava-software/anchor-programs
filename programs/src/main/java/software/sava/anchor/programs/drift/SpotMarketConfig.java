@@ -25,7 +25,8 @@ public record SpotMarketConfig(String symbol,
                                PublicKey openbookMarket,
                                PublicKey pythFeedId,
                                AccountMeta readMarketPDA,
-                               AccountMeta writeMarketPDA) implements SrcGen, MarketConfig {
+                               AccountMeta writeMarketPDA,
+                               PublicKey vaultPDA) implements SrcGen, MarketConfig {
 
   static SpotMarketConfig createConfig(final String symbol,
                                        final int marketIndex,
@@ -38,7 +39,8 @@ public record SpotMarketConfig(String symbol,
                                        final String phoenixMarket,
                                        final String openbookMarket,
                                        final String pythFeedId,
-                                       final String marketPDA) {
+                                       final String marketPDA,
+                                       final String vaultPDA) {
     final var marketPDAKey = PublicKey.fromBase58Encoded(marketPDA);
     final AccountMeta readOracle;
     final AccountMeta writeOracle;
@@ -63,7 +65,8 @@ public record SpotMarketConfig(String symbol,
         SrcGen.fromBase58Encoded(openbookMarket),
         SrcGen.fromBase58Encoded(pythFeedId),
         AccountMeta.createRead(marketPDAKey),
-        AccountMeta.createWrite(marketPDAKey)
+        AccountMeta.createWrite(marketPDAKey),
+        SrcGen.fromBase58Encoded(vaultPDA)
     );
   }
 
@@ -73,6 +76,7 @@ public record SpotMarketConfig(String symbol,
             createConfig(
                 "%s",
                 %d,
+                %s,
                 %s,
                 %s,
                 %s,
@@ -96,7 +100,8 @@ public record SpotMarketConfig(String symbol,
         SrcGen.pubKeyConstant(phoenixMarket),
         SrcGen.pubKeyConstant(openbookMarket),
         SrcGen.pubKeyConstant(pythFeedId),
-        SrcGen.pubKeyConstant(DriftPDAs.deriveSpotMarketAccount(driftAccounts, marketIndex).publicKey())
+        SrcGen.pubKeyConstant(DriftPDAs.deriveSpotMarketAccount(driftAccounts, marketIndex).publicKey()),
+        SrcGen.pubKeyConstant(DriftPDAs.deriveSpotMarketVaultAccount(driftAccounts, marketIndex).publicKey())
     );
   }
 
@@ -158,7 +163,7 @@ public record SpotMarketConfig(String symbol,
           phoenixMarket,
           openbookMarket,
           pythFeedId,
-          null, null
+          null, null, null
       );
     }
 

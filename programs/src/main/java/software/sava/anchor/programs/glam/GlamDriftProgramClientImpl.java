@@ -16,7 +16,7 @@ import software.sava.rpc.json.http.response.AccountInfo;
 import java.util.OptionalInt;
 import java.util.concurrent.CompletableFuture;
 
-import static software.sava.anchor.programs.drift.DriftPDAs.*;
+import static software.sava.anchor.programs.drift.DriftPDAs.deriveUserStatsAccount;
 
 final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
@@ -68,9 +68,9 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   @Override
   public Instruction deposit(final PublicKey userTokenAccountKey,
                              final PublicKey tokenProgramKey,
-                             final int marketIndex,
+                             final SpotMarketConfig spotMarketConfig,
                              final long amount) {
-    return deposit(user, authority(), userTokenAccountKey, tokenProgramKey, marketIndex, amount);
+    return deposit(user, authority(), userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount);
   }
 
   @Override
@@ -78,11 +78,10 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                              final PublicKey authority,
                              final PublicKey userTokenAccountKey,
                              final PublicKey tokenProgramKey,
-                             final int marketIndex,
+                             final SpotMarketConfig spotMarketConfig,
                              final long amount,
                              final boolean reduceOnly) {
     final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
-    final var spotMarketVaultPDA = deriveSpotMarketVaultAccount(driftAccounts, marketIndex);
     return GlamProgram.driftDeposit(
         invokedProgram,
         solanaAccounts,
@@ -91,11 +90,11 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         userStatsKey,
         driftAccounts.stateKey(),
         glamFundAccounts.treasuryPublicKey(),
-        spotMarketVaultPDA.publicKey(),
+        spotMarketConfig.vaultPDA(),
         userTokenAccountKey,
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
-        marketIndex,
+        spotMarketConfig.marketIndex(),
         amount
     );
   }
@@ -104,7 +103,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   public Instruction transferDeposit(final PublicKey fromUser,
                                      final PublicKey toUser,
                                      final PublicKey authority,
-                                     final int marketIndex,
+                                     final SpotMarketConfig spotMarketConfig,
                                      final long amount) {
     throw new UnsupportedOperationException("TODO: transferDeposit");
   }
@@ -112,14 +111,14 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   @Override
   public Instruction withdraw(final PublicKey userTokenAccountKey,
                               final PublicKey tokenProgramKey,
-                              final int marketIndex,
+                              final SpotMarketConfig spotMarketConfig,
                               final long amount) {
     return withdraw(
         user,
         authority(),
         userTokenAccountKey,
         tokenProgramKey,
-        marketIndex,
+        spotMarketConfig,
         amount
     );
   }
@@ -129,12 +128,10 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                               final PublicKey authority,
                               final PublicKey userTokenAccountKey,
                               final PublicKey tokenProgramKey,
-                              final int marketIndex,
+                              final SpotMarketConfig spotMarketConfig,
                               final long amount,
                               final boolean reduceOnly) {
     final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
-    final var spotMarketVaultPDA = deriveSpotMarketVaultAccount(driftAccounts, marketIndex);
-    final var driftSignerPDA = deriveSignerAccount(driftAccounts.driftProgram());
     return GlamProgram.driftWithdraw(
         invokedProgram,
         solanaAccounts,
@@ -142,13 +139,13 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         user,
         userStatsKey,
         driftAccounts.stateKey(),
-        driftSignerPDA.publicKey(),
+        driftAccounts.driftSignerPDA(),
         glamFundAccounts.treasuryPublicKey(),
         userTokenAccountKey,
-        spotMarketVaultPDA.publicKey(),
+        spotMarketConfig.vaultPDA(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
-        marketIndex,
+        spotMarketConfig.marketIndex(),
         amount
     );
   }

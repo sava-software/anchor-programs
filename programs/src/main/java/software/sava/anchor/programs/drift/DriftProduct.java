@@ -52,6 +52,7 @@ public enum DriftProduct {
     W_PERP,
     XRP_PERP,
     ZEX_PERP,
+    _1KMEW_PERP,
     _1KWEN_PERP,
     _1MBONK_PERP,
     _1MPEPE_PERP

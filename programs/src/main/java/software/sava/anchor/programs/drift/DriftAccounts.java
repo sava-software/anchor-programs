@@ -4,6 +4,7 @@ import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 
 import static software.sava.anchor.programs.drift.DriftAsset.USDC;
+import static software.sava.anchor.programs.drift.DriftPDAs.deriveSignerAccount;
 import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 
 public interface DriftAccounts {
@@ -30,6 +31,8 @@ public interface DriftAccounts {
     return invokedDriftProgram().publicKey();
   }
 
+  PublicKey driftSignerPDA();
+
   PublicKey stateKey();
 
   PublicKey marketLookupTable();
@@ -55,8 +58,10 @@ public interface DriftAccounts {
                                               final PublicKey serumLookupTable,
                                               final SpotMarkets spotMarkets,
                                               final PerpMarkets perpMarkets) {
+    final var driftSigner = deriveSignerAccount(driftProgram).publicKey();
     return new DriftAccountsRecord(
         AccountMeta.createInvoked(driftProgram),
+        driftSigner,
         marketLookupTable,
         serumLookupTable,
         DriftPDAs.deriveStateAccount(driftProgram).publicKey(),
