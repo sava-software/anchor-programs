@@ -93,24 +93,23 @@ public record SpotMarketConfig(String symbol,
         launchTs == null ? null : '"' + launchTs.toString() + '"',
         SrcGen.pubKeyConstant(readOracle.publicKey()),
         oracleSource == null ? null : "OracleSource." + oracleSource.name(),
-        pythFeedId == null ? null : SrcGen.pubKeyConstant(DriftPDAs
-            .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey()),
+        SrcGen.pubKeyConstant(pythPullOraclePDA),
         SrcGen.pubKeyConstant(mint),
         SrcGen.pubKeyConstant(serumMarket),
         SrcGen.pubKeyConstant(phoenixMarket),
         SrcGen.pubKeyConstant(openbookMarket),
         SrcGen.pubKeyConstant(pythFeedId),
-        SrcGen.pubKeyConstant(DriftPDAs.deriveSpotMarketAccount(driftAccounts, marketIndex).publicKey()),
-        SrcGen.pubKeyConstant(DriftPDAs.deriveSpotMarketVaultAccount(driftAccounts, marketIndex).publicKey())
+        SrcGen.pubKeyConstant(readMarketPDA.publicKey()),
+        SrcGen.pubKeyConstant(vaultPDA)
     );
   }
 
-  public static List<SpotMarketConfig> parseConfigs(final JsonIterator ji) {
+  public static List<SpotMarketConfig> parseConfigs(final JsonIterator ji, final DriftAccounts driftAccounts) {
     final var configs = new ArrayList<SpotMarketConfig>();
     while (ji.readArray()) {
       final var parser = new SpotMarketConfig.Builder();
       ji.testObject(parser);
-      final var config = parser.create();
+      final var config = parser.create(driftAccounts);
       configs.add(config);
     }
     return configs;
@@ -141,7 +140,7 @@ public record SpotMarketConfig(String symbol,
     private PublicKey openbookMarket;
     private PublicKey pythFeedId;
 
-    private SpotMarketConfig create() {
+    private SpotMarketConfig create(final DriftAccounts driftAccounts) {
       final AccountMeta readOracle;
       final AccountMeta writeOracle;
       if (oracle == null) {
@@ -151,19 +150,25 @@ public record SpotMarketConfig(String symbol,
         readOracle = AccountMeta.createRead(oracle);
         writeOracle = AccountMeta.createWrite(oracle);
       }
+      final var pythPullOraclePDA = pythFeedId == null ? null : DriftPDAs
+          .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey();
+      final var marketPDA = DriftPDAs.deriveSpotMarketAccount(driftAccounts, marketIndex).publicKey();
+
       return new SpotMarketConfig(
           symbol,
           marketIndex,
           launchTs,
           readOracle, writeOracle,
           oracleSource,
-          null,
+          pythPullOraclePDA,
           mint,
           serumMarket,
           phoenixMarket,
           openbookMarket,
           pythFeedId,
-          null, null, null
+          AccountMeta.createRead(marketPDA),
+          AccountMeta.createWrite(marketPDA),
+          DriftPDAs.deriveSpotMarketVaultAccount(driftAccounts, marketIndex).publicKey()
       );
     }
 

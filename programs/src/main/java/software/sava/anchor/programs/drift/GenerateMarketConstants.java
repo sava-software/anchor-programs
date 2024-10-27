@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Executors;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import static java.nio.file.StandardOpenOption.*;
@@ -28,7 +28,7 @@ final class GenerateMarketConstants {
 
   private static void parseConfigsAndWriteSrc(final String devNetKey,
                                               final String mainNetKey,
-                                              final Function<JsonIterator, List<? extends SrcGen>> configParser,
+                                              final BiFunction<JsonIterator, DriftAccounts, List<? extends SrcGen>> configParser,
                                               final Class<?> clas,
                                               final Set<Class<?>> imports,
                                               final String response,
@@ -39,7 +39,7 @@ final class GenerateMarketConstants {
 
     final var devNetJson = quoteJson(response.substring(from, to));
     var ji = JsonIterator.parse(devNetJson);
-    final var devNetConfigs = configParser.apply(ji);
+    final var devNetConfigs = configParser.apply(ji, DriftAccounts.DEV_NET);
 
     from = response.indexOf(mainNetKey, to);
     from = response.indexOf('[', from + mainNetKey.length());
@@ -48,7 +48,7 @@ final class GenerateMarketConstants {
     final var mainNetJson = quoteJson(response.substring(from, to));
 
     ji = JsonIterator.parse(mainNetJson);
-    final var mainNetConfigs = configParser.apply(ji);
+    final var mainNetConfigs = configParser.apply(ji, DriftAccounts.MAIN_NET);
 
     writeMarketConfigsSrc(devNetConfigs, mainNetConfigs, clas, imports, fileName);
 
@@ -57,6 +57,30 @@ final class GenerateMarketConstants {
     } else {
       writeProductsSrc(devNetConfigs, mainNetConfigs);
     }
+  }
+
+  private static <T extends SrcGen> MarketConfigs<T> parseConfigs(final String devNetKey,
+                                                                  final String mainNetKey,
+                                                                  final BiFunction<JsonIterator, DriftAccounts, List<T>> configParser,
+                                                                  final String response) {
+    int from = response.indexOf(devNetKey);
+    from = response.indexOf('[', from + devNetKey.length());
+    int to = response.indexOf("];", from) + 1;
+
+    final var devNetJson = quoteJson(response.substring(from, to));
+    var ji = JsonIterator.parse(devNetJson);
+    final var devNetConfigs = configParser.apply(ji, DriftAccounts.DEV_NET);
+
+    from = response.indexOf(mainNetKey, to);
+    from = response.indexOf('[', from + mainNetKey.length());
+    to = response.indexOf("];", from) + 1;
+
+    final var mainNetJson = quoteJson(response.substring(from, to));
+
+    ji = JsonIterator.parse(mainNetJson);
+    final var mainNetConfigs = configParser.apply(ji, DriftAccounts.MAIN_NET);
+
+    return new MarketConfigs(mainNetConfigs, devNetConfigs);
   }
 
   private static String convertJson(final String javascript) {
@@ -73,14 +97,62 @@ final class GenerateMarketConstants {
         .replaceAll("new PublicKey\\( *\"(\\w+)\" *\\)", "\"$1\"");
   }
 
-  private static void genSpotMarkets(final HttpClient httpClient) {
+  private record MarketConfigs<T extends SrcGen>(List<T> mainNet, List<T> devNet) {
+
+  }
+
+  private static String fetchSpotMarkets(final HttpClient httpClient) {
     final var marketConstantsURI = URI.create("https://raw.githubusercontent.com/drift-labs/protocol-v2/master/sdk/src/constants/spotMarkets.ts");
     final var request = HttpRequest.newBuilder(marketConstantsURI).GET().build();
     final var responseFuture = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    final var response = convertJson(responseFuture.join().body());
+    return convertJson(responseFuture.join().body());
+  }
+
+  private static String fetchPerpMarkets(final HttpClient httpClient) {
+    final var marketConstantsURI = URI.create("https://raw.githubusercontent.com/drift-labs/protocol-v2/master/sdk/src/constants/perpMarkets.ts");
+    final var request = HttpRequest.newBuilder(marketConstantsURI).GET().build();
+    final var responseFuture = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
+    return convertJson(responseFuture.join().body());
+  }
+
+  private static final String DEV_NET_SPOT_KEY = "DevnetSpotMarkets: SpotMarketConfig[]";
+  private static final String MAIN_NET_SPOT_KEY = "MainnetSpotMarkets: SpotMarketConfig[]";
+  private static final String DEV_NET_PERP_KEY = "DevnetPerpMarkets: PerpMarketConfig[]";
+  private static final String MAIN_NET_PERP_KEY = "MainnetPerpMarkets: PerpMarketConfig[]";
+
+  static DynamicSpotMarkets createSpotMarkets(final HttpClient httpClient) {
+    final var response = fetchSpotMarkets(httpClient);
+    final var configs = parseConfigs(
+        DEV_NET_SPOT_KEY,
+        MAIN_NET_SPOT_KEY,
+        SpotMarketConfig::parseConfigs,
+        response
+    );
+    return new DynamicSpotMarkets(
+        SpotMarkets.createRecord(configs.mainNet),
+        SpotMarkets.createRecord(configs.devNet)
+    );
+  }
+
+  static DynamicPerpMarkets createPerpMarkets(final HttpClient httpClient) {
+    final var response = fetchPerpMarkets(httpClient);
+    final var configs = parseConfigs(
+        DEV_NET_PERP_KEY,
+        MAIN_NET_PERP_KEY,
+        PerpMarketConfig::parseConfigs,
+        response
+    );
+    return new DynamicPerpMarkets(
+        PerpMarkets.createRecord(configs.mainNet),
+        PerpMarkets.createRecord(configs.devNet)
+    );
+  }
+
+  private static void genSpotMarkets(final HttpClient httpClient) {
+    final var response = fetchSpotMarkets(httpClient);
     parseConfigsAndWriteSrc(
-        "DevnetSpotMarkets: SpotMarketConfig[]",
-        "MainnetSpotMarkets: SpotMarketConfig[]",
+        DEV_NET_SPOT_KEY,
+        MAIN_NET_SPOT_KEY,
         SpotMarketConfig::parseConfigs,
         SpotMarketConfig.class,
         Set.of(),
@@ -90,13 +162,10 @@ final class GenerateMarketConstants {
   }
 
   private static void genPerpMarkets(final HttpClient httpClient) {
-    final var marketConstantsURI = URI.create("https://raw.githubusercontent.com/drift-labs/protocol-v2/master/sdk/src/constants/perpMarkets.ts");
-    final var request = HttpRequest.newBuilder(marketConstantsURI).GET().build();
-    final var responseFuture = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString());
-    final var response = convertJson(responseFuture.join().body());
+    final var response = fetchPerpMarkets(httpClient);
     parseConfigsAndWriteSrc(
-        "DevnetPerpMarkets: PerpMarketConfig[]",
-        "MainnetPerpMarkets: PerpMarketConfig[]",
+        DEV_NET_PERP_KEY,
+        MAIN_NET_PERP_KEY,
         PerpMarketConfig::parseConfigs,
         PerpMarketConfig.class,
         Set.of(Set.class),
@@ -238,6 +307,8 @@ final class GenerateMarketConstants {
           .executor(executor)
           .proxy(HttpClient.Builder.NO_PROXY)
           .build()) {
+//        final var spotMarkets = DynamicSpotMarkets.fetchMarkets(httpClient);
+//        spotMarkets.mainNet().streamMarkets().forEach(System.out::println);
         genSpotMarkets(httpClient);
         genPerpMarkets(httpClient);
       }

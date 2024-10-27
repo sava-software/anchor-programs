@@ -92,19 +92,18 @@ public record PerpMarketConfig(String fullName,
         launchTs == null ? null : '"' + launchTs.toString() + '"',
         SrcGen.pubKeyConstant(readOracle.publicKey()),
         oracleSource == null ? null : "OracleSource." + oracleSource.name(),
-        pythFeedId == null ? null : SrcGen.pubKeyConstant(DriftPDAs
-            .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey()),
+        SrcGen.pubKeyConstant(pythPullOraclePDA),
         SrcGen.pubKeyConstant(pythFeedId),
-        SrcGen.pubKeyConstant(DriftPDAs.derivePerpMarketAccount(driftAccounts, marketIndex).publicKey())
+        SrcGen.pubKeyConstant(readMarketPDA.publicKey())
     );
   }
 
-  public static List<PerpMarketConfig> parseConfigs(final JsonIterator ji) {
+  public static List<PerpMarketConfig> parseConfigs(final JsonIterator ji, final DriftAccounts driftAccounts) {
     final var configs = new ArrayList<PerpMarketConfig>();
     while (ji.readArray()) {
       final var parser = new PerpMarketConfig.Builder();
       ji.testObject(parser);
-      final var config = parser.create();
+      final var config = parser.create(driftAccounts);
       configs.add(config);
     }
     return configs;
@@ -129,7 +128,7 @@ public record PerpMarketConfig(String fullName,
     private OracleSource oracleSource;
     private PublicKey pythFeedId;
 
-    private PerpMarketConfig create() {
+    private PerpMarketConfig create(final DriftAccounts driftAccounts) {
       final AccountMeta readOracle;
       final AccountMeta writeOracle;
       if (oracle == null) {
@@ -139,6 +138,9 @@ public record PerpMarketConfig(String fullName,
         readOracle = AccountMeta.createRead(oracle);
         writeOracle = AccountMeta.createWrite(oracle);
       }
+      final var pythPullOraclePDA = pythFeedId == null ? null : DriftPDAs
+          .derivePythPullOracleAccount(driftAccounts.driftProgram(), pythFeedId.toByteArray()).publicKey();
+      final var marketPDA = DriftPDAs.derivePerpMarketAccount(driftAccounts, marketIndex).publicKey();
       return new PerpMarketConfig(
           fullName,
           categories,
@@ -148,9 +150,10 @@ public record PerpMarketConfig(String fullName,
           launchTs,
           readOracle, writeOracle,
           oracleSource,
-          null,
+          pythPullOraclePDA,
           pythFeedId,
-          null, null
+          AccountMeta.createRead(marketPDA),
+          AccountMeta.createWrite(marketPDA)
       );
     }
 
