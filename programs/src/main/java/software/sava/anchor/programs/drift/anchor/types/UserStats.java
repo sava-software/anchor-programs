@@ -49,8 +49,10 @@ public record UserStats(PublicKey _address,
                         // The number of sub accounts created. Can be greater than the number of sub accounts if user
                         // has deleted sub accounts
                         int numberOfSubAccountsCreated,
-                        // Whether the user is a referrer. Sub account 0 can not be deleted if user is a referrer
-                        boolean isReferrer,
+                        // Flags for referrer status:
+                        // First bit (LSB): 1 if user is a referrer, 0 otherwise
+                        // Second bit: 1 if user was referred, 0 otherwise
+                        int referrerStatus,
                         boolean disableUpdatePerpBidAskTwap,
                         byte[] padding1,
                         // accumulated fuel for token amounts of insurance
@@ -87,7 +89,7 @@ public record UserStats(PublicKey _address,
   public static final int IF_STAKED_QUOTE_ASSET_AMOUNT_OFFSET = 176;
   public static final int NUMBER_OF_SUB_ACCOUNTS_OFFSET = 184;
   public static final int NUMBER_OF_SUB_ACCOUNTS_CREATED_OFFSET = 186;
-  public static final int IS_REFERRER_OFFSET = 188;
+  public static final int REFERRER_STATUS_OFFSET = 188;
   public static final int DISABLE_UPDATE_PERP_BID_ASK_TWAP_OFFSET = 189;
   public static final int PADDING1_OFFSET = 190;
   public static final int FUEL_INSURANCE_OFFSET = 192;
@@ -172,8 +174,8 @@ public record UserStats(PublicKey _address,
     return Filter.createMemCompFilter(NUMBER_OF_SUB_ACCOUNTS_CREATED_OFFSET, _data);
   }
 
-  public static Filter createIsReferrerFilter(final boolean isReferrer) {
-    return Filter.createMemCompFilter(IS_REFERRER_OFFSET, new byte[]{(byte) (isReferrer ? 1 : 0)});
+  public static Filter createReferrerStatusFilter(final int referrerStatus) {
+    return Filter.createMemCompFilter(REFERRER_STATUS_OFFSET, new byte[]{(byte) referrerStatus});
   }
 
   public static Filter createDisableUpdatePerpBidAskTwapFilter(final boolean disableUpdatePerpBidAskTwap) {
@@ -270,7 +272,7 @@ public record UserStats(PublicKey _address,
     i += 2;
     final var numberOfSubAccountsCreated = getInt16LE(_data, i);
     i += 2;
-    final var isReferrer = _data[i] == 1;
+    final var referrerStatus = _data[i] & 0xFF;
     ++i;
     final var disableUpdatePerpBidAskTwap = _data[i] == 1;
     ++i;
@@ -309,7 +311,7 @@ public record UserStats(PublicKey _address,
                          ifStakedQuoteAssetAmount,
                          numberOfSubAccounts,
                          numberOfSubAccountsCreated,
-                         isReferrer,
+                         referrerStatus,
                          disableUpdatePerpBidAskTwap,
                          padding1,
                          fuelInsurance,
@@ -351,7 +353,7 @@ public record UserStats(PublicKey _address,
     i += 2;
     putInt16LE(_data, i, numberOfSubAccountsCreated);
     i += 2;
-    _data[i] = (byte) (isReferrer ? 1 : 0);
+    _data[i] = (byte) referrerStatus;
     ++i;
     _data[i] = (byte) (disableUpdatePerpBidAskTwap ? 1 : 0);
     ++i;

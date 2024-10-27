@@ -293,7 +293,13 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.MismatchedSwiftOrderParamsMarketIndex,
     DriftError.InvalidSwiftOrderParam,
     DriftError.PlaceAndTakeOrderSuccessConditionFailed,
-    DriftError.InvalidHighLeverageModeConfig {
+    DriftError.InvalidHighLeverageModeConfig,
+    DriftError.InvalidRFQUserAccount,
+    DriftError.RFQUserAccountWrongMutability,
+    DriftError.RFQUserAccountFull,
+    DriftError.RFQOrderNotFilled,
+    DriftError.InvalidRFQOrder,
+    DriftError.InvalidRFQMatch {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -588,6 +594,12 @@ public sealed interface DriftError extends ProgramError permits
       case 6288 -> InvalidSwiftOrderParam.INSTANCE;
       case 6289 -> PlaceAndTakeOrderSuccessConditionFailed.INSTANCE;
       case 6290 -> InvalidHighLeverageModeConfig.INSTANCE;
+      case 6291 -> InvalidRFQUserAccount.INSTANCE;
+      case 6292 -> RFQUserAccountWrongMutability.INSTANCE;
+      case 6293 -> RFQUserAccountFull.INSTANCE;
+      case 6294 -> RFQOrderNotFilled.INSTANCE;
+      case 6295 -> InvalidRFQOrder.INSTANCE;
+      case 6296 -> InvalidRFQMatch.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2626,6 +2638,48 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final InvalidHighLeverageModeConfig INSTANCE = new InvalidHighLeverageModeConfig(
         6290, "Invalid High Leverage Mode Config"
+    );
+  }
+
+  record InvalidRFQUserAccount(int code, String msg) implements DriftError {
+
+    public static final InvalidRFQUserAccount INSTANCE = new InvalidRFQUserAccount(
+        6291, "Invalid RFQ User Account"
+    );
+  }
+
+  record RFQUserAccountWrongMutability(int code, String msg) implements DriftError {
+
+    public static final RFQUserAccountWrongMutability INSTANCE = new RFQUserAccountWrongMutability(
+        6292, "RFQUserAccount should be mutable"
+    );
+  }
+
+  record RFQUserAccountFull(int code, String msg) implements DriftError {
+
+    public static final RFQUserAccountFull INSTANCE = new RFQUserAccountFull(
+        6293, "RFQUserAccount has too many active RFQs"
+    );
+  }
+
+  record RFQOrderNotFilled(int code, String msg) implements DriftError {
+
+    public static final RFQOrderNotFilled INSTANCE = new RFQOrderNotFilled(
+        6294, "RFQ order not filled as expected"
+    );
+  }
+
+  record InvalidRFQOrder(int code, String msg) implements DriftError {
+
+    public static final InvalidRFQOrder INSTANCE = new InvalidRFQOrder(
+        6295, "RFQ orders must be jit makers"
+    );
+  }
+
+  record InvalidRFQMatch(int code, String msg) implements DriftError {
+
+    public static final InvalidRFQMatch INSTANCE = new InvalidRFQMatch(
+        6296, "RFQ matches must be valid"
     );
   }
 }

@@ -17,6 +17,7 @@ import software.sava.anchor.programs.drift.anchor.types.OracleSource;
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
 import software.sava.anchor.programs.drift.anchor.types.PositionDirection;
 import software.sava.anchor.programs.drift.anchor.types.PrelaunchOracleParams;
+import software.sava.anchor.programs.drift.anchor.types.RFQMatch;
 import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
 import software.sava.anchor.programs.drift.anchor.types.SpotFulfillmentConfigStatus;
 import software.sava.anchor.programs.drift.anchor.types.SpotFulfillmentType;
@@ -133,6 +134,27 @@ public final class DriftProgram {
     );
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, INITIALIZE_USER_STATS_DISCRIMINATOR);
+  }
+
+  public static final Discriminator INITIALIZE_RFQ_USER_DISCRIMINATOR = toDiscriminator(87, 2, 27, 16, 186, 206, 169, 38);
+
+  public static Instruction initializeRfqUser(final AccountMeta invokedDriftProgramMeta,
+                                              final PublicKey rfqUserKey,
+                                              final PublicKey authorityKey,
+                                              final PublicKey userKey,
+                                              final PublicKey payerKey,
+                                              final PublicKey rentKey,
+                                              final PublicKey systemProgramKey) {
+    final var keys = List.of(
+      createWrite(rfqUserKey),
+      createReadOnlySigner(authorityKey),
+      createWrite(userKey),
+      createWritableSigner(payerKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, INITIALIZE_RFQ_USER_DISCRIMINATOR);
   }
 
   public static final Discriminator INITIALIZE_REFERRER_NAME_DISCRIMINATOR = toDiscriminator(235, 126, 231, 10, 42, 164, 26, 61);
@@ -991,6 +1013,62 @@ public final class DriftProgram {
     @Override
     public int l() {
       return 8 + Borsh.lenVector(swiftMessageBytes) + Borsh.lenVector(swiftOrderParamsMessageBytes) + Borsh.lenArray(swiftMessageSignature);
+    }
+  }
+
+  public static final Discriminator PLACE_AND_MATCH_RFQ_ORDERS_DISCRIMINATOR = toDiscriminator(111, 3, 51, 243, 178, 174, 219, 100);
+
+  public static Instruction placeAndMatchRfqOrders(final AccountMeta invokedDriftProgramMeta,
+                                                   final PublicKey stateKey,
+                                                   final PublicKey userKey,
+                                                   final PublicKey userStatsKey,
+                                                   final PublicKey authorityKey,
+                                                   // the supplied Sysvar could be anything else.
+                                                   // The Instruction Sysvar has not been implemented
+                                                   // in the Anchor framework yet, so this is the safe approach.
+                                                   final PublicKey ixSysvarKey,
+                                                   final RFQMatch[] rfqMatches) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWrite(userKey),
+      createWrite(userStatsKey),
+      createReadOnlySigner(authorityKey),
+      createRead(ixSysvarKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.lenVector(rfqMatches)];
+    int i = writeDiscriminator(PLACE_AND_MATCH_RFQ_ORDERS_DISCRIMINATOR, _data, 0);
+    Borsh.writeVector(rfqMatches, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record PlaceAndMatchRfqOrdersIxData(Discriminator discriminator, RFQMatch[] rfqMatches) implements Borsh {  
+
+    public static PlaceAndMatchRfqOrdersIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static PlaceAndMatchRfqOrdersIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var rfqMatches = Borsh.readVector(RFQMatch.class, RFQMatch::read, _data, i);
+      return new PlaceAndMatchRfqOrdersIxData(discriminator, rfqMatches);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeVector(rfqMatches, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.lenVector(rfqMatches);
     }
   }
 
