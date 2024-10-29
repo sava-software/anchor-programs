@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.drift;
 
+import software.sava.anchor.programs.drift.anchor.types.OracleSource;
 import java.util.Set;
 
 import static software.sava.anchor.programs.drift.PerpMarketConfig.createConfig;
@@ -15,7 +16,7 @@ public final class PerpMarketConfigs {
           0,
           "2022-11-04T11:15:05Z",
           "BAtFj4kQttZRVep3UZS2aZRDixkGYgWsbqTBVDbnSsPF",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "BAtFj4kQttZRVep3UZS2aZRDixkGYgWsbqTBVDbnSsPF",
           "H6ARHf6YXhGYeQfUzQNGk6rDNnLBQKrenN712K4AQJEG",
           "8UJgxaiQx5nTrdDgph5FiahMmzduuLTLf5WmsPegYA6W"
@@ -28,7 +29,7 @@ public final class PerpMarketConfigs {
           1,
           "2022-12-06T17:21:21Z",
           "486kr3pmFPfTsS4aZgcsQ7kS4i9rjMsYYZup6HQNSTT4",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "486kr3pmFPfTsS4aZgcsQ7kS4i9rjMsYYZup6HQNSTT4",
           "GVXRSBjFk6e6J3NbVPXohDJetcTjaeeuykUpbQF8UoMU",
           "2UZMvVTBQR9yWxrEdzEQzXWE61bUjqQ5VpJAGqVb3B19"
@@ -41,7 +42,7 @@ public final class PerpMarketConfigs {
           2,
           "2022-12-06T17:21:21Z",
           "6bEp2MiyoiiiDxcVqE8rUHQWwHirXUXtKfAEATTVqNzT",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "6bEp2MiyoiiiDxcVqE8rUHQWwHirXUXtKfAEATTVqNzT",
           "JBu1AL4obBcCMqKBBxhpWCNUt136ijcuMZLFvTP7iWdB",
           "25Eax9W8SA3wpCQFhJEGyHhQ2NDHEshZEDzyMNtthR8D"
@@ -54,7 +55,7 @@ public final class PerpMarketConfigs {
           3,
           "2023-02-07T20:44:21Z",
           "79EWaCYU9jiQN8SbvVzGFAhAncUZYp3PjNg7KxmN5cLE",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "79EWaCYU9jiQN8SbvVzGFAhAncUZYp3PjNg7KxmN5cLE",
           "FNNvb1AFDnDVPkocEri8mWbJ1952HQZtFLuwPiUjSJQ",
           "7QAtMC3AaAc91W4XuwYXM1Mtffq9h9Z8dTxcJrKRHu1z"
@@ -67,7 +68,7 @@ public final class PerpMarketConfigs {
           4,
           "2023-03-01T17:02:29Z",
           "GojbSnJuPdKDT1ZuHuAM5t9oz6bxTo1xhUKpTua2F72p",
-          OracleSource.PYTH_1M_PULL,
+          OracleSource.Pyth1MPull,
           "GojbSnJuPdKDT1ZuHuAM5t9oz6bxTo1xhUKpTua2F72p",
           "8ihFLu5FimgTQ1Unh4dVyEHUGodJ5gJQCrQf4KUVB9bN",
           "2QeqpeJUVo2LBWNELRfcBwJgrNoxJQSd7gokcaM5nvaa"
@@ -80,7 +81,7 @@ public final class PerpMarketConfigs {
           5,
           "2023-03-01T17:02:29Z",
           "BrzyDgwELy4jjjsqLQpBeUxzrsueYyMhuWpYBaUYcXvi",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "BrzyDgwELy4jjjsqLQpBeUxzrsueYyMhuWpYBaUYcXvi",
           "JDbuHmbAJvsBsLKSnZG8Fa9nkiQRyYfg8fGdcYwfu2u7",
           "6oopaUD3RK7mHBf2vPWT3aUodysg3VWcqksuAZo4xWrt"
@@ -93,7 +94,7 @@ public final class PerpMarketConfigs {
           6,
           "2023-03-22T16:16:52Z",
           "8ocfAdqVRnzvfdubQaTxar4Kz5HJhNbPNmkLxswqiHUD",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "8ocfAdqVRnzvfdubQaTxar4Kz5HJhNbPNmkLxswqiHUD",
           "5HRrdmghsnU3i2u5StaKaydS7eq3vnKVKwXMzCNKsc4C",
           "53xRgYi7591y8TKSqRbC2AMzXJF7ZLLTms6t2XKuigUp"
@@ -106,7 +107,7 @@ public final class PerpMarketConfigs {
           7,
           "2023-04-06T19:07:33Z",
           "23y63pHVwKfYSCDFdiGRaGbTYWoyr8UzhUE7zukyf6gK",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "23y63pHVwKfYSCDFdiGRaGbTYWoyr8UzhUE7zukyf6gK",
           "FsSM3s38PX9K7Dn6eGzuE29S2Dsk1Sss1baytTQdCaQj",
           "48R9ic9xgigVRqNPbABN8gTGoRV9wn6UUmcKYz3csbhR"
@@ -119,7 +120,7 @@ public final class PerpMarketConfigs {
           8,
           "2023-04-06T19:07:33Z",
           "Dk8eWjuQHMbxJAwB9Sg7pXQPH4kgbg8qZGcUrWcD9gTm",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "Dk8eWjuQHMbxJAwB9Sg7pXQPH4kgbg8qZGcUrWcD9gTm",
           "4CkQJBxhU8EZ2UjhigbtdaPbpTe6mqf811fipYBFbSYN",
           "J6MErLoamPSkr6RzoYo8Da2WLCRmmmMQpanDSaenVCvq"
@@ -132,7 +133,7 @@ public final class PerpMarketConfigs {
           9,
           "2023-05-03T14:58:26Z",
           "HBordkz5YxjzNURmKUY4vfEYFG9fZyZNeNF1VDLMoemT",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "HBordkz5YxjzNURmKUY4vfEYFG9fZyZNeNF1VDLMoemT",
           "3Qub3HaAJaa2xNY7SUqPKd3vVwTqDfDDkEUMPjXD2c1q",
           "91NsaUmTNNdLGbYtwmoiYSn9SgWHCsZiChfMYMYZ2nQx"
@@ -145,7 +146,7 @@ public final class PerpMarketConfigs {
           10,
           "2023-05-11T05:00:39Z",
           "CLxofhtzvLiErpn25wvUzpZXEqBhuZ6WMEckEraxyuGt",
-          OracleSource.PYTH_1M_PULL,
+          OracleSource.Pyth1MPull,
           "CLxofhtzvLiErpn25wvUzpZXEqBhuZ6WMEckEraxyuGt",
           "FSfxunDmjjbDV2QxpyxFCAPKmYJHSLnLuvQXDLkMzLBm",
           "GsMte91Y1eY9XYtY1nt1Ax77V5hzsj3rr1a7a29mxHZw"
@@ -158,7 +159,7 @@ public final class PerpMarketConfigs {
           11,
           "2023-06-06T22:44:40Z",
           "C9Zi2Y3Mt6Zt6pcFvobN3N29HcrzKujPAPBDDTDRcUa2",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "C9Zi2Y3Mt6Zt6pcFvobN3N29HcrzKujPAPBDDTDRcUa2",
           "4o4CUwzFwLqCvmA5x1G4VzoZkAhAcbiuiYyjWX1CVbY2",
           "Aw9bzBKbryKnoLtYRLuhbhEYZHcoZyxZ5XszdepwHRKJ"
@@ -171,7 +172,7 @@ public final class PerpMarketConfigs {
           12,
           "2023-06-19T18:58:01Z",
           "8TQztfGcNjHGRusX4ejQQtPZs3Ypczt9jWF6pkgQMqUX",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "8TQztfGcNjHGRusX4ejQQtPZs3Ypczt9jWF6pkgQMqUX",
           "58FU64wmcNpvC9rHcdLQRmeKsenh8rfQtA8yvkxK26Ha",
           "6KPv8DdWauTCV2zMqqiUbP1MjqSCDnA453VodUtZCFZR"
@@ -184,7 +185,7 @@ public final class PerpMarketConfigs {
           13,
           "2023-07-13T17:49:10Z",
           "9757epAjXWCWQH98kyK9vzgehd1XDVEf7joNHUaKk3iV",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "9757epAjXWCWQH98kyK9vzgehd1XDVEf7joNHUaKk3iV",
           "Guffb8DAAxNH6kdoawYjPXTbwUhjmveh8R4LM6uEqRV1",
           "2fqYPht3DVWKHuEzPJy4eaCzd5onZhw7fwSxpGohexNm"
@@ -197,7 +198,7 @@ public final class PerpMarketConfigs {
           14,
           "2023-08-17T17:55:55Z",
           "9b1rcK9RUPK2vAqwNYCYEG34gUVpS2WGs2YCZZy2X5Tb",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "9b1rcK9RUPK2vAqwNYCYEG34gUVpS2WGs2YCZZy2X5Tb",
           "7moA1i5vQUpfDwSpK6Pw9s56ahB7WFGidtbL2ujWrVvm",
           "7jyQomwaLZYpwrcZWAa7yoDeLPTsXsCDEzhvtxeee5hY"
@@ -210,7 +211,7 @@ public final class PerpMarketConfigs {
           15,
           "2023-10-23T15:24:19Z",
           "BfXcyDWJmYADa5eZD7gySSDd6giqgjvm7xsAhQ239SUD",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "BfXcyDWJmYADa5eZD7gySSDd6giqgjvm7xsAhQ239SUD",
           "9EdtbaivHQYA4Nh3XzGR6DwRaoorqXYnmpfsnFhvwuVj",
           "2uBzNiiGJvJhK2iuZZKJcCZH9ih1kFroq3ZPqo9UYDUU"
@@ -223,7 +224,7 @@ public final class PerpMarketConfigs {
           16,
           "2023-10-23T15:24:19Z",
           "Gwvob7yoLMgQRVWjScCRyQFMsgpRKrSAYisYEyjDJwEp",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "Gwvob7yoLMgQRVWjScCRyQFMsgpRKrSAYisYEyjDJwEp",
           "ALdkqQDMfHNg77oCNskfX751kHys4KE7SFuZzuKaN536",
           "3a7HAEqxzwvJEAViYKhDtHk85mrFf1dU2HCsffgXxUj8"
@@ -236,7 +237,7 @@ public final class PerpMarketConfigs {
           17,
           "2023-11-06T10:19:28Z",
           "4CyhPqyVK3UQHFWhEpk91Aw4WbBsN3JtyosXH6zjoRqG",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "4CyhPqyVK3UQHFWhEpk91Aw4WbBsN3JtyosXH6zjoRqG",
           "4BA3RcS4zE32WWgp49vvvre2t6nXY1W1kMyKZxeeuUey",
           "CZtHZuoLWdPYZNGan5PW9P2VEnzsywgkVy1Vfe6nMN5o"
@@ -249,7 +250,7 @@ public final class PerpMarketConfigs {
           18,
           "2023-11-21T05:00:00Z",
           "GqkCu7CbsPVz1H6W6AAHuReqbJckYG59TXz7Y5HDV7hr",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "GqkCu7CbsPVz1H6W6AAHuReqbJckYG59TXz7Y5HDV7hr",
           "nrYkQQQur7z8rYTST3G9GqATviK5SxTDkrqd21MW6Ue",
           "75Mk3ySkJG5rCAsiQd4KZfFws35dSj2JVa6jxrqyTM52"
@@ -262,7 +263,7 @@ public final class PerpMarketConfigs {
           19,
           "2023-12-06T16:35:40Z",
           "C6LHPUrgjrgo5eNUitC8raNEdEttfoRhmqdJ3BHVBJhi",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "C6LHPUrgjrgo5eNUitC8raNEdEttfoRhmqdJ3BHVBJhi",
           "funeUsHgi2QKkLdUPASRLuYkaK8JaazCEz3HikbkhVt",
           "H9AGF2BJe35YYgwjF8oZZogQxwBmBEy3soZWZpkVZq9e"
@@ -275,7 +276,7 @@ public final class PerpMarketConfigs {
           20,
           "2023-12-07T16:40:40Z",
           "Ffq6ACJ17NAgaxC6ocfMzVXL3K61qxB2xHg6WUawWPfP",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "Ffq6ACJ17NAgaxC6ocfMzVXL3K61qxB2xHg6WUawWPfP",
           "D8UUgr8a3aR3yUeHLu7v8FWK7E8Y5sSU7qrYBXUJXBQ5",
           "FH6CkSYthofVKdfuNagWn48fou1Dq5REkxhtZsk22Gpi"
@@ -288,7 +289,7 @@ public final class PerpMarketConfigs {
           21,
           "2023-12-21T15:42:11Z",
           "EVyoxFo5jWpv1vV7p6KVjDWwVqtTqvrZ4JMFkieVkVsD",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "EVyoxFo5jWpv1vV7p6KVjDWwVqtTqvrZ4JMFkieVkVsD",
           "6cUuAyAX3eXoiWkjFF77RQBEUF15AAMQ7d1hm4EPd3tv",
           "EBsU7BPiCDw7Q7GqQBzNcFGdFDU9bEmE4TjuW76fA62r"
@@ -301,7 +302,7 @@ public final class PerpMarketConfigs {
           22,
           "2024-01-02T15:32:38Z",
           "FgBGHNex4urrBmNbSj8ntNQDGqeHcWewKtkvL6JE6dEX",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "FgBGHNex4urrBmNbSj8ntNQDGqeHcWewKtkvL6JE6dEX",
           "Ax9ujW5B9oqcv59N8m6f1BpTBq2rGeGaBcpKjC5UYsXU",
           "CGVDM9FjRQR7e1oV8cAitnYJNZdKo7szzSSLcxhLgJEx"
@@ -314,7 +315,7 @@ public final class PerpMarketConfigs {
           23,
           "2024-01-25T21:59:31Z",
           "6x6KfE7nY2xoLCRSMPT1u83wQ5fpGXoKNBqFjrCwzsCQ",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "6x6KfE7nY2xoLCRSMPT1u83wQ5fpGXoKNBqFjrCwzsCQ",
           "6ABgrEZk8urs6kJ1JNdC1sspH5zKXRqxy8sg3ZG2cQps",
           "8BbCGbxsQk1HYohgdn1TMUNs6RYcX4Hae3k8mt4rvnzf"
@@ -327,7 +328,7 @@ public final class PerpMarketConfigs {
           24,
           "2024-01-31T15:00:01Z",
           "AwqRpfJ36jnSZQykyL1jYY35mhMteeEAjh7o8LveRQin",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "AwqRpfJ36jnSZQykyL1jYY35mhMteeEAjh7o8LveRQin",
           "g6eRCbboSwK4tSWngn773RCMexr1APQr4uA9bGZBYfo",
           "8DdB5hHSZtPT3oqbsiHUytCrrodApNC31k3MuZhxJH61"
@@ -340,7 +341,7 @@ public final class PerpMarketConfigs {
           25,
           "2024-02-20T17:06:05Z",
           "hnefGsC8hJi8MBajpRSkUY97wJmLoBQYXaHkz3nmw1z",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "hnefGsC8hJi8MBajpRSkUY97wJmLoBQYXaHkz3nmw1z",
           "CSRRrhXa6DYu1W5jf89A7unCATdug2Z33tYyV2NXZZxa",
           "76k9apcvniHwHdEtWnk398ePaz8AaQfwRTH69rqxyTyc"
@@ -353,7 +354,7 @@ public final class PerpMarketConfigs {
           26,
           "2024-02-28T16:11:09Z",
           "5ZPtwR9QpBLcZQVMnVURuYBmZMu1qQrBcA9Gutc5eKN3",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "5ZPtwR9QpBLcZQVMnVURuYBmZMu1qQrBcA9Gutc5eKN3",
           "5NxzemFgGDhimYE3S5qmb5zkjZUmiHXb4up5WGXe7NLn",
           "7rUSt1PXXn2Pp4ZNDcZqZGEgKSGpxqbRyb2W6rG1Dtt6"
@@ -366,7 +367,7 @@ public final class PerpMarketConfigs {
           27,
           "2024-03-14T12:12:23Z",
           "4HbitGsdcFbtFotmYscikQFAAKJ3nYx4t7sV7fTvsk8U",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "4HbitGsdcFbtFotmYscikQFAAKJ3nYx4t7sV7fTvsk8U",
           "H9j8CT1bFiWHaZUPMooEaxMRHdWdJ5T9CzFn41z96JHW",
           "971cCfHVRrjfBS774g27cxgZZV42k5GHTuBZ3K7sgUqh"
@@ -379,7 +380,7 @@ public final class PerpMarketConfigs {
           28,
           "2024-04-04T14:24:41Z",
           "7aqj2wH1BH8XT3QQ3MWtvt3My7RAGf5Stm3vx5fiysJz",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "7aqj2wH1BH8XT3QQ3MWtvt3My7RAGf5Stm3vx5fiysJz",
           "Cwrv3ghHj6oQQgWfAGXN15RYhX8ttmDx7AXwwXC3xH2F",
           "HhMFv6ooJMZsDEKu8v2JER8VkHkUeEES3PZuwR6N6LMS"
@@ -392,7 +393,7 @@ public final class PerpMarketConfigs {
           29,
           "2024-04-08T16:25:32Z",
           "13jpjpVyU5hGpjsZ4HzCcmBo85wze4N8Au7U6cC3GMip",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "13jpjpVyU5hGpjsZ4HzCcmBo85wze4N8Au7U6cC3GMip",
           "Q8VX3mWPydnjA2VRFuT6QsnMzdQXJQVQGTWgwuau7si",
           "5ep7HpgVonAeLGwWc9WeVeFjgBM2w2uFzYusm8if1ExG"
@@ -405,7 +406,7 @@ public final class PerpMarketConfigs {
           30,
           "2024-05-25T00:00:00Z",
           "23KmX7SNikmUr2axSCy6Zer7XPBnvmVcASALnDGqBVRR",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "23KmX7SNikmUr2axSCy6Zer7XPBnvmVcASALnDGqBVRR",
           "7CUTyEXVdDDByR8RPDzZsFtzNYH9KKc9bEtFY4qkdY1U",
           "2dCbfkVE9sa9eweSrx7ZymvfgxPEJSdHGv79mr66Kgqn"
@@ -418,7 +419,7 @@ public final class PerpMarketConfigs {
           31,
           "2024-06-05T14:27:28Z",
           "FNFejcXENaPgKaCTfstew9vSSvdQPnXjGTkJjUnnYvHU",
-          OracleSource.SWITCHBOARD_ON_DEMAND,
+          OracleSource.SwitchboardOnDemand,
           null,
           null,
           "2A8cqEuqEGA1bj7Jw7EJ7DjaPknxdjThsuWmia91fxkG"
@@ -431,7 +432,7 @@ public final class PerpMarketConfigs {
           32,
           "2024-06-10T12:09:49Z",
           "HxM66CFwGwrvfTFFkvvA8N3CnKX6m2obzameYWDaSSdA",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "HxM66CFwGwrvfTFFkvvA8N3CnKX6m2obzameYWDaSSdA",
           "9mq2zVYvxfUB5i3RkxpfsRMZNGB4Bv7aNe6CHqam1Y9e",
           "33c6Cz3wjwKtgBi9gykADNxGyLoXUj9qkTqVpCoF7Rjm"
@@ -444,7 +445,7 @@ public final class PerpMarketConfigs {
           33,
           "2024-06-26T15:19:17Z",
           "HVwBCaR4GEB1fHrp7xCTzbYoZXL3V8b1aek2swPrmGx3",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "HVwBCaR4GEB1fHrp7xCTzbYoZXL3V8b1aek2swPrmGx3",
           "58e5mVgj8FcZhbohfV5At2XkDKtzoyvpzE1FLnBLx4zV",
           "2kNJMr5BnijfBAfy26QmUREYdPfXhvLs4Dxw46JkCHXx"
@@ -457,7 +458,7 @@ public final class PerpMarketConfigs {
           34,
           "2024-07-03T13:24:14Z",
           "H3pn43tkNvsG5z3qzmERguSvKoyHZvvY6VPmNrJqiW5X",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "H3pn43tkNvsG5z3qzmERguSvKoyHZvvY6VPmNrJqiW5X",
           "DTuubHi6jSLeRAdEAwWA1cY1z9WRXXC5jmMF47evdjbb",
           "2aDdPxPn7BB7spdCMM5kVxgrUnSsLtT2hyrbbYFYmcZG"
@@ -470,7 +471,7 @@ public final class PerpMarketConfigs {
           35,
           "2024-07-10T17:42:24Z",
           "F47c7aJgYkfKXQ9gzrJaEpsNwUKHprysregTWXrtYLFp",
-          OracleSource.PYTH_1K_PULL,
+          OracleSource.Pyth1KPull,
           "F47c7aJgYkfKXQ9gzrJaEpsNwUKHprysregTWXrtYLFp",
           "6Uo93N83iF5U9KwC8eQpogx4XptMT4wSKfje7hB1Ufko",
           "5dUgDwxmr3uibX8W9h1fDcetj1SvMawiVJfKw4zJtUuR"
@@ -561,7 +562,7 @@ public final class PerpMarketConfigs {
           42,
           "2024-09-05T15:51:24Z",
           "BNjCXrpEqjdBnuRy2SAUgm5Pq8B73wGFwsf6RYFJiLPY",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "BNjCXrpEqjdBnuRy2SAUgm5Pq8B73wGFwsf6RYFJiLPY",
           "AFJXXYuniABNnoEE7DLtkxwqLDkcda4xG5k2F4FB86hj",
           "J5RWv9z5ore5pDXtyKho8fmm35N13Mststp8JRUaE93P"
@@ -587,7 +588,7 @@ public final class PerpMarketConfigs {
           44,
           "2024-09-25T19:17:39Z",
           "56ap2coZG7FPWUigVm9XrpQs3xuCwnwQaWtjWZcffEUG",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "56ap2coZG7FPWUigVm9XrpQs3xuCwnwQaWtjWZcffEUG",
           "7dKhAhQpaaquHuyugjYV3U976DULY2DFnzsRHfzeJfFy",
           "G9JHXgiDXDKENtp4hmhYfciKM2YL8tMHLLMZ3aXo21Xx"
@@ -600,7 +601,7 @@ public final class PerpMarketConfigs {
           45,
           "2024-10-03T14:31:04Z",
           "21gjgEcuDppthwV16J1QpFzje3vmgMp2uSzh7pJsG7ob",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "21gjgEcuDppthwV16J1QpFzje3vmgMp2uSzh7pJsG7ob",
           "JEJtFypgxMbKC14navaTfeVQhVkWwYJJ3b7DoXsvibg2",
           "FQKbtupzpZ1XWcZR2axN5pjDWMyjuS4v8BjP1CVdPBE3"
@@ -626,7 +627,7 @@ public final class PerpMarketConfigs {
           47,
           "2024-10-10T15:34:53Z",
           "53j4mz7cQV7mAZekKbV3n2L4bY7jY6eXdgaTkWDLYxq4",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "53j4mz7cQV7mAZekKbV3n2L4bY7jY6eXdgaTkWDLYxq4",
           "HfGEQUj3axQD8UWikugoXTcu3m7QVytfrCWCBMhrRBED",
           "7MfxQtZFQV7yNWjfWnrbwcVSGinUqVCRRpW6X7a72mDL"
@@ -678,7 +679,7 @@ public final class PerpMarketConfigs {
           51,
           "2024-10-23T17:01:55Z",
           "DKGwCUcwngwmgifGxnme7zVR695LCBGk2pnuksRnbhfD",
-          OracleSource.PYTH_1K_PULL,
+          OracleSource.Pyth1KPull,
           "DKGwCUcwngwmgifGxnme7zVR695LCBGk2pnuksRnbhfD",
           "6ULHnTs1Ys2J23xKaHUJcJzYkWFrhQhZofLU5sq2CpRA",
           "GiTjHed1gapTxjpFLdoBYtajHt9nj8DEcYHuwc3C7Mve"
@@ -694,7 +695,7 @@ public final class PerpMarketConfigs {
           0,
           "2022-06-20T18:55:53Z",
           "BAtFj4kQttZRVep3UZS2aZRDixkGYgWsbqTBVDbnSsPF",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "BAtFj4kQttZRVep3UZS2aZRDixkGYgWsbqTBVDbnSsPF",
           "H6ARHf6YXhGYeQfUzQNGk6rDNnLBQKrenN712K4AQJEG",
           "8UJgxaiQx5nTrdDgph5FiahMmzduuLTLf5WmsPegYA6W"
@@ -707,7 +708,7 @@ public final class PerpMarketConfigs {
           1,
           "2022-06-20T18:55:53Z",
           "486kr3pmFPfTsS4aZgcsQ7kS4i9rjMsYYZup6HQNSTT4",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "486kr3pmFPfTsS4aZgcsQ7kS4i9rjMsYYZup6HQNSTT4",
           "GVXRSBjFk6e6J3NbVPXohDJetcTjaeeuykUpbQF8UoMU",
           "2UZMvVTBQR9yWxrEdzEQzXWE61bUjqQ5VpJAGqVb3B19"
@@ -720,7 +721,7 @@ public final class PerpMarketConfigs {
           2,
           "2021-11-23T18:12:13.472Z",
           "6bEp2MiyoiiiDxcVqE8rUHQWwHirXUXtKfAEATTVqNzT",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "6bEp2MiyoiiiDxcVqE8rUHQWwHirXUXtKfAEATTVqNzT",
           "JBu1AL4obBcCMqKBBxhpWCNUt136ijcuMZLFvTP7iWdB",
           "25Eax9W8SA3wpCQFhJEGyHhQ2NDHEshZEDzyMNtthR8D"
@@ -733,7 +734,7 @@ public final class PerpMarketConfigs {
           3,
           "2023-02-05T15:16:26Z",
           "79EWaCYU9jiQN8SbvVzGFAhAncUZYp3PjNg7KxmN5cLE",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "79EWaCYU9jiQN8SbvVzGFAhAncUZYp3PjNg7KxmN5cLE",
           "FNNvb1AFDnDVPkocEri8mWbJ1952HQZtFLuwPiUjSJQ",
           "7QAtMC3AaAc91W4XuwYXM1Mtffq9h9Z8dTxcJrKRHu1z"
@@ -746,7 +747,7 @@ public final class PerpMarketConfigs {
           4,
           "2023-02-22T12:28:51Z",
           "GojbSnJuPdKDT1ZuHuAM5t9oz6bxTo1xhUKpTua2F72p",
-          OracleSource.PYTH_1M_PULL,
+          OracleSource.Pyth1MPull,
           "GojbSnJuPdKDT1ZuHuAM5t9oz6bxTo1xhUKpTua2F72p",
           "8ihFLu5FimgTQ1Unh4dVyEHUGodJ5gJQCrQf4KUVB9bN",
           "2QeqpeJUVo2LBWNELRfcBwJgrNoxJQSd7gokcaM5nvaa"
@@ -759,7 +760,7 @@ public final class PerpMarketConfigs {
           5,
           "2023-03-01T17:02:29Z",
           "BrzyDgwELy4jjjsqLQpBeUxzrsueYyMhuWpYBaUYcXvi",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "BrzyDgwELy4jjjsqLQpBeUxzrsueYyMhuWpYBaUYcXvi",
           "JDbuHmbAJvsBsLKSnZG8Fa9nkiQRyYfg8fGdcYwfu2u7",
           "6oopaUD3RK7mHBf2vPWT3aUodysg3VWcqksuAZo4xWrt"
@@ -772,7 +773,7 @@ public final class PerpMarketConfigs {
           6,
           "2023-03-22T16:16:52Z",
           "8ocfAdqVRnzvfdubQaTxar4Kz5HJhNbPNmkLxswqiHUD",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "8ocfAdqVRnzvfdubQaTxar4Kz5HJhNbPNmkLxswqiHUD",
           "5HRrdmghsnU3i2u5StaKaydS7eq3vnKVKwXMzCNKsc4C",
           "53xRgYi7591y8TKSqRbC2AMzXJF7ZLLTms6t2XKuigUp"
@@ -785,7 +786,7 @@ public final class PerpMarketConfigs {
           7,
           "2023-04-06T19:07:33Z",
           "23y63pHVwKfYSCDFdiGRaGbTYWoyr8UzhUE7zukyf6gK",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "23y63pHVwKfYSCDFdiGRaGbTYWoyr8UzhUE7zukyf6gK",
           "FsSM3s38PX9K7Dn6eGzuE29S2Dsk1Sss1baytTQdCaQj",
           "48R9ic9xgigVRqNPbABN8gTGoRV9wn6UUmcKYz3csbhR"
@@ -798,7 +799,7 @@ public final class PerpMarketConfigs {
           8,
           "2023-04-06T19:07:33Z",
           "Dk8eWjuQHMbxJAwB9Sg7pXQPH4kgbg8qZGcUrWcD9gTm",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "Dk8eWjuQHMbxJAwB9Sg7pXQPH4kgbg8qZGcUrWcD9gTm",
           "4CkQJBxhU8EZ2UjhigbtdaPbpTe6mqf811fipYBFbSYN",
           "J6MErLoamPSkr6RzoYo8Da2WLCRmmmMQpanDSaenVCvq"
@@ -811,7 +812,7 @@ public final class PerpMarketConfigs {
           9,
           "2023-05-03T14:58:26Z",
           "HBordkz5YxjzNURmKUY4vfEYFG9fZyZNeNF1VDLMoemT",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "HBordkz5YxjzNURmKUY4vfEYFG9fZyZNeNF1VDLMoemT",
           "3Qub3HaAJaa2xNY7SUqPKd3vVwTqDfDDkEUMPjXD2c1q",
           "91NsaUmTNNdLGbYtwmoiYSn9SgWHCsZiChfMYMYZ2nQx"
@@ -824,7 +825,7 @@ public final class PerpMarketConfigs {
           10,
           "2023-05-11T05:00:39Z",
           "CLxofhtzvLiErpn25wvUzpZXEqBhuZ6WMEckEraxyuGt",
-          OracleSource.PYTH_1M_PULL,
+          OracleSource.Pyth1MPull,
           "CLxofhtzvLiErpn25wvUzpZXEqBhuZ6WMEckEraxyuGt",
           "FSfxunDmjjbDV2QxpyxFCAPKmYJHSLnLuvQXDLkMzLBm",
           "GsMte91Y1eY9XYtY1nt1Ax77V5hzsj3rr1a7a29mxHZw"
@@ -837,7 +838,7 @@ public final class PerpMarketConfigs {
           11,
           "2023-06-06T22:44:40Z",
           "C9Zi2Y3Mt6Zt6pcFvobN3N29HcrzKujPAPBDDTDRcUa2",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "C9Zi2Y3Mt6Zt6pcFvobN3N29HcrzKujPAPBDDTDRcUa2",
           "4o4CUwzFwLqCvmA5x1G4VzoZkAhAcbiuiYyjWX1CVbY2",
           "Aw9bzBKbryKnoLtYRLuhbhEYZHcoZyxZ5XszdepwHRKJ"
@@ -850,7 +851,7 @@ public final class PerpMarketConfigs {
           12,
           "2023-06-19T18:58:01Z",
           "8TQztfGcNjHGRusX4ejQQtPZs3Ypczt9jWF6pkgQMqUX",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "8TQztfGcNjHGRusX4ejQQtPZs3Ypczt9jWF6pkgQMqUX",
           "58FU64wmcNpvC9rHcdLQRmeKsenh8rfQtA8yvkxK26Ha",
           "6KPv8DdWauTCV2zMqqiUbP1MjqSCDnA453VodUtZCFZR"
@@ -863,7 +864,7 @@ public final class PerpMarketConfigs {
           13,
           "2023-07-13T17:49:10Z",
           "9757epAjXWCWQH98kyK9vzgehd1XDVEf7joNHUaKk3iV",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "9757epAjXWCWQH98kyK9vzgehd1XDVEf7joNHUaKk3iV",
           "Guffb8DAAxNH6kdoawYjPXTbwUhjmveh8R4LM6uEqRV1",
           "2fqYPht3DVWKHuEzPJy4eaCzd5onZhw7fwSxpGohexNm"
@@ -876,7 +877,7 @@ public final class PerpMarketConfigs {
           14,
           "2023-08-17T17:55:55Z",
           "9b1rcK9RUPK2vAqwNYCYEG34gUVpS2WGs2YCZZy2X5Tb",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "9b1rcK9RUPK2vAqwNYCYEG34gUVpS2WGs2YCZZy2X5Tb",
           "7moA1i5vQUpfDwSpK6Pw9s56ahB7WFGidtbL2ujWrVvm",
           "7jyQomwaLZYpwrcZWAa7yoDeLPTsXsCDEzhvtxeee5hY"
@@ -889,7 +890,7 @@ public final class PerpMarketConfigs {
           15,
           "2023-10-23T15:24:19Z",
           "BfXcyDWJmYADa5eZD7gySSDd6giqgjvm7xsAhQ239SUD",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "BfXcyDWJmYADa5eZD7gySSDd6giqgjvm7xsAhQ239SUD",
           "9EdtbaivHQYA4Nh3XzGR6DwRaoorqXYnmpfsnFhvwuVj",
           "2uBzNiiGJvJhK2iuZZKJcCZH9ih1kFroq3ZPqo9UYDUU"
@@ -902,7 +903,7 @@ public final class PerpMarketConfigs {
           16,
           "2023-10-23T15:24:19Z",
           "Gwvob7yoLMgQRVWjScCRyQFMsgpRKrSAYisYEyjDJwEp",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "Gwvob7yoLMgQRVWjScCRyQFMsgpRKrSAYisYEyjDJwEp",
           "ALdkqQDMfHNg77oCNskfX751kHys4KE7SFuZzuKaN536",
           "3a7HAEqxzwvJEAViYKhDtHk85mrFf1dU2HCsffgXxUj8"
@@ -915,7 +916,7 @@ public final class PerpMarketConfigs {
           17,
           "2023-11-06T10:19:28Z",
           "4CyhPqyVK3UQHFWhEpk91Aw4WbBsN3JtyosXH6zjoRqG",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "4CyhPqyVK3UQHFWhEpk91Aw4WbBsN3JtyosXH6zjoRqG",
           "4BA3RcS4zE32WWgp49vvvre2t6nXY1W1kMyKZxeeuUey",
           "CZtHZuoLWdPYZNGan5PW9P2VEnzsywgkVy1Vfe6nMN5o"
@@ -928,7 +929,7 @@ public final class PerpMarketConfigs {
           18,
           "2023-11-21T05:00:00Z",
           "GqkCu7CbsPVz1H6W6AAHuReqbJckYG59TXz7Y5HDV7hr",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "GqkCu7CbsPVz1H6W6AAHuReqbJckYG59TXz7Y5HDV7hr",
           "nrYkQQQur7z8rYTST3G9GqATviK5SxTDkrqd21MW6Ue",
           "75Mk3ySkJG5rCAsiQd4KZfFws35dSj2JVa6jxrqyTM52"
@@ -941,7 +942,7 @@ public final class PerpMarketConfigs {
           19,
           "2023-12-06T16:35:40Z",
           "C6LHPUrgjrgo5eNUitC8raNEdEttfoRhmqdJ3BHVBJhi",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "C6LHPUrgjrgo5eNUitC8raNEdEttfoRhmqdJ3BHVBJhi",
           "funeUsHgi2QKkLdUPASRLuYkaK8JaazCEz3HikbkhVt",
           "H9AGF2BJe35YYgwjF8oZZogQxwBmBEy3soZWZpkVZq9e"
@@ -954,7 +955,7 @@ public final class PerpMarketConfigs {
           20,
           "2023-12-07T16:40:40Z",
           "Ffq6ACJ17NAgaxC6ocfMzVXL3K61qxB2xHg6WUawWPfP",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "Ffq6ACJ17NAgaxC6ocfMzVXL3K61qxB2xHg6WUawWPfP",
           "D8UUgr8a3aR3yUeHLu7v8FWK7E8Y5sSU7qrYBXUJXBQ5",
           "FH6CkSYthofVKdfuNagWn48fou1Dq5REkxhtZsk22Gpi"
@@ -967,7 +968,7 @@ public final class PerpMarketConfigs {
           21,
           "2023-12-21T15:42:11Z",
           "EVyoxFo5jWpv1vV7p6KVjDWwVqtTqvrZ4JMFkieVkVsD",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "EVyoxFo5jWpv1vV7p6KVjDWwVqtTqvrZ4JMFkieVkVsD",
           "6cUuAyAX3eXoiWkjFF77RQBEUF15AAMQ7d1hm4EPd3tv",
           "EBsU7BPiCDw7Q7GqQBzNcFGdFDU9bEmE4TjuW76fA62r"
@@ -980,7 +981,7 @@ public final class PerpMarketConfigs {
           22,
           "2024-01-02T15:32:38Z",
           "FgBGHNex4urrBmNbSj8ntNQDGqeHcWewKtkvL6JE6dEX",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "FgBGHNex4urrBmNbSj8ntNQDGqeHcWewKtkvL6JE6dEX",
           "Ax9ujW5B9oqcv59N8m6f1BpTBq2rGeGaBcpKjC5UYsXU",
           "CGVDM9FjRQR7e1oV8cAitnYJNZdKo7szzSSLcxhLgJEx"
@@ -993,7 +994,7 @@ public final class PerpMarketConfigs {
           23,
           "2024-03-07T23:02:17Z",
           "J9nrFWjDUeDVZ4BhhxsbQXWgLcLEgQyNBrCbwSADmJdr",
-          OracleSource.SWITCHBOARD_ON_DEMAND,
+          OracleSource.SwitchboardOnDemand,
           "4HbitGsdcFbtFotmYscikQFAAKJ3nYx4t7sV7fTvsk8U",
           "H9j8CT1bFiWHaZUPMooEaxMRHdWdJ5T9CzFn41z96JHW",
           "8BbCGbxsQk1HYohgdn1TMUNs6RYcX4Hae3k8mt4rvnzf"
@@ -1006,7 +1007,7 @@ public final class PerpMarketConfigs {
           24,
           "2024-03-26T17:58:56Z",
           "7aqj2wH1BH8XT3QQ3MWtvt3My7RAGf5Stm3vx5fiysJz",
-          OracleSource.PYTH_PULL,
+          OracleSource.PythPull,
           "7aqj2wH1BH8XT3QQ3MWtvt3My7RAGf5Stm3vx5fiysJz",
           "Cwrv3ghHj6oQQgWfAGXN15RYhX8ttmDx7AXwwXC3xH2F",
           "8DdB5hHSZtPT3oqbsiHUytCrrodApNC31k3MuZhxJH61"
@@ -1019,7 +1020,7 @@ public final class PerpMarketConfigs {
           25,
           "2024-07-10T00:41:04Z",
           "F47c7aJgYkfKXQ9gzrJaEpsNwUKHprysregTWXrtYLFp",
-          OracleSource.PYTH_1K_PULL,
+          OracleSource.Pyth1KPull,
           "F47c7aJgYkfKXQ9gzrJaEpsNwUKHprysregTWXrtYLFp",
           "6Uo93N83iF5U9KwC8eQpogx4XptMT4wSKfje7hB1Ufko",
           "76k9apcvniHwHdEtWnk398ePaz8AaQfwRTH69rqxyTyc"

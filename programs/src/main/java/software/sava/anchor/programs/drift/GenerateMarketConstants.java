@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.drift;
 
+import software.sava.anchor.programs.drift.anchor.types.OracleSource;
 import systems.comodal.jsoniter.JsonIterator;
 
 import java.io.IOException;
@@ -81,7 +82,7 @@ final class GenerateMarketConstants {
     ji = JsonIterator.parse(mainNetJson);
     final var mainNetConfigs = configParser.apply(ji, DriftAccounts.MAIN_NET);
 
-    return new MarketConfigs(mainNetConfigs, devNetConfigs);
+    return new MarketConfigs<>(mainNetConfigs, devNetConfigs);
   }
 
   private static String convertJson(final String javascript) {
@@ -248,8 +249,9 @@ final class GenerateMarketConstants {
     src.append("package ").append(GenerateMarketConstants.class.getPackageName()).append(';');
 
     final var allImports = new HashSet<>(imports);
+    allImports.add(OracleSource.class);
 
-    final var importLines = allImports.isEmpty() ? "" : allImports.stream()
+    final var importLines = allImports.stream()
         .map(Class::getName)
         .map(name -> String.format("import %s;", name))
         .collect(Collectors.joining("\n", "\n", "\n"));

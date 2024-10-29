@@ -45,5 +45,10 @@
     "name": "Kamino Liquidity",
     "program": "6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc",
     "package": "kamino.liquidity"
+  },
+  {
+    "name": "Pyth Receiver Oracle Program",
+    "program": "rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ",
+    "package": "pyth.receiver"
   }
 ]

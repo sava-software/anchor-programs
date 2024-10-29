@@ -25,6 +25,8 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.meteora.alpha_vault.anchor;
   exports software.sava.anchor.programs.meteora.dlmm.anchor.types;
   exports software.sava.anchor.programs.meteora.dlmm.anchor;
+  exports software.sava.anchor.programs.pyth.receiver.anchor.types;
+  exports software.sava.anchor.programs.pyth.receiver.anchor;
   requires java.base;
   requires java.net.http;
   requires org.bouncycastle.provider;

@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.drift;
 
+import software.sava.anchor.programs.drift.anchor.types.OracleSource;
 import software.sava.core.accounts.meta.AccountMeta;
 
 public sealed interface MarketConfig permits SpotMarketConfig, PerpMarketConfig {

@@ -1,5 +1,7 @@
 package software.sava.anchor.programs.drift;
 
+import software.sava.anchor.AnchorUtil;
+import software.sava.anchor.programs.drift.anchor.types.OracleSource;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.rpc.json.PublicKeyEncoding;
@@ -9,6 +11,7 @@ import systems.comodal.jsoniter.JsonIterator;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static systems.comodal.jsoniter.JsonIterator.fieldEquals;
 
@@ -117,9 +120,16 @@ public record SpotMarketConfig(String symbol,
 
   static OracleSource parseOracleSource(final JsonIterator ji) {
     final var oracleSource = ji.readString();
-    return oracleSource == null || oracleSource.isBlank()
-        ? null
-        : OracleSource.valueOf(oracleSource);
+    if (oracleSource == null || oracleSource.isBlank()) {
+      return null;
+    }
+    if (oracleSource.equalsIgnoreCase("PYTH_1M_PULL")) {
+      return OracleSource.Pyth1MPull;
+    } else if (oracleSource.equalsIgnoreCase("PYTH_1K_PULL")) {
+      return OracleSource.Pyth1KPull;
+    } else {
+      return OracleSource.valueOf(AnchorUtil.camelCase(oracleSource.toLowerCase(Locale.ENGLISH), true));
+    }
   }
 
   @Override
