@@ -1,10 +1,10 @@
 package software.sava.anchor.programs.pyth.receiver.anchor.types;
 
 import software.sava.core.borsh.RustEnum;
-// * This enum represents how many guardian signatures were checked for a Pythnet price update
-//  * If full, guardian quorum has been attained
-//  * If partial, at least config.minimum signatures have been verified, but in the case config.minimum_signatures changes in the future we also include the number of signatures that were checked
 
+// * This enum represents how many guardian signatures were checked for a Pythnet price update
+// * If full, guardian quorum has been attained
+// * If partial, at least config.minimum signatures have been verified, but in the case config.minimum_signatures changes in the future we also include the number of signatures that were checked
 public sealed interface VerificationLevel extends RustEnum permits
   VerificationLevel.Partial,
   VerificationLevel.Full {
