@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 record SpotMarketsRecord(SpotMarketConfig[] marketConfigs,
-                         Map<DriftAsset, SpotMarketConfig> byAsset) implements SpotMarkets {
+                         Map<String, SpotMarketConfig> byAsset) implements SpotMarkets {
 
   @Override
   public SpotMarketConfig marketConfig(final int index) {
@@ -15,6 +15,11 @@ record SpotMarketsRecord(SpotMarketConfig[] marketConfigs,
 
   @Override
   public SpotMarketConfig forAsset(final DriftAsset asset) {
+    return forAsset(asset.name());
+  }
+
+  @Override
+  public SpotMarketConfig forAsset(final String asset) {
     return byAsset.get(asset);
   }
 

@@ -193,15 +193,29 @@ final class GenerateMarketConstants {
             
             public enum DriftProduct {
             
-            %s}
+            %s
+              private final String symbol;
+            
+              DriftProduct(final String symbol) {
+                this.symbol = symbol;
+              }
+            
+              public String symbol() {
+                return symbol;
+              }
+            }
             """,
         GenerateMarketConstants.class.getPackageName(),
-        distinct.stream()
-            .map(symbol -> symbol.replace('-', '_'))
-            .map(symbol -> Character.isAlphabetic(symbol.charAt(0)) ? symbol : '_' + symbol)
+        distinct.stream().map(symbol -> {
+              final var name = symbol.replace('-', '_');
+              return String.format("""
+                      %s("%s")""",
+                  Character.isAlphabetic(name.charAt(0)) ? name : '_' + name, symbol
+              );
+            })
             .sorted()
-            .collect(Collectors.joining(",\n"))
-            .indent(4)
+            .collect(Collectors.joining(",\n", "", ";"))
+            .indent(2)
     );
     try {
       Files.writeString(Path.of(

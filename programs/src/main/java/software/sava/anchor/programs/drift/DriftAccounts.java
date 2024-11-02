@@ -47,11 +47,15 @@ public interface DriftAccounts {
 
   SpotMarketConfig spotMarketConfig(final DriftAsset symbol);
 
+  SpotMarketConfig spotMarketConfig(final String symbol);
+
   PerpMarkets perpMarkets();
 
   PerpMarketConfig perpMarketConfig(final int index);
 
   PerpMarketConfig perpMarketConfig(final DriftProduct product);
+
+  PerpMarketConfig perpMarketConfig(final String product);
 
   static DriftAccounts createAddressConstants(final PublicKey driftProgram,
                                               final PublicKey marketLookupTable,

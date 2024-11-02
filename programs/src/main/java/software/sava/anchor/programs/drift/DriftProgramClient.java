@@ -44,15 +44,19 @@ public interface DriftProgramClient {
     return DriftExtraAccounts.createExtraAccounts(driftAccounts());
   }
 
-  default SpotMarketConfig spotMarket(final String asset) {
-    return spotMarket(DriftAsset.valueOf(asset));
+  default SpotMarketConfig spotMarket(final String symbol) {
+    return driftAccounts().spotMarketConfig(symbol);
   }
 
-  default SpotMarketConfig spotMarket(final DriftAsset asset) {
-    return driftAccounts().spotMarketConfig(asset);
+  default SpotMarketConfig spotMarket(final DriftAsset symbol) {
+    return driftAccounts().spotMarketConfig(symbol);
   }
 
   default PerpMarketConfig perpMarket(final DriftProduct product) {
+    return driftAccounts().perpMarketConfig(product);
+  }
+
+  default PerpMarketConfig perpMarket(final String product) {
     return driftAccounts().perpMarketConfig(product);
   }
 

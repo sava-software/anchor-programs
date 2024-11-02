@@ -1,16 +1,16 @@
 package software.sava.anchor.programs.drift;
 
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 public interface SpotMarkets {
 
   static SpotMarkets createRecord(final SpotMarketConfig[] marketConfigs) {
-    final var byAsset = new EnumMap<DriftAsset, SpotMarketConfig>(DriftAsset.class);
+    final var byAsset = new TreeMap<String, SpotMarketConfig>(String.CASE_INSENSITIVE_ORDER);
     for (final var config : marketConfigs) {
-      byAsset.put(DriftAsset.valueOf(config.symbol()), config);
+      byAsset.put(config.symbol(), config);
     }
     return new SpotMarketsRecord(marketConfigs, byAsset);
   }
@@ -22,6 +22,8 @@ public interface SpotMarkets {
   SpotMarketConfig marketConfig(final int index);
 
   SpotMarketConfig forAsset(final DriftAsset asset);
+
+  SpotMarketConfig forAsset(final String asset);
 
   int numMarkets();
 

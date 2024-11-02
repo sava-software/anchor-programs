@@ -683,6 +683,19 @@ public final class PerpMarketConfigs {
           "DKGwCUcwngwmgifGxnme7zVR695LCBGk2pnuksRnbhfD",
           "6ULHnTs1Ys2J23xKaHUJcJzYkWFrhQhZofLU5sq2CpRA",
           "GiTjHed1gapTxjpFLdoBYtajHt9nj8DEcYHuwc3C7Mve"
+      ),
+      createConfig(
+          "MICHI",
+          Set.of("Meme"),
+          "MICHI-PERP",
+          "MICHI",
+          52,
+          "2024-10-31T19:25:22Z",
+          "GHzvsMDMSiuyZoWhEAuM27MKFdN2Y4fA4wSDuSd6dLMA",
+          OracleSource.PythPull,
+          "GHzvsMDMSiuyZoWhEAuM27MKFdN2Y4fA4wSDuSd6dLMA",
+          "7hxgusbzi1ZW9wAdkSbfbZKUmwLSARGa7hyrRgA3vN58",
+          "4fKVSpRcdYVS2Lnckrd5kYLeBr6pCEL5VNJerjoNyrhT"
       )
   });
 

@@ -22,12 +22,22 @@ record DriftAccountsRecord(AccountMeta invokedDriftProgram,
   }
 
   @Override
+  public SpotMarketConfig spotMarketConfig(final String symbol) {
+    return spotMarkets.forAsset(symbol);
+  }
+
+  @Override
   public PerpMarketConfig perpMarketConfig(final int index) {
     return perpMarkets.marketConfig(index);
   }
 
   @Override
   public PerpMarketConfig perpMarketConfig(final DriftProduct product) {
+    return perpMarkets.forProduct(product);
+  }
+
+  @Override
+  public PerpMarketConfig perpMarketConfig(final String product) {
     return perpMarkets.forProduct(product);
   }
 }

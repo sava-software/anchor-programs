@@ -1,20 +1,16 @@
 package software.sava.anchor.programs.drift;
 
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.stream.Stream;
 
 public interface PerpMarkets {
 
   static PerpMarkets createRecord(final PerpMarketConfig[] marketConfigs) {
-    final var byProduct = new EnumMap<DriftProduct, PerpMarketConfig>(DriftProduct.class);
+    final var byProduct = new TreeMap<String, PerpMarketConfig>(String.CASE_INSENSITIVE_ORDER);
     for (final var config : marketConfigs) {
-      final var symbol = config.symbol().replace('-', '_');
-      final var product = Character.isAlphabetic(symbol.charAt(0))
-          ? DriftProduct.valueOf(symbol)
-          : DriftProduct.valueOf('_' + symbol);
-      byProduct.put(product, config);
+      byProduct.put(config.symbol(), config);
     }
     return new PerpMarketsRecord(marketConfigs, byProduct);
   }
@@ -27,6 +23,8 @@ public interface PerpMarkets {
   PerpMarketConfig marketConfig(final int index);
 
   PerpMarketConfig forProduct(final DriftProduct product);
+
+  PerpMarketConfig forProduct(final String product);
 
   int numMarkets();
 

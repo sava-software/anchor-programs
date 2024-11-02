@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 public record PerpMarketsRecord(PerpMarketConfig[] marketConfigs,
-                                Map<DriftProduct, PerpMarketConfig> byProduct) implements PerpMarkets {
+                                Map<String, PerpMarketConfig> byProduct) implements PerpMarkets {
 
   @Override
   public PerpMarketConfig marketConfig(final int index) {
@@ -15,6 +15,11 @@ public record PerpMarketsRecord(PerpMarketConfig[] marketConfigs,
 
   @Override
   public PerpMarketConfig forProduct(final DriftProduct product) {
+    return forProduct(product.symbol());
+  }
+
+  @Override
+  public PerpMarketConfig forProduct(final String product) {
     return byProduct.get(product);
   }
 
