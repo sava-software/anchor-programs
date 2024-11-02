@@ -67,7 +67,10 @@ public sealed interface Swap extends RustEnum permits
   Swap.MoonshotWrappedSell,
   Swap.StabbleStableSwap,
   Swap.StabbleWeightedSwap,
-  Swap.Obric {
+  Swap.Obric,
+  Swap.FoxBuyFromEstimatedCost,
+  Swap.FoxClaimPartial,
+  Swap.SolFi {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -132,6 +135,9 @@ public sealed interface Swap extends RustEnum permits
       case 56 -> StabbleStableSwap.INSTANCE;
       case 57 -> StabbleWeightedSwap.INSTANCE;
       case 58 -> Obric.read(_data, i);
+      case 59 -> FoxBuyFromEstimatedCost.INSTANCE;
+      case 60 -> FoxClaimPartial.read(_data, i);
+      case 61 -> SolFi.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -946,6 +952,46 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 58;
+    }
+  }
+
+  record FoxBuyFromEstimatedCost() implements EnumNone, Swap {
+
+    public static final FoxBuyFromEstimatedCost INSTANCE = new FoxBuyFromEstimatedCost();
+
+    @Override
+    public int ordinal() {
+      return 59;
+    }
+  }
+
+  record FoxClaimPartial(boolean val) implements EnumBool, Swap {
+
+    public static final FoxClaimPartial TRUE = new FoxClaimPartial(true);
+    public static final FoxClaimPartial FALSE = new FoxClaimPartial(false);
+
+    public static FoxClaimPartial read(final byte[] _data, int i) {
+      return _data[i] == 1 ? FoxClaimPartial.TRUE : FoxClaimPartial.FALSE;
+    }
+
+    @Override
+    public int ordinal() {
+      return 60;
+    }
+  }
+
+  record SolFi(boolean val) implements EnumBool, Swap {
+
+    public static final SolFi TRUE = new SolFi(true);
+    public static final SolFi FALSE = new SolFi(false);
+
+    public static SolFi read(final byte[] _data, int i) {
+      return _data[i] == 1 ? SolFi.TRUE : SolFi.FALSE;
+    }
+
+    @Override
+    public int ordinal() {
+      return 61;
     }
   }
 }

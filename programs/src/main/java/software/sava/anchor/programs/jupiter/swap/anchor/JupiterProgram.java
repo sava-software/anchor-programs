@@ -2802,6 +2802,93 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, OBRIC_SWAP_DISCRIMINATOR);
   }
 
+  public static final Discriminator FOX_BUY_FROM_ESTIMATED_COST_DISCRIMINATOR = toDiscriminator(38, 20, 62, 38, 252, 254, 180, 216);
+
+  public static Instruction foxBuyFromEstimatedCost(final AccountMeta invokedJupiterProgramMeta,
+                                                    final PublicKey swapProgramKey,
+                                                    final PublicKey userKey,
+                                                    final PublicKey configKey,
+                                                    final PublicKey mintBaseKey,
+                                                    final PublicKey mintYKey,
+                                                    final PublicKey mintNKey,
+                                                    final PublicKey potKey,
+                                                    final PublicKey userAtaBaseKey,
+                                                    final PublicKey userAtaBuyKey,
+                                                    final PublicKey tokenProgramKey) {
+    final var keys = List.of(
+      createRead(swapProgramKey),
+      createRead(userKey),
+      createWrite(configKey),
+      createRead(mintBaseKey),
+      createWrite(mintYKey),
+      createWrite(mintNKey),
+      createWrite(potKey),
+      createWrite(userAtaBaseKey),
+      createWrite(userAtaBuyKey),
+      createRead(tokenProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedJupiterProgramMeta, keys, FOX_BUY_FROM_ESTIMATED_COST_DISCRIMINATOR);
+  }
+
+  public static final Discriminator FOX_CLAIM_PARTIAL_DISCRIMINATOR = toDiscriminator(184, 176, 125, 244, 139, 168, 254, 129);
+
+  public static Instruction foxClaimPartial(final AccountMeta invokedJupiterProgramMeta,
+                                            final PublicKey swapProgramKey,
+                                            final PublicKey userKey,
+                                            final PublicKey configKey,
+                                            final PublicKey mintBaseKey,
+                                            final PublicKey mintYKey,
+                                            final PublicKey mintNKey,
+                                            final PublicKey potKey,
+                                            final PublicKey userAtaBaseKey,
+                                            final PublicKey userAtaYKey,
+                                            final PublicKey userAtaNKey,
+                                            final PublicKey tokenProgramKey) {
+    final var keys = List.of(
+      createRead(swapProgramKey),
+      createWrite(userKey),
+      createWrite(configKey),
+      createRead(mintBaseKey),
+      createWrite(mintYKey),
+      createWrite(mintNKey),
+      createWrite(potKey),
+      createWrite(userAtaBaseKey),
+      createRead(userAtaYKey),
+      createRead(userAtaNKey),
+      createRead(tokenProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedJupiterProgramMeta, keys, FOX_CLAIM_PARTIAL_DISCRIMINATOR);
+  }
+
+  public static final Discriminator SOL_FI_SWAP_DISCRIMINATOR = toDiscriminator(187, 18, 36, 207, 77, 52, 25, 43);
+
+  public static Instruction solFiSwap(final AccountMeta invokedJupiterProgramMeta,
+                                      final PublicKey swapProgramKey,
+                                      final PublicKey tokenTransferAuthorityKey,
+                                      final PublicKey marketAccountKey,
+                                      final PublicKey baseVaultKey,
+                                      final PublicKey quoteVaultKey,
+                                      final PublicKey userBaseAtaKey,
+                                      final PublicKey userQuoteAtaKey,
+                                      final PublicKey tokenProgramKey,
+                                      final PublicKey instructionsSysvarKey) {
+    final var keys = List.of(
+      createRead(swapProgramKey),
+      createRead(tokenTransferAuthorityKey),
+      createWrite(marketAccountKey),
+      createWrite(baseVaultKey),
+      createWrite(quoteVaultKey),
+      createWrite(userBaseAtaKey),
+      createWrite(userQuoteAtaKey),
+      createRead(tokenProgramKey),
+      createRead(instructionsSysvarKey)
+    );
+
+    return Instruction.createInstruction(invokedJupiterProgramMeta, keys, SOL_FI_SWAP_DISCRIMINATOR);
+  }
+
   private JupiterProgram() {
   }
 }

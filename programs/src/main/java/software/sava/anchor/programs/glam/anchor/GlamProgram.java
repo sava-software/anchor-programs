@@ -901,6 +901,8 @@ public final class GlamProgram {
                                         final PublicKey outputMintKey,
                                         final PublicKey signerKey,
                                         final PublicKey jupiterProgramKey,
+                                        final PublicKey inputTokenProgramKey,
+                                        final PublicKey outputTokenProgramKey,
                                         final long amount,
                                         final byte[] data) {
     final var keys = List.of(
@@ -916,8 +918,8 @@ public final class GlamProgram {
       createRead(solanaAccounts.systemProgram()),
       createRead(jupiterProgramKey),
       createRead(solanaAccounts.associatedTokenAccountProgram()),
-      createRead(solanaAccounts.tokenProgram()),
-      createRead(solanaAccounts.token2022Program())
+      createRead(inputTokenProgramKey),
+      createRead(outputTokenProgramKey)
     );
 
     final byte[] _data = new byte[20 + Borsh.lenVector(data)];
@@ -2024,6 +2026,64 @@ public final class GlamProgram {
     @Override
     public int l() {
       return 8 + Borsh.len(fund);
+    }
+  }
+
+  public static final Discriminator UPDATE_SHARE_CLASS_DISCRIMINATOR = toDiscriminator(196, 227, 109, 174, 25, 115, 15, 26);
+
+  public static Instruction updateShareClass(final AccountMeta invokedGlamProgramMeta,
+                                             final SolanaAccounts solanaAccounts,
+                                             final PublicKey shareClassMintKey,
+                                             final PublicKey fundKey,
+                                             final PublicKey managerKey,
+                                             final int shareClassId,
+                                             final ShareClassModel shareClassMetadata) {
+    final var keys = List.of(
+      createWrite(shareClassMintKey),
+      createWrite(fundKey),
+      createWritableSigner(managerKey),
+      createRead(solanaAccounts.token2022Program())
+    );
+
+    final byte[] _data = new byte[9 + Borsh.len(shareClassMetadata)];
+    int i = writeDiscriminator(UPDATE_SHARE_CLASS_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) shareClassId;
+    ++i;
+    Borsh.write(shareClassMetadata, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record UpdateShareClassIxData(Discriminator discriminator, int shareClassId, ShareClassModel shareClassMetadata) implements Borsh {  
+
+    public static UpdateShareClassIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static UpdateShareClassIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var shareClassId = _data[i] & 0xFF;
+      ++i;
+      final var shareClassMetadata = ShareClassModel.read(_data, i);
+      return new UpdateShareClassIxData(discriminator, shareClassId, shareClassMetadata);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) shareClassId;
+      ++i;
+      i += Borsh.write(shareClassMetadata, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 1 + Borsh.len(shareClassMetadata);
     }
   }
 

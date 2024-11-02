@@ -43,7 +43,9 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                   final PublicKey outputSignerATA,
                                   final PublicKey outputTreasuryATA,
                                   final PublicKey inputMintKey,
+                                  final PublicKey inputTokenProgram,
                                   final PublicKey outputMintKey,
+                                  final PublicKey outputTokenProgram,
                                   final long amount,
                                   final Instruction swapInstruction) {
     return GlamProgram.jupiterSwap(
@@ -58,6 +60,8 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         inputMintKey, outputMintKey,
         manager.publicKey(),
         jupiterAccounts.swapProgram(),
+        inputTokenProgram,
+        outputTokenProgram,
         amount,
         swapInstruction.data()
     ).extraAccounts(swapInstruction.accounts());
@@ -97,7 +101,9 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         outputSignerATA,
         outputTreasuryATA,
         inputMintKey,
+        inputTokenProgram.publicKey(),
         outputMintKey,
+        outputTokenProgram.publicKey(),
         amount,
         swapInstruction
     );
@@ -144,7 +150,9 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         outputSignerATA,
         outputTreasuryATA,
         inputMintKey,
+        inputTokenProgram.publicKey(),
         outputMintKey,
+        outputTokenProgram.publicKey(),
         amount,
         swapInstruction
     );

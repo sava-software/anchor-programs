@@ -46,11 +46,11 @@ public final class GlamPDAs {
 
   public static ProgramDerivedAddress inputSignerAtaPDA(final PublicKey program,
                                                         final PublicKey signerAccount,
-                                                        final SolanaAccounts solanaAccounts,
+                                                        final PublicKey inputTokenProgramAccount,
                                                         final PublicKey inputMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       signerAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
+      inputTokenProgramAccount.toByteArray(),
       inputMintAccount.toByteArray()
     ), program);
   }
@@ -87,11 +87,11 @@ public final class GlamPDAs {
 
   public static ProgramDerivedAddress outputTreasuryAtaPDA(final PublicKey program,
                                                            final PublicKey treasuryAccount,
-                                                           final SolanaAccounts solanaAccounts,
+                                                           final PublicKey outputTokenProgramAccount,
                                                            final PublicKey outputMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       treasuryAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
+      outputTokenProgramAccount.toByteArray(),
       outputMintAccount.toByteArray()
     ), program);
   }
