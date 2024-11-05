@@ -1,16 +1,15 @@
 package software.sava.anchor.programs.drift;
 
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-record SpotMarketsRecord(SpotMarketConfig[] marketConfigs,
+record SpotMarketsRecord(List<SpotMarketConfig> markets,
                          Map<String, SpotMarketConfig> byAsset) implements SpotMarkets {
 
   @Override
   public SpotMarketConfig marketConfig(final int index) {
-    return marketConfigs[index];
+    return markets.get(index);
   }
 
   @Override
@@ -25,16 +24,11 @@ record SpotMarketsRecord(SpotMarketConfig[] marketConfigs,
 
   @Override
   public int numMarkets() {
-    return marketConfigs.length;
+    return markets.size();
   }
 
   @Override
   public Stream<SpotMarketConfig> streamMarkets() {
-    return Arrays.stream(marketConfigs);
-  }
-
-  @Override
-  public Collection<SpotMarketConfig> markets() {
-    return byAsset.values();
+    return markets.stream();
   }
 }

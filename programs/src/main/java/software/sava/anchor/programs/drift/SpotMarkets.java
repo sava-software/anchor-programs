@@ -1,6 +1,5 @@
 package software.sava.anchor.programs.drift;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.stream.Stream;
@@ -12,7 +11,7 @@ public interface SpotMarkets {
     for (final var config : marketConfigs) {
       byAsset.put(config.symbol(), config);
     }
-    return new SpotMarketsRecord(marketConfigs, byAsset);
+    return new SpotMarketsRecord(List.of(marketConfigs), byAsset);
   }
 
   static SpotMarkets createRecord(final List<SpotMarketConfig> marketConfigs) {
@@ -29,5 +28,5 @@ public interface SpotMarkets {
 
   Stream<SpotMarketConfig> streamMarkets();
 
-  Collection<SpotMarketConfig> markets();
+  List<SpotMarketConfig> markets();
 }
