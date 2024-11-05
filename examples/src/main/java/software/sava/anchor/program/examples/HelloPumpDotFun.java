@@ -22,8 +22,6 @@ public final class HelloPumpDotFun {
           .filter(PumpProgram.CREATE_DISCRIMINATOR)
           .findFirst().orElseThrow();
       final var ixData = PumpProgram.CreateIxData.read(createIx);
-      System.out.println(ixData);
-
 
       final var accounts = createIx.accounts();
       System.out.format("""
