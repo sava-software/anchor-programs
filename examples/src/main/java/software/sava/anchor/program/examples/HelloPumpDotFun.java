@@ -17,13 +17,12 @@ public final class HelloPumpDotFun {
       final var sig = "3c7h7tvqP88mUQjzdvJ6m9Y3Ppr6XviYpWXZXgcuLqtt1rhgJVnPk1B15ZSfiUusXSniWZEhfP9otNsUuCi168XV";
       final var tx = rpcClient.getTransaction(sig).join();
       final var skeleton = TransactionSkeleton.deserializeSkeleton(tx.data());
-      final var instructions = skeleton.parseLegacyInstructions();
+      final var instructions = skeleton.parseInstructionsWithoutTableAccounts();
       final var createIx = Arrays.stream(instructions)
           .filter(PumpProgram.CREATE_DISCRIMINATOR)
           .findFirst().orElseThrow();
-      final var ixData = PumpProgram.CreateIxData.read(createIx);
-
       final var accounts = createIx.accounts();
+      final var ixData = PumpProgram.CreateIxData.read(createIx);
       System.out.format("""
               New pump.fun token:
                * name: %s
