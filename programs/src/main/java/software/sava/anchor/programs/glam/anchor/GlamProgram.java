@@ -116,6 +116,7 @@ public final class GlamProgram {
   public static Instruction closeShareClass(final AccountMeta invokedGlamProgramMeta,
                                             final SolanaAccounts solanaAccounts,
                                             final PublicKey fundKey,
+                                            final PublicKey treasuryKey,
                                             final PublicKey shareClassMintKey,
                                             final PublicKey extraAccountMetaListKey,
                                             final PublicKey openfundsKey,
@@ -123,6 +124,7 @@ public final class GlamProgram {
                                             final int shareClassId) {
     final var keys = List.of(
       createWrite(fundKey),
+      createWrite(treasuryKey),
       createWrite(shareClassMintKey),
       createWrite(extraAccountMetaListKey),
       createWrite(openfundsKey),
@@ -167,6 +169,24 @@ public final class GlamProgram {
     public int l() {
       return BYTES;
     }
+  }
+
+  public static final Discriminator CLOSE_TOKEN_ACCOUNTS_DISCRIMINATOR = toDiscriminator(199, 170, 37, 55, 63, 183, 235, 143);
+
+  public static Instruction closeTokenAccounts(final AccountMeta invokedGlamProgramMeta,
+                                               final SolanaAccounts solanaAccounts,
+                                               final PublicKey fundKey,
+                                               final PublicKey treasuryKey,
+                                               final PublicKey managerKey) {
+    final var keys = List.of(
+      createWrite(fundKey),
+      createWrite(treasuryKey),
+      createWritableSigner(managerKey),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.token2022Program())
+    );
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, CLOSE_TOKEN_ACCOUNTS_DISCRIMINATOR);
   }
 
   public static final Discriminator DEACTIVATE_STAKE_ACCOUNTS_DISCRIMINATOR = toDiscriminator(58, 18, 6, 22, 226, 216, 161, 193);

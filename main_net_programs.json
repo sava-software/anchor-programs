@@ -18,6 +18,16 @@
     "package": "jupiter.limit"
   },
   {
+    "name": "Jupiter Governance",
+    "program": "GovaE4iu227srtG2s3tZzB4RmWBzw8sTwrCLZz7kN7rY",
+    "package": "jupiter.governance"
+  },
+  {
+    "name": "Jupiter Staking",
+    "program": "voTpe3tHQ7AjQHMapgSue2HJFAh2cGsdokqN3XqmVSj",
+    "package": "jupiter.staking"
+  },
+  {
     "name": "Jupiter Swap",
     "program": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
     "package": "jupiter.swap"

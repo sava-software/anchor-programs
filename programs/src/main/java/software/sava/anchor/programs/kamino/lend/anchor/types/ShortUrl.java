@@ -23,13 +23,6 @@ public record ShortUrl(PublicKey _address, Discriminator discriminator, PublicKe
     return Filter.createMemCompFilter(REFERRER_OFFSET, referrer);
   }
 
-  public static Filter createShortUrlFilter(final String shortUrl) {
-    final byte[] bytes = shortUrl.getBytes(UTF_8);
-    final byte[] _data = new byte[4 + bytes.length];
-    Borsh.writeVector(bytes, _data, 0);
-    return Filter.createMemCompFilter(SHORT_URL_OFFSET, _data);
-  }
-
   public static ShortUrl createRecord(final PublicKey _address, final Discriminator discriminator, final PublicKey referrer, final String shortUrl) {
     return new ShortUrl(_address, discriminator, referrer, shortUrl, shortUrl.getBytes(UTF_8));
   }

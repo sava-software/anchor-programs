@@ -10,7 +10,8 @@ public enum ExchangeStatus implements Borsh.Enum {
   FillPaused,
   LiqPaused,
   FundingPaused,
-  SettlePnlPaused;
+  SettlePnlPaused,
+  AmmImmediateFillPaused;
 
   public static ExchangeStatus read(final byte[] _data, final int offset) {
     return Borsh.read(ExchangeStatus.values(), _data, offset);

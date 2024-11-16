@@ -599,6 +599,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         invokedProgram,
         solanaAccounts,
         glamFundAccounts.fundPublicKey(),
+        glamFundAccounts.treasuryPublicKey(),
         shareClassMintKey,
         extraAccountMetaListPDA.publicKey(),
         openFundsPDA.publicKey(),

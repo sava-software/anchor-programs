@@ -299,7 +299,12 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.RFQUserAccountFull,
     DriftError.RFQOrderNotFilled,
     DriftError.InvalidRFQOrder,
-    DriftError.InvalidRFQMatch {
+    DriftError.InvalidRFQMatch,
+    DriftError.InvalidSwiftUserAccount,
+    DriftError.SwiftUserAccountWrongMutability,
+    DriftError.SwiftUserOrdersAccountFull,
+    DriftError.SwiftOrderDoesNotExist,
+    DriftError.InvalidSwiftOrderId {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -600,6 +605,11 @@ public sealed interface DriftError extends ProgramError permits
       case 6294 -> RFQOrderNotFilled.INSTANCE;
       case 6295 -> InvalidRFQOrder.INSTANCE;
       case 6296 -> InvalidRFQMatch.INSTANCE;
+      case 6297 -> InvalidSwiftUserAccount.INSTANCE;
+      case 6298 -> SwiftUserAccountWrongMutability.INSTANCE;
+      case 6299 -> SwiftUserOrdersAccountFull.INSTANCE;
+      case 6300 -> SwiftOrderDoesNotExist.INSTANCE;
+      case 6301 -> InvalidSwiftOrderId.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2680,6 +2690,41 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final InvalidRFQMatch INSTANCE = new InvalidRFQMatch(
         6296, "RFQ matches must be valid"
+    );
+  }
+
+  record InvalidSwiftUserAccount(int code, String msg) implements DriftError {
+
+    public static final InvalidSwiftUserAccount INSTANCE = new InvalidSwiftUserAccount(
+        6297, "Invalid swift user account"
+    );
+  }
+
+  record SwiftUserAccountWrongMutability(int code, String msg) implements DriftError {
+
+    public static final SwiftUserAccountWrongMutability INSTANCE = new SwiftUserAccountWrongMutability(
+        6298, "Swift account wrong mutability"
+    );
+  }
+
+  record SwiftUserOrdersAccountFull(int code, String msg) implements DriftError {
+
+    public static final SwiftUserOrdersAccountFull INSTANCE = new SwiftUserOrdersAccountFull(
+        6299, "SwiftUserAccount has too many active orders"
+    );
+  }
+
+  record SwiftOrderDoesNotExist(int code, String msg) implements DriftError {
+
+    public static final SwiftOrderDoesNotExist INSTANCE = new SwiftOrderDoesNotExist(
+        6300, "Order with swift uuid does not exist"
+    );
+  }
+
+  record InvalidSwiftOrderId(int code, String msg) implements DriftError {
+
+    public static final InvalidSwiftOrderId INSTANCE = new InvalidSwiftOrderId(
+        6301, "Swift order id cannot be 0s"
     );
   }
 }

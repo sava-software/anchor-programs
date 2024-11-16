@@ -62,6 +62,8 @@ public record LendingMarket(PublicKey _address,
                             // Min net value accepted to be found in a position after any lending action in an obligation (scaled by quote currency decimals)
                             BigInteger minNetValueInObligationSf,
                             long minValueSkipLiquidationLtvBfChecks,
+                            // Market name, zero-padded.
+                            byte[] name,
                             long[] padding1) implements Borsh {
 
   public static final int BYTES = 4664;
@@ -89,7 +91,8 @@ public record LendingMarket(PublicKey _address,
   public static final int ELEVATION_GROUP_PADDING_OFFSET = 2504;
   public static final int MIN_NET_VALUE_IN_OBLIGATION_SF_OFFSET = 3224;
   public static final int MIN_VALUE_SKIP_LIQUIDATION_LTV_BF_CHECKS_OFFSET = 3240;
-  public static final int PADDING1_OFFSET = 3248;
+  public static final int NAME_OFFSET = 3248;
+  public static final int PADDING1_OFFSET = 3280;
 
   public static Filter createVersionFilter(final long version) {
     final byte[] _data = new byte[8];
@@ -241,7 +244,9 @@ public record LendingMarket(PublicKey _address,
     i += 16;
     final var minValueSkipLiquidationLtvBfChecks = getInt64LE(_data, i);
     i += 8;
-    final var padding1 = new long[177];
+    final var name = new byte[32];
+    i += Borsh.readArray(name, _data, i);
+    final var padding1 = new long[173];
     Borsh.readArray(padding1, _data, i);
     return new LendingMarket(_address,
                              discriminator,
@@ -267,6 +272,7 @@ public record LendingMarket(PublicKey _address,
                              elevationGroupPadding,
                              minNetValueInObligationSf,
                              minValueSkipLiquidationLtvBfChecks,
+                             name,
                              padding1);
   }
 
@@ -313,6 +319,7 @@ public record LendingMarket(PublicKey _address,
     i += 16;
     putInt64LE(_data, i, minValueSkipLiquidationLtvBfChecks);
     i += 8;
+    i += Borsh.writeArray(name, _data, i);
     i += Borsh.writeArray(padding1, _data, i);
     return i - offset;
   }

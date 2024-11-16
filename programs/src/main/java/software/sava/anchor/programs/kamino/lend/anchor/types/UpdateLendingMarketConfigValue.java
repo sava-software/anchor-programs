@@ -19,7 +19,8 @@ public sealed interface UpdateLendingMarketConfigValue extends RustEnum permits
   UpdateLendingMarketConfigValue.U64,
   UpdateLendingMarketConfigValue.U128,
   UpdateLendingMarketConfigValue.Pubkey,
-  UpdateLendingMarketConfigValue.ElevationGroup {
+  UpdateLendingMarketConfigValue.ElevationGroup,
+  UpdateLendingMarketConfigValue.Name {
 
   static UpdateLendingMarketConfigValue read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -33,6 +34,7 @@ public sealed interface UpdateLendingMarketConfigValue extends RustEnum permits
       case 5 -> U128.read(_data, i);
       case 6 -> Pubkey.read(_data, i);
       case 7 -> ElevationGroup.read(_data, i);
+      case 8 -> Name.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [UpdateLendingMarketConfigValue]", ordinal
       ));
@@ -154,6 +156,37 @@ public sealed interface UpdateLendingMarketConfigValue extends RustEnum permits
     @Override
     public int ordinal() {
       return 7;
+    }
+  }
+
+  record Name(byte[] val) implements UpdateLendingMarketConfigValue {
+
+    public static final int BYTES = 32;
+
+    public static Name read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var val = new byte[32];
+      Borsh.readArray(val, _data, offset);
+      return new Name(val);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      i += Borsh.writeArray(val, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+
+    @Override
+    public int ordinal() {
+      return 8;
     }
   }
 }

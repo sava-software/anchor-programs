@@ -21,7 +21,8 @@ public enum UpdateLendingMarketMode implements Borsh.Enum {
   UpdateBorrowingDisabled,
   UpdateMinNetValueObligationPostAction,
   UpdateMinValueSkipPriorityLiqCheck,
-  UpdatePaddingFields;
+  UpdatePaddingFields,
+  UpdateName;
 
   public static UpdateLendingMarketMode read(final byte[] _data, final int offset) {
     return Borsh.read(UpdateLendingMarketMode.values(), _data, offset);
