@@ -142,8 +142,8 @@ public interface JupiterAccounts {
     return deriveProposalMeta(this, proposal);
   }
 
-  static ProgramDerivedAddress deriveOptionalProposalMeta(final JupiterAccounts jupiterAccounts,
-                                                          final PublicKey proposal) {
+  static ProgramDerivedAddress deriveOptionProposalMeta(final JupiterAccounts jupiterAccounts,
+                                                        final PublicKey proposal) {
     return findProgramAddress(
         List.of(
             "OptionProposalMeta".getBytes(UTF_8),
@@ -153,8 +153,8 @@ public interface JupiterAccounts {
     );
   }
 
-  default ProgramDerivedAddress deriveOptionalProposalMeta(final PublicKey proposal) {
-    return deriveOptionalProposalMeta(this, proposal);
+  default ProgramDerivedAddress deriveOptionProposalMeta(final PublicKey proposal) {
+    return deriveOptionProposalMeta(this, proposal);
   }
 
   static ProgramDerivedAddress deriveVote(final JupiterAccounts jupiterAccounts,

@@ -6,12 +6,9 @@ import software.sava.anchor.programs.jupiter.voter.anchor.types.Escrow;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
-import software.sava.rpc.json.http.SolanaNetwork;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
-import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
-import java.net.http.HttpClient;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -120,39 +117,5 @@ public interface JupiterVoteClient {
         escrow.owner(),
         destinationTokensKey
     );
-  }
-
-  static void main(final String[] args) {
-    final var jupiterAccounts = JupiterAccounts.MAIN_NET;
-
-    final var lockerPDA = jupiterAccounts.deriveJupLocker();
-    final var voterAccount = PublicKey.fromBase58Encoded("");
-    final var escrowPDA = jupiterAccounts.deriveEscrow(lockerPDA.publicKey(), voterAccount);
-    final var governorPDA = jupiterAccounts.deriveGovernor();
-
-    final var proposalKey = PublicKey.fromBase58Encoded("ByQ21v3hqdQVwPHsfwurrtEAH8pB3DYuLdp9jU2Hwnd4");
-    final var votePDA = jupiterAccounts.deriveVote(proposalKey, voterAccount);
-    final var proposalMetaPDA = jupiterAccounts.deriveProposalMeta(proposalKey);
-    final var optionalProposalMetaPDA = jupiterAccounts.deriveOptionalProposalMeta(proposalKey);
-
-    System.out.println(lockerPDA);
-    System.out.println(escrowPDA);
-    System.out.println(votePDA);
-    System.out.println(governorPDA);
-    System.out.println(proposalMetaPDA);
-    System.out.println(optionalProposalMetaPDA);
-
-    try (final var httpClient = HttpClient.newHttpClient()) {
-      final var rpcClient = SolanaRpcClient.createClient(SolanaNetwork.MAIN_NET.getEndpoint(), httpClient);
-
-      final var voteClient = JupiterVoteClient.createClient();
-      final var castVoteIx = voteClient.castVote(voterAccount, proposalKey, 0);
-
-      final var nativeClient = NativeProgramAccountClient.createClient(voterAccount);
-      final var castVoteTx = nativeClient.createTransaction(castVoteIx);
-
-      final var simulation = rpcClient.simulateTransaction(castVoteTx).join();
-      System.out.println(simulation);
-    }
   }
 }
