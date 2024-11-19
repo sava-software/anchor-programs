@@ -1,4 +1,4 @@
-package software.sava.anchor.programs.jupiter.staking.anchor.types;
+package software.sava.anchor.programs.jupiter.voter.anchor.types;
 
 import java.lang.String;
 

@@ -23,9 +23,9 @@
     "package": "jupiter.governance"
   },
   {
-    "name": "Jupiter Staking",
+    "name": "Jupiter Locked Voter",
     "program": "voTpe3tHQ7AjQHMapgSue2HJFAh2cGsdokqN3XqmVSj",
-    "package": "jupiter.staking"
+    "package": "jupiter.voter"
   },
   {
     "name": "Jupiter Swap",

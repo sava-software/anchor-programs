@@ -1,10 +1,10 @@
-package software.sava.anchor.programs.jupiter.staking.anchor;
+package software.sava.anchor.programs.jupiter.voter.anchor;
 
 import java.lang.String;
 
 import java.util.List;
 
-import software.sava.anchor.programs.jupiter.staking.anchor.types.LockerParams;
+import software.sava.anchor.programs.jupiter.voter.anchor.types.LockerParams;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.borsh.Borsh;

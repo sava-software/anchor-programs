@@ -13,10 +13,11 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.jupiter.governance.anchor;
   exports software.sava.anchor.programs.jupiter.limit.anchor.types;
   exports software.sava.anchor.programs.jupiter.limit.anchor;
-  exports software.sava.anchor.programs.jupiter.staking.anchor.types;
-  exports software.sava.anchor.programs.jupiter.staking.anchor;
   exports software.sava.anchor.programs.jupiter.swap.anchor.types;
   exports software.sava.anchor.programs.jupiter.swap.anchor;
+  exports software.sava.anchor.programs.jupiter.voter.anchor.types;
+  exports software.sava.anchor.programs.jupiter.voter.anchor;
+  exports software.sava.anchor.programs.jupiter.voter;
   exports software.sava.anchor.programs.jupiter;
   exports software.sava.anchor.programs.kamino.lend.anchor.types;
   exports software.sava.anchor.programs.kamino.lend.anchor;
@@ -37,7 +38,6 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.pyth.receiver.anchor;
   exports software.sava.anchor.programs.switchboard.on_demand.anchor.types;
   exports software.sava.anchor.programs.switchboard.on_demand.anchor;
-  exports software.sava.anchor.programs.jupiter.governance;
   requires java.base;
   requires java.net.http;
   requires org.bouncycastle.provider;

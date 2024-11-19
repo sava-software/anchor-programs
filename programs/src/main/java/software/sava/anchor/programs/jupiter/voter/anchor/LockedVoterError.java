@@ -1,4 +1,4 @@
-package software.sava.anchor.programs.jupiter.staking.anchor;
+package software.sava.anchor.programs.jupiter.voter.anchor;
 
 import software.sava.anchor.ProgramError;
 

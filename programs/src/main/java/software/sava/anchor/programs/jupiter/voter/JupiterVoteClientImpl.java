@@ -1,9 +1,9 @@
-package software.sava.anchor.programs.jupiter.governance;
+package software.sava.anchor.programs.jupiter.voter;
 
 import software.sava.anchor.programs.jupiter.JupiterAccounts;
 import software.sava.anchor.programs.jupiter.governance.anchor.GovernProgram;
-import software.sava.anchor.programs.jupiter.staking.anchor.LockedVoterProgram;
-import software.sava.anchor.programs.jupiter.staking.anchor.types.Escrow;
+import software.sava.anchor.programs.jupiter.voter.anchor.LockedVoterProgram;
+import software.sava.anchor.programs.jupiter.voter.anchor.types.Escrow;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
