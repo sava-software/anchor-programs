@@ -132,6 +132,19 @@ final class JupiterVoteClientImpl implements JupiterVoteClient {
   }
 
   @Override
+  public Instruction toggleMaxLock(final PublicKey escrowOwner, final boolean maxLock) {
+    final var lockerKey = accounts.deriveJupLocker().publicKey();
+    final var escrowKey = accounts.deriveEscrow(lockerKey, escrowOwner).publicKey();
+    return LockedVoterProgram.toggleMaxLock(
+        accounts.invokedVoteProgram(),
+        lockerKey,
+        escrowKey,
+        escrowOwner,
+        maxLock
+    );
+  }
+
+  @Override
   public Instruction withdraw(final Escrow escrow,
                               final PublicKey payerKey,
                               final PublicKey destinationTokensKey) {

@@ -92,6 +92,8 @@ public interface JupiterVoteClient {
 
   Instruction toggleMaxLock(final Escrow escrow, final boolean maxLock);
 
+  Instruction toggleMaxLock(final PublicKey escrowOwner, final boolean maxLock);
+
   Instruction withdraw(final Escrow escrow,
                        final PublicKey payerKey,
                        final PublicKey destinationTokensKey);
