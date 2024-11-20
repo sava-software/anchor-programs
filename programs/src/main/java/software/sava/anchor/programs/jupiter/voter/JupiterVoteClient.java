@@ -88,6 +88,22 @@ public interface JupiterVoteClient {
     return increaseLockedAmount(escrow, escrow.owner(), sourceTokensKey, amount);
   }
 
+  Instruction increaseLockedAmount(final PublicKey escrowOwner,
+                                   final PublicKey payerKey,
+                                   final PublicKey sourceTokensKey,
+                                   final long amount);
+
+  default Instruction increaseLockedAmount(final PublicKey escrowOwner,
+                                           final PublicKey sourceTokensKey,
+                                           final long amount) {
+    return increaseLockedAmount(
+        escrowOwner,
+        escrowOwner,
+        sourceTokensKey,
+        amount
+    );
+  }
+
   Instruction extendLockDuration(final Escrow escrow, final long duration);
 
   Instruction toggleMaxLock(final Escrow escrow, final boolean maxLock);

@@ -7,6 +7,7 @@ import software.sava.anchor.programs.jupiter.voter.anchor.types.Escrow;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
+import software.sava.solana.programs.token.AssociatedTokenProgram;
 
 final class JupiterVoteClientImpl implements JupiterVoteClient {
 
@@ -102,6 +103,27 @@ final class JupiterVoteClientImpl implements JupiterVoteClient {
         escrow.locker(),
         escrow._address(),
         escrow.tokens(),
+        payerKey,
+        sourceTokensKey,
+        solanaAccounts.tokenProgram(),
+        amount
+    );
+  }
+
+  @Override
+  public Instruction increaseLockedAmount(final PublicKey escrowOwner,
+                                          final PublicKey payerKey,
+                                          final PublicKey sourceTokensKey,
+                                          final long amount) {
+    final var lockerKey = accounts.deriveJupLocker().publicKey();
+    final var escrowKey = accounts.deriveEscrow(lockerKey, escrowOwner).publicKey();
+    final var escrowTokensKey = AssociatedTokenProgram
+        .findATA(solanaAccounts, escrowKey, accounts.jupTokenMint()).publicKey();
+    return LockedVoterProgram.increaseLockedAmount(
+        accounts.invokedVoteProgram(),
+        lockerKey,
+        escrowKey,
+        escrowTokensKey,
         payerKey,
         sourceTokensKey,
         solanaAccounts.tokenProgram(),
