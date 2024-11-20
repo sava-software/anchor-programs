@@ -43,12 +43,16 @@ public interface JupiterVoteClient {
     final var accounts = jupiterAccounts();
     final var governorKey = accounts.deriveGovernor().publicKey();
     return rpcClient.getProgramAccounts(
-        jupiterAccounts().voteProgram(),
-        List.of(
-            Proposal.createGovernorFilter(governorKey)
-        ),
+        jupiterAccounts().govProgram(),
+        List.of(Proposal.createGovernorFilter(governorKey)),
         Proposal.FACTORY
     );
+  }
+
+  Instruction newEscrow(final PublicKey escrowOwnerKey, final PublicKey payer);
+
+  default Instruction newEscrow(final PublicKey escrowOwnerKey) {
+    return newEscrow(escrowOwnerKey, escrowOwnerKey);
   }
 
   Instruction newVote(final PublicKey proposal,

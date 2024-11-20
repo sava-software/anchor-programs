@@ -30,6 +30,20 @@ final class JupiterVoteClientImpl implements JupiterVoteClient {
   }
 
   @Override
+  public Instruction newEscrow(final PublicKey escrowOwnerKey, final PublicKey payer) {
+    final var lockerKey = accounts.deriveJupLocker().publicKey();
+    final var escrowKey = accounts.deriveEscrow(lockerKey, escrowOwnerKey).publicKey();
+    return LockedVoterProgram.newEscrow(
+        accounts.invokedGovProgram(),
+        lockerKey,
+        escrowKey,
+        escrowOwnerKey,
+        payer,
+        solanaAccounts.systemProgram()
+    );
+  }
+
+  @Override
   public Instruction newVote(final PublicKey proposal,
                              final PublicKey payer,
                              final PublicKey voter) {
