@@ -65,5 +65,10 @@
     "name": "Switchboard On-Demand",
     "program": "SBondMDrcV3K4kxZR1HNVT7osZxAHVHgYXL5Ze1oMUv",
     "package": "switchboard.on_demand"
+  },
+  {
+    "name": "Moonshot",
+    "program": "MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG",
+    "package": "moonshot"
   }
 ]
