@@ -70,7 +70,9 @@ public sealed interface Swap extends RustEnum permits
   Swap.Obric,
   Swap.FoxBuyFromEstimatedCost,
   Swap.FoxClaimPartial,
-  Swap.SolFi {
+  Swap.SolFi,
+  Swap.SolayerDelegateNoInit,
+  Swap.SolayerUndelegateNoInit {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -138,6 +140,8 @@ public sealed interface Swap extends RustEnum permits
       case 59 -> FoxBuyFromEstimatedCost.INSTANCE;
       case 60 -> FoxClaimPartial.read(_data, i);
       case 61 -> SolFi.read(_data, i);
+      case 62 -> SolayerDelegateNoInit.INSTANCE;
+      case 63 -> SolayerUndelegateNoInit.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -992,6 +996,26 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 61;
+    }
+  }
+
+  record SolayerDelegateNoInit() implements EnumNone, Swap {
+
+    public static final SolayerDelegateNoInit INSTANCE = new SolayerDelegateNoInit();
+
+    @Override
+    public int ordinal() {
+      return 62;
+    }
+  }
+
+  record SolayerUndelegateNoInit() implements EnumNone, Swap {
+
+    public static final SolayerUndelegateNoInit INSTANCE = new SolayerUndelegateNoInit();
+
+    @Override
+    public int ordinal() {
+      return 63;
     }
   }
 }

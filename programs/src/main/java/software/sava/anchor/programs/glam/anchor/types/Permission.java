@@ -20,7 +20,11 @@ public enum Permission implements Borsh.Enum {
   JupiterSwapFundAssets,
   JupiterSwapAnyAsset,
   WSolWrap,
-  WSolUnwrap;
+  WSolUnwrap,
+  MintShare,
+  BurnShare,
+  ForceTransferShare,
+  SetTokenAccountsStates;
 
   public static Permission read(final byte[] _data, final int offset) {
     return Borsh.read(Permission.values(), _data, offset);

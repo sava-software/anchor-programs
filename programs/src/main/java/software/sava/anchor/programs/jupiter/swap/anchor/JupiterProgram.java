@@ -2889,6 +2889,33 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, SOL_FI_SWAP_DISCRIMINATOR);
   }
 
+  public static final Discriminator SOLAYER_DELEGATE_UNDELEGATE_NO_INIT_DISCRIMINATOR = toDiscriminator(197, 105, 46, 2, 253, 8, 197, 36);
+
+  public static Instruction solayerDelegateUndelegateNoInit(final AccountMeta invokedJupiterProgramMeta,
+                                                            final PublicKey swapProgramKey,
+                                                            final PublicKey stakerKey,
+                                                            final PublicKey endoAvsKey,
+                                                            final PublicKey avsTokenMintKey,
+                                                            final PublicKey delegatedTokenVaultKey,
+                                                            final PublicKey delegatedTokenMintKey,
+                                                            final PublicKey stakerDelegatedTokenAccountKey,
+                                                            final PublicKey stakerAvsTokenAccountKey,
+                                                            final PublicKey tokenProgramKey) {
+    final var keys = List.of(
+      createRead(swapProgramKey),
+      createRead(stakerKey),
+      createRead(endoAvsKey),
+      createWrite(avsTokenMintKey),
+      createWrite(delegatedTokenVaultKey),
+      createRead(delegatedTokenMintKey),
+      createWrite(stakerDelegatedTokenAccountKey),
+      createWrite(stakerAvsTokenAccountKey),
+      createRead(tokenProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedJupiterProgramMeta, keys, SOLAYER_DELEGATE_UNDELEGATE_NO_INIT_DISCRIMINATOR);
+  }
+
   private JupiterProgram() {
   }
 }

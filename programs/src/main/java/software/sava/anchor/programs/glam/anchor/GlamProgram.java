@@ -92,6 +92,71 @@ public final class GlamProgram {
     }
   }
 
+  public static final Discriminator BURN_SHARE_DISCRIMINATOR = toDiscriminator(111, 41, 160, 233, 46, 233, 79, 62);
+
+  public static Instruction burnShare(final AccountMeta invokedGlamProgramMeta,
+                                      final SolanaAccounts solanaAccounts,
+                                      final PublicKey fromAtaKey,
+                                      final PublicKey fromKey,
+                                      final PublicKey shareClassMintKey,
+                                      final PublicKey fundKey,
+                                      final PublicKey managerKey,
+                                      final int shareClassId,
+                                      final long amount) {
+    final var keys = List.of(
+      createWrite(fromAtaKey),
+      createRead(fromKey),
+      createWrite(shareClassMintKey),
+      createWrite(fundKey),
+      createWritableSigner(managerKey),
+      createRead(solanaAccounts.token2022Program())
+    );
+
+    final byte[] _data = new byte[17];
+    int i = writeDiscriminator(BURN_SHARE_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) shareClassId;
+    ++i;
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record BurnShareIxData(Discriminator discriminator, int shareClassId, long amount) implements Borsh {  
+
+    public static BurnShareIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 17;
+
+    public static BurnShareIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var shareClassId = _data[i] & 0xFF;
+      ++i;
+      final var amount = getInt64LE(_data, i);
+      return new BurnShareIxData(discriminator, shareClassId, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) shareClassId;
+      ++i;
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator CLOSE_FUND_DISCRIMINATOR = toDiscriminator(230, 183, 3, 112, 236, 252, 5, 185);
 
   public static Instruction closeFund(final AccountMeta invokedGlamProgramMeta,
@@ -768,6 +833,75 @@ public final class GlamProgram {
     }
   }
 
+  public static final Discriminator FORCE_TRANSFER_SHARE_DISCRIMINATOR = toDiscriminator(71, 90, 36, 42, 220, 208, 46, 19);
+
+  public static Instruction forceTransferShare(final AccountMeta invokedGlamProgramMeta,
+                                               final SolanaAccounts solanaAccounts,
+                                               final PublicKey fromAtaKey,
+                                               final PublicKey toAtaKey,
+                                               final PublicKey fromKey,
+                                               final PublicKey toKey,
+                                               final PublicKey shareClassMintKey,
+                                               final PublicKey fundKey,
+                                               final PublicKey managerKey,
+                                               final int shareClassId,
+                                               final long amount) {
+    final var keys = List.of(
+      createWrite(fromAtaKey),
+      createWrite(toAtaKey),
+      createRead(fromKey),
+      createRead(toKey),
+      createWrite(shareClassMintKey),
+      createWrite(fundKey),
+      createWritableSigner(managerKey),
+      createRead(solanaAccounts.token2022Program())
+    );
+
+    final byte[] _data = new byte[17];
+    int i = writeDiscriminator(FORCE_TRANSFER_SHARE_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) shareClassId;
+    ++i;
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record ForceTransferShareIxData(Discriminator discriminator, int shareClassId, long amount) implements Borsh {  
+
+    public static ForceTransferShareIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 17;
+
+    public static ForceTransferShareIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var shareClassId = _data[i] & 0xFF;
+      ++i;
+      final var amount = getInt64LE(_data, i);
+      return new ForceTransferShareIxData(discriminator, shareClassId, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) shareClassId;
+      ++i;
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator INITIALIZE_AND_DELEGATE_STAKE_DISCRIMINATOR = toDiscriminator(71, 101, 230, 157, 50, 23, 47, 1);
 
   public static Instruction initializeAndDelegateStake(final AccountMeta invokedGlamProgramMeta,
@@ -1346,6 +1480,71 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, MERGE_STAKE_ACCOUNTS_DISCRIMINATOR);
   }
 
+  public static final Discriminator MINT_SHARE_DISCRIMINATOR = toDiscriminator(145, 1, 122, 214, 134, 106, 116, 109);
+
+  public static Instruction mintShare(final AccountMeta invokedGlamProgramMeta,
+                                      final SolanaAccounts solanaAccounts,
+                                      final PublicKey mintToKey,
+                                      final PublicKey recipientKey,
+                                      final PublicKey shareClassMintKey,
+                                      final PublicKey fundKey,
+                                      final PublicKey managerKey,
+                                      final int shareClassId,
+                                      final long amount) {
+    final var keys = List.of(
+      createWrite(mintToKey),
+      createRead(recipientKey),
+      createWrite(shareClassMintKey),
+      createWrite(fundKey),
+      createWritableSigner(managerKey),
+      createRead(solanaAccounts.token2022Program())
+    );
+
+    final byte[] _data = new byte[17];
+    int i = writeDiscriminator(MINT_SHARE_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) shareClassId;
+    ++i;
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record MintShareIxData(Discriminator discriminator, int shareClassId, long amount) implements Borsh {  
+
+    public static MintShareIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 17;
+
+    public static MintShareIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var shareClassId = _data[i] & 0xFF;
+      ++i;
+      final var amount = getInt64LE(_data, i);
+      return new MintShareIxData(discriminator, shareClassId, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) shareClassId;
+      ++i;
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator REDEEM_DISCRIMINATOR = toDiscriminator(184, 12, 86, 149, 70, 196, 97, 225);
 
   public static Instruction redeem(final AccountMeta invokedGlamProgramMeta,
@@ -1494,6 +1693,117 @@ public final class GlamProgram {
     @Override
     public int l() {
       return 8 + Borsh.lenVector(_newStakeAccountId) + 1;
+    }
+  }
+
+  public static final Discriminator SET_SUBSCRIBE_REDEEM_ENABLED_DISCRIMINATOR = toDiscriminator(189, 56, 205, 172, 201, 185, 34, 92);
+
+  public static Instruction setSubscribeRedeemEnabled(final AccountMeta invokedGlamProgramMeta,
+                                                      final PublicKey fundKey,
+                                                      final PublicKey managerKey,
+                                                      final boolean enabled) {
+    final var keys = List.of(
+      createWrite(fundKey),
+      createWritableSigner(managerKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(SET_SUBSCRIBE_REDEEM_ENABLED_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) (enabled ? 1 : 0);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record SetSubscribeRedeemEnabledIxData(Discriminator discriminator, boolean enabled) implements Borsh {  
+
+    public static SetSubscribeRedeemEnabledIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static SetSubscribeRedeemEnabledIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var enabled = _data[i] == 1;
+      return new SetSubscribeRedeemEnabledIxData(discriminator, enabled);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) (enabled ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator SET_TOKEN_ACCOUNTS_STATES_DISCRIMINATOR = toDiscriminator(50, 133, 45, 86, 117, 66, 115, 195);
+
+  public static Instruction setTokenAccountsStates(final AccountMeta invokedGlamProgramMeta,
+                                                   final SolanaAccounts solanaAccounts,
+                                                   final PublicKey shareClassMintKey,
+                                                   final PublicKey fundKey,
+                                                   final PublicKey managerKey,
+                                                   final int shareClassId,
+                                                   final boolean frozen) {
+    final var keys = List.of(
+      createWrite(shareClassMintKey),
+      createWrite(fundKey),
+      createWritableSigner(managerKey),
+      createRead(solanaAccounts.token2022Program())
+    );
+
+    final byte[] _data = new byte[10];
+    int i = writeDiscriminator(SET_TOKEN_ACCOUNTS_STATES_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) shareClassId;
+    ++i;
+    _data[i] = (byte) (frozen ? 1 : 0);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record SetTokenAccountsStatesIxData(Discriminator discriminator, int shareClassId, boolean frozen) implements Borsh {  
+
+    public static SetTokenAccountsStatesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 10;
+
+    public static SetTokenAccountsStatesIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var shareClassId = _data[i] & 0xFF;
+      ++i;
+      final var frozen = _data[i] == 1;
+      return new SetTokenAccountsStatesIxData(discriminator, shareClassId, frozen);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) shareClassId;
+      ++i;
+      _data[i] = (byte) (frozen ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
     }
   }
 

@@ -34,6 +34,17 @@ public final class GlamPDAs {
     ), program);
   }
 
+  public static ProgramDerivedAddress fromAtaPDA(final PublicKey program,
+                                                 final PublicKey fromAccount,
+                                                 final PublicKey token2022ProgramAccount,
+                                                 final PublicKey shareClassMintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      fromAccount.toByteArray(),
+      token2022ProgramAccount.toByteArray(),
+      shareClassMintAccount.toByteArray()
+    ), program);
+  }
+
   public static ProgramDerivedAddress fundPDA(final PublicKey program,
                                               final PublicKey managerAccount,
                                               final byte[] fundModelCreated) {
@@ -67,6 +78,17 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress mintTo1PDA(final PublicKey program,
+                                                 final PublicKey recipientAccount,
+                                                 final PublicKey token2022ProgramAccount,
+                                                 final PublicKey shareClassMintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      recipientAccount.toByteArray(),
+      token2022ProgramAccount.toByteArray(),
+      shareClassMintAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress mintTo2PDA(final PublicKey program,
                                                  final PublicKey treasuryAccount,
                                                  final SolanaAccounts solanaAccounts,
                                                  final PublicKey poolMintAccount) {
@@ -120,6 +142,17 @@ public final class GlamPDAs {
     return PublicKey.findProgramAddress(List.of(
       "account-policy".getBytes(US_ASCII),
       srcAccountAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress toAtaPDA(final PublicKey program,
+                                               final PublicKey toAccount,
+                                               final PublicKey token2022ProgramAccount,
+                                               final PublicKey shareClassMintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      toAccount.toByteArray(),
+      token2022ProgramAccount.toByteArray(),
+      shareClassMintAccount.toByteArray()
     ), program);
   }
 
