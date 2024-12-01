@@ -1,8 +1,6 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.anchor.types.FundAccount;
-import software.sava.anchor.programs.glam.anchor.types.FundModel;
-import software.sava.anchor.programs.glam.anchor.types.ShareClassModel;
+import software.sava.anchor.programs.glam.anchor.types.*;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
@@ -15,6 +13,8 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static software.sava.anchor.programs.glam.anchor.types.EngineFieldName.DelegateAcls;
 
 public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
@@ -35,7 +35,11 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
   static CompletableFuture<List<AccountInfo<FundAccount>>> fetchFundAccounts(final SolanaRpcClient rpcClient,
                                                                              final PublicKey programPublicKey) {
-    return rpcClient.getProgramAccounts(programPublicKey, FundAccount.FACTORY);
+    return rpcClient.getProgramAccounts(
+        programPublicKey,
+        List.of(FundAccount.DISCRIMINATOR_FILTER),
+        FundAccount.FACTORY
+    );
   }
 
   static CompletableFuture<List<AccountInfo<FundAccount>>> fetchFundAccountsByManager(final SolanaRpcClient rpcClient,
@@ -68,6 +72,31 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
         .filter(accountInfo -> accountInfo.name().equals(fundName)
             && accountInfo.manager().equals(managerPublicKey))
         .collect(Collectors.toMap(FundAccount::_address, Function.identity()));
+  }
+
+  static boolean isDelegatedWithPermission(final FundAccount fundAccount,
+                                           final PublicKey delegate,
+                                           final Permission permission) {
+    for (final var engineFields : fundAccount.params()) {
+      for (final var engineField : engineFields) {
+        if (engineField.name() == DelegateAcls && engineField.value() instanceof EngineFieldValue.VecDelegateAcl(
+            final var delegateAcls
+        )) {
+          for (final var delegateAcl : delegateAcls) {
+            if (delegate.equals(delegateAcl.pubkey())) {
+              for (final var _permission : delegateAcl.permissions()) {
+                if (_permission == permission) {
+                  return true;
+                }
+              }
+              return false;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return false;
   }
 
   NativeProgramAccountClient delegatedNativeProgramAccountClient();
