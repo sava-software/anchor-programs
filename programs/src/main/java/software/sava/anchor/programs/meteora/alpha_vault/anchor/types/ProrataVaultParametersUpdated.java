@@ -9,8 +9,8 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record ProrataVaultParametersUpdated(PublicKey vault,
                                             long maxBuyingCap,
-                                            long startVestingSlot,
-                                            long endVestingSlot) implements Borsh {
+                                            long startVestingPoint,
+                                            long endVestingPoint) implements Borsh {
 
   public static final int BYTES = 56;
 
@@ -23,13 +23,13 @@ public record ProrataVaultParametersUpdated(PublicKey vault,
     i += 32;
     final var maxBuyingCap = getInt64LE(_data, i);
     i += 8;
-    final var startVestingSlot = getInt64LE(_data, i);
+    final var startVestingPoint = getInt64LE(_data, i);
     i += 8;
-    final var endVestingSlot = getInt64LE(_data, i);
+    final var endVestingPoint = getInt64LE(_data, i);
     return new ProrataVaultParametersUpdated(vault,
                                              maxBuyingCap,
-                                             startVestingSlot,
-                                             endVestingSlot);
+                                             startVestingPoint,
+                                             endVestingPoint);
   }
 
   @Override
@@ -39,9 +39,9 @@ public record ProrataVaultParametersUpdated(PublicKey vault,
     i += 32;
     putInt64LE(_data, i, maxBuyingCap);
     i += 8;
-    putInt64LE(_data, i, startVestingSlot);
+    putInt64LE(_data, i, startVestingPoint);
     i += 8;
-    putInt64LE(_data, i, endVestingSlot);
+    putInt64LE(_data, i, endVestingPoint);
     i += 8;
     return i - offset;
   }

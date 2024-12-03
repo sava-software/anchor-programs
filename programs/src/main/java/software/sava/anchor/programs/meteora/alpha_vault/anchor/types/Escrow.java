@@ -25,7 +25,7 @@ public record Escrow(PublicKey _address,
                      // Total token that escrow has claimed
                      long claimedToken,
                      // Last claimed timestamp
-                     long lastClaimedSlot,
+                     long lastClaimedPoint,
                      // Whether owner has claimed for remaining quote token
                      int refunded,
                      // padding 1
@@ -43,7 +43,7 @@ public record Escrow(PublicKey _address,
   public static final int OWNER_OFFSET = 40;
   public static final int TOTAL_DEPOSIT_OFFSET = 72;
   public static final int CLAIMED_TOKEN_OFFSET = 80;
-  public static final int LAST_CLAIMED_SLOT_OFFSET = 88;
+  public static final int LAST_CLAIMED_POINT_OFFSET = 88;
   public static final int REFUNDED_OFFSET = 96;
   public static final int PADDING1_OFFSET = 97;
   public static final int MAX_CAP_OFFSET = 104;
@@ -70,10 +70,10 @@ public record Escrow(PublicKey _address,
     return Filter.createMemCompFilter(CLAIMED_TOKEN_OFFSET, _data);
   }
 
-  public static Filter createLastClaimedSlotFilter(final long lastClaimedSlot) {
+  public static Filter createLastClaimedPointFilter(final long lastClaimedPoint) {
     final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, lastClaimedSlot);
-    return Filter.createMemCompFilter(LAST_CLAIMED_SLOT_OFFSET, _data);
+    putInt64LE(_data, 0, lastClaimedPoint);
+    return Filter.createMemCompFilter(LAST_CLAIMED_POINT_OFFSET, _data);
   }
 
   public static Filter createRefundedFilter(final int refunded) {
@@ -110,7 +110,7 @@ public record Escrow(PublicKey _address,
     i += 8;
     final var claimedToken = getInt64LE(_data, i);
     i += 8;
-    final var lastClaimedSlot = getInt64LE(_data, i);
+    final var lastClaimedPoint = getInt64LE(_data, i);
     i += 8;
     final var refunded = _data[i] & 0xFF;
     ++i;
@@ -128,7 +128,7 @@ public record Escrow(PublicKey _address,
                       owner,
                       totalDeposit,
                       claimedToken,
-                      lastClaimedSlot,
+                      lastClaimedPoint,
                       refunded,
                       padding1,
                       maxCap,
@@ -147,7 +147,7 @@ public record Escrow(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, claimedToken);
     i += 8;
-    putInt64LE(_data, i, lastClaimedSlot);
+    putInt64LE(_data, i, lastClaimedPoint);
     i += 8;
     _data[i] = (byte) refunded;
     ++i;

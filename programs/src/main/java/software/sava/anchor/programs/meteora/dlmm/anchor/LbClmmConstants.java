@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.meteora.dlmm.anchor;
 
+import java.math.BigInteger;
 public final class LbClmmConstants {
 
   public static final int BASIS_POINT_MAX = 10000;
@@ -31,6 +32,12 @@ public final class LbClmmConstants {
   public static final int BIN_ARRAY_BITMAP_SIZE = 512;
 
   public static final long MAX_REWARD_BIN_SPLIT = 15;
+
+  public static final int MAX_BIN_STEP = 400;
+
+  public static final BigInteger MAX_BASE_FEE = new BigInteger("100000000");
+
+  public static final BigInteger MIN_BASE_FEE = new BigInteger("100000");
 
   public static final byte[] BIN_ARRAY = new byte[]{98, 105, 110, 95, 97, 114, 114, 97, 121};
 

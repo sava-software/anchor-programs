@@ -61,7 +61,14 @@ public sealed interface LbClmmError extends ProgramError permits
     LbClmmError.LiquidityLocked,
     LbClmmError.BinRangeIsNotEmpty,
     LbClmmError.NotExactAmountOut,
-    LbClmmError.InvalidActivationType {
+    LbClmmError.InvalidActivationType,
+    LbClmmError.InvalidActivationDuration,
+    LbClmmError.MissingTokenAmountAsTokenLaunchProof,
+    LbClmmError.InvalidQuoteToken,
+    LbClmmError.InvalidBinStep,
+    LbClmmError.InvalidBaseFee,
+    LbClmmError.InvalidPreActivationDuration,
+    LbClmmError.AlreadyPassPreActivationSwapPoint {
 
   static LbClmmError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -124,6 +131,13 @@ public sealed interface LbClmmError extends ProgramError permits
       case 6056 -> BinRangeIsNotEmpty.INSTANCE;
       case 6057 -> NotExactAmountOut.INSTANCE;
       case 6058 -> InvalidActivationType.INSTANCE;
+      case 6059 -> InvalidActivationDuration.INSTANCE;
+      case 6060 -> MissingTokenAmountAsTokenLaunchProof.INSTANCE;
+      case 6061 -> InvalidQuoteToken.INSTANCE;
+      case 6062 -> InvalidBinStep.INSTANCE;
+      case 6063 -> InvalidBaseFee.INSTANCE;
+      case 6064 -> InvalidPreActivationDuration.INSTANCE;
+      case 6065 -> AlreadyPassPreActivationSwapPoint.INSTANCE;
       default -> throw new IllegalStateException("Unexpected LbClmm error code: " + errorCode);
     };
   }
@@ -538,6 +552,55 @@ public sealed interface LbClmmError extends ProgramError permits
 
     public static final InvalidActivationType INSTANCE = new InvalidActivationType(
         6058, "Invalid activation type"
+    );
+  }
+
+  record InvalidActivationDuration(int code, String msg) implements LbClmmError {
+
+    public static final InvalidActivationDuration INSTANCE = new InvalidActivationDuration(
+        6059, "Invalid activation duration"
+    );
+  }
+
+  record MissingTokenAmountAsTokenLaunchProof(int code, String msg) implements LbClmmError {
+
+    public static final MissingTokenAmountAsTokenLaunchProof INSTANCE = new MissingTokenAmountAsTokenLaunchProof(
+        6060, "Missing token amount as token launch owner proof"
+    );
+  }
+
+  record InvalidQuoteToken(int code, String msg) implements LbClmmError {
+
+    public static final InvalidQuoteToken INSTANCE = new InvalidQuoteToken(
+        6061, "Quote token must be SOL or USDC"
+    );
+  }
+
+  record InvalidBinStep(int code, String msg) implements LbClmmError {
+
+    public static final InvalidBinStep INSTANCE = new InvalidBinStep(
+        6062, "Invalid bin step"
+    );
+  }
+
+  record InvalidBaseFee(int code, String msg) implements LbClmmError {
+
+    public static final InvalidBaseFee INSTANCE = new InvalidBaseFee(
+        6063, "Invalid base fee"
+    );
+  }
+
+  record InvalidPreActivationDuration(int code, String msg) implements LbClmmError {
+
+    public static final InvalidPreActivationDuration INSTANCE = new InvalidPreActivationDuration(
+        6064, "Invalid pre-activation duration"
+    );
+  }
+
+  record AlreadyPassPreActivationSwapPoint(int code, String msg) implements LbClmmError {
+
+    public static final AlreadyPassPreActivationSwapPoint INSTANCE = new AlreadyPassPreActivationSwapPoint(
+        6065, "Already pass pre-activation swap point"
     );
   }
 }

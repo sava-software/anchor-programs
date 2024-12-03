@@ -17,6 +17,7 @@ public record ProrataVaultConfig(PublicKey _address,
                                  long startVestingDuration,
                                  long endVestingDuration,
                                  long escrowFee,
+                                 int activationType,
                                  byte[] padding) implements Borsh {
 
   public static final int BYTES = 232;
@@ -26,7 +27,8 @@ public record ProrataVaultConfig(PublicKey _address,
   public static final int START_VESTING_DURATION_OFFSET = 16;
   public static final int END_VESTING_DURATION_OFFSET = 24;
   public static final int ESCROW_FEE_OFFSET = 32;
-  public static final int PADDING_OFFSET = 40;
+  public static final int ACTIVATION_TYPE_OFFSET = 40;
+  public static final int PADDING_OFFSET = 41;
 
   public static Filter createMaxBuyingCapFilter(final long maxBuyingCap) {
     final byte[] _data = new byte[8];
@@ -50,6 +52,10 @@ public record ProrataVaultConfig(PublicKey _address,
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, escrowFee);
     return Filter.createMemCompFilter(ESCROW_FEE_OFFSET, _data);
+  }
+
+  public static Filter createActivationTypeFilter(final int activationType) {
+    return Filter.createMemCompFilter(ACTIVATION_TYPE_OFFSET, new byte[]{(byte) activationType});
   }
 
   public static ProrataVaultConfig read(final byte[] _data, final int offset) {
@@ -76,7 +82,9 @@ public record ProrataVaultConfig(PublicKey _address,
     i += 8;
     final var escrowFee = getInt64LE(_data, i);
     i += 8;
-    final var padding = new byte[192];
+    final var activationType = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[191];
     Borsh.readArray(padding, _data, i);
     return new ProrataVaultConfig(_address,
                                   discriminator,
@@ -84,6 +92,7 @@ public record ProrataVaultConfig(PublicKey _address,
                                   startVestingDuration,
                                   endVestingDuration,
                                   escrowFee,
+                                  activationType,
                                   padding);
   }
 
@@ -98,6 +107,8 @@ public record ProrataVaultConfig(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, escrowFee);
     i += 8;
+    _data[i] = (byte) activationType;
+    ++i;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

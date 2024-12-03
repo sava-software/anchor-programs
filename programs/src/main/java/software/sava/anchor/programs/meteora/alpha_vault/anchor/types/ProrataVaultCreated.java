@@ -9,14 +9,15 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record ProrataVaultCreated(PublicKey baseMint,
                                   PublicKey quoteMint,
-                                  long startVestingSlot,
-                                  long endVestingSlot,
+                                  long startVestingPoint,
+                                  long endVestingPoint,
                                   long maxBuyingCap,
                                   PublicKey pool,
                                   int poolType,
-                                  long escrowFee) implements Borsh {
+                                  long escrowFee,
+                                  int activationType) implements Borsh {
 
-  public static final int BYTES = 129;
+  public static final int BYTES = 130;
 
   public static ProrataVaultCreated read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -27,9 +28,9 @@ public record ProrataVaultCreated(PublicKey baseMint,
     i += 32;
     final var quoteMint = readPubKey(_data, i);
     i += 32;
-    final var startVestingSlot = getInt64LE(_data, i);
+    final var startVestingPoint = getInt64LE(_data, i);
     i += 8;
-    final var endVestingSlot = getInt64LE(_data, i);
+    final var endVestingPoint = getInt64LE(_data, i);
     i += 8;
     final var maxBuyingCap = getInt64LE(_data, i);
     i += 8;
@@ -38,14 +39,17 @@ public record ProrataVaultCreated(PublicKey baseMint,
     final var poolType = _data[i] & 0xFF;
     ++i;
     final var escrowFee = getInt64LE(_data, i);
+    i += 8;
+    final var activationType = _data[i] & 0xFF;
     return new ProrataVaultCreated(baseMint,
                                    quoteMint,
-                                   startVestingSlot,
-                                   endVestingSlot,
+                                   startVestingPoint,
+                                   endVestingPoint,
                                    maxBuyingCap,
                                    pool,
                                    poolType,
-                                   escrowFee);
+                                   escrowFee,
+                                   activationType);
   }
 
   @Override
@@ -55,9 +59,9 @@ public record ProrataVaultCreated(PublicKey baseMint,
     i += 32;
     quoteMint.write(_data, i);
     i += 32;
-    putInt64LE(_data, i, startVestingSlot);
+    putInt64LE(_data, i, startVestingPoint);
     i += 8;
-    putInt64LE(_data, i, endVestingSlot);
+    putInt64LE(_data, i, endVestingPoint);
     i += 8;
     putInt64LE(_data, i, maxBuyingCap);
     i += 8;
@@ -67,6 +71,8 @@ public record ProrataVaultCreated(PublicKey baseMint,
     ++i;
     putInt64LE(_data, i, escrowFee);
     i += 8;
+    _data[i] = (byte) activationType;
+    ++i;
     return i - offset;
   }
 

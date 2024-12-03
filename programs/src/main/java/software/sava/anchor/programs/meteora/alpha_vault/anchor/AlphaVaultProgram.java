@@ -18,6 +18,7 @@ import software.sava.core.tx.Instruction;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
+import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
@@ -27,6 +28,56 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class AlphaVaultProgram {
+
+  public static final Discriminator TRANSFER_VAULT_AUTHORITY_DISCRIMINATOR = toDiscriminator(139, 35, 83, 88, 52, 186, 162, 110);
+
+  public static Instruction transferVaultAuthority(final AccountMeta invokedAlphaVaultProgramMeta,
+                                                   final PublicKey vaultKey,
+                                                   final PublicKey vaultAuthorityKey,
+                                                   final PublicKey newAuthority) {
+    final var keys = List.of(
+      createWrite(vaultKey),
+      createReadOnlySigner(vaultAuthorityKey)
+    );
+
+    final byte[] _data = new byte[40];
+    int i = writeDiscriminator(TRANSFER_VAULT_AUTHORITY_DISCRIMINATOR, _data, 0);
+    newAuthority.write(_data, i);
+
+    return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
+  }
+
+  public record TransferVaultAuthorityIxData(Discriminator discriminator, PublicKey newAuthority) implements Borsh {  
+
+    public static TransferVaultAuthorityIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 40;
+
+    public static TransferVaultAuthorityIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var newAuthority = readPubKey(_data, i);
+      return new TransferVaultAuthorityIxData(discriminator, newAuthority);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      newAuthority.write(_data, i);
+      i += 32;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
 
   public static final Discriminator INITIALIZE_PRORATA_VAULT_DISCRIMINATOR = toDiscriminator(178, 180, 176, 247, 128, 186, 43, 9);
 
@@ -229,7 +280,7 @@ public final class AlphaVaultProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 48;
+    public static final int BYTES = 49;
 
     public static CreateProrataConfigIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -470,7 +521,7 @@ public final class AlphaVaultProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 64;
+    public static final int BYTES = 65;
 
     public static CreateFcfsConfigIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -662,6 +713,68 @@ public final class AlphaVaultProgram {
     @Override
     public int l() {
       return 8 + 8 + Borsh.lenVectorArray(proof);
+    }
+  }
+
+  public static final Discriminator CREATE_PERMISSIONED_ESCROW_WITH_AUTHORITY_DISCRIMINATOR = toDiscriminator(211, 231, 194, 69, 65, 11, 123, 93);
+
+  public static Instruction createPermissionedEscrowWithAuthority(final AccountMeta invokedAlphaVaultProgramMeta,
+                                                                  final PublicKey vaultKey,
+                                                                  final PublicKey poolKey,
+                                                                  final PublicKey escrowKey,
+                                                                  final PublicKey ownerKey,
+                                                                  final PublicKey payerKey,
+                                                                  final PublicKey systemProgramKey,
+                                                                  final PublicKey eventAuthorityKey,
+                                                                  final PublicKey programKey,
+                                                                  final long maxCap) {
+    final var keys = List.of(
+      createWrite(vaultKey),
+      createRead(poolKey),
+      createWrite(escrowKey),
+      createRead(ownerKey),
+      createWritableSigner(payerKey),
+      createRead(systemProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(CREATE_PERMISSIONED_ESCROW_WITH_AUTHORITY_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, maxCap);
+
+    return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
+  }
+
+  public record CreatePermissionedEscrowWithAuthorityIxData(Discriminator discriminator, long maxCap) implements Borsh {  
+
+    public static CreatePermissionedEscrowWithAuthorityIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static CreatePermissionedEscrowWithAuthorityIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var maxCap = getInt64LE(_data, i);
+      return new CreatePermissionedEscrowWithAuthorityIxData(discriminator, maxCap);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, maxCap);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
     }
   }
 

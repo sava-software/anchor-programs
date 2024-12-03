@@ -9,16 +9,17 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record FcfsVaultCreated(PublicKey baseMint,
                                PublicKey quoteMint,
-                               long startVestingSlot,
-                               long endVestingSlot,
+                               long startVestingPoint,
+                               long endVestingPoint,
                                long maxDepositingCap,
                                PublicKey pool,
                                int poolType,
-                               long depositingSlot,
+                               long depositingPoint,
                                long individualDepositingCap,
-                               long escrowFee) implements Borsh {
+                               long escrowFee,
+                               int activationType) implements Borsh {
 
-  public static final int BYTES = 145;
+  public static final int BYTES = 146;
 
   public static FcfsVaultCreated read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -29,9 +30,9 @@ public record FcfsVaultCreated(PublicKey baseMint,
     i += 32;
     final var quoteMint = readPubKey(_data, i);
     i += 32;
-    final var startVestingSlot = getInt64LE(_data, i);
+    final var startVestingPoint = getInt64LE(_data, i);
     i += 8;
-    final var endVestingSlot = getInt64LE(_data, i);
+    final var endVestingPoint = getInt64LE(_data, i);
     i += 8;
     final var maxDepositingCap = getInt64LE(_data, i);
     i += 8;
@@ -39,21 +40,24 @@ public record FcfsVaultCreated(PublicKey baseMint,
     i += 32;
     final var poolType = _data[i] & 0xFF;
     ++i;
-    final var depositingSlot = getInt64LE(_data, i);
+    final var depositingPoint = getInt64LE(_data, i);
     i += 8;
     final var individualDepositingCap = getInt64LE(_data, i);
     i += 8;
     final var escrowFee = getInt64LE(_data, i);
+    i += 8;
+    final var activationType = _data[i] & 0xFF;
     return new FcfsVaultCreated(baseMint,
                                 quoteMint,
-                                startVestingSlot,
-                                endVestingSlot,
+                                startVestingPoint,
+                                endVestingPoint,
                                 maxDepositingCap,
                                 pool,
                                 poolType,
-                                depositingSlot,
+                                depositingPoint,
                                 individualDepositingCap,
-                                escrowFee);
+                                escrowFee,
+                                activationType);
   }
 
   @Override
@@ -63,9 +67,9 @@ public record FcfsVaultCreated(PublicKey baseMint,
     i += 32;
     quoteMint.write(_data, i);
     i += 32;
-    putInt64LE(_data, i, startVestingSlot);
+    putInt64LE(_data, i, startVestingPoint);
     i += 8;
-    putInt64LE(_data, i, endVestingSlot);
+    putInt64LE(_data, i, endVestingPoint);
     i += 8;
     putInt64LE(_data, i, maxDepositingCap);
     i += 8;
@@ -73,12 +77,14 @@ public record FcfsVaultCreated(PublicKey baseMint,
     i += 32;
     _data[i] = (byte) poolType;
     ++i;
-    putInt64LE(_data, i, depositingSlot);
+    putInt64LE(_data, i, depositingPoint);
     i += 8;
     putInt64LE(_data, i, individualDepositingCap);
     i += 8;
     putInt64LE(_data, i, escrowFee);
     i += 8;
+    _data[i] = (byte) activationType;
+    ++i;
     return i - offset;
   }
 

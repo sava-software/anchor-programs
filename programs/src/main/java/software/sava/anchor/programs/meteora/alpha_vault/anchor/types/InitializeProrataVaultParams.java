@@ -10,12 +10,12 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 public record InitializeProrataVaultParams(int poolType,
                                            PublicKey quoteMint,
                                            PublicKey baseMint,
-                                           long depositingSlot,
-                                           long startVestingSlot,
-                                           long endVestingSlot,
+                                           long depositingPoint,
+                                           long startVestingPoint,
+                                           long endVestingPoint,
                                            long maxBuyingCap,
                                            long escrowFee,
-                                           boolean permissioned) implements Borsh {
+                                           int whitelistMode) implements Borsh {
 
   public static final int BYTES = 106;
 
@@ -30,26 +30,26 @@ public record InitializeProrataVaultParams(int poolType,
     i += 32;
     final var baseMint = readPubKey(_data, i);
     i += 32;
-    final var depositingSlot = getInt64LE(_data, i);
+    final var depositingPoint = getInt64LE(_data, i);
     i += 8;
-    final var startVestingSlot = getInt64LE(_data, i);
+    final var startVestingPoint = getInt64LE(_data, i);
     i += 8;
-    final var endVestingSlot = getInt64LE(_data, i);
+    final var endVestingPoint = getInt64LE(_data, i);
     i += 8;
     final var maxBuyingCap = getInt64LE(_data, i);
     i += 8;
     final var escrowFee = getInt64LE(_data, i);
     i += 8;
-    final var permissioned = _data[i] == 1;
+    final var whitelistMode = _data[i] & 0xFF;
     return new InitializeProrataVaultParams(poolType,
                                             quoteMint,
                                             baseMint,
-                                            depositingSlot,
-                                            startVestingSlot,
-                                            endVestingSlot,
+                                            depositingPoint,
+                                            startVestingPoint,
+                                            endVestingPoint,
                                             maxBuyingCap,
                                             escrowFee,
-                                            permissioned);
+                                            whitelistMode);
   }
 
   @Override
@@ -61,17 +61,17 @@ public record InitializeProrataVaultParams(int poolType,
     i += 32;
     baseMint.write(_data, i);
     i += 32;
-    putInt64LE(_data, i, depositingSlot);
+    putInt64LE(_data, i, depositingPoint);
     i += 8;
-    putInt64LE(_data, i, startVestingSlot);
+    putInt64LE(_data, i, startVestingPoint);
     i += 8;
-    putInt64LE(_data, i, endVestingSlot);
+    putInt64LE(_data, i, endVestingPoint);
     i += 8;
     putInt64LE(_data, i, maxBuyingCap);
     i += 8;
     putInt64LE(_data, i, escrowFee);
     i += 8;
-    _data[i] = (byte) (permissioned ? 1 : 0);
+    _data[i] = (byte) whitelistMode;
     ++i;
     return i - offset;
   }

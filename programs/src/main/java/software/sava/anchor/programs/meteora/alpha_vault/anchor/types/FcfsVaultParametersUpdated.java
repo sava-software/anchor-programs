@@ -9,9 +9,9 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record FcfsVaultParametersUpdated(PublicKey vault,
                                          long maxDepositingCap,
-                                         long startVestingSlot,
-                                         long endVestingSlot,
-                                         long depositingSlot,
+                                         long startVestingPoint,
+                                         long endVestingPoint,
+                                         long depositingPoint,
                                          long individualDepositingCap) implements Borsh {
 
   public static final int BYTES = 72;
@@ -25,18 +25,18 @@ public record FcfsVaultParametersUpdated(PublicKey vault,
     i += 32;
     final var maxDepositingCap = getInt64LE(_data, i);
     i += 8;
-    final var startVestingSlot = getInt64LE(_data, i);
+    final var startVestingPoint = getInt64LE(_data, i);
     i += 8;
-    final var endVestingSlot = getInt64LE(_data, i);
+    final var endVestingPoint = getInt64LE(_data, i);
     i += 8;
-    final var depositingSlot = getInt64LE(_data, i);
+    final var depositingPoint = getInt64LE(_data, i);
     i += 8;
     final var individualDepositingCap = getInt64LE(_data, i);
     return new FcfsVaultParametersUpdated(vault,
                                           maxDepositingCap,
-                                          startVestingSlot,
-                                          endVestingSlot,
-                                          depositingSlot,
+                                          startVestingPoint,
+                                          endVestingPoint,
+                                          depositingPoint,
                                           individualDepositingCap);
   }
 
@@ -47,11 +47,11 @@ public record FcfsVaultParametersUpdated(PublicKey vault,
     i += 32;
     putInt64LE(_data, i, maxDepositingCap);
     i += 8;
-    putInt64LE(_data, i, startVestingSlot);
+    putInt64LE(_data, i, startVestingPoint);
     i += 8;
-    putInt64LE(_data, i, endVestingSlot);
+    putInt64LE(_data, i, endVestingPoint);
     i += 8;
-    putInt64LE(_data, i, depositingSlot);
+    putInt64LE(_data, i, depositingPoint);
     i += 8;
     putInt64LE(_data, i, individualDepositingCap);
     i += 8;

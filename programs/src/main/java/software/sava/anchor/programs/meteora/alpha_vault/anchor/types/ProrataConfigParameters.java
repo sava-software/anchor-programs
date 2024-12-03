@@ -9,9 +9,10 @@ public record ProrataConfigParameters(long maxBuyingCap,
                                       long startVestingDuration,
                                       long endVestingDuration,
                                       long escrowFee,
+                                      int activationType,
                                       long index) implements Borsh {
 
-  public static final int BYTES = 40;
+  public static final int BYTES = 41;
 
   public static ProrataConfigParameters read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -26,11 +27,14 @@ public record ProrataConfigParameters(long maxBuyingCap,
     i += 8;
     final var escrowFee = getInt64LE(_data, i);
     i += 8;
+    final var activationType = _data[i] & 0xFF;
+    ++i;
     final var index = getInt64LE(_data, i);
     return new ProrataConfigParameters(maxBuyingCap,
                                        startVestingDuration,
                                        endVestingDuration,
                                        escrowFee,
+                                       activationType,
                                        index);
   }
 
@@ -45,6 +49,8 @@ public record ProrataConfigParameters(long maxBuyingCap,
     i += 8;
     putInt64LE(_data, i, escrowFee);
     i += 8;
+    _data[i] = (byte) activationType;
+    ++i;
     putInt64LE(_data, i, index);
     i += 8;
     return i - offset;

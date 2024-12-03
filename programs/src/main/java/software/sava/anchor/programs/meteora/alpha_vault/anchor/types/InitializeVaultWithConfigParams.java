@@ -8,8 +8,7 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 public record InitializeVaultWithConfigParams(int poolType,
                                               PublicKey quoteMint,
                                               PublicKey baseMint,
-                                              // Permissioned vault support whitelist wallet deposit cap feature
-                                              boolean permissioned) implements Borsh {
+                                              int whitelistMode) implements Borsh {
 
   public static final int BYTES = 66;
 
@@ -24,11 +23,11 @@ public record InitializeVaultWithConfigParams(int poolType,
     i += 32;
     final var baseMint = readPubKey(_data, i);
     i += 32;
-    final var permissioned = _data[i] == 1;
+    final var whitelistMode = _data[i] & 0xFF;
     return new InitializeVaultWithConfigParams(poolType,
                                                quoteMint,
                                                baseMint,
-                                               permissioned);
+                                               whitelistMode);
   }
 
   @Override
@@ -40,7 +39,7 @@ public record InitializeVaultWithConfigParams(int poolType,
     i += 32;
     baseMint.write(_data, i);
     i += 32;
-    _data[i] = (byte) (permissioned ? 1 : 0);
+    _data[i] = (byte) whitelistMode;
     ++i;
     return i - offset;
   }

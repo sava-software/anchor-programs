@@ -59,8 +59,8 @@ public record LbPair(PublicKey _address,
                      long[] binArrayBitmap,
                      // Last time the pool fee parameter was updated
                      long lastUpdatedAt,
-                     // Whitelisted wallet
-                     PublicKey whitelistedWallet,
+                     // _padding_2, previous whitelisted_wallet, BE CAREFUL FOR TOMBSTONE WHEN REUSE !!
+                     byte[] padding2,
                      // Address allowed to swap when the current point is greater than or equal to the pre-activation point. The pre-activation point is calculated as `activation_point - pre_activation_duration`.
                      PublicKey preActivationSwapAddress,
                      // Base keypair. Only required for permission pair
@@ -69,10 +69,10 @@ public record LbPair(PublicKey _address,
                      long activationPoint,
                      // Duration before activation activation_point. Used to calculate pre-activation time point for pre_activation_swap_address
                      long preActivationDuration,
-                     // _padding 2 is reclaimed free space from swap_cap_deactivate_point and swap_cap_amount before, BE CAREFUL FOR TOMBSTONE WHEN REUSE !!
-                     byte[] padding2,
-                     // Liquidity lock duration for positions which created before activate. Only applicable for permission pair.
-                     long lockDuration,
+                     // _padding 3 is reclaimed free space from swap_cap_deactivate_point and swap_cap_amount before, BE CAREFUL FOR TOMBSTONE WHEN REUSE !!
+                     byte[] padding3,
+                     // _padding_4, previous lock_duration, BE CAREFUL FOR TOMBSTONE WHEN REUSE !!
+                     long padding4,
                      // Pool creator
                      PublicKey creator,
                      // Reserved space for future use
@@ -103,13 +103,13 @@ public record LbPair(PublicKey _address,
   public static final int ORACLE_OFFSET = 552;
   public static final int BIN_ARRAY_BITMAP_OFFSET = 584;
   public static final int LAST_UPDATED_AT_OFFSET = 712;
-  public static final int WHITELISTED_WALLET_OFFSET = 720;
+  public static final int PADDING2_OFFSET = 720;
   public static final int PRE_ACTIVATION_SWAP_ADDRESS_OFFSET = 752;
   public static final int BASE_KEY_OFFSET = 784;
   public static final int ACTIVATION_POINT_OFFSET = 816;
   public static final int PRE_ACTIVATION_DURATION_OFFSET = 824;
-  public static final int PADDING2_OFFSET = 832;
-  public static final int LOCK_DURATION_OFFSET = 840;
+  public static final int PADDING3_OFFSET = 832;
+  public static final int PADDING4_OFFSET = 840;
   public static final int CREATOR_OFFSET = 848;
   public static final int RESERVED_OFFSET = 880;
 
@@ -183,10 +183,6 @@ public record LbPair(PublicKey _address,
     return Filter.createMemCompFilter(LAST_UPDATED_AT_OFFSET, _data);
   }
 
-  public static Filter createWhitelistedWalletFilter(final PublicKey whitelistedWallet) {
-    return Filter.createMemCompFilter(WHITELISTED_WALLET_OFFSET, whitelistedWallet);
-  }
-
   public static Filter createPreActivationSwapAddressFilter(final PublicKey preActivationSwapAddress) {
     return Filter.createMemCompFilter(PRE_ACTIVATION_SWAP_ADDRESS_OFFSET, preActivationSwapAddress);
   }
@@ -207,10 +203,10 @@ public record LbPair(PublicKey _address,
     return Filter.createMemCompFilter(PRE_ACTIVATION_DURATION_OFFSET, _data);
   }
 
-  public static Filter createLockDurationFilter(final long lockDuration) {
+  public static Filter createPadding4Filter(final long padding4) {
     final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, lockDuration);
-    return Filter.createMemCompFilter(LOCK_DURATION_OFFSET, _data);
+    putInt64LE(_data, 0, padding4);
+    return Filter.createMemCompFilter(PADDING4_OFFSET, _data);
   }
 
   public static Filter createCreatorFilter(final PublicKey creator) {
@@ -277,8 +273,8 @@ public record LbPair(PublicKey _address,
     i += Borsh.readArray(binArrayBitmap, _data, i);
     final var lastUpdatedAt = getInt64LE(_data, i);
     i += 8;
-    final var whitelistedWallet = readPubKey(_data, i);
-    i += 32;
+    final var padding2 = new byte[32];
+    i += Borsh.readArray(padding2, _data, i);
     final var preActivationSwapAddress = readPubKey(_data, i);
     i += 32;
     final var baseKey = readPubKey(_data, i);
@@ -287,9 +283,9 @@ public record LbPair(PublicKey _address,
     i += 8;
     final var preActivationDuration = getInt64LE(_data, i);
     i += 8;
-    final var padding2 = new byte[8];
-    i += Borsh.readArray(padding2, _data, i);
-    final var lockDuration = getInt64LE(_data, i);
+    final var padding3 = new byte[8];
+    i += Borsh.readArray(padding3, _data, i);
+    final var padding4 = getInt64LE(_data, i);
     i += 8;
     final var creator = readPubKey(_data, i);
     i += 32;
@@ -319,13 +315,13 @@ public record LbPair(PublicKey _address,
                       oracle,
                       binArrayBitmap,
                       lastUpdatedAt,
-                      whitelistedWallet,
+                      padding2,
                       preActivationSwapAddress,
                       baseKey,
                       activationPoint,
                       preActivationDuration,
-                      padding2,
-                      lockDuration,
+                      padding3,
+                      padding4,
                       creator,
                       reserved);
   }
@@ -368,8 +364,7 @@ public record LbPair(PublicKey _address,
     i += Borsh.writeArray(binArrayBitmap, _data, i);
     putInt64LE(_data, i, lastUpdatedAt);
     i += 8;
-    whitelistedWallet.write(_data, i);
-    i += 32;
+    i += Borsh.writeArray(padding2, _data, i);
     preActivationSwapAddress.write(_data, i);
     i += 32;
     baseKey.write(_data, i);
@@ -378,8 +373,8 @@ public record LbPair(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, preActivationDuration);
     i += 8;
-    i += Borsh.writeArray(padding2, _data, i);
-    putInt64LE(_data, i, lockDuration);
+    i += Borsh.writeArray(padding3, _data, i);
+    putInt64LE(_data, i, padding4);
     i += 8;
     creator.write(_data, i);
     i += 32;

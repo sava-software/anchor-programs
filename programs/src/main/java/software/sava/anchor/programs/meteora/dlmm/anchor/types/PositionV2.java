@@ -44,8 +44,8 @@ public record PositionV2(PublicKey _address,
                          PublicKey operator,
                          // Time point which the locked liquidity can be withdraw
                          long lockReleasePoint,
-                         // Is the position subjected to liquidity locking for the launch pool.
-                         int subjectedToBootstrapLiquidityLocking,
+                         // _padding_0, previous subjected_to_bootstrap_liquidity_locking, BE CAREFUL FOR TOMBSTONE WHEN REUSE !!
+                         int padding0,
                          // Address is able to claim fee in this position, only valid for bootstrap_liquidity_position
                          PublicKey feeOwner,
                          // Reserved space for future use
@@ -67,7 +67,7 @@ public record PositionV2(PublicKey _address,
   public static final int TOTAL_CLAIMED_REWARDS_OFFSET = 7944;
   public static final int OPERATOR_OFFSET = 7960;
   public static final int LOCK_RELEASE_POINT_OFFSET = 7992;
-  public static final int SUBJECTED_TO_BOOTSTRAP_LIQUIDITY_LOCKING_OFFSET = 8000;
+  public static final int PADDING0_OFFSET = 8000;
   public static final int FEE_OWNER_OFFSET = 8001;
   public static final int RESERVED_OFFSET = 8033;
 
@@ -119,8 +119,8 @@ public record PositionV2(PublicKey _address,
     return Filter.createMemCompFilter(LOCK_RELEASE_POINT_OFFSET, _data);
   }
 
-  public static Filter createSubjectedToBootstrapLiquidityLockingFilter(final int subjectedToBootstrapLiquidityLocking) {
-    return Filter.createMemCompFilter(SUBJECTED_TO_BOOTSTRAP_LIQUIDITY_LOCKING_OFFSET, new byte[]{(byte) subjectedToBootstrapLiquidityLocking});
+  public static Filter createPadding0Filter(final int padding0) {
+    return Filter.createMemCompFilter(PADDING0_OFFSET, new byte[]{(byte) padding0});
   }
 
   public static Filter createFeeOwnerFilter(final PublicKey feeOwner) {
@@ -169,7 +169,7 @@ public record PositionV2(PublicKey _address,
     i += 32;
     final var lockReleasePoint = getInt64LE(_data, i);
     i += 8;
-    final var subjectedToBootstrapLiquidityLocking = _data[i] & 0xFF;
+    final var padding0 = _data[i] & 0xFF;
     ++i;
     final var feeOwner = readPubKey(_data, i);
     i += 32;
@@ -190,7 +190,7 @@ public record PositionV2(PublicKey _address,
                           totalClaimedRewards,
                           operator,
                           lockReleasePoint,
-                          subjectedToBootstrapLiquidityLocking,
+                          padding0,
                           feeOwner,
                           reserved);
   }
@@ -220,7 +220,7 @@ public record PositionV2(PublicKey _address,
     i += 32;
     putInt64LE(_data, i, lockReleasePoint);
     i += 8;
-    _data[i] = (byte) subjectedToBootstrapLiquidityLocking;
+    _data[i] = (byte) padding0;
     ++i;
     feeOwner.write(_data, i);
     i += 32;

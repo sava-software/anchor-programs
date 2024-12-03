@@ -6,10 +6,10 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record UpdateFcfsVaultParams(long maxDepositingCap,
-                                    long depositingSlot,
+                                    long depositingPoint,
                                     long individualDepositingCap,
-                                    long startVestingSlot,
-                                    long endVestingSlot) implements Borsh {
+                                    long startVestingPoint,
+                                    long endVestingPoint) implements Borsh {
 
   public static final int BYTES = 40;
 
@@ -20,18 +20,18 @@ public record UpdateFcfsVaultParams(long maxDepositingCap,
     int i = offset;
     final var maxDepositingCap = getInt64LE(_data, i);
     i += 8;
-    final var depositingSlot = getInt64LE(_data, i);
+    final var depositingPoint = getInt64LE(_data, i);
     i += 8;
     final var individualDepositingCap = getInt64LE(_data, i);
     i += 8;
-    final var startVestingSlot = getInt64LE(_data, i);
+    final var startVestingPoint = getInt64LE(_data, i);
     i += 8;
-    final var endVestingSlot = getInt64LE(_data, i);
+    final var endVestingPoint = getInt64LE(_data, i);
     return new UpdateFcfsVaultParams(maxDepositingCap,
-                                     depositingSlot,
+                                     depositingPoint,
                                      individualDepositingCap,
-                                     startVestingSlot,
-                                     endVestingSlot);
+                                     startVestingPoint,
+                                     endVestingPoint);
   }
 
   @Override
@@ -39,13 +39,13 @@ public record UpdateFcfsVaultParams(long maxDepositingCap,
     int i = offset;
     putInt64LE(_data, i, maxDepositingCap);
     i += 8;
-    putInt64LE(_data, i, depositingSlot);
+    putInt64LE(_data, i, depositingPoint);
     i += 8;
     putInt64LE(_data, i, individualDepositingCap);
     i += 8;
-    putInt64LE(_data, i, startVestingSlot);
+    putInt64LE(_data, i, startVestingPoint);
     i += 8;
-    putInt64LE(_data, i, endVestingSlot);
+    putInt64LE(_data, i, endVestingPoint);
     i += 8;
     return i - offset;
   }

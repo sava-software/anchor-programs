@@ -3,15 +3,14 @@ package software.sava.anchor.programs.meteora.alpha_vault.anchor;
 import software.sava.anchor.ProgramError;
 
 public sealed interface AlphaVaultError extends ProgramError permits
-    AlphaVaultError.StartSlotAfterEnd,
-    AlphaVaultError.SlotNotInFuture,
+    AlphaVaultError.TimePointNotInFuture,
     AlphaVaultError.IncorrectTokenMint,
     AlphaVaultError.IncorrectPairType,
     AlphaVaultError.PoolHasStarted,
-    AlphaVaultError.NotPermitThisActionInThisSlot,
+    AlphaVaultError.NotPermitThisActionInThisTimePoint,
     AlphaVaultError.TheSaleIsOngoing,
     AlphaVaultError.EscrowIsNotClosable,
-    AlphaVaultError.SlotOrdersAreIncorrect,
+    AlphaVaultError.TimePointOrdersAreIncorrect,
     AlphaVaultError.EscrowHasRefuned,
     AlphaVaultError.MathOverflow,
     AlphaVaultError.MaxBuyingCapIsZero,
@@ -24,241 +23,323 @@ public sealed interface AlphaVaultError extends ProgramError permits
     AlphaVaultError.DepositAmountIsZero,
     AlphaVaultError.PoolOwnerIsMismatched,
     AlphaVaultError.RefundAmountIsZero,
-    AlphaVaultError.DepositingSlotDurationIsInvalid,
-    AlphaVaultError.DepositingSlotIsInvalid,
+    AlphaVaultError.DepositingDurationIsInvalid,
+    AlphaVaultError.DepositingTimePointIsInvalid,
     AlphaVaultError.IndividualDepositingCapIsZero,
     AlphaVaultError.InvalidFeeReceiverAccount,
     AlphaVaultError.NotPermissionedVault,
     AlphaVaultError.NotPermitToDoThisAction,
-    AlphaVaultError.InvalidProof {
+    AlphaVaultError.InvalidProof,
+    AlphaVaultError.InvalidActivationType,
+    AlphaVaultError.ActivationTypeIsMismatched,
+    AlphaVaultError.InvalidPool,
+    AlphaVaultError.InvalidCreator,
+    AlphaVaultError.PermissionedVaultCannotChargeEscrowFee,
+    AlphaVaultError.EscrowFeeTooHigh,
+    AlphaVaultError.LockDurationInvalid,
+    AlphaVaultError.MaxBuyingCapIsTooSmall,
+    AlphaVaultError.MaxDepositingCapIsTooSmall,
+    AlphaVaultError.InvalidWhitelistWalletMode {
 
   static AlphaVaultError getInstance(final int errorCode) {
     return switch (errorCode) {
-      case 6000 -> StartSlotAfterEnd.INSTANCE;
-      case 6001 -> SlotNotInFuture.INSTANCE;
-      case 6002 -> IncorrectTokenMint.INSTANCE;
-      case 6003 -> IncorrectPairType.INSTANCE;
-      case 6004 -> PoolHasStarted.INSTANCE;
-      case 6005 -> NotPermitThisActionInThisSlot.INSTANCE;
-      case 6006 -> TheSaleIsOngoing.INSTANCE;
-      case 6007 -> EscrowIsNotClosable.INSTANCE;
-      case 6008 -> SlotOrdersAreIncorrect.INSTANCE;
-      case 6009 -> EscrowHasRefuned.INSTANCE;
-      case 6010 -> MathOverflow.INSTANCE;
-      case 6011 -> MaxBuyingCapIsZero.INSTANCE;
-      case 6012 -> MaxAmountIsTooSmall.INSTANCE;
-      case 6013 -> PoolTypeIsNotSupported.INSTANCE;
-      case 6014 -> InvalidAdmin.INSTANCE;
-      case 6015 -> VaultModeIsIncorrect.INSTANCE;
-      case 6016 -> MaxDepositingCapIsInValid.INSTANCE;
-      case 6017 -> VestingDurationIsInValid.INSTANCE;
-      case 6018 -> DepositAmountIsZero.INSTANCE;
-      case 6019 -> PoolOwnerIsMismatched.INSTANCE;
-      case 6020 -> RefundAmountIsZero.INSTANCE;
-      case 6021 -> DepositingSlotDurationIsInvalid.INSTANCE;
-      case 6022 -> DepositingSlotIsInvalid.INSTANCE;
-      case 6023 -> IndividualDepositingCapIsZero.INSTANCE;
-      case 6024 -> InvalidFeeReceiverAccount.INSTANCE;
-      case 6025 -> NotPermissionedVault.INSTANCE;
-      case 6026 -> NotPermitToDoThisAction.INSTANCE;
-      case 6027 -> InvalidProof.INSTANCE;
+      case 6000 -> TimePointNotInFuture.INSTANCE;
+      case 6001 -> IncorrectTokenMint.INSTANCE;
+      case 6002 -> IncorrectPairType.INSTANCE;
+      case 6003 -> PoolHasStarted.INSTANCE;
+      case 6004 -> NotPermitThisActionInThisTimePoint.INSTANCE;
+      case 6005 -> TheSaleIsOngoing.INSTANCE;
+      case 6006 -> EscrowIsNotClosable.INSTANCE;
+      case 6007 -> TimePointOrdersAreIncorrect.INSTANCE;
+      case 6008 -> EscrowHasRefuned.INSTANCE;
+      case 6009 -> MathOverflow.INSTANCE;
+      case 6010 -> MaxBuyingCapIsZero.INSTANCE;
+      case 6011 -> MaxAmountIsTooSmall.INSTANCE;
+      case 6012 -> PoolTypeIsNotSupported.INSTANCE;
+      case 6013 -> InvalidAdmin.INSTANCE;
+      case 6014 -> VaultModeIsIncorrect.INSTANCE;
+      case 6015 -> MaxDepositingCapIsInValid.INSTANCE;
+      case 6016 -> VestingDurationIsInValid.INSTANCE;
+      case 6017 -> DepositAmountIsZero.INSTANCE;
+      case 6018 -> PoolOwnerIsMismatched.INSTANCE;
+      case 6019 -> RefundAmountIsZero.INSTANCE;
+      case 6020 -> DepositingDurationIsInvalid.INSTANCE;
+      case 6021 -> DepositingTimePointIsInvalid.INSTANCE;
+      case 6022 -> IndividualDepositingCapIsZero.INSTANCE;
+      case 6023 -> InvalidFeeReceiverAccount.INSTANCE;
+      case 6024 -> NotPermissionedVault.INSTANCE;
+      case 6025 -> NotPermitToDoThisAction.INSTANCE;
+      case 6026 -> InvalidProof.INSTANCE;
+      case 6027 -> InvalidActivationType.INSTANCE;
+      case 6028 -> ActivationTypeIsMismatched.INSTANCE;
+      case 6029 -> InvalidPool.INSTANCE;
+      case 6030 -> InvalidCreator.INSTANCE;
+      case 6031 -> PermissionedVaultCannotChargeEscrowFee.INSTANCE;
+      case 6032 -> EscrowFeeTooHigh.INSTANCE;
+      case 6033 -> LockDurationInvalid.INSTANCE;
+      case 6034 -> MaxBuyingCapIsTooSmall.INSTANCE;
+      case 6035 -> MaxDepositingCapIsTooSmall.INSTANCE;
+      case 6036 -> InvalidWhitelistWalletMode.INSTANCE;
       default -> throw new IllegalStateException("Unexpected AlphaVault error code: " + errorCode);
     };
   }
 
-  record StartSlotAfterEnd(int code, String msg) implements AlphaVaultError {
+  record TimePointNotInFuture(int code, String msg) implements AlphaVaultError {
 
-    public static final StartSlotAfterEnd INSTANCE = new StartSlotAfterEnd(
-        6000, "start slot is after end slot"
-    );
-  }
-
-  record SlotNotInFuture(int code, String msg) implements AlphaVaultError {
-
-    public static final SlotNotInFuture INSTANCE = new SlotNotInFuture(
-        6001, "slot is not in future"
+    public static final TimePointNotInFuture INSTANCE = new TimePointNotInFuture(
+        6000, "Time point is not in future"
     );
   }
 
   record IncorrectTokenMint(int code, String msg) implements AlphaVaultError {
 
     public static final IncorrectTokenMint INSTANCE = new IncorrectTokenMint(
-        6002, "token mint is incorrect"
+        6001, "Token mint is incorrect"
     );
   }
 
   record IncorrectPairType(int code, String msg) implements AlphaVaultError {
 
     public static final IncorrectPairType INSTANCE = new IncorrectPairType(
-        6003, "pair is not permissioned"
+        6002, "Pair is not permissioned"
     );
   }
 
   record PoolHasStarted(int code, String msg) implements AlphaVaultError {
 
     public static final PoolHasStarted INSTANCE = new PoolHasStarted(
-        6004, "Pool has started"
+        6003, "Pool has started"
     );
   }
 
-  record NotPermitThisActionInThisSlot(int code, String msg) implements AlphaVaultError {
+  record NotPermitThisActionInThisTimePoint(int code, String msg) implements AlphaVaultError {
 
-    public static final NotPermitThisActionInThisSlot INSTANCE = new NotPermitThisActionInThisSlot(
-        6005, "This action is not permitted in this slot"
+    public static final NotPermitThisActionInThisTimePoint INSTANCE = new NotPermitThisActionInThisTimePoint(
+        6004, "This action is not permitted in this time point"
     );
   }
 
   record TheSaleIsOngoing(int code, String msg) implements AlphaVaultError {
 
     public static final TheSaleIsOngoing INSTANCE = new TheSaleIsOngoing(
-        6006, "the sale is on going, cannot withdraw"
+        6005, "The sale is on going, cannot withdraw"
     );
   }
 
   record EscrowIsNotClosable(int code, String msg) implements AlphaVaultError {
 
     public static final EscrowIsNotClosable INSTANCE = new EscrowIsNotClosable(
-        6007, "Escrow is not closable"
+        6006, "Escrow is not closable"
     );
   }
 
-  record SlotOrdersAreIncorrect(int code, String msg) implements AlphaVaultError {
+  record TimePointOrdersAreIncorrect(int code, String msg) implements AlphaVaultError {
 
-    public static final SlotOrdersAreIncorrect INSTANCE = new SlotOrdersAreIncorrect(
-        6008, "Slot orders are incorrect"
+    public static final TimePointOrdersAreIncorrect INSTANCE = new TimePointOrdersAreIncorrect(
+        6007, "Time point orders are incorrect"
     );
   }
 
   record EscrowHasRefuned(int code, String msg) implements AlphaVaultError {
 
     public static final EscrowHasRefuned INSTANCE = new EscrowHasRefuned(
-        6009, "Escrow has refunded"
+        6008, "Escrow has refunded"
     );
   }
 
   record MathOverflow(int code, String msg) implements AlphaVaultError {
 
     public static final MathOverflow INSTANCE = new MathOverflow(
-        6010, "Math operation overflow"
+        6009, "Math operation overflow"
     );
   }
 
   record MaxBuyingCapIsZero(int code, String msg) implements AlphaVaultError {
 
     public static final MaxBuyingCapIsZero INSTANCE = new MaxBuyingCapIsZero(
-        6011, "Max buying cap is zero"
+        6010, "Max buying cap is zero"
     );
   }
 
   record MaxAmountIsTooSmall(int code, String msg) implements AlphaVaultError {
 
     public static final MaxAmountIsTooSmall INSTANCE = new MaxAmountIsTooSmall(
-        6012, "Max amount is too small"
+        6011, "Max amount is too small"
     );
   }
 
   record PoolTypeIsNotSupported(int code, String msg) implements AlphaVaultError {
 
     public static final PoolTypeIsNotSupported INSTANCE = new PoolTypeIsNotSupported(
-        6013, "Pool type is not supported"
+        6012, "Pool type is not supported"
     );
   }
 
   record InvalidAdmin(int code, String msg) implements AlphaVaultError {
 
     public static final InvalidAdmin INSTANCE = new InvalidAdmin(
-        6014, "Invalid admin"
+        6013, "Invalid admin"
     );
   }
 
   record VaultModeIsIncorrect(int code, String msg) implements AlphaVaultError {
 
     public static final VaultModeIsIncorrect INSTANCE = new VaultModeIsIncorrect(
-        6015, "Vault mode is incorrect"
+        6014, "Vault mode is incorrect"
     );
   }
 
   record MaxDepositingCapIsInValid(int code, String msg) implements AlphaVaultError {
 
     public static final MaxDepositingCapIsInValid INSTANCE = new MaxDepositingCapIsInValid(
-        6016, "Max depositing cap is invalid"
+        6015, "Max depositing cap is invalid"
     );
   }
 
   record VestingDurationIsInValid(int code, String msg) implements AlphaVaultError {
 
     public static final VestingDurationIsInValid INSTANCE = new VestingDurationIsInValid(
-        6017, "Vesting duration is invalid"
+        6016, "Vesting duration is invalid"
     );
   }
 
   record DepositAmountIsZero(int code, String msg) implements AlphaVaultError {
 
     public static final DepositAmountIsZero INSTANCE = new DepositAmountIsZero(
-        6018, "Deposit amount is zero"
+        6017, "Deposit amount is zero"
     );
   }
 
   record PoolOwnerIsMismatched(int code, String msg) implements AlphaVaultError {
 
     public static final PoolOwnerIsMismatched INSTANCE = new PoolOwnerIsMismatched(
-        6019, "Pool owner is mismatched"
+        6018, "Pool owner is mismatched"
     );
   }
 
   record RefundAmountIsZero(int code, String msg) implements AlphaVaultError {
 
     public static final RefundAmountIsZero INSTANCE = new RefundAmountIsZero(
-        6020, "Refund amount is zero"
+        6019, "Refund amount is zero"
     );
   }
 
-  record DepositingSlotDurationIsInvalid(int code, String msg) implements AlphaVaultError {
+  record DepositingDurationIsInvalid(int code, String msg) implements AlphaVaultError {
 
-    public static final DepositingSlotDurationIsInvalid INSTANCE = new DepositingSlotDurationIsInvalid(
-        6021, "Depositing slot duration is invalid"
+    public static final DepositingDurationIsInvalid INSTANCE = new DepositingDurationIsInvalid(
+        6020, "Depositing duration is invalid"
     );
   }
 
-  record DepositingSlotIsInvalid(int code, String msg) implements AlphaVaultError {
+  record DepositingTimePointIsInvalid(int code, String msg) implements AlphaVaultError {
 
-    public static final DepositingSlotIsInvalid INSTANCE = new DepositingSlotIsInvalid(
-        6022, "Depositing slot is invalid"
+    public static final DepositingTimePointIsInvalid INSTANCE = new DepositingTimePointIsInvalid(
+        6021, "Depositing time point is invalid"
     );
   }
 
   record IndividualDepositingCapIsZero(int code, String msg) implements AlphaVaultError {
 
     public static final IndividualDepositingCapIsZero INSTANCE = new IndividualDepositingCapIsZero(
-        6023, "Individual depositing cap is zero"
+        6022, "Individual depositing cap is zero"
     );
   }
 
   record InvalidFeeReceiverAccount(int code, String msg) implements AlphaVaultError {
 
     public static final InvalidFeeReceiverAccount INSTANCE = new InvalidFeeReceiverAccount(
-        6024, "Invalid fee receiver account"
+        6023, "Invalid fee receiver account"
     );
   }
 
   record NotPermissionedVault(int code, String msg) implements AlphaVaultError {
 
     public static final NotPermissionedVault INSTANCE = new NotPermissionedVault(
-        6025, "Not permissioned vault"
+        6024, "Not permissioned vault"
     );
   }
 
   record NotPermitToDoThisAction(int code, String msg) implements AlphaVaultError {
 
     public static final NotPermitToDoThisAction INSTANCE = new NotPermitToDoThisAction(
-        6026, "Not permit to do this action"
+        6025, "Not permit to do this action"
     );
   }
 
   record InvalidProof(int code, String msg) implements AlphaVaultError {
 
     public static final InvalidProof INSTANCE = new InvalidProof(
-        6027, "Invalid Merkle proof."
+        6026, "Invalid Merkle proof"
+    );
+  }
+
+  record InvalidActivationType(int code, String msg) implements AlphaVaultError {
+
+    public static final InvalidActivationType INSTANCE = new InvalidActivationType(
+        6027, "Invalid activation type"
+    );
+  }
+
+  record ActivationTypeIsMismatched(int code, String msg) implements AlphaVaultError {
+
+    public static final ActivationTypeIsMismatched INSTANCE = new ActivationTypeIsMismatched(
+        6028, "Activation type is mismatched"
+    );
+  }
+
+  record InvalidPool(int code, String msg) implements AlphaVaultError {
+
+    public static final InvalidPool INSTANCE = new InvalidPool(
+        6029, "Pool is not connected to the alpha vault"
+    );
+  }
+
+  record InvalidCreator(int code, String msg) implements AlphaVaultError {
+
+    public static final InvalidCreator INSTANCE = new InvalidCreator(
+        6030, "Invalid creator"
+    );
+  }
+
+  record PermissionedVaultCannotChargeEscrowFee(int code, String msg) implements AlphaVaultError {
+
+    public static final PermissionedVaultCannotChargeEscrowFee INSTANCE = new PermissionedVaultCannotChargeEscrowFee(
+        6031, "Permissioned vault cannot charge escrow fee"
+    );
+  }
+
+  record EscrowFeeTooHigh(int code, String msg) implements AlphaVaultError {
+
+    public static final EscrowFeeTooHigh INSTANCE = new EscrowFeeTooHigh(
+        6032, "Escrow fee too high"
+    );
+  }
+
+  record LockDurationInvalid(int code, String msg) implements AlphaVaultError {
+
+    public static final LockDurationInvalid INSTANCE = new LockDurationInvalid(
+        6033, "Lock duration is invalid"
+    );
+  }
+
+  record MaxBuyingCapIsTooSmall(int code, String msg) implements AlphaVaultError {
+
+    public static final MaxBuyingCapIsTooSmall INSTANCE = new MaxBuyingCapIsTooSmall(
+        6034, "Max buying cap is too small"
+    );
+  }
+
+  record MaxDepositingCapIsTooSmall(int code, String msg) implements AlphaVaultError {
+
+    public static final MaxDepositingCapIsTooSmall INSTANCE = new MaxDepositingCapIsTooSmall(
+        6035, "Max depositing cap is too small"
+    );
+  }
+
+  record InvalidWhitelistWalletMode(int code, String msg) implements AlphaVaultError {
+
+    public static final InvalidWhitelistWalletMode INSTANCE = new InvalidWhitelistWalletMode(
+        6036, "Invalid whitelist wallet mode"
     );
   }
 }

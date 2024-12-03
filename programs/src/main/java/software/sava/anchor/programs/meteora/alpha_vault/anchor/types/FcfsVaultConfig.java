@@ -16,9 +16,10 @@ public record FcfsVaultConfig(PublicKey _address,
                               long maxDepositingCap,
                               long startVestingDuration,
                               long endVestingDuration,
-                              long depositingSlotDurationUntilLastJoinSlot,
+                              long depositingDurationUntilLastJoinPoint,
                               long individualDepositingCap,
                               long escrowFee,
+                              int activationType,
                               byte[] padding) implements Borsh {
 
   public static final int BYTES = 232;
@@ -27,10 +28,11 @@ public record FcfsVaultConfig(PublicKey _address,
   public static final int MAX_DEPOSITING_CAP_OFFSET = 8;
   public static final int START_VESTING_DURATION_OFFSET = 16;
   public static final int END_VESTING_DURATION_OFFSET = 24;
-  public static final int DEPOSITING_SLOT_DURATION_UNTIL_LAST_JOIN_SLOT_OFFSET = 32;
+  public static final int DEPOSITING_DURATION_UNTIL_LAST_JOIN_POINT_OFFSET = 32;
   public static final int INDIVIDUAL_DEPOSITING_CAP_OFFSET = 40;
   public static final int ESCROW_FEE_OFFSET = 48;
-  public static final int PADDING_OFFSET = 56;
+  public static final int ACTIVATION_TYPE_OFFSET = 56;
+  public static final int PADDING_OFFSET = 57;
 
   public static Filter createMaxDepositingCapFilter(final long maxDepositingCap) {
     final byte[] _data = new byte[8];
@@ -50,10 +52,10 @@ public record FcfsVaultConfig(PublicKey _address,
     return Filter.createMemCompFilter(END_VESTING_DURATION_OFFSET, _data);
   }
 
-  public static Filter createDepositingSlotDurationUntilLastJoinSlotFilter(final long depositingSlotDurationUntilLastJoinSlot) {
+  public static Filter createDepositingDurationUntilLastJoinPointFilter(final long depositingDurationUntilLastJoinPoint) {
     final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, depositingSlotDurationUntilLastJoinSlot);
-    return Filter.createMemCompFilter(DEPOSITING_SLOT_DURATION_UNTIL_LAST_JOIN_SLOT_OFFSET, _data);
+    putInt64LE(_data, 0, depositingDurationUntilLastJoinPoint);
+    return Filter.createMemCompFilter(DEPOSITING_DURATION_UNTIL_LAST_JOIN_POINT_OFFSET, _data);
   }
 
   public static Filter createIndividualDepositingCapFilter(final long individualDepositingCap) {
@@ -66,6 +68,10 @@ public record FcfsVaultConfig(PublicKey _address,
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, escrowFee);
     return Filter.createMemCompFilter(ESCROW_FEE_OFFSET, _data);
+  }
+
+  public static Filter createActivationTypeFilter(final int activationType) {
+    return Filter.createMemCompFilter(ACTIVATION_TYPE_OFFSET, new byte[]{(byte) activationType});
   }
 
   public static FcfsVaultConfig read(final byte[] _data, final int offset) {
@@ -90,22 +96,25 @@ public record FcfsVaultConfig(PublicKey _address,
     i += 8;
     final var endVestingDuration = getInt64LE(_data, i);
     i += 8;
-    final var depositingSlotDurationUntilLastJoinSlot = getInt64LE(_data, i);
+    final var depositingDurationUntilLastJoinPoint = getInt64LE(_data, i);
     i += 8;
     final var individualDepositingCap = getInt64LE(_data, i);
     i += 8;
     final var escrowFee = getInt64LE(_data, i);
     i += 8;
-    final var padding = new byte[176];
+    final var activationType = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[175];
     Borsh.readArray(padding, _data, i);
     return new FcfsVaultConfig(_address,
                                discriminator,
                                maxDepositingCap,
                                startVestingDuration,
                                endVestingDuration,
-                               depositingSlotDurationUntilLastJoinSlot,
+                               depositingDurationUntilLastJoinPoint,
                                individualDepositingCap,
                                escrowFee,
+                               activationType,
                                padding);
   }
 
@@ -118,12 +127,14 @@ public record FcfsVaultConfig(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, endVestingDuration);
     i += 8;
-    putInt64LE(_data, i, depositingSlotDurationUntilLastJoinSlot);
+    putInt64LE(_data, i, depositingDurationUntilLastJoinPoint);
     i += 8;
     putInt64LE(_data, i, individualDepositingCap);
     i += 8;
     putInt64LE(_data, i, escrowFee);
     i += 8;
+    _data[i] = (byte) activationType;
+    ++i;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

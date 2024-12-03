@@ -45,9 +45,9 @@ public record Vault(PublicKey _address,
                     // Total claimed_token
                     long totalClaimedToken,
                     // Start vesting ts
-                    long startVestingSlot,
+                    long startVestingPoint,
                     // End vesting ts
-                    long endVestingSlot,
+                    long endVestingPoint,
                     // bump
                     int bump,
                     // pool type
@@ -60,16 +60,20 @@ public record Vault(PublicKey _address,
                     long maxDepositingCap,
                     // individual depositing cap
                     long individualDepositingCap,
-                    // depositing slot
-                    long depositingSlot,
+                    // depositing point
+                    long depositingPoint,
                     // flat fee when user open an escrow
                     long escrowFee,
                     // total escrow fee just for statistic
                     long totalEscrowFee,
-                    // permissioned flag
-                    int permissioned,
+                    // deposit whitelist mode
+                    int whitelistMode,
+                    // activation type
+                    int activationType,
                     // padding 1
                     byte[] padding1,
+                    // vault authority normally is vault creator, will be able to create merkle root config
+                    PublicKey vaultAuthority,
                     BigInteger[] padding) implements Borsh {
 
   public static final int BYTES = 472;
@@ -89,20 +93,22 @@ public record Vault(PublicKey _address,
   public static final int BOUGHT_TOKEN_OFFSET = 264;
   public static final int TOTAL_REFUND_OFFSET = 272;
   public static final int TOTAL_CLAIMED_TOKEN_OFFSET = 280;
-  public static final int START_VESTING_SLOT_OFFSET = 288;
-  public static final int END_VESTING_SLOT_OFFSET = 296;
+  public static final int START_VESTING_POINT_OFFSET = 288;
+  public static final int END_VESTING_POINT_OFFSET = 296;
   public static final int BUMP_OFFSET = 304;
   public static final int POOL_TYPE_OFFSET = 305;
   public static final int VAULT_MODE_OFFSET = 306;
   public static final int PADDING0_OFFSET = 307;
   public static final int MAX_DEPOSITING_CAP_OFFSET = 312;
   public static final int INDIVIDUAL_DEPOSITING_CAP_OFFSET = 320;
-  public static final int DEPOSITING_SLOT_OFFSET = 328;
+  public static final int DEPOSITING_POINT_OFFSET = 328;
   public static final int ESCROW_FEE_OFFSET = 336;
   public static final int TOTAL_ESCROW_FEE_OFFSET = 344;
-  public static final int PERMISSIONED_OFFSET = 352;
-  public static final int PADDING1_OFFSET = 353;
-  public static final int PADDING_OFFSET = 360;
+  public static final int WHITELIST_MODE_OFFSET = 352;
+  public static final int ACTIVATION_TYPE_OFFSET = 353;
+  public static final int PADDING1_OFFSET = 354;
+  public static final int VAULT_AUTHORITY_OFFSET = 360;
+  public static final int PADDING_OFFSET = 392;
 
   public static Filter createPoolFilter(final PublicKey pool) {
     return Filter.createMemCompFilter(POOL_OFFSET, pool);
@@ -174,16 +180,16 @@ public record Vault(PublicKey _address,
     return Filter.createMemCompFilter(TOTAL_CLAIMED_TOKEN_OFFSET, _data);
   }
 
-  public static Filter createStartVestingSlotFilter(final long startVestingSlot) {
+  public static Filter createStartVestingPointFilter(final long startVestingPoint) {
     final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, startVestingSlot);
-    return Filter.createMemCompFilter(START_VESTING_SLOT_OFFSET, _data);
+    putInt64LE(_data, 0, startVestingPoint);
+    return Filter.createMemCompFilter(START_VESTING_POINT_OFFSET, _data);
   }
 
-  public static Filter createEndVestingSlotFilter(final long endVestingSlot) {
+  public static Filter createEndVestingPointFilter(final long endVestingPoint) {
     final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, endVestingSlot);
-    return Filter.createMemCompFilter(END_VESTING_SLOT_OFFSET, _data);
+    putInt64LE(_data, 0, endVestingPoint);
+    return Filter.createMemCompFilter(END_VESTING_POINT_OFFSET, _data);
   }
 
   public static Filter createBumpFilter(final int bump) {
@@ -210,10 +216,10 @@ public record Vault(PublicKey _address,
     return Filter.createMemCompFilter(INDIVIDUAL_DEPOSITING_CAP_OFFSET, _data);
   }
 
-  public static Filter createDepositingSlotFilter(final long depositingSlot) {
+  public static Filter createDepositingPointFilter(final long depositingPoint) {
     final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, depositingSlot);
-    return Filter.createMemCompFilter(DEPOSITING_SLOT_OFFSET, _data);
+    putInt64LE(_data, 0, depositingPoint);
+    return Filter.createMemCompFilter(DEPOSITING_POINT_OFFSET, _data);
   }
 
   public static Filter createEscrowFeeFilter(final long escrowFee) {
@@ -228,8 +234,16 @@ public record Vault(PublicKey _address,
     return Filter.createMemCompFilter(TOTAL_ESCROW_FEE_OFFSET, _data);
   }
 
-  public static Filter createPermissionedFilter(final int permissioned) {
-    return Filter.createMemCompFilter(PERMISSIONED_OFFSET, new byte[]{(byte) permissioned});
+  public static Filter createWhitelistModeFilter(final int whitelistMode) {
+    return Filter.createMemCompFilter(WHITELIST_MODE_OFFSET, new byte[]{(byte) whitelistMode});
+  }
+
+  public static Filter createActivationTypeFilter(final int activationType) {
+    return Filter.createMemCompFilter(ACTIVATION_TYPE_OFFSET, new byte[]{(byte) activationType});
+  }
+
+  public static Filter createVaultAuthorityFilter(final PublicKey vaultAuthority) {
+    return Filter.createMemCompFilter(VAULT_AUTHORITY_OFFSET, vaultAuthority);
   }
 
   public static Vault read(final byte[] _data, final int offset) {
@@ -276,9 +290,9 @@ public record Vault(PublicKey _address,
     i += 8;
     final var totalClaimedToken = getInt64LE(_data, i);
     i += 8;
-    final var startVestingSlot = getInt64LE(_data, i);
+    final var startVestingPoint = getInt64LE(_data, i);
     i += 8;
-    final var endVestingSlot = getInt64LE(_data, i);
+    final var endVestingPoint = getInt64LE(_data, i);
     i += 8;
     final var bump = _data[i] & 0xFF;
     ++i;
@@ -292,17 +306,21 @@ public record Vault(PublicKey _address,
     i += 8;
     final var individualDepositingCap = getInt64LE(_data, i);
     i += 8;
-    final var depositingSlot = getInt64LE(_data, i);
+    final var depositingPoint = getInt64LE(_data, i);
     i += 8;
     final var escrowFee = getInt64LE(_data, i);
     i += 8;
     final var totalEscrowFee = getInt64LE(_data, i);
     i += 8;
-    final var permissioned = _data[i] & 0xFF;
+    final var whitelistMode = _data[i] & 0xFF;
     ++i;
-    final var padding1 = new byte[7];
+    final var activationType = _data[i] & 0xFF;
+    ++i;
+    final var padding1 = new byte[6];
     i += Borsh.readArray(padding1, _data, i);
-    final var padding = new BigInteger[7];
+    final var vaultAuthority = readPubKey(_data, i);
+    i += 32;
+    final var padding = new BigInteger[5];
     Borsh.readArray(padding, _data, i);
     return new Vault(_address,
                      discriminator,
@@ -320,19 +338,21 @@ public record Vault(PublicKey _address,
                      boughtToken,
                      totalRefund,
                      totalClaimedToken,
-                     startVestingSlot,
-                     endVestingSlot,
+                     startVestingPoint,
+                     endVestingPoint,
                      bump,
                      poolType,
                      vaultMode,
                      padding0,
                      maxDepositingCap,
                      individualDepositingCap,
-                     depositingSlot,
+                     depositingPoint,
                      escrowFee,
                      totalEscrowFee,
-                     permissioned,
+                     whitelistMode,
+                     activationType,
                      padding1,
+                     vaultAuthority,
                      padding);
   }
 
@@ -367,9 +387,9 @@ public record Vault(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, totalClaimedToken);
     i += 8;
-    putInt64LE(_data, i, startVestingSlot);
+    putInt64LE(_data, i, startVestingPoint);
     i += 8;
-    putInt64LE(_data, i, endVestingSlot);
+    putInt64LE(_data, i, endVestingPoint);
     i += 8;
     _data[i] = (byte) bump;
     ++i;
@@ -382,15 +402,19 @@ public record Vault(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, individualDepositingCap);
     i += 8;
-    putInt64LE(_data, i, depositingSlot);
+    putInt64LE(_data, i, depositingPoint);
     i += 8;
     putInt64LE(_data, i, escrowFee);
     i += 8;
     putInt64LE(_data, i, totalEscrowFee);
     i += 8;
-    _data[i] = (byte) permissioned;
+    _data[i] = (byte) whitelistMode;
+    ++i;
+    _data[i] = (byte) activationType;
     ++i;
     i += Borsh.writeArray(padding1, _data, i);
+    vaultAuthority.write(_data, i);
+    i += 32;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
