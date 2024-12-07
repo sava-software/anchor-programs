@@ -66,6 +66,17 @@ public final class GlamPDAs {
     ), program);
   }
 
+  public static ProgramDerivedAddress managerAtaPDA(final PublicKey program,
+                                                    final PublicKey managerAccount,
+                                                    final PublicKey tokenProgramAccount,
+                                                    final PublicKey assetAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      managerAccount.toByteArray(),
+      tokenProgramAccount.toByteArray(),
+      assetAccount.toByteArray()
+    ), program);
+  }
+
   public static ProgramDerivedAddress mintToPDA(final PublicKey program,
                                                 final PublicKey treasuryAccount,
                                                 final SolanaAccounts solanaAccounts,
@@ -161,6 +172,17 @@ public final class GlamPDAs {
     return PublicKey.findProgramAddress(List.of(
       "treasury".getBytes(US_ASCII),
       fundAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress treasuryAtaPDA(final PublicKey program,
+                                                     final PublicKey treasuryAccount,
+                                                     final PublicKey tokenProgramAccount,
+                                                     final PublicKey assetAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      treasuryAccount.toByteArray(),
+      tokenProgramAccount.toByteArray(),
+      assetAccount.toByteArray()
     ), program);
   }
 

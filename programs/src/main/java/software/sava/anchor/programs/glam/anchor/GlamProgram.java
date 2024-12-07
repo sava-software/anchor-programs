@@ -157,6 +157,72 @@ public final class GlamProgram {
     }
   }
 
+  public static final Discriminator CAST_VOTE_DISCRIMINATOR = toDiscriminator(20, 212, 15, 189, 69, 180, 69, 151);
+
+  public static Instruction castVote(final AccountMeta invokedGlamProgramMeta,
+                                     final PublicKey fundKey,
+                                     final PublicKey treasuryKey,
+                                     final PublicKey signerKey,
+                                     final PublicKey lockerKey,
+                                     final PublicKey escrowKey,
+                                     final PublicKey proposalKey,
+                                     final PublicKey voteKey,
+                                     final PublicKey governorKey,
+                                     final PublicKey lockedVoterProgramKey,
+                                     final PublicKey governanceProgramKey,
+                                     final int side) {
+    final var keys = List.of(
+      createWrite(fundKey),
+      createWrite(treasuryKey),
+      createWritableSigner(signerKey),
+      createRead(lockerKey),
+      createRead(escrowKey),
+      createWrite(proposalKey),
+      createWrite(voteKey),
+      createRead(governorKey),
+      createRead(lockedVoterProgramKey),
+      createRead(governanceProgramKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(CAST_VOTE_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) side;
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record CastVoteIxData(Discriminator discriminator, int side) implements Borsh {  
+
+    public static CastVoteIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static CastVoteIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var side = _data[i] & 0xFF;
+      return new CastVoteIxData(discriminator, side);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) side;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator CLOSE_FUND_DISCRIMINATOR = toDiscriminator(230, 183, 3, 112, 236, 252, 5, 185);
 
   public static Instruction closeFund(final AccountMeta invokedGlamProgramMeta,
@@ -902,6 +968,93 @@ public final class GlamProgram {
     }
   }
 
+  public static final Discriminator INCREASE_LOCKED_AMOUNT_DISCRIMINATOR = toDiscriminator(5, 168, 118, 53, 72, 46, 203, 146);
+
+  public static Instruction increaseLockedAmount(final AccountMeta invokedGlamProgramMeta,
+                                                 final SolanaAccounts solanaAccounts,
+                                                 final PublicKey fundKey,
+                                                 final PublicKey treasuryKey,
+                                                 final PublicKey signerKey,
+                                                 final PublicKey lockerKey,
+                                                 final PublicKey escrowJupAtaKey,
+                                                 final PublicKey treasuryJupAtaKey,
+                                                 final PublicKey escrowKey,
+                                                 final PublicKey lockedVoterProgramKey,
+                                                 final long amount) {
+    final var keys = List.of(
+      createRead(fundKey),
+      createWrite(treasuryKey),
+      createWritableSigner(signerKey),
+      createWrite(lockerKey),
+      createWrite(escrowJupAtaKey),
+      createWrite(treasuryJupAtaKey),
+      createWrite(escrowKey),
+      createRead(lockedVoterProgramKey),
+      createRead(solanaAccounts.tokenProgram())
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(INCREASE_LOCKED_AMOUNT_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record IncreaseLockedAmountIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static IncreaseLockedAmountIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static IncreaseLockedAmountIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new IncreaseLockedAmountIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INIT_LOCKED_VOTER_ESCROW_DISCRIMINATOR = toDiscriminator(148, 74, 247, 66, 206, 51, 119, 243);
+
+  public static Instruction initLockedVoterEscrow(final AccountMeta invokedGlamProgramMeta,
+                                                  final SolanaAccounts solanaAccounts,
+                                                  final PublicKey fundKey,
+                                                  final PublicKey treasuryKey,
+                                                  final PublicKey signerKey,
+                                                  final PublicKey lockerKey,
+                                                  final PublicKey escrowKey,
+                                                  final PublicKey lockedVoterProgramKey) {
+    final var keys = List.of(
+      createRead(fundKey),
+      createWrite(treasuryKey),
+      createWritableSigner(signerKey),
+      createWrite(lockerKey),
+      createWrite(escrowKey),
+      createRead(lockedVoterProgramKey),
+      createRead(solanaAccounts.systemProgram())
+    );
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, INIT_LOCKED_VOTER_ESCROW_DISCRIMINATOR);
+  }
+
   public static final Discriminator INITIALIZE_AND_DELEGATE_STAKE_DISCRIMINATOR = toDiscriminator(71, 101, 230, 157, 50, 23, 47, 1);
 
   public static Instruction initializeAndDelegateStake(final AccountMeta invokedGlamProgramMeta,
@@ -1543,6 +1696,29 @@ public final class GlamProgram {
     public int l() {
       return BYTES;
     }
+  }
+
+  public static final Discriminator NEW_VOTE_DISCRIMINATOR = toDiscriminator(163, 108, 157, 189, 140, 80, 13, 143);
+
+  public static Instruction newVote(final AccountMeta invokedGlamProgramMeta,
+                                    final SolanaAccounts solanaAccounts,
+                                    final PublicKey fundKey,
+                                    final PublicKey treasuryKey,
+                                    final PublicKey signerKey,
+                                    final PublicKey proposalKey,
+                                    final PublicKey voteKey,
+                                    final PublicKey governanceProgramKey) {
+    final var keys = List.of(
+      createRead(fundKey),
+      createWrite(treasuryKey),
+      createWritableSigner(signerKey),
+      createWrite(proposalKey),
+      createWrite(voteKey),
+      createRead(governanceProgramKey),
+      createRead(solanaAccounts.systemProgram())
+    );
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, NEW_VOTE_DISCRIMINATOR);
   }
 
   public static final Discriminator REDEEM_DISCRIMINATOR = toDiscriminator(184, 12, 86, 149, 70, 196, 97, 225);
@@ -2414,6 +2590,66 @@ public final class GlamProgram {
     @Override
     public int l() {
       return 8 + 1 + Borsh.len(shareClassMetadata);
+    }
+  }
+
+  public static final Discriminator WITHDRAW_DISCRIMINATOR = toDiscriminator(183, 18, 70, 156, 148, 109, 161, 34);
+
+  public static Instruction withdraw(final AccountMeta invokedGlamProgramMeta,
+                                     final PublicKey fundKey,
+                                     final PublicKey treasuryKey,
+                                     final PublicKey assetKey,
+                                     final PublicKey treasuryAtaKey,
+                                     final PublicKey managerAtaKey,
+                                     final PublicKey managerKey,
+                                     final PublicKey tokenProgramKey,
+                                     final long amount) {
+    final var keys = List.of(
+      createWrite(fundKey),
+      createWrite(treasuryKey),
+      createRead(assetKey),
+      createWrite(treasuryAtaKey),
+      createWrite(managerAtaKey),
+      createWritableSigner(managerKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(WITHDRAW_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record WithdrawIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static WithdrawIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static WithdrawIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new WithdrawIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
     }
   }
 

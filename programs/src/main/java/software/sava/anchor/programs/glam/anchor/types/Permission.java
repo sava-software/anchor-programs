@@ -24,7 +24,9 @@ public enum Permission implements Borsh.Enum {
   MintShare,
   BurnShare,
   ForceTransferShare,
-  SetTokenAccountsStates;
+  SetTokenAccountsStates,
+  StakeJup,
+  VoteOnProposal;
 
   public static Permission read(final byte[] _data, final int offset) {
     return Borsh.read(Permission.values(), _data, offset);

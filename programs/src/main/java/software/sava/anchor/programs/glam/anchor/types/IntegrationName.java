@@ -11,7 +11,8 @@ public enum IntegrationName implements Borsh.Enum {
   NativeStaking,
   Marinade,
   Jupiter,
-  Mint;
+  Mint,
+  JupiterVote;
 
   public static IntegrationName read(final byte[] _data, final int offset) {
     return Borsh.read(IntegrationName.values(), _data, offset);
