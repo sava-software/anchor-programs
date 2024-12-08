@@ -42,7 +42,9 @@ public interface JupiterAccounts {
         voteProgram, createInvoked(voteProgram),
         govProgram, createInvoked(govProgram),
         jupTokenMint,
-        jupBaseKey
+        jupBaseKey,
+        deriveLocker(voteProgram, jupBaseKey).publicKey(),
+        deriveGovernor(govProgram, jupBaseKey).publicKey()
     );
   }
 
@@ -64,14 +66,18 @@ public interface JupiterAccounts {
     );
   }
 
-  static ProgramDerivedAddress deriveLocker(final JupiterAccounts jupiterAccounts, final PublicKey base) {
+  static ProgramDerivedAddress deriveLocker(final PublicKey voteProgram, final PublicKey base) {
     return findProgramAddress(
         List.of(
             "Locker".getBytes(UTF_8),
             base.toByteArray()
         ),
-        jupiterAccounts.voteProgram()
+        voteProgram
     );
+  }
+
+  static ProgramDerivedAddress deriveLocker(final JupiterAccounts jupiterAccounts, final PublicKey base) {
+    return deriveLocker(jupiterAccounts.voteProgram(), base);
   }
 
   default ProgramDerivedAddress deriveJupLocker() {
@@ -95,14 +101,22 @@ public interface JupiterAccounts {
     return deriveEscrow(this, locker, escrowOwner);
   }
 
-  static ProgramDerivedAddress deriveGovernor(final JupiterAccounts jupiterAccounts, final PublicKey base) {
+  default ProgramDerivedAddress deriveEscrow(final PublicKey escrowOwner) {
+    return deriveEscrow(this, lockerKey(), escrowOwner);
+  }
+
+  static ProgramDerivedAddress deriveGovernor(final PublicKey govProgram, final PublicKey base) {
     return findProgramAddress(
         List.of(
             "Governor".getBytes(UTF_8),
             base.toByteArray()
         ),
-        jupiterAccounts.govProgram()
+        govProgram
     );
+  }
+
+  static ProgramDerivedAddress deriveGovernor(final JupiterAccounts jupiterAccounts, final PublicKey base) {
+    return deriveGovernor(jupiterAccounts.govProgram(), base);
   }
 
   default ProgramDerivedAddress deriveGovernor() {
@@ -126,6 +140,10 @@ public interface JupiterAccounts {
 
   default ProgramDerivedAddress deriveProposal(final PublicKey governor, final long proposalCount) {
     return deriveProposal(this, governor, proposalCount);
+  }
+
+  default ProgramDerivedAddress deriveProposal(final long proposalCount) {
+    return deriveProposal(this, governorKey(), proposalCount);
   }
 
   static ProgramDerivedAddress deriveProposalMeta(final JupiterAccounts jupiterAccounts, final PublicKey proposal) {
@@ -212,4 +230,8 @@ public interface JupiterAccounts {
   PublicKey jupTokenMint();
 
   PublicKey jupBaseKey();
+
+  PublicKey lockerKey();
+
+  PublicKey governorKey();
 }

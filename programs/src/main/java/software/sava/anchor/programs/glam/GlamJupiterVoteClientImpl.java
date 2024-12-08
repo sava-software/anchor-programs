@@ -1,31 +1,40 @@
-package software.sava.anchor.programs.jupiter.voter;
+package software.sava.anchor.programs.glam;
 
+import software.sava.anchor.programs.glam.anchor.GlamProgram;
 import software.sava.anchor.programs.jupiter.JupiterAccounts;
-import software.sava.anchor.programs.jupiter.governance.anchor.GovernProgram;
-import software.sava.anchor.programs.jupiter.voter.anchor.LockedVoterProgram;
+import software.sava.anchor.programs.jupiter.voter.BaseJupiterVoteClient;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
 
-final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements JupiterVoteClient {
+final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements GlamJupiterVoteClient {
 
-  JupiterVoteClientImpl(final SolanaAccounts solanaAccounts,
-                        final JupiterAccounts accounts,
-                        final PublicKey escrowOwnerKey) {
-    super(solanaAccounts, accounts, escrowOwnerKey);
+  private final GlamAccounts glamAccounts;
+  private final PublicKey fundKey;
+
+  GlamJupiterVoteClientImpl(final SolanaAccounts solanaAccounts,
+                            final JupiterAccounts jupiterAccounts,
+                            final GlamAccounts glamAccounts,
+                            final PublicKey fundKey,
+                            final PublicKey treasuryKey) {
+    super(solanaAccounts, jupiterAccounts, treasuryKey);
+    this.glamAccounts = glamAccounts;
+    this.fundKey = fundKey;
   }
 
   @Override
   public Instruction newEscrow(final PublicKey escrowOwnerKey,
                                final PublicKey escrowKey,
                                final PublicKey payer) {
-    return LockedVoterProgram.newEscrow(
-        jupiterAccounts.invokedGovProgram(),
-        jupiterAccounts.lockerKey(),
-        escrowKey,
+    return GlamProgram.initLockedVoterEscrow(
+        glamAccounts.invokedProgram(),
+        solanaAccounts,
+        fundKey,
         escrowOwnerKey,
         payer,
-        solanaAccounts.systemProgram()
+        jupiterAccounts.lockerKey(),
+        escrowKey,
+        jupiterAccounts.voteProgram()
     );
   }
 
@@ -34,13 +43,18 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
                              final PublicKey voteKey,
                              final PublicKey payer,
                              final PublicKey voter) {
-    return GovernProgram.newVote(
-        jupiterAccounts.invokedGovProgram(),
+    if (!voter.equals(escrowOwnerKey)) {
+      throw new IllegalStateException("Treasury must correspond to the GLAM fund account.");
+    }
+    return GlamProgram.newVote(
+        glamAccounts.invokedProgram(),
+        solanaAccounts,
+        fundKey,
+        escrowOwnerKey,
+        payer,
         proposal,
         voteKey,
-        payer,
-        solanaAccounts.systemProgram(),
-        voter
+        jupiterAccounts.govProgram()
     );
   }
 
@@ -50,28 +64,19 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
                               final PublicKey proposal,
                               final PublicKey voteKey,
                               final int side) {
-    return LockedVoterProgram.castVote(
-        jupiterAccounts.invokedVoteProgram(),
+    return GlamProgram.castVote(
+        glamAccounts.invokedProgram(),
+        fundKey,
+        escrowOwnerKey,
+        voteDelegate,
         jupiterAccounts.lockerKey(),
         escrowKey,
-        voteDelegate,
         proposal,
         voteKey,
         jupiterAccounts.governorKey(),
+        jupiterAccounts.voteProgram(),
         jupiterAccounts.govProgram(),
         side
-    );
-  }
-
-  @Override
-  public Instruction setVoteDelegate(final PublicKey escrowOwnerKey,
-                                     final PublicKey escrowKey,
-                                     final PublicKey newDelegate) {
-    return LockedVoterProgram.setVoteDelegate(
-        jupiterAccounts.invokedVoteProgram(),
-        escrowKey,
-        escrowOwnerKey,
-        newDelegate
     );
   }
 
@@ -81,16 +86,26 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
                                           final PublicKey payerKey,
                                           final PublicKey sourceTokensKey,
                                           final long amount) {
-    return LockedVoterProgram.increaseLockedAmount(
-        jupiterAccounts.invokedVoteProgram(),
-        jupiterAccounts.lockerKey(),
-        escrowKey,
-        escrowTokensKey,
+    return GlamProgram.increaseLockedAmount(
+        glamAccounts.invokedProgram(),
+        solanaAccounts,
+        fundKey,
+        escrowOwnerKey,
         payerKey,
+        jupiterAccounts.lockerKey(),
+        escrowTokensKey,
         sourceTokensKey,
-        solanaAccounts.tokenProgram(),
+        escrowKey,
+        jupiterAccounts.voteProgram(),
         amount
     );
+  }
+
+  @Override
+  public Instruction setVoteDelegate(final PublicKey escrowOwnerKey,
+                                     final PublicKey escrowKey,
+                                     final PublicKey newDelegate) {
+    throw new UnsupportedOperationException("TODO: setVoteDelegate");
   }
 
   @Override
@@ -98,13 +113,7 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
                                         final PublicKey escrowKey,
                                         final PublicKey escrowOwnerKey,
                                         final long duration) {
-    return LockedVoterProgram.extendLockDuration(
-        jupiterAccounts.invokedVoteProgram(),
-        lockerKey,
-        escrowKey,
-        escrowOwnerKey,
-        duration
-    );
+    throw new UnsupportedOperationException("TODO: extendLockDuration");
   }
 
   @Override
@@ -112,13 +121,7 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
                                    final PublicKey escrowKey,
                                    final PublicKey escrowOwnerKey,
                                    final boolean maxLock) {
-    return LockedVoterProgram.toggleMaxLock(
-        jupiterAccounts.invokedVoteProgram(),
-        lockerKey,
-        escrowKey,
-        escrowOwnerKey,
-        maxLock
-    );
+    throw new UnsupportedOperationException("TODO: toggleMaxLock");
   }
 
   @Override
@@ -128,16 +131,7 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
                               final PublicKey escrowTokensKey,
                               final PublicKey payerKey,
                               final PublicKey destinationTokensKey) {
-    return LockedVoterProgram.withdraw(
-        jupiterAccounts.invokedVoteProgram(),
-        lockerKey,
-        escrowKey,
-        escrowOwnerKey,
-        escrowTokensKey,
-        destinationTokensKey,
-        payerKey,
-        solanaAccounts.tokenProgram()
-    );
+    throw new UnsupportedOperationException("TODO: withdraw");
   }
 
   @Override
@@ -147,16 +141,7 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
                                           final PublicKey partialUnstakeKey,
                                           final long amount,
                                           final String memo) {
-    return LockedVoterProgram.openPartialUnstaking(
-        jupiterAccounts.invokedVoteProgram(),
-        lockerKey,
-        escrowKey,
-        partialUnstakeKey,
-        escrowOwnerKey,
-        solanaAccounts.systemProgram(),
-        amount,
-        memo
-    );
+    throw new UnsupportedOperationException("TODO: openPartialUnstaking");
   }
 
   @Override
@@ -164,13 +149,7 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
                                            final PublicKey escrowKey,
                                            final PublicKey escrowOwnerKey,
                                            final PublicKey partialUnstakeKey) {
-    return LockedVoterProgram.mergePartialUnstaking(
-        jupiterAccounts.invokedVoteProgram(),
-        lockerKey,
-        escrowKey,
-        partialUnstakeKey,
-        escrowOwnerKey
-    );
+    throw new UnsupportedOperationException("TODO: mergePartialUnstaking");
   }
 
   @Override
@@ -181,16 +160,6 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
                                               final PublicKey partialUnstakeKey,
                                               final PublicKey payerKey,
                                               final PublicKey destinationTokensKey) {
-    return LockedVoterProgram.withdrawPartialUnstaking(
-        jupiterAccounts.invokedVoteProgram(),
-        lockerKey,
-        escrowKey,
-        partialUnstakeKey,
-        escrowOwnerKey,
-        escrowTokensKey,
-        destinationTokensKey,
-        payerKey,
-        solanaAccounts.tokenProgram()
-    );
+    throw new UnsupportedOperationException("TODO: withdrawPartialUnstaking");
   }
 }

@@ -9,5 +9,7 @@ record JupiterccountsRecord(PublicKey swapProgram, AccountMeta invokedSwapProgra
                             PublicKey voteProgram, AccountMeta invokedVoteProgram,
                             PublicKey govProgram, AccountMeta invokedGovProgram,
                             PublicKey jupTokenMint,
-                            PublicKey jupBaseKey) implements JupiterAccounts {
+                            PublicKey jupBaseKey,
+                            PublicKey lockerKey,
+                            PublicKey governorKey) implements JupiterAccounts {
 }

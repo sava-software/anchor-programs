@@ -15,12 +15,13 @@ import java.util.concurrent.CompletableFuture;
 public interface JupiterVoteClient {
 
   static JupiterVoteClient createClient(final SolanaAccounts solanaAccounts,
-                                        final JupiterAccounts accounts) {
-    return new JupiterVoteClientImpl(solanaAccounts, accounts);
+                                        final JupiterAccounts jupiterAccounts,
+                                        final PublicKey escrowOwnerKey) {
+    return new JupiterVoteClientImpl(solanaAccounts, jupiterAccounts, escrowOwnerKey);
   }
 
-  static JupiterVoteClient createClient() {
-    return createClient(SolanaAccounts.MAIN_NET, JupiterAccounts.MAIN_NET);
+  static JupiterVoteClient createClient(final PublicKey escrowOwnerKey) {
+    return createClient(SolanaAccounts.MAIN_NET, JupiterAccounts.MAIN_NET, escrowOwnerKey);
   }
 
   SolanaAccounts solanaAccounts();
@@ -49,38 +50,69 @@ public interface JupiterVoteClient {
     );
   }
 
-  Instruction newEscrow(final PublicKey escrowOwnerKey, final PublicKey payer);
+  PublicKey escrowOwnerKey();
 
-  default Instruction newEscrow(final PublicKey escrowOwnerKey) {
-    return newEscrow(escrowOwnerKey, escrowOwnerKey);
-  }
+  PublicKey deriveVoteKey(final PublicKey proposal);
+
+  Instruction newEscrow(final PublicKey escrowOwnerKey,
+                        final PublicKey escrowKey,
+                        final PublicKey payer);
+
+  Instruction newEscrow(final PublicKey payer);
 
   Instruction newVote(final PublicKey proposal,
+                      final PublicKey voteKey,
                       final PublicKey payer,
                       final PublicKey voter);
 
-  default Instruction newVote(final PublicKey proposal,
-                              final PublicKey voter) {
-    return newVote(proposal, voter, voter);
-  }
+  Instruction newVote(final PublicKey proposal,
+                      final PublicKey voteKey,
+                      final PublicKey payer);
 
-  Instruction castVote(final PublicKey voter,
+  Instruction newVote(final PublicKey proposal, final PublicKey payer);
+
+  Instruction castVote(final PublicKey escrowKey,
                        final PublicKey voteDelegate,
                        final PublicKey proposal,
+                       final PublicKey voteKey,
                        final int side);
 
-  default Instruction castVote(final PublicKey voter,
-                               final PublicKey proposal,
-                               final int side) {
-    return castVote(voter, voter, proposal, side);
-  }
+  Instruction castVote(final PublicKey proposal,
+                       final PublicKey voteKey,
+                       final int side);
 
-  Instruction setVoteDelegate(final PublicKey escrowOwnerKey, final PublicKey newDelegate);
+  Instruction setVoteDelegate(final PublicKey escrowOwnerKey,
+                              final PublicKey escrowKey,
+                              final PublicKey newDelegate);
 
-  Instruction increaseLockedAmount(final Escrow escrow,
+  Instruction setVoteDelegate(final PublicKey newDelegate);
+
+  Instruction increaseLockedAmount(final PublicKey escrowKey,
+                                   final PublicKey escrowTokensKey,
                                    final PublicKey payerKey,
                                    final PublicKey sourceTokensKey,
                                    final long amount);
+
+  Instruction increaseLockedAmount(final PublicKey escrowTokensKey,
+                                   final PublicKey payerKey,
+                                   final PublicKey sourceTokensKey,
+                                   final long amount);
+
+  Instruction increaseLockedAmount(final PublicKey payerKey,
+                                   final long amount);
+
+  default Instruction increaseLockedAmount(final Escrow escrow,
+                                           final PublicKey payerKey,
+                                           final PublicKey sourceTokensKey,
+                                           final long amount) {
+    return increaseLockedAmount(
+        escrow._address(),
+        escrow.tokens(),
+        payerKey,
+        sourceTokensKey,
+        amount
+    );
+  }
 
   default Instruction increaseLockedAmount(final Escrow escrow,
                                            final PublicKey sourceTokensKey,
@@ -88,47 +120,89 @@ public interface JupiterVoteClient {
     return increaseLockedAmount(escrow, escrow.owner(), sourceTokensKey, amount);
   }
 
-  Instruction increaseLockedAmount(final PublicKey escrowOwner,
-                                   final PublicKey payerKey,
-                                   final PublicKey sourceTokensKey,
-                                   final long amount);
-
-  default Instruction increaseLockedAmount(final PublicKey escrowOwner,
-                                           final PublicKey sourceTokensKey,
-                                           final long amount) {
-    return increaseLockedAmount(
-        escrowOwner,
-        escrowOwner,
-        sourceTokensKey,
-        amount
-    );
-  }
+  Instruction extendLockDuration(final PublicKey lockerKey,
+                                 final PublicKey escrowKey,
+                                 final PublicKey escrowOwnerKey,
+                                 final long duration);
 
   Instruction extendLockDuration(final Escrow escrow, final long duration);
 
+  Instruction extendLockDuration(final long duration);
+
+  Instruction toggleMaxLock(final PublicKey lockerKey,
+                            final PublicKey escrowKey,
+                            final PublicKey escrowOwnerKey,
+                            final boolean maxLock);
+
   Instruction toggleMaxLock(final Escrow escrow, final boolean maxLock);
 
-  Instruction toggleMaxLock(final PublicKey escrowOwner, final boolean maxLock);
+  Instruction toggleMaxLock(final PublicKey escrowOwner,
+                            final PublicKey escrowKey,
+                            final boolean maxLock);
+
+  Instruction toggleMaxLock(final boolean maxLock);
+
+  default Instruction toggleMaxLock(PublicKey escrowOwner, boolean maxLock) {
+    final var escrowKey = jupiterAccounts().deriveEscrow(escrowOwner).publicKey();
+    return toggleMaxLock(escrowOwner, escrowKey, maxLock);
+  }
+
+  Instruction withdraw(final PublicKey lockerKey,
+                       final PublicKey escrowKey,
+                       final PublicKey escrowOwnerKey,
+                       final PublicKey escrowTokensKey,
+                       final PublicKey payerKey,
+                       final PublicKey destinationTokensKey);
 
   Instruction withdraw(final Escrow escrow,
                        final PublicKey payerKey,
                        final PublicKey destinationTokensKey);
 
-  default Instruction withdraw(final Escrow escrow, final PublicKey destinationTokensKey) {
-    return withdraw(escrow, escrow.owner(), destinationTokensKey);
-  }
+  Instruction withdraw(final PublicKey payerKey);
+
+  Instruction withdraw(final Escrow escrow);
+
+  Instruction withdraw();
+
+  Instruction openPartialUnstaking(final PublicKey lockerKey,
+                                   final PublicKey escrowKey,
+                                   final PublicKey escrowOwnerKey,
+                                   final PublicKey partialUnstakeKey,
+                                   final long amount,
+                                   final String memo);
 
   Instruction openPartialUnstaking(final Escrow escrow,
                                    final PublicKey partialUnstakeKey,
                                    final long amount,
                                    final String memo);
 
+  Instruction openPartialUnstaking(final PublicKey partialUnstakeKey,
+                                   final long amount,
+                                   final String memo);
+
+  Instruction mergePartialUnstaking(final PublicKey lockerKey,
+                                    final PublicKey escrowKey,
+                                    final PublicKey escrowOwnerKey,
+                                    final PublicKey partialUnstakeKey);
+
   Instruction mergePartialUnstaking(final Escrow escrow, final PublicKey partialUnstakeKey);
+
+  Instruction mergePartialUnstaking(final PublicKey partialUnstakeKey);
+
+  Instruction withdrawPartialUnstaking(final PublicKey lockerKey,
+                                       final PublicKey escrowKey,
+                                       final PublicKey escrowOwnerKey,
+                                       final PublicKey escrowTokensKey,
+                                       final PublicKey partialUnstakeKey,
+                                       final PublicKey payerKey,
+                                       final PublicKey destinationTokensKey);
 
   Instruction withdrawPartialUnstaking(final Escrow escrow,
                                        final PublicKey partialUnstakeKey,
                                        final PublicKey payerKey,
                                        final PublicKey destinationTokensKey);
+
+  Instruction withdrawPartialUnstaking(final PublicKey partialUnstakeKey, final PublicKey payerKey);
 
   default Instruction withdrawPartialUnstaking(final Escrow escrow,
                                                final PublicKey partialUnstakeKey,
