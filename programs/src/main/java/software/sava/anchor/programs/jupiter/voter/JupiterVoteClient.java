@@ -52,6 +52,12 @@ public interface JupiterVoteClient {
 
   PublicKey escrowOwnerKey();
 
+  PublicKey escrowOwnerKeyATA();
+
+  PublicKey escrowKey();
+
+  PublicKey escrowATA();
+
   PublicKey deriveVoteKey(final PublicKey proposal);
 
   Instruction newEscrow(final PublicKey escrowOwnerKey,

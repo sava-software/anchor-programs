@@ -54,6 +54,21 @@ public abstract class BaseJupiterVoteClient implements JupiterVoteClient {
   }
 
   @Override
+  public final PublicKey escrowOwnerKeyATA() {
+    return ownerJupATA;
+  }
+
+  @Override
+  public final PublicKey escrowKey() {
+    return escrowKey;
+  }
+
+  @Override
+  public final PublicKey escrowATA() {
+    return escrowJupATA;
+  }
+
+  @Override
   public final PublicKey deriveVoteKey(final PublicKey proposal) {
     return jupiterAccounts.deriveVote(proposal, escrowOwnerKey).publicKey();
   }
