@@ -10,24 +10,26 @@ public interface GlamJupiterVoteClient extends JupiterVoteClient {
   static GlamJupiterVoteClient createClient(final SolanaAccounts solanaAccounts,
                                             final JupiterAccounts jupiterAccounts,
                                             final GlamAccounts glamAccounts,
-                                            final PublicKey fundKey,
+                                            final PublicKey glamKey,
                                             final PublicKey treasuryKey) {
     return new GlamJupiterVoteClientImpl(
         solanaAccounts,
         jupiterAccounts,
         glamAccounts,
-        fundKey,
+        glamKey,
         treasuryKey
     );
   }
 
-  static GlamJupiterVoteClient createClient(final PublicKey fundKey, final PublicKey treasuryKey) {
+  static GlamJupiterVoteClient createClient(final PublicKey glamKey, final PublicKey treasuryKey) {
     return createClient(
         SolanaAccounts.MAIN_NET,
         JupiterAccounts.MAIN_NET,
         GlamAccounts.MAIN_NET,
-        fundKey,
+        glamKey,
         treasuryKey
     );
   }
+
+  PublicKey glamKey();
 }

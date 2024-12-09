@@ -10,16 +10,21 @@ import software.sava.core.tx.Instruction;
 final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements GlamJupiterVoteClient {
 
   private final GlamAccounts glamAccounts;
-  private final PublicKey fundKey;
+  private final PublicKey glamKey;
 
   GlamJupiterVoteClientImpl(final SolanaAccounts solanaAccounts,
                             final JupiterAccounts jupiterAccounts,
                             final GlamAccounts glamAccounts,
-                            final PublicKey fundKey,
+                            final PublicKey glamKey,
                             final PublicKey treasuryKey) {
     super(solanaAccounts, jupiterAccounts, treasuryKey);
     this.glamAccounts = glamAccounts;
-    this.fundKey = fundKey;
+    this.glamKey = glamKey;
+  }
+
+  @Override
+  public PublicKey glamKey() {
+    return glamKey;
   }
 
   @Override
@@ -29,7 +34,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
     return GlamProgram.initLockedVoterEscrow(
         glamAccounts.invokedProgram(),
         solanaAccounts,
-        fundKey,
+        glamKey,
         escrowOwnerKey,
         payer,
         jupiterAccounts.lockerKey(),
@@ -49,7 +54,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
     return GlamProgram.newVote(
         glamAccounts.invokedProgram(),
         solanaAccounts,
-        fundKey,
+        glamKey,
         escrowOwnerKey,
         payer,
         proposal,
@@ -66,7 +71,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                               final int side) {
     return GlamProgram.castVote(
         glamAccounts.invokedProgram(),
-        fundKey,
+        glamKey,
         escrowOwnerKey,
         voteDelegate,
         jupiterAccounts.lockerKey(),
@@ -89,7 +94,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
     return GlamProgram.increaseLockedAmount(
         glamAccounts.invokedProgram(),
         solanaAccounts,
-        fundKey,
+        glamKey,
         escrowOwnerKey,
         payerKey,
         jupiterAccounts.lockerKey(),

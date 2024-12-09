@@ -29,15 +29,6 @@ public abstract class BaseJupiterVoteClient implements JupiterVoteClient {
     this.escrowJupATA = findATA(solanaAccounts, escrowKey, jupTokenMint).publicKey();
   }
 
-  public static void main(final String[] args) {
-    final var ata = findATA(
-        SolanaAccounts.MAIN_NET,
-        PublicKey.fromBase58Encoded("nC4rfsZPreALAKwyPD9gdDRUgb5G1aFeWSpWxjmBAjv"),
-        JupiterAccounts.MAIN_NET.jupTokenMint()
-    ).publicKey();
-    System.out.println(ata);
-  }
-
   @Override
   public final SolanaAccounts solanaAccounts() {
     return solanaAccounts;
