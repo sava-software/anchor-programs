@@ -1,5 +1,7 @@
 package software.sava.anchor.programs.switchboard.on_demand.anchor.types;
 
+import java.lang.Boolean;
+
 import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
@@ -14,9 +16,8 @@ public record PullFeedInitParams(byte[] feedHash,
                                  long recentSlot,
                                  byte[] ipfsHash,
                                  int minSampleSize,
-                                 int maxStaleness) implements Borsh {
-
-  public static final int BYTES = 121;
+                                 int maxStaleness,
+                                 Boolean permitWriteByAuthority) implements Borsh {
 
   public static PullFeedInitParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -38,6 +39,8 @@ public record PullFeedInitParams(byte[] feedHash,
     final var minSampleSize = _data[i] & 0xFF;
     ++i;
     final var maxStaleness = getInt32LE(_data, i);
+    i += 4;
+    final var permitWriteByAuthority = _data[i++] == 0 ? null : _data[i] == 1;
     return new PullFeedInitParams(feedHash,
                                   maxVariance,
                                   minResponses,
@@ -45,7 +48,8 @@ public record PullFeedInitParams(byte[] feedHash,
                                   recentSlot,
                                   ipfsHash,
                                   minSampleSize,
-                                  maxStaleness);
+                                  maxStaleness,
+                                  permitWriteByAuthority);
   }
 
   @Override
@@ -64,11 +68,20 @@ public record PullFeedInitParams(byte[] feedHash,
     ++i;
     putInt32LE(_data, i, maxStaleness);
     i += 4;
+    i += Borsh.writeOptional(permitWriteByAuthority, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return BYTES;
+    return Borsh.lenArray(feedHash)
+         + 8
+         + 4
+         + Borsh.lenArray(name)
+         + 8
+         + Borsh.lenArray(ipfsHash)
+         + 1
+         + 4
+         + (permitWriteByAuthority == null ? 1 : (1 + 1));
   }
 }

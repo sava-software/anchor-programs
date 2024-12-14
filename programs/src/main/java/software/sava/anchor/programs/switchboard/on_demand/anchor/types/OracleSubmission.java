@@ -15,7 +15,8 @@ public record OracleSubmission(// The public key of the oracle that submitted th
                                PublicKey oracle,
                                // The slot at which this value was signed.
                                long slot,
-                               byte[] padding1,
+                               // The slot at which this value was landed on chain.
+                               long landedAt,
                                // The value that was submitted.
                                BigInteger value) implements Borsh {
 
@@ -30,12 +31,12 @@ public record OracleSubmission(// The public key of the oracle that submitted th
     i += 32;
     final var slot = getInt64LE(_data, i);
     i += 8;
-    final var padding1 = new byte[8];
-    i += Borsh.readArray(padding1, _data, i);
+    final var landedAt = getInt64LE(_data, i);
+    i += 8;
     final var value = getInt128LE(_data, i);
     return new OracleSubmission(oracle,
                                 slot,
-                                padding1,
+                                landedAt,
                                 value);
   }
 
@@ -46,7 +47,8 @@ public record OracleSubmission(// The public key of the oracle that submitted th
     i += 32;
     putInt64LE(_data, i, slot);
     i += 8;
-    i += Borsh.writeArray(padding1, _data, i);
+    putInt64LE(_data, i, landedAt);
+    i += 8;
     putInt128LE(_data, i, value);
     i += 16;
     return i - offset;

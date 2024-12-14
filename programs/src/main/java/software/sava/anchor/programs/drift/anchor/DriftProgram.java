@@ -2012,6 +2012,63 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator UPDATE_USER_POOL_ID_DISCRIMINATOR = toDiscriminator(219, 86, 73, 106, 56, 218, 128, 109);
+
+  public static Instruction updateUserPoolId(final AccountMeta invokedDriftProgramMeta,
+                                             final PublicKey userKey,
+                                             final PublicKey authorityKey,
+                                             final int subAccountId,
+                                             final int poolId) {
+    final var keys = List.of(
+      createWrite(userKey),
+      createReadOnlySigner(authorityKey)
+    );
+
+    final byte[] _data = new byte[11];
+    int i = writeDiscriminator(UPDATE_USER_POOL_ID_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, subAccountId);
+    i += 2;
+    _data[i] = (byte) poolId;
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateUserPoolIdIxData(Discriminator discriminator, int subAccountId, int poolId) implements Borsh {  
+
+    public static UpdateUserPoolIdIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 11;
+
+    public static UpdateUserPoolIdIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var subAccountId = getInt16LE(_data, i);
+      i += 2;
+      final var poolId = _data[i] & 0xFF;
+      return new UpdateUserPoolIdIxData(discriminator, subAccountId, poolId);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, subAccountId);
+      i += 2;
+      _data[i] = (byte) poolId;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator UPDATE_USER_DELEGATE_DISCRIMINATOR = toDiscriminator(139, 205, 141, 141, 113, 36, 94, 187);
 
   public static Instruction updateUserDelegate(final AccountMeta invokedDriftProgramMeta,
@@ -2183,6 +2240,67 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator UPDATE_USER_PROTECTED_MAKER_ORDERS_DISCRIMINATOR = toDiscriminator(114, 39, 123, 198, 187, 25, 90, 219);
+
+  public static Instruction updateUserProtectedMakerOrders(final AccountMeta invokedDriftProgramMeta,
+                                                           final PublicKey stateKey,
+                                                           final PublicKey userKey,
+                                                           final PublicKey authorityKey,
+                                                           final PublicKey protectedMakerModeConfigKey,
+                                                           final int subAccountId,
+                                                           final boolean protectedMakerOrders) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWrite(userKey),
+      createReadOnlySigner(authorityKey),
+      createWrite(protectedMakerModeConfigKey)
+    );
+
+    final byte[] _data = new byte[11];
+    int i = writeDiscriminator(UPDATE_USER_PROTECTED_MAKER_ORDERS_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, subAccountId);
+    i += 2;
+    _data[i] = (byte) (protectedMakerOrders ? 1 : 0);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateUserProtectedMakerOrdersIxData(Discriminator discriminator, int subAccountId, boolean protectedMakerOrders) implements Borsh {  
+
+    public static UpdateUserProtectedMakerOrdersIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 11;
+
+    public static UpdateUserProtectedMakerOrdersIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var subAccountId = getInt16LE(_data, i);
+      i += 2;
+      final var protectedMakerOrders = _data[i] == 1;
+      return new UpdateUserProtectedMakerOrdersIxData(discriminator, subAccountId, protectedMakerOrders);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, subAccountId);
+      i += 2;
+      _data[i] = (byte) (protectedMakerOrders ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator DELETE_USER_DISCRIMINATOR = toDiscriminator(186, 85, 17, 249, 219, 231, 98, 251);
 
   public static Instruction deleteUser(final AccountMeta invokedDriftProgramMeta,
@@ -2198,6 +2316,27 @@ public final class DriftProgram {
     );
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, DELETE_USER_DISCRIMINATOR);
+  }
+
+  public static final Discriminator FORCE_DELETE_USER_DISCRIMINATOR = toDiscriminator(2, 241, 195, 172, 227, 24, 254, 158);
+
+  public static Instruction forceDeleteUser(final AccountMeta invokedDriftProgramMeta,
+                                            final PublicKey userKey,
+                                            final PublicKey userStatsKey,
+                                            final PublicKey stateKey,
+                                            final PublicKey authorityKey,
+                                            final PublicKey keeperKey,
+                                            final PublicKey driftSignerKey) {
+    final var keys = List.of(
+      createWrite(userKey),
+      createWrite(userStatsKey),
+      createWrite(stateKey),
+      createWrite(authorityKey),
+      createWritableSigner(keeperKey),
+      createRead(driftSignerKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, FORCE_DELETE_USER_DISCRIMINATOR);
   }
 
   public static final Discriminator DELETE_SWIFT_USER_ORDERS_DISCRIMINATOR = toDiscriminator(83, 157, 116, 215, 177, 177, 158, 20);
@@ -2536,6 +2675,21 @@ public final class DriftProgram {
     );
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_USER_IDLE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator LOG_USER_BALANCES_DISCRIMINATOR = toDiscriminator(162, 21, 35, 251, 32, 57, 161, 210);
+
+  public static Instruction logUserBalances(final AccountMeta invokedDriftProgramMeta,
+                                            final PublicKey stateKey,
+                                            final PublicKey authorityKey,
+                                            final PublicKey userKey) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createReadOnlySigner(authorityKey),
+      createWrite(userKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, LOG_USER_BALANCES_DISCRIMINATOR);
   }
 
   public static final Discriminator DISABLE_USER_HIGH_LEVERAGE_MODE_DISCRIMINATOR = toDiscriminator(183, 155, 45, 0, 226, 85, 213, 69);
@@ -6333,6 +6487,58 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator UPDATE_SPOT_MARKET_POOL_ID_DISCRIMINATOR = toDiscriminator(22, 213, 197, 160, 139, 193, 81, 149);
+
+  public static Instruction updateSpotMarketPoolId(final AccountMeta invokedDriftProgramMeta,
+                                                   final PublicKey adminKey,
+                                                   final PublicKey stateKey,
+                                                   final PublicKey spotMarketKey,
+                                                   final int poolId) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(spotMarketKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(UPDATE_SPOT_MARKET_POOL_ID_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) poolId;
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateSpotMarketPoolIdIxData(Discriminator discriminator, int poolId) implements Borsh {  
+
+    public static UpdateSpotMarketPoolIdIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdateSpotMarketPoolIdIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var poolId = _data[i] & 0xFF;
+      return new UpdateSpotMarketPoolIdIxData(discriminator, poolId);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) poolId;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator UPDATE_SPOT_MARKET_LIQUIDATION_FEE_DISCRIMINATOR = toDiscriminator(11, 13, 255, 53, 56, 136, 104, 177);
 
   public static Instruction updateSpotMarketLiquidationFee(final AccountMeta invokedDriftProgramMeta,
@@ -9921,6 +10127,111 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator INITIALIZE_PYTH_LAZER_ORACLE_DISCRIMINATOR = toDiscriminator(140, 107, 33, 214, 235, 219, 103, 20);
+
+  public static Instruction initializePythLazerOracle(final AccountMeta invokedDriftProgramMeta,
+                                                      final PublicKey adminKey,
+                                                      final PublicKey lazerOracleKey,
+                                                      final PublicKey stateKey,
+                                                      final PublicKey rentKey,
+                                                      final PublicKey systemProgramKey,
+                                                      final int feedId) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(lazerOracleKey),
+      createRead(stateKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[12];
+    int i = writeDiscriminator(INITIALIZE_PYTH_LAZER_ORACLE_DISCRIMINATOR, _data, 0);
+    putInt32LE(_data, i, feedId);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record InitializePythLazerOracleIxData(Discriminator discriminator, int feedId) implements Borsh {  
+
+    public static InitializePythLazerOracleIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 12;
+
+    public static InitializePythLazerOracleIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var feedId = getInt32LE(_data, i);
+      return new InitializePythLazerOracleIxData(discriminator, feedId);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, feedId);
+      i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator POST_PYTH_LAZER_ORACLE_UPDATE_DISCRIMINATOR = toDiscriminator(218, 237, 170, 245, 39, 143, 166, 33);
+
+  public static Instruction postPythLazerOracleUpdate(final AccountMeta invokedDriftProgramMeta,
+                                                      final PublicKey keeperKey,
+                                                      final PublicKey pythLazerStorageKey,
+                                                      final PublicKey ixSysvarKey,
+                                                      final byte[] pythMessage) {
+    final var keys = List.of(
+      createWritableSigner(keeperKey),
+      createRead(pythLazerStorageKey),
+      createRead(ixSysvarKey)
+    );
+
+    final byte[] _data = new byte[12 + Borsh.lenVector(pythMessage)];
+    int i = writeDiscriminator(POST_PYTH_LAZER_ORACLE_UPDATE_DISCRIMINATOR, _data, 0);
+    Borsh.writeVector(pythMessage, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record PostPythLazerOracleUpdateIxData(Discriminator discriminator, byte[] pythMessage) implements Borsh {  
+
+    public static PostPythLazerOracleUpdateIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static PostPythLazerOracleUpdateIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final byte[] pythMessage = Borsh.readbyteVector(_data, i);
+      return new PostPythLazerOracleUpdateIxData(discriminator, pythMessage);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeVector(pythMessage, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.lenVector(pythMessage);
+    }
+  }
+
   public static final Discriminator INITIALIZE_HIGH_LEVERAGE_MODE_CONFIG_DISCRIMINATOR = toDiscriminator(213, 167, 93, 246, 208, 130, 90, 248);
 
   public static Instruction initializeHighLeverageModeConfig(final AccountMeta invokedDriftProgramMeta,
@@ -10018,6 +10329,121 @@ public final class DriftProgram {
       i += 4;
       final var reduceOnly = _data[i] == 1;
       return new UpdateHighLeverageModeConfigIxData(discriminator, maxUsers, reduceOnly);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, maxUsers);
+      i += 4;
+      _data[i] = (byte) (reduceOnly ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INITIALIZE_PROTECTED_MAKER_MODE_CONFIG_DISCRIMINATOR = toDiscriminator(67, 103, 220, 67, 88, 32, 252, 8);
+
+  public static Instruction initializeProtectedMakerModeConfig(final AccountMeta invokedDriftProgramMeta,
+                                                               final PublicKey adminKey,
+                                                               final PublicKey protectedMakerModeConfigKey,
+                                                               final PublicKey stateKey,
+                                                               final PublicKey rentKey,
+                                                               final PublicKey systemProgramKey,
+                                                               final int maxUsers) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(protectedMakerModeConfigKey),
+      createRead(stateKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[12];
+    int i = writeDiscriminator(INITIALIZE_PROTECTED_MAKER_MODE_CONFIG_DISCRIMINATOR, _data, 0);
+    putInt32LE(_data, i, maxUsers);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record InitializeProtectedMakerModeConfigIxData(Discriminator discriminator, int maxUsers) implements Borsh {  
+
+    public static InitializeProtectedMakerModeConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 12;
+
+    public static InitializeProtectedMakerModeConfigIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var maxUsers = getInt32LE(_data, i);
+      return new InitializeProtectedMakerModeConfigIxData(discriminator, maxUsers);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, maxUsers);
+      i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_PROTECTED_MAKER_MODE_CONFIG_DISCRIMINATOR = toDiscriminator(86, 166, 235, 253, 67, 202, 223, 17);
+
+  public static Instruction updateProtectedMakerModeConfig(final AccountMeta invokedDriftProgramMeta,
+                                                           final PublicKey adminKey,
+                                                           final PublicKey protectedMakerModeConfigKey,
+                                                           final PublicKey stateKey,
+                                                           final int maxUsers,
+                                                           final boolean reduceOnly) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(protectedMakerModeConfigKey),
+      createRead(stateKey)
+    );
+
+    final byte[] _data = new byte[13];
+    int i = writeDiscriminator(UPDATE_PROTECTED_MAKER_MODE_CONFIG_DISCRIMINATOR, _data, 0);
+    putInt32LE(_data, i, maxUsers);
+    i += 4;
+    _data[i] = (byte) (reduceOnly ? 1 : 0);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateProtectedMakerModeConfigIxData(Discriminator discriminator, int maxUsers, boolean reduceOnly) implements Borsh {  
+
+    public static UpdateProtectedMakerModeConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 13;
+
+    public static UpdateProtectedMakerModeConfigIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var maxUsers = getInt32LE(_data, i);
+      i += 4;
+      final var reduceOnly = _data[i] == 1;
+      return new UpdateProtectedMakerModeConfigIxData(discriminator, maxUsers, reduceOnly);
     }
 
     @Override

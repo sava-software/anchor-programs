@@ -36,6 +36,7 @@ public record PullFeedAccountData(PublicKey _address,
                                   int minResponses,
                                   byte[] name,
                                   byte[] padding1,
+                                  int permitWriteByAuthority,
                                   int historicalResultIdx,
                                   int minSampleSize,
                                   long lastUpdateTimestamp,
@@ -65,6 +66,7 @@ public record PullFeedAccountData(PublicKey _address,
   public static final int MIN_RESPONSES_OFFSET = 2176;
   public static final int NAME_OFFSET = 2180;
   public static final int PADDING1_OFFSET = 2212;
+  public static final int PERMIT_WRITE_BY_AUTHORITY_OFFSET = 2213;
   public static final int HISTORICAL_RESULT_IDX_OFFSET = 2214;
   public static final int MIN_SAMPLE_SIZE_OFFSET = 2215;
   public static final int LAST_UPDATE_TIMESTAMP_OFFSET = 2216;
@@ -108,6 +110,10 @@ public record PullFeedAccountData(PublicKey _address,
     final byte[] _data = new byte[4];
     putInt32LE(_data, 0, minResponses);
     return Filter.createMemCompFilter(MIN_RESPONSES_OFFSET, _data);
+  }
+
+  public static Filter createPermitWriteByAuthorityFilter(final int permitWriteByAuthority) {
+    return Filter.createMemCompFilter(PERMIT_WRITE_BY_AUTHORITY_OFFSET, new byte[]{(byte) permitWriteByAuthority});
   }
 
   public static Filter createHistoricalResultIdxFilter(final int historicalResultIdx) {
@@ -174,8 +180,10 @@ public record PullFeedAccountData(PublicKey _address,
     i += 4;
     final var name = new byte[32];
     i += Borsh.readArray(name, _data, i);
-    final var padding1 = new byte[2];
+    final var padding1 = new byte[1];
     i += Borsh.readArray(padding1, _data, i);
+    final var permitWriteByAuthority = _data[i] & 0xFF;
+    ++i;
     final var historicalResultIdx = _data[i] & 0xFF;
     ++i;
     final var minSampleSize = _data[i] & 0xFF;
@@ -212,6 +220,7 @@ public record PullFeedAccountData(PublicKey _address,
                                    minResponses,
                                    name,
                                    padding1,
+                                   permitWriteByAuthority,
                                    historicalResultIdx,
                                    minSampleSize,
                                    lastUpdateTimestamp,
@@ -245,6 +254,8 @@ public record PullFeedAccountData(PublicKey _address,
     i += 4;
     i += Borsh.writeArray(name, _data, i);
     i += Borsh.writeArray(padding1, _data, i);
+    _data[i] = (byte) permitWriteByAuthority;
+    ++i;
     _data[i] = (byte) historicalResultIdx;
     ++i;
     _data[i] = (byte) minSampleSize;

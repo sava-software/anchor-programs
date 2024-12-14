@@ -1,5 +1,7 @@
 package software.sava.anchor.programs.switchboard.on_demand.anchor.types;
 
+import java.lang.Boolean;
+
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
@@ -17,7 +19,8 @@ public record PullFeedSetConfigsParams(byte[] feedHash,
                                        byte[] name,
                                        byte[] ipfsHash,
                                        OptionalInt minSampleSize,
-                                       OptionalInt maxStaleness) implements Borsh {
+                                       OptionalInt maxStaleness,
+                                       Boolean permitWriteByAuthority) implements Borsh {
 
   public static PullFeedSetConfigsParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -53,6 +56,10 @@ public record PullFeedSetConfigsParams(byte[] feedHash,
       ++i;
     }
     final var maxStaleness = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+    if (maxStaleness.isPresent()) {
+      i += 4;
+    }
+    final var permitWriteByAuthority = _data[i++] == 0 ? null : _data[i] == 1;
     return new PullFeedSetConfigsParams(feedHash,
                                         authority,
                                         maxVariance,
@@ -60,7 +67,8 @@ public record PullFeedSetConfigsParams(byte[] feedHash,
                                         name,
                                         ipfsHash,
                                         minSampleSize,
-                                        maxStaleness);
+                                        maxStaleness,
+                                        permitWriteByAuthority);
   }
 
   @Override
@@ -89,6 +97,7 @@ public record PullFeedSetConfigsParams(byte[] feedHash,
     }
     i += Borsh.writeOptionalbyte(minSampleSize, _data, i);
     i += Borsh.writeOptional(maxStaleness, _data, i);
+    i += Borsh.writeOptional(permitWriteByAuthority, _data, i);
     return i - offset;
   }
 
@@ -101,6 +110,7 @@ public record PullFeedSetConfigsParams(byte[] feedHash,
          + (name == null || name.length == 0 ? 1 : (1 + Borsh.lenArray(name)))
          + (ipfsHash == null || ipfsHash.length == 0 ? 1 : (1 + Borsh.lenArray(ipfsHash)))
          + (minSampleSize == null || minSampleSize.isEmpty() ? 1 : (1 + 1))
-         + (maxStaleness == null || maxStaleness.isEmpty() ? 1 : (1 + 4));
+         + (maxStaleness == null || maxStaleness.isEmpty() ? 1 : (1 + 4))
+         + (permitWriteByAuthority == null ? 1 : (1 + 1));
   }
 }

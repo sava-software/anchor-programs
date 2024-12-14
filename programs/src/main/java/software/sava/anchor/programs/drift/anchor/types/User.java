@@ -80,6 +80,7 @@ public record User(PublicKey _address,
                    // Whether or not user has open order with auction
                    boolean hasOpenAuction,
                    MarginMode marginMode,
+                   int poolId,
                    byte[] padding1,
                    int lastFuelBonusUpdateTs,
                    byte[] padding) implements Borsh {
@@ -114,7 +115,8 @@ public record User(PublicKey _address,
   public static final int OPEN_AUCTIONS_OFFSET = 4353;
   public static final int HAS_OPEN_AUCTION_OFFSET = 4354;
   public static final int MARGIN_MODE_OFFSET = 4355;
-  public static final int PADDING1_OFFSET = 4356;
+  public static final int POOL_ID_OFFSET = 4356;
+  public static final int PADDING1_OFFSET = 4357;
   public static final int LAST_FUEL_BONUS_UPDATE_TS_OFFSET = 4360;
   public static final int PADDING_OFFSET = 4364;
 
@@ -236,6 +238,10 @@ public record User(PublicKey _address,
     return Filter.createMemCompFilter(MARGIN_MODE_OFFSET, marginMode.write());
   }
 
+  public static Filter createPoolIdFilter(final int poolId) {
+    return Filter.createMemCompFilter(POOL_ID_OFFSET, new byte[]{(byte) poolId});
+  }
+
   public static Filter createLastFuelBonusUpdateTsFilter(final int lastFuelBonusUpdateTs) {
     final byte[] _data = new byte[4];
     putInt32LE(_data, 0, lastFuelBonusUpdateTs);
@@ -312,7 +318,9 @@ public record User(PublicKey _address,
     ++i;
     final var marginMode = MarginMode.read(_data, i);
     i += Borsh.len(marginMode);
-    final var padding1 = new byte[4];
+    final var poolId = _data[i] & 0xFF;
+    ++i;
+    final var padding1 = new byte[3];
     i += Borsh.readArray(padding1, _data, i);
     final var lastFuelBonusUpdateTs = getInt32LE(_data, i);
     i += 4;
@@ -347,6 +355,7 @@ public record User(PublicKey _address,
                     openAuctions,
                     hasOpenAuction,
                     marginMode,
+                    poolId,
                     padding1,
                     lastFuelBonusUpdateTs,
                     padding);
@@ -404,6 +413,8 @@ public record User(PublicKey _address,
     _data[i] = (byte) (hasOpenAuction ? 1 : 0);
     ++i;
     i += Borsh.write(marginMode, _data, i);
+    _data[i] = (byte) poolId;
+    ++i;
     i += Borsh.writeArray(padding1, _data, i);
     putInt32LE(_data, i, lastFuelBonusUpdateTs);
     i += 4;

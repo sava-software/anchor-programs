@@ -304,7 +304,13 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.SwiftUserAccountWrongMutability,
     DriftError.SwiftUserOrdersAccountFull,
     DriftError.SwiftOrderDoesNotExist,
-    DriftError.InvalidSwiftOrderId {
+    DriftError.InvalidSwiftOrderId,
+    DriftError.InvalidPoolId,
+    DriftError.InvalidProtectedMakerModeConfig,
+    DriftError.InvalidPythLazerStorageOwner,
+    DriftError.UnverifiedPythLazerMessage,
+    DriftError.InvalidPythLazerMessage,
+    DriftError.PythLazerMessagePriceFeedMismatch {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -610,6 +616,12 @@ public sealed interface DriftError extends ProgramError permits
       case 6299 -> SwiftUserOrdersAccountFull.INSTANCE;
       case 6300 -> SwiftOrderDoesNotExist.INSTANCE;
       case 6301 -> InvalidSwiftOrderId.INSTANCE;
+      case 6302 -> InvalidPoolId.INSTANCE;
+      case 6303 -> InvalidProtectedMakerModeConfig.INSTANCE;
+      case 6304 -> InvalidPythLazerStorageOwner.INSTANCE;
+      case 6305 -> UnverifiedPythLazerMessage.INSTANCE;
+      case 6306 -> InvalidPythLazerMessage.INSTANCE;
+      case 6307 -> PythLazerMessagePriceFeedMismatch.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2556,14 +2568,14 @@ public sealed interface DriftError extends ProgramError permits
   record OracleMismatchedVaaAndPriceUpdates(int code, String msg) implements DriftError {
 
     public static final OracleMismatchedVaaAndPriceUpdates INSTANCE = new OracleMismatchedVaaAndPriceUpdates(
-        6277, "Don't have the same remaining accounts number and merkle price updates left"
+        6277, "Don't have the same remaining accounts number and pyth updates left"
     );
   }
 
   record OracleBadRemainingAccountPublicKey(int code, String msg) implements DriftError {
 
     public static final OracleBadRemainingAccountPublicKey INSTANCE = new OracleBadRemainingAccountPublicKey(
-        6278, "Remaining account passed is not a valid pda"
+        6278, "Remaining account passed does not match oracle update derived pda"
     );
   }
 
@@ -2725,6 +2737,48 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final InvalidSwiftOrderId INSTANCE = new InvalidSwiftOrderId(
         6301, "Swift order id cannot be 0s"
+    );
+  }
+
+  record InvalidPoolId(int code, String msg) implements DriftError {
+
+    public static final InvalidPoolId INSTANCE = new InvalidPoolId(
+        6302, "Invalid pool id"
+    );
+  }
+
+  record InvalidProtectedMakerModeConfig(int code, String msg) implements DriftError {
+
+    public static final InvalidProtectedMakerModeConfig INSTANCE = new InvalidProtectedMakerModeConfig(
+        6303, "Invalid Protected Maker Mode Config"
+    );
+  }
+
+  record InvalidPythLazerStorageOwner(int code, String msg) implements DriftError {
+
+    public static final InvalidPythLazerStorageOwner INSTANCE = new InvalidPythLazerStorageOwner(
+        6304, "Invalid pyth lazer storage owner"
+    );
+  }
+
+  record UnverifiedPythLazerMessage(int code, String msg) implements DriftError {
+
+    public static final UnverifiedPythLazerMessage INSTANCE = new UnverifiedPythLazerMessage(
+        6305, "Verification of pyth lazer message failed"
+    );
+  }
+
+  record InvalidPythLazerMessage(int code, String msg) implements DriftError {
+
+    public static final InvalidPythLazerMessage INSTANCE = new InvalidPythLazerMessage(
+        6306, "Invalid pyth lazer message"
+    );
+  }
+
+  record PythLazerMessagePriceFeedMismatch(int code, String msg) implements DriftError {
+
+    public static final PythLazerMessagePriceFeedMismatch INSTANCE = new PythLazerMessagePriceFeedMismatch(
+        6307, "Pyth lazer message does not correspond to correct fed id"
     );
   }
 }

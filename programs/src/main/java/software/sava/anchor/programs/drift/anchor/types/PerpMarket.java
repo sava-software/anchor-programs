@@ -101,7 +101,7 @@ public record PerpMarket(PublicKey _address,
                          // fuel multiplier for perp maker
                          // precision: 10
                          int fuelBoostMaker,
-                         int padding1,
+                         int poolId,
                          int highLeverageMarginRatioInitial,
                          int highLeverageMarginRatioMaintenance,
                          byte[] padding) implements Borsh {
@@ -140,7 +140,7 @@ public record PerpMarket(PublicKey _address,
   public static final int FUEL_BOOST_POSITION_OFFSET = 1170;
   public static final int FUEL_BOOST_TAKER_OFFSET = 1171;
   public static final int FUEL_BOOST_MAKER_OFFSET = 1172;
-  public static final int PADDING1_OFFSET = 1173;
+  public static final int POOL_ID_OFFSET = 1173;
   public static final int HIGH_LEVERAGE_MARGIN_RATIO_INITIAL_OFFSET = 1174;
   public static final int HIGH_LEVERAGE_MARGIN_RATIO_MAINTENANCE_OFFSET = 1176;
   public static final int PADDING_OFFSET = 1178;
@@ -299,8 +299,8 @@ public record PerpMarket(PublicKey _address,
     return Filter.createMemCompFilter(FUEL_BOOST_MAKER_OFFSET, new byte[]{(byte) fuelBoostMaker});
   }
 
-  public static Filter createPadding1Filter(final int padding1) {
-    return Filter.createMemCompFilter(PADDING1_OFFSET, new byte[]{(byte) padding1});
+  public static Filter createPoolIdFilter(final int poolId) {
+    return Filter.createMemCompFilter(POOL_ID_OFFSET, new byte[]{(byte) poolId});
   }
 
   public static Filter createHighLeverageMarginRatioInitialFilter(final int highLeverageMarginRatioInitial) {
@@ -393,7 +393,7 @@ public record PerpMarket(PublicKey _address,
     ++i;
     final var fuelBoostMaker = _data[i] & 0xFF;
     ++i;
-    final var padding1 = _data[i] & 0xFF;
+    final var poolId = _data[i] & 0xFF;
     ++i;
     final var highLeverageMarginRatioInitial = getInt16LE(_data, i);
     i += 2;
@@ -434,7 +434,7 @@ public record PerpMarket(PublicKey _address,
                           fuelBoostPosition,
                           fuelBoostTaker,
                           fuelBoostMaker,
-                          padding1,
+                          poolId,
                           highLeverageMarginRatioInitial,
                           highLeverageMarginRatioMaintenance,
                           padding);
@@ -498,7 +498,7 @@ public record PerpMarket(PublicKey _address,
     ++i;
     _data[i] = (byte) fuelBoostMaker;
     ++i;
-    _data[i] = (byte) padding1;
+    _data[i] = (byte) poolId;
     ++i;
     putInt16LE(_data, i, highLeverageMarginRatioInitial);
     i += 2;

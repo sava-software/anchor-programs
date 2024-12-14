@@ -7,6 +7,7 @@ import software.sava.anchor.programs.switchboard.on_demand.anchor.types.Guardian
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.GuardianUnregisterParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleHeartbeatParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleInitParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleInitSVMParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleSetConfigsParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleUpdateDelegationParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PermissionSetParams;
@@ -15,11 +16,14 @@ import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeed
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSetConfigsParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSubmitResponseManyParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSubmitResponseParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSubmitResponseSVMParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueAddMrEnclaveParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueAllowSubsidiesParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueGarbageCollectParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueInitDelegationGroupParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueInitParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueInitSVMParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueOverrideSVMParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueRemoveMrEnclaveParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueSetConfigsParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.RandomnessCommitParams;
@@ -337,6 +341,69 @@ public final class SbOnDemandProgram {
     }
   }
 
+  public static final Discriminator ORACLE_INIT_SVM_DISCRIMINATOR = toDiscriminator(106, 20, 36, 117, 166, 175, 131, 83);
+
+  public static Instruction oracleInitSvm(final AccountMeta invokedSbOnDemandProgramMeta,
+                                          final SolanaAccounts solanaAccounts,
+                                          final PublicKey oracleKey,
+                                          final PublicKey oracleStatsKey,
+                                          final PublicKey programStateKey,
+                                          final PublicKey payerKey,
+                                          final PublicKey lutSignerKey,
+                                          final PublicKey lutKey,
+                                          final PublicKey stakeProgramKey,
+                                          final PublicKey stakePoolKey,
+                                          final OracleInitSVMParams params) {
+    final var keys = List.of(
+      createWrite(oracleKey),
+      createWrite(oracleStatsKey),
+      createWrite(programStateKey),
+      createWritableSigner(payerKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(lutSignerKey),
+      createWrite(lutKey),
+      createRead(solanaAccounts.addressLookupTableProgram()),
+      createRead(stakeProgramKey),
+      createRead(stakePoolKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(ORACLE_INIT_SVM_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record OracleInitSvmIxData(Discriminator discriminator, OracleInitSVMParams params) implements Borsh {  
+
+    public static OracleInitSvmIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static OracleInitSvmIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = OracleInitSVMParams.read(_data, i);
+      return new OracleInitSvmIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(params);
+    }
+  }
+
   public static final Discriminator ORACLE_SET_CONFIGS_DISCRIMINATOR = toDiscriminator(129, 111, 223, 4, 191, 188, 70, 180);
 
   public static Instruction oracleSetConfigs(final AccountMeta invokedSbOnDemandProgramMeta,
@@ -619,8 +686,6 @@ public final class SbOnDemandProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 129;
-
     public static PullFeedInitIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
@@ -640,7 +705,7 @@ public final class SbOnDemandProgram {
 
     @Override
     public int l() {
-      return BYTES;
+      return 8 + Borsh.len(params);
     }
   }
 
@@ -790,6 +855,64 @@ public final class SbOnDemandProgram {
       int i = offset + discriminator.length();
       final var params = PullFeedSubmitResponseManyParams.read(_data, i);
       return new PullFeedSubmitResponseManyIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(params);
+    }
+  }
+
+  public static final Discriminator PULL_FEED_SUBMIT_RESPONSE_SVM_DISCRIMINATOR = toDiscriminator(123, 7, 190, 12, 220, 230, 198, 148);
+
+  public static Instruction pullFeedSubmitResponseSvm(final AccountMeta invokedSbOnDemandProgramMeta,
+                                                      final SolanaAccounts solanaAccounts,
+                                                      final PublicKey feedKey,
+                                                      final PublicKey queueKey,
+                                                      final PublicKey programStateKey,
+                                                      final PublicKey payerKey,
+                                                      final PublicKey rewardVaultKey,
+                                                      final PullFeedSubmitResponseSVMParams params) {
+    final var keys = List.of(
+      createWrite(feedKey),
+      createRead(queueKey),
+      createRead(programStateKey),
+      createRead(solanaAccounts.slotHashesSysVar()),
+      createWritableSigner(payerKey),
+      createRead(solanaAccounts.systemProgram()),
+      createWrite(rewardVaultKey),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.wrappedSolTokenMint())
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(PULL_FEED_SUBMIT_RESPONSE_SVM_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record PullFeedSubmitResponseSvmIxData(Discriminator discriminator, PullFeedSubmitResponseSVMParams params) implements Borsh {  
+
+    public static PullFeedSubmitResponseSvmIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static PullFeedSubmitResponseSvmIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = PullFeedSubmitResponseSVMParams.read(_data, i);
+      return new PullFeedSubmitResponseSvmIxData(discriminator, params);
     }
 
     @Override
@@ -1076,6 +1199,124 @@ public final class SbOnDemandProgram {
       int i = offset + discriminator.length();
       final var params = QueueInitDelegationGroupParams.read(_data, i);
       return new QueueInitDelegationGroupIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator QUEUE_INIT_SVM_DISCRIMINATOR = toDiscriminator(175, 94, 119, 151, 45, 144, 173, 235);
+
+  public static Instruction queueInitSvm(final AccountMeta invokedSbOnDemandProgramMeta,
+                                         final SolanaAccounts solanaAccounts,
+                                         final PublicKey queueKey,
+                                         final PublicKey queueEscrowKey,
+                                         final PublicKey authorityKey,
+                                         final PublicKey payerKey,
+                                         final PublicKey programStateKey,
+                                         final PublicKey lutSignerKey,
+                                         final PublicKey lutKey,
+                                         final QueueInitSVMParams params) {
+    final var keys = List.of(
+      createWrite(queueKey),
+      createWrite(queueEscrowKey),
+      createRead(authorityKey),
+      createWritableSigner(payerKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.wrappedSolTokenMint()),
+      createRead(programStateKey),
+      createWrite(lutSignerKey),
+      createWrite(lutKey),
+      createRead(solanaAccounts.addressLookupTableProgram()),
+      createRead(solanaAccounts.associatedTokenAccountProgram())
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(QUEUE_INIT_SVM_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record QueueInitSvmIxData(Discriminator discriminator, QueueInitSVMParams params) implements Borsh {  
+
+    public static QueueInitSvmIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 66;
+
+    public static QueueInitSvmIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = QueueInitSVMParams.read(_data, i);
+      return new QueueInitSvmIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator QUEUE_OVERRIDE_SVM_DISCRIMINATOR = toDiscriminator(43, 103, 15, 35, 89, 14, 244, 165);
+
+  public static Instruction queueOverrideSvm(final AccountMeta invokedSbOnDemandProgramMeta,
+                                             final PublicKey oracleKey,
+                                             final PublicKey queueKey,
+                                             final PublicKey authorityKey,
+                                             final PublicKey stateKey,
+                                             final QueueOverrideSVMParams params) {
+    final var keys = List.of(
+      createWrite(oracleKey),
+      createWrite(queueKey),
+      createReadOnlySigner(authorityKey),
+      createRead(stateKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(QUEUE_OVERRIDE_SVM_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record QueueOverrideSvmIxData(Discriminator discriminator, QueueOverrideSVMParams params) implements Borsh {  
+
+    public static QueueOverrideSvmIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 120;
+
+    public static QueueOverrideSvmIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = QueueOverrideSVMParams.read(_data, i);
+      return new QueueOverrideSvmIxData(discriminator, params);
     }
 
     @Override

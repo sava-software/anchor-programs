@@ -194,6 +194,7 @@ public record SpotMarket(PublicKey _address,
                          // precision: 10
                          int fuelBoostInsurance,
                          int tokenProgram,
+                         int poolId,
                          byte[] padding) implements Borsh {
 
   public static final int BYTES = 776;
@@ -261,7 +262,8 @@ public record SpotMarket(PublicKey _address,
   public static final int FUEL_BOOST_MAKER_OFFSET = 732;
   public static final int FUEL_BOOST_INSURANCE_OFFSET = 733;
   public static final int TOKEN_PROGRAM_OFFSET = 734;
-  public static final int PADDING_OFFSET = 735;
+  public static final int POOL_ID_OFFSET = 735;
+  public static final int PADDING_OFFSET = 736;
 
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);
@@ -585,6 +587,10 @@ public record SpotMarket(PublicKey _address,
     return Filter.createMemCompFilter(TOKEN_PROGRAM_OFFSET, new byte[]{(byte) tokenProgram});
   }
 
+  public static Filter createPoolIdFilter(final int poolId) {
+    return Filter.createMemCompFilter(POOL_ID_OFFSET, new byte[]{(byte) poolId});
+  }
+
   public static SpotMarket read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -725,7 +731,9 @@ public record SpotMarket(PublicKey _address,
     ++i;
     final var tokenProgram = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[41];
+    final var poolId = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[40];
     Borsh.readArray(padding, _data, i);
     return new SpotMarket(_address,
                           discriminator,
@@ -791,6 +799,7 @@ public record SpotMarket(PublicKey _address,
                           fuelBoostMaker,
                           fuelBoostInsurance,
                           tokenProgram,
+                          poolId,
                           padding);
   }
 
@@ -911,6 +920,8 @@ public record SpotMarket(PublicKey _address,
     _data[i] = (byte) fuelBoostInsurance;
     ++i;
     _data[i] = (byte) tokenProgram;
+    ++i;
+    _data[i] = (byte) poolId;
     ++i;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;

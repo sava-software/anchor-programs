@@ -5,7 +5,7 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record PullFeedSubmitResponseParams(long slot, Submission[] submissions) implements Borsh {
+public record PullFeedSubmitResponseParams(long slot, SbOnDemandActionsPullFeedPullFeedSubmitResponseActionSubmission[] submissions) implements Borsh {
 
   public static PullFeedSubmitResponseParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -14,7 +14,7 @@ public record PullFeedSubmitResponseParams(long slot, Submission[] submissions) 
     int i = offset;
     final var slot = getInt64LE(_data, i);
     i += 8;
-    final var submissions = Borsh.readVector(Submission.class, Submission::read, _data, i);
+    final var submissions = Borsh.readVector(SbOnDemandActionsPullFeedPullFeedSubmitResponseActionSubmission.class, SbOnDemandActionsPullFeedPullFeedSubmitResponseActionSubmission::read, _data, i);
     return new PullFeedSubmitResponseParams(slot, submissions);
   }
 

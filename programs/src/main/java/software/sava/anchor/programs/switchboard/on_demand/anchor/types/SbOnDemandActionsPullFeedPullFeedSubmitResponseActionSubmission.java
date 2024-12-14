@@ -7,14 +7,14 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 
-public record Submission(BigInteger value,
-                         byte[] signature,
-                         int recoveryId,
-                         int _offset) implements Borsh {
+public record SbOnDemandActionsPullFeedPullFeedSubmitResponseActionSubmission(BigInteger value,
+                                                                              byte[] signature,
+                                                                              int recoveryId,
+                                                                              int _offset) implements Borsh {
 
   public static final int BYTES = 82;
 
-  public static Submission read(final byte[] _data, final int offset) {
+  public static SbOnDemandActionsPullFeedPullFeedSubmitResponseActionSubmission read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
@@ -26,10 +26,10 @@ public record Submission(BigInteger value,
     final var recoveryId = _data[i] & 0xFF;
     ++i;
     final var _offset = _data[i] & 0xFF;
-    return new Submission(value,
-                          signature,
-                          recoveryId,
-                          _offset);
+    return new SbOnDemandActionsPullFeedPullFeedSubmitResponseActionSubmission(value,
+                                                                               signature,
+                                                                               recoveryId,
+                                                                               _offset);
   }
 
   @Override

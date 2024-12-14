@@ -23,6 +23,8 @@ public record CurrentResult(// The median value of the submissions needed for qu
                             BigInteger maxValue,
                             // The number of samples used to calculate this result
                             int numSamples,
+                            // The index of the submission that was used to calculate this result
+                            int submissionIdx,
                             byte[] padding1,
                             // The slot at which this value was signed.
                             long slot,
@@ -52,7 +54,9 @@ public record CurrentResult(// The median value of the submissions needed for qu
     i += 16;
     final var numSamples = _data[i] & 0xFF;
     ++i;
-    final var padding1 = new byte[7];
+    final var submissionIdx = _data[i] & 0xFF;
+    ++i;
+    final var padding1 = new byte[6];
     i += Borsh.readArray(padding1, _data, i);
     final var slot = getInt64LE(_data, i);
     i += 8;
@@ -66,6 +70,7 @@ public record CurrentResult(// The median value of the submissions needed for qu
                              minValue,
                              maxValue,
                              numSamples,
+                             submissionIdx,
                              padding1,
                              slot,
                              minSlot,
@@ -88,6 +93,8 @@ public record CurrentResult(// The median value of the submissions needed for qu
     putInt128LE(_data, i, maxValue);
     i += 16;
     _data[i] = (byte) numSamples;
+    ++i;
+    _data[i] = (byte) submissionIdx;
     ++i;
     i += Borsh.writeArray(padding1, _data, i);
     putInt64LE(_data, i, slot);

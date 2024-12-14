@@ -44,13 +44,34 @@ public sealed interface FillMode extends RustEnum permits
     }
   }
 
-  record PlaceAndTake(boolean val) implements EnumBool, FillMode {
+  record PlaceAndTake(boolean _bool, int _u8) implements FillMode {
 
-    public static final PlaceAndTake TRUE = new PlaceAndTake(true);
-    public static final PlaceAndTake FALSE = new PlaceAndTake(false);
+    public static final int BYTES = 2;
 
-    public static PlaceAndTake read(final byte[] _data, int i) {
-      return _data[i] == 1 ? PlaceAndTake.TRUE : PlaceAndTake.FALSE;
+    public static PlaceAndTake read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      int i = offset;
+      final var _bool = _data[i] == 1;
+      ++i;
+      final var _u8 = _data[i] & 0xFF;
+      return new PlaceAndTake(_bool, _u8);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      _data[i] = (byte) (_bool ? 1 : 0);
+      ++i;
+      _data[i] = (byte) _u8;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
     }
 
     @Override
