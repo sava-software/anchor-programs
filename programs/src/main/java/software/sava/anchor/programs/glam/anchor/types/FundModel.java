@@ -16,6 +16,7 @@ public record FundModel(PublicKey id,
                         Boolean isEnabled,
                         PublicKey[] assets,
                         int[] assetsWeights,
+                        PublicKey[] externalTreasuryAccounts,
                         ShareClassModel[] shareClasses,
                         CompanyModel company,
                         ManagerModel manager,
@@ -35,6 +36,7 @@ public record FundModel(PublicKey id,
                                        final Boolean isEnabled,
                                        final PublicKey[] assets,
                                        final int[] assetsWeights,
+                                       final PublicKey[] externalTreasuryAccounts,
                                        final ShareClassModel[] shareClasses,
                                        final CompanyModel company,
                                        final ManagerModel manager,
@@ -53,6 +55,7 @@ public record FundModel(PublicKey id,
                          isEnabled,
                          assets,
                          assetsWeights,
+                         externalTreasuryAccounts,
                          shareClasses,
                          company,
                          manager,
@@ -95,6 +98,8 @@ public record FundModel(PublicKey id,
     i += Borsh.lenVector(assets);
     final var assetsWeights = Borsh.readintVector(_data, i);
     i += Borsh.lenVector(assetsWeights);
+    final var externalTreasuryAccounts = Borsh.readPublicKeyVector(_data, i);
+    i += Borsh.lenVector(externalTreasuryAccounts);
     final var shareClasses = Borsh.readVector(ShareClassModel.class, ShareClassModel::read, _data, i);
     i += Borsh.lenVector(shareClasses);
     final var company = _data[i++] == 0 ? null : CompanyModel.read(_data, i);
@@ -129,6 +134,7 @@ public record FundModel(PublicKey id,
                          isEnabled,
                          assets,
                          assetsWeights,
+                         externalTreasuryAccounts,
                          shareClasses,
                          company,
                          manager,
@@ -152,6 +158,7 @@ public record FundModel(PublicKey id,
     i += Borsh.writeOptional(isEnabled, _data, i);
     i += Borsh.writeVector(assets, _data, i);
     i += Borsh.writeVector(assetsWeights, _data, i);
+    i += Borsh.writeVector(externalTreasuryAccounts, _data, i);
     i += Borsh.writeVector(shareClasses, _data, i);
     i += Borsh.writeOptional(company, _data, i);
     i += Borsh.writeOptional(manager, _data, i);
@@ -176,6 +183,7 @@ public record FundModel(PublicKey id,
          + (isEnabled == null ? 1 : (1 + 1))
          + Borsh.lenVector(assets)
          + Borsh.lenVector(assetsWeights)
+         + Borsh.lenVector(externalTreasuryAccounts)
          + Borsh.lenVector(shareClasses)
          + (company == null ? 1 : (1 + Borsh.len(company)))
          + (manager == null ? 1 : (1 + Borsh.len(manager)))
