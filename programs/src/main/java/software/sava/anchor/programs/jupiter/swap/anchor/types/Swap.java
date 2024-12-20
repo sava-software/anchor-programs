@@ -72,7 +72,8 @@ public sealed interface Swap extends RustEnum permits
   Swap.FoxClaimPartial,
   Swap.SolFi,
   Swap.SolayerDelegateNoInit,
-  Swap.SolayerUndelegateNoInit {
+  Swap.SolayerUndelegateNoInit,
+  Swap.TokenMill {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -142,6 +143,7 @@ public sealed interface Swap extends RustEnum permits
       case 61 -> SolFi.read(_data, i);
       case 62 -> SolayerDelegateNoInit.INSTANCE;
       case 63 -> SolayerUndelegateNoInit.INSTANCE;
+      case 64 -> TokenMill.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1016,6 +1018,18 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 63;
+    }
+  }
+
+  record TokenMill(Side val) implements BorshEnum, Swap {
+
+    public static TokenMill read(final byte[] _data, final int offset) {
+      return new TokenMill(Side.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 64;
     }
   }
 }

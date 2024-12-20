@@ -11,11 +11,15 @@ import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record TokenLedger(PublicKey _address, Discriminator discriminator, PublicKey tokenAccount, long amount) implements Borsh {
 
   public static final int BYTES = 48;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(156, 247, 9, 188, 54, 108, 85, 77);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int TOKEN_ACCOUNT_OFFSET = 8;
   public static final int AMOUNT_OFFSET = 40;

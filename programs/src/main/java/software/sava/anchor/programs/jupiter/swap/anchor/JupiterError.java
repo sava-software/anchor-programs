@@ -20,7 +20,8 @@ public sealed interface JupiterError extends ProgramError permits
     JupiterError.IncorrectTokenProgramID,
     JupiterError.TokenProgramNotProvided,
     JupiterError.SwapNotSupported,
-    JupiterError.ExactOutAmountNotMatched {
+    JupiterError.ExactOutAmountNotMatched,
+    JupiterError.SourceAndDestinationMintCannotBeTheSame {
 
   static JupiterError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -42,6 +43,7 @@ public sealed interface JupiterError extends ProgramError permits
       case 6015 -> TokenProgramNotProvided.INSTANCE;
       case 6016 -> SwapNotSupported.INSTANCE;
       case 6017 -> ExactOutAmountNotMatched.INSTANCE;
+      case 6018 -> SourceAndDestinationMintCannotBeTheSame.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Jupiter error code: " + errorCode);
     };
   }
@@ -169,6 +171,13 @@ public sealed interface JupiterError extends ProgramError permits
 
     public static final ExactOutAmountNotMatched INSTANCE = new ExactOutAmountNotMatched(
         6017, "Exact out amount doesn't match"
+    );
+  }
+
+  record SourceAndDestinationMintCannotBeTheSame(int code, String msg) implements JupiterError {
+
+    public static final SourceAndDestinationMintCannotBeTheSame INSTANCE = new SourceAndDestinationMintCannotBeTheSame(
+        6018, "Source mint and destination mint cannot the same"
     );
   }
 }
