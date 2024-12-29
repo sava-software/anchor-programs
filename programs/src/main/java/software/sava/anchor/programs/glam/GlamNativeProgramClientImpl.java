@@ -35,7 +35,7 @@ public class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
 
   GlamNativeProgramClientImpl(final SolanaAccounts solanaAccounts, final GlamFundAccounts glamFundAccounts) {
     this.solanaAccounts = solanaAccounts;
-    this.nativeProgramClient = GlamNativeProgramClient.createClient(solanaAccounts, glamFundAccounts);
+    this.nativeProgramClient = NativeProgramClient.createClient(solanaAccounts);
     this.glamFundAccounts = glamFundAccounts;
     this.invokedProgram = glamFundAccounts.glamAccounts().invokedProgram();
     this.manager = createFeePayer(glamFundAccounts.signerPublicKey());
