@@ -44,7 +44,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     this.glamFundAccounts = glamFundAccounts;
     this.invokedProgram = glamFundAccounts.glamAccounts().invokedProgram();
     this.manager = createFeePayer(glamFundAccounts.signerPublicKey());
-    this.nativeProgramAccountClient = nativeProgramClient.createAccountClient(glamFundAccounts.treasuryPublicKey(), manager);
+    this.nativeProgramAccountClient = NativeProgramAccountClient.createClient(solanaAccounts, glamFundAccounts.treasuryPublicKey(), manager);
   }
 
   @Override
