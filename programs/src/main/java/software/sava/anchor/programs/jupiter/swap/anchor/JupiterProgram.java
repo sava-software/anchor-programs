@@ -159,62 +159,6 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, CREATE_OPEN_ORDERS_DISCRIMINATOR);
   }
 
-  public static final Discriminator CREATE_TOKEN_ACCOUNT_DISCRIMINATOR = toDiscriminator(147, 241, 123, 100, 244, 132, 174, 118);
-
-  public static Instruction createTokenAccount(final AccountMeta invokedJupiterProgramMeta,
-                                               final PublicKey tokenAccountKey,
-                                               final PublicKey userKey,
-                                               final PublicKey mintKey,
-                                               final PublicKey tokenProgramKey,
-                                               final PublicKey systemProgramKey,
-                                               final int bump) {
-    final var keys = List.of(
-      createWrite(tokenAccountKey),
-      createWritableSigner(userKey),
-      createRead(mintKey),
-      createRead(tokenProgramKey),
-      createRead(systemProgramKey)
-    );
-
-    final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CREATE_TOKEN_ACCOUNT_DISCRIMINATOR, _data, 0);
-    _data[i] = (byte) bump;
-
-    return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
-  }
-
-  public record CreateTokenAccountIxData(Discriminator discriminator, int bump) implements Borsh {  
-
-    public static CreateTokenAccountIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 9;
-
-    public static CreateTokenAccountIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = parseDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var bump = _data[i] & 0xFF;
-      return new CreateTokenAccountIxData(discriminator, bump);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) bump;
-      ++i;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
   public static final Discriminator CREATE_PROGRAM_OPEN_ORDERS_DISCRIMINATOR = toDiscriminator(28, 226, 32, 148, 188, 136, 113, 171);
 
   public static Instruction createProgramOpenOrders(final AccountMeta invokedJupiterProgramMeta,

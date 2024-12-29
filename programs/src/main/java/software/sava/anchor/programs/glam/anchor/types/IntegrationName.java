@@ -10,7 +10,7 @@ public enum IntegrationName implements Borsh.Enum {
   SanctumStakePool,
   NativeStaking,
   Marinade,
-  Jupiter,
+  JupiterSwap,
   Mint,
   JupiterVote;
 

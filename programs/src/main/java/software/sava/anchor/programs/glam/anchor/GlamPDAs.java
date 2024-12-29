@@ -46,11 +46,11 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress fundPDA(final PublicKey program,
-                                              final PublicKey managerAccount,
+                                              final PublicKey signerAccount,
                                               final byte[] fundModelCreated) {
     return PublicKey.findProgramAddress(List.of(
       "fund".getBytes(US_ASCII),
-      managerAccount.toByteArray(),
+      signerAccount.toByteArray(),
       fundModelCreated
     ), program);
   }
@@ -67,11 +67,11 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress managerAtaPDA(final PublicKey program,
-                                                    final PublicKey managerAccount,
+                                                    final PublicKey signerAccount,
                                                     final PublicKey tokenProgramAccount,
                                                     final PublicKey assetAccount) {
     return PublicKey.findProgramAddress(List.of(
-      managerAccount.toByteArray(),
+      signerAccount.toByteArray(),
       tokenProgramAccount.toByteArray(),
       assetAccount.toByteArray()
     ), program);

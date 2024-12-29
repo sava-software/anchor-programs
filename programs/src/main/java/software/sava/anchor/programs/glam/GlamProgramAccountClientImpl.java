@@ -630,6 +630,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         assetATAKey,
         policyPDA.publicKey(),
         manager.publicKey(),
+        shareClassId,
         amount,
         true
     );

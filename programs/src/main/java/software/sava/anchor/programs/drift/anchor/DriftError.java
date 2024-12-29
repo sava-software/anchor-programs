@@ -2645,7 +2645,7 @@ public sealed interface DriftError extends ProgramError permits
   record InvalidSwiftOrderParam(int code, String msg) implements DriftError {
 
     public static final InvalidSwiftOrderParam INSTANCE = new InvalidSwiftOrderParam(
-        6288, "Swift only available for market/oracle perp orders"
+        6288, "Invalid swift order param"
     );
   }
 

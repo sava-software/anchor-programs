@@ -73,7 +73,11 @@ public sealed interface Swap extends RustEnum permits
   Swap.SolFi,
   Swap.SolayerDelegateNoInit,
   Swap.SolayerUndelegateNoInit,
-  Swap.TokenMill {
+  Swap.TokenMill,
+  Swap.DaoFunBuy,
+  Swap.DaoFunSell,
+  Swap.ZeroFi,
+  Swap.WooFi {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -144,6 +148,10 @@ public sealed interface Swap extends RustEnum permits
       case 62 -> SolayerDelegateNoInit.INSTANCE;
       case 63 -> SolayerUndelegateNoInit.INSTANCE;
       case 64 -> TokenMill.read(_data, i);
+      case 65 -> DaoFunBuy.INSTANCE;
+      case 66 -> DaoFunSell.INSTANCE;
+      case 67 -> ZeroFi.INSTANCE;
+      case 68 -> WooFi.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1030,6 +1038,46 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 64;
+    }
+  }
+
+  record DaoFunBuy() implements EnumNone, Swap {
+
+    public static final DaoFunBuy INSTANCE = new DaoFunBuy();
+
+    @Override
+    public int ordinal() {
+      return 65;
+    }
+  }
+
+  record DaoFunSell() implements EnumNone, Swap {
+
+    public static final DaoFunSell INSTANCE = new DaoFunSell();
+
+    @Override
+    public int ordinal() {
+      return 66;
+    }
+  }
+
+  record ZeroFi() implements EnumNone, Swap {
+
+    public static final ZeroFi INSTANCE = new ZeroFi();
+
+    @Override
+    public int ordinal() {
+      return 67;
+    }
+  }
+
+  record WooFi() implements EnumNone, Swap {
+
+    public static final WooFi INSTANCE = new WooFi();
+
+    @Override
+    public int ordinal() {
+      return 68;
     }
   }
 }

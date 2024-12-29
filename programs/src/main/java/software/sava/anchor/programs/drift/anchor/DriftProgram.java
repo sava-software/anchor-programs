@@ -1133,7 +1133,6 @@ public final class DriftProgram {
                                                  // The Instruction Sysvar has not been implemented
                                                  // in the Anchor framework yet, so this is the safe approach.
                                                  final PublicKey ixSysvarKey,
-                                                 final byte[] swiftMessageBytes,
                                                  final byte[] swiftOrderParamsMessageBytes) {
     final var keys = List.of(
       createRead(stateKey),
@@ -1144,15 +1143,14 @@ public final class DriftProgram {
       createRead(ixSysvarKey)
     );
 
-    final byte[] _data = new byte[16 + Borsh.lenVector(swiftMessageBytes) + Borsh.lenVector(swiftOrderParamsMessageBytes)];
+    final byte[] _data = new byte[12 + Borsh.lenVector(swiftOrderParamsMessageBytes)];
     int i = writeDiscriminator(PLACE_SWIFT_TAKER_ORDER_DISCRIMINATOR, _data, 0);
-    i += Borsh.writeVector(swiftMessageBytes, _data, i);
     Borsh.writeVector(swiftOrderParamsMessageBytes, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record PlaceSwiftTakerOrderIxData(Discriminator discriminator, byte[] swiftMessageBytes, byte[] swiftOrderParamsMessageBytes) implements Borsh {  
+  public record PlaceSwiftTakerOrderIxData(Discriminator discriminator, byte[] swiftOrderParamsMessageBytes) implements Borsh {  
 
     public static PlaceSwiftTakerOrderIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -1164,23 +1162,20 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final byte[] swiftMessageBytes = Borsh.readbyteVector(_data, i);
-      i += Borsh.lenVector(swiftMessageBytes);
       final byte[] swiftOrderParamsMessageBytes = Borsh.readbyteVector(_data, i);
-      return new PlaceSwiftTakerOrderIxData(discriminator, swiftMessageBytes, swiftOrderParamsMessageBytes);
+      return new PlaceSwiftTakerOrderIxData(discriminator, swiftOrderParamsMessageBytes);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeVector(swiftMessageBytes, _data, i);
       i += Borsh.writeVector(swiftOrderParamsMessageBytes, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + Borsh.lenVector(swiftMessageBytes) + Borsh.lenVector(swiftOrderParamsMessageBytes);
+      return 8 + Borsh.lenVector(swiftOrderParamsMessageBytes);
     }
   }
 
@@ -2312,7 +2307,7 @@ public final class DriftProgram {
       createWrite(userKey),
       createWrite(userStatsKey),
       createWrite(stateKey),
-      createReadOnlySigner(authorityKey)
+      createWritableSigner(authorityKey)
     );
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, DELETE_USER_DISCRIMINATOR);
