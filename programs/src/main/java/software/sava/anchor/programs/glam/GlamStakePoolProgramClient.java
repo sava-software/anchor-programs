@@ -18,6 +18,13 @@ public interface GlamStakePoolProgramClient extends StakePoolProgramClient {
     return createClient(glamClient, StakePoolAccounts.MAIN_NET);
   }
 
+  Instruction withdrawStake(final PublicKey poolProgram,
+                            final StakePoolState stakePoolState,
+                            final PublicKey validatorOrReserveStakeAccount,
+                            final FundPDA stakeAccountPDA,
+                            final PublicKey poolTokenATA,
+                            final long poolTokenAmount);
+
   Instruction withdrawStake(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
                             final PublicKey validatorOrReserveStakeAccount,
                             final FundPDA stakeAccountPDA,

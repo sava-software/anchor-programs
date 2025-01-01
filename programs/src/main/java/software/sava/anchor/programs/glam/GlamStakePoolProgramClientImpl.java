@@ -41,8 +41,18 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
   }
 
   @Override
+  public SolanaAccounts solanaAccounts() {
+    return solanaAccounts;
+  }
+
+  @Override
   public StakePoolAccounts stakePoolAccounts() {
     return stakePoolAccounts;
+  }
+
+  @Override
+  public PublicKey ownerPublicKey() {
+    return glamFundAccounts.treasuryPublicKey();
   }
 
   @Override
@@ -148,7 +158,8 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
   }
 
   @Override
-  public Instruction withdrawStake(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+  public Instruction withdrawStake(final PublicKey poolProgram,
+                                   final StakePoolState stakePoolState,
                                    final PublicKey validatorOrReserveStakeAccount,
                                    final PublicKey uninitializedStakeAccount,
                                    final PublicKey stakeAccountWithdrawalAuthority,
@@ -158,22 +169,14 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
   }
 
   @Override
-  public Instruction withdrawStake(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
-                                   final PublicKey validatorOrReserveStakeAccount,
-                                   final PublicKey uninitializedStakeAccount,
-                                   final PublicKey poolTokenATA,
-                                   final long poolTokenAmount) {
-    throw new UnsupportedOperationException("Use withdrawStake with a provided FundPDA stake account.");
-  }
-
-  @Override
-  public Instruction withdrawStake(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+  public Instruction withdrawStake(final PublicKey poolProgram,
+                                   final StakePoolState stakePoolState,
                                    final PublicKey validatorOrReserveStakeAccount,
                                    final FundPDA stakeAccountPDA,
                                    final PublicKey poolTokenATA,
                                    final long poolTokenAmount) {
-    final var stakePoolState = stakePoolStateAccountInfo.data();
-    final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
+    final var stakePoolWithdrawAuthority = StakePoolProgram
+        .findStakePoolWithdrawAuthority(stakePoolState.address(), poolProgram);
     return GlamProgram.stakePoolWithdrawStake(
         invokedProgram,
         solanaAccounts,
@@ -188,11 +191,27 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         stakePoolState.validatorList(),
         validatorOrReserveStakeAccount,
         poolTokenATA,
-        stakePoolStateAccountInfo.owner(),
+        poolProgram,
         stakePoolState.tokenProgramId(),
         poolTokenAmount,
         stakeAccountPDA.id(),
         stakeAccountPDA.pda().nonce()
+    );
+  }
+
+  @Override
+  public Instruction withdrawStake(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+                                   final PublicKey validatorOrReserveStakeAccount,
+                                   final FundPDA stakeAccountPDA,
+                                   final PublicKey poolTokenATA,
+                                   final long poolTokenAmount) {
+    return withdrawStake(
+        stakePoolStateAccountInfo.owner(),
+        stakePoolStateAccountInfo.data(),
+        validatorOrReserveStakeAccount,
+        stakeAccountPDA,
+        poolTokenATA,
+        poolTokenAmount
     );
   }
 
