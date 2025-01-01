@@ -8,6 +8,7 @@ import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 import software.sava.solana.programs.stakepool.StakePoolAccounts;
+import software.sava.solana.programs.stakepool.StakePoolProgram;
 import software.sava.solana.programs.stakepool.StakePoolProgramClient;
 import software.sava.solana.programs.stakepool.StakePoolState;
 
@@ -114,24 +115,25 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
   }
 
   @Override
-  public Instruction withdrawSol(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+  public Instruction withdrawSol(final PublicKey stakePoolProgram,
+                                 final StakePoolState stakePoolState,
                                  final PublicKey poolTokenATA,
                                  final long poolTokenAmount) {
-    final var stakePoolState = stakePoolStateAccountInfo.data();
-    final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
+    final var stakePoolWithdrawAuthority = StakePoolProgram.
+        findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
     return GlamProgram.stakePoolWithdrawSol(
         invokedProgram,
         solanaAccounts,
         manager.publicKey(),
         glamFundAccounts.fundPublicKey(),
         glamFundAccounts.treasuryPublicKey(),
-        stakePoolStateAccountInfo.owner(),
         stakePoolState.address(),
         stakePoolWithdrawAuthority.publicKey(),
         stakePoolState.reserveStake(),
         stakePoolState.poolMint(),
         stakePoolState.managerFeeAccount(),
         poolTokenATA,
+        stakePoolProgram,
         stakePoolState.tokenProgramId(),
         poolTokenAmount
     );

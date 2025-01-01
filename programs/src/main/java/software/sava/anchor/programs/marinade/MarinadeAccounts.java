@@ -1,11 +1,11 @@
 package software.sava.anchor.programs.marinade;
 
-import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.accounts.PublicKey;
+import software.sava.core.accounts.meta.AccountMeta;
 
+import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 import static software.sava.core.accounts.meta.AccountMeta.createInvoked;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
-import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 
 public interface MarinadeAccounts {
 
@@ -20,7 +20,8 @@ public interface MarinadeAccounts {
       "HZsepB79dnpvH6qfVgvMpS738EndHw3qSHo4Gv5WX1KA",
       "7GgPYjS5Dza89wV6FpZ23kUJRG5vbQ1GM25ezspYFSoE",
       "EyaSjUtSgo9aRD1f8LWXwdvkpDTmXAW54yoSHZRF14WL",
-      "UefNb6z6yvArqe4cJHTXCqStRsKmWhGxnZzuHbikP5Q"
+      "UefNb6z6yvArqe4cJHTXCqStRsKmWhGxnZzuHbikP5Q",
+      "DwFYJNnhLmw19FBTrVaLWZ8SZJpxdPoSYVSJaio9tjbY"
   );
 
   PublicKey mSolTokenMint();
@@ -57,6 +58,8 @@ public interface MarinadeAccounts {
 
   PublicKey liquidityPoolSolLegAccount();
 
+  PublicKey validatorListAccount();
+
   static MarinadeAccounts createAddressConstants(
       final PublicKey mSolTokenMint,
       final PublicKey mSolTokenMintAuthorityPDA,
@@ -68,7 +71,8 @@ public interface MarinadeAccounts {
       final PublicKey lpAuthPDA,
       final PublicKey mSolLegAccount,
       final PublicKey mSolLegAuthority,
-      final PublicKey solLegAccount) {
+      final PublicKey solLegAccount,
+      final PublicKey validatorListAccount) {
     return new MarinadeAccountsRecord(
         mSolTokenMint,
         mSolTokenMintAuthorityPDA,
@@ -84,7 +88,8 @@ public interface MarinadeAccounts {
         lpAuthPDA,
         mSolLegAccount,
         mSolLegAuthority,
-        solLegAccount
+        solLegAccount,
+        validatorListAccount
     );
   }
 
@@ -99,7 +104,8 @@ public interface MarinadeAccounts {
       final String lpAuthPDA,
       final String mSolLegAccount,
       final String mSolLegAuthority,
-      final String solLegAccount) {
+      final String solLegAccount,
+      final String validatorListAccount) {
     return createAddressConstants(
         fromBase58Encoded(mSolTokenMint),
         fromBase58Encoded(mSolTokenMintAuthorityPDA),
@@ -111,7 +117,8 @@ public interface MarinadeAccounts {
         fromBase58Encoded(lpAuthPDA),
         fromBase58Encoded(mSolLegAccount),
         fromBase58Encoded(mSolLegAuthority),
-        fromBase58Encoded(solLegAccount)
+        fromBase58Encoded(solLegAccount),
+        fromBase58Encoded(validatorListAccount)
     );
   }
 }

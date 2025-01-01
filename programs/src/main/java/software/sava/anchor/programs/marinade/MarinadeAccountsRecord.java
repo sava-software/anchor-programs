@@ -1,7 +1,7 @@
 package software.sava.anchor.programs.marinade;
 
-import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.accounts.PublicKey;
+import software.sava.core.accounts.meta.AccountMeta;
 
 record MarinadeAccountsRecord(PublicKey mSolTokenMint,
                               PublicKey mSolTokenMintAuthorityPDA,
@@ -19,5 +19,6 @@ record MarinadeAccountsRecord(PublicKey mSolTokenMint,
                               PublicKey liquidityPoolAuthPDA,
                               PublicKey liquidityPoolMSolLegAccount,
                               PublicKey liquidityPoolMSolLegAuthority,
-                              PublicKey liquidityPoolSolLegAccount) implements MarinadeAccounts {
+                              PublicKey liquidityPoolSolLegAccount,
+                              PublicKey validatorListAccount) implements MarinadeAccounts {
 }
