@@ -71,28 +71,6 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
     ).extraAccounts(swapInstruction.accounts());
   }
 
-
-  @Override
-  public List<Instruction> swapChecked(final PublicKey inputMintKey,
-                                       final AccountMeta inputTokenProgram,
-                                       final PublicKey outputMintKey,
-                                       final AccountMeta outputTokenProgram,
-                                       final long amount,
-                                       final Instruction swapInstruction,
-                                       final boolean wrapSOL) {
-    return swapChecked(
-        null,
-        inputMintKey,
-        inputTokenProgram,
-        null,
-        outputMintKey,
-        outputTokenProgram,
-        amount,
-        swapInstruction,
-        wrapSOL
-    );
-  }
-
   @Override
   public List<Instruction> swapChecked(final PublicKey inputProgramStateKey,
                                        final PublicKey inputMintKey,
@@ -160,25 +138,6 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
   }
 
   @Override
-  public Instruction swapUncheckedAndNoWrap(final PublicKey inputMintKey,
-                                            final AccountMeta inputTokenProgram,
-                                            final PublicKey outputMintKey,
-                                            final AccountMeta outputTokenProgram,
-                                            final long amount,
-                                            final Instruction swapInstruction) {
-    return swapUncheckedAndNoWrap(
-        null,
-        inputMintKey,
-        inputTokenProgram,
-        null,
-        outputMintKey,
-        outputTokenProgram,
-        amount,
-        swapInstruction
-    );
-  }
-
-  @Override
   public Instruction swapUncheckedAndNoWrap(final PublicKey inputProgramStateKey,
                                             final PublicKey inputMintKey,
                                             final AccountMeta inputTokenProgram,
@@ -212,16 +171,18 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
   }
 
   @Override
-  public List<Instruction> swapUnchecked(final PublicKey inputMintKey,
+  public List<Instruction> swapUnchecked(final PublicKey inputProgramStateKey,
+                                         final PublicKey inputMintKey,
                                          final AccountMeta inputTokenProgram,
+                                         final PublicKey outputProgramStateKey,
                                          final PublicKey outputMintKey,
                                          final AccountMeta outputTokenProgram,
                                          final long amount,
                                          final Instruction swapInstruction,
                                          final boolean wrapSOL) {
     final var glamJupiterSwap = swapUncheckedAndNoWrap(
-        inputMintKey, inputTokenProgram,
-        outputMintKey, outputTokenProgram,
+        inputProgramStateKey, inputMintKey, inputTokenProgram,
+        outputProgramStateKey, outputMintKey, outputTokenProgram,
         amount,
         swapInstruction
     );
