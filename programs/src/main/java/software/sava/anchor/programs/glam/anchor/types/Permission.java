@@ -27,7 +27,8 @@ public enum Permission implements Borsh.Enum {
   SetTokenAccountsStates,
   StakeJup,
   VoteOnProposal,
-  UnstakeJup;
+  UnstakeJup,
+  JupiterSwapLst;
 
   public static Permission read(final byte[] _data, final int offset) {
     return Borsh.read(Permission.values(), _data, offset);

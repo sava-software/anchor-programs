@@ -42,8 +42,10 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                   final PublicKey inputSignerATA,
                                   final PublicKey outputSignerATA,
                                   final PublicKey outputTreasuryATA,
+                                  final PublicKey inputProgramStateKey,
                                   final PublicKey inputMintKey,
                                   final PublicKey inputTokenProgram,
+                                  final PublicKey outputProgramStateKey,
                                   final PublicKey outputMintKey,
                                   final PublicKey outputTokenProgram,
                                   final long amount,
@@ -59,6 +61,8 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         outputTreasuryATA,
         inputMintKey, outputMintKey,
         manager.publicKey(),
+        inputProgramStateKey,
+        outputProgramStateKey,
         jupiterAccounts.swapProgram(),
         inputTokenProgram,
         outputTokenProgram,
@@ -66,6 +70,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         swapInstruction.data()
     ).extraAccounts(swapInstruction.accounts());
   }
+
 
   @Override
   public List<Instruction> swapChecked(final PublicKey inputMintKey,
@@ -75,8 +80,30 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                        final long amount,
                                        final Instruction swapInstruction,
                                        final boolean wrapSOL) {
+    return swapChecked(
+        null,
+        inputMintKey,
+        inputTokenProgram,
+        null,
+        outputMintKey,
+        outputTokenProgram,
+        amount,
+        swapInstruction,
+        wrapSOL
+    );
+  }
+
+  @Override
+  public List<Instruction> swapChecked(final PublicKey inputProgramStateKey,
+                                       final PublicKey inputMintKey,
+                                       final AccountMeta inputTokenProgram,
+                                       final PublicKey outputProgramStateKey,
+                                       final PublicKey outputMintKey,
+                                       final AccountMeta outputTokenProgram,
+                                       final long amount,
+                                       final Instruction swapInstruction,
+                                       final boolean wrapSOL) {
     final var inputTokenProgramKey = inputTokenProgram.publicKey();
-    final var outputTokenProgramKey = outputTokenProgram.publicKey();
 
     final var inputTreasuryATA = glamProgramAccountClient.findATA(inputTokenProgramKey, inputMintKey).publicKey();
 
@@ -85,6 +112,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         true, inputSignerATA, inputMintKey, inputTokenProgram
     );
 
+    final var outputTokenProgramKey = outputTokenProgram.publicKey();
     final var outputSignerATA = glamProgramAccountClient.findATAForFeePayer(outputTokenProgramKey, outputMintKey).publicKey();
     final var createManagerOutputATA = glamProgramAccountClient.createATAForFeePayerFundedByFeePayer(
         true, outputSignerATA, outputMintKey, outputTokenProgram
@@ -100,10 +128,12 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         inputSignerATA,
         outputSignerATA,
         outputTreasuryATA,
+        inputProgramStateKey,
         inputMintKey,
-        inputTokenProgram.publicKey(),
+        inputTokenProgramKey,
+        outputProgramStateKey,
         outputMintKey,
-        outputTokenProgram.publicKey(),
+        outputTokenProgramKey,
         amount,
         swapInstruction
     );
@@ -136,6 +166,27 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                             final AccountMeta outputTokenProgram,
                                             final long amount,
                                             final Instruction swapInstruction) {
+    return swapUncheckedAndNoWrap(
+        null,
+        inputMintKey,
+        inputTokenProgram,
+        null,
+        outputMintKey,
+        outputTokenProgram,
+        amount,
+        swapInstruction
+    );
+  }
+
+  @Override
+  public Instruction swapUncheckedAndNoWrap(final PublicKey inputProgramStateKey,
+                                            final PublicKey inputMintKey,
+                                            final AccountMeta inputTokenProgram,
+                                            final PublicKey outputProgramStateKey,
+                                            final PublicKey outputMintKey,
+                                            final AccountMeta outputTokenProgram,
+                                            final long amount,
+                                            final Instruction swapInstruction) {
     final var inputTokenProgramKey = inputTokenProgram.publicKey();
     final var outputTokenProgramKey = outputTokenProgram.publicKey();
 
@@ -149,8 +200,10 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         inputSignerATA,
         outputSignerATA,
         outputTreasuryATA,
+        inputProgramStateKey,
         inputMintKey,
         inputTokenProgram.publicKey(),
+        outputProgramStateKey,
         outputMintKey,
         outputTokenProgram.publicKey(),
         amount,
@@ -172,7 +225,6 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         amount,
         swapInstruction
     );
-
     return wrapSOL && inputMintKey.equals(solanaAccounts.wrappedSolTokenMint())
         ? List.of(glamProgramAccountClient.transferLamportsAndSyncNative(amount), glamJupiterSwap)
         : List.of(glamJupiterSwap);

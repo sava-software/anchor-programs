@@ -12,6 +12,8 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
+import static java.util.Objects.requireNonNullElse;
+
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
@@ -362,8 +364,8 @@ public final class DcaProgram {
       createRead(inputMintKey),
       createRead(outputMintKey),
       createWrite(dcaAtaKey),
-      createWrite(userInAtaKey),
-      createWrite(userOutAtaKey),
+      createWrite(requireNonNullElse(userInAtaKey, invokedDcaProgramMeta.publicKey())),
+      createWrite(requireNonNullElse(userOutAtaKey, invokedDcaProgramMeta.publicKey())),
       createRead(systemProgramKey),
       createRead(tokenProgramKey),
       createRead(associatedTokenProgramKey),
@@ -777,8 +779,8 @@ public final class DcaProgram {
       createWrite(userKey),
       createRead(outputMintKey),
       createWrite(dcaOutAtaKey),
-      createWrite(userOutAtaKey),
-      createWrite(intermediateAccountKey),
+      createWrite(requireNonNullElse(userOutAtaKey, invokedDcaProgramMeta.publicKey())),
+      createWrite(requireNonNullElse(intermediateAccountKey, invokedDcaProgramMeta.publicKey())),
       createRead(systemProgramKey),
       createRead(tokenProgramKey),
       createRead(associatedTokenProgramKey),
@@ -815,9 +817,9 @@ public final class DcaProgram {
       createWrite(inAtaKey),
       createWrite(outAtaKey),
       createWrite(userKey),
-      createWrite(userOutAtaKey),
-      createWrite(initUserOutAtaKey),
-      createWrite(intermediateAccountKey),
+      createWrite(requireNonNullElse(userOutAtaKey, invokedDcaProgramMeta.publicKey())),
+      createWrite(requireNonNullElse(initUserOutAtaKey, invokedDcaProgramMeta.publicKey())),
+      createWrite(requireNonNullElse(intermediateAccountKey, invokedDcaProgramMeta.publicKey())),
       createRead(systemProgramKey),
       createRead(tokenProgramKey),
       createRead(associatedTokenProgramKey),

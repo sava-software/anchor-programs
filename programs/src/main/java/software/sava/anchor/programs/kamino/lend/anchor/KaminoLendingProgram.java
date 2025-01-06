@@ -20,6 +20,8 @@ import software.sava.core.tx.Instruction;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import static java.util.Objects.requireNonNullElse;
+
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
@@ -476,10 +478,10 @@ public final class KaminoLendingProgram {
     final var keys = List.of(
       createWrite(reserveKey),
       createRead(lendingMarketKey),
-      createRead(pythOracleKey),
-      createRead(switchboardPriceOracleKey),
-      createRead(switchboardTwapOracleKey),
-      createRead(scopePricesKey)
+      createRead(requireNonNullElse(pythOracleKey, invokedKaminoLendingProgramMeta.publicKey())),
+      createRead(requireNonNullElse(switchboardPriceOracleKey, invokedKaminoLendingProgramMeta.publicKey())),
+      createRead(requireNonNullElse(switchboardTwapOracleKey, invokedKaminoLendingProgramMeta.publicKey())),
+      createRead(requireNonNullElse(scopePricesKey, invokedKaminoLendingProgramMeta.publicKey()))
     );
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, REFRESH_RESERVE_DISCRIMINATOR);
@@ -1029,7 +1031,7 @@ public final class KaminoLendingProgram {
       createWrite(reserveSourceLiquidityKey),
       createWrite(borrowReserveLiquidityFeeReceiverKey),
       createWrite(userDestinationLiquidityKey),
-      createWrite(referrerTokenStateKey),
+      createWrite(requireNonNullElse(referrerTokenStateKey, invokedKaminoLendingProgramMeta.publicKey())),
       createRead(tokenProgramKey),
       createRead(instructionSysvarAccountKey)
     );
@@ -1166,7 +1168,7 @@ public final class KaminoLendingProgram {
       createWrite(reserveCollateralMintKey),
       createWrite(reserveDestinationDepositCollateralKey),
       createWrite(userSourceLiquidityKey),
-      createRead(placeholderUserDestinationCollateralKey),
+      createRead(requireNonNullElse(placeholderUserDestinationCollateralKey, invokedKaminoLendingProgramMeta.publicKey())),
       createRead(collateralTokenProgramKey),
       createRead(liquidityTokenProgramKey),
       createRead(instructionSysvarAccountKey)
@@ -1240,7 +1242,7 @@ public final class KaminoLendingProgram {
       createWrite(reserveCollateralMintKey),
       createWrite(reserveLiquiditySupplyKey),
       createWrite(userDestinationLiquidityKey),
-      createRead(placeholderUserDestinationCollateralKey),
+      createRead(requireNonNullElse(placeholderUserDestinationCollateralKey, invokedKaminoLendingProgramMeta.publicKey())),
       createRead(collateralTokenProgramKey),
       createRead(liquidityTokenProgramKey),
       createRead(instructionSysvarAccountKey)
@@ -1414,8 +1416,8 @@ public final class KaminoLendingProgram {
       createWrite(reserveDestinationLiquidityKey),
       createWrite(userSourceLiquidityKey),
       createWrite(reserveLiquidityFeeReceiverKey),
-      createWrite(referrerTokenStateKey),
-      createWrite(referrerAccountKey),
+      createWrite(requireNonNullElse(referrerTokenStateKey, invokedKaminoLendingProgramMeta.publicKey())),
+      createWrite(requireNonNullElse(referrerAccountKey, invokedKaminoLendingProgramMeta.publicKey())),
       createRead(sysvarInfoKey),
       createRead(tokenProgramKey)
     );
@@ -1490,8 +1492,8 @@ public final class KaminoLendingProgram {
       createWrite(reserveSourceLiquidityKey),
       createWrite(userDestinationLiquidityKey),
       createWrite(reserveLiquidityFeeReceiverKey),
-      createWrite(referrerTokenStateKey),
-      createWrite(referrerAccountKey),
+      createWrite(requireNonNullElse(referrerTokenStateKey, invokedKaminoLendingProgramMeta.publicKey())),
+      createWrite(requireNonNullElse(referrerAccountKey, invokedKaminoLendingProgramMeta.publicKey())),
       createRead(sysvarInfoKey),
       createRead(tokenProgramKey)
     );
@@ -1659,7 +1661,7 @@ public final class KaminoLendingProgram {
       createReadOnlySigner(ownerKey),
       createWritableSigner(feePayerKey),
       createWrite(userMetadataKey),
-      createRead(referrerUserMetadataKey),
+      createRead(requireNonNullElse(referrerUserMetadataKey, invokedKaminoLendingProgramMeta.publicKey())),
       createRead(rentKey),
       createRead(systemProgramKey)
     );

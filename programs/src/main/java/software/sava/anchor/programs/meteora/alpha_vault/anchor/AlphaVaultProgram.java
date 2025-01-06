@@ -16,6 +16,8 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
+import static java.util.Objects.requireNonNullElse;
+
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
@@ -636,7 +638,7 @@ public final class AlphaVaultProgram {
       createWrite(escrowKey),
       createRead(ownerKey),
       createWritableSigner(payerKey),
-      createWrite(escrowFeeReceiverKey),
+      createWrite(requireNonNullElse(escrowFeeReceiverKey, invokedAlphaVaultProgramMeta.publicKey())),
       createRead(systemProgramKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
@@ -668,7 +670,7 @@ public final class AlphaVaultProgram {
       createRead(ownerKey),
       createRead(merkleRootConfigKey),
       createWritableSigner(payerKey),
-      createWrite(escrowFeeReceiverKey),
+      createWrite(requireNonNullElse(escrowFeeReceiverKey, invokedAlphaVaultProgramMeta.publicKey())),
       createRead(systemProgramKey),
       createRead(eventAuthorityKey),
       createRead(programKey)

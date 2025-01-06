@@ -15,6 +15,8 @@ import software.sava.core.tx.Instruction;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import static java.util.Objects.requireNonNullElse;
+
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
@@ -939,7 +941,7 @@ public final class YvaultsProgram {
       createWrite(poolTokenVaultBKey),
       createRead(scopePricesKey),
       createRead(tokenInfosKey),
-      createRead(eventAuthorityKey),
+      createRead(requireNonNullElse(eventAuthorityKey, invokedYvaultsProgramMeta.publicKey())),
       createRead(consensusAccountKey)
     );
 
@@ -1078,7 +1080,7 @@ public final class YvaultsProgram {
       createRead(tokenATokenProgramKey),
       createRead(tokenBTokenProgramKey),
       createRead(systemKey),
-      createRead(eventAuthorityKey)
+      createRead(requireNonNullElse(eventAuthorityKey, invokedYvaultsProgramMeta.publicKey()))
     );
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, CLOSE_STRATEGY_DISCRIMINATOR);
@@ -1238,7 +1240,7 @@ public final class YvaultsProgram {
       createRead(tokenInfosKey),
       createRead(poolProgramKey),
       createRead(instructionSysvarAccountKey),
-      createRead(eventAuthorityKey)
+      createRead(requireNonNullElse(eventAuthorityKey, invokedYvaultsProgramMeta.publicKey()))
     );
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, INVEST_DISCRIMINATOR);
@@ -1312,7 +1314,7 @@ public final class YvaultsProgram {
       createRead(memoProgramKey),
       createRead(poolProgramKey),
       createRead(instructionSysvarAccountKey),
-      createRead(eventAuthorityKey)
+      createRead(requireNonNullElse(eventAuthorityKey, invokedYvaultsProgramMeta.publicKey()))
     );
 
     final byte[] _data = new byte[24];
@@ -1422,7 +1424,7 @@ public final class YvaultsProgram {
       createWrite(positionTokenAccountKey),
       createRead(poolProgramKey),
       createRead(instructionSysvarAccountKey),
-      createRead(eventAuthorityKey)
+      createRead(requireNonNullElse(eventAuthorityKey, invokedYvaultsProgramMeta.publicKey()))
     );
 
     final byte[] _data = new byte[16];
@@ -1518,7 +1520,7 @@ public final class YvaultsProgram {
       createRead(tokenProgramKey),
       createRead(tokenProgram2022Key),
       createRead(poolProgramKey),
-      createRead(eventAuthorityKey)
+      createRead(requireNonNullElse(eventAuthorityKey, invokedYvaultsProgramMeta.publicKey()))
     );
 
     final byte[] _data = new byte[9];
@@ -1635,7 +1637,7 @@ public final class YvaultsProgram {
       createRead(tokenProgram2022Key),
       createRead(poolProgramKey),
       createRead(instructionSysvarAccountKey),
-      createRead(eventAuthorityKey)
+      createRead(requireNonNullElse(eventAuthorityKey, invokedYvaultsProgramMeta.publicKey()))
     );
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, COLLECT_FEES_AND_REWARDS_DISCRIMINATOR);
@@ -1840,7 +1842,7 @@ public final class YvaultsProgram {
       createRead(tokenProgram2022Key),
       createRead(instructionSysvarAccountKey),
       createRead(consensusAccountKey),
-      createRead(eventAuthorityKey)
+      createRead(requireNonNullElse(eventAuthorityKey, invokedYvaultsProgramMeta.publicKey()))
     );
 
     final byte[] _data = new byte[16];
@@ -2009,7 +2011,7 @@ public final class YvaultsProgram {
       createRead(memoProgramKey),
       createRead(poolProgramKey),
       createRead(instructionSysvarAccountKey),
-      createRead(eventAuthorityKey)
+      createRead(requireNonNullElse(eventAuthorityKey, invokedYvaultsProgramMeta.publicKey()))
     );
 
     final byte[] _data = new byte[24];

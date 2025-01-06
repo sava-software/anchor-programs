@@ -48,6 +48,16 @@ public interface GlamJupiterProgramClient {
     return swapChecked(inputMintKey, outputMintKey, amount, swapInstruction, true);
   }
 
+  List<Instruction> swapChecked(final PublicKey inputProgramStateKey,
+                                final PublicKey inputMintKey,
+                                final AccountMeta inputTokenProgram,
+                                final PublicKey outputProgramStateKey,
+                                final PublicKey outputMintKey,
+                                final AccountMeta outputTokenProgram,
+                                final long amount,
+                                final Instruction swapInstruction,
+                                final boolean wrapSOL);
+
   Instruction swapUncheckedAndNoWrap(final PublicKey inputMintKey,
                                      final AccountMeta inputTokenProgram,
                                      final PublicKey outputMintKey,
@@ -67,6 +77,15 @@ public interface GlamJupiterProgramClient {
         swapInstruction
     );
   }
+
+  Instruction swapUncheckedAndNoWrap(final PublicKey inputProgramStateKey,
+                                     final PublicKey inputMintKey,
+                                     final AccountMeta inputTokenProgram,
+                                     final PublicKey outputProgramStateKey,
+                                     final PublicKey outputMintKey,
+                                     final AccountMeta outputTokenProgram,
+                                     final long amount,
+                                     final Instruction swapInstruction);
 
   List<Instruction> swapUnchecked(final PublicKey inputMintKey,
                                   final AccountMeta inputTokenProgram,

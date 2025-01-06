@@ -20,6 +20,8 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
+import static java.util.Objects.requireNonNullElse;
+
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
@@ -58,7 +60,7 @@ public final class LbClmmProgram {
                                              final int binStep) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createRead(tokenMintXKey),
       createRead(tokenMintYKey),
       createWrite(reserveXKey),
@@ -139,7 +141,7 @@ public final class LbClmmProgram {
     final var keys = List.of(
       createReadOnlySigner(baseKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createRead(tokenMintXKey),
       createRead(tokenMintYKey),
       createWrite(reserveXKey),
@@ -211,7 +213,7 @@ public final class LbClmmProgram {
                                                                        final CustomizableParams params) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createRead(tokenMintXKey),
       createRead(tokenMintYKey),
       createWrite(reserveXKey),
@@ -359,7 +361,7 @@ public final class LbClmmProgram {
     final var keys = List.of(
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(userTokenXKey),
       createWrite(userTokenYKey),
       createWrite(reserveXKey),
@@ -434,7 +436,7 @@ public final class LbClmmProgram {
     final var keys = List.of(
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(userTokenXKey),
       createWrite(userTokenYKey),
       createWrite(reserveXKey),
@@ -509,7 +511,7 @@ public final class LbClmmProgram {
     final var keys = List.of(
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(userTokenXKey),
       createWrite(userTokenYKey),
       createWrite(reserveXKey),
@@ -582,7 +584,7 @@ public final class LbClmmProgram {
     final var keys = List.of(
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(userTokenKey),
       createWrite(reserveKey),
       createRead(tokenMintKey),
@@ -651,7 +653,7 @@ public final class LbClmmProgram {
     final var keys = List.of(
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(userTokenKey),
       createWrite(reserveKey),
       createRead(tokenMintKey),
@@ -722,7 +724,7 @@ public final class LbClmmProgram {
     final var keys = List.of(
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(userTokenXKey),
       createWrite(userTokenYKey),
       createWrite(reserveXKey),
@@ -1089,7 +1091,7 @@ public final class LbClmmProgram {
                                  final long minAmountOut) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createRead(binArrayBitmapExtensionKey),
+      createRead(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(reserveXKey),
       createWrite(reserveYKey),
       createWrite(userTokenInKey),
@@ -1097,7 +1099,7 @@ public final class LbClmmProgram {
       createRead(tokenXMintKey),
       createRead(tokenYMintKey),
       createWrite(oracleKey),
-      createWrite(hostFeeInKey),
+      createWrite(requireNonNullElse(hostFeeInKey, invokedLbClmmProgramMeta.publicKey())),
       createReadOnlySigner(userKey),
       createRead(tokenXProgramKey),
       createRead(tokenYProgramKey),
@@ -1172,7 +1174,7 @@ public final class LbClmmProgram {
                                          final long outAmount) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createRead(binArrayBitmapExtensionKey),
+      createRead(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(reserveXKey),
       createWrite(reserveYKey),
       createWrite(userTokenInKey),
@@ -1180,7 +1182,7 @@ public final class LbClmmProgram {
       createRead(tokenXMintKey),
       createRead(tokenYMintKey),
       createWrite(oracleKey),
-      createWrite(hostFeeInKey),
+      createWrite(requireNonNullElse(hostFeeInKey, invokedLbClmmProgramMeta.publicKey())),
       createReadOnlySigner(userKey),
       createRead(tokenXProgramKey),
       createRead(tokenYProgramKey),
@@ -1256,7 +1258,7 @@ public final class LbClmmProgram {
                                                 final int maxPriceImpactBps) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createRead(binArrayBitmapExtensionKey),
+      createRead(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(reserveXKey),
       createWrite(reserveYKey),
       createWrite(userTokenInKey),
@@ -1264,7 +1266,7 @@ public final class LbClmmProgram {
       createRead(tokenXMintKey),
       createRead(tokenYMintKey),
       createWrite(oracleKey),
-      createWrite(hostFeeInKey),
+      createWrite(requireNonNullElse(hostFeeInKey, invokedLbClmmProgramMeta.publicKey())),
       createReadOnlySigner(userKey),
       createRead(tokenXProgramKey),
       createRead(tokenYProgramKey),
@@ -2013,7 +2015,7 @@ public final class LbClmmProgram {
     final var keys = List.of(
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(userTokenXKey),
       createWrite(userTokenYKey),
       createWrite(reserveXKey),
@@ -2240,7 +2242,7 @@ public final class LbClmmProgram {
     final var keys = List.of(
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(userTokenXKey),
       createWrite(userTokenYKey),
       createWrite(reserveXKey),
@@ -2329,7 +2331,7 @@ public final class LbClmmProgram {
     final var keys = List.of(
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
       createWrite(userTokenKey),
       createWrite(reserveKey),
       createRead(tokenMintKey),
@@ -2389,9 +2391,9 @@ public final class LbClmmProgram {
                                      final int binId) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createRead(binArrayBitmapExtensionKey),
-      createRead(fromBinArrayKey),
-      createRead(toBinArrayKey),
+      createRead(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
+      createRead(requireNonNullElse(fromBinArrayKey, invokedLbClmmProgramMeta.publicKey())),
+      createRead(requireNonNullElse(toBinArrayKey, invokedLbClmmProgramMeta.publicKey())),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );

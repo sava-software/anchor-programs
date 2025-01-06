@@ -10,6 +10,8 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
+import static java.util.Objects.requireNonNullElse;
+
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
@@ -257,11 +259,11 @@ public final class JupiterProgram {
       createReadOnlySigner(userTransferAuthorityKey),
       createWrite(userSourceTokenAccountKey),
       createWrite(userDestinationTokenAccountKey),
-      createWrite(destinationTokenAccountKey),
+      createWrite(requireNonNullElse(destinationTokenAccountKey, invokedJupiterProgramMeta.publicKey())),
       createRead(sourceMintKey),
       createRead(destinationMintKey),
-      createWrite(platformFeeAccountKey),
-      createRead(token2022ProgramKey),
+      createWrite(requireNonNullElse(platformFeeAccountKey, invokedJupiterProgramMeta.publicKey())),
+      createRead(requireNonNullElse(token2022ProgramKey, invokedJupiterProgramMeta.publicKey())),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -361,9 +363,9 @@ public final class JupiterProgram {
       createReadOnlySigner(userTransferAuthorityKey),
       createWrite(userSourceTokenAccountKey),
       createWrite(userDestinationTokenAccountKey),
-      createWrite(destinationTokenAccountKey),
+      createWrite(requireNonNullElse(destinationTokenAccountKey, invokedJupiterProgramMeta.publicKey())),
       createRead(destinationMintKey),
-      createWrite(platformFeeAccountKey),
+      createWrite(requireNonNullElse(platformFeeAccountKey, invokedJupiterProgramMeta.publicKey())),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -463,9 +465,9 @@ public final class JupiterProgram {
       createReadOnlySigner(userTransferAuthorityKey),
       createWrite(userSourceTokenAccountKey),
       createWrite(userDestinationTokenAccountKey),
-      createWrite(destinationTokenAccountKey),
+      createWrite(requireNonNullElse(destinationTokenAccountKey, invokedJupiterProgramMeta.publicKey())),
       createRead(destinationMintKey),
-      createWrite(platformFeeAccountKey),
+      createWrite(requireNonNullElse(platformFeeAccountKey, invokedJupiterProgramMeta.publicKey())),
       createRead(tokenLedgerKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
@@ -575,8 +577,8 @@ public final class JupiterProgram {
       createWrite(destinationTokenAccountKey),
       createRead(sourceMintKey),
       createRead(destinationMintKey),
-      createWrite(platformFeeAccountKey),
-      createRead(token2022ProgramKey),
+      createWrite(requireNonNullElse(platformFeeAccountKey, invokedJupiterProgramMeta.publicKey())),
+      createRead(requireNonNullElse(token2022ProgramKey, invokedJupiterProgramMeta.publicKey())),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -695,8 +697,8 @@ public final class JupiterProgram {
       createWrite(destinationTokenAccountKey),
       createRead(sourceMintKey),
       createRead(destinationMintKey),
-      createWrite(platformFeeAccountKey),
-      createRead(token2022ProgramKey),
+      createWrite(requireNonNullElse(platformFeeAccountKey, invokedJupiterProgramMeta.publicKey())),
+      createRead(requireNonNullElse(token2022ProgramKey, invokedJupiterProgramMeta.publicKey())),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -815,8 +817,8 @@ public final class JupiterProgram {
       createWrite(destinationTokenAccountKey),
       createRead(sourceMintKey),
       createRead(destinationMintKey),
-      createWrite(platformFeeAccountKey),
-      createRead(token2022ProgramKey),
+      createWrite(requireNonNullElse(platformFeeAccountKey, invokedJupiterProgramMeta.publicKey())),
+      createRead(requireNonNullElse(token2022ProgramKey, invokedJupiterProgramMeta.publicKey())),
       createRead(tokenLedgerKey),
       createRead(eventAuthorityKey),
       createRead(programKey)

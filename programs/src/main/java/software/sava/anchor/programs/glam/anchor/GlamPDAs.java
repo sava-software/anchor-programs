@@ -78,11 +78,11 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress mintToPDA(final PublicKey program,
-                                                final PublicKey treasuryAccount,
+                                                final PublicKey vaultAccount,
                                                 final SolanaAccounts solanaAccounts,
                                                 final PublicKey msolMintAccount) {
     return PublicKey.findProgramAddress(List.of(
-      treasuryAccount.toByteArray(),
+      vaultAccount.toByteArray(),
       solanaAccounts.tokenProgram().toByteArray(),
       msolMintAccount.toByteArray()
     ), program);
@@ -100,11 +100,11 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress mintTo2PDA(final PublicKey program,
-                                                 final PublicKey treasuryAccount,
+                                                 final PublicKey vaultAccount,
                                                  final SolanaAccounts solanaAccounts,
                                                  final PublicKey poolMintAccount) {
     return PublicKey.findProgramAddress(List.of(
-      treasuryAccount.toByteArray(),
+      vaultAccount.toByteArray(),
       solanaAccounts.tokenProgram().toByteArray(),
       poolMintAccount.toByteArray()
     ), program);
@@ -118,12 +118,12 @@ public final class GlamPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress outputTreasuryAtaPDA(final PublicKey program,
-                                                           final PublicKey treasuryAccount,
-                                                           final PublicKey outputTokenProgramAccount,
-                                                           final PublicKey outputMintAccount) {
+  public static ProgramDerivedAddress outputVaultAtaPDA(final PublicKey program,
+                                                        final PublicKey vaultAccount,
+                                                        final PublicKey outputTokenProgramAccount,
+                                                        final PublicKey outputMintAccount) {
     return PublicKey.findProgramAddress(List.of(
-      treasuryAccount.toByteArray(),
+      vaultAccount.toByteArray(),
       outputTokenProgramAccount.toByteArray(),
       outputMintAccount.toByteArray()
     ), program);
@@ -167,31 +167,31 @@ public final class GlamPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress treasuryPDA(final PublicKey program,
-                                                  final PublicKey fundAccount) {
+  public static ProgramDerivedAddress vaultPDA(final PublicKey program,
+                                               final PublicKey fundAccount) {
     return PublicKey.findProgramAddress(List.of(
       "treasury".getBytes(US_ASCII),
       fundAccount.toByteArray()
     ), program);
   }
 
-  public static ProgramDerivedAddress treasuryAtaPDA(final PublicKey program,
-                                                     final PublicKey treasuryAccount,
-                                                     final PublicKey tokenProgramAccount,
-                                                     final PublicKey assetAccount) {
+  public static ProgramDerivedAddress vaultAtaPDA(final PublicKey program,
+                                                  final PublicKey vaultAccount,
+                                                  final PublicKey tokenProgramAccount,
+                                                  final PublicKey assetAccount) {
     return PublicKey.findProgramAddress(List.of(
-      treasuryAccount.toByteArray(),
+      vaultAccount.toByteArray(),
       tokenProgramAccount.toByteArray(),
       assetAccount.toByteArray()
     ), program);
   }
 
-  public static ProgramDerivedAddress treasuryWsolAtaPDA(final PublicKey program,
-                                                         final PublicKey treasuryAccount,
-                                                         final SolanaAccounts solanaAccounts,
-                                                         final PublicKey wsolMintAccount) {
+  public static ProgramDerivedAddress vaultWsolAtaPDA(final PublicKey program,
+                                                      final PublicKey vaultAccount,
+                                                      final SolanaAccounts solanaAccounts,
+                                                      final PublicKey wsolMintAccount) {
     return PublicKey.findProgramAddress(List.of(
-      treasuryAccount.toByteArray(),
+      vaultAccount.toByteArray(),
       solanaAccounts.tokenProgram().toByteArray(),
       wsolMintAccount.toByteArray()
     ), program);

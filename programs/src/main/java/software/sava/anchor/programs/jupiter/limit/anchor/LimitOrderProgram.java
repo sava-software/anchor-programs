@@ -9,6 +9,8 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
+import static java.util.Objects.requireNonNullElse;
+
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
@@ -48,7 +50,7 @@ public final class LimitOrderProgram {
       createWrite(makerInputAccountKey),
       createRead(inputMintKey),
       createRead(makerOutputAccountKey),
-      createRead(referralKey),
+      createRead(requireNonNullElse(referralKey, invokedLimitOrderProgramMeta.publicKey())),
       createRead(outputMintKey),
       createRead(systemProgramKey),
       createRead(tokenProgramKey),
@@ -136,7 +138,7 @@ public final class LimitOrderProgram {
       createWrite(takerInputAccountKey),
       createRead(feeAuthorityKey),
       createWrite(programFeeAccountKey),
-      createWrite(referralKey),
+      createWrite(requireNonNullElse(referralKey, invokedLimitOrderProgramMeta.publicKey())),
       createRead(tokenProgramKey),
       createRead(systemProgramKey)
     );
@@ -275,7 +277,7 @@ public final class LimitOrderProgram {
       createWrite(takerInputAccountKey),
       createRead(feeAuthorityKey),
       createWrite(programFeeAccountKey),
-      createWrite(referralKey),
+      createWrite(requireNonNullElse(referralKey, invokedLimitOrderProgramMeta.publicKey())),
       createRead(inputMintKey),
       createRead(inputMintTokenProgramKey),
       createRead(outputMintKey),
@@ -341,7 +343,7 @@ public final class LimitOrderProgram {
       createWrite(makerInputAccountKey),
       createRead(systemProgramKey),
       createRead(tokenProgramKey),
-      createRead(inputMintKey)
+      createRead(requireNonNullElse(inputMintKey, invokedLimitOrderProgramMeta.publicKey()))
     );
 
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, CANCEL_ORDER_DISCRIMINATOR);
@@ -366,7 +368,7 @@ public final class LimitOrderProgram {
       createWrite(makerInputAccountKey),
       createRead(systemProgramKey),
       createRead(tokenProgramKey),
-      createRead(inputMintKey)
+      createRead(requireNonNullElse(inputMintKey, invokedLimitOrderProgramMeta.publicKey()))
     );
 
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, CANCEL_EXPIRED_ORDER_DISCRIMINATOR);
