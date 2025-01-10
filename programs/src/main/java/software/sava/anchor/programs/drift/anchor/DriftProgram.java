@@ -3248,6 +3248,176 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator LIQUIDATE_SPOT_WITH_SWAP_BEGIN_DISCRIMINATOR = toDiscriminator(12, 43, 176, 83, 156, 251, 117, 13);
+
+  public static Instruction liquidateSpotWithSwapBegin(final AccountMeta invokedDriftProgramMeta,
+                                                       final PublicKey stateKey,
+                                                       final PublicKey authorityKey,
+                                                       final PublicKey liquidatorKey,
+                                                       final PublicKey liquidatorStatsKey,
+                                                       final PublicKey userKey,
+                                                       final PublicKey userStatsKey,
+                                                       final PublicKey liabilitySpotMarketVaultKey,
+                                                       final PublicKey assetSpotMarketVaultKey,
+                                                       final PublicKey liabilityTokenAccountKey,
+                                                       final PublicKey assetTokenAccountKey,
+                                                       final PublicKey tokenProgramKey,
+                                                       final PublicKey driftSignerKey,
+                                                       // Instructions Sysvar for instruction introspection
+                                                       final PublicKey instructionsKey,
+                                                       final int assetMarketIndex,
+                                                       final int liabilityMarketIndex,
+                                                       final long swapAmount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createReadOnlySigner(authorityKey),
+      createWrite(liquidatorKey),
+      createWrite(liquidatorStatsKey),
+      createWrite(userKey),
+      createWrite(userStatsKey),
+      createWrite(liabilitySpotMarketVaultKey),
+      createWrite(assetSpotMarketVaultKey),
+      createWrite(liabilityTokenAccountKey),
+      createWrite(assetTokenAccountKey),
+      createRead(tokenProgramKey),
+      createRead(driftSignerKey),
+      createRead(instructionsKey)
+    );
+
+    final byte[] _data = new byte[20];
+    int i = writeDiscriminator(LIQUIDATE_SPOT_WITH_SWAP_BEGIN_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, assetMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, liabilityMarketIndex);
+    i += 2;
+    putInt64LE(_data, i, swapAmount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record LiquidateSpotWithSwapBeginIxData(Discriminator discriminator,
+                                                 int assetMarketIndex,
+                                                 int liabilityMarketIndex,
+                                                 long swapAmount) implements Borsh {  
+
+    public static LiquidateSpotWithSwapBeginIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 20;
+
+    public static LiquidateSpotWithSwapBeginIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var assetMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var liabilityMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var swapAmount = getInt64LE(_data, i);
+      return new LiquidateSpotWithSwapBeginIxData(discriminator, assetMarketIndex, liabilityMarketIndex, swapAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, assetMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, liabilityMarketIndex);
+      i += 2;
+      putInt64LE(_data, i, swapAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator LIQUIDATE_SPOT_WITH_SWAP_END_DISCRIMINATOR = toDiscriminator(142, 88, 163, 160, 223, 75, 55, 225);
+
+  public static Instruction liquidateSpotWithSwapEnd(final AccountMeta invokedDriftProgramMeta,
+                                                     final PublicKey stateKey,
+                                                     final PublicKey authorityKey,
+                                                     final PublicKey liquidatorKey,
+                                                     final PublicKey liquidatorStatsKey,
+                                                     final PublicKey userKey,
+                                                     final PublicKey userStatsKey,
+                                                     final PublicKey liabilitySpotMarketVaultKey,
+                                                     final PublicKey assetSpotMarketVaultKey,
+                                                     final PublicKey liabilityTokenAccountKey,
+                                                     final PublicKey assetTokenAccountKey,
+                                                     final PublicKey tokenProgramKey,
+                                                     final PublicKey driftSignerKey,
+                                                     // Instructions Sysvar for instruction introspection
+                                                     final PublicKey instructionsKey,
+                                                     final int assetMarketIndex,
+                                                     final int liabilityMarketIndex) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createReadOnlySigner(authorityKey),
+      createWrite(liquidatorKey),
+      createWrite(liquidatorStatsKey),
+      createWrite(userKey),
+      createWrite(userStatsKey),
+      createWrite(liabilitySpotMarketVaultKey),
+      createWrite(assetSpotMarketVaultKey),
+      createWrite(liabilityTokenAccountKey),
+      createWrite(assetTokenAccountKey),
+      createRead(tokenProgramKey),
+      createRead(driftSignerKey),
+      createRead(instructionsKey)
+    );
+
+    final byte[] _data = new byte[12];
+    int i = writeDiscriminator(LIQUIDATE_SPOT_WITH_SWAP_END_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, assetMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, liabilityMarketIndex);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record LiquidateSpotWithSwapEndIxData(Discriminator discriminator, int assetMarketIndex, int liabilityMarketIndex) implements Borsh {  
+
+    public static LiquidateSpotWithSwapEndIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 12;
+
+    public static LiquidateSpotWithSwapEndIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var assetMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var liabilityMarketIndex = getInt16LE(_data, i);
+      return new LiquidateSpotWithSwapEndIxData(discriminator, assetMarketIndex, liabilityMarketIndex);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, assetMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, liabilityMarketIndex);
+      i += 2;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator LIQUIDATE_BORROW_FOR_PERP_PNL_DISCRIMINATOR = toDiscriminator(169, 17, 32, 90, 207, 148, 209, 27);
 
   public static Instruction liquidateBorrowForPerpPnl(final AccountMeta invokedDriftProgramMeta,
@@ -4542,6 +4712,23 @@ public final class DriftProgram {
     public int l() {
       return 8 + Borsh.lenVector(params);
     }
+  }
+
+  public static final Discriminator PAUSE_SPOT_MARKET_DEPOSIT_WITHDRAW_DISCRIMINATOR = toDiscriminator(183, 119, 59, 170, 137, 35, 242, 86);
+
+  public static Instruction pauseSpotMarketDepositWithdraw(final AccountMeta invokedDriftProgramMeta,
+                                                           final PublicKey stateKey,
+                                                           final PublicKey keeperKey,
+                                                           final PublicKey spotMarketKey,
+                                                           final PublicKey spotMarketVaultKey) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createReadOnlySigner(keeperKey),
+      createWrite(spotMarketKey),
+      createRead(spotMarketVaultKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, PAUSE_SPOT_MARKET_DEPOSIT_WITHDRAW_DISCRIMINATOR);
   }
 
   public static final Discriminator INITIALIZE_DISCRIMINATOR = toDiscriminator(175, 175, 109, 31, 13, 152, 155, 237);

@@ -7,9 +7,9 @@ import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
 
 import java.util.List;
+import java.util.Map;
 
 public interface GlamJupiterProgramClient {
-
 
   static GlamJupiterProgramClient createClient(final GlamProgramAccountClient nativeProgramAccountClient,
                                                final JupiterAccounts jupiterAccounts) {
@@ -21,6 +21,8 @@ public interface GlamJupiterProgramClient {
   }
 
   SolanaAccounts solanaAccounts();
+
+  GlamVaultAccounts glamVaultAccounts();
 
   JupiterAccounts jupiterAccounts();
 
@@ -83,6 +85,11 @@ public interface GlamJupiterProgramClient {
                                         final Instruction swapInstruction) {
     return swapChecked(inputMintKey, outputMintKey, amount, swapInstruction, true);
   }
+
+  Map<PublicKey, Instruction> createSwapTokenAccountsIdempotent(final AccountMeta inputTokenProgram,
+                                                                final PublicKey inputMintKey,
+                                                                final AccountMeta outputTokenProgram,
+                                                                final PublicKey outputMintKey);
 
   List<Instruction> swapChecked(final PublicKey inputProgramStateKey,
                                 final PublicKey inputMintKey,

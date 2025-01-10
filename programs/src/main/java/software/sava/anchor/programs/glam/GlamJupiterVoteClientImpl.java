@@ -23,6 +23,11 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
   }
 
   @Override
+  public GlamAccounts glamAccounts() {
+    return glamAccounts;
+  }
+
+  @Override
   public PublicKey glamKey() {
     return glamKey;
   }
@@ -49,7 +54,10 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                              final PublicKey payer,
                              final PublicKey voter) {
     if (!voter.equals(escrowOwnerKey)) {
-      throw new IllegalStateException("Treasury must correspond to the GLAM fund account.");
+      throw new IllegalStateException(String.format(
+          "Voter must correspond to the GLAM vault account. [expected=%s] [observed=%s]",
+          escrowOwnerKey, voter
+      ));
     }
     return GlamProgram.newVote(
         glamAccounts.invokedProgram(),

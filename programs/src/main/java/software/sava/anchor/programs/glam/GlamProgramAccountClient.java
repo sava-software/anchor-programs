@@ -18,22 +18,22 @@ import static software.sava.anchor.programs.glam.anchor.types.EngineFieldName.De
 
 public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
-  static GlamProgramAccountClient createClient(final SolanaAccounts solanaAccounts, final GlamFundAccounts glamFundAccounts) {
-    return new GlamProgramAccountClientImpl(solanaAccounts, glamFundAccounts);
+  static GlamProgramAccountClient createClient(final SolanaAccounts solanaAccounts, final GlamVaultAccounts glamVaultAccounts) {
+    return new GlamProgramAccountClientImpl(solanaAccounts, glamVaultAccounts);
   }
 
   static GlamProgramAccountClient createClient(final SolanaAccounts solanaAccounts,
                                                final GlamAccounts glamAccounts,
                                                final PublicKey signerPublicKey,
-                                               final PublicKey fundPublicKey) {
-    return createClient(solanaAccounts, GlamFundAccounts.createAccounts(glamAccounts, signerPublicKey, fundPublicKey));
+                                               final PublicKey glamPublicKey) {
+    return createClient(solanaAccounts, GlamVaultAccounts.createAccounts(glamAccounts, signerPublicKey, glamPublicKey));
   }
 
-  static GlamProgramAccountClient createClient(final PublicKey signerPublicKey, final PublicKey fundPublicKey) {
-    return createClient(SolanaAccounts.MAIN_NET, GlamAccounts.MAIN_NET, signerPublicKey, fundPublicKey);
+  static GlamProgramAccountClient createClient(final PublicKey signerPublicKey, final PublicKey glamPublicKey) {
+    return createClient(SolanaAccounts.MAIN_NET, GlamAccounts.MAIN_NET, signerPublicKey, glamPublicKey);
   }
 
-  static CompletableFuture<List<AccountInfo<FundAccount>>> fetchFundAccounts(final SolanaRpcClient rpcClient,
+  static CompletableFuture<List<AccountInfo<FundAccount>>> fetchGlamAccounts(final SolanaRpcClient rpcClient,
                                                                              final PublicKey programPublicKey) {
     return rpcClient.getProgramAccounts(
         programPublicKey,
@@ -42,7 +42,7 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
     );
   }
 
-  static CompletableFuture<List<AccountInfo<FundAccount>>> fetchFundAccountsByManager(final SolanaRpcClient rpcClient,
+  static CompletableFuture<List<AccountInfo<FundAccount>>> fetchGlamAccountsByManager(final SolanaRpcClient rpcClient,
                                                                                       final PublicKey managerPublicKey,
                                                                                       final PublicKey programPublicKey) {
     return rpcClient.getProgramAccounts(
@@ -55,29 +55,29 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
     );
   }
 
-  static Map<PublicKey, FundAccount> filterFundAccounts(final List<AccountInfo<FundAccount>> glamFundAccounts,
-                                                        final PublicKey managerPublicKey) {
+  static Map<PublicKey, FundAccount> filterGlamAccounts(final List<AccountInfo<FundAccount>> glamFundAccounts,
+                                                        final PublicKey feePayerPublicKey) {
 
     return glamFundAccounts.stream()
         .map(AccountInfo::data)
-        .filter(accountInfo -> accountInfo.manager().equals(managerPublicKey))
+        .filter(accountInfo -> accountInfo.manager().equals(feePayerPublicKey))
         .collect(Collectors.toMap(FundAccount::_address, Function.identity()));
   }
 
-  static Map<PublicKey, FundAccount> filterFundAccounts(final List<AccountInfo<FundAccount>> glamFundAccounts,
-                                                        final PublicKey managerPublicKey,
-                                                        final String fundName) {
+  static Map<PublicKey, FundAccount> filterGlamAccounts(final List<AccountInfo<FundAccount>> glamFundAccounts,
+                                                        final PublicKey feePayerPublicKey,
+                                                        final String glamName) {
     return glamFundAccounts.stream()
         .map(AccountInfo::data)
-        .filter(accountInfo -> accountInfo.name().equals(fundName)
-            && accountInfo.manager().equals(managerPublicKey))
+        .filter(accountInfo -> accountInfo.name().equals(glamName)
+            && accountInfo.manager().equals(feePayerPublicKey))
         .collect(Collectors.toMap(FundAccount::_address, Function.identity()));
   }
 
-  static boolean isDelegatedWithPermission(final FundAccount fundAccount,
+  static boolean isDelegatedWithPermission(final FundAccount glamAccount,
                                            final PublicKey delegate,
                                            final Permission permission) {
-    for (final var engineFields : fundAccount.params()) {
+    for (final var engineFields : glamAccount.params()) {
       for (final var engineField : engineFields) {
         if (engineField.name() == DelegateAcls && engineField.value() instanceof EngineFieldValue.VecDelegateAcl(
             final var delegateAcls
@@ -101,7 +101,7 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
   NativeProgramAccountClient delegatedNativeProgramAccountClient();
 
-  GlamFundAccounts fundAccounts();
+  GlamVaultAccounts vaultAccounts();
 
   Instruction transferLamportsAndSyncNative(final long lamports);
 

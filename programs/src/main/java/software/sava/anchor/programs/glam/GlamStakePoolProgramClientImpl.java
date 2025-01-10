@@ -17,7 +17,7 @@ import static software.sava.solana.programs.stakepool.StakePoolProgramClient.fin
 final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient {
 
   private final GlamProgramAccountClient glamProgramAccountClient;
-  private final GlamFundAccounts glamFundAccounts;
+  private final GlamVaultAccounts glamVaultAccounts;
   private final AccountMeta invokedProgram;
   private final AccountMeta manager;
   private final SolanaAccounts solanaAccounts;
@@ -27,8 +27,8 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
   GlamStakePoolProgramClientImpl(final GlamProgramAccountClient glamProgramAccountClient,
                                  final StakePoolAccounts stakePoolAccounts) {
     this.glamProgramAccountClient = glamProgramAccountClient;
-    this.glamFundAccounts = glamProgramAccountClient.fundAccounts();
-    this.invokedProgram = glamFundAccounts.glamAccounts().invokedProgram();
+    this.glamVaultAccounts = glamProgramAccountClient.vaultAccounts();
+    this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProgram();
     this.manager = glamProgramAccountClient.feePayer();
     this.solanaAccounts = glamProgramAccountClient.solanaAccounts();
     this.stakePoolAccounts = stakePoolAccounts;
@@ -52,7 +52,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
 
   @Override
   public PublicKey ownerPublicKey() {
-    return glamFundAccounts.treasuryPublicKey();
+    return glamVaultAccounts.vaultPublicKey();
   }
 
   @Override
@@ -65,8 +65,8 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         invokedProgram,
         solanaAccounts,
         manager.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         stakePoolStateAccountInfo.owner(),
         stakePoolState.address(),
         stakePoolWithdrawAuthority.publicKey(),
@@ -98,8 +98,8 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         invokedProgram,
         solanaAccounts,
         manager.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         depositStakeAccount,
         poolTokenATA,
         stakePoolState.poolMint(),
@@ -135,8 +135,8 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         invokedProgram,
         solanaAccounts,
         manager.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         stakePoolState.address(),
         stakePoolWithdrawAuthority.publicKey(),
         stakePoolState.reserveStake(),
@@ -181,8 +181,8 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         invokedProgram,
         solanaAccounts,
         manager.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         stakeAccountPDA.pda().publicKey(),
         stakePoolState.poolMint(),
         stakePoolState.managerFeeAccount(),

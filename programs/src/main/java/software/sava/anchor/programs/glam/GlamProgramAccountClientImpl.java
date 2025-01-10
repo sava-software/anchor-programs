@@ -34,17 +34,17 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   private final SolanaAccounts solanaAccounts;
   private final NativeProgramClient nativeProgramClient;
   private final NativeProgramAccountClient nativeProgramAccountClient;
-  private final GlamFundAccounts glamFundAccounts;
+  private final GlamVaultAccounts glamVaultAccounts;
   private final AccountMeta invokedProgram;
-  private final AccountMeta manager;
+  private final AccountMeta feePayer;
 
-  GlamProgramAccountClientImpl(final SolanaAccounts solanaAccounts, final GlamFundAccounts glamFundAccounts) {
+  GlamProgramAccountClientImpl(final SolanaAccounts solanaAccounts, final GlamVaultAccounts glamVaultAccounts) {
     this.solanaAccounts = solanaAccounts;
-    this.nativeProgramClient = GlamNativeProgramClient.createClient(solanaAccounts, glamFundAccounts);
-    this.glamFundAccounts = glamFundAccounts;
-    this.invokedProgram = glamFundAccounts.glamAccounts().invokedProgram();
-    this.manager = createFeePayer(glamFundAccounts.signerPublicKey());
-    this.nativeProgramAccountClient = NativeProgramAccountClient.createClient(solanaAccounts, glamFundAccounts.treasuryPublicKey(), manager);
+    this.nativeProgramClient = GlamNativeProgramClient.createClient(solanaAccounts, glamVaultAccounts);
+    this.glamVaultAccounts = glamVaultAccounts;
+    this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProgram();
+    this.feePayer = createFeePayer(glamVaultAccounts.signerPublicKey());
+    this.nativeProgramAccountClient = NativeProgramAccountClient.createClient(solanaAccounts, glamVaultAccounts.vaultPublicKey(), feePayer);
   }
 
   @Override
@@ -58,8 +58,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public GlamFundAccounts fundAccounts() {
-    return glamFundAccounts;
+  public GlamVaultAccounts vaultAccounts() {
+    return glamVaultAccounts;
   }
 
   @Override
@@ -69,7 +69,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public AccountMeta feePayer() {
-    return manager;
+    return feePayer;
   }
 
   @Override
@@ -350,10 +350,10 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     return GlamProgram.wsolWrap(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         wrappedSolPDA().publicKey(),
-        manager.publicKey(),
+        feePayer.publicKey(),
         lamports
     );
   }
@@ -368,10 +368,10 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     return GlamProgram.wsolUnwrap(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         wrappedSolPDA().publicKey(),
-        manager.publicKey()
+        feePayer.publicKey()
     );
   }
 
@@ -468,7 +468,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public FundPDA createStakeAccountPDA() {
-    return FundPDA.createPDA("stake_account", glamFundAccounts.fundPublicKey(), invokedProgram.publicKey());
+    return FundPDA.createPDA("stake_account", glamVaultAccounts.glamPublicKey(), invokedProgram.publicKey());
   }
 
   @Override
@@ -479,9 +479,9 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     return GlamProgram.initializeAndDelegateStake(
         invokedProgram,
         solanaAccounts,
-        manager.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        feePayer.publicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         pda.publicKey(),
         validatorVoteAccount,
         solanaAccounts.stakeConfig(),
@@ -498,9 +498,9 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     return GlamProgram.splitStakeAccount(
         invokedProgram,
         solanaAccounts,
-        manager.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        feePayer.publicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         existingStakeAccount,
         newStakeAccountPDA.pda().publicKey(),
         lamports,
@@ -519,9 +519,9 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     return GlamProgram.withdrawFromStakeAccounts(
         invokedProgram,
         solanaAccounts,
-        manager.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey()
+        feePayer.publicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey()
     );
   }
 
@@ -546,10 +546,10 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     return GlamProgram.initializeFund(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.openFundsPDA().publicKey(),
-        glamFundAccounts.treasuryPublicKey(),
-        manager.publicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.openFundsPDA().publicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
         fundModel
     );
   }
@@ -559,11 +559,11 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     return GlamProgram.addShareClass(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.shareClassPDA(shareClassId).publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.openFundsPDA().publicKey(),
-        glamFundAccounts.treasuryPublicKey(),
-        manager.publicKey(),
+        glamVaultAccounts.shareClassPDA(shareClassId).publicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.openFundsPDA().publicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
         shareClassModel
     );
   }
@@ -572,8 +572,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction updateFund(final FundModel fundModel) {
     return GlamProgram.updateFund(
         invokedProgram,
-        glamFundAccounts.fundPublicKey(),
-        manager.publicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        feePayer.publicKey(),
         fundModel
     );
   }
@@ -583,27 +583,27 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     return GlamProgram.closeFund(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.openFundsPDA().publicKey(),
-        glamFundAccounts.treasuryPublicKey(),
-        manager.publicKey()
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.openFundsPDA().publicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey()
     );
   }
 
   @Override
   public Instruction closeShareClass(final PublicKey shareClassMintKey, final int shareClassId) {
-    final var shareClassPDA = glamFundAccounts.shareClassPDA(shareClassId).publicKey();
+    final var shareClassPDA = glamVaultAccounts.shareClassPDA(shareClassId).publicKey();
     final var extraAccountMetaListPDA = GlamPDAs.extraAccountMetaListPDA(invokedProgram.publicKey(), shareClassPDA);
-    final var openFundsPDA = GlamPDAs.openfundsPDA(invokedProgram.publicKey(), glamFundAccounts.fundPublicKey());
+    final var openFundsPDA = GlamPDAs.openfundsPDA(invokedProgram.publicKey(), glamVaultAccounts.glamPublicKey());
     return GlamProgram.closeShareClass(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         shareClassMintKey,
         extraAccountMetaListPDA.publicKey(),
         openFundsPDA.publicKey(),
-        manager.publicKey(),
+        feePayer.publicKey(),
         shareClassId
     );
   }
@@ -615,21 +615,21 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                final PublicKey assetATAKey,
                                final int shareClassId,
                                final long amount) {
-    final var shareClassPDA = glamFundAccounts.shareClassPDA(shareClassId).publicKey();
-    final var shareClassATA = AssociatedTokenProgram.findATA2022(solanaAccounts, manager.publicKey(), shareClassPDA).publicKey();
+    final var shareClassPDA = glamVaultAccounts.shareClassPDA(shareClassId).publicKey();
+    final var shareClassATA = AssociatedTokenProgram.findATA2022(solanaAccounts, feePayer.publicKey(), shareClassPDA).publicKey();
     final var policyPDA = GlamPDAs.signerPolicyPDA(invokedProgram.publicKey(), shareClassATA);
     return GlamProgram.subscribe(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         shareClassPDA,
         shareClassATA,
         assetKey,
         treasuryAssetATAKey,
         assetATAKey,
         policyPDA.publicKey(),
-        manager.publicKey(),
+        feePayer.publicKey(),
         shareClassId,
         amount,
         true
@@ -640,17 +640,17 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction redeem(final int shareClassId,
                             final long amount,
                             final boolean inKind) {
-    final var shareClassPDA = glamFundAccounts.shareClassPDA(shareClassId).publicKey();
-    final var shareClassATA = AssociatedTokenProgram.findATA2022(solanaAccounts, manager.publicKey(), shareClassPDA).publicKey();
+    final var shareClassPDA = glamVaultAccounts.shareClassPDA(shareClassId).publicKey();
+    final var shareClassATA = AssociatedTokenProgram.findATA2022(solanaAccounts, feePayer.publicKey(), shareClassPDA).publicKey();
     final var policyPDA = GlamPDAs.signerPolicyPDA(invokedProgram.publicKey(), shareClassATA);
     return GlamProgram.redeem(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
         shareClassPDA,
         shareClassATA,
-        manager.publicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        feePayer.publicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         policyPDA.publicKey(),
         amount,
         inKind,

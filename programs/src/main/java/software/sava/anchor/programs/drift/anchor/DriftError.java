@@ -310,7 +310,8 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.InvalidPythLazerStorageOwner,
     DriftError.UnverifiedPythLazerMessage,
     DriftError.InvalidPythLazerMessage,
-    DriftError.PythLazerMessagePriceFeedMismatch {
+    DriftError.PythLazerMessagePriceFeedMismatch,
+    DriftError.InvalidLiquidateSpotWithSwap {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -622,6 +623,7 @@ public sealed interface DriftError extends ProgramError permits
       case 6305 -> UnverifiedPythLazerMessage.INSTANCE;
       case 6306 -> InvalidPythLazerMessage.INSTANCE;
       case 6307 -> PythLazerMessagePriceFeedMismatch.INSTANCE;
+      case 6308 -> InvalidLiquidateSpotWithSwap.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2779,6 +2781,13 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final PythLazerMessagePriceFeedMismatch INSTANCE = new PythLazerMessagePriceFeedMismatch(
         6307, "Pyth lazer message does not correspond to correct fed id"
+    );
+  }
+
+  record InvalidLiquidateSpotWithSwap(int code, String msg) implements DriftError {
+
+    public static final InvalidLiquidateSpotWithSwap INSTANCE = new InvalidLiquidateSpotWithSwap(
+        6308, "InvalidLiquidateSpotWithSwap"
     );
   }
 }

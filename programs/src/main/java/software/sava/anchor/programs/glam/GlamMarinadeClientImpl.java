@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.glam;
 
+import software.sava.anchor.programs.glam.anchor.GlamPDAs;
 import software.sava.anchor.programs.glam.anchor.GlamProgram;
 import software.sava.anchor.programs.marinade.MarinadeAccounts;
 import software.sava.anchor.programs.marinade.MarinadeProgramClient;
@@ -22,7 +23,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
 
   private final SolanaAccounts solanaAccounts;
   private final MarinadeAccounts marinadeAccounts;
-  private final GlamFundAccounts glamFundAccounts;
+  private final GlamVaultAccounts glamVaultAccounts;
   private final AccountMeta invokedProgram;
   private final AccountMeta feePayer;
   private final MarinadeProgramClient marinadeProgramClient;
@@ -30,8 +31,8 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   GlamMarinadeClientImpl(final GlamProgramAccountClient glamClient, final MarinadeAccounts marinadeAccounts) {
     this.solanaAccounts = glamClient.solanaAccounts();
     this.marinadeAccounts = marinadeAccounts;
-    this.glamFundAccounts = glamClient.fundAccounts();
-    this.invokedProgram = glamFundAccounts.glamAccounts().invokedProgram();
+    this.glamVaultAccounts = glamClient.vaultAccounts();
+    this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProgram();
     this.feePayer = glamClient.feePayer();
     this.marinadeProgramClient = MarinadeProgramClient.createClient(glamClient, marinadeAccounts);
   }
@@ -48,7 +49,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
 
   @Override
   public FundPDA createMarinadeTicket() {
-    return FundPDA.createPDA("ticket", glamFundAccounts.fundPublicKey(), invokedProgram.publicKey());
+    return FundPDA.createPDA("ticket", glamVaultAccounts.glamPublicKey(), invokedProgram.publicKey());
   }
 
   @Override
@@ -67,8 +68,8 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         invokedProgram,
         solanaAccounts,
         feePayer.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         marinadeAccounts.stateProgram(),
         marinadeAccounts.treasuryReserveSolPDA(),
         marinadeAccounts.mSolTokenMint(),
@@ -102,8 +103,8 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         invokedProgram,
         solanaAccounts,
         feePayer.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         marinadeAccounts.stateProgram(),
         marinadeProgramState.validatorSystem().validatorList().account(),
         marinadeProgramState.stakeSystem().stakeList().account(),
@@ -126,8 +127,8 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         invokedProgram,
         solanaAccounts,
         feePayer.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         ticketPDA.publicKey(),
         marinadeAccounts.mSolTokenMint(),
         mSolTokenAccount,
@@ -142,11 +143,11 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
 
   private Instruction claimTickets() {
     return GlamProgram.marinadeClaimTickets(
-        glamFundAccounts.glamAccounts().invokedProgram(),
+        glamVaultAccounts.glamAccounts().invokedProgram(),
         solanaAccounts,
         feePayer.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         marinadeAccounts.stateProgram(),
         marinadeAccounts.treasuryReserveSolPDA(),
         marinadeAccounts.marinadeProgram()

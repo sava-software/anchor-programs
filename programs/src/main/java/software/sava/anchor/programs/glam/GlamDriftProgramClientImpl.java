@@ -23,7 +23,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   private final SolanaAccounts solanaAccounts;
   private final DriftAccounts driftAccounts;
   private final DriftProgramClient delegatedDriftClient;
-  private final GlamFundAccounts glamFundAccounts;
+  private final GlamVaultAccounts glamVaultAccounts;
   private final AccountMeta invokedProgram;
   private final AccountMeta feePayer;
   private final PublicKey user;
@@ -32,11 +32,11 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                              final DriftAccounts driftAccounts) {
     this.solanaAccounts = glamClient.solanaAccounts();
     this.driftAccounts = driftAccounts;
-    this.glamFundAccounts = glamClient.fundAccounts();
+    this.glamVaultAccounts = glamClient.vaultAccounts();
     this.delegatedDriftClient = DriftProgramClient.createClient(glamClient, driftAccounts);
-    this.invokedProgram = glamFundAccounts.glamAccounts().invokedProgram();
+    this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProgram();
     this.feePayer = glamClient.feePayer();
-    this.user = DriftPDAs.deriveMainUserAccount(driftAccounts, glamFundAccounts.treasuryPublicKey()).publicKey();
+    this.user = DriftPDAs.deriveMainUserAccount(driftAccounts, glamVaultAccounts.vaultPublicKey()).publicKey();
   }
 
   @Override
@@ -56,7 +56,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
   @Override
   public PublicKey authority() {
-    return glamFundAccounts.treasuryPublicKey();
+    return glamVaultAccounts.vaultPublicKey();
   }
 
   @Override
@@ -85,11 +85,11 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     return GlamProgram.driftDeposit(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
         user,
         userStatsKey,
         driftAccounts.stateKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         spotMarketConfig.vaultPDA(),
         userTokenAccountKey,
         feePayer.publicKey(),
@@ -135,12 +135,12 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     return GlamProgram.driftWithdraw(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
         user,
         userStatsKey,
         driftAccounts.stateKey(),
         driftAccounts.driftSignerPDA(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         userTokenAccountKey,
         spotMarketConfig.vaultPDA(),
         feePayer.publicKey(),
@@ -252,10 +252,10 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     return GlamProgram.driftPlaceOrders(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
         user,
         driftAccounts.stateKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
         toGlam(orderParams)
@@ -302,10 +302,10 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
         user,
         driftAccounts.stateKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
         null,
@@ -324,10 +324,10 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
         user,
         driftAccounts.stateKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
         MarketType.Spot,
@@ -346,10 +346,10 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
         user,
         driftAccounts.stateKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
         MarketType.Perp,
@@ -368,10 +368,10 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
         solanaAccounts,
-        glamFundAccounts.fundPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
         user,
         driftAccounts.stateKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
         marketConfig instanceof PerpMarketConfig ? MarketType.Perp : MarketType.Spot,

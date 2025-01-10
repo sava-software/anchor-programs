@@ -29,16 +29,16 @@ public class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
 
   private final SolanaAccounts solanaAccounts;
   private final NativeProgramClient nativeProgramClient;
-  private final GlamFundAccounts glamFundAccounts;
+  private final GlamVaultAccounts glamVaultAccounts;
   private final AccountMeta invokedProgram;
   private final AccountMeta manager;
 
-  GlamNativeProgramClientImpl(final SolanaAccounts solanaAccounts, final GlamFundAccounts glamFundAccounts) {
+  GlamNativeProgramClientImpl(final SolanaAccounts solanaAccounts, final GlamVaultAccounts glamVaultAccounts) {
     this.solanaAccounts = solanaAccounts;
     this.nativeProgramClient = NativeProgramClient.createClient(solanaAccounts);
-    this.glamFundAccounts = glamFundAccounts;
-    this.invokedProgram = glamFundAccounts.glamAccounts().invokedProgram();
-    this.manager = createFeePayer(glamFundAccounts.signerPublicKey());
+    this.glamVaultAccounts = glamVaultAccounts;
+    this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProgram();
+    this.manager = createFeePayer(glamVaultAccounts.signerPublicKey());
   }
 
   @Override
@@ -50,10 +50,11 @@ public class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   public NativeProgramAccountClient createAccountClient(final AccountMeta ownerAndFeePayer) {
     return GlamProgramAccountClient.createClient(
         solanaAccounts,
-        GlamFundAccounts.createAccounts(
-            glamFundAccounts.glamAccounts(),
+        GlamVaultAccounts.createAccounts(
+            glamVaultAccounts.glamAccounts(),
             ownerAndFeePayer.publicKey(),
-            glamFundAccounts.fundPublicKey())
+            glamVaultAccounts.glamPublicKey()
+        )
     );
   }
 
@@ -61,10 +62,11 @@ public class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   public NativeProgramAccountClient createAccountClient(final PublicKey owner, final AccountMeta feePayer) {
     return GlamProgramAccountClient.createClient(
         solanaAccounts,
-        GlamFundAccounts.createAccounts(
-            glamFundAccounts.glamAccounts(),
+        GlamVaultAccounts.createAccounts(
+            glamVaultAccounts.glamAccounts(),
             feePayer.publicKey(),
-            glamFundAccounts.fundPublicKey())
+            glamVaultAccounts.glamPublicKey()
+        )
     );
   }
 
@@ -261,8 +263,8 @@ public class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
         invokedProgram,
         solanaAccounts,
         manager.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey(),
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
         destinationStakeAccount.address(),
         srcStakeAccount
     );
@@ -280,8 +282,8 @@ public class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
         invokedProgram,
         solanaAccounts,
         manager.publicKey(),
-        glamFundAccounts.fundPublicKey(),
-        glamFundAccounts.treasuryPublicKey()
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey()
     );
   }
 

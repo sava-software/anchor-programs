@@ -31,5 +31,7 @@ public interface GlamJupiterVoteClient extends JupiterVoteClient {
     );
   }
 
+  GlamAccounts glamAccounts();
+
   PublicKey glamKey();
 }

@@ -7,7 +7,6 @@ import software.sava.core.accounts.meta.AccountMeta;
 import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static software.sava.anchor.programs.glam.GlamAccounts.deriveAddress;
 
 public interface GlamAccounts {
 
@@ -28,25 +27,9 @@ public interface GlamAccounts {
     );
   }
 
-  static ProgramDerivedAddress deriveAddress(final String name, final PublicKey parent, final PublicKey program) {
-    return PublicKey.findProgramAddress(
-        List.of(
-            name.getBytes(UTF_8),
-            parent.toByteArray()
-        ), program);
-  }
-
   PublicKey program();
 
   AccountMeta invokedProgram();
-
-  default ProgramDerivedAddress treasuryPDA(final PublicKey fundPublicKey) {
-    return deriveAddress("treasury", fundPublicKey, program());
-  }
-
-  default ProgramDerivedAddress openFundsPDA(final PublicKey fundPublicKey) {
-    return deriveAddress("openfunds", fundPublicKey, program());
-  }
 
   default ProgramDerivedAddress shareClassMintPDA(final PublicKey fundPublicKey, final int shareClassId) {
     return PublicKey.findProgramAddress(
