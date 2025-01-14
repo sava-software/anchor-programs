@@ -9,12 +9,8 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-// Reserve collateral
-public record ReserveCollateral(// Reserve collateral mint address
-                                PublicKey mintPubkey,
-                                // Reserve collateral mint supply, used for exchange rate
+public record ReserveCollateral(PublicKey mintPubkey,
                                 long mintTotalSupply,
-                                // Reserve collateral supply address
                                 PublicKey supplyVault,
                                 BigInteger[] padding1,
                                 BigInteger[] padding2) implements Borsh {

@@ -13,7 +13,7 @@ import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record FundMetadataAccount(PublicKey _address,
                                   Discriminator discriminator,
-                                  PublicKey fundPubkey,
+                                  PublicKey statePubkey,
                                   CompanyField[] company,
                                   FundField[] fund,
                                   ShareClassField[][] shareClasses,
@@ -22,11 +22,11 @@ public record FundMetadataAccount(PublicKey _address,
   public static final Discriminator DISCRIMINATOR = toDiscriminator(214, 24, 35, 92, 16, 104, 166, 6);
   public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
-  public static final int FUND_PUBKEY_OFFSET = 8;
+  public static final int STATE_PUBKEY_OFFSET = 8;
   public static final int COMPANY_OFFSET = 40;
 
-  public static Filter createFundPubkeyFilter(final PublicKey fundPubkey) {
-    return Filter.createMemCompFilter(FUND_PUBKEY_OFFSET, fundPubkey);
+  public static Filter createStatePubkeyFilter(final PublicKey statePubkey) {
+    return Filter.createMemCompFilter(STATE_PUBKEY_OFFSET, statePubkey);
   }
 
   public static FundMetadataAccount read(final byte[] _data, final int offset) {
@@ -45,7 +45,7 @@ public record FundMetadataAccount(PublicKey _address,
     }
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
-    final var fundPubkey = readPubKey(_data, i);
+    final var statePubkey = readPubKey(_data, i);
     i += 32;
     final var company = Borsh.readVector(CompanyField.class, CompanyField::read, _data, i);
     i += Borsh.lenVector(company);
@@ -56,7 +56,7 @@ public record FundMetadataAccount(PublicKey _address,
     final var fundManagers = Borsh.readMultiDimensionVector(FundManagerField.class, FundManagerField::read, _data, i);
     return new FundMetadataAccount(_address,
                                    discriminator,
-                                   fundPubkey,
+                                   statePubkey,
                                    company,
                                    fund,
                                    shareClasses,
@@ -66,7 +66,7 @@ public record FundMetadataAccount(PublicKey _address,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    fundPubkey.write(_data, i);
+    statePubkey.write(_data, i);
     i += 32;
     i += Borsh.writeVector(company, _data, i);
     i += Borsh.writeVector(fund, _data, i);

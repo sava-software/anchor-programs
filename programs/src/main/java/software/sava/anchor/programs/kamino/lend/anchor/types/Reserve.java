@@ -14,26 +14,18 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record Reserve(PublicKey _address,
                       Discriminator discriminator,
-                      // Version of the reserve
                       long version,
-                      // Last slot when supply and rates updated
                       LastUpdate lastUpdate,
-                      // Lending market address
                       PublicKey lendingMarket,
                       PublicKey farmCollateral,
                       PublicKey farmDebt,
-                      // Reserve liquidity
                       ReserveLiquidity liquidity,
                       long[] reserveLiquidityPadding,
-                      // Reserve collateral
                       ReserveCollateral collateral,
                       long[] reserveCollateralPadding,
-                      // Reserve configuration values
                       ReserveConfig config,
                       long[] configPadding,
                       long borrowedAmountOutsideElevationGroup,
-                      // Amount of token borrowed in lamport of debt asset in the given
-                      // elevation group when this reserve is part of the collaterals.
                       long[] borrowedAmountsAgainstThisReserveInElevationGroups,
                       long[] padding) implements Borsh {
 

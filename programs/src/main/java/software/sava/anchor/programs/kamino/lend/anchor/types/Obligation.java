@@ -16,47 +16,26 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-// Lending market obligation state
 public record Obligation(PublicKey _address,
                          Discriminator discriminator,
-                         // Version of the struct
                          long tag,
-                         // Last update to collateral, liquidity, or their market values
                          LastUpdate lastUpdate,
-                         // Lending market address
                          PublicKey lendingMarket,
-                         // Owner authority which can borrow liquidity
                          PublicKey owner,
-                         // TODO: Does this break the stack size when copied onto the stack, if too big?
-                         // Deposited collateral for the obligation, unique by deposit reserve address
                          ObligationCollateral[] deposits,
-                         // Worst LTV for the collaterals backing the loan, represented as a percentage
                          long lowestReserveDepositLiquidationLtv,
-                         // Market value of deposits (scaled fraction)
                          BigInteger depositedValueSf,
-                         // Borrowed liquidity for the obligation, unique by borrow reserve address
                          ObligationLiquidity[] borrows,
-                         // Risk adjusted market value of borrows/debt (sum of price * borrowed_amount * borrow_factor) (scaled fraction)
                          BigInteger borrowFactorAdjustedDebtValueSf,
-                         // Market value of borrows - used for max_liquidatable_borrowed_amount (scaled fraction)
                          BigInteger borrowedAssetsMarketValueSf,
-                         // The maximum borrow value at the weighted average loan to value ratio (scaled fraction)
                          BigInteger allowedBorrowValueSf,
-                         // The dangerous borrow value at the weighted average liquidation threshold (scaled fraction)
                          BigInteger unhealthyBorrowValueSf,
-                         // The asset tier of the deposits
                          byte[] depositsAssetTiers,
-                         // The asset tier of the borrows
                          byte[] borrowsAssetTiers,
-                         // The elevation group id the obligation opted into.
                          int elevationGroup,
-                         // The number of deprecated reserves the obligation has a deposit
                          int numOfObsoleteReserves,
-                         // Marked = 1 if borrows array is not empty, 0 = borrows empty
                          int hasDebt,
-                         // Wallet address of the referrer
                          PublicKey referrer,
-                         // Marked = 1 if borrowing disabled, 0 = borrowing enabled
                          int borrowingDisabled,
                          byte[] reserved,
                          long highestBorrowFactorPct,

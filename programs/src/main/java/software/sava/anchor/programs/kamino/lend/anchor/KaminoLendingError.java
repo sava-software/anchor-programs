@@ -62,7 +62,7 @@ public sealed interface KaminoLendingError extends ProgramError permits
     KaminoLendingError.InvalidScopePriceAccount,
     KaminoLendingError.ObligationCollateralLtvZero,
     KaminoLendingError.InvalidObligationSeedsValue,
-    KaminoLendingError.InvalidObligationId,
+    KaminoLendingError.DeprecatedInvalidObligationId,
     KaminoLendingError.InvalidBorrowRateCurvePoint,
     KaminoLendingError.InvalidUtilizationRate,
     KaminoLendingError.CannotSocializeObligationWithCollateral,
@@ -177,7 +177,7 @@ public sealed interface KaminoLendingError extends ProgramError permits
       case 6056 -> InvalidScopePriceAccount.INSTANCE;
       case 6057 -> ObligationCollateralLtvZero.INSTANCE;
       case 6058 -> InvalidObligationSeedsValue.INSTANCE;
-      case 6059 -> InvalidObligationId.INSTANCE;
+      case 6059 -> DeprecatedInvalidObligationId.INSTANCE;
       case 6060 -> InvalidBorrowRateCurvePoint.INSTANCE;
       case 6061 -> InvalidUtilizationRate.INSTANCE;
       case 6062 -> CannotSocializeObligationWithCollateral.INSTANCE;
@@ -647,10 +647,10 @@ public sealed interface KaminoLendingError extends ProgramError permits
     );
   }
 
-  record InvalidObligationId(int code, String msg) implements KaminoLendingError {
+  record DeprecatedInvalidObligationId(int code, String msg) implements KaminoLendingError {
 
-    public static final InvalidObligationId INSTANCE = new InvalidObligationId(
-        6059, "Obligation id must be 0"
+    public static final DeprecatedInvalidObligationId INSTANCE = new DeprecatedInvalidObligationId(
+        6059, "[DEPRECATED] Obligation id must be 0"
     );
   }
 

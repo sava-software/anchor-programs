@@ -21,32 +21,17 @@ public record UserState(PublicKey _address,
                         long userId,
                         PublicKey farmState,
                         PublicKey owner,
-                        // Indicate if this user state is part of a delegated farm
                         int isFarmDelegated,
                         byte[] padding0,
-                        // Rewards tally used for computation of gained rewards
-                        // (scaled from `Decimal` representation).
                         BigInteger[] rewardsTallyScaled,
-                        // Number of reward tokens ready for claim
                         long[] rewardsIssuedUnclaimed,
                         long[] lastClaimTs,
-                        // User stake deposited and usable, generating rewards and fees.
-                        // (scaled from `Decimal` representation).
                         BigInteger activeStakeScaled,
-                        // User stake deposited but not usable and not generating rewards yet.
-                        // (scaled from `Decimal` representation).
                         BigInteger pendingDepositStakeScaled,
-                        // After this timestamp, pending user stake can be moved to user stake
-                        // Initialized to now() + delayed user stake period
                         long pendingDepositStakeTs,
-                        // User deposits unstaked, pending for withdrawal, not usable and not generating rewards.
-                        // (scaled from `Decimal` representation).
                         BigInteger pendingWithdrawalUnstakeScaled,
-                        // After this timestamp, user can withdraw their deposit.
                         long pendingWithdrawalUnstakeTs,
-                        // User bump used for account address validation
                         long bump,
-                        // Delegatee used for initialisation - useful to check against
                         PublicKey delegatee,
                         long lastStakeTs,
                         long[] padding1) implements Borsh {

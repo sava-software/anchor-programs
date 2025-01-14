@@ -9,10 +9,7 @@ import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static software.sava.anchor.programs.glam.anchor.types.EngineFieldName.DelegateAcls;
 
@@ -49,29 +46,10 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
         programPublicKey,
         List.of(
             FundAccount.DISCRIMINATOR_FILTER,
-            FundAccount.createManagerFilter(managerPublicKey)
+            FundAccount.createOwnerFilter(managerPublicKey)
         ),
         FundAccount.FACTORY
     );
-  }
-
-  static Map<PublicKey, FundAccount> filterGlamAccounts(final List<AccountInfo<FundAccount>> glamFundAccounts,
-                                                        final PublicKey feePayerPublicKey) {
-
-    return glamFundAccounts.stream()
-        .map(AccountInfo::data)
-        .filter(accountInfo -> accountInfo.manager().equals(feePayerPublicKey))
-        .collect(Collectors.toMap(FundAccount::_address, Function.identity()));
-  }
-
-  static Map<PublicKey, FundAccount> filterGlamAccounts(final List<AccountInfo<FundAccount>> glamFundAccounts,
-                                                        final PublicKey feePayerPublicKey,
-                                                        final String glamName) {
-    return glamFundAccounts.stream()
-        .map(AccountInfo::data)
-        .filter(accountInfo -> accountInfo.name().equals(glamName)
-            && accountInfo.manager().equals(feePayerPublicKey))
-        .collect(Collectors.toMap(FundAccount::_address, Function.identity()));
   }
 
   static boolean isDelegatedWithPermission(final FundAccount glamAccount,
@@ -115,11 +93,11 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
                                          final PublicKey validatorVoteAccount,
                                          final long lamports);
 
-  Instruction initializeFund(final FundModel fundModel);
+  Instruction initializeFund(final StateModel fundModel);
 
   Instruction addShareClass(final int shareClassId, final ShareClassModel shareClassModel);
 
-  Instruction updateFund(final FundModel fundModel);
+  Instruction updateFund(final StateModel fundModel);
 
   Instruction closeFund();
 

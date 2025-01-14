@@ -1595,56 +1595,21 @@ public final class KaminoLendingProgram {
                                                    final PublicKey payerKey,
                                                    final PublicKey lendingMarketKey,
                                                    final PublicKey reserveKey,
+                                                   final PublicKey referrerKey,
                                                    final PublicKey referrerTokenStateKey,
                                                    final PublicKey rentKey,
-                                                   final PublicKey systemProgramKey,
-                                                   final PublicKey referrer) {
+                                                   final PublicKey systemProgramKey) {
     final var keys = List.of(
       createWritableSigner(payerKey),
       createRead(lendingMarketKey),
       createRead(reserveKey),
+      createRead(referrerKey),
       createWrite(referrerTokenStateKey),
       createRead(rentKey),
       createRead(systemProgramKey)
     );
 
-    final byte[] _data = new byte[40];
-    int i = writeDiscriminator(INIT_REFERRER_TOKEN_STATE_DISCRIMINATOR, _data, 0);
-    referrer.write(_data, i);
-
-    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
-  }
-
-  public record InitReferrerTokenStateIxData(Discriminator discriminator, PublicKey referrer) implements Borsh {  
-
-    public static InitReferrerTokenStateIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 40;
-
-    public static InitReferrerTokenStateIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = parseDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var referrer = readPubKey(_data, i);
-      return new InitReferrerTokenStateIxData(discriminator, referrer);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      referrer.write(_data, i);
-      i += 32;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, INIT_REFERRER_TOKEN_STATE_DISCRIMINATOR);
   }
 
   public static final Discriminator INIT_USER_METADATA_DISCRIMINATOR = toDiscriminator(117, 169, 176, 69, 197, 23, 15, 162);

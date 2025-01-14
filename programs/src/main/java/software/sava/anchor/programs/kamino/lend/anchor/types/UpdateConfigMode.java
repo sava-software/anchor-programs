@@ -46,7 +46,7 @@ public enum UpdateConfigMode implements Borsh.Enum {
   UpdateFarmCollateral,
   UpdateFarmDebt,
   UpdateDisableUsageAsCollateralOutsideEmode,
-  UpdateBlockBorrowingAboveUtilization,
+  UpdateBlockBorrowingAboveUtilizationPct,
   UpdateBlockPriceUsage,
   UpdateBorrowLimitOutsideElevationGroup,
   UpdateBorrowLimitsInElevationGroupAgainstThisReserve,

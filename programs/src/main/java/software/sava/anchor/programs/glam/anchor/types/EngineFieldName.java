@@ -12,7 +12,7 @@ public enum EngineFieldName implements Borsh.Enum {
   ShareClassBlocklist,
   DelegateAcls,
   IntegrationAcls,
-  ExternalTreasuryAccounts,
+  ExternalVaultAccounts,
   LockUp,
   DriftMarketIndexesPerp,
   DriftMarketIndexesSpot,

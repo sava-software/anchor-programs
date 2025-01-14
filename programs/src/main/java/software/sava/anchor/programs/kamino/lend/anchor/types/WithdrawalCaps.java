@@ -5,7 +5,6 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-// Reserve Withdrawal Caps State
 public record WithdrawalCaps(long configCapacity,
                              long currentTotal,
                              long lastIntervalStartTimestamp,

@@ -16,8 +16,8 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                             final JupiterAccounts jupiterAccounts,
                             final GlamAccounts glamAccounts,
                             final PublicKey glamKey,
-                            final PublicKey treasuryKey) {
-    super(solanaAccounts, jupiterAccounts, treasuryKey);
+                            final PublicKey glamVaultKey) {
+    super(solanaAccounts, jupiterAccounts, glamVaultKey);
     this.glamAccounts = glamAccounts;
     this.glamKey = glamKey;
   }

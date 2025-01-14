@@ -8,7 +8,7 @@ public enum UpdateLendingMarketMode implements Borsh.Enum {
   UpdateEmergencyMode,
   UpdateLiquidationCloseFactor,
   UpdateLiquidationMaxValue,
-  UpdateGlobalUnhealthyBorrow,
+  DeprecatedUpdateGlobalUnhealthyBorrow,
   UpdateGlobalAllowedBorrow,
   UpdateRiskCouncil,
   UpdateMinFullLiquidationThreshold,
@@ -20,7 +20,8 @@ public enum UpdateLendingMarketMode implements Borsh.Enum {
   UpdateAutodeleverageEnabled,
   UpdateBorrowingDisabled,
   UpdateMinNetValueObligationPostAction,
-  UpdateMinValueSkipPriorityLiqCheck,
+  UpdateMinValueLtvSkipPriorityLiqCheck,
+  UpdateMinValueBfSkipPriorityLiqCheck,
   UpdatePaddingFields,
   UpdateName;
 

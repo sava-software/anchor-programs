@@ -5,8 +5,7 @@ import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 
-public record PythConfiguration(// Pubkey of the base price feed (disabled if `null` or `default`)
-                                PublicKey price) implements Borsh {
+public record PythConfiguration(PublicKey price) implements Borsh {
 
   public static final int BYTES = 32;
 

@@ -7,65 +7,33 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-// Reserve configuration values
-public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
-                            int status,
-                            // Asset tier -> 0 - regular (collateral & debt), 1 - isolated collateral, 2 - isolated debt
+public record ReserveConfig(int status,
                             int assetTier,
-                            // Flat rate that goes to the host
                             int hostFixedInterestRateBps,
-                            // [DEPRECATED] Boost for side (debt or collateral)
                             byte[] reserved2,
-                            // [DEPRECATED] Reward points multiplier per obligation type
                             byte[] reserved3,
-                            // Protocol take rate is the amount borrowed interest protocol receives, as a percentage
                             int protocolTakeRatePct,
-                            // Cut of the liquidation bonus that the protocol receives, as a percentage
                             int protocolLiquidationFeePct,
-                            // Target ratio of the value of borrows to deposits, as a percentage
-                            // 0 if use as collateral is disabled
                             int loanToValuePct,
-                            // Loan to value ratio at which an obligation can be liquidated, as percentage
                             int liquidationThresholdPct,
-                            // Minimum bonus a liquidator receives when repaying part of an unhealthy obligation, as bps
                             int minLiquidationBonusBps,
-                            // Maximum bonus a liquidator receives when repaying part of an unhealthy obligation, as bps
                             int maxLiquidationBonusBps,
-                            // Bad debt liquidation bonus for an undercollateralized obligation, as bps
                             int badDebtLiquidationBonusBps,
-                            // Time in seconds that must pass before redemptions are enabled after the deposit limit is crossed
                             long deleveragingMarginCallPeriodSecs,
-                            // The rate at which the deleveraging threshold decreases in slots per bps
-                            // e.g. 1 bps per hour would be 7200 slots per bps (assuming 2 slots per second)
                             long deleveragingThresholdSlotsPerBps,
-                            // Program owner fees assessed, separate from gains due to interest accrual
                             ReserveFees fees,
-                            // Borrow rate curve based on utilization
                             BorrowRateCurve borrowRateCurve,
-                            // Borrow factor in percentage - used for risk adjustment
                             long borrowFactorPct,
-                            // Maximum deposit limit of liquidity in native units, u64::MAX for inf
                             long depositLimit,
-                            // Maximum amount borrowed, u64::MAX for inf, 0 to disable borrows (protected deposits)
                             long borrowLimit,
-                            // Token id from TokenInfos struct
                             TokenInfo tokenInfo,
-                            // Deposit withdrawl caps - deposit & redeem
                             WithdrawalCaps depositWithdrawalCap,
-                            // Debt withdrawl caps - borrow & repay
                             WithdrawalCaps debtWithdrawalCap,
                             byte[] elevationGroups,
                             int disableUsageAsCollOutsideEmode,
-                            int utilizationLimitBlockBorrowingAbove,
+                            int utilizationLimitBlockBorrowingAbovePct,
                             byte[] reserved1,
-                            // Maximum amount liquidity of this reserve borrowed outside all elevation groups
-                            // - u64::MAX for inf
-                            // - 0 to disable borrows outside elevation groups
                             long borrowLimitOutsideElevationGroup,
-                            // Defines the maximum amount (in lamports of elevation group debt asset)
-                            // that can be borrowed when this reserve is used as collateral.
-                            // - u64::MAX for inf
-                            // - 0 to disable borrows in this elevation group (expected value for the debt asset)
                             long[] borrowLimitAgainstThisCollateralInElevationGroup) implements Borsh {
 
   public static final int BYTES = 912;
@@ -123,7 +91,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     i += Borsh.readArray(elevationGroups, _data, i);
     final var disableUsageAsCollOutsideEmode = _data[i] & 0xFF;
     ++i;
-    final var utilizationLimitBlockBorrowingAbove = _data[i] & 0xFF;
+    final var utilizationLimitBlockBorrowingAbovePct = _data[i] & 0xFF;
     ++i;
     final var reserved1 = new byte[2];
     i += Borsh.readArray(reserved1, _data, i);
@@ -155,7 +123,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
                              debtWithdrawalCap,
                              elevationGroups,
                              disableUsageAsCollOutsideEmode,
-                             utilizationLimitBlockBorrowingAbove,
+                             utilizationLimitBlockBorrowingAbovePct,
                              reserved1,
                              borrowLimitOutsideElevationGroup,
                              borrowLimitAgainstThisCollateralInElevationGroup);
@@ -204,7 +172,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     i += Borsh.writeArray(elevationGroups, _data, i);
     _data[i] = (byte) disableUsageAsCollOutsideEmode;
     ++i;
-    _data[i] = (byte) utilizationLimitBlockBorrowingAbove;
+    _data[i] = (byte) utilizationLimitBlockBorrowingAbovePct;
     ++i;
     i += Borsh.writeArray(reserved1, _data, i);
     putInt64LE(_data, i, borrowLimitOutsideElevationGroup);

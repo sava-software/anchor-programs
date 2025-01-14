@@ -45,16 +45,6 @@ public final class GlamPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress fundPDA(final PublicKey program,
-                                              final PublicKey signerAccount,
-                                              final byte[] fundModelCreated) {
-    return PublicKey.findProgramAddress(List.of(
-      "fund".getBytes(US_ASCII),
-      signerAccount.toByteArray(),
-      fundModelCreated
-    ), program);
-  }
-
   public static ProgramDerivedAddress inputSignerAtaPDA(final PublicKey program,
                                                         final PublicKey signerAccount,
                                                         final PublicKey inputTokenProgramAccount,
@@ -66,14 +56,11 @@ public final class GlamPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress managerAtaPDA(final PublicKey program,
-                                                    final PublicKey signerAccount,
-                                                    final PublicKey tokenProgramAccount,
-                                                    final PublicKey assetAccount) {
+  public static ProgramDerivedAddress metadataPDA(final PublicKey program,
+                                                  final PublicKey stateAccount) {
     return PublicKey.findProgramAddress(List.of(
-      signerAccount.toByteArray(),
-      tokenProgramAccount.toByteArray(),
-      assetAccount.toByteArray()
+      "openfunds".getBytes(US_ASCII),
+      stateAccount.toByteArray()
     ), program);
   }
 
@@ -110,14 +97,6 @@ public final class GlamPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress openfundsPDA(final PublicKey program,
-                                                   final PublicKey fundAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      "openfunds".getBytes(US_ASCII),
-      fundAccount.toByteArray()
-    ), program);
-  }
-
   public static ProgramDerivedAddress outputVaultAtaPDA(final PublicKey program,
                                                         final PublicKey vaultAccount,
                                                         final PublicKey outputTokenProgramAccount,
@@ -126,6 +105,17 @@ public final class GlamPDAs {
       vaultAccount.toByteArray(),
       outputTokenProgramAccount.toByteArray(),
       outputMintAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress signerAtaPDA(final PublicKey program,
+                                                   final PublicKey signerAccount,
+                                                   final PublicKey tokenProgramAccount,
+                                                   final PublicKey assetAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      signerAccount.toByteArray(),
+      tokenProgramAccount.toByteArray(),
+      assetAccount.toByteArray()
     ), program);
   }
 
@@ -156,6 +146,16 @@ public final class GlamPDAs {
     ), program);
   }
 
+  public static ProgramDerivedAddress statePDA(final PublicKey program,
+                                               final PublicKey signerAccount,
+                                               final byte[] stateModelCreated) {
+    return PublicKey.findProgramAddress(List.of(
+      "fund".getBytes(US_ASCII),
+      signerAccount.toByteArray(),
+      stateModelCreated
+    ), program);
+  }
+
   public static ProgramDerivedAddress toAtaPDA(final PublicKey program,
                                                final PublicKey toAccount,
                                                final PublicKey token2022ProgramAccount,
@@ -168,10 +168,10 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress vaultPDA(final PublicKey program,
-                                               final PublicKey fundAccount) {
+                                               final PublicKey stateAccount) {
     return PublicKey.findProgramAddress(List.of(
       "treasury".getBytes(US_ASCII),
-      fundAccount.toByteArray()
+      stateAccount.toByteArray()
     ), program);
   }
 

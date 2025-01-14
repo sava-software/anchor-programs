@@ -12,7 +12,7 @@ public interface GlamVaultAccounts {
                                           final PublicKey glamPublicKey) {
     final var program = glamAccounts.program();
     final var vaultPDA = GlamPDAs.vaultPDA(program, glamPublicKey);
-    final var openFundsPDA = GlamPDAs.openfundsPDA(program, glamPublicKey);
+    final var openFundsPDA = GlamPDAs.metadataPDA(program, glamPublicKey);
     return new GlamVaultAccountsRecord(
         glamAccounts,
         signerPublicKey,

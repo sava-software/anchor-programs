@@ -2,8 +2,8 @@ package software.sava.anchor.programs.glam;
 
 import software.sava.anchor.programs.glam.anchor.GlamPDAs;
 import software.sava.anchor.programs.glam.anchor.GlamProgram;
-import software.sava.anchor.programs.glam.anchor.types.FundModel;
 import software.sava.anchor.programs.glam.anchor.types.ShareClassModel;
+import software.sava.anchor.programs.glam.anchor.types.StateModel;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -542,8 +542,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public Instruction initializeFund(final FundModel fundModel) {
-    return GlamProgram.initializeFund(
+  public Instruction initializeFund(final StateModel fundModel) {
+    return GlamProgram.initializeState(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -569,8 +569,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public Instruction updateFund(final FundModel fundModel) {
-    return GlamProgram.updateFund(
+  public Instruction updateFund(final StateModel fundModel) {
+    return GlamProgram.updateState(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         feePayer.publicKey(),
@@ -580,7 +580,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction closeFund() {
-    return GlamProgram.closeFund(
+    return GlamProgram.closeState(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -594,7 +594,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction closeShareClass(final PublicKey shareClassMintKey, final int shareClassId) {
     final var shareClassPDA = glamVaultAccounts.shareClassPDA(shareClassId).publicKey();
     final var extraAccountMetaListPDA = GlamPDAs.extraAccountMetaListPDA(invokedProgram.publicKey(), shareClassPDA);
-    final var openFundsPDA = GlamPDAs.openfundsPDA(invokedProgram.publicKey(), glamVaultAccounts.glamPublicKey());
+    final var openFundsPDA = GlamPDAs.metadataPDA(invokedProgram.publicKey(), glamVaultAccounts.glamPublicKey());
     return GlamProgram.closeShareClass(
         invokedProgram,
         solanaAccounts,
