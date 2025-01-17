@@ -39,14 +39,14 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
     );
   }
 
-  static CompletableFuture<List<AccountInfo<FundAccount>>> fetchGlamAccountsByManager(final SolanaRpcClient rpcClient,
-                                                                                      final PublicKey managerPublicKey,
-                                                                                      final PublicKey programPublicKey) {
+  static CompletableFuture<List<AccountInfo<FundAccount>>> fetchGlamAccountsByOwner(final SolanaRpcClient rpcClient,
+                                                                                    final PublicKey ownerPublicKey,
+                                                                                    final PublicKey programPublicKey) {
     return rpcClient.getProgramAccounts(
         programPublicKey,
         List.of(
             FundAccount.DISCRIMINATOR_FILTER,
-            FundAccount.createOwnerFilter(managerPublicKey)
+            FundAccount.createOwnerFilter(ownerPublicKey)
         ),
         FundAccount.FACTORY
     );
