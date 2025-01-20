@@ -52,14 +52,30 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
     );
   }
 
+  static boolean isDelegatedWithPermission(final FundAccount glamAccount, final PublicKey delegate) {
+    for (final var engineFields : glamAccount.params()) {
+      for (final var engineField : engineFields) {
+        if (engineField.name() == DelegateAcls && engineField.value()
+            instanceof EngineFieldValue.VecDelegateAcl(final var delegateAcls)) {
+          for (final var delegateAcl : delegateAcls) {
+            if (delegate.equals(delegateAcl.pubkey())) {
+              return true;
+            }
+          }
+          return false;
+        }
+      }
+    }
+    return false;
+  }
+
   static boolean isDelegatedWithPermission(final FundAccount glamAccount,
                                            final PublicKey delegate,
                                            final Permission permission) {
     for (final var engineFields : glamAccount.params()) {
       for (final var engineField : engineFields) {
-        if (engineField.name() == DelegateAcls && engineField.value() instanceof EngineFieldValue.VecDelegateAcl(
-            final var delegateAcls
-        )) {
+        if (engineField.name() == DelegateAcls && engineField.value()
+            instanceof EngineFieldValue.VecDelegateAcl(final var delegateAcls)) {
           for (final var delegateAcl : delegateAcls) {
             if (delegate.equals(delegateAcl.pubkey())) {
               for (final var _permission : delegateAcl.permissions()) {
