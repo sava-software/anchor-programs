@@ -13,6 +13,8 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.jupiter.governance.anchor;
   exports software.sava.anchor.programs.jupiter.limit.anchor.types;
   exports software.sava.anchor.programs.jupiter.limit.anchor;
+  exports software.sava.anchor.programs.jupiter.merkle.distributor.anchor.types;
+  exports software.sava.anchor.programs.jupiter.merkle.distributor.anchor;
   exports software.sava.anchor.programs.jupiter.swap.anchor.types;
   exports software.sava.anchor.programs.jupiter.swap.anchor;
   exports software.sava.anchor.programs.jupiter.voter.anchor.types;

@@ -1,26 +1,5 @@
-def getAppVersion = { ->
-  try (final var gitTagOut = new ByteArrayOutputStream()) {
-    exec {
-      commandLine 'git', 'tag', '--points-at', 'HEAD'
-      standardOutput = gitTagOut
-    }
-    final var tagName = gitTagOut.toString().strip()
-    if (tagName.isBlank()) {
-      try (final var gitHashOut = new ByteArrayOutputStream()) {
-        exec {
-          commandLine 'git', 'rev-parse', '--short', 'HEAD'
-          standardOutput = gitHashOut
-        }
-        return 'git-' + gitHashOut.toString().strip()
-      }
-    } else {
-      return tagName
-    }
-  }
-} as Object
-
 ext {
-  VERSION = getAppVersion()
+  VERSION = project.findProperty('version')
   VCS_URL = 'https://github.com/sava-software/anchor-programs'
 }
 
@@ -31,7 +10,7 @@ subprojects {
   project.group = 'software.sava'
   project.version = "$VERSION"
 
-  final JLV = JavaLanguageVersion.of(project.findProperty('jv') as Integer ?: 23)
+  final JLV = JavaLanguageVersion.of(project.findProperty('javaVersion') as Integer ?: 23)
 
   plugins.withType(JavaPlugin).configureEach {
     java {
@@ -91,8 +70,8 @@ subprojects {
     useJUnitPlatform()
     testLogging {
       events "passed", "skipped", "failed", "standardOut", "standardError"
-      exceptionFormat "full"
-      showStandardStreams true
+      exceptionFormat = "full"
+      showStandardStreams = true
     }
   }
 
@@ -101,24 +80,48 @@ subprojects {
     archiveClassifier.set('sources')
   }
 
+  java {
+    withJavadocJar()
+    withSourcesJar()
+  }
+
   publishing {
     publications {
       mavenJava(MavenPublication) {
         from components.java
-        artifact sourcesJar
-        groupId project.group
-        artifactId project.name
+
+        groupId = project.group
+        artifactId = project.name
         version = project.version
+
         pom {
           name = project.name
+          description = "Solana program clients generated from Anchor IDLs"
           url = "$VCS_URL"
+          licenses {
+            license {
+              name = 'GPL-3.0 license'
+              url = 'https://github.com/sava-software/anchor-programs/blob/main/LICENSE'
+            }
+          }
+          developers {
+            developer {
+              name = 'Jim'
+              id = 'jpe7s'
+              email = 'jpe7s.salt188@passfwd.com'
+              organization = 'Sava Software'
+              organizationUrl = 'https://github.com/sava-software'
+            }
+          }
           scm {
             connection = 'scm:git:git@github.com:sava-software/anchor-programs.git'
+            developerConnection = 'scm:git:ssh@github.com:sava-software/anchor-programs.git'
             url = "$VCS_URL"
           }
         }
       }
     }
+
     repositories {
       maven {
         name = "GitHubPackages"

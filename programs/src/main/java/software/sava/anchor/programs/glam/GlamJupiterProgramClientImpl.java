@@ -195,10 +195,10 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                             final long amount,
                                             final Instruction swapInstruction) {
     final var inputTokenProgramKey = inputTokenProgram.publicKey();
-    final var outputTokenProgramKey = outputTokenProgram.publicKey();
-
     final var inputVaultATA = glamProgramAccountClient.findATA(inputTokenProgramKey, inputMintKey).publicKey();
     final var inputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(inputTokenProgramKey, inputMintKey).publicKey();
+
+    final var outputTokenProgramKey = outputTokenProgram.publicKey();
     final var outputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(outputTokenProgramKey, outputMintKey).publicKey();
     final var outputVaultATA = glamProgramAccountClient.findATA(outputTokenProgramKey, outputMintKey).publicKey();
 
