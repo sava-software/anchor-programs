@@ -4,6 +4,7 @@ import java.util.List;
 
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
+import software.sava.core.encoding.ByteUtil;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
@@ -22,12 +23,14 @@ public final class MerkleDistributorPDAs {
   public static ProgramDerivedAddress distributorPDA(final PublicKey program,
                                                      final PublicKey baseAccount,
                                                      final PublicKey mintAccount,
-                                                     final byte[] version) {
+                                                     final long version) {
+    final byte[] versionBytes = new byte[Long.BYTES];
+    ByteUtil.putInt64LE(versionBytes, 0, version);
     return PublicKey.findProgramAddress(List.of(
       "MerkleDistributor".getBytes(US_ASCII),
       baseAccount.toByteArray(),
       mintAccount.toByteArray(),
-      version
+      versionBytes
     ), program);
   }
 
