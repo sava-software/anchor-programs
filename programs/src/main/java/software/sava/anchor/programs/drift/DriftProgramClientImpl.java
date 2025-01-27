@@ -343,4 +343,295 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         successCondition
     );
   }
+
+  public Instruction initializeInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                                  final PublicKey insuranceFundStakeKey,
+                                                  final PublicKey payerKey,
+                                                  final PublicKey systemProgramKey,
+                                                  final PublicKey rentSysvar) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    return DriftProgram.initializeInsuranceFundStake(
+        accounts.invokedDriftProgram(),
+        spotMarketConfig.vaultPDA(),
+        insuranceFundStakeKey,
+        userStatsPDA.publicKey(),
+        accounts.stateKey(),
+        authority,
+        payerKey,
+        rentSysvar,
+        systemProgramKey,
+        spotMarketConfig.marketIndex()
+    );
+  }
+
+  public Instruction addInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                           final PublicKey insuranceFundStakeKey,
+                                           final PublicKey insuranceFundVaultKey,
+                                           final PublicKey userTokenAccountKey,
+                                           final PublicKey tokenProgramKey,
+                                           final long amount) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    return DriftProgram.addInsuranceFundStake(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        spotMarketConfig.vaultPDA(),
+        insuranceFundStakeKey,
+        userStatsPDA.publicKey(),
+        authority,
+        spotMarketConfig.vaultPDA(),
+        insuranceFundVaultKey,
+        accounts.driftSignerPDA(),
+        userTokenAccountKey,
+        tokenProgramKey,
+        spotMarketConfig.marketIndex(),
+        amount
+    );
+  }
+
+  public Instruction requestRemoveInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                                     final PublicKey insuranceFundStakeKey,
+                                                     final PublicKey insuranceFundVaultKey,
+                                                     final long amount) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    return DriftProgram.requestRemoveInsuranceFundStake(
+        accounts.invokedDriftProgram(),
+        spotMarketConfig.vaultPDA(),
+        insuranceFundStakeKey,
+        userStatsPDA.publicKey(),
+        authority,
+        insuranceFundVaultKey,
+        spotMarketConfig.marketIndex(),
+        amount
+    );
+  }
+
+  public Instruction cancelRequestRemoveInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                                           final PublicKey insuranceFundStakeKey,
+                                                           final PublicKey insuranceFundVaultKey) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    return DriftProgram.cancelRequestRemoveInsuranceFundStake(
+        accounts.invokedDriftProgram(),
+        spotMarketConfig.vaultPDA(),
+        insuranceFundStakeKey,
+        userStatsPDA.publicKey(),
+        authority,
+        insuranceFundVaultKey,
+        spotMarketConfig.marketIndex()
+    );
+  }
+
+  public Instruction removeInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                              final PublicKey insuranceFundStakeKey,
+                                              final PublicKey insuranceFundVaultKey,
+                                              final PublicKey userTokenAccountKey,
+                                              final PublicKey tokenProgramKey) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    return DriftProgram.removeInsuranceFundStake(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        spotMarketConfig.vaultPDA(),
+        insuranceFundStakeKey,
+        userStatsPDA.publicKey(),
+        authority,
+        insuranceFundVaultKey,
+        accounts.driftSignerPDA(),
+        userTokenAccountKey,
+        tokenProgramKey,
+        spotMarketConfig.marketIndex()
+    );
+  }
+
+  public Instruction enableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey, final int subAccountId) {
+    return DriftProgram.enableUserHighLeverageMode(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        highLeverageModeConfigKey,
+        subAccountId
+    );
+  }
+
+  public Instruction disableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey) {
+    return DriftProgram.disableUserHighLeverageMode(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        authority,
+        user,
+        highLeverageModeConfigKey
+    );
+  }
+
+  public Instruction reclaimRent(final PublicKey rentKey) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    return DriftProgram.reclaimRent(
+        accounts.invokedDriftProgram(),
+        user,
+        userStatsPDA.publicKey(),
+        accounts.stateKey(),
+        authority,
+        rentKey
+    );
+  }
+
+  public Instruction deleteUser(final PublicKey userKey, final PublicKey userStatsKey, final PublicKey stateKey) {
+    return DriftProgram.deleteUser(
+        accounts.invokedDriftProgram(),
+        userKey,
+        userStatsKey,
+        stateKey,
+        authority
+    );
+  }
+
+  public Instruction forceDeleteUser(final PublicKey userKey,
+                                     final PublicKey userStatsKey,
+                                     final PublicKey stateKey,
+                                     final PublicKey keeperKey) {
+    return DriftProgram.forceDeleteUser(
+        accounts.invokedDriftProgram(),
+        userKey,
+        userStatsKey,
+        stateKey,
+        authority,
+        keeperKey,
+        accounts.driftSignerPDA()
+    );
+  }
+
+  public Instruction deleteSwiftUserOrders(final PublicKey userKey,
+                                           final PublicKey swiftUserOrdersKey,
+                                           final PublicKey stateKey) {
+    return DriftProgram.deleteSwiftUserOrders(
+        accounts.invokedDriftProgram(),
+        userKey,
+        swiftUserOrdersKey,
+        stateKey,
+        authority
+    );
+  }
+
+  public Instruction updateUserPoolId(final int subAccountId, final int poolId) {
+    return DriftProgram.updateUserPoolId(
+        accounts.invokedDriftProgram(),
+        user,
+        authority,
+        subAccountId,
+        poolId
+    );
+  }
+
+  public Instruction updateUserName(final int subAccountId, final byte[] name) {
+    return DriftProgram.updateUserName(
+        accounts.invokedDriftProgram(),
+        user,
+        authority,
+        subAccountId,
+        name
+    );
+  }
+
+  public Instruction updateUserCustomMarginRatio(final int subAccountId, final int marginRatio) {
+    return DriftProgram.updateUserCustomMarginRatio(
+        accounts.invokedDriftProgram(),
+        user,
+        authority,
+        subAccountId,
+        marginRatio
+    );
+  }
+
+  public Instruction updateUserMarginTradingEnabled(final int subAccountId, final boolean marginTradingEnabled) {
+    return DriftProgram.updateUserMarginTradingEnabled(
+        accounts.invokedDriftProgram(),
+        user,
+        authority,
+        subAccountId,
+        marginTradingEnabled
+    );
+  }
+
+  public Instruction updateUserDelegate(final int subAccountId, final PublicKey delegate) {
+    return DriftProgram.updateUserDelegate(
+        accounts.invokedDriftProgram(),
+        user,
+        authority,
+        subAccountId,
+        delegate
+    );
+  }
+
+  public Instruction updateUserReduceOnly(final int subAccountId, final boolean reduceOnly) {
+    return DriftProgram.updateUserReduceOnly(
+        accounts.invokedDriftProgram(),
+        user,
+        authority,
+        subAccountId,
+        reduceOnly
+    );
+  }
+
+  public Instruction updateUserAdvancedLp(final int subAccountId, final boolean advancedLp) {
+    return DriftProgram.updateUserAdvancedLp(
+        accounts.invokedDriftProgram(),
+        user,
+        authority,
+        subAccountId,
+        advancedLp
+    );
+  }
+
+  public Instruction updateUserProtectedMakerOrders(final PublicKey protectedMakerModeConfigKey,
+                                                    final int subAccountId,
+                                                    final boolean protectedMakerOrders) {
+    return DriftProgram.updateUserProtectedMakerOrders(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        protectedMakerModeConfigKey,
+        subAccountId,
+        protectedMakerOrders
+    );
+  }
+
+  public Instruction removePerpLpShares(final PublicKey userKey,
+                                        final PublicKey authorityKey,
+                                        final long sharesToBurn,
+                                        final int marketIndex) {
+    return DriftProgram.removePerpLpShares(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        userKey,
+        authorityKey,
+        sharesToBurn,
+        marketIndex
+    );
+  }
+
+  public Instruction removePerpLpSharesInExpiringMarket(final PublicKey userKey,
+                                                        final long sharesToBurn,
+                                                        final int marketIndex) {
+    return DriftProgram.removePerpLpSharesInExpiringMarket(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        userKey,
+        sharesToBurn,
+        marketIndex
+    );
+  }
+
+  public Instruction addPerpLpShares(final PublicKey userKey,
+                                     final PublicKey authorityKey,
+                                     final long nShares,
+                                     final int marketIndex) {
+    return DriftProgram.addPerpLpShares(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        userKey,
+        authorityKey,
+        nShares,
+        marketIndex
+    );
+  }
 }
