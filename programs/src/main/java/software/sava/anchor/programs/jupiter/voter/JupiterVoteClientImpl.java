@@ -2,7 +2,10 @@ package software.sava.anchor.programs.jupiter.voter;
 
 import software.sava.anchor.programs.jupiter.JupiterAccounts;
 import software.sava.anchor.programs.jupiter.governance.anchor.GovernProgram;
+import software.sava.anchor.programs.jupiter.governance.anchor.types.GovernanceParameters;
+import software.sava.anchor.programs.jupiter.governance.anchor.types.ProposalInstruction;
 import software.sava.anchor.programs.jupiter.voter.anchor.LockedVoterProgram;
+import software.sava.anchor.programs.jupiter.voter.anchor.types.LockerParams;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
@@ -191,6 +194,93 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
         destinationTokensKey,
         payerKey,
         solanaAccounts.tokenProgram()
+    );
+  }
+
+  @Override
+  public Instruction newLocker(final PublicKey baseKey,
+                               final PublicKey lockerKey,
+                               final PublicKey tokenMintKey,
+                               final PublicKey governorKey,
+                               final PublicKey payerKey,
+                               final LockerParams params) {
+    return LockedVoterProgram.newLocker(
+        jupiterAccounts.invokedVoteProgram(),
+        baseKey,
+        lockerKey,
+        tokenMintKey,
+        governorKey,
+        payerKey,
+        solanaAccounts.systemProgram(),
+        params
+    );
+  }
+
+  @Override
+  public Instruction activateProposal(final PublicKey proposalKey, final PublicKey smartWalletKey) {
+    return LockedVoterProgram.activateProposal(
+        jupiterAccounts.invokedVoteProgram(),
+        jupiterAccounts.lockerKey(),
+        jupiterAccounts.governorKey(),
+        proposalKey,
+        jupiterAccounts.govProgram(),
+        smartWalletKey
+    );
+
+  }
+
+  @Override
+  public Instruction setLockerParams(final PublicKey smartWalletKey, final LockerParams params) {
+    return LockedVoterProgram.setLockerParams(
+        jupiterAccounts.invokedVoteProgram(),
+        jupiterAccounts.lockerKey(),
+        jupiterAccounts.governorKey(),
+        smartWalletKey,
+        params);
+  }
+
+  @Override
+  public Instruction createGovernor(final PublicKey baseKey,
+                                    final PublicKey governorKey,
+                                    final PublicKey smartWalletKey,
+                                    final PublicKey payerKey,
+                                    final PublicKey locker,
+                                    final GovernanceParameters params) {
+    return GovernProgram.createGovernor(
+        jupiterAccounts.invokedGovProgram(),
+        baseKey,
+        governorKey,
+        smartWalletKey,
+        payerKey,
+        solanaAccounts.systemProgram(),
+        locker,
+        params
+    );
+  }
+
+  @Override
+  public Instruction createProposal(final PublicKey governorKey,
+                                    final PublicKey proposalKey,
+                                    final PublicKey smartWalletKey,
+                                    final PublicKey proposerKey,
+                                    final PublicKey payerKey,
+                                    final PublicKey eventAuthorityKey,
+                                    final int proposalType,
+                                    final int maxOption,
+                                    final ProposalInstruction[] instructions) {
+    return GovernProgram.createProposal(
+        jupiterAccounts.invokedGovProgram(),
+        governorKey,
+        proposalKey,
+        smartWalletKey,
+        proposerKey,
+        payerKey,
+        solanaAccounts.systemProgram(),
+        eventAuthorityKey,
+        jupiterAccounts.govProgram(),
+        proposalType,
+        maxOption,
+        instructions
     );
   }
 }

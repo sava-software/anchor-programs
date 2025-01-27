@@ -1,9 +1,7 @@
 package software.sava.anchor.programs.drift;
 
 import software.sava.anchor.programs.drift.anchor.DriftProgram;
-import software.sava.anchor.programs.drift.anchor.types.OrderParams;
-import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
-import software.sava.anchor.programs.drift.anchor.types.User;
+import software.sava.anchor.programs.drift.anchor.types.*;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -16,6 +14,7 @@ import software.sava.solana.programs.clients.NativeProgramAccountClient;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.concurrent.CompletableFuture;
 
 public interface DriftProgramClient {
@@ -160,13 +159,17 @@ public interface DriftProgramClient {
     return withdraw(user, authority, userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount, false);
   }
 
-  Instruction settlePnl(final int marketIndex);
+  default Instruction settlePnl(int marketIndex) {
+    return settlePnl(mainUserAccount(), authority(), marketIndex);
+  }
 
   Instruction settlePnl(final PublicKey user,
                         final PublicKey authority,
                         final int marketIndex);
 
-  Instruction settlePnl(final short[] marketIndexes, final SettlePnlMode mode);
+  default Instruction settlePnl(short[] marketIndexes, SettlePnlMode mode) {
+    return settlePnl(mainUserAccount(), authority(), marketIndexes, mode);
+  }
 
   Instruction settlePnl(final PublicKey user,
                         final PublicKey authority,
@@ -186,23 +189,46 @@ public interface DriftProgramClient {
     );
   }
 
-  Instruction placeOrder(final OrderParams orderParams);
+  default Instruction placeOrder(final OrderParams orderParams) {
+    return placeOrder(orderParams, authority(), mainUserAccount());
+  }
 
-  Instruction placeOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user);
+  default Instruction placeOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user) {
+    return switch (orderParams.marketType()) {
+      case Spot -> placeSpotOrder(orderParams, authority, user);
+      case Perp -> placePerpOrder(orderParams, authority, user);
+    };
+  }
 
-  Instruction placePerpOrder(final OrderParams orderParams);
+  default Instruction placeSpotOrder(final OrderParams orderParams) {
+    return placeSpotOrder(orderParams, authority(), mainUserAccount());
+  }
+
+  Instruction placeSpotOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user);
+
+  default Instruction placePerpOrder(final OrderParams orderParams) {
+    return placePerpOrder(orderParams, authority(), mainUserAccount());
+  }
 
   default Instruction placePerpOrder(final OrderParams orderParams, final PublicKey authority) {
-    return placePerpOrder(orderParams, authority, DriftPDAs.deriveMainUserAccount(driftAccounts(), authority).publicKey());
+    return placePerpOrder(
+        orderParams,
+        authority,
+        DriftPDAs.deriveMainUserAccount(driftAccounts(), authority).publicKey()
+    );
   }
 
   Instruction placePerpOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user);
 
-  Instruction placeOrders(final OrderParams[] orderParams);
+  default Instruction placeOrders(final OrderParams[] orderParams) {
+    return placeOrders(orderParams, authority(), mainUserAccount());
+  }
 
   Instruction placeOrders(final OrderParams[] orderParams, final PublicKey authority, final PublicKey user);
 
-  Instruction cancelOrder(final int orderId);
+  default Instruction cancelOrder(int orderId) {
+    return cancelOrder(authority(), mainUserAccount(), orderId);
+  }
 
   default Instruction cancelOrder(final int orderId, final PublicKey authority) {
     return cancelOrder(authority, DriftPDAs.deriveMainUserAccount(driftAccounts(), authority).publicKey(), orderId);
@@ -210,27 +236,101 @@ public interface DriftProgramClient {
 
   Instruction cancelOrder(final PublicKey authority, final PublicKey user, final int orderId);
 
-  Instruction cancelOrders(final int[] orderIds);
+  default Instruction cancelOrders(final int[] orderIds) {
+    return cancelOrders(authority(), mainUserAccount(), orderIds);
+  }
 
   Instruction cancelOrders(final PublicKey authority, final PublicKey user, final int[] orderIds);
 
-  Instruction cancelOrderByUserOrderId(final int orderId);
+  default Instruction cancelOrderByUserOrderId(final int orderId) {
+    return cancelOrderByUserOrderId(authority(), mainUserAccount(), orderId);
+  }
 
   Instruction cancelOrderByUserOrderId(final PublicKey authority, final PublicKey user, final int orderId);
 
-  Instruction cancelAllOrders();
+  default Instruction cancelAllOrders() {
+    return cancelAllOrders(authority(), mainUserAccount());
+  }
 
-  Instruction cancelAllOrders(final PublicKey authority, final PublicKey user);
+  default Instruction cancelAllOrders(final PublicKey authority, final PublicKey user) {
+    return cancelAllOrders(
+        authority,
+        user,
+        (PositionDirection) null
+    );
+  }
 
-  Instruction cancelAllSpotOrders();
+  Instruction cancelAllOrders(final PublicKey authority,
+                              final PublicKey user,
+                              final PositionDirection direction);
 
-  Instruction cancelAllSpotOrders(final PublicKey authority, final PublicKey user);
+  default Instruction cancelAllOrders(final MarketConfig marketConfig) {
+    return cancelAllOrders(marketConfig, null);
+  }
 
-  Instruction cancelAllPerpOrders();
+  default Instruction cancelAllOrders(final MarketConfig marketConfig, final PositionDirection direction) {
+    return cancelAllOrders(authority(), mainUserAccount(), marketConfig, direction);
+  }
 
-  Instruction cancelAllPerpOrders(final PublicKey authority, final PublicKey user);
+  default Instruction cancelAllOrders(final PublicKey authority,
+                                      final PublicKey user,
+                                      final MarketConfig marketConfig) {
+    return cancelAllOrders(
+        authority,
+        user,
+        marketConfig,
+        null
+    );
+  }
 
-  Instruction cancelAllOrders(final MarketConfig marketConfig);
+  Instruction cancelAllOrders(final PublicKey authority,
+                              final PublicKey user,
+                              final MarketConfig marketConfig,
+                              final PositionDirection direction);
 
-  Instruction cancelAllOrders(final PublicKey authority, final PublicKey user, final MarketConfig marketConfig);
+  default Instruction cancelAllSpotOrders() {
+    return cancelAllSpotOrders(null);
+  }
+
+  default Instruction cancelAllSpotOrders(final PositionDirection direction) {
+    return cancelAllSpotOrders(authority(), mainUserAccount(), direction);
+  }
+
+  default Instruction cancelAllSpotOrders(final PublicKey authority, final PublicKey user) {
+    return cancelAllSpotOrders(
+        authority,
+        user,
+        null
+    );
+  }
+
+  Instruction cancelAllSpotOrders(final PublicKey authority,
+                                  final PublicKey user,
+                                  final PositionDirection direction);
+
+  default Instruction cancelAllPerpOrders() {
+    return cancelAllPerpOrders(null);
+  }
+
+  default Instruction cancelAllPerpOrders(final PositionDirection direction) {
+    return cancelAllPerpOrders(authority(), mainUserAccount(), direction);
+  }
+
+  default Instruction cancelAllPerpOrders(final PublicKey authority, final PublicKey user) {
+    return cancelAllPerpOrders(
+        authority,
+        user,
+        null
+    );
+  }
+
+  Instruction cancelAllPerpOrders(final PublicKey authority,
+                                  final PublicKey user,
+                                  final PositionDirection direction);
+
+  Instruction modifyOrder(final OptionalInt orderId, final ModifyOrderParams modifyOrderParams);
+
+  Instruction modifyOrderByUserId(final int userOrderId, final ModifyOrderParams modifyOrderParams);
+
+  Instruction placeAndTakePerpOrder(final OrderParams params, final OptionalInt successCondition);
 }

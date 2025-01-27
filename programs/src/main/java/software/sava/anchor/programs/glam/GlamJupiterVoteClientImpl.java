@@ -2,7 +2,10 @@ package software.sava.anchor.programs.glam;
 
 import software.sava.anchor.programs.glam.anchor.GlamProgram;
 import software.sava.anchor.programs.jupiter.JupiterAccounts;
+import software.sava.anchor.programs.jupiter.governance.anchor.types.GovernanceParameters;
+import software.sava.anchor.programs.jupiter.governance.anchor.types.ProposalInstruction;
 import software.sava.anchor.programs.jupiter.voter.BaseJupiterVoteClient;
+import software.sava.anchor.programs.jupiter.voter.anchor.types.LockerParams;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
@@ -174,5 +177,48 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                               final PublicKey payerKey,
                                               final PublicKey destinationTokensKey) {
     throw new UnsupportedOperationException("TODO: withdrawPartialUnstaking");
+  }
+
+  @Override
+  public Instruction newLocker(final PublicKey baseKey,
+                               final PublicKey lockerKey,
+                               final PublicKey tokenMintKey,
+                               final PublicKey governorKey,
+                               final PublicKey payerKey,
+                               final LockerParams params) {
+    throw new UnsupportedOperationException("TODO: newLocker");
+  }
+
+  @Override
+  public Instruction activateProposal(final PublicKey proposalKey, final PublicKey smartWalletKey) {
+    throw new UnsupportedOperationException("TODO: activateProposal");
+  }
+
+  @Override
+  public Instruction setLockerParams(final PublicKey smartWalletKey, final LockerParams params) {
+    throw new UnsupportedOperationException("TODO: setLockerParams");
+  }
+
+  @Override
+  public Instruction createGovernor(final PublicKey baseKey,
+                                    final PublicKey governorKey,
+                                    final PublicKey smartWalletKey,
+                                    final PublicKey payerKey,
+                                    final PublicKey locker,
+                                    final GovernanceParameters params) {
+    throw new UnsupportedOperationException("TODO: createGovernor");
+  }
+
+  @Override
+  public Instruction createProposal(final PublicKey governorKey,
+                                    final PublicKey proposalKey,
+                                    final PublicKey smartWalletKey,
+                                    final PublicKey proposerKey,
+                                    final PublicKey payerKey,
+                                    final PublicKey eventAuthorityKey,
+                                    final int proposalType,
+                                    final int maxOption,
+                                    final ProposalInstruction[] instructions) {
+    throw new UnsupportedOperationException("TODO: createProposal");
   }
 }

@@ -1,6 +1,7 @@
 package software.sava.anchor.programs.glam;
 
 import software.sava.anchor.programs.drift.*;
+import software.sava.anchor.programs.drift.anchor.types.ModifyOrderParams;
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
 import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
 import software.sava.anchor.programs.drift.anchor.types.User;
@@ -166,7 +167,10 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
-  public Instruction settlePnl(final PublicKey user, final PublicKey authority, final short[] marketIndexes, final SettlePnlMode mode) {
+  public Instruction settlePnl(final PublicKey user,
+                               final PublicKey authority,
+                               final short[] marketIndexes,
+                               final SettlePnlMode mode) {
     return delegatedDriftClient.settlePnl(user, authority, marketIndexes, mode);
   }
 
@@ -223,28 +227,23 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
-  public Instruction placeOrder(final OrderParams orderParams) {
-    return placeOrder(orderParams, authority(), user);
-  }
-
-  @Override
   public Instruction placeOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user) {
     return placeOrders(new OrderParams[]{orderParams}, authority, user);
   }
 
   @Override
-  public Instruction placePerpOrder(final OrderParams orderParams) {
-    return placePerpOrder(orderParams, authority(), user);
+  public Instruction placeSpotOrder(final OrderParams orderParams) {
+    throw new UnsupportedOperationException("TODO: placeSpotOrder");
+  }
+
+  @Override
+  public Instruction placeSpotOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user) {
+    throw new UnsupportedOperationException("TODO: placeSpotOrder");
   }
 
   @Override
   public Instruction placePerpOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user) {
     return placeOrders(new OrderParams[]{orderParams}, authority, user);
-  }
-
-  @Override
-  public Instruction placeOrders(final OrderParams[] orderParams) {
-    return placeOrders(orderParams, authority(), user);
   }
 
   @Override
@@ -263,18 +262,8 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
-  public Instruction cancelOrder(final int orderId) {
-    return cancelOrder(authority(), user, orderId);
-  }
-
-  @Override
   public Instruction cancelOrder(final PublicKey authority, final PublicKey user, final int orderId) {
     throw new UnsupportedOperationException("TODO: cancelOrder");
-  }
-
-  @Override
-  public Instruction cancelOrders(final int[] orderIds) {
-    return cancelOrders(authority(), user, orderIds);
   }
 
   @Override
@@ -283,22 +272,22 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
-  public Instruction cancelOrderByUserOrderId(final int orderId) {
-    return cancelOrderByUserOrderId(authority(), user, orderId);
-  }
-
-  @Override
   public Instruction cancelOrderByUserOrderId(final PublicKey authority, final PublicKey user, final int orderId) {
     throw new UnsupportedOperationException("TODO: cancelOrderByUserOrderId");
   }
 
-  @Override
-  public Instruction cancelAllOrders() {
-    return cancelAllOrders(authority(), user);
+  private static PositionDirection mapDirection(final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
+    return switch (direction) {
+      case Long -> PositionDirection.Long;
+      case Short -> PositionDirection.Short;
+      case null -> null;
+    };
   }
 
   @Override
-  public Instruction cancelAllOrders(final PublicKey authority, final PublicKey user) {
+  public Instruction cancelAllOrders(final PublicKey authority,
+                                     final PublicKey user,
+                                     final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
         solanaAccounts,
@@ -310,17 +299,14 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         null,
         OptionalInt.empty(),
-        null
+        mapDirection(direction)
     );
   }
 
   @Override
-  public Instruction cancelAllSpotOrders() {
-    return cancelAllSpotOrders(authority(), user);
-  }
-
-  @Override
-  public Instruction cancelAllSpotOrders(final PublicKey authority, final PublicKey user) {
+  public Instruction cancelAllSpotOrders(final PublicKey authority,
+                                         final PublicKey user,
+                                         final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
         solanaAccounts,
@@ -332,17 +318,14 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         MarketType.Spot,
         OptionalInt.empty(),
-        null
+        mapDirection(direction)
     );
   }
 
   @Override
-  public Instruction cancelAllPerpOrders() {
-    return cancelAllPerpOrders(authority(), user);
-  }
-
-  @Override
-  public Instruction cancelAllPerpOrders(final PublicKey authority, final PublicKey user) {
+  public Instruction cancelAllPerpOrders(final PublicKey authority,
+                                         final PublicKey user,
+                                         final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
         solanaAccounts,
@@ -354,17 +337,15 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         MarketType.Perp,
         OptionalInt.empty(),
-        null
+        mapDirection(direction)
     );
   }
 
   @Override
-  public Instruction cancelAllOrders(final MarketConfig marketConfig) {
-    return cancelAllOrders(authority(), user, marketConfig);
-  }
-
-  @Override
-  public Instruction cancelAllOrders(final PublicKey authority, final PublicKey user, final MarketConfig marketConfig) {
+  public Instruction cancelAllOrders(final PublicKey authority,
+                                     final PublicKey user,
+                                     final MarketConfig marketConfig,
+                                     final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
         solanaAccounts,
@@ -376,7 +357,22 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         marketConfig instanceof PerpMarketConfig ? MarketType.Perp : MarketType.Spot,
         OptionalInt.of(marketConfig.marketIndex()),
-        null
+        mapDirection(direction)
     );
+  }
+
+  @Override
+  public Instruction modifyOrder(final OptionalInt orderId, final ModifyOrderParams modifyOrderParams) {
+    throw new UnsupportedOperationException("TODO: modifyOrder");
+  }
+
+  @Override
+  public Instruction modifyOrderByUserId(final int userOrderId, final ModifyOrderParams modifyOrderParams) {
+    throw new UnsupportedOperationException("TODO: modifyOrderByUserId");
+  }
+
+  @Override
+  public Instruction placeAndTakePerpOrder(final OrderParams params, final OptionalInt successCondition) {
+    throw new UnsupportedOperationException("TODO: placeAndTakePerpOrder");
   }
 }

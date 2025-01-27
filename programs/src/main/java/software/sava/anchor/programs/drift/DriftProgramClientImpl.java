@@ -1,9 +1,7 @@
 package software.sava.anchor.programs.drift;
 
 import software.sava.anchor.programs.drift.anchor.DriftProgram;
-import software.sava.anchor.programs.drift.anchor.types.OrderParams;
-import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
-import software.sava.anchor.programs.drift.anchor.types.User;
+import software.sava.anchor.programs.drift.anchor.types.*;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
@@ -33,7 +31,10 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     this.accounts = accounts;
     this.authority = nativeProgramAccountClient.ownerPublicKey();
     this.user = DriftPDAs.deriveMainUserAccount(accounts, authority).publicKey();
-    this.quoteSpotMarketVaultAccountKey = deriveSpotMarketVaultAccount(accounts, accounts.defaultQuoteMarket().marketIndex()).publicKey();
+    this.quoteSpotMarketVaultAccountKey = deriveSpotMarketVaultAccount(
+        accounts,
+        accounts.defaultQuoteMarket().marketIndex()
+    ).publicKey();
   }
 
   @Override
@@ -148,11 +149,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction settlePnl(final int marketIndex) {
-    return settlePnl(user, authority(), marketIndex);
-  }
-
-  @Override
   public Instruction settlePnl(final PublicKey user,
                                final PublicKey authority,
                                final int marketIndex) {
@@ -164,11 +160,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         quoteSpotMarketVaultAccountKey,
         marketIndex
     );
-  }
-
-  @Override
-  public Instruction settlePnl(final short[] marketIndexes, final SettlePnlMode mode) {
-    return settlePnl(user, authority(), marketIndexes, mode);
   }
 
   @Override
@@ -188,22 +179,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction placeOrder(final OrderParams orderParams) {
-    return placeOrder(orderParams, authority, user);
-  }
-
-  @Override
-  public Instruction placeOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user) {
-    return switch (orderParams.marketType()) {
-      case Spot -> placeSpotOrder(orderParams, authority, user);
-      case Perp -> placePerpOrder(orderParams, authority, user);
-    };
-  }
-
-  public Instruction placeSpotOrder(final OrderParams orderParams) {
-    return placeSpotOrder(orderParams, authority, user);
-  }
-
   public Instruction placeSpotOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user) {
     return DriftProgram.placeSpotOrder(
         accounts.invokedDriftProgram(),
@@ -212,11 +187,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         authority,
         orderParams
     );
-  }
-
-  @Override
-  public Instruction placePerpOrder(final OrderParams orderParams) {
-    return placePerpOrder(orderParams, authority, user);
   }
 
   @Override
@@ -231,11 +201,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction placeOrders(final OrderParams[] orderParams) {
-    return placeOrders(orderParams, authority, user);
-  }
-
-  @Override
   public Instruction placeOrders(final OrderParams[] orderParams, final PublicKey authority, final PublicKey user) {
     return DriftProgram.placeOrders(
         accounts.invokedDriftProgram(),
@@ -244,11 +209,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         authority,
         orderParams
     );
-  }
-
-  @Override
-  public Instruction cancelOrder(final int orderId) {
-    return cancelOrder(authority, user, orderId);
   }
 
   @Override
@@ -263,11 +223,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction cancelOrders(final int[] orderIds) {
-    return cancelOrders(authority, user, orderIds);
-  }
-
-  @Override
   public Instruction cancelOrders(final PublicKey authority, final PublicKey user, final int[] orderIds) {
     return DriftProgram.cancelOrdersByIds(
         accounts.invokedDriftProgram(),
@@ -276,11 +231,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         authority,
         orderIds
     );
-  }
-
-  @Override
-  public Instruction cancelOrderByUserOrderId(final int orderId) {
-    return cancelOrderByUserOrderId(authority, user, orderId);
   }
 
   @Override
@@ -295,12 +245,9 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction cancelAllOrders() {
-    return cancelAllOrders(authority, user);
-  }
-
-  @Override
-  public Instruction cancelAllOrders(final PublicKey authority, final PublicKey user) {
+  public Instruction cancelAllOrders(final PublicKey authority,
+                                     final PublicKey user,
+                                     final PositionDirection direction) {
     return DriftProgram.cancelOrders(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
@@ -308,17 +255,14 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         authority,
         null,
         OptionalInt.empty(),
-        null
+        direction
     );
   }
 
   @Override
-  public Instruction cancelAllSpotOrders() {
-    return cancelAllSpotOrders(authority, user);
-  }
-
-  @Override
-  public Instruction cancelAllSpotOrders(final PublicKey authority, final PublicKey user) {
+  public Instruction cancelAllSpotOrders(final PublicKey authority,
+                                         final PublicKey user,
+                                         final PositionDirection direction) {
     return DriftProgram.cancelOrders(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
@@ -326,17 +270,14 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         authority,
         Spot,
         OptionalInt.empty(),
-        null
+        direction
     );
   }
 
   @Override
-  public Instruction cancelAllPerpOrders() {
-    return cancelAllPerpOrders(authority, user);
-  }
-
-  @Override
-  public Instruction cancelAllPerpOrders(final PublicKey authority, final PublicKey user) {
+  public Instruction cancelAllPerpOrders(final PublicKey authority,
+                                         final PublicKey user,
+                                         final PositionDirection direction) {
     return DriftProgram.cancelOrders(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
@@ -344,19 +285,15 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         authority,
         Perp,
         OptionalInt.empty(),
-        null
+        direction
     );
-  }
-
-  @Override
-  public Instruction cancelAllOrders(final MarketConfig marketConfig) {
-    return cancelAllOrders(authority, user, marketConfig);
   }
 
   @Override
   public Instruction cancelAllOrders(final PublicKey authority,
                                      final PublicKey user,
-                                     final MarketConfig marketConfig) {
+                                     final MarketConfig marketConfig,
+                                     final PositionDirection direction) {
     return DriftProgram.cancelOrders(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
@@ -364,7 +301,46 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         authority,
         marketConfig instanceof PerpMarketConfig ? Perp : Spot,
         OptionalInt.of(marketConfig.marketIndex()),
-        null
+        direction
+    );
+  }
+
+  @Override
+  public Instruction modifyOrder(final OptionalInt orderId, final ModifyOrderParams modifyOrderParams) {
+    return DriftProgram.modifyOrder(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        orderId,
+        modifyOrderParams
+    );
+  }
+
+  @Override
+  public Instruction modifyOrderByUserId(final int userOrderId, final ModifyOrderParams modifyOrderParams) {
+    return DriftProgram.modifyOrderByUserId(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        authority,
+        userOrderId,
+        modifyOrderParams
+    );
+  }
+
+
+  @Override
+  public Instruction placeAndTakePerpOrder(final OrderParams params, final OptionalInt successCondition) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    return DriftProgram.placeAndTakePerpOrder(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        user,
+        userStatsPDA.publicKey(),
+        authority,
+        params,
+        successCondition
     );
   }
 }

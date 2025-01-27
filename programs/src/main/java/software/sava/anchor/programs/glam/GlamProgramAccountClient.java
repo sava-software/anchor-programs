@@ -129,6 +129,25 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
     }
   }
 
+  static boolean hasIntegration(final FundAccount glamAccount, final IntegrationName integrationName) {
+    for (final var engineFields : glamAccount.params()) {
+      for (final var engineField : engineFields) {
+        final var engineFieldName = engineField.name();
+        if (engineFieldName == IntegrationAcls) {
+          if (engineField.value() instanceof EngineFieldValue.VecIntegrationAcl(final var integrationAcls)) {
+            for (final var integrationAcl : integrationAcls) {
+              if (integrationAcl.name() == integrationName) {
+                return true;
+              }
+            }
+            return false;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
   NativeProgramAccountClient delegatedNativeProgramAccountClient();
 
   GlamVaultAccounts vaultAccounts();
@@ -161,6 +180,7 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
                         final int shareClassId,
                         final long amount);
 
-  Instruction redeem(final int shareClassId, final long amount,
+  Instruction redeem(final int shareClassId,
+                     final long amount,
                      final boolean inKind);
 }
