@@ -9,9 +9,11 @@ import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 import static software.sava.anchor.programs.glam.anchor.types.EngineFieldName.DelegateAcls;
+import static software.sava.anchor.programs.glam.anchor.types.EngineFieldName.IntegrationAcls;
 
 public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
@@ -93,6 +95,40 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
     return false;
   }
 
+  static void removePresentPermissions(final FundAccount glamAccount,
+                                       final PublicKey delegateKey,
+                                       final Set<Permission> requiredPermissions,
+                                       final Set<IntegrationName> requiredIntegrations) {
+    for (final var engineFields : glamAccount.params()) {
+      for (final var engineField : engineFields) {
+        final var engineFieldName = engineField.name();
+        if (engineFieldName == DelegateAcls) {
+          if (engineField.value() instanceof EngineFieldValue.VecDelegateAcl(final var delegateAcls)) {
+            for (final var delegateAcl : delegateAcls) {
+              if (delegateKey.equals(delegateAcl.pubkey())) {
+                for (final var permission : delegateAcl.permissions()) {
+                  requiredPermissions.remove(permission);
+                }
+                if (requiredIntegrations.isEmpty()) {
+                  break;
+                }
+              }
+            }
+          }
+        } else if (engineFieldName == IntegrationAcls) {
+          if (engineField.value() instanceof EngineFieldValue.VecIntegrationAcl(final var integrationAcls)) {
+            for (final var integrationAcl : integrationAcls) {
+              requiredIntegrations.remove(integrationAcl.name());
+            }
+            if (requiredPermissions.isEmpty()) {
+              break;
+            }
+          }
+        }
+      }
+    }
+  }
+
   NativeProgramAccountClient delegatedNativeProgramAccountClient();
 
   GlamVaultAccounts vaultAccounts();
@@ -120,7 +156,7 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
   Instruction closeShareClass(final PublicKey shareClassKey, final int shareClassId);
 
   Instruction subscribe(final PublicKey assetKey,
-                        final PublicKey treasuryAssetATAKey,
+                        final PublicKey vaultAssetATAKey,
                         final PublicKey assetATAKey,
                         final int shareClassId,
                         final long amount);

@@ -611,7 +611,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction subscribe(final PublicKey assetKey,
-                               final PublicKey treasuryAssetATAKey,
+                               final PublicKey vaultAssetATAKey,
                                final PublicKey assetATAKey,
                                final int shareClassId,
                                final long amount) {
@@ -626,7 +626,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         shareClassPDA,
         shareClassATA,
         assetKey,
-        treasuryAssetATAKey,
+        vaultAssetATAKey,
         assetATAKey,
         policyPDA.publicKey(),
         feePayer.publicKey(),
