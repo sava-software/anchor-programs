@@ -2,6 +2,8 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.drift.anchor.types;
   exports software.sava.anchor.programs.drift.anchor;
   exports software.sava.anchor.programs.drift;
+  exports software.sava.anchor.programs.glam.anchor.types;
+  exports software.sava.anchor.programs.glam.anchor;
   exports software.sava.anchor.programs.glam_v0.anchor.types;
   exports software.sava.anchor.programs.glam_v0.anchor;
   exports software.sava.anchor.programs.glam_v0;
@@ -42,6 +44,7 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.pyth.receiver.anchor;
   exports software.sava.anchor.programs.switchboard.on_demand.anchor.types;
   exports software.sava.anchor.programs.switchboard.on_demand.anchor;
+  exports software.sava.anchor.programs.glam;
   requires java.base;
   requires java.net.http;
   requires org.bouncycastle.provider;

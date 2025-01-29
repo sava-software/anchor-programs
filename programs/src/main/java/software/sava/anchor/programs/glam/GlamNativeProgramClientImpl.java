@@ -1,8 +1,6 @@
-package software.sava.anchor.programs.glam_v0;
+package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.GlamNativeProgramClient;
-import software.sava.anchor.programs.glam.GlamVaultAccounts;
-import software.sava.anchor.programs.glam_v0.anchor.GlamProgram;
+import software.sava.anchor.programs.glam.anchor.GlamProgram;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -27,7 +25,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static software.sava.core.accounts.meta.AccountMeta.createFeePayer;
 
-public final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
+final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
 
   private final SolanaAccounts solanaAccounts;
   private final NativeProgramClient nativeProgramClient;
@@ -35,7 +33,7 @@ public final class GlamNativeProgramClientImpl implements GlamNativeProgramClien
   private final AccountMeta invokedProgram;
   private final AccountMeta manager;
 
-  public GlamNativeProgramClientImpl(final SolanaAccounts solanaAccounts, final GlamVaultAccounts glamVaultAccounts) {
+  GlamNativeProgramClientImpl(final SolanaAccounts solanaAccounts, final GlamVaultAccounts glamVaultAccounts) {
     this.solanaAccounts = solanaAccounts;
     this.nativeProgramClient = NativeProgramClient.createClient(solanaAccounts);
     this.glamVaultAccounts = glamVaultAccounts;
@@ -50,9 +48,9 @@ public final class GlamNativeProgramClientImpl implements GlamNativeProgramClien
 
   @Override
   public NativeProgramAccountClient createAccountClient(final AccountMeta ownerAndFeePayer) {
-    return GlamV0ProgramAccountClient.createV0Client(
+    return GlamProgramAccountClient.createClient(
         solanaAccounts,
-        GlamVaultAccounts.createV0Accounts(
+        GlamVaultAccounts.createAccounts(
             glamVaultAccounts.glamAccounts(),
             ownerAndFeePayer.publicKey(),
             glamVaultAccounts.glamPublicKey()
@@ -62,9 +60,9 @@ public final class GlamNativeProgramClientImpl implements GlamNativeProgramClien
 
   @Override
   public NativeProgramAccountClient createAccountClient(final PublicKey owner, final AccountMeta feePayer) {
-    return GlamV0ProgramAccountClient.createV0Client(
+    return GlamProgramAccountClient.createClient(
         solanaAccounts,
-        GlamVaultAccounts.createV0Accounts(
+        GlamVaultAccounts.createAccounts(
             glamVaultAccounts.glamAccounts(),
             feePayer.publicKey(),
             glamVaultAccounts.glamPublicKey()

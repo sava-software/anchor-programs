@@ -1,12 +1,6 @@
-package software.sava.anchor.programs.glam_v0;
+package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.GlamNativeProgramClient;
-import software.sava.anchor.programs.glam.GlamVaultAccounts;
-import software.sava.anchor.programs.glam.VaultPDA;
-import software.sava.anchor.programs.glam_v0.anchor.GlamPDAs;
-import software.sava.anchor.programs.glam_v0.anchor.GlamProgram;
-import software.sava.anchor.programs.glam_v0.anchor.types.ShareClassModel;
-import software.sava.anchor.programs.glam_v0.anchor.types.StateModel;
+import software.sava.anchor.programs.glam.anchor.GlamProgram;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -24,7 +18,6 @@ import software.sava.solana.programs.clients.NativeProgramClient;
 import software.sava.solana.programs.stake.StakeAccount;
 import software.sava.solana.programs.stake.StakeAuthorize;
 import software.sava.solana.programs.stake.StakeState;
-import software.sava.solana.programs.token.AssociatedTokenProgram;
 
 import java.util.Collection;
 import java.util.List;
@@ -32,7 +25,7 @@ import java.util.concurrent.CompletableFuture;
 
 import static software.sava.core.accounts.meta.AccountMeta.createFeePayer;
 
-final class GlamProgramAccountClientImpl implements GlamV0ProgramAccountClient {
+final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   private final SolanaAccounts solanaAccounts;
   private final NativeProgramClient nativeProgramClient;
@@ -243,7 +236,8 @@ final class GlamProgramAccountClientImpl implements GlamV0ProgramAccountClient {
   }
 
   @Override
-  public CompletableFuture<List<AccountInfo<TokenAccount>>> fetchTokenAccounts(final SolanaRpcClient rpcClient, final PublicKey tokenMintAddress) {
+  public CompletableFuture<List<AccountInfo<TokenAccount>>> fetchTokenAccounts(final SolanaRpcClient rpcClient,
+                                                                               final PublicKey tokenMintAddress) {
     return nativeProgramAccountClient.fetchTokenAccounts(rpcClient, tokenMintAddress);
   }
 
@@ -379,12 +373,18 @@ final class GlamProgramAccountClientImpl implements GlamV0ProgramAccountClient {
   }
 
   @Override
-  public Instruction createAccount(final PublicKey newAccountPublicKey, final long lamports, final long space, final PublicKey programOwner) {
+  public Instruction createAccount(final PublicKey newAccountPublicKey,
+                                   final long lamports,
+                                   final long space,
+                                   final PublicKey programOwner) {
     throw new UnsupportedOperationException("TODO: createAccount");
   }
 
   @Override
-  public Instruction createAccountWithSeed(final AccountWithSeed accountWithSeed, final long lamports, final long space, final PublicKey programOwner) {
+  public Instruction createAccountWithSeed(final AccountWithSeed accountWithSeed,
+                                           final long lamports,
+                                           final long space,
+                                           final PublicKey programOwner) {
     throw new UnsupportedOperationException("TODO: createAccountWithSeed");
   }
 
@@ -394,7 +394,9 @@ final class GlamProgramAccountClientImpl implements GlamV0ProgramAccountClient {
   }
 
   @Override
-  public Instruction allocateAccountSpaceWithSeed(final AccountWithSeed accountWithSeed, final long space, final PublicKey programOwner) {
+  public Instruction allocateAccountSpaceWithSeed(final AccountWithSeed accountWithSeed,
+                                                  final long space,
+                                                  final PublicKey programOwner) {
     throw new UnsupportedOperationException("TODO: allocateAccountSpaceWithSeed");
   }
 
@@ -542,122 +544,5 @@ final class GlamProgramAccountClientImpl implements GlamV0ProgramAccountClient {
   @Override
   public Instruction withdrawStakeAccount(final StakeAccount stakeAccount, final long lamports) {
     throw new UnsupportedOperationException("TODO: withdrawStakeAccount with specific amount of lamports");
-  }
-
-  @Override
-  public Instruction initializeFund(final StateModel fundModel) {
-    return GlamProgram.initializeState(
-        invokedProgram,
-        solanaAccounts,
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.metadataPDA().publicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        feePayer.publicKey(),
-        fundModel
-    );
-  }
-
-  @Override
-  public Instruction addShareClass(final int shareClassId, final ShareClassModel shareClassModel) {
-    return GlamProgram.addShareClass(
-        invokedProgram,
-        solanaAccounts,
-        glamVaultAccounts.shareClassPDA(shareClassId).publicKey(),
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.metadataPDA().publicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        feePayer.publicKey(),
-        shareClassModel
-    );
-  }
-
-  @Override
-  public Instruction updateFund(final StateModel fundModel) {
-    return GlamProgram.updateState(
-        invokedProgram,
-        glamVaultAccounts.glamPublicKey(),
-        feePayer.publicKey(),
-        fundModel
-    );
-  }
-
-  @Override
-  public Instruction closeFund() {
-    return GlamProgram.closeState(
-        invokedProgram,
-        solanaAccounts,
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.metadataPDA().publicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        feePayer.publicKey()
-    );
-  }
-
-  @Override
-  public Instruction closeShareClass(final PublicKey shareClassMintKey, final int shareClassId) {
-    final var shareClassPDA = glamVaultAccounts.shareClassPDA(shareClassId).publicKey();
-    final var extraAccountMetaListPDA = GlamPDAs.extraAccountMetaListPDA(invokedProgram.publicKey(), shareClassPDA);
-    final var openFundsPDA = GlamPDAs.metadataPDA(invokedProgram.publicKey(), glamVaultAccounts.glamPublicKey());
-    return GlamProgram.closeShareClass(
-        invokedProgram,
-        solanaAccounts,
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        shareClassMintKey,
-        extraAccountMetaListPDA.publicKey(),
-        openFundsPDA.publicKey(),
-        feePayer.publicKey(),
-        shareClassId
-    );
-  }
-
-
-  @Override
-  public Instruction subscribe(final PublicKey assetKey,
-                               final PublicKey vaultAssetATAKey,
-                               final PublicKey assetATAKey,
-                               final int shareClassId,
-                               final long amount) {
-    final var shareClassPDA = glamVaultAccounts.shareClassPDA(shareClassId).publicKey();
-    final var shareClassATA = AssociatedTokenProgram.findATA2022(solanaAccounts, feePayer.publicKey(), shareClassPDA).publicKey();
-    final var policyPDA = GlamPDAs.signerPolicyPDA(invokedProgram.publicKey(), shareClassATA);
-    return GlamProgram.subscribe(
-        invokedProgram,
-        solanaAccounts,
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        shareClassPDA,
-        shareClassATA,
-        assetKey,
-        vaultAssetATAKey,
-        assetATAKey,
-        policyPDA.publicKey(),
-        feePayer.publicKey(),
-        shareClassId,
-        amount,
-        true
-    );
-  }
-
-  @Override
-  public Instruction redeem(final int shareClassId,
-                            final long amount,
-                            final boolean inKind) {
-    final var shareClassPDA = glamVaultAccounts.shareClassPDA(shareClassId).publicKey();
-    final var shareClassATA = AssociatedTokenProgram.findATA2022(solanaAccounts, feePayer.publicKey(), shareClassPDA).publicKey();
-    final var policyPDA = GlamPDAs.signerPolicyPDA(invokedProgram.publicKey(), shareClassATA);
-    return GlamProgram.redeem(
-        invokedProgram,
-        solanaAccounts,
-        glamVaultAccounts.glamPublicKey(),
-        shareClassPDA,
-        shareClassATA,
-        feePayer.publicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        policyPDA.publicKey(),
-        amount,
-        inKind,
-        true
-    );
   }
 }
