@@ -10,6 +10,7 @@ import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
+import software.sava.rpc.json.http.response.AccountInfo;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -72,6 +73,10 @@ public record PartialUnstaking(PublicKey _address,
 
   public static PartialUnstaking read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
+  }
+
+  public static PartialUnstaking read(final AccountInfo<byte[]> accountInfo) {
+    return read(accountInfo.pubKey(), accountInfo.data(), 0);
   }
 
   public static PartialUnstaking read(final PublicKey _address, final byte[] _data) {

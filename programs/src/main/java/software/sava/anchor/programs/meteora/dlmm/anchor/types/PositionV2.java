@@ -8,6 +8,7 @@ import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
+import software.sava.rpc.json.http.response.AccountInfo;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
@@ -129,6 +130,10 @@ public record PositionV2(PublicKey _address,
 
   public static PositionV2 read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
+  }
+
+  public static PositionV2 read(final AccountInfo<byte[]> accountInfo) {
+    return read(accountInfo.pubKey(), accountInfo.data(), 0);
   }
 
   public static PositionV2 read(final PublicKey _address, final byte[] _data) {
