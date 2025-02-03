@@ -8,14 +8,14 @@ import software.sava.core.accounts.meta.AccountMeta;
 public interface GlamVaultAccounts {
 
   static GlamVaultAccounts createAccounts(final GlamAccounts glamAccounts,
-                                          final PublicKey signerPublicKey,
+                                          final PublicKey feePayer,
                                           final PublicKey glamPublicKey) {
     final var program = glamAccounts.program();
     final var vaultPDA = GlamPDAs.vaultPDA(program, glamPublicKey);
     final var metadataPDA = GlamPDAs.metadataPDA(program, glamPublicKey);
     return new GlamVaultAccountsRecord(
         glamAccounts,
-        signerPublicKey,
+        feePayer,
         glamPublicKey,
         vaultPDA,
         AccountMeta.createWrite(vaultPDA.publicKey()),
@@ -23,19 +23,19 @@ public interface GlamVaultAccounts {
     );
   }
 
-  static GlamVaultAccounts createAccounts(final PublicKey signerPublicKey, final PublicKey glamPublicKey) {
-    return GlamVaultAccounts.createAccounts(GlamAccounts.MAIN_NET, signerPublicKey, glamPublicKey);
+  static GlamVaultAccounts createAccounts(final PublicKey feePayer, final PublicKey glamPublicKey) {
+    return GlamVaultAccounts.createAccounts(GlamAccounts.MAIN_NET, feePayer, glamPublicKey);
   }
 
   static GlamVaultAccounts createV0Accounts(final GlamAccounts glamAccounts,
-                                            final PublicKey signerPublicKey,
+                                            final PublicKey feePayer,
                                             final PublicKey glamPublicKey) {
     final var program = glamAccounts.program();
     final var vaultPDA = software.sava.anchor.programs.glam_v0.anchor.GlamPDAs.vaultPDA(program, glamPublicKey);
     final var metadataPDA = software.sava.anchor.programs.glam_v0.anchor.GlamPDAs.metadataPDA(program, glamPublicKey);
     return new GlamVaultAccountsRecord(
         glamAccounts,
-        signerPublicKey,
+        feePayer,
         glamPublicKey,
         vaultPDA,
         AccountMeta.createWrite(vaultPDA.publicKey()),
@@ -43,13 +43,13 @@ public interface GlamVaultAccounts {
     );
   }
 
-  static GlamVaultAccounts createV0Accounts(final PublicKey signerPublicKey, final PublicKey glamPublicKey) {
-    return GlamVaultAccounts.createV0Accounts(GlamAccounts.MAIN_NET_VO, signerPublicKey, glamPublicKey);
+  static GlamVaultAccounts createV0Accounts(final PublicKey feePayer, final PublicKey glamPublicKey) {
+    return GlamVaultAccounts.createV0Accounts(GlamAccounts.MAIN_NET_VO, feePayer, glamPublicKey);
   }
 
   GlamAccounts glamAccounts();
 
-  PublicKey signerPublicKey();
+  PublicKey feePayer();
 
   PublicKey glamPublicKey();
 

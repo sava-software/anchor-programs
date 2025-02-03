@@ -31,14 +31,14 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   private final NativeProgramClient nativeProgramClient;
   private final GlamVaultAccounts glamVaultAccounts;
   private final AccountMeta invokedProgram;
-  private final AccountMeta manager;
+  private final AccountMeta feePayer;
 
   GlamNativeProgramClientImpl(final SolanaAccounts solanaAccounts, final GlamVaultAccounts glamVaultAccounts) {
     this.solanaAccounts = solanaAccounts;
     this.nativeProgramClient = NativeProgramClient.createClient(solanaAccounts);
     this.glamVaultAccounts = glamVaultAccounts;
     this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProgram();
-    this.manager = createFeePayer(glamVaultAccounts.signerPublicKey());
+    this.feePayer = createFeePayer(glamVaultAccounts.feePayer());
   }
 
   @Override
@@ -263,7 +263,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
     return GlamProgram.mergeStakeAccounts(
         invokedProgram,
         solanaAccounts,
-        manager.publicKey(),
+        feePayer.publicKey(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         destinationStakeAccount.address(),
@@ -282,7 +282,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
     return GlamProgram.deactivateStakeAccounts(
         invokedProgram,
         solanaAccounts,
-        manager.publicKey(),
+        feePayer.publicKey(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey()
     );

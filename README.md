@@ -9,156 +9,32 @@ code is under the `anchor` package, and manually written code is directly under 
 Code is generated using [sava-software/anchor-src-gen](https://github.com/sava-software/anchor-src-gen), see that
 project for more context on which features are provided.
 
-## Requirements
+## Documentation
 
-- The latest generally available JDK. This project will continue to move to the latest and will not maintain
-  versions released against previous JDK's.
+User documentation lives at [sava.software](https://sava.software/).
 
-## [Dependencies](programs/src/main/java/module-info.java)
-
-- [JSON Iterator](https://github.com/comodal/json-iterator?tab=readme-ov-file#json-iterator)
-- [sava-core](https://github.com/sava-software/sava)
-- [sava-rpc](https://github.com/sava-software/sava)
-- [solana-programs](https://github.com/sava-software/solana-programs)
-- [anchor-src-gen](https://github.com/sava-software/anchor-src-gen)
-
-### Add Dependency
-
-Create
-a [GitHub user access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-personal-access-token-classic)
-with read access to GitHub Packages.
-
-Then add the following to your Gradle build script.
-
-```groovy
-repositories {
-  maven {
-    url = "https://maven.pkg.github.com/sava-software/sava"
-    credentials {
-      username = GITHUB_USERNAME
-      password = GITHUB_PERSONAL_ACCESS_TOKEN
-    }
-  }
-  maven {
-    url = "https://maven.pkg.github.com/sava-software/solana-programs"
-  }
-  maven {
-    url = "https://maven.pkg.github.com/sava-software/anchor-src-gen"
-  }
-  maven {
-    url = "https://maven.pkg.github.com/sava-software/anchor-programs"
-  }
-}
-
-dependencies {
-  implementation "software.sava:sava-core:$VERSION"
-  implementation "software.sava:sava-rpc:$VERSION"
-  implementation "software.sava:solana-programs:$VERSION"
-  implementation "software.sava:anchor-src-gen:$VERSION"
-  implementation "software.sava:anchor-programs:$VERSION"
-}
-```
+* [Anchor Programs](https://sava.software/libraries/anchor-programs)
 
 ## Contribution
 
-Unit tests are needed and welcomed. Otherwise, please open an issue or send an email before working on a pull request.
+Unit tests are needed and welcomed. Otherwise, please open
+a [discussion](https://github.com/sava-software/sava/discussions), issue, or send an email before working on a pull
+request.
 
-## Warning
+## Build
 
-Young project, under active development, breaking changes and bugs are to be expected.
+[Generate a classic token](https://github.com/settings/tokens) with the `read:packages` scope needed to access
+dependencies hosted on GitHub Package Repository.
 
-## Examples
+Create a `gradle.properties` file in the sava project directory root or under `$HOME/.gradle/`.
 
-### [Retrieve and Parse Drift placeOrders Transaction](examples/src/main/java/software/sava/anchor/program/examples/ParseDriftPlaceOrdersTransaction.java)
+### gradle.properties
 
-Prints the following at the end: 
-> Limit Long 0.1 @ 111 on SOL-PERP [reduceOnly=false] [postOnly=MustPostOnly]
+```properties
+gpr.user=GITHUB_USERNAME
+gpr.token=GITHUB_TOKEN
+```
 
-```java
-try (final var httpClient = HttpClient.newHttpClient()) {
-  final var rpcClient = SolanaRpcClient.createClient(SolanaNetwork.MAIN_NET.getEndpoint(), httpClient);
-
-  // Fetch a Drift placeOrders Transaction
-  final var txFuture = rpcClient.getTransaction(
-          "36Wnn99Y49mJ5GKiNiT3ja2q8gzSvMNrN5A3Bcn2YfCyrwY7kgQGVAu9VNzXqmWSbgzX76oUGxYNuPGM7tpPoJJS"
-  );
-  final var tx = txFuture.join();
-  final byte[] txData = tx.data();
-
-  final var skeleton = TransactionSkeleton.deserializeSkeleton(txData);
-
-  final Instruction[] instructions;
-  if (skeleton.isLegacy()) {
-    instructions = skeleton.parseInstructions(skeleton.parseAccounts());
-  } else {
-    // Fetch Lookup tables to allow parsing of versioned transactions.
-    final int txVersion = skeleton.version();
-    if (txVersion == 0) {
-      final var tableAccountInfos = rpcClient.getMultipleAccounts(
-          Arrays.asList(skeleton.lookupTableAccounts()),
-          AddressLookupTable.FACTORY
-      ).join();
-
-      final var lookupTables = tableAccountInfos.stream()
-          .map(AccountInfo::data)
-          .collect(Collectors.toUnmodifiableMap(AddressLookupTable::address, Function.identity()));
-
-      instructions = skeleton.parseInstructions(skeleton.parseAccounts(lookupTables));
-    } else {
-      throw new IllegalStateException("Unhandled tx version " + txVersion);
-    }
-  }
-
-  // instructions[0]; // Compute Budget Limit
-  // instructions[1]; // Compute Unit Price
-  // instructions[2]; // Drift Place Orders
-  final var placeOrdersIxData = Arrays.stream(instructions)
-      .filter(DriftProgram.PLACE_ORDERS_DISCRIMINATOR)
-      .map(DriftProgram.PlaceOrdersIxData::read)
-      .findFirst().orElseThrow();
-  
-  final OrderParams[] orderParams = placeOrdersIxData.params();
-  final OrderParams order = orderParams[0];
-
-  // Fetch token contexts to make use of convenient scaled value conversions.
-  final var jupiterClient = JupiterClient.createClient(httpClient);
-  final var verifiedTokens = jupiterClient.verifiedTokenMap().join();
-
-  // Create Drift Client to map market indexes from the order to its configuration.
-  final var nativeProgramClient = NativeProgramClient.createClient();
-  final var nativeProgramAccountClient = nativeProgramClient
-      .createAccountClient(AccountMeta.createFeePayer(PublicKey.NONE));
-  final var driftClient = DriftProgramClient.createClient(nativeProgramAccountClient);
-
-  final var driftAccounts = driftClient.accounts();
-  final MarketConfig marketConfig;
-  final TokenContext baseTokenContext;
-  if (order.marketType() == MarketType.Perp) {
-    final var perpMarketConfig = driftAccounts.perpMarketConfig(order.marketIndex());
-    final var spotConfig = driftClient.spotMarket(perpMarketConfig.baseAssetSymbol());
-    baseTokenContext = verifiedTokens.get(spotConfig.mint());
-    marketConfig = perpMarketConfig;
-  } else {
-    final var spotConfig = driftAccounts.spotMarketConfig(order.marketIndex());
-    baseTokenContext = verifiedTokens.get(spotConfig.mint());
-    marketConfig = spotConfig;
-  }
-
-  // Assume all Drift markets are priced in USDC
-  final var usdcTokenMint = driftClient.spotMarket(DriftAsset.USDC).mint();
-  final var usdcTokenContext = verifiedTokens.get(usdcTokenMint);
-
-  // Limit Long 0.1 @ 111 on SOL-PERP [reduceOnly=false] [postOnly=MustPostOnly]
-  System.out.format("""
-          %s %s %s @ %s on %s [reduceOnly=%b] [postOnly=%s]
-          """,
-      order.orderType(),
-      order.direction(),
-      baseTokenContext.toDecimal(order.baseAssetAmount()).toPlainString(),
-      usdcTokenContext.toDecimal(order.price()).toPlainString(),
-      marketConfig.symbol(),
-      order.reduceOnly(),
-      order.postOnly()
-  );
-}
+```shell
+./gradlew check
 ```

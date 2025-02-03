@@ -11,12 +11,12 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 public record GlamAccountsRecord(PublicKey program, AccountMeta invokedProgram) implements GlamAccounts {
 
   @Override
-  public ProgramDerivedAddress mintPDA(final PublicKey fundPublicKey, final int shareClassId) {
+  public ProgramDerivedAddress mintPDA(final PublicKey glamPublicKey, final int shareClassId) {
     return PublicKey.findProgramAddress(
         List.of(
             "share".getBytes(UTF_8),
             new byte[]{(byte) (shareClassId % 256)},
-            fundPublicKey.toByteArray()
+            glamPublicKey.toByteArray()
         ), program());
   }
 }

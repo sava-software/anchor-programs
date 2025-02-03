@@ -45,5 +45,5 @@ public interface GlamAccounts {
 
   AccountMeta invokedProgram();
 
-  ProgramDerivedAddress mintPDA(final PublicKey fundPublicKey, final int shareClassId);
+  ProgramDerivedAddress mintPDA(final PublicKey glamPublicKey, final int shareClassId);
 }

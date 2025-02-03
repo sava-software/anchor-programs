@@ -5,7 +5,7 @@ import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 
 public record GlamVaultAccountsRecord(GlamAccounts glamAccounts,
-                                      PublicKey signerPublicKey,
+                                      PublicKey feePayer,
                                       PublicKey glamPublicKey,
                                       ProgramDerivedAddress vaultPDA,
                                       AccountMeta vaultWriteMeta,

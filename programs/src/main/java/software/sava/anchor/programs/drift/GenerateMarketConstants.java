@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
@@ -183,7 +182,8 @@ final class GenerateMarketConstants {
     );
   }
 
-  private static void writeProductsSrc(final List<? extends SrcGen> devNetConfigs, final List<? extends SrcGen> mainNetConfigs) {
+  private static void writeProductsSrc(final List<? extends SrcGen> devNetConfigs,
+                                       final List<? extends SrcGen> mainNetConfigs) {
     final var distinct = HashSet.<String>newHashSet(devNetConfigs.size() + mainNetConfigs.size());
     devNetConfigs.stream().map(SrcGen::symbol).forEach(distinct::add);
     mainNetConfigs.stream().map(SrcGen::symbol).forEach(distinct::add);
@@ -228,7 +228,8 @@ final class GenerateMarketConstants {
     }
   }
 
-  private static void writeAssetsSrc(final List<? extends SrcGen> devNetConfigs, final List<? extends SrcGen> mainNetConfigs) {
+  private static void writeAssetsSrc(final List<? extends SrcGen> devNetConfigs,
+                                     final List<? extends SrcGen> mainNetConfigs) {
     final var distinct = new TreeSet<String>();
     devNetConfigs.stream().map(SrcGen::symbol).forEach(distinct::add);
     mainNetConfigs.stream().map(SrcGen::symbol).forEach(distinct::add);
@@ -288,7 +289,8 @@ final class GenerateMarketConstants {
     src.append(String.format("""
           private %s() {
           }
-        }""", fileName));
+        }""", fileName
+    ));
 
     final var sourceCode = src.toString();
     try {
@@ -323,20 +325,6 @@ final class GenerateMarketConstants {
           });
         
         """);
-  }
-
-  public static void main(final String[] args) {
-    try (final var executor = Executors.newVirtualThreadPerTaskExecutor()) {
-      try (final var httpClient = HttpClient.newBuilder()
-          .executor(executor)
-          .proxy(HttpClient.Builder.NO_PROXY)
-          .build()) {
-//        final var spotMarkets = DynamicSpotMarkets.fetchMarkets(httpClient);
-//        spotMarkets.mainNet().streamMarkets().forEach(System.out::println);
-        genSpotMarkets(httpClient);
-        genPerpMarkets(httpClient);
-      }
-    }
   }
 
   private GenerateMarketConstants() {

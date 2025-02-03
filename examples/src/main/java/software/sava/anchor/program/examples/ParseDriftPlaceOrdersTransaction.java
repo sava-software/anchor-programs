@@ -59,8 +59,9 @@ public final class ParseDriftPlaceOrdersTransaction {
             final var lookupTables = tableAccountInfos.stream()
                 .map(AccountInfo::data)
                 .collect(Collectors.toUnmodifiableMap(AddressLookupTable::address, Function.identity()));
+            final var accounts = skeleton.parseAccounts(lookupTables);
 
-            instructions = skeleton.parseInstructions(skeleton.parseAccounts(lookupTables));
+            instructions = skeleton.parseInstructions(accounts);
           }
         } else {
           throw new IllegalStateException("Unhandled tx version " + txVersion);
