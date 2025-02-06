@@ -51,7 +51,9 @@ public record GlamIxProxy(Discriminator discriminator,
 
     for (int s = 0, g; s < numAccounts; ++s) {
       g = indexes[s];
-      mappedAccounts[g] = accounts.get(s);
+      if (g >= 0) {
+        mappedAccounts[g] = accounts.get(s);
+      }
     }
 
     return Instruction.createInstruction(
