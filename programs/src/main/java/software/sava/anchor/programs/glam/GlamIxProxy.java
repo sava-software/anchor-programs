@@ -6,6 +6,7 @@ import software.sava.core.tx.Instruction;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.IntStream;
 
 public record GlamIxProxy(Discriminator discriminator,
                           Discriminator glamDiscriminator,
@@ -19,10 +20,7 @@ public record GlamIxProxy(Discriminator discriminator,
                                         List<GlamDynamicAccountMeta> newDynamicAccounts,
                                         List<GlamAccountMeta> newAccounts,
                                         int[] indexes) {
-    int numRemoved = 0;
-    for (int i = 0; i < indexes.length; ++i) {
-      ++numRemoved;
-    }
+    final int numRemoved = (int) IntStream.of(indexes).filter(i -> i < 0).count();
     return new GlamIxProxy(
         discriminator,
         glamDiscriminator,
