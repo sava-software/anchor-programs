@@ -5,10 +5,11 @@ import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
 import java.util.Arrays;
+import java.util.List;
 
 public record GlamIxProxy(Discriminator discriminator,
                           Discriminator glamDiscriminator,
-                          GlamAccountMeta[] glamAccountMetaArray,
+                          List<GlamAccountMeta> glamAccountMetaArray,
                           int[] indexes,
                           int numAccounts) {
 

@@ -9,6 +9,9 @@ public record GlamAccountMeta(DynamicGlamAccount dynamicGlamAccount, int index, 
   }
 
   public void setAccount(final AccountMeta[] accounts, final GlamVaultAccounts vaultAccounts) {
+    if (index < 0) {
+      return;
+    }
     final var accountMeta = vaultAccounts.accountMeta(dynamicGlamAccount, write);
     setAccount(accounts, accountMeta);
   }
