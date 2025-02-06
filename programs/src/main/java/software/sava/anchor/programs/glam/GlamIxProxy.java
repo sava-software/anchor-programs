@@ -9,12 +9,14 @@ import java.util.List;
 
 public record GlamIxProxy(Discriminator discriminator,
                           Discriminator glamDiscriminator,
+                          List<GlamDynamicAccountMeta> newDynamicAccounts,
                           List<GlamAccountMeta> newAccounts,
                           int[] indexes,
                           int numAccounts) {
 
   public static GlamIxProxy createProxy(Discriminator discriminator,
                                         Discriminator glamDiscriminator,
+                                        List<GlamDynamicAccountMeta> newDynamicAccounts,
                                         List<GlamAccountMeta> newAccounts,
                                         int[] indexes) {
     int numRemoved = 0;
@@ -24,9 +26,10 @@ public record GlamIxProxy(Discriminator discriminator,
     return new GlamIxProxy(
         discriminator,
         glamDiscriminator,
+        newDynamicAccounts,
         newAccounts,
         indexes,
-        newAccounts.size() + (indexes.length - numRemoved)
+        newDynamicAccounts.size() + newAccounts.size() + (indexes.length - numRemoved)
     );
   }
 
@@ -49,8 +52,11 @@ public record GlamIxProxy(Discriminator discriminator,
     glamDiscriminator.write(data, 0);
 
     final var mappedAccounts = new AccountMeta[numAccounts];
-    for (final var glamAccountMeta : newAccounts) {
+    for (final var glamAccountMeta : newDynamicAccounts) {
       glamAccountMeta.setAccount(mappedAccounts, glamVaultAccounts);
+    }
+    for (final var glamAccountMeta : newAccounts) {
+      glamAccountMeta.setAccount(mappedAccounts);
     }
 
     final var accounts = instruction.accounts();

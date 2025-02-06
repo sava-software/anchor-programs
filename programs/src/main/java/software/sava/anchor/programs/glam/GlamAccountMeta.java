@@ -2,14 +2,9 @@ package software.sava.anchor.programs.glam;
 
 import software.sava.core.accounts.meta.AccountMeta;
 
-public record GlamAccountMeta(DynamicGlamAccount dynamicGlamAccount, int index, boolean write) {
+public record GlamAccountMeta(AccountMeta accountMeta, int index) {
 
-  public void setAccount(final AccountMeta[] accounts, final AccountMeta accountMeta) {
+  public void setAccount(final AccountMeta[] accounts) {
     accounts[index] = accountMeta;
-  }
-
-  public void setAccount(final AccountMeta[] accounts, final GlamVaultAccounts vaultAccounts) {
-    final var accountMeta = vaultAccounts.accountMeta(dynamicGlamAccount, write);
-    setAccount(accounts, accountMeta);
   }
 }
