@@ -15,11 +15,16 @@ public interface GlamVaultAccounts {
     final var metadataPDA = GlamPDAs.metadataPDA(program, glamPublicKey);
     return new GlamVaultAccountsRecord(
         glamAccounts,
-        feePayer,
-        glamPublicKey,
+        AccountMeta.createReadOnlySigner(feePayer),
+        AccountMeta.createWritableSigner(feePayer),
+        AccountMeta.createRead(glamPublicKey),
+        AccountMeta.createWrite(glamPublicKey),
         vaultPDA,
+        AccountMeta.createRead(vaultPDA.publicKey()),
         AccountMeta.createWrite(vaultPDA.publicKey()),
-        metadataPDA
+        metadataPDA,
+        AccountMeta.createRead(metadataPDA.publicKey()),
+        AccountMeta.createWrite(metadataPDA.publicKey())
     );
   }
 
@@ -35,11 +40,16 @@ public interface GlamVaultAccounts {
     final var metadataPDA = software.sava.anchor.programs.glam_v0.anchor.GlamPDAs.metadataPDA(program, glamPublicKey);
     return new GlamVaultAccountsRecord(
         glamAccounts,
-        feePayer,
-        glamPublicKey,
+        AccountMeta.createReadOnlySigner(feePayer),
+        AccountMeta.createWritableSigner(feePayer),
+        AccountMeta.createRead(glamPublicKey),
+        AccountMeta.createWrite(glamPublicKey),
         vaultPDA,
+        AccountMeta.createRead(vaultPDA.publicKey()),
         AccountMeta.createWrite(vaultPDA.publicKey()),
-        metadataPDA
+        metadataPDA,
+        AccountMeta.createRead(metadataPDA.publicKey()),
+        AccountMeta.createWrite(metadataPDA.publicKey())
     );
   }
 
@@ -59,9 +69,9 @@ public interface GlamVaultAccounts {
     return vaultPDA().publicKey();
   }
 
-  AccountMeta vaultWriteMeta();
-
   ProgramDerivedAddress metadataPDA();
 
   ProgramDerivedAddress shareClassPDA(final int shareId);
+
+  AccountMeta accountMeta(final DynamicGlamAccount dynamicGlamAccount, final boolean write);
 }

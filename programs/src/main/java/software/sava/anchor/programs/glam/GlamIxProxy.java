@@ -1,0 +1,51 @@
+package software.sava.anchor.programs.glam;
+
+import software.sava.core.accounts.PublicKey;
+import software.sava.core.accounts.meta.AccountMeta;
+import software.sava.core.tx.Instruction;
+
+import java.util.Arrays;
+
+public record GlamIxProxy(PublicKey discriminator,
+                          PublicKey glamDiscriminator,
+                          GlamAccountMeta[] glamAccountMetaArray,
+                          int[] indexes,
+                          int numAccounts) {
+
+  public Instruction mapInstruction(final GlamVaultAccounts glamVaultAccounts, final Instruction instruction) {
+    final byte[] data = Arrays.copyOfRange(instruction.data(), instruction.offset(), instruction.offset() + instruction.len());
+    glamDiscriminator.write(data, 0);
+
+    final var mappedAccounts = new AccountMeta[numAccounts];
+    for (final var glamAccountMeta : glamAccountMetaArray) {
+      glamAccountMeta.setAccount(mappedAccounts, glamVaultAccounts);
+    }
+
+    final var accounts = instruction.accounts();
+    final int numAccounts = accounts.size();
+
+    if (this.numAccounts != numAccounts) {
+      throw new IllegalStateException(String.format(
+          """
+              Expected %d accounts for %s instruction %s, not %d
+              """
+          ,
+          this.numAccounts,
+          instruction.programId(),
+          discriminator,
+          numAccounts
+      ));
+    }
+
+    for (int s = 0, g; s < numAccounts; ++s) {
+      g = indexes[s];
+      mappedAccounts[g] = accounts.get(s);
+    }
+
+    return Instruction.createInstruction(
+        glamVaultAccounts.glamAccounts().invokedProgram(),
+        Arrays.asList(mappedAccounts),
+        data
+    );
+  }
+}

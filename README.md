@@ -1,5 +1,3 @@
-![](https://github.com/sava-software/sava/blob/003cf88b3cd2a05279027557f23f7698662d2999/assets/images/solana_java_cup.svg)
-
 # Anchor Programs [![Build](https://github.com/sava-software/anchor-programs/actions/workflows/gradle.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/gradle.yml) [![Release](https://github.com/sava-software/anchor-programs/actions/workflows/release.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/release.yml)
 
 Generated programs can be found in
@@ -13,13 +11,13 @@ project for more context on which features are provided.
 
 User documentation lives at [sava.software](https://sava.software/).
 
+* [Dependency Configuration](https://sava.software/quickstart)
 * [Anchor Programs](https://sava.software/libraries/anchor-programs)
 
 ## Contribution
 
-Unit tests are needed and welcomed. Otherwise, please open
-a [discussion](https://github.com/sava-software/sava/discussions), issue, or send an email before working on a pull
-request.
+Unit tests are needed and welcomed. Otherwise, please open a discussion, issue, or send an email before working on a
+pull request.
 
 ## Build
 

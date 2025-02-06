@@ -143,10 +143,10 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
                                   final long lamports) {
     return MarinadeFinanceProgram.orderUnstake(
         marinadeAccounts.invokedMarinadeProgram(),
-        owner,
         marinadeAccounts.stateProgram(),
         marinadeAccounts.mSolTokenMint(),
         mSolTokenAccount,
+        owner,
         ticketAccount,
         solanaAccounts.clockSysVar(),
         solanaAccounts.rentSysVar(),
