@@ -9,9 +9,26 @@ import java.util.List;
 
 public record GlamIxProxy(Discriminator discriminator,
                           Discriminator glamDiscriminator,
-                          List<GlamAccountMeta> glamAccountMetaArray,
+                          List<GlamAccountMeta> newAccounts,
                           int[] indexes,
                           int numAccounts) {
+
+  public static GlamIxProxy createProxy(Discriminator discriminator,
+                                        Discriminator glamDiscriminator,
+                                        List<GlamAccountMeta> newAccounts,
+                                        int[] indexes) {
+    int numRemoved = 0;
+    for (int i = 0; i < indexes.length; ++i) {
+      ++numRemoved;
+    }
+    return new GlamIxProxy(
+        discriminator,
+        glamDiscriminator,
+        newAccounts,
+        indexes,
+        newAccounts.size() + (indexes.length - numRemoved)
+    );
+  }
 
   public Instruction mapInstruction(final GlamVaultAccounts glamVaultAccounts, final Instruction instruction) {
     final int discriminatorLength = discriminator.length();
@@ -24,36 +41,34 @@ public record GlamIxProxy(Discriminator discriminator,
       System.arraycopy(instruction.data(), instruction.offset(), data, 0, dataLength);
     } else {
       data = new byte[dataLength + lengthDelta];
-      System.arraycopy(instruction.data(), instruction.offset() + discriminatorLength, data, discriminatorLength, dataLength - discriminatorLength);
+      System.arraycopy(
+          instruction.data(), instruction.offset() + discriminatorLength,
+          data, discriminatorLength, dataLength - discriminatorLength
+      );
     }
     glamDiscriminator.write(data, 0);
 
     final var mappedAccounts = new AccountMeta[numAccounts];
-    for (final var glamAccountMeta : glamAccountMetaArray) {
+    for (final var glamAccountMeta : newAccounts) {
       glamAccountMeta.setAccount(mappedAccounts, glamVaultAccounts);
     }
 
     final var accounts = instruction.accounts();
     final int numAccounts = accounts.size();
 
-    if (this.numAccounts != numAccounts) {
-      throw new IllegalStateException(String.format(
-          """
-              Expected %d accounts for %s instruction %s, not %d
-              """
-          ,
-          this.numAccounts,
-          instruction.programId(),
-          discriminator,
-          numAccounts
-      ));
-    }
-
-    for (int s = 0, g; s < numAccounts; ++s) {
+    int s = 0;
+    int g;
+    for (; s < indexes.length; ++s) {
       g = indexes[s];
       if (g >= 0) {
         mappedAccounts[g] = accounts.get(s);
       }
+    }
+
+    // Copy extra accounts.
+    g = numAccounts;
+    for (; s < numAccounts; ++s, ++g) {
+      mappedAccounts[g] = accounts.get(s);
     }
 
     return Instruction.createInstruction(
