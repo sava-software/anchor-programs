@@ -1,19 +1,30 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
+import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
 import java.util.Arrays;
 
-public record GlamIxProxy(PublicKey discriminator,
-                          PublicKey glamDiscriminator,
+public record GlamIxProxy(Discriminator discriminator,
+                          Discriminator glamDiscriminator,
                           GlamAccountMeta[] glamAccountMetaArray,
                           int[] indexes,
                           int numAccounts) {
 
   public Instruction mapInstruction(final GlamVaultAccounts glamVaultAccounts, final Instruction instruction) {
-    final byte[] data = Arrays.copyOfRange(instruction.data(), instruction.offset(), instruction.offset() + instruction.len());
+    final int discriminatorLength = discriminator.length();
+    final int glamDiscriminatorLength = glamDiscriminator.length();
+    final int lengthDelta = glamDiscriminatorLength - discriminatorLength;
+    final int dataLength = instruction.len();
+    final byte[] data;
+    if (lengthDelta == 0) {
+      data = new byte[dataLength];
+      System.arraycopy(instruction.data(), instruction.offset(), data, 0, dataLength);
+    } else {
+      data = new byte[dataLength + lengthDelta];
+      System.arraycopy(instruction.data(), instruction.offset() + discriminatorLength, data, discriminatorLength, dataLength - discriminatorLength);
+    }
     glamDiscriminator.write(data, 0);
 
     final var mappedAccounts = new AccountMeta[numAccounts];
