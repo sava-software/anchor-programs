@@ -9,6 +9,7 @@ import software.sava.core.tx.Instruction;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
 
@@ -18,6 +19,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
   private final AccountMeta invokedProgram;
   private final AccountMeta manager;
   private final JupiterAccounts jupiterAccounts;
+  private final PublicKey swapProgram;
 
   GlamJupiterProgramClientImpl(final GlamProgramAccountClient glamProgramAccountClient,
                                final JupiterAccounts jupiterAccounts) {
@@ -27,6 +29,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
     this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProgram();
     this.manager = glamProgramAccountClient.feePayer();
     this.jupiterAccounts = jupiterAccounts;
+    this.swapProgram = jupiterAccounts.swapProgram();
   }
 
   @Override
@@ -59,15 +62,13 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
-        inputVaultATA,
-        outputVaultATA,
+        inputVaultATA, outputVaultATA,
         inputMintKey, outputMintKey,
         manager.publicKey(),
-        inputProgramStateKey,
-        outputProgramStateKey,
-        jupiterAccounts.swapProgram(),
-        inputTokenProgram,
-        outputTokenProgram,
+        Objects.requireNonNullElse(inputProgramStateKey, swapProgram),
+        Objects.requireNonNullElse(outputProgramStateKey, swapProgram),
+        swapProgram,
+        inputTokenProgram, outputTokenProgram,
         amount,
         swapInstruction.data()
     ).extraAccounts(swapInstruction.accounts());
