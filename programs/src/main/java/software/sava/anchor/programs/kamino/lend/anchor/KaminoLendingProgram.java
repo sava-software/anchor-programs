@@ -348,6 +348,68 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, REDEEM_FEES_DISCRIMINATOR);
   }
 
+  public static final Discriminator WITHDRAW_PROTOCOL_FEE_DISCRIMINATOR = toDiscriminator(158, 201, 158, 189, 33, 93, 162, 103);
+
+  public static Instruction withdrawProtocolFee(final AccountMeta invokedKaminoLendingProgramMeta,
+                                                final PublicKey lendingMarketOwnerKey,
+                                                final PublicKey lendingMarketKey,
+                                                final PublicKey reserveKey,
+                                                final PublicKey reserveLiquidityMintKey,
+                                                final PublicKey lendingMarketAuthorityKey,
+                                                final PublicKey feeVaultKey,
+                                                final PublicKey lendingMarketOwnerAtaKey,
+                                                final PublicKey tokenProgramKey,
+                                                final long amount) {
+    final var keys = List.of(
+      createReadOnlySigner(lendingMarketOwnerKey),
+      createRead(lendingMarketKey),
+      createRead(reserveKey),
+      createWrite(reserveLiquidityMintKey),
+      createRead(lendingMarketAuthorityKey),
+      createWrite(feeVaultKey),
+      createWrite(lendingMarketOwnerAtaKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(WITHDRAW_PROTOCOL_FEE_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record WithdrawProtocolFeeIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static WithdrawProtocolFeeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static WithdrawProtocolFeeIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new WithdrawProtocolFeeIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator SOCIALIZE_LOSS_DISCRIMINATOR = toDiscriminator(245, 75, 91, 0, 236, 97, 19, 3);
 
   public static Instruction socializeLoss(final AccountMeta invokedKaminoLendingProgramMeta,
@@ -404,59 +466,49 @@ public final class KaminoLendingProgram {
     }
   }
 
-  public static final Discriminator WITHDRAW_PROTOCOL_FEE_DISCRIMINATOR = toDiscriminator(158, 201, 158, 189, 33, 93, 162, 103);
+  public static final Discriminator MARK_OBLIGATION_FOR_DELEVERAGING_DISCRIMINATOR = toDiscriminator(164, 35, 182, 19, 0, 116, 243, 127);
 
-  public static Instruction withdrawProtocolFee(final AccountMeta invokedKaminoLendingProgramMeta,
-                                                final PublicKey lendingMarketOwnerKey,
-                                                final PublicKey lendingMarketKey,
-                                                final PublicKey reserveKey,
-                                                final PublicKey reserveLiquidityMintKey,
-                                                final PublicKey lendingMarketAuthorityKey,
-                                                final PublicKey feeVaultKey,
-                                                final PublicKey lendingMarketOwnerAtaKey,
-                                                final PublicKey tokenProgramKey,
-                                                final long amount) {
+  public static Instruction markObligationForDeleveraging(final AccountMeta invokedKaminoLendingProgramMeta,
+                                                          final PublicKey riskCouncilKey,
+                                                          final PublicKey obligationKey,
+                                                          final PublicKey lendingMarketKey,
+                                                          final int autodeleverageTargetLtvPct) {
     final var keys = List.of(
-      createReadOnlySigner(lendingMarketOwnerKey),
-      createRead(lendingMarketKey),
-      createRead(reserveKey),
-      createWrite(reserveLiquidityMintKey),
-      createRead(lendingMarketAuthorityKey),
-      createWrite(feeVaultKey),
-      createWrite(lendingMarketOwnerAtaKey),
-      createRead(tokenProgramKey)
+      createReadOnlySigner(riskCouncilKey),
+      createWrite(obligationKey),
+      createRead(lendingMarketKey)
     );
 
-    final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_PROTOCOL_FEE_DISCRIMINATOR, _data, 0);
-    putInt64LE(_data, i, amount);
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(MARK_OBLIGATION_FOR_DELEVERAGING_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) autodeleverageTargetLtvPct;
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
-  public record WithdrawProtocolFeeIxData(Discriminator discriminator, long amount) implements Borsh {  
+  public record MarkObligationForDeleveragingIxData(Discriminator discriminator, int autodeleverageTargetLtvPct) implements Borsh {  
 
-    public static WithdrawProtocolFeeIxData read(final Instruction instruction) {
+    public static MarkObligationForDeleveragingIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 16;
+    public static final int BYTES = 9;
 
-    public static WithdrawProtocolFeeIxData read(final byte[] _data, final int offset) {
+    public static MarkObligationForDeleveragingIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var amount = getInt64LE(_data, i);
-      return new WithdrawProtocolFeeIxData(discriminator, amount);
+      final var autodeleverageTargetLtvPct = _data[i] & 0xFF;
+      return new MarkObligationForDeleveragingIxData(discriminator, autodeleverageTargetLtvPct);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, amount);
-      i += 8;
+      _data[i] = (byte) autodeleverageTargetLtvPct;
+      ++i;
       return i - offset;
     }
 
@@ -1139,6 +1191,63 @@ public final class KaminoLendingProgram {
     }
   }
 
+  public static final Discriminator REPAY_AND_WITHDRAW_AND_REDEEM_DISCRIMINATOR = toDiscriminator(2, 54, 152, 3, 148, 96, 109, 218);
+
+  public static Instruction repayAndWithdrawAndRedeem(final AccountMeta invokedKaminoLendingProgramMeta,
+                                                      final PublicKey repayAccountsKey,
+                                                      final PublicKey withdrawAccountsKey,
+                                                      final long repayAmount,
+                                                      final long withdrawCollateralAmount) {
+    final var keys = List.of(
+      createRead(repayAccountsKey),
+      createRead(withdrawAccountsKey)
+    );
+
+    final byte[] _data = new byte[24];
+    int i = writeDiscriminator(REPAY_AND_WITHDRAW_AND_REDEEM_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, repayAmount);
+    i += 8;
+    putInt64LE(_data, i, withdrawCollateralAmount);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record RepayAndWithdrawAndRedeemIxData(Discriminator discriminator, long repayAmount, long withdrawCollateralAmount) implements Borsh {  
+
+    public static RepayAndWithdrawAndRedeemIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 24;
+
+    public static RepayAndWithdrawAndRedeemIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var repayAmount = getInt64LE(_data, i);
+      i += 8;
+      final var withdrawCollateralAmount = getInt64LE(_data, i);
+      return new RepayAndWithdrawAndRedeemIxData(discriminator, repayAmount, withdrawCollateralAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, repayAmount);
+      i += 8;
+      putInt64LE(_data, i, withdrawCollateralAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_DISCRIMINATOR = toDiscriminator(129, 199, 4, 2, 222, 39, 26, 46);
 
   public static Instruction depositReserveLiquidityAndObligationCollateral(final AccountMeta invokedKaminoLendingProgramMeta,
@@ -1232,7 +1341,7 @@ public final class KaminoLendingProgram {
                                                                                    final PublicKey instructionSysvarAccountKey,
                                                                                    final long collateralAmount) {
     final var keys = List.of(
-      createWritableSigner(ownerKey),
+      createReadOnlySigner(ownerKey),
       createWrite(obligationKey),
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),

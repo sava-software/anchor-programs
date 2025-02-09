@@ -5,7 +5,9 @@ import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 
-public record SwitchboardConfiguration(PublicKey priceAggregator, PublicKey twapAggregator) implements Borsh {
+public record SwitchboardConfiguration(// Pubkey of the base price feed (disabled if `null` or `default`)
+                                       PublicKey priceAggregator,
+                                       PublicKey twapAggregator) implements Borsh {
 
   public static final int BYTES = 64;
 

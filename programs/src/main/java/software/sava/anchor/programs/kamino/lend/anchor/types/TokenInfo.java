@@ -5,13 +5,19 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record TokenInfo(byte[] name,
+public record TokenInfo(// UTF-8 encoded name of the token (null-terminated)
+                        byte[] name,
+                        // Heuristics limits of acceptable price
                         PriceHeuristic heuristic,
+                        // Max divergence between twap and price in bps
                         long maxTwapDivergenceBps,
                         long maxAgePriceSeconds,
                         long maxAgeTwapSeconds,
+                        // Scope price configuration
                         ScopeConfiguration scopeConfiguration,
+                        // Switchboard configuration
                         SwitchboardConfiguration switchboardConfiguration,
+                        // Pyth configuration
                         PythConfiguration pythConfiguration,
                         int blockPriceUsage,
                         byte[] reserved,

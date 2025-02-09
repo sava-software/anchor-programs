@@ -15,18 +15,26 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record Reserve(PublicKey _address,
                       Discriminator discriminator,
+                      // Version of the reserve
                       long version,
+                      // Last slot when supply and rates updated
                       LastUpdate lastUpdate,
+                      // Lending market address
                       PublicKey lendingMarket,
                       PublicKey farmCollateral,
                       PublicKey farmDebt,
+                      // Reserve liquidity
                       ReserveLiquidity liquidity,
                       long[] reserveLiquidityPadding,
+                      // Reserve collateral
                       ReserveCollateral collateral,
                       long[] reserveCollateralPadding,
+                      // Reserve configuration values
                       ReserveConfig config,
                       long[] configPadding,
                       long borrowedAmountOutsideElevationGroup,
+                      // Amount of token borrowed in lamport of debt asset in the given
+                      // elevation group when this reserve is part of the collaterals.
                       long[] borrowedAmountsAgainstThisReserveInElevationGroups,
                       long[] padding) implements Borsh {
 
@@ -43,7 +51,7 @@ public record Reserve(PublicKey _address,
   public static final int COLLATERAL_OFFSET = 2560;
   public static final int RESERVE_COLLATERAL_PADDING_OFFSET = 3656;
   public static final int CONFIG_OFFSET = 4856;
-  public static final int CONFIG_PADDING_OFFSET = 5768;
+  public static final int CONFIG_PADDING_OFFSET = 5776;
   public static final int BORROWED_AMOUNT_OUTSIDE_ELEVATION_GROUP_OFFSET = 6704;
   public static final int BORROWED_AMOUNTS_AGAINST_THIS_RESERVE_IN_ELEVATION_GROUPS_OFFSET = 6712;
   public static final int PADDING_OFFSET = 6968;
@@ -116,7 +124,7 @@ public record Reserve(PublicKey _address,
     i += Borsh.readArray(reserveCollateralPadding, _data, i);
     final var config = ReserveConfig.read(_data, i);
     i += Borsh.len(config);
-    final var configPadding = new long[117];
+    final var configPadding = new long[116];
     i += Borsh.readArray(configPadding, _data, i);
     final var borrowedAmountOutsideElevationGroup = getInt64LE(_data, i);
     i += 8;

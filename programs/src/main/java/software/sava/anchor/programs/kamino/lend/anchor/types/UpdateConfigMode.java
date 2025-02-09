@@ -35,11 +35,11 @@ public enum UpdateConfigMode implements Borsh.Enum {
   UpdateDepositWithdrawalCapCurrentTotal,
   UpdateBadDebtLiquidationBonusBps,
   UpdateMinLiquidationBonusBps,
-  DeleveragingMarginCallPeriod,
+  UpdateDeleveragingMarginCallPeriod,
   UpdateBorrowFactor,
   UpdateAssetTier,
   UpdateElevationGroup,
-  DeleveragingThresholdSlotsPerBps,
+  UpdateDeleveragingThresholdDecreaseBpsPerDay,
   DeprecatedUpdateMultiplierSideBoost,
   DeprecatedUpdateMultiplierTagBoost,
   UpdateReserveStatus,
@@ -50,7 +50,9 @@ public enum UpdateConfigMode implements Borsh.Enum {
   UpdateBlockPriceUsage,
   UpdateBorrowLimitOutsideElevationGroup,
   UpdateBorrowLimitsInElevationGroupAgainstThisReserve,
-  UpdateHostFixedInterestRateBps;
+  UpdateHostFixedInterestRateBps,
+  UpdateAutodeleverageEnabled,
+  UpdateDeleveragingBonusIncreaseBpsPerDay;
 
   public static UpdateConfigMode read(final byte[] _data, final int offset) {
     return Borsh.read(UpdateConfigMode.values(), _data, offset);

@@ -13,11 +13,16 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
+// Referrer account -> each owner can have multiple accounts for specific reserves
 public record UserMetadata(PublicKey _address,
                            Discriminator discriminator,
+                           // Pubkey of the referrer/owner - pubkey::default if no referrer
                            PublicKey referrer,
+                           // Bump used for validation of account address
                            long bump,
+                           // User lookup table - used to store all user accounts - atas for each reserve mint, each obligation PDA, UserMetadata itself and all referrer_token_states if there is a referrer
                            PublicKey userLookupTable,
+                           // User metadata account owner
                            PublicKey owner,
                            long[] padding1,
                            long[] padding2) implements Borsh {

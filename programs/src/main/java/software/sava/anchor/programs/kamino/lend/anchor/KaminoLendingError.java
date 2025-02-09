@@ -114,7 +114,11 @@ public sealed interface KaminoLendingError extends ProgramError permits
     KaminoLendingError.UnsupportedTokenExtension,
     KaminoLendingError.InvalidTokenAccount,
     KaminoLendingError.DepositDisabledOutsideElevationGroup,
-    KaminoLendingError.CannotCalculateReferralAmountDueToSlotsMismatch {
+    KaminoLendingError.CannotCalculateReferralAmountDueToSlotsMismatch,
+    KaminoLendingError.ObligationOwnersMustMatch,
+    KaminoLendingError.ObligationsMustMatch,
+    KaminoLendingError.LendingMarketsMustMatch,
+    KaminoLendingError.ObligationAlreadyMarkedForDeleveraging {
 
   static KaminoLendingError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -230,6 +234,10 @@ public sealed interface KaminoLendingError extends ProgramError permits
       case 6109 -> InvalidTokenAccount.INSTANCE;
       case 6110 -> DepositDisabledOutsideElevationGroup.INSTANCE;
       case 6111 -> CannotCalculateReferralAmountDueToSlotsMismatch.INSTANCE;
+      case 6112 -> ObligationOwnersMustMatch.INSTANCE;
+      case 6113 -> ObligationsMustMatch.INSTANCE;
+      case 6114 -> LendingMarketsMustMatch.INSTANCE;
+      case 6115 -> ObligationAlreadyMarkedForDeleveraging.INSTANCE;
       default -> throw new IllegalStateException("Unexpected KaminoLending error code: " + errorCode);
     };
   }
@@ -1015,6 +1023,34 @@ public sealed interface KaminoLendingError extends ProgramError permits
 
     public static final CannotCalculateReferralAmountDueToSlotsMismatch INSTANCE = new CannotCalculateReferralAmountDueToSlotsMismatch(
         6111, "Cannot calculate referral amount due to slots mismatch"
+    );
+  }
+
+  record ObligationOwnersMustMatch(int code, String msg) implements KaminoLendingError {
+
+    public static final ObligationOwnersMustMatch INSTANCE = new ObligationOwnersMustMatch(
+        6112, "Obligation owners must match"
+    );
+  }
+
+  record ObligationsMustMatch(int code, String msg) implements KaminoLendingError {
+
+    public static final ObligationsMustMatch INSTANCE = new ObligationsMustMatch(
+        6113, "Obligations must match"
+    );
+  }
+
+  record LendingMarketsMustMatch(int code, String msg) implements KaminoLendingError {
+
+    public static final LendingMarketsMustMatch INSTANCE = new LendingMarketsMustMatch(
+        6114, "Lending markets must match"
+    );
+  }
+
+  record ObligationAlreadyMarkedForDeleveraging(int code, String msg) implements KaminoLendingError {
+
+    public static final ObligationAlreadyMarkedForDeleveraging INSTANCE = new ObligationAlreadyMarkedForDeleveraging(
+        6115, "Obligation is already marked for deleveraging"
     );
   }
 }

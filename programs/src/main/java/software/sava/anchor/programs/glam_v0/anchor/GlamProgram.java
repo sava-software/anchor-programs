@@ -434,7 +434,7 @@ public final class GlamProgram {
       createWrite(userKey),
       createWrite(userStatsKey),
       createWrite(driftStateKey),
-      createRead(vaultKey),
+      createWrite(vaultKey),
       createWritableSigner(signerKey),
       createRead(driftProgramKey),
       createRead(solanaAccounts.systemProgram())

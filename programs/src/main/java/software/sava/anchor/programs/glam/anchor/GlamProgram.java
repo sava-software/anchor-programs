@@ -434,7 +434,7 @@ public final class GlamProgram {
       createWrite(userKey),
       createWrite(userStatsKey),
       createWrite(driftStateKey),
-      createRead(vaultKey),
+      createWrite(vaultKey),
       createWritableSigner(signerKey),
       createRead(driftProgramKey),
       createRead(solanaAccounts.systemProgram())
@@ -1163,11 +1163,7 @@ public final class GlamProgram {
                                         final SolanaAccounts solanaAccounts,
                                         final PublicKey stateKey,
                                         final PublicKey vaultKey,
-                                        // input_vault_ata to input_signer_ata
                                         final PublicKey inputVaultAtaKey,
-                                        final PublicKey inputSignerAtaKey,
-                                        // TODO: Do we really need output_signer_ata?
-                                        final PublicKey outputSignerAtaKey,
                                         final PublicKey outputVaultAtaKey,
                                         final PublicKey inputMintKey,
                                         final PublicKey outputMintKey,
@@ -1183,8 +1179,6 @@ public final class GlamProgram {
       createWrite(stateKey),
       createWrite(vaultKey),
       createWrite(inputVaultAtaKey),
-      createWrite(inputSignerAtaKey),
-      createWrite(outputSignerAtaKey),
       createWrite(outputVaultAtaKey),
       createRead(inputMintKey),
       createRead(outputMintKey),

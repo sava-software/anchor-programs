@@ -11,21 +11,40 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record ReserveLiquidity(PublicKey mintPubkey,
+// Reserve liquidity
+public record ReserveLiquidity(// Reserve liquidity mint address
+                               PublicKey mintPubkey,
+                               // Reserve liquidity supply address
                                PublicKey supplyVault,
+                               // Reserve liquidity fee collection address
                                PublicKey feeVault,
+                               // Reserve liquidity available
                                long availableAmount,
+                               // Reserve liquidity borrowed (scaled fraction)
                                BigInteger borrowedAmountSf,
+                               // Reserve liquidity market price in quote currency (scaled fraction)
                                BigInteger marketPriceSf,
+                               // Unix timestamp of the market price (from the oracle)
                                long marketPriceLastUpdatedTs,
+                               // Reserve liquidity mint decimals
                                long mintDecimals,
-                               long depositLimitCrossedSlot,
-                               long borrowLimitCrossedSlot,
+                               // Timestamp when the last refresh reserve detected that the liquidity amount is above the deposit cap. When this threshold is crossed, then redemptions (auto-deleverage) are enabled.
+                               // If the threshold is not crossed, then the timestamp is set to 0
+                               long depositLimitCrossedTimestamp,
+                               // Timestamp when the last refresh reserve detected that the borrowed amount is above the borrow cap. When this threshold is crossed, then redemptions (auto-deleverage) are enabled.
+                               // If the threshold is not crossed, then the timestamp is set to 0
+                               long borrowLimitCrossedTimestamp,
+                               // Reserve liquidity cumulative borrow rate (scaled fraction)
                                BigFractionBytes cumulativeBorrowRateBsf,
+                               // Reserve cumulative protocol fees (scaled fraction)
                                BigInteger accumulatedProtocolFeesSf,
+                               // Reserve cumulative referrer fees (scaled fraction)
                                BigInteger accumulatedReferrerFeesSf,
+                               // Reserve pending referrer fees, to be claimed in refresh_obligation by referrer or protocol (scaled fraction)
                                BigInteger pendingReferrerFeesSf,
+                               // Reserve referrer fee absolute rate calculated at each refresh_reserve operation (scaled fraction)
                                BigInteger absoluteReferralRateSf,
+                               // Token program of the liquidity mint
                                PublicKey tokenProgram,
                                long[] padding2,
                                BigInteger[] padding3) implements Borsh {
@@ -53,9 +72,9 @@ public record ReserveLiquidity(PublicKey mintPubkey,
     i += 8;
     final var mintDecimals = getInt64LE(_data, i);
     i += 8;
-    final var depositLimitCrossedSlot = getInt64LE(_data, i);
+    final var depositLimitCrossedTimestamp = getInt64LE(_data, i);
     i += 8;
-    final var borrowLimitCrossedSlot = getInt64LE(_data, i);
+    final var borrowLimitCrossedTimestamp = getInt64LE(_data, i);
     i += 8;
     final var cumulativeBorrowRateBsf = BigFractionBytes.read(_data, i);
     i += Borsh.len(cumulativeBorrowRateBsf);
@@ -81,8 +100,8 @@ public record ReserveLiquidity(PublicKey mintPubkey,
                                 marketPriceSf,
                                 marketPriceLastUpdatedTs,
                                 mintDecimals,
-                                depositLimitCrossedSlot,
-                                borrowLimitCrossedSlot,
+                                depositLimitCrossedTimestamp,
+                                borrowLimitCrossedTimestamp,
                                 cumulativeBorrowRateBsf,
                                 accumulatedProtocolFeesSf,
                                 accumulatedReferrerFeesSf,
@@ -112,9 +131,9 @@ public record ReserveLiquidity(PublicKey mintPubkey,
     i += 8;
     putInt64LE(_data, i, mintDecimals);
     i += 8;
-    putInt64LE(_data, i, depositLimitCrossedSlot);
+    putInt64LE(_data, i, depositLimitCrossedTimestamp);
     i += 8;
-    putInt64LE(_data, i, borrowLimitCrossedSlot);
+    putInt64LE(_data, i, borrowLimitCrossedTimestamp);
     i += 8;
     i += Borsh.write(cumulativeBorrowRateBsf, _data, i);
     putInt128LE(_data, i, accumulatedProtocolFeesSf);
