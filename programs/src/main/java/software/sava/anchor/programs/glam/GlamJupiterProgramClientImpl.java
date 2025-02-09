@@ -9,7 +9,6 @@ import software.sava.core.tx.Instruction;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
 
@@ -65,8 +64,8 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         inputVaultATA, outputVaultATA,
         inputMintKey, outputMintKey,
         manager.publicKey(),
-        Objects.requireNonNullElse(inputProgramStateKey, swapProgram),
-        Objects.requireNonNullElse(outputProgramStateKey, swapProgram),
+        inputProgramStateKey,
+        outputProgramStateKey,
         swapProgram,
         inputTokenProgram, outputTokenProgram,
         amount,
