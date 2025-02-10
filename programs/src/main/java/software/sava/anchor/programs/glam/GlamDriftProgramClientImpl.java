@@ -250,7 +250,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   public Instruction placeOrders(final OrderParams[] orderParams, final PublicKey authority, final PublicKey user) {
     return GlamProgram.driftPlaceOrders(
         invokedProgram,
-        solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         user,
         driftAccounts.stateKey(),
@@ -290,13 +289,12 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                      final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
-        solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
-        user,
-        driftAccounts.stateKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
+        driftAccounts.stateKey(),
+        user,
         null,
         OptionalInt.empty(),
         mapDirection(direction)
@@ -309,13 +307,12 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                          final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
-        solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
-        user,
-        driftAccounts.stateKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
+        driftAccounts.stateKey(),
+        user,
         MarketType.Spot,
         OptionalInt.empty(),
         mapDirection(direction)
@@ -328,13 +325,12 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                          final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
-        solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
-        user,
-        driftAccounts.stateKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
+        driftAccounts.stateKey(),
+        user,
         MarketType.Perp,
         OptionalInt.empty(),
         mapDirection(direction)
@@ -348,13 +344,12 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                      final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
     return GlamProgram.driftCancelOrders(
         invokedProgram,
-        solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
-        user,
-        driftAccounts.stateKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
+        driftAccounts.stateKey(),
+        user,
         marketConfig instanceof PerpMarketConfig ? MarketType.Perp : MarketType.Spot,
         OptionalInt.of(marketConfig.marketIndex()),
         mapDirection(direction)

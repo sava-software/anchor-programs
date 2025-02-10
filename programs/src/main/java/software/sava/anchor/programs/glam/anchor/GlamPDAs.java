@@ -45,12 +45,20 @@ public final class GlamPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress inputVaultAtaPDA(final PublicKey program,
-                                                       final PublicKey vaultAccount,
-                                                       final PublicKey inputTokenProgramAccount,
-                                                       final PublicKey inputMintAccount) {
+  public static ProgramDerivedAddress glamVaultPDA(final PublicKey program,
+                                                   final PublicKey glamStateAccount) {
     return PublicKey.findProgramAddress(List.of(
-      vaultAccount.toByteArray(),
+      "vault".getBytes(US_ASCII),
+      glamStateAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress inputSignerAtaPDA(final PublicKey program,
+                                                        final PublicKey signerAccount,
+                                                        final PublicKey inputTokenProgramAccount,
+                                                        final PublicKey inputMintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      signerAccount.toByteArray(),
       inputTokenProgramAccount.toByteArray(),
       inputMintAccount.toByteArray()
     ), program);

@@ -342,24 +342,22 @@ public final class GlamProgram {
   public static final Discriminator DRIFT_CANCEL_ORDERS_DISCRIMINATOR = toDiscriminator(98, 107, 48, 79, 97, 60, 99, 58);
 
   public static Instruction driftCancelOrders(final AccountMeta invokedGlamProgramMeta,
-                                              final SolanaAccounts solanaAccounts,
+                                              final PublicKey glamStateKey,
+                                              final PublicKey glamVaultKey,
+                                              final PublicKey glamSignerKey,
+                                              final PublicKey cpiProgramKey,
                                               final PublicKey stateKey,
                                               final PublicKey userKey,
-                                              final PublicKey driftStateKey,
-                                              final PublicKey vaultKey,
-                                              final PublicKey signerKey,
-                                              final PublicKey driftProgramKey,
                                               final MarketType marketType,
                                               final OptionalInt marketIndex,
                                               final PositionDirection direction) {
     final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
       createRead(stateKey),
-      createWrite(userKey),
-      createWrite(driftStateKey),
-      createRead(vaultKey),
-      createWritableSigner(signerKey),
-      createRead(driftProgramKey),
-      createRead(solanaAccounts.tokenProgram())
+      createWrite(userKey)
     );
 
     final byte[] _data = new byte[
@@ -415,6 +413,61 @@ public final class GlamProgram {
     @Override
     public int l() {
       return 8 + (marketType == null ? 1 : (1 + Borsh.len(marketType))) + (marketIndex == null || marketIndex.isEmpty() ? 1 : (1 + 2)) + (direction == null ? 1 : (1 + Borsh.len(direction)));
+    }
+  }
+
+  public static final Discriminator DRIFT_CANCEL_ORDERS_BY_IDS_DISCRIMINATOR = toDiscriminator(172, 99, 108, 14, 81, 89, 228, 183);
+
+  public static Instruction driftCancelOrdersByIds(final AccountMeta invokedGlamProgramMeta,
+                                                   final PublicKey glamStateKey,
+                                                   final PublicKey glamVaultKey,
+                                                   final PublicKey glamSignerKey,
+                                                   final PublicKey cpiProgramKey,
+                                                   final PublicKey stateKey,
+                                                   final PublicKey userKey,
+                                                   final int[] orderIds) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createRead(stateKey),
+      createWrite(userKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.lenVector(orderIds)];
+    int i = writeDiscriminator(DRIFT_CANCEL_ORDERS_BY_IDS_DISCRIMINATOR, _data, 0);
+    Borsh.writeVector(orderIds, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record DriftCancelOrdersByIdsIxData(Discriminator discriminator, int[] orderIds) implements Borsh {  
+
+    public static DriftCancelOrdersByIdsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static DriftCancelOrdersByIdsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var orderIds = Borsh.readintVector(_data, i);
+      return new DriftCancelOrdersByIdsIxData(discriminator, orderIds);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeVector(orderIds, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.lenVector(orderIds);
     }
   }
 
@@ -545,7 +598,6 @@ public final class GlamProgram {
   public static final Discriminator DRIFT_PLACE_ORDERS_DISCRIMINATOR = toDiscriminator(117, 18, 210, 6, 238, 174, 135, 167);
 
   public static Instruction driftPlaceOrders(final AccountMeta invokedGlamProgramMeta,
-                                             final SolanaAccounts solanaAccounts,
                                              final PublicKey stateKey,
                                              final PublicKey userKey,
                                              final PublicKey driftStateKey,
@@ -559,8 +611,7 @@ public final class GlamProgram {
       createWrite(driftStateKey),
       createRead(vaultKey),
       createWritableSigner(signerKey),
-      createRead(driftProgramKey),
-      createRead(solanaAccounts.tokenProgram())
+      createRead(driftProgramKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(orderParams)];
@@ -1163,7 +1214,11 @@ public final class GlamProgram {
                                         final SolanaAccounts solanaAccounts,
                                         final PublicKey stateKey,
                                         final PublicKey vaultKey,
+                                        // input_vault_ata to input_signer_ata
                                         final PublicKey inputVaultAtaKey,
+                                        final PublicKey inputSignerAtaKey,
+                                        // TODO: Do we really need output_signer_ata?
+                                        final PublicKey outputSignerAtaKey,
                                         final PublicKey outputVaultAtaKey,
                                         final PublicKey inputMintKey,
                                         final PublicKey outputMintKey,
@@ -1179,6 +1234,8 @@ public final class GlamProgram {
       createWrite(stateKey),
       createWrite(vaultKey),
       createWrite(inputVaultAtaKey),
+      createWrite(inputSignerAtaKey),
+      createWrite(outputSignerAtaKey),
       createWrite(outputVaultAtaKey),
       createRead(inputMintKey),
       createRead(outputMintKey),
