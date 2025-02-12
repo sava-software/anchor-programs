@@ -319,27 +319,27 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction createLookupTable(final ProgramDerivedAddress uninitializedTableAccount, final long recentSlot) {
-    throw new UnsupportedOperationException("TODO: createLookupTable");
+    return nativeProgramAccountClient.createLookupTable(uninitializedTableAccount, recentSlot);
   }
 
   @Override
   public Instruction freezeLookupTable(final PublicKey tableAccount) {
-    throw new UnsupportedOperationException("TODO: freezeLookupTable");
+    return nativeProgramAccountClient.freezeLookupTable(tableAccount);
   }
 
   @Override
   public Instruction extendLookupTable(final PublicKey tableAccount, final List<PublicKey> newAddresses) {
-    throw new UnsupportedOperationException("TODO: extendLookupTable");
+    return nativeProgramAccountClient.extendLookupTable(tableAccount, newAddresses);
   }
 
   @Override
   public Instruction deactivateLookupTable(final PublicKey tableAccount) {
-    throw new UnsupportedOperationException("TODO: deactivateLookupTable");
+    return nativeProgramAccountClient.deactivateLookupTable(tableAccount);
   }
 
   @Override
   public Instruction closeLookupTable(final PublicKey tableAccount) {
-    throw new UnsupportedOperationException("TODO: closeLookupTable");
+    return nativeProgramAccountClient.closeLookupTable(tableAccount);
   }
 
   @Override
@@ -397,7 +397,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction allocateAccountSpaceWithSeed(final AccountWithSeed accountWithSeed,
                                                   final long space,
                                                   final PublicKey programOwner) {
-    throw new UnsupportedOperationException("TODO: allocateAccountSpaceWithSeed");
+    return nativeProgramAccountClient.allocateAccountSpaceWithSeed(accountWithSeed, space, programOwner);
   }
 
   @Override

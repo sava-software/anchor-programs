@@ -232,13 +232,8 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
-  public Instruction placeSpotOrder(final OrderParams orderParams) {
-    throw new UnsupportedOperationException("TODO: placeSpotOrder");
-  }
-
-  @Override
   public Instruction placeSpotOrder(final OrderParams orderParams, final PublicKey authority, final PublicKey user) {
-    throw new UnsupportedOperationException("TODO: placeSpotOrder");
+    return placeOrder(orderParams, authority, user);
   }
 
   @Override
@@ -261,18 +256,27 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
-  public Instruction cancelOrder(final PublicKey authority, final PublicKey user, final int orderId) {
-    throw new UnsupportedOperationException("TODO: cancelOrder");
-  }
-
-  @Override
   public Instruction cancelOrders(final PublicKey authority, final PublicKey user, final int[] orderIds) {
-    throw new UnsupportedOperationException("TODO: cancel by orderIds");
+    return GlamProgram.driftCancelOrdersByIds(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        driftAccounts.driftProgram(),
+        driftAccounts.stateKey(),
+        user,
+        orderIds
+    );
   }
 
   @Override
   public Instruction cancelOrderByUserOrderId(final PublicKey authority, final PublicKey user, final int orderId) {
-    throw new UnsupportedOperationException("TODO: cancelOrderByUserOrderId");
+    return cancelOrders(authority, user, new int[]{orderId});
+  }
+
+  @Override
+  public Instruction cancelOrder(final PublicKey authority, final PublicKey user, final int orderId) {
+    return cancelOrderByUserOrderId(authority, user, orderId);
   }
 
   private static PositionDirection mapDirection(final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {

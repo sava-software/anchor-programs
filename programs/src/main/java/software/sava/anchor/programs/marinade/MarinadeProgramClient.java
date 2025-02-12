@@ -62,6 +62,8 @@ public interface MarinadeProgramClient {
 
   PublicKey owner();
 
+  PublicKey feePayer();
+
   default CompletableFuture<List<AccountInfo<TokenAccount>>> fetchMSolTokenAccounts(final SolanaRpcClient rpcClient) {
     return rpcClient.getTokenAccountsForTokenMintByOwner(owner(), marinadeAccounts().mSolTokenMint());
   }
@@ -93,7 +95,7 @@ public interface MarinadeProgramClient {
 
   default AccountWithSeed createOffCurveAccountWithSeed(final String asciiSeed) {
     return PublicKey.createOffCurveAccountWithAsciiSeed(
-        owner(),
+        feePayer(),
         asciiSeed,
         marinadeAccounts().marinadeProgram()
     );

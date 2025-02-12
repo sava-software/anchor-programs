@@ -51,6 +51,11 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   }
 
   @Override
+  public PublicKey feePayer() {
+    return feePayer.publicKey();
+  }
+
+  @Override
   public Instruction marinadeDeposit(final PublicKey mSolTokenAccount, final long lamports) {
     return GlamProgram.marinadeDepositSol(
         invokedProgram,

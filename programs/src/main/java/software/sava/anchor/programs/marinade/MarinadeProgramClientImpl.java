@@ -16,6 +16,7 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
   private final SolanaAccounts solanaAccounts;
   private final MarinadeAccounts marinadeAccounts;
   private final PublicKey owner;
+  private final PublicKey feePayer;
 
   MarinadeProgramClientImpl(final NativeProgramAccountClient nativeProgramAccountClient,
                             final MarinadeAccounts marinadeAccounts) {
@@ -23,6 +24,7 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
     this.solanaAccounts = nativeProgramAccountClient.solanaAccounts();
     this.marinadeAccounts = marinadeAccounts;
     this.owner = nativeProgramAccountClient.ownerPublicKey();
+    this.feePayer = nativeProgramAccountClient.feePayer().publicKey();
   }
 
   @Override
@@ -43,6 +45,11 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
   @Override
   public PublicKey owner() {
     return owner;
+  }
+
+  @Override
+  public PublicKey feePayer() {
+    return feePayer;
   }
 
   @Override
