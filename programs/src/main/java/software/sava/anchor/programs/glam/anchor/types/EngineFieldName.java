@@ -4,8 +4,8 @@ import software.sava.core.borsh.Borsh;
 
 public enum EngineFieldName implements Borsh.Enum {
 
-  ShareClassAllowlist,
-  ShareClassBlocklist,
+  Allowlist,
+  Blocklist,
   ExternalVaultAccounts,
   LockUp,
   DriftMarketIndexesPerp,

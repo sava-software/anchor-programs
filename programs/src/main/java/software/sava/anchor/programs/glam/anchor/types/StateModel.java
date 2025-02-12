@@ -16,7 +16,7 @@ public record StateModel(PublicKey id,
                          Boolean enabled,
                          PublicKey[] assets,
                          PublicKey[] externalVaultAccounts,
-                         ShareClassModel[] mints,
+                         MintModel[] mints,
                          CompanyModel company,
                          ManagerModel owner,
                          CreatedModel created,
@@ -35,7 +35,7 @@ public record StateModel(PublicKey id,
                                         final Boolean enabled,
                                         final PublicKey[] assets,
                                         final PublicKey[] externalVaultAccounts,
-                                        final ShareClassModel[] mints,
+                                        final MintModel[] mints,
                                         final CompanyModel company,
                                         final ManagerModel owner,
                                         final CreatedModel created,
@@ -99,7 +99,7 @@ public record StateModel(PublicKey id,
     if (externalVaultAccounts != null) {
       i += Borsh.lenVector(externalVaultAccounts);
     }
-    final var mints = _data[i++] == 0 ? null : Borsh.readVector(ShareClassModel.class, ShareClassModel::read, _data, i);
+    final var mints = _data[i++] == 0 ? null : Borsh.readVector(MintModel.class, MintModel::read, _data, i);
     if (mints != null) {
       i += Borsh.lenVector(mints);
     }

@@ -19,14 +19,22 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress extraAccountMetaListPDA(final PublicKey program,
-                                                              final PublicKey shareClassMintAccount) {
+                                                              final PublicKey newMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       "extra-account-metas".getBytes(US_ASCII),
-      shareClassMintAccount.toByteArray()
+      newMintAccount.toByteArray()
     ), program);
   }
 
   public static ProgramDerivedAddress extraAccountMetaList1PDA(final PublicKey program,
+                                                               final PublicKey glamMintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "extra-account-metas".getBytes(US_ASCII),
+      glamMintAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress extraAccountMetaList2PDA(final PublicKey program,
                                                                final PublicKey mintAccount) {
     return PublicKey.findProgramAddress(List.of(
       "extra-account-metas".getBytes(US_ASCII),
@@ -37,11 +45,11 @@ public final class GlamPDAs {
   public static ProgramDerivedAddress fromAtaPDA(final PublicKey program,
                                                  final PublicKey fromAccount,
                                                  final PublicKey token2022ProgramAccount,
-                                                 final PublicKey shareClassMintAccount) {
+                                                 final PublicKey glamMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       fromAccount.toByteArray(),
       token2022ProgramAccount.toByteArray(),
-      shareClassMintAccount.toByteArray()
+      glamMintAccount.toByteArray()
     ), program);
   }
 
@@ -65,7 +73,15 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress metadataPDA(final PublicKey program,
-                                                  final PublicKey stateAccount) {
+                                                  final PublicKey glamStateAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "metadata".getBytes(US_ASCII),
+      glamStateAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress metadata1PDA(final PublicKey program,
+                                                   final PublicKey stateAccount) {
     return PublicKey.findProgramAddress(List.of(
       "metadata".getBytes(US_ASCII),
       stateAccount.toByteArray()
@@ -86,11 +102,11 @@ public final class GlamPDAs {
   public static ProgramDerivedAddress mintTo1PDA(final PublicKey program,
                                                  final PublicKey recipientAccount,
                                                  final PublicKey token2022ProgramAccount,
-                                                 final PublicKey shareClassMintAccount) {
+                                                 final PublicKey glamMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       recipientAccount.toByteArray(),
       token2022ProgramAccount.toByteArray(),
-      shareClassMintAccount.toByteArray()
+      glamMintAccount.toByteArray()
     ), program);
   }
 
@@ -106,10 +122,10 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress openfundsMetadataPDA(final PublicKey program,
-                                                           final PublicKey stateAccount) {
+                                                           final PublicKey glamStateAccount) {
     return PublicKey.findProgramAddress(List.of(
       "metadata".getBytes(US_ASCII),
-      stateAccount.toByteArray()
+      glamStateAccount.toByteArray()
     ), program);
   }
 
@@ -146,11 +162,11 @@ public final class GlamPDAs {
   public static ProgramDerivedAddress signerShareAtaPDA(final PublicKey program,
                                                         final PublicKey signerAccount,
                                                         final PublicKey token2022ProgramAccount,
-                                                        final PublicKey shareClassMintAccount) {
+                                                        final PublicKey glamMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       signerAccount.toByteArray(),
       token2022ProgramAccount.toByteArray(),
-      shareClassMintAccount.toByteArray()
+      glamMintAccount.toByteArray()
     ), program);
   }
 
@@ -175,11 +191,11 @@ public final class GlamPDAs {
   public static ProgramDerivedAddress toAtaPDA(final PublicKey program,
                                                final PublicKey toAccount,
                                                final PublicKey token2022ProgramAccount,
-                                               final PublicKey shareClassMintAccount) {
+                                               final PublicKey glamMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       toAccount.toByteArray(),
       token2022ProgramAccount.toByteArray(),
-      shareClassMintAccount.toByteArray()
+      glamMintAccount.toByteArray()
     ), program);
   }
 
@@ -188,6 +204,14 @@ public final class GlamPDAs {
     return PublicKey.findProgramAddress(List.of(
       "vault".getBytes(US_ASCII),
       stateAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress vault1PDA(final PublicKey program,
+                                                final PublicKey glamStateAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "vault".getBytes(US_ASCII),
+      glamStateAccount.toByteArray()
     ), program);
   }
 

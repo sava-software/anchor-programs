@@ -377,7 +377,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                    final long lamports,
                                    final long space,
                                    final PublicKey programOwner) {
-    throw new UnsupportedOperationException("TODO: createAccount");
+    return nativeProgramAccountClient.createAccount(newAccountPublicKey, lamports, space, programOwner);
   }
 
   @Override
@@ -385,7 +385,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                            final long lamports,
                                            final long space,
                                            final PublicKey programOwner) {
-    throw new UnsupportedOperationException("TODO: createAccountWithSeed");
+    return nativeProgramAccountClient.createAccountWithSeed(accountWithSeed, lamports, space, programOwner);
   }
 
   @Override

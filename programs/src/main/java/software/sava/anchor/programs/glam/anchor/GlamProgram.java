@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.OptionalInt;
 
 import software.sava.anchor.programs.glam.anchor.types.MarketType;
+import software.sava.anchor.programs.glam.anchor.types.MintModel;
 import software.sava.anchor.programs.glam.anchor.types.OrderParams;
 import software.sava.anchor.programs.glam.anchor.types.PositionDirection;
-import software.sava.anchor.programs.glam.anchor.types.ShareClassModel;
 import software.sava.anchor.programs.glam.anchor.types.StateModel;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -37,59 +37,59 @@ import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class GlamProgram {
 
-  public static final Discriminator ADD_SHARE_CLASS_DISCRIMINATOR = toDiscriminator(34, 49, 47, 6, 204, 166, 51, 204);
+  public static final Discriminator ADD_MINT_DISCRIMINATOR = toDiscriminator(171, 222, 111, 37, 60, 166, 208, 108);
 
-  public static Instruction addShareClass(final AccountMeta invokedGlamProgramMeta,
-                                          final SolanaAccounts solanaAccounts,
-                                          final PublicKey shareClassMintKey,
-                                          final PublicKey extraAccountMetaListKey,
-                                          final PublicKey stateKey,
-                                          final PublicKey openfundsMetadataKey,
-                                          final PublicKey signerKey,
-                                          final ShareClassModel shareClassMetadata) {
+  public static Instruction addMint(final AccountMeta invokedGlamProgramMeta,
+                                    final SolanaAccounts solanaAccounts,
+                                    final PublicKey glamStateKey,
+                                    final PublicKey newMintKey,
+                                    final PublicKey signerKey,
+                                    final PublicKey extraAccountMetaListKey,
+                                    final PublicKey openfundsMetadataKey,
+                                    final MintModel mintModel) {
     final var keys = List.of(
-      createWrite(shareClassMintKey),
-      createWrite(extraAccountMetaListKey),
-      createWrite(stateKey),
-      createWrite(requireNonNullElse(openfundsMetadataKey, invokedGlamProgramMeta.publicKey())),
+      createWrite(glamStateKey),
+      createWrite(newMintKey),
       createWritableSigner(signerKey),
+      createWrite(extraAccountMetaListKey),
+      createWrite(requireNonNullElse(openfundsMetadataKey, invokedGlamProgramMeta.publicKey())),
       createRead(solanaAccounts.systemProgram()),
       createRead(solanaAccounts.token2022Program())
     );
 
-    final byte[] _data = new byte[8 + Borsh.len(shareClassMetadata)];
-    int i = writeDiscriminator(ADD_SHARE_CLASS_DISCRIMINATOR, _data, 0);
-    Borsh.write(shareClassMetadata, _data, i);
+    final byte[] _data = new byte[8 + Borsh.len(mintModel)];
+    int i = writeDiscriminator(ADD_MINT_DISCRIMINATOR, _data, 0);
+    Borsh.write(mintModel, _data, i);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record AddShareClassIxData(Discriminator discriminator, ShareClassModel shareClassMetadata) implements Borsh {  
+  public record AddMintIxData(Discriminator discriminator, MintModel mintModel) implements Borsh {  
 
-    public static AddShareClassIxData read(final Instruction instruction) {
+    public static AddMintIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static AddShareClassIxData read(final byte[] _data, final int offset) {
+    public static AddMintIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var shareClassMetadata = ShareClassModel.read(_data, i);
-      return new AddShareClassIxData(discriminator, shareClassMetadata);
+      final var mintModel = MintModel.read(_data, i);
+      return new AddMintIxData(discriminator, mintModel);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(shareClassMetadata, _data, i);
+      i += Borsh.write(mintModel, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + Borsh.len(shareClassMetadata);
+      return 8 + Borsh.len(mintModel);
     }
   }
 
@@ -97,32 +97,32 @@ public final class GlamProgram {
 
   public static Instruction burnShare(final AccountMeta invokedGlamProgramMeta,
                                       final SolanaAccounts solanaAccounts,
+                                      final PublicKey glamStateKey,
+                                      final PublicKey glamMintKey,
                                       final PublicKey fromAtaKey,
                                       final PublicKey fromKey,
-                                      final PublicKey shareClassMintKey,
-                                      final PublicKey stateKey,
                                       final PublicKey signerKey,
-                                      final int shareClassId,
+                                      final int mintId,
                                       final long amount) {
     final var keys = List.of(
+      createRead(glamStateKey),
+      createWrite(glamMintKey),
       createWrite(fromAtaKey),
       createRead(fromKey),
-      createWrite(shareClassMintKey),
-      createWrite(stateKey),
       createWritableSigner(signerKey),
       createRead(solanaAccounts.token2022Program())
     );
 
     final byte[] _data = new byte[17];
     int i = writeDiscriminator(BURN_SHARE_DISCRIMINATOR, _data, 0);
-    _data[i] = (byte) shareClassId;
+    _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record BurnShareIxData(Discriminator discriminator, int shareClassId, long amount) implements Borsh {  
+  public record BurnShareIxData(Discriminator discriminator, int mintId, long amount) implements Borsh {  
 
     public static BurnShareIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -136,16 +136,16 @@ public final class GlamProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var shareClassId = _data[i] & 0xFF;
+      final var mintId = _data[i] & 0xFF;
       ++i;
       final var amount = getInt64LE(_data, i);
-      return new BurnShareIxData(discriminator, shareClassId, amount);
+      return new BurnShareIxData(discriminator, mintId, amount);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) shareClassId;
+      _data[i] = (byte) mintId;
       ++i;
       putInt64LE(_data, i, amount);
       i += 8;
@@ -224,21 +224,21 @@ public final class GlamProgram {
     }
   }
 
-  public static final Discriminator CLOSE_SHARE_CLASS_DISCRIMINATOR = toDiscriminator(35, 248, 168, 150, 244, 251, 61, 91);
+  public static final Discriminator CLOSE_MINT_DISCRIMINATOR = toDiscriminator(149, 251, 157, 212, 65, 181, 235, 129);
 
-  public static Instruction closeShareClass(final AccountMeta invokedGlamProgramMeta,
-                                            final SolanaAccounts solanaAccounts,
-                                            final PublicKey stateKey,
-                                            final PublicKey vaultKey,
-                                            final PublicKey shareClassMintKey,
-                                            final PublicKey extraAccountMetaListKey,
-                                            final PublicKey metadataKey,
-                                            final PublicKey signerKey,
-                                            final int shareClassId) {
+  public static Instruction closeMint(final AccountMeta invokedGlamProgramMeta,
+                                      final SolanaAccounts solanaAccounts,
+                                      final PublicKey glamStateKey,
+                                      final PublicKey vaultKey,
+                                      final PublicKey glamMintKey,
+                                      final PublicKey extraAccountMetaListKey,
+                                      final PublicKey metadataKey,
+                                      final PublicKey signerKey,
+                                      final int mintId) {
     final var keys = List.of(
-      createWrite(stateKey),
+      createWrite(glamStateKey),
       createWrite(vaultKey),
-      createWrite(shareClassMintKey),
+      createWrite(glamMintKey),
       createWrite(extraAccountMetaListKey),
       createWrite(metadataKey),
       createWritableSigner(signerKey),
@@ -246,34 +246,34 @@ public final class GlamProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CLOSE_SHARE_CLASS_DISCRIMINATOR, _data, 0);
-    _data[i] = (byte) shareClassId;
+    int i = writeDiscriminator(CLOSE_MINT_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) mintId;
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record CloseShareClassIxData(Discriminator discriminator, int shareClassId) implements Borsh {  
+  public record CloseMintIxData(Discriminator discriminator, int mintId) implements Borsh {  
 
-    public static CloseShareClassIxData read(final Instruction instruction) {
+    public static CloseMintIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 9;
 
-    public static CloseShareClassIxData read(final byte[] _data, final int offset) {
+    public static CloseMintIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var shareClassId = _data[i] & 0xFF;
-      return new CloseShareClassIxData(discriminator, shareClassId);
+      final var mintId = _data[i] & 0xFF;
+      return new CloseMintIxData(discriminator, mintId);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) shareClassId;
+      _data[i] = (byte) mintId;
       ++i;
       return i - offset;
     }
@@ -918,36 +918,36 @@ public final class GlamProgram {
 
   public static Instruction forceTransferShare(final AccountMeta invokedGlamProgramMeta,
                                                final SolanaAccounts solanaAccounts,
+                                               final PublicKey glamStateKey,
+                                               final PublicKey glamMintKey,
                                                final PublicKey fromAtaKey,
                                                final PublicKey toAtaKey,
                                                final PublicKey fromKey,
                                                final PublicKey toKey,
-                                               final PublicKey shareClassMintKey,
-                                               final PublicKey stateKey,
                                                final PublicKey signerKey,
-                                               final int shareClassId,
+                                               final int mintId,
                                                final long amount) {
     final var keys = List.of(
+      createWrite(glamStateKey),
+      createWrite(glamMintKey),
       createWrite(fromAtaKey),
       createWrite(toAtaKey),
       createRead(fromKey),
       createRead(toKey),
-      createWrite(shareClassMintKey),
-      createWrite(stateKey),
       createWritableSigner(signerKey),
       createRead(solanaAccounts.token2022Program())
     );
 
     final byte[] _data = new byte[17];
     int i = writeDiscriminator(FORCE_TRANSFER_SHARE_DISCRIMINATOR, _data, 0);
-    _data[i] = (byte) shareClassId;
+    _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record ForceTransferShareIxData(Discriminator discriminator, int shareClassId, long amount) implements Borsh {  
+  public record ForceTransferShareIxData(Discriminator discriminator, int mintId, long amount) implements Borsh {  
 
     public static ForceTransferShareIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -961,16 +961,16 @@ public final class GlamProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var shareClassId = _data[i] & 0xFF;
+      final var mintId = _data[i] & 0xFF;
       ++i;
       final var amount = getInt64LE(_data, i);
-      return new ForceTransferShareIxData(discriminator, shareClassId, amount);
+      return new ForceTransferShareIxData(discriminator, mintId, amount);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) shareClassId;
+      _data[i] = (byte) mintId;
       ++i;
       putInt64LE(_data, i, amount);
       i += 8;
@@ -1330,9 +1330,7 @@ public final class GlamProgram {
                                                    final PublicKey marinadeStateKey,
                                                    final PublicKey reservePdaKey,
                                                    final PublicKey marinadeProgramKey,
-                                                   final long msolAmount,
-                                                   final String ticketId,
-                                                   final int bump) {
+                                                   final long msolAmount) {
     final var keys = List.of(
       createWritableSigner(signerKey),
       createWrite(stateKey),
@@ -1349,32 +1347,20 @@ public final class GlamProgram {
       createRead(marinadeProgramKey)
     );
 
-    final byte[] _ticketId = ticketId.getBytes(UTF_8);
-    final byte[] _data = new byte[21 + Borsh.lenVector(_ticketId)];
+    final byte[] _data = new byte[16];
     int i = writeDiscriminator(MARINADE_DELAYED_UNSTAKE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, msolAmount);
-    i += 8;
-    i += Borsh.writeVector(_ticketId, _data, i);
-    _data[i] = (byte) bump;
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record MarinadeDelayedUnstakeIxData(Discriminator discriminator,
-                                             long msolAmount,
-                                             String ticketId, byte[] _ticketId,
-                                             int bump) implements Borsh {  
+  public record MarinadeDelayedUnstakeIxData(Discriminator discriminator, long msolAmount) implements Borsh {  
 
     public static MarinadeDelayedUnstakeIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static MarinadeDelayedUnstakeIxData createRecord(final Discriminator discriminator,
-                                                            final long msolAmount,
-                                                            final String ticketId,
-                                                            final int bump) {
-      return new MarinadeDelayedUnstakeIxData(discriminator, msolAmount, ticketId, ticketId.getBytes(UTF_8), bump);
-    }
+    public static final int BYTES = 16;
 
     public static MarinadeDelayedUnstakeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -1383,11 +1369,7 @@ public final class GlamProgram {
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var msolAmount = getInt64LE(_data, i);
-      i += 8;
-      final var ticketId = Borsh.string(_data, i);
-      i += (Integer.BYTES + getInt32LE(_data, i));
-      final var bump = _data[i] & 0xFF;
-      return new MarinadeDelayedUnstakeIxData(discriminator, msolAmount, ticketId, ticketId.getBytes(UTF_8), bump);
+      return new MarinadeDelayedUnstakeIxData(discriminator, msolAmount);
     }
 
     @Override
@@ -1395,15 +1377,12 @@ public final class GlamProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, msolAmount);
       i += 8;
-      i += Borsh.writeVector(_ticketId, _data, i);
-      _data[i] = (byte) bump;
-      ++i;
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 8 + Borsh.lenVector(_ticketId) + 1;
+      return BYTES;
     }
   }
 
@@ -1682,32 +1661,32 @@ public final class GlamProgram {
 
   public static Instruction mintShare(final AccountMeta invokedGlamProgramMeta,
                                       final SolanaAccounts solanaAccounts,
+                                      final PublicKey glamStateKey,
+                                      final PublicKey glamMintKey,
+                                      final PublicKey signerKey,
                                       final PublicKey mintToKey,
                                       final PublicKey recipientKey,
-                                      final PublicKey shareClassMintKey,
-                                      final PublicKey stateKey,
-                                      final PublicKey signerKey,
-                                      final int shareClassId,
+                                      final int mintId,
                                       final long amount) {
     final var keys = List.of(
+      createWrite(glamStateKey),
+      createWrite(glamMintKey),
+      createWritableSigner(signerKey),
       createWrite(mintToKey),
       createRead(recipientKey),
-      createWrite(shareClassMintKey),
-      createWrite(stateKey),
-      createWritableSigner(signerKey),
       createRead(solanaAccounts.token2022Program())
     );
 
     final byte[] _data = new byte[17];
     int i = writeDiscriminator(MINT_SHARE_DISCRIMINATOR, _data, 0);
-    _data[i] = (byte) shareClassId;
+    _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record MintShareIxData(Discriminator discriminator, int shareClassId, long amount) implements Borsh {  
+  public record MintShareIxData(Discriminator discriminator, int mintId, long amount) implements Borsh {  
 
     public static MintShareIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -1721,16 +1700,16 @@ public final class GlamProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var shareClassId = _data[i] & 0xFF;
+      final var mintId = _data[i] & 0xFF;
       ++i;
       final var amount = getInt64LE(_data, i);
-      return new MintShareIxData(discriminator, shareClassId, amount);
+      return new MintShareIxData(discriminator, mintId, amount);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) shareClassId;
+      _data[i] = (byte) mintId;
       ++i;
       putInt64LE(_data, i, amount);
       i += 8;
@@ -1841,21 +1820,21 @@ public final class GlamProgram {
 
   public static Instruction redeem(final AccountMeta invokedGlamProgramMeta,
                                    final SolanaAccounts solanaAccounts,
-                                   final PublicKey stateKey,
-                                   final PublicKey shareClassKey,
-                                   final PublicKey signerShareAtaKey,
+                                   final PublicKey glamStateKey,
+                                   final PublicKey glamVaultKey,
+                                   final PublicKey glamMintKey,
                                    final PublicKey signerKey,
-                                   final PublicKey vaultKey,
+                                   final PublicKey signerShareAtaKey,
                                    final PublicKey signerPolicyKey,
                                    final long amount,
                                    final boolean inKind,
                                    final boolean skipState) {
     final var keys = List.of(
-      createRead(stateKey),
-      createWrite(shareClassKey),
-      createWrite(signerShareAtaKey),
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWrite(glamMintKey),
       createWritableSigner(signerKey),
-      createWrite(vaultKey),
+      createWrite(signerShareAtaKey),
       createWrite(requireNonNullElse(signerPolicyKey, invokedGlamProgramMeta.publicKey())),
       createRead(solanaAccounts.systemProgram()),
       createRead(solanaAccounts.tokenProgram()),
@@ -2042,28 +2021,28 @@ public final class GlamProgram {
 
   public static Instruction setTokenAccountsStates(final AccountMeta invokedGlamProgramMeta,
                                                    final SolanaAccounts solanaAccounts,
-                                                   final PublicKey shareClassMintKey,
-                                                   final PublicKey stateKey,
+                                                   final PublicKey glamStateKey,
+                                                   final PublicKey glamMintKey,
                                                    final PublicKey signerKey,
-                                                   final int shareClassId,
+                                                   final int mintId,
                                                    final boolean frozen) {
     final var keys = List.of(
-      createWrite(shareClassMintKey),
-      createWrite(stateKey),
+      createRead(glamStateKey),
+      createWrite(glamMintKey),
       createWritableSigner(signerKey),
       createRead(solanaAccounts.token2022Program())
     );
 
     final byte[] _data = new byte[10];
     int i = writeDiscriminator(SET_TOKEN_ACCOUNTS_STATES_DISCRIMINATOR, _data, 0);
-    _data[i] = (byte) shareClassId;
+    _data[i] = (byte) mintId;
     ++i;
     _data[i] = (byte) (frozen ? 1 : 0);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record SetTokenAccountsStatesIxData(Discriminator discriminator, int shareClassId, boolean frozen) implements Borsh {  
+  public record SetTokenAccountsStatesIxData(Discriminator discriminator, int mintId, boolean frozen) implements Borsh {  
 
     public static SetTokenAccountsStatesIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -2077,16 +2056,16 @@ public final class GlamProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var shareClassId = _data[i] & 0xFF;
+      final var mintId = _data[i] & 0xFF;
       ++i;
       final var frozen = _data[i] == 1;
-      return new SetTokenAccountsStatesIxData(discriminator, shareClassId, frozen);
+      return new SetTokenAccountsStatesIxData(discriminator, mintId, frozen);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) shareClassId;
+      _data[i] = (byte) mintId;
       ++i;
       _data[i] = (byte) (frozen ? 1 : 0);
       ++i;
@@ -2470,22 +2449,22 @@ public final class GlamProgram {
 
   public static Instruction subscribe(final AccountMeta invokedGlamProgramMeta,
                                       final SolanaAccounts solanaAccounts,
-                                      final PublicKey stateKey,
-                                      final PublicKey vaultKey,
-                                      final PublicKey shareClassMintKey,
+                                      final PublicKey glamStateKey,
+                                      final PublicKey glamVaultKey,
+                                      final PublicKey glamMintKey,
                                       final PublicKey signerShareAtaKey,
                                       final PublicKey assetKey,
                                       final PublicKey vaultAtaKey,
                                       final PublicKey signerAssetAtaKey,
                                       final PublicKey signerPolicyKey,
                                       final PublicKey signerKey,
-                                      final int shareClassId,
+                                      final int mintId,
                                       final long amount,
                                       final boolean skipState) {
     final var keys = List.of(
-      createRead(stateKey),
-      createWrite(vaultKey),
-      createWrite(shareClassMintKey),
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWrite(glamMintKey),
       createWrite(signerShareAtaKey),
       createRead(assetKey),
       createWrite(vaultAtaKey),
@@ -2500,7 +2479,7 @@ public final class GlamProgram {
 
     final byte[] _data = new byte[18];
     int i = writeDiscriminator(SUBSCRIBE_DISCRIMINATOR, _data, 0);
-    _data[i] = (byte) shareClassId;
+    _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amount);
     i += 8;
@@ -2510,7 +2489,7 @@ public final class GlamProgram {
   }
 
   public record SubscribeIxData(Discriminator discriminator,
-                                int shareClassId,
+                                int mintId,
                                 long amount,
                                 boolean skipState) implements Borsh {  
 
@@ -2526,18 +2505,18 @@ public final class GlamProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var shareClassId = _data[i] & 0xFF;
+      final var mintId = _data[i] & 0xFF;
       ++i;
       final var amount = getInt64LE(_data, i);
       i += 8;
       final var skipState = _data[i] == 1;
-      return new SubscribeIxData(discriminator, shareClassId, amount, skipState);
+      return new SubscribeIxData(discriminator, mintId, amount, skipState);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) shareClassId;
+      _data[i] = (byte) mintId;
       ++i;
       putInt64LE(_data, i, amount);
       i += 8;
@@ -2674,61 +2653,61 @@ public final class GlamProgram {
     }
   }
 
-  public static final Discriminator UPDATE_SHARE_CLASS_DISCRIMINATOR = toDiscriminator(196, 227, 109, 174, 25, 115, 15, 26);
+  public static final Discriminator UPDATE_MINT_DISCRIMINATOR = toDiscriminator(212, 203, 57, 78, 75, 245, 222, 5);
 
-  public static Instruction updateShareClass(final AccountMeta invokedGlamProgramMeta,
-                                             final SolanaAccounts solanaAccounts,
-                                             final PublicKey shareClassMintKey,
-                                             final PublicKey stateKey,
-                                             final PublicKey signerKey,
-                                             final int shareClassId,
-                                             final ShareClassModel shareClassMetadata) {
+  public static Instruction updateMint(final AccountMeta invokedGlamProgramMeta,
+                                       final SolanaAccounts solanaAccounts,
+                                       final PublicKey glamStateKey,
+                                       final PublicKey glamMintKey,
+                                       final PublicKey signerKey,
+                                       final int mintId,
+                                       final MintModel mintModel) {
     final var keys = List.of(
-      createWrite(shareClassMintKey),
-      createWrite(stateKey),
+      createWrite(glamStateKey),
+      createWrite(glamMintKey),
       createWritableSigner(signerKey),
       createRead(solanaAccounts.token2022Program())
     );
 
-    final byte[] _data = new byte[9 + Borsh.len(shareClassMetadata)];
-    int i = writeDiscriminator(UPDATE_SHARE_CLASS_DISCRIMINATOR, _data, 0);
-    _data[i] = (byte) shareClassId;
+    final byte[] _data = new byte[9 + Borsh.len(mintModel)];
+    int i = writeDiscriminator(UPDATE_MINT_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) mintId;
     ++i;
-    Borsh.write(shareClassMetadata, _data, i);
+    Borsh.write(mintModel, _data, i);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record UpdateShareClassIxData(Discriminator discriminator, int shareClassId, ShareClassModel shareClassMetadata) implements Borsh {  
+  public record UpdateMintIxData(Discriminator discriminator, int mintId, MintModel mintModel) implements Borsh {  
 
-    public static UpdateShareClassIxData read(final Instruction instruction) {
+    public static UpdateMintIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static UpdateShareClassIxData read(final byte[] _data, final int offset) {
+    public static UpdateMintIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var shareClassId = _data[i] & 0xFF;
+      final var mintId = _data[i] & 0xFF;
       ++i;
-      final var shareClassMetadata = ShareClassModel.read(_data, i);
-      return new UpdateShareClassIxData(discriminator, shareClassId, shareClassMetadata);
+      final var mintModel = MintModel.read(_data, i);
+      return new UpdateMintIxData(discriminator, mintId, mintModel);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) shareClassId;
+      _data[i] = (byte) mintId;
       ++i;
-      i += Borsh.write(shareClassMetadata, _data, i);
+      i += Borsh.write(mintModel, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 1 + Borsh.len(shareClassMetadata);
+      return 8 + 1 + Borsh.len(mintModel);
     }
   }
 

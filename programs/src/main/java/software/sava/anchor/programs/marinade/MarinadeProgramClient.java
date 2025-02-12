@@ -12,6 +12,7 @@ import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -57,11 +58,19 @@ public interface MarinadeProgramClient {
 
   MarinadeAccounts marinadeAccounts();
 
-  CompletableFuture<List<AccountInfo<TokenAccount>>> fetchMSolTokenAccounts(final SolanaRpcClient rpcClient);
+  NativeProgramAccountClient nativeProgramAccountClient();
+
+  PublicKey owner();
+
+  default CompletableFuture<List<AccountInfo<TokenAccount>>> fetchMSolTokenAccounts(final SolanaRpcClient rpcClient) {
+    return rpcClient.getTokenAccountsForTokenMintByOwner(owner(), marinadeAccounts().mSolTokenMint());
+  }
 
   Instruction marinadeDeposit(final PublicKey mSolTokenAccount, final long lamports);
 
-  CompletableFuture<AccountInfo<State>> fetchProgramState(final SolanaRpcClient rpcClient);
+  default CompletableFuture<AccountInfo<State>> fetchProgramState(final SolanaRpcClient rpcClient) {
+    return rpcClient.getAccountInfo(marinadeAccounts().stateProgram(), State.FACTORY);
+  }
 
   static CompletableFuture<AccountInfo<MarinadeValidatorList>> fetchValidatorList(final SolanaRpcClient rpcClient,
                                                                                   final State programState) {
@@ -69,7 +78,44 @@ public interface MarinadeProgramClient {
     return rpcClient.getAccountInfo(destinationValidatorList.account(), MarinadeValidatorList.FACTORY);
   }
 
-  ProgramDerivedAddress findDuplicationKey(PublicKey validatorPublicKey);
+  default CompletableFuture<List<AccountInfo<TicketAccountData>>> fetchTicketAccounts(final SolanaRpcClient rpcClient) {
+    return fetchTicketAccounts(rpcClient, marinadeAccounts().marinadeProgram(), owner());
+  }
+
+  default ProgramDerivedAddress findDuplicationKey(final PublicKey validatorPublicKey) {
+    final var marinadeAccounts = marinadeAccounts();
+    return PublicKey.findProgramAddress(List.of(
+        marinadeAccounts.stateProgram().toByteArray(),
+        "unique_validator".getBytes(StandardCharsets.UTF_8),
+        validatorPublicKey.toByteArray()
+    ), marinadeAccounts.marinadeProgram());
+  }
+
+  default AccountWithSeed createOffCurveAccountWithSeed(final String asciiSeed) {
+    return PublicKey.createOffCurveAccountWithAsciiSeed(
+        owner(),
+        asciiSeed,
+        marinadeAccounts().marinadeProgram()
+    );
+  }
+
+  default Instruction createTicketAccountIx(final PublicKey ticketAccount, final long minRentLamports) {
+    return nativeProgramAccountClient().createAccount(
+        ticketAccount,
+        minRentLamports,
+        TicketAccountData.BYTES,
+        marinadeAccounts().marinadeProgram()
+    );
+  }
+
+  default Instruction createTicketAccountWithSeedIx(final AccountWithSeed accountWithSeed, final long minRentLamports) {
+    return nativeProgramAccountClient().createAccountWithSeed(
+        accountWithSeed,
+        minRentLamports,
+        TicketAccountData.BYTES,
+        marinadeAccounts().marinadeProgram()
+    );
+  }
 
   Instruction depositStakeAccount(final State marinadeProgramState,
                                   final PublicKey stakeAccount,
@@ -77,17 +123,9 @@ public interface MarinadeProgramClient {
                                   final PublicKey validatorPublicKey,
                                   final int validatorIndex);
 
-  Instruction createTicketAccountIx(final PublicKey ticketAccount, final long minRentLamports);
-
-  AccountWithSeed createOffCurveAccountWithSeed(final String asciiSeed);
-
-  Instruction createTicketAccountWithSeedIx(final AccountWithSeed accountWithSeed, final long minRentLamports);
-
   Instruction orderUnstake(final PublicKey mSolTokenAccount,
                            final PublicKey ticketAccount,
                            final long lamports);
-
-  CompletableFuture<List<AccountInfo<TicketAccountData>>> fetchTicketAccounts(final SolanaRpcClient rpcClient);
 
   Instruction claimTicket(final PublicKey ticketAccount);
 

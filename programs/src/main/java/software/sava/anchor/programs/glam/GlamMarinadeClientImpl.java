@@ -2,21 +2,15 @@ package software.sava.anchor.programs.glam;
 
 import software.sava.anchor.programs.glam.anchor.GlamProgram;
 import software.sava.anchor.programs.marinade.MarinadeAccounts;
-import software.sava.anchor.programs.marinade.MarinadeProgramClient;
 import software.sava.anchor.programs.marinade.anchor.types.State;
-import software.sava.anchor.programs.marinade.anchor.types.TicketAccountData;
-import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
-import software.sava.core.accounts.token.TokenAccount;
 import software.sava.core.tx.Instruction;
-import software.sava.rpc.json.http.client.SolanaRpcClient;
-import software.sava.rpc.json.http.response.AccountInfo;
+import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 final class GlamMarinadeClientImpl implements GlamMarinadeClient {
 
@@ -24,16 +18,16 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   private final MarinadeAccounts marinadeAccounts;
   private final GlamVaultAccounts glamVaultAccounts;
   private final AccountMeta invokedProgram;
+  private final GlamProgramAccountClient glamClient;
   private final AccountMeta feePayer;
-  private final MarinadeProgramClient marinadeProgramClient;
 
   GlamMarinadeClientImpl(final GlamProgramAccountClient glamClient, final MarinadeAccounts marinadeAccounts) {
     this.solanaAccounts = glamClient.solanaAccounts();
     this.marinadeAccounts = marinadeAccounts;
     this.glamVaultAccounts = glamClient.vaultAccounts();
     this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProgram();
+    this.glamClient = glamClient;
     this.feePayer = glamClient.feePayer();
-    this.marinadeProgramClient = MarinadeProgramClient.createClient(glamClient, marinadeAccounts);
   }
 
   @Override
@@ -47,18 +41,13 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   }
 
   @Override
-  public VaultPDA createMarinadeTicket() {
-    return VaultPDA.createPDA("ticket", glamVaultAccounts.glamPublicKey(), invokedProgram.publicKey());
+  public NativeProgramAccountClient nativeProgramAccountClient() {
+    return glamClient;
   }
 
   @Override
-  public CompletableFuture<List<AccountInfo<TokenAccount>>> fetchMSolTokenAccounts(final SolanaRpcClient rpcClient) {
-    return marinadeProgramClient.fetchMSolTokenAccounts(rpcClient);
-  }
-
-  @Override
-  public CompletableFuture<List<AccountInfo<TicketAccountData>>> fetchTicketAccounts(final SolanaRpcClient rpcClient) {
-    return marinadeProgramClient.fetchTicketAccounts(rpcClient);
+  public PublicKey owner() {
+    return glamVaultAccounts.vaultPublicKey();
   }
 
   @Override
@@ -80,16 +69,6 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         marinadeAccounts.marinadeProgram(),
         lamports
     );
-  }
-
-  @Override
-  public CompletableFuture<AccountInfo<State>> fetchProgramState(final SolanaRpcClient rpcClient) {
-    return marinadeProgramClient.fetchProgramState(rpcClient);
-  }
-
-  @Override
-  public ProgramDerivedAddress findDuplicationKey(final PublicKey validatorPublicKey) {
-    return marinadeProgramClient.findDuplicationKey(validatorPublicKey);
   }
 
   @Override
@@ -119,24 +98,21 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
 
   @Override
   public Instruction orderUnstake(final PublicKey mSolTokenAccount,
-                                  final VaultPDA ticketAccount,
+                                  final PublicKey ticketAccount,
                                   final long lamports) {
-    final var ticketPDA = ticketAccount.pda();
     return GlamProgram.marinadeDelayedUnstake(
         invokedProgram,
         solanaAccounts,
         feePayer.publicKey(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
-        ticketPDA.publicKey(),
+        ticketAccount,
         marinadeAccounts.mSolTokenMint(),
         mSolTokenAccount,
         marinadeAccounts.stateProgram(),
         marinadeAccounts.treasuryReserveSolPDA(),
         marinadeAccounts.marinadeProgram(),
-        lamports,
-        ticketAccount.id(),
-        ticketPDA.nonce()
+        lamports
     );
   }
 

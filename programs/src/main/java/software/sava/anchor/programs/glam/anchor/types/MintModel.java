@@ -11,49 +11,49 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 
-public record ShareClassModel(String symbol, byte[] _symbol,
-                              String name, byte[] _name,
-                              String uri, byte[] _uri,
-                              PublicKey statePubkey,
-                              PublicKey asset,
-                              String imageUri, byte[] _imageUri,
-                              PublicKey[] allowlist,
-                              PublicKey[] blocklist,
-                              OptionalInt lockUpPeriodInSeconds,
-                              PublicKey permanentDelegate,
-                              Boolean defaultAccountStateFrozen,
-                              Boolean isRawOpenfunds,
-                              ShareClassOpenfundsModel rawOpenfunds) implements Borsh {
+public record MintModel(String symbol, byte[] _symbol,
+                        String name, byte[] _name,
+                        String uri, byte[] _uri,
+                        PublicKey statePubkey,
+                        PublicKey asset,
+                        String imageUri, byte[] _imageUri,
+                        PublicKey[] allowlist,
+                        PublicKey[] blocklist,
+                        OptionalInt lockUpPeriodInSeconds,
+                        PublicKey permanentDelegate,
+                        Boolean defaultAccountStateFrozen,
+                        Boolean isRawOpenfunds,
+                        MintOpenfundsModel rawOpenfunds) implements Borsh {
 
-  public static ShareClassModel createRecord(final String symbol,
-                                             final String name,
-                                             final String uri,
-                                             final PublicKey statePubkey,
-                                             final PublicKey asset,
-                                             final String imageUri,
-                                             final PublicKey[] allowlist,
-                                             final PublicKey[] blocklist,
-                                             final OptionalInt lockUpPeriodInSeconds,
-                                             final PublicKey permanentDelegate,
-                                             final Boolean defaultAccountStateFrozen,
-                                             final Boolean isRawOpenfunds,
-                                             final ShareClassOpenfundsModel rawOpenfunds) {
-    return new ShareClassModel(symbol, Borsh.getBytes(symbol),
-                               name, Borsh.getBytes(name),
-                               uri, Borsh.getBytes(uri),
-                               statePubkey,
-                               asset,
-                               imageUri, Borsh.getBytes(imageUri),
-                               allowlist,
-                               blocklist,
-                               lockUpPeriodInSeconds,
-                               permanentDelegate,
-                               defaultAccountStateFrozen,
-                               isRawOpenfunds,
-                               rawOpenfunds);
+  public static MintModel createRecord(final String symbol,
+                                       final String name,
+                                       final String uri,
+                                       final PublicKey statePubkey,
+                                       final PublicKey asset,
+                                       final String imageUri,
+                                       final PublicKey[] allowlist,
+                                       final PublicKey[] blocklist,
+                                       final OptionalInt lockUpPeriodInSeconds,
+                                       final PublicKey permanentDelegate,
+                                       final Boolean defaultAccountStateFrozen,
+                                       final Boolean isRawOpenfunds,
+                                       final MintOpenfundsModel rawOpenfunds) {
+    return new MintModel(symbol, Borsh.getBytes(symbol),
+                         name, Borsh.getBytes(name),
+                         uri, Borsh.getBytes(uri),
+                         statePubkey,
+                         asset,
+                         imageUri, Borsh.getBytes(imageUri),
+                         allowlist,
+                         blocklist,
+                         lockUpPeriodInSeconds,
+                         permanentDelegate,
+                         defaultAccountStateFrozen,
+                         isRawOpenfunds,
+                         rawOpenfunds);
   }
 
-  public static ShareClassModel read(final byte[] _data, final int offset) {
+  public static MintModel read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
@@ -106,20 +106,20 @@ public record ShareClassModel(String symbol, byte[] _symbol,
     if (isRawOpenfunds != null) {
       ++i;
     }
-    final var rawOpenfunds = _data[i++] == 0 ? null : ShareClassOpenfundsModel.read(_data, i);
-    return new ShareClassModel(symbol, Borsh.getBytes(symbol),
-                               name, Borsh.getBytes(name),
-                               uri, Borsh.getBytes(uri),
-                               statePubkey,
-                               asset,
-                               imageUri, Borsh.getBytes(imageUri),
-                               allowlist,
-                               blocklist,
-                               lockUpPeriodInSeconds,
-                               permanentDelegate,
-                               defaultAccountStateFrozen,
-                               isRawOpenfunds,
-                               rawOpenfunds);
+    final var rawOpenfunds = _data[i++] == 0 ? null : MintOpenfundsModel.read(_data, i);
+    return new MintModel(symbol, Borsh.getBytes(symbol),
+                         name, Borsh.getBytes(name),
+                         uri, Borsh.getBytes(uri),
+                         statePubkey,
+                         asset,
+                         imageUri, Borsh.getBytes(imageUri),
+                         allowlist,
+                         blocklist,
+                         lockUpPeriodInSeconds,
+                         permanentDelegate,
+                         defaultAccountStateFrozen,
+                         isRawOpenfunds,
+                         rawOpenfunds);
   }
 
   @Override
