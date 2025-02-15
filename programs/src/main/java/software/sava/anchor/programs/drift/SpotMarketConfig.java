@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static java.lang.System.Logger.Level.WARNING;
 import static systems.comodal.jsoniter.JsonIterator.fieldEquals;
 
 public record SpotMarketConfig(String symbol,
@@ -120,8 +121,16 @@ public record SpotMarketConfig(String symbol,
     return configs;
   }
 
-  private static String replaceScale(final String enumString, final int index, final char replacement) {
-    return enumString.substring(0, index + 1) + replacement + enumString.substring(index + 3);
+  private static String replaceScale(final String enumString,
+                                     final int index,
+                                     final char replacement) {
+    final var prefix = enumString.substring(0, index + 1);
+    final int fromSuffix = index + 2;
+    if (fromSuffix < enumString.length()) {
+      return prefix + replacement + enumString.substring(fromSuffix);
+    } else {
+      return prefix + replacement;
+    }
   }
 
   static OracleSource parseOracleSource(final JsonIterator ji) {
@@ -129,27 +138,21 @@ public record SpotMarketConfig(String symbol,
     if (oracleSource == null || oracleSource.isBlank()) {
       return null;
     }
-    if (oracleSource.equalsIgnoreCase("PYTH_1M_PULL")) {
-      return OracleSource.Pyth1MPull;
-    } else if (oracleSource.equalsIgnoreCase("PYTH_1K_PULL")) {
-      return OracleSource.Pyth1KPull;
+    var enumString = AnchorUtil.camelCase(oracleSource.toLowerCase(Locale.ENGLISH), true);
+    int i = enumString.indexOf("1k");
+    if (i > 0) {
+      enumString = replaceScale(enumString, i, 'K');
     } else {
-      var enumString = AnchorUtil.camelCase(oracleSource.toLowerCase(Locale.ENGLISH), true);
-      int i = enumString.indexOf("1k");
+      i = enumString.indexOf("1m");
       if (i > 0) {
-        enumString = replaceScale(enumString, i, 'K');
-      } else {
-        i = enumString.indexOf("1m");
-        if (i > 0) {
-          enumString = replaceScale(enumString, i, 'M');
-        }
+        enumString = replaceScale(enumString, i, 'M');
       }
-      try {
-        return OracleSource.valueOf(enumString);
-      } catch (final RuntimeException ex) {
-        logger.log(System.Logger.Level.WARNING, "Unknown oracle source: " + oracleSource, ex.getCause());
-        return null;
-      }
+    }
+    try {
+      return OracleSource.valueOf(enumString);
+    } catch (final RuntimeException ex) {
+      logger.log(WARNING, "Unknown oracle source: " + enumString, ex.getCause());
+      return null;
     }
   }
 

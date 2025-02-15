@@ -23,7 +23,7 @@ import static java.nio.file.StandardOpenOption.*;
 
 final class GenerateMarketConstants {
 
-  private static String quoteJson(final String javascript) {
+  static String quoteJson(final String javascript) {
     return javascript.replaceAll("(\\w+):\\s+", "\"$1\": ");
   }
 
@@ -84,7 +84,7 @@ final class GenerateMarketConstants {
     return new MarketConfigs<>(mainNetConfigs, devNetConfigs);
   }
 
-  private static String convertJson(final String javascript) {
+  static String convertJson(final String javascript) {
     return javascript
         .replace('\'', '"')
         .replaceAll("\\s+.*precision.*", "")
@@ -117,7 +117,7 @@ final class GenerateMarketConstants {
   private static final String DEV_NET_SPOT_KEY = "DevnetSpotMarkets: SpotMarketConfig[]";
   private static final String MAIN_NET_SPOT_KEY = "MainnetSpotMarkets: SpotMarketConfig[]";
   private static final String DEV_NET_PERP_KEY = "DevnetPerpMarkets: PerpMarketConfig[]";
-  private static final String MAIN_NET_PERP_KEY = "MainnetPerpMarkets: PerpMarketConfig[]";
+  static final String MAIN_NET_PERP_KEY = "MainnetPerpMarkets: PerpMarketConfig[]";
 
   static CompletableFuture<DynamicSpotMarkets> createSpotMarkets(final HttpClient httpClient) {
     final var responseFuture = fetchSpotMarkets(httpClient);
