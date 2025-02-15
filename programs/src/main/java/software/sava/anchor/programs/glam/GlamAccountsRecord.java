@@ -14,9 +14,10 @@ public record GlamAccountsRecord(PublicKey program, AccountMeta invokedProgram) 
   public ProgramDerivedAddress mintPDA(final PublicKey glamPublicKey, final int shareClassId) {
     return PublicKey.findProgramAddress(
         List.of(
-            "share".getBytes(UTF_8),
+            "mint".getBytes(UTF_8),
             new byte[]{(byte) (shareClassId % 256)},
             glamPublicKey.toByteArray()
-        ), program());
+        ), program()
+    );
   }
 }

@@ -9,6 +9,7 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
+import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public sealed interface PerpFulfillmentMethod extends RustEnum permits
   PerpFulfillmentMethod.AMM,
@@ -38,9 +39,11 @@ public sealed interface PerpFulfillmentMethod extends RustEnum permits
     }
   }
 
-  record Match(PublicKey _publicKey, int _u16) implements PerpFulfillmentMethod {
+  record Match(PublicKey _publicKey,
+               int _u16,
+               long _u64) implements PerpFulfillmentMethod {
 
-    public static final int BYTES = 34;
+    public static final int BYTES = 42;
 
     public static Match read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -50,7 +53,9 @@ public sealed interface PerpFulfillmentMethod extends RustEnum permits
       final var _publicKey = readPubKey(_data, i);
       i += 32;
       final var _u16 = getInt16LE(_data, i);
-      return new Match(_publicKey, _u16);
+      i += 2;
+      final var _u64 = getInt64LE(_data, i);
+      return new Match(_publicKey, _u16, _u64);
     }
 
     @Override
@@ -60,6 +65,8 @@ public sealed interface PerpFulfillmentMethod extends RustEnum permits
       i += 32;
       putInt16LE(_data, i, _u16);
       i += 2;
+      putInt64LE(_data, i, _u64);
+      i += 8;
       return i - offset;
     }
 

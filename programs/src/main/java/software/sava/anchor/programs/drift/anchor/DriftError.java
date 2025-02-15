@@ -311,7 +311,10 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.UnverifiedPythLazerMessage,
     DriftError.InvalidPythLazerMessage,
     DriftError.PythLazerMessagePriceFeedMismatch,
-    DriftError.InvalidLiquidateSpotWithSwap {
+    DriftError.InvalidLiquidateSpotWithSwap,
+    DriftError.SwiftUserContextUserMismatch,
+    DriftError.UserFuelOverflowThresholdNotMet,
+    DriftError.FuelOverflowAccountNotFound {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -624,6 +627,9 @@ public sealed interface DriftError extends ProgramError permits
       case 6306 -> InvalidPythLazerMessage.INSTANCE;
       case 6307 -> PythLazerMessagePriceFeedMismatch.INSTANCE;
       case 6308 -> InvalidLiquidateSpotWithSwap.INSTANCE;
+      case 6309 -> SwiftUserContextUserMismatch.INSTANCE;
+      case 6310 -> UserFuelOverflowThresholdNotMet.INSTANCE;
+      case 6311 -> FuelOverflowAccountNotFound.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2788,6 +2794,27 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final InvalidLiquidateSpotWithSwap INSTANCE = new InvalidLiquidateSpotWithSwap(
         6308, "InvalidLiquidateSpotWithSwap"
+    );
+  }
+
+  record SwiftUserContextUserMismatch(int code, String msg) implements DriftError {
+
+    public static final SwiftUserContextUserMismatch INSTANCE = new SwiftUserContextUserMismatch(
+        6309, "User in swift message does not match user in ix context"
+    );
+  }
+
+  record UserFuelOverflowThresholdNotMet(int code, String msg) implements DriftError {
+
+    public static final UserFuelOverflowThresholdNotMet INSTANCE = new UserFuelOverflowThresholdNotMet(
+        6310, "User fuel overflow threshold not met"
+    );
+  }
+
+  record FuelOverflowAccountNotFound(int code, String msg) implements DriftError {
+
+    public static final FuelOverflowAccountNotFound INSTANCE = new FuelOverflowAccountNotFound(
+        6311, "FuelOverflow account not found"
     );
   }
 }

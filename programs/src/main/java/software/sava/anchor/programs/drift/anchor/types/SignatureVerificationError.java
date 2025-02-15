@@ -13,7 +13,9 @@ public enum SignatureVerificationError implements Borsh.Enum {
   InvalidMessageDataSize,
   InvalidInstructionIndex,
   MessageOffsetOverflow,
-  InvalidMessageHex;
+  InvalidMessageHex,
+  InvalidMessageData,
+  LoadInstructionAtFailed;
 
   public static SignatureVerificationError read(final byte[] _data, final int offset) {
     return Borsh.read(SignatureVerificationError.values(), _data, offset);

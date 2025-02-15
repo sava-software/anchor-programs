@@ -18,16 +18,16 @@ import static software.sava.core.encoding.ByteUtil.putInt32LE;
 // * The struct SwiftUserOrdersZeroCopy is used to load the data in efficiently
 public record SwiftUserOrders(PublicKey _address,
                               Discriminator discriminator,
-                              PublicKey userPubkey,
+                              PublicKey authorityPubkey,
                               int padding,
                               SwiftOrderId[] swiftOrderData) implements Borsh {
 
-  public static final int USER_PUBKEY_OFFSET = 8;
+  public static final int AUTHORITY_PUBKEY_OFFSET = 8;
   public static final int PADDING_OFFSET = 40;
   public static final int SWIFT_ORDER_DATA_OFFSET = 44;
 
-  public static Filter createUserPubkeyFilter(final PublicKey userPubkey) {
-    return Filter.createMemCompFilter(USER_PUBKEY_OFFSET, userPubkey);
+  public static Filter createAuthorityPubkeyFilter(final PublicKey authorityPubkey) {
+    return Filter.createMemCompFilter(AUTHORITY_PUBKEY_OFFSET, authorityPubkey);
   }
 
   public static Filter createPaddingFilter(final int padding) {
@@ -56,18 +56,18 @@ public record SwiftUserOrders(PublicKey _address,
     }
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
-    final var userPubkey = readPubKey(_data, i);
+    final var authorityPubkey = readPubKey(_data, i);
     i += 32;
     final var padding = getInt32LE(_data, i);
     i += 4;
     final var swiftOrderData = Borsh.readVector(SwiftOrderId.class, SwiftOrderId::read, _data, i);
-    return new SwiftUserOrders(_address, discriminator, userPubkey, padding, swiftOrderData);
+    return new SwiftUserOrders(_address, discriminator, authorityPubkey, padding, swiftOrderData);
   }
 
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    userPubkey.write(_data, i);
+    authorityPubkey.write(_data, i);
     i += 32;
     putInt32LE(_data, i, padding);
     i += 4;

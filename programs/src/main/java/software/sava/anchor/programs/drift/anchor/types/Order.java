@@ -66,6 +66,8 @@ public record Order(// The slot the order was placed
                     OrderTriggerCondition triggerCondition,
                     // How many slots the auction lasts
                     int auctionDuration,
+                    // Last 8 bits of the slot the order was posted on-chain (not order slot for swift orders)
+                    int postedSlotTail,
                     byte[] padding) implements Borsh {
 
   public static final int BYTES = 96;
@@ -121,7 +123,9 @@ public record Order(// The slot the order was placed
     i += Borsh.len(triggerCondition);
     final var auctionDuration = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[3];
+    final var postedSlotTail = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[2];
     Borsh.readArray(padding, _data, i);
     return new Order(slot,
                      price,
@@ -146,6 +150,7 @@ public record Order(// The slot the order was placed
                      immediateOrCancel,
                      triggerCondition,
                      auctionDuration,
+                     postedSlotTail,
                      padding);
   }
 
@@ -191,6 +196,8 @@ public record Order(// The slot the order was placed
     ++i;
     i += Borsh.write(triggerCondition, _data, i);
     _data[i] = (byte) auctionDuration;
+    ++i;
+    _data[i] = (byte) postedSlotTail;
     ++i;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;

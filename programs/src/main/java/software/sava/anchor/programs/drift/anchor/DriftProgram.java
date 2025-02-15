@@ -162,7 +162,6 @@ public final class DriftProgram {
   public static Instruction initializeSwiftUserOrders(final AccountMeta invokedDriftProgramMeta,
                                                       final PublicKey swiftUserOrdersKey,
                                                       final PublicKey authorityKey,
-                                                      final PublicKey userKey,
                                                       final PublicKey payerKey,
                                                       final PublicKey rentKey,
                                                       final PublicKey systemProgramKey,
@@ -170,7 +169,6 @@ public final class DriftProgram {
     final var keys = List.of(
       createWrite(swiftUserOrdersKey),
       createReadOnlySigner(authorityKey),
-      createRead(userKey),
       createWritableSigner(payerKey),
       createRead(rentKey),
       createRead(systemProgramKey)
@@ -220,13 +218,11 @@ public final class DriftProgram {
   public static Instruction resizeSwiftUserOrders(final AccountMeta invokedDriftProgramMeta,
                                                   final PublicKey swiftUserOrdersKey,
                                                   final PublicKey authorityKey,
-                                                  final PublicKey userKey,
                                                   final PublicKey systemProgramKey,
                                                   final int numOrders) {
     final var keys = List.of(
       createWrite(swiftUserOrdersKey),
       createWritableSigner(authorityKey),
-      createRead(userKey),
       createRead(systemProgramKey)
     );
 
@@ -267,6 +263,61 @@ public final class DriftProgram {
     public int l() {
       return BYTES;
     }
+  }
+
+  public static final Discriminator INITIALIZE_FUEL_OVERFLOW_DISCRIMINATOR = toDiscriminator(88, 223, 132, 161, 208, 88, 142, 42);
+
+  public static Instruction initializeFuelOverflow(final AccountMeta invokedDriftProgramMeta,
+                                                   final PublicKey fuelOverflowKey,
+                                                   final PublicKey userStatsKey,
+                                                   final PublicKey authorityKey,
+                                                   final PublicKey payerKey,
+                                                   final PublicKey rentKey,
+                                                   final PublicKey systemProgramKey) {
+    final var keys = List.of(
+      createWrite(fuelOverflowKey),
+      createWrite(userStatsKey),
+      createRead(authorityKey),
+      createWritableSigner(payerKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, INITIALIZE_FUEL_OVERFLOW_DISCRIMINATOR);
+  }
+
+  public static final Discriminator SWEEP_FUEL_DISCRIMINATOR = toDiscriminator(175, 107, 19, 56, 165, 241, 43, 69);
+
+  public static Instruction sweepFuel(final AccountMeta invokedDriftProgramMeta,
+                                      final PublicKey fuelOverflowKey,
+                                      final PublicKey userStatsKey,
+                                      final PublicKey authorityKey,
+                                      final PublicKey signerKey) {
+    final var keys = List.of(
+      createWrite(fuelOverflowKey),
+      createWrite(userStatsKey),
+      createRead(authorityKey),
+      createReadOnlySigner(signerKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, SWEEP_FUEL_DISCRIMINATOR);
+  }
+
+  public static final Discriminator RESET_FUEL_SEASON_DISCRIMINATOR = toDiscriminator(199, 122, 192, 255, 32, 99, 63, 200);
+
+  public static Instruction resetFuelSeason(final AccountMeta invokedDriftProgramMeta,
+                                            final PublicKey userStatsKey,
+                                            final PublicKey authorityKey,
+                                            final PublicKey stateKey,
+                                            final PublicKey adminKey) {
+    final var keys = List.of(
+      createWrite(userStatsKey),
+      createRead(authorityKey),
+      createRead(stateKey),
+      createReadOnlySigner(adminKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, RESET_FUEL_SEASON_DISCRIMINATOR);
   }
 
   public static final Discriminator INITIALIZE_REFERRER_NAME_DISCRIMINATOR = toDiscriminator(235, 126, 231, 10, 42, 164, 26, 61);
@@ -1133,7 +1184,8 @@ public final class DriftProgram {
                                                  // The Instruction Sysvar has not been implemented
                                                  // in the Anchor framework yet, so this is the safe approach.
                                                  final PublicKey ixSysvarKey,
-                                                 final byte[] swiftOrderParamsMessageBytes) {
+                                                 final byte[] swiftOrderParamsMessageBytes,
+                                                 final boolean isDelegateSigner) {
     final var keys = List.of(
       createRead(stateKey),
       createWrite(userKey),
@@ -1143,14 +1195,15 @@ public final class DriftProgram {
       createRead(ixSysvarKey)
     );
 
-    final byte[] _data = new byte[12 + Borsh.lenVector(swiftOrderParamsMessageBytes)];
+    final byte[] _data = new byte[13 + Borsh.lenVector(swiftOrderParamsMessageBytes)];
     int i = writeDiscriminator(PLACE_SWIFT_TAKER_ORDER_DISCRIMINATOR, _data, 0);
-    Borsh.writeVector(swiftOrderParamsMessageBytes, _data, i);
+    i += Borsh.writeVector(swiftOrderParamsMessageBytes, _data, i);
+    _data[i] = (byte) (isDelegateSigner ? 1 : 0);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record PlaceSwiftTakerOrderIxData(Discriminator discriminator, byte[] swiftOrderParamsMessageBytes) implements Borsh {  
+  public record PlaceSwiftTakerOrderIxData(Discriminator discriminator, byte[] swiftOrderParamsMessageBytes, boolean isDelegateSigner) implements Borsh {  
 
     public static PlaceSwiftTakerOrderIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -1163,19 +1216,23 @@ public final class DriftProgram {
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final byte[] swiftOrderParamsMessageBytes = Borsh.readbyteVector(_data, i);
-      return new PlaceSwiftTakerOrderIxData(discriminator, swiftOrderParamsMessageBytes);
+      i += Borsh.lenVector(swiftOrderParamsMessageBytes);
+      final var isDelegateSigner = _data[i] == 1;
+      return new PlaceSwiftTakerOrderIxData(discriminator, swiftOrderParamsMessageBytes, isDelegateSigner);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.writeVector(swiftOrderParamsMessageBytes, _data, i);
+      _data[i] = (byte) (isDelegateSigner ? 1 : 0);
+      ++i;
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + Borsh.lenVector(swiftOrderParamsMessageBytes);
+      return 8 + Borsh.lenVector(swiftOrderParamsMessageBytes) + 1;
     }
   }
 
@@ -2337,12 +2394,10 @@ public final class DriftProgram {
   public static final Discriminator DELETE_SWIFT_USER_ORDERS_DISCRIMINATOR = toDiscriminator(83, 157, 116, 215, 177, 177, 158, 20);
 
   public static Instruction deleteSwiftUserOrders(final AccountMeta invokedDriftProgramMeta,
-                                                  final PublicKey userKey,
                                                   final PublicKey swiftUserOrdersKey,
                                                   final PublicKey stateKey,
                                                   final PublicKey authorityKey) {
     final var keys = List.of(
-      createWrite(userKey),
       createWrite(swiftUserOrdersKey),
       createWrite(stateKey),
       createReadOnlySigner(authorityKey)

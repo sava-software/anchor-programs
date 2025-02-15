@@ -56,6 +56,8 @@ public record UserStats(PublicKey _address,
                         int referrerStatus,
                         boolean disableUpdatePerpBidAskTwap,
                         byte[] padding1,
+                        // whether the user has a FuelOverflow account
+                        int fuelOverflowStatus,
                         // accumulated fuel for token amounts of insurance
                         int fuelInsurance,
                         // accumulated fuel for notional of deposits
@@ -93,6 +95,7 @@ public record UserStats(PublicKey _address,
   public static final int REFERRER_STATUS_OFFSET = 188;
   public static final int DISABLE_UPDATE_PERP_BID_ASK_TWAP_OFFSET = 189;
   public static final int PADDING1_OFFSET = 190;
+  public static final int FUEL_OVERFLOW_STATUS_OFFSET = 191;
   public static final int FUEL_INSURANCE_OFFSET = 192;
   public static final int FUEL_DEPOSITS_OFFSET = 196;
   public static final int FUEL_BORROWS_OFFSET = 200;
@@ -181,6 +184,10 @@ public record UserStats(PublicKey _address,
 
   public static Filter createDisableUpdatePerpBidAskTwapFilter(final boolean disableUpdatePerpBidAskTwap) {
     return Filter.createMemCompFilter(DISABLE_UPDATE_PERP_BID_ASK_TWAP_OFFSET, new byte[]{(byte) (disableUpdatePerpBidAskTwap ? 1 : 0)});
+  }
+
+  public static Filter createFuelOverflowStatusFilter(final int fuelOverflowStatus) {
+    return Filter.createMemCompFilter(FUEL_OVERFLOW_STATUS_OFFSET, new byte[]{(byte) fuelOverflowStatus});
   }
 
   public static Filter createFuelInsuranceFilter(final int fuelInsurance) {
@@ -281,8 +288,10 @@ public record UserStats(PublicKey _address,
     ++i;
     final var disableUpdatePerpBidAskTwap = _data[i] == 1;
     ++i;
-    final var padding1 = new byte[2];
+    final var padding1 = new byte[1];
     i += Borsh.readArray(padding1, _data, i);
+    final var fuelOverflowStatus = _data[i] & 0xFF;
+    ++i;
     final var fuelInsurance = getInt32LE(_data, i);
     i += 4;
     final var fuelDeposits = getInt32LE(_data, i);
@@ -319,6 +328,7 @@ public record UserStats(PublicKey _address,
                          referrerStatus,
                          disableUpdatePerpBidAskTwap,
                          padding1,
+                         fuelOverflowStatus,
                          fuelInsurance,
                          fuelDeposits,
                          fuelBorrows,
@@ -363,6 +373,8 @@ public record UserStats(PublicKey _address,
     _data[i] = (byte) (disableUpdatePerpBidAskTwap ? 1 : 0);
     ++i;
     i += Borsh.writeArray(padding1, _data, i);
+    _data[i] = (byte) fuelOverflowStatus;
+    ++i;
     putInt32LE(_data, i, fuelInsurance);
     i += 4;
     putInt32LE(_data, i, fuelDeposits);
