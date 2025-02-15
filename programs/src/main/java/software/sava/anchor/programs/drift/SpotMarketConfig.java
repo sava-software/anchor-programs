@@ -120,6 +120,10 @@ public record SpotMarketConfig(String symbol,
     return configs;
   }
 
+  private static String replaceScale(final String enumString, final int index, final char replacement) {
+    return enumString.substring(0, index + 1) + replacement + enumString.substring(index + 3);
+  }
+
   static OracleSource parseOracleSource(final JsonIterator ji) {
     final var oracleSource = ji.readString();
     if (oracleSource == null || oracleSource.isBlank()) {
@@ -133,10 +137,12 @@ public record SpotMarketConfig(String symbol,
       var enumString = AnchorUtil.camelCase(oracleSource.toLowerCase(Locale.ENGLISH), true);
       int i = enumString.indexOf("1k");
       if (i > 0) {
-        enumString = enumString.substring(0, i + 1) + 'K' + enumString.substring(i + 3);
+        enumString = replaceScale(enumString, i, 'K');
       } else {
         i = enumString.indexOf("1m");
-        enumString = enumString.substring(0, i + 1) + 'M' + enumString.substring(i + 3);
+        if (i > 0) {
+          enumString = replaceScale(enumString, i, 'M');
+        }
       }
       try {
         return OracleSource.valueOf(enumString);
