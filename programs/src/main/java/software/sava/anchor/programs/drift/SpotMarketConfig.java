@@ -31,6 +31,8 @@ public record SpotMarketConfig(String symbol,
                                AccountMeta writeMarketPDA,
                                PublicKey vaultPDA) implements SrcGen, MarketConfig {
 
+  private static final System.Logger logger = System.getLogger(MarketConfig.class.getName());
+
   static SpotMarketConfig createConfig(final String symbol,
                                        final int marketIndex,
                                        final String launchTs,
@@ -128,7 +130,20 @@ public record SpotMarketConfig(String symbol,
     } else if (oracleSource.equalsIgnoreCase("PYTH_1K_PULL")) {
       return OracleSource.Pyth1KPull;
     } else {
-      return OracleSource.valueOf(AnchorUtil.camelCase(oracleSource.toLowerCase(Locale.ENGLISH), true));
+      var enumString = AnchorUtil.camelCase(oracleSource.toLowerCase(Locale.ENGLISH), true);
+      int i = enumString.indexOf("1k");
+      if (i > 0) {
+        enumString = enumString.substring(0, i + 1) + 'K' + enumString.substring(i + 3);
+      } else {
+        i = enumString.indexOf("1m");
+        enumString = enumString.substring(0, i + 1) + 'M' + enumString.substring(i + 3);
+      }
+      try {
+        return OracleSource.valueOf(enumString);
+      } catch (final RuntimeException ex) {
+        logger.log(System.Logger.Level.WARNING, "Unknown oracle source: " + oracleSource, ex.getCause());
+        return null;
+      }
     }
   }
 
