@@ -2,7 +2,6 @@ package software.sava.anchor.programs.glam_v0;
 
 import software.sava.anchor.programs.glam.GlamNativeProgramClient;
 import software.sava.anchor.programs.glam.GlamVaultAccounts;
-import software.sava.anchor.programs.glam.VaultPDA;
 import software.sava.anchor.programs.glam_v0.anchor.GlamPDAs;
 import software.sava.anchor.programs.glam_v0.anchor.GlamProgram;
 import software.sava.anchor.programs.glam_v0.anchor.types.ShareClassModel;
@@ -467,49 +466,6 @@ final class GlamProgramAccountClientImpl implements GlamV0ProgramAccountClient {
   @Override
   public Instruction closeTokenAccount(final PublicKey tokenAccount) {
     throw new UnsupportedOperationException("TODO: closeTokenAccount");
-  }
-
-  @Override
-  public VaultPDA createStakeAccountPDA() {
-    return VaultPDA.createPDA("stake_account", glamVaultAccounts.glamPublicKey(), invokedProgram.publicKey());
-  }
-
-  @Override
-  public Instruction initializeAndDelegateStake(final VaultPDA stakeAccountPDA,
-                                                final PublicKey validatorVoteAccount,
-                                                final long lamports) {
-    final var pda = stakeAccountPDA.pda();
-    return GlamProgram.initializeAndDelegateStake(
-        invokedProgram,
-        solanaAccounts,
-        feePayer.publicKey(),
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        pda.publicKey(),
-        validatorVoteAccount,
-        solanaAccounts.stakeConfig(),
-        lamports,
-        stakeAccountPDA.id(),
-        pda.nonce()
-    );
-  }
-
-  @Override
-  public Instruction splitStakeAccount(final PublicKey existingStakeAccount,
-                                       final VaultPDA newStakeAccountPDA,
-                                       final long lamports) {
-    return GlamProgram.splitStakeAccount(
-        invokedProgram,
-        solanaAccounts,
-        feePayer.publicKey(),
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        existingStakeAccount,
-        newStakeAccountPDA.pda().publicKey(),
-        lamports,
-        newStakeAccountPDA.id(),
-        newStakeAccountPDA.pda().nonce()
-    );
   }
 
   @Override

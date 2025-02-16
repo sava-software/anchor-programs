@@ -111,14 +111,4 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
   GlamVaultAccounts vaultAccounts();
 
   Instruction transferLamportsAndSyncNative(final long lamports);
-
-  VaultPDA createStakeAccountPDA();
-
-  Instruction splitStakeAccount(final PublicKey existingStakeAccount,
-                                final VaultPDA newStakeAccountPDA,
-                                final long lamports);
-
-  Instruction initializeAndDelegateStake(final VaultPDA stakeAccountPDA,
-                                         final PublicKey validatorVoteAccount,
-                                         final long lamports);
 }

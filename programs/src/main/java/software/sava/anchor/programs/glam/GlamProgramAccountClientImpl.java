@@ -471,44 +471,6 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     throw new UnsupportedOperationException("TODO: closeTokenAccount");
   }
 
-  @Override
-  public VaultPDA createStakeAccountPDA() {
-    return VaultPDA.createPDA("stake_account", glamVaultAccounts.glamPublicKey(), invokedProgram.publicKey());
-  }
-
-  @Override
-  public Instruction initializeAndDelegateStake(final VaultPDA stakeAccountPDA,
-                                                final PublicKey validatorVoteAccount,
-                                                final long lamports) {
-    final var pda = stakeAccountPDA.pda();
-    return GlamProgram.initializeAndDelegateStake(
-        invokedProgram,
-        solanaAccounts,
-        feePayer.publicKey(),
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        pda.publicKey(),
-        validatorVoteAccount,
-        solanaAccounts.stakeConfig(),
-        lamports
-    );
-  }
-
-  @Override
-  public Instruction splitStakeAccount(final PublicKey existingStakeAccount,
-                                       final VaultPDA newStakeAccountPDA,
-                                       final long lamports) {
-    return GlamProgram.splitStakeAccount(
-        invokedProgram,
-        solanaAccounts,
-        feePayer.publicKey(),
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        existingStakeAccount,
-        newStakeAccountPDA.pda().publicKey(),
-        lamports
-    );
-  }
 
   @Override
   public Instruction deactivateStakeAccount(final PublicKey stakeAccount) {

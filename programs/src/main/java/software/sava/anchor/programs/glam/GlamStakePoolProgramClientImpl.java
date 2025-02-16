@@ -165,16 +165,6 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                    final PublicKey stakeAccountWithdrawalAuthority,
                                    final PublicKey poolTokenATA,
                                    final long poolTokenAmount) {
-    throw new UnsupportedOperationException("Use withdrawStake with a provided FundPDA stake account.");
-  }
-
-  @Override
-  public Instruction withdrawStake(final PublicKey poolProgram,
-                                   final StakePoolState stakePoolState,
-                                   final PublicKey validatorOrReserveStakeAccount,
-                                   final VaultPDA stakeAccountPDA,
-                                   final PublicKey poolTokenATA,
-                                   final long poolTokenAmount) {
     final var stakePoolWithdrawAuthority = StakePoolProgram
         .findStakePoolWithdrawAuthority(stakePoolState.address(), poolProgram);
     return GlamProgram.stakePoolWithdrawStake(
@@ -183,7 +173,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         manager.publicKey(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
-        stakeAccountPDA.pda().publicKey(),
+        uninitializedStakeAccount,
         stakePoolState.poolMint(),
         stakePoolState.managerFeeAccount(),
         stakePoolState.address(),
@@ -193,22 +183,6 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         poolTokenATA,
         poolProgram,
         stakePoolState.tokenProgramId(),
-        poolTokenAmount
-    );
-  }
-
-  @Override
-  public Instruction withdrawStake(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
-                                   final PublicKey validatorOrReserveStakeAccount,
-                                   final VaultPDA stakeAccountPDA,
-                                   final PublicKey poolTokenATA,
-                                   final long poolTokenAmount) {
-    return withdrawStake(
-        stakePoolStateAccountInfo.owner(),
-        stakePoolStateAccountInfo.data(),
-        validatorOrReserveStakeAccount,
-        stakeAccountPDA,
-        poolTokenATA,
         poolTokenAmount
     );
   }
