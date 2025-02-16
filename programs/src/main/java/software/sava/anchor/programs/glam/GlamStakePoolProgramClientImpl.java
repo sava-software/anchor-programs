@@ -193,9 +193,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
         poolTokenATA,
         poolProgram,
         stakePoolState.tokenProgramId(),
-        poolTokenAmount,
-        stakeAccountPDA.id(),
-        stakeAccountPDA.pda().nonce()
+        poolTokenAmount
     );
   }
 

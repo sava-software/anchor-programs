@@ -47,8 +47,8 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
   }
 
   private Instruction jupiterSwap(final PublicKey inputVaultATA,
-                                  final PublicKey inputSignerATA,
-                                  final PublicKey outputSignerATA,
+//                                  final PublicKey inputSignerATA,
+//                                  final PublicKey outputSignerATA,
                                   final PublicKey outputVaultATA,
                                   final PublicKey inputProgramStateKey,
                                   final PublicKey inputMintKey,
@@ -64,8 +64,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         inputVaultATA,
-        inputSignerATA,
-        outputSignerATA,
+        // inputSignerATA, outputSignerATA,
         outputVaultATA,
         inputMintKey, outputMintKey,
         manager.publicKey(),
@@ -84,16 +83,16 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                                                        final AccountMeta outputTokenProgram,
                                                                        final PublicKey outputMintKey) {
     final var inputTokenProgramKey = inputTokenProgram.publicKey();
-    final var inputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(inputTokenProgramKey, inputMintKey).publicKey();
-    final var createFeePayerInputATA = glamProgramAccountClient.createATAForFeePayerFundedByFeePayer(
-        true, inputFeePayerATA, inputMintKey, inputTokenProgram
-    );
+//    final var inputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(inputTokenProgramKey, inputMintKey).publicKey();
+//    final var createFeePayerInputATA = glamProgramAccountClient.createATAForFeePayerFundedByFeePayer(
+//        true, inputFeePayerATA, inputMintKey, inputTokenProgram
+//    );
 
     final var outputTokenProgramKey = outputTokenProgram.publicKey();
-    final var outputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(outputTokenProgramKey, outputMintKey).publicKey();
-    final var createFeePayerOutputATA = glamProgramAccountClient.createATAForFeePayerFundedByFeePayer(
-        true, outputFeePayerATA, outputMintKey, outputTokenProgram
-    );
+//    final var outputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(outputTokenProgramKey, outputMintKey).publicKey();
+//    final var createFeePayerOutputATA = glamProgramAccountClient.createATAForFeePayerFundedByFeePayer(
+//        true, outputFeePayerATA, outputMintKey, outputTokenProgram
+//    );
 
     final var outputVaultATA = glamProgramAccountClient.findATA(outputTokenProgramKey, outputMintKey).publicKey();
     final var createVaultOutputATA = glamProgramAccountClient.createATAForOwnerFundedByFeePayer(
@@ -107,14 +106,14 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
       );
       return Map.of(
           inputVaultATA, createVaultInputATA,
-          inputFeePayerATA, createFeePayerInputATA,
-          outputFeePayerATA, createFeePayerOutputATA,
+//          inputFeePayerATA, createFeePayerInputATA,
+//          outputFeePayerATA, createFeePayerOutputATA,
           outputVaultATA, createVaultOutputATA
       );
     } else {
       return Map.of(
-          inputFeePayerATA, createFeePayerInputATA,
-          outputFeePayerATA, createFeePayerOutputATA,
+//          inputFeePayerATA, createFeePayerInputATA,
+//          outputFeePayerATA, createFeePayerOutputATA,
           outputVaultATA, createVaultOutputATA
       );
     }
@@ -134,16 +133,16 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
 
     final var inputVaultATA = glamProgramAccountClient.findATA(inputTokenProgramKey, inputMintKey).publicKey();
 
-    final var inputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(inputTokenProgramKey, inputMintKey).publicKey();
-    final var createFeePayerInputATA = glamProgramAccountClient.createATAForFeePayerFundedByFeePayer(
-        true, inputFeePayerATA, inputMintKey, inputTokenProgram
-    );
+//    final var inputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(inputTokenProgramKey, inputMintKey).publicKey();
+//    final var createFeePayerInputATA = glamProgramAccountClient.createATAForFeePayerFundedByFeePayer(
+//        true, inputFeePayerATA, inputMintKey, inputTokenProgram
+//    );
 
     final var outputTokenProgramKey = outputTokenProgram.publicKey();
-    final var outputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(outputTokenProgramKey, outputMintKey).publicKey();
-    final var createFeePayerOutputATA = glamProgramAccountClient.createATAForFeePayerFundedByFeePayer(
-        true, outputFeePayerATA, outputMintKey, outputTokenProgram
-    );
+//    final var outputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(outputTokenProgramKey, outputMintKey).publicKey();
+//    final var createFeePayerOutputATA = glamProgramAccountClient.createATAForFeePayerFundedByFeePayer(
+//        true, outputFeePayerATA, outputMintKey, outputTokenProgram
+//    );
 
     final var outputVaultATA = glamProgramAccountClient.findATA(outputTokenProgramKey, outputMintKey).publicKey();
     final var createVaultOutputATA = glamProgramAccountClient.createATAForOwnerFundedByFeePayer(
@@ -152,8 +151,8 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
 
     final var glamJupiterSwap = jupiterSwap(
         inputVaultATA,
-        inputFeePayerATA,
-        outputFeePayerATA,
+//        inputFeePayerATA,
+//        outputFeePayerATA,
         outputVaultATA,
         inputProgramStateKey,
         inputMintKey,
@@ -171,15 +170,15 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
               true, inputVaultATA, inputMintKey, inputTokenProgram
           ),
           glamProgramAccountClient.transferLamportsAndSyncNative(amount),
-          createFeePayerInputATA,
-          createFeePayerOutputATA,
+//          createFeePayerInputATA,
+//          createFeePayerOutputATA,
           createVaultOutputATA,
           glamJupiterSwap
       );
     } else {
       return List.of(
-          createFeePayerInputATA,
-          createFeePayerOutputATA,
+//          createFeePayerInputATA,
+//          createFeePayerOutputATA,
           createVaultOutputATA,
           glamJupiterSwap
       );
@@ -197,16 +196,16 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                             final Instruction swapInstruction) {
     final var inputTokenProgramKey = inputTokenProgram.publicKey();
     final var inputVaultATA = glamProgramAccountClient.findATA(inputTokenProgramKey, inputMintKey).publicKey();
-    final var inputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(inputTokenProgramKey, inputMintKey).publicKey();
+//    final var inputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(inputTokenProgramKey, inputMintKey).publicKey();
 
     final var outputTokenProgramKey = outputTokenProgram.publicKey();
-    final var outputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(outputTokenProgramKey, outputMintKey).publicKey();
+//    final var outputFeePayerATA = glamProgramAccountClient.findATAForFeePayer(outputTokenProgramKey, outputMintKey).publicKey();
     final var outputVaultATA = glamProgramAccountClient.findATA(outputTokenProgramKey, outputMintKey).publicKey();
 
     return jupiterSwap(
         inputVaultATA,
-        inputFeePayerATA,
-        outputFeePayerATA,
+//        inputFeePayerATA,
+//        outputFeePayerATA,
         outputVaultATA,
         inputProgramStateKey,
         inputMintKey,

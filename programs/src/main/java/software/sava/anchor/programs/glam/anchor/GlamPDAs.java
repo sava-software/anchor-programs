@@ -61,12 +61,12 @@ public final class GlamPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress inputSignerAtaPDA(final PublicKey program,
-                                                        final PublicKey signerAccount,
-                                                        final PublicKey inputTokenProgramAccount,
-                                                        final PublicKey inputMintAccount) {
+  public static ProgramDerivedAddress inputVaultAtaPDA(final PublicKey program,
+                                                       final PublicKey vaultAccount,
+                                                       final PublicKey inputTokenProgramAccount,
+                                                       final PublicKey inputMintAccount) {
     return PublicKey.findProgramAddress(List.of(
-      signerAccount.toByteArray(),
+      vaultAccount.toByteArray(),
       inputTokenProgramAccount.toByteArray(),
       inputMintAccount.toByteArray()
     ), program);

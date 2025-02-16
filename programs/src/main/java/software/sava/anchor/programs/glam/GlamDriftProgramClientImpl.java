@@ -174,6 +174,33 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     return delegatedDriftClient.settlePnl(user, authority, marketIndexes, mode);
   }
 
+  private static PostOnlyParam mapPostOnlyParam(final software.sava.anchor.programs.drift.anchor.types.PostOnlyParam postOnlyParam) {
+    return switch (postOnlyParam) {
+      case None -> PostOnlyParam.None;
+      case MustPostOnly -> PostOnlyParam.MustPostOnly;
+      case TryPostOnly -> PostOnlyParam.TryPostOnly;
+      case Slide -> PostOnlyParam.Slide;
+    };
+  }
+
+  private static OrderTriggerCondition mapOrderTriggerCondition(final software.sava.anchor.programs.drift.anchor.types.OrderTriggerCondition orderTriggerCondition) {
+    return switch (orderTriggerCondition) {
+      case Above -> OrderTriggerCondition.Above;
+      case Below -> OrderTriggerCondition.Below;
+      case TriggeredAbove -> OrderTriggerCondition.TriggeredAbove;
+      case TriggeredBelow -> OrderTriggerCondition.TriggeredBelow;
+      case null -> null;
+    };
+  }
+
+  private static PositionDirection mapDirection(final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
+    return switch (direction) {
+      case Long -> PositionDirection.Long;
+      case Short -> PositionDirection.Short;
+      case null -> null;
+    };
+  }
+
   private static software.sava.anchor.programs.glam.anchor.types.OrderParams toGlam(final OrderParams orderParams) {
     return new software.sava.anchor.programs.glam.anchor.types.OrderParams(
         switch (orderParams.orderType()) {
@@ -187,30 +214,17 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
           case Spot -> MarketType.Spot;
           case Perp -> MarketType.Perp;
         },
-        switch (orderParams.direction()) {
-          case Long -> PositionDirection.Long;
-          case Short -> PositionDirection.Short;
-        },
+        mapDirection(orderParams.direction()),
         orderParams.userOrderId(),
         orderParams.baseAssetAmount(),
         orderParams.price(),
         orderParams.marketIndex(),
         orderParams.reduceOnly(),
-        switch (orderParams.postOnly()) {
-          case None -> PostOnlyParam.None;
-          case MustPostOnly -> PostOnlyParam.MustPostOnly;
-          case TryPostOnly -> PostOnlyParam.TryPostOnly;
-          case Slide -> PostOnlyParam.Slide;
-        },
+        mapPostOnlyParam(orderParams.postOnly()),
         orderParams.immediateOrCancel(),
         orderParams.maxTs(),
         orderParams.triggerPrice(),
-        switch (orderParams.triggerCondition()) {
-          case Above -> OrderTriggerCondition.Above;
-          case Below -> OrderTriggerCondition.Below;
-          case TriggeredAbove -> OrderTriggerCondition.TriggeredAbove;
-          case TriggeredBelow -> OrderTriggerCondition.TriggeredBelow;
-        },
+        mapOrderTriggerCondition(orderParams.triggerCondition()),
         orderParams.oraclePriceOffset(),
         orderParams.auctionDuration(),
         orderParams.auctionStartPrice(),
@@ -265,6 +279,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
+        authority,
         orderIds
     );
   }
@@ -279,14 +294,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     return cancelOrderByUserOrderId(authority, user, orderId);
   }
 
-  private static PositionDirection mapDirection(final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
-    return switch (direction) {
-      case Long -> PositionDirection.Long;
-      case Short -> PositionDirection.Short;
-      case null -> null;
-    };
-  }
-
   @Override
   public Instruction cancelAllOrders(final PublicKey authority,
                                      final PublicKey user,
@@ -299,6 +306,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
+        authority,
         null,
         OptionalInt.empty(),
         mapDirection(direction)
@@ -317,6 +325,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
+        authority,
         MarketType.Spot,
         OptionalInt.empty(),
         mapDirection(direction)
@@ -335,6 +344,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
+        authority,
         MarketType.Perp,
         OptionalInt.empty(),
         mapDirection(direction)
@@ -354,24 +364,64 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
+        authority,
         marketConfig instanceof PerpMarketConfig ? MarketType.Perp : MarketType.Spot,
         OptionalInt.of(marketConfig.marketIndex()),
         mapDirection(direction)
     );
   }
 
-  @Override
-  public Instruction modifyOrder(final OptionalInt orderId, final ModifyOrderParams modifyOrderParams) {
-    throw new UnsupportedOperationException("TODO: modifyOrder");
+  private static software.sava.anchor.programs.glam.anchor.types.ModifyOrderParams mapModifyOrderParams(final ModifyOrderParams modifyOrderParams) {
+    return new software.sava.anchor.programs.glam.anchor.types.ModifyOrderParams(
+        mapDirection(modifyOrderParams.direction()),
+        modifyOrderParams.baseAssetAmount(),
+        modifyOrderParams.price(),
+        modifyOrderParams.reduceOnly(),
+        mapPostOnlyParam(modifyOrderParams.postOnly()),
+        modifyOrderParams.immediateOrCancel(),
+        modifyOrderParams.maxTs(),
+        modifyOrderParams.triggerPrice(),
+        mapOrderTriggerCondition(modifyOrderParams.triggerCondition()),
+        modifyOrderParams.oraclePriceOffset(),
+        modifyOrderParams.auctionDuration(),
+        modifyOrderParams.auctionStartPrice(),
+        modifyOrderParams.auctionEndPrice(),
+        modifyOrderParams.policy()
+    );
   }
 
   @Override
-  public Instruction modifyOrderByUserId(final int userOrderId, final ModifyOrderParams modifyOrderParams) {
-    throw new UnsupportedOperationException("TODO: modifyOrderByUserId");
+  public Instruction modifyOrder(final PublicKey authority,
+                                 final PublicKey user,
+                                 final OptionalInt orderId,
+                                 final software.sava.anchor.programs.drift.anchor.types.ModifyOrderParams modifyOrderParams) {
+    return GlamProgram.driftModifyOrder(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        driftAccounts.driftProgram(),
+        driftAccounts.stateKey(),
+        user,
+        authority,
+        orderId,
+        mapModifyOrderParams(modifyOrderParams)
+    );
   }
 
   @Override
-  public Instruction placeAndTakePerpOrder(final OrderParams params, final OptionalInt successCondition) {
+  public Instruction modifyOrderByUserId(final PublicKey authority,
+                                         final PublicKey user,
+                                         final int userOrderId,
+                                         final software.sava.anchor.programs.drift.anchor.types.ModifyOrderParams modifyOrderParams) {
+    return modifyOrder(authority, user, OptionalInt.of(userOrderId), modifyOrderParams);
+  }
+
+  @Override
+  public Instruction placeAndTakePerpOrder(final PublicKey authority,
+                                           final PublicKey user,
+                                           final OrderParams params,
+                                           final OptionalInt successCondition) {
     throw new UnsupportedOperationException("TODO: placeAndTakePerpOrder");
   }
 }

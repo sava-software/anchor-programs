@@ -5,8 +5,10 @@ import java.lang.String;
 import java.util.List;
 import java.util.OptionalInt;
 
+import software.sava.anchor.programs.glam.anchor.types.InitObligationArgs;
 import software.sava.anchor.programs.glam.anchor.types.MarketType;
 import software.sava.anchor.programs.glam.anchor.types.MintModel;
+import software.sava.anchor.programs.glam.anchor.types.ModifyOrderParams;
 import software.sava.anchor.programs.glam.anchor.types.OrderParams;
 import software.sava.anchor.programs.glam.anchor.types.PositionDirection;
 import software.sava.anchor.programs.glam.anchor.types.StateModel;
@@ -93,17 +95,17 @@ public final class GlamProgram {
     }
   }
 
-  public static final Discriminator BURN_SHARE_DISCRIMINATOR = toDiscriminator(111, 41, 160, 233, 46, 233, 79, 62);
+  public static final Discriminator BURN_TOKENS_DISCRIMINATOR = toDiscriminator(76, 15, 51, 254, 229, 215, 121, 66);
 
-  public static Instruction burnShare(final AccountMeta invokedGlamProgramMeta,
-                                      final SolanaAccounts solanaAccounts,
-                                      final PublicKey glamStateKey,
-                                      final PublicKey glamMintKey,
-                                      final PublicKey fromAtaKey,
-                                      final PublicKey fromKey,
-                                      final PublicKey signerKey,
-                                      final int mintId,
-                                      final long amount) {
+  public static Instruction burnTokens(final AccountMeta invokedGlamProgramMeta,
+                                       final SolanaAccounts solanaAccounts,
+                                       final PublicKey glamStateKey,
+                                       final PublicKey glamMintKey,
+                                       final PublicKey fromAtaKey,
+                                       final PublicKey fromKey,
+                                       final PublicKey signerKey,
+                                       final int mintId,
+                                       final long amount) {
     final var keys = List.of(
       createRead(glamStateKey),
       createWrite(glamMintKey),
@@ -114,7 +116,7 @@ public final class GlamProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(BURN_SHARE_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(BURN_TOKENS_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amount);
@@ -122,15 +124,15 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record BurnShareIxData(Discriminator discriminator, int mintId, long amount) implements Borsh {  
+  public record BurnTokensIxData(Discriminator discriminator, int mintId, long amount) implements Borsh {  
 
-    public static BurnShareIxData read(final Instruction instruction) {
+    public static BurnTokensIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 17;
 
-    public static BurnShareIxData read(final byte[] _data, final int offset) {
+    public static BurnTokensIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -139,7 +141,7 @@ public final class GlamProgram {
       final var mintId = _data[i] & 0xFF;
       ++i;
       final var amount = getInt64LE(_data, i);
-      return new BurnShareIxData(discriminator, mintId, amount);
+      return new BurnTokensIxData(discriminator, mintId, amount);
     }
 
     @Override
@@ -348,6 +350,7 @@ public final class GlamProgram {
                                               final PublicKey cpiProgramKey,
                                               final PublicKey stateKey,
                                               final PublicKey userKey,
+                                              final PublicKey authorityKey,
                                               final MarketType marketType,
                                               final OptionalInt marketIndex,
                                               final PositionDirection direction) {
@@ -357,7 +360,8 @@ public final class GlamProgram {
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
       createRead(stateKey),
-      createWrite(userKey)
+      createWrite(userKey),
+      createRead(authorityKey)
     );
 
     final byte[] _data = new byte[
@@ -425,6 +429,7 @@ public final class GlamProgram {
                                                    final PublicKey cpiProgramKey,
                                                    final PublicKey stateKey,
                                                    final PublicKey userKey,
+                                                   final PublicKey authorityKey,
                                                    final int[] orderIds) {
     final var keys = List.of(
       createRead(glamStateKey),
@@ -432,7 +437,8 @@ public final class GlamProgram {
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
       createRead(stateKey),
-      createWrite(userKey)
+      createWrite(userKey),
+      createRead(authorityKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(orderIds)];
@@ -593,6 +599,73 @@ public final class GlamProgram {
     );
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, DRIFT_INITIALIZE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator DRIFT_MODIFY_ORDER_DISCRIMINATOR = toDiscriminator(235, 245, 222, 58, 245, 128, 19, 202);
+
+  public static Instruction driftModifyOrder(final AccountMeta invokedGlamProgramMeta,
+                                             final PublicKey glamStateKey,
+                                             final PublicKey glamVaultKey,
+                                             final PublicKey glamSignerKey,
+                                             final PublicKey cpiProgramKey,
+                                             final PublicKey stateKey,
+                                             final PublicKey userKey,
+                                             final PublicKey authorityKey,
+                                             final OptionalInt orderId,
+                                             final ModifyOrderParams modifyOrderParams) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createRead(stateKey),
+      createWrite(userKey),
+      createRead(authorityKey)
+    );
+
+    final byte[] _data = new byte[
+        8
+        + (orderId == null || orderId.isEmpty() ? 1 : 5) + Borsh.len(modifyOrderParams)
+    ];
+    int i = writeDiscriminator(DRIFT_MODIFY_ORDER_DISCRIMINATOR, _data, 0);
+    i += Borsh.writeOptional(orderId, _data, i);
+    Borsh.write(modifyOrderParams, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record DriftModifyOrderIxData(Discriminator discriminator, OptionalInt orderId, ModifyOrderParams modifyOrderParams) implements Borsh {  
+
+    public static DriftModifyOrderIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static DriftModifyOrderIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var orderId = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+      if (orderId.isPresent()) {
+        i += 4;
+      }
+      final var modifyOrderParams = ModifyOrderParams.read(_data, i);
+      return new DriftModifyOrderIxData(discriminator, orderId, modifyOrderParams);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeOptional(orderId, _data, i);
+      i += Borsh.write(modifyOrderParams, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + (orderId == null || orderId.isEmpty() ? 1 : (1 + 4)) + Borsh.len(modifyOrderParams);
+    }
   }
 
   public static final Discriminator DRIFT_PLACE_ORDERS_DISCRIMINATOR = toDiscriminator(117, 18, 210, 6, 238, 174, 135, 167);
@@ -914,19 +987,19 @@ public final class GlamProgram {
     }
   }
 
-  public static final Discriminator FORCE_TRANSFER_SHARE_DISCRIMINATOR = toDiscriminator(71, 90, 36, 42, 220, 208, 46, 19);
+  public static final Discriminator FORCE_TRANSFER_TOKENS_DISCRIMINATOR = toDiscriminator(185, 34, 78, 211, 192, 13, 160, 37);
 
-  public static Instruction forceTransferShare(final AccountMeta invokedGlamProgramMeta,
-                                               final SolanaAccounts solanaAccounts,
-                                               final PublicKey glamStateKey,
-                                               final PublicKey glamMintKey,
-                                               final PublicKey fromAtaKey,
-                                               final PublicKey toAtaKey,
-                                               final PublicKey fromKey,
-                                               final PublicKey toKey,
-                                               final PublicKey signerKey,
-                                               final int mintId,
-                                               final long amount) {
+  public static Instruction forceTransferTokens(final AccountMeta invokedGlamProgramMeta,
+                                                final SolanaAccounts solanaAccounts,
+                                                final PublicKey glamStateKey,
+                                                final PublicKey glamMintKey,
+                                                final PublicKey fromAtaKey,
+                                                final PublicKey toAtaKey,
+                                                final PublicKey fromKey,
+                                                final PublicKey toKey,
+                                                final PublicKey signerKey,
+                                                final int mintId,
+                                                final long amount) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createWrite(glamMintKey),
@@ -939,7 +1012,7 @@ public final class GlamProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(FORCE_TRANSFER_SHARE_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(FORCE_TRANSFER_TOKENS_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amount);
@@ -947,15 +1020,15 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record ForceTransferShareIxData(Discriminator discriminator, int mintId, long amount) implements Borsh {  
+  public record ForceTransferTokensIxData(Discriminator discriminator, int mintId, long amount) implements Borsh {  
 
-    public static ForceTransferShareIxData read(final Instruction instruction) {
+    public static ForceTransferTokensIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 17;
 
-    public static ForceTransferShareIxData read(final byte[] _data, final int offset) {
+    public static ForceTransferTokensIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -964,7 +1037,7 @@ public final class GlamProgram {
       final var mintId = _data[i] & 0xFF;
       ++i;
       final var amount = getInt64LE(_data, i);
-      return new ForceTransferShareIxData(discriminator, mintId, amount);
+      return new ForceTransferTokensIxData(discriminator, mintId, amount);
     }
 
     @Override
@@ -1080,9 +1153,7 @@ public final class GlamProgram {
                                                        final PublicKey vaultStakeAccountKey,
                                                        final PublicKey voteKey,
                                                        final PublicKey stakeConfigKey,
-                                                       final long lamports,
-                                                       final String stakeAccountId,
-                                                       final int stakeAccountBump) {
+                                                       final long lamports) {
     final var keys = List.of(
       createWritableSigner(signerKey),
       createWrite(stateKey),
@@ -1097,32 +1168,20 @@ public final class GlamProgram {
       createRead(solanaAccounts.systemProgram())
     );
 
-    final byte[] _stakeAccountId = stakeAccountId.getBytes(UTF_8);
-    final byte[] _data = new byte[21 + Borsh.lenVector(_stakeAccountId)];
+    final byte[] _data = new byte[16];
     int i = writeDiscriminator(INITIALIZE_AND_DELEGATE_STAKE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, lamports);
-    i += 8;
-    i += Borsh.writeVector(_stakeAccountId, _data, i);
-    _data[i] = (byte) stakeAccountBump;
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record InitializeAndDelegateStakeIxData(Discriminator discriminator,
-                                                 long lamports,
-                                                 String stakeAccountId, byte[] _stakeAccountId,
-                                                 int stakeAccountBump) implements Borsh {  
+  public record InitializeAndDelegateStakeIxData(Discriminator discriminator, long lamports) implements Borsh {  
 
     public static InitializeAndDelegateStakeIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static InitializeAndDelegateStakeIxData createRecord(final Discriminator discriminator,
-                                                                final long lamports,
-                                                                final String stakeAccountId,
-                                                                final int stakeAccountBump) {
-      return new InitializeAndDelegateStakeIxData(discriminator, lamports, stakeAccountId, stakeAccountId.getBytes(UTF_8), stakeAccountBump);
-    }
+    public static final int BYTES = 16;
 
     public static InitializeAndDelegateStakeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -1131,11 +1190,7 @@ public final class GlamProgram {
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
-      i += 8;
-      final var stakeAccountId = Borsh.string(_data, i);
-      i += (Integer.BYTES + getInt32LE(_data, i));
-      final var stakeAccountBump = _data[i] & 0xFF;
-      return new InitializeAndDelegateStakeIxData(discriminator, lamports, stakeAccountId, stakeAccountId.getBytes(UTF_8), stakeAccountBump);
+      return new InitializeAndDelegateStakeIxData(discriminator, lamports);
     }
 
     @Override
@@ -1143,15 +1198,12 @@ public final class GlamProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, lamports);
       i += 8;
-      i += Borsh.writeVector(_stakeAccountId, _data, i);
-      _data[i] = (byte) stakeAccountBump;
-      ++i;
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 8 + Borsh.lenVector(_stakeAccountId) + 1;
+      return BYTES;
     }
   }
 
@@ -1214,11 +1266,7 @@ public final class GlamProgram {
                                         final SolanaAccounts solanaAccounts,
                                         final PublicKey stateKey,
                                         final PublicKey vaultKey,
-                                        // input_vault_ata to input_signer_ata
                                         final PublicKey inputVaultAtaKey,
-                                        final PublicKey inputSignerAtaKey,
-                                        // TODO: Do we really need output_signer_ata?
-                                        final PublicKey outputSignerAtaKey,
                                         final PublicKey outputVaultAtaKey,
                                         final PublicKey inputMintKey,
                                         final PublicKey outputMintKey,
@@ -1234,15 +1282,12 @@ public final class GlamProgram {
       createWrite(stateKey),
       createWrite(vaultKey),
       createWrite(inputVaultAtaKey),
-      createWrite(inputSignerAtaKey),
-      createWrite(outputSignerAtaKey),
       createWrite(outputVaultAtaKey),
       createRead(inputMintKey),
       createRead(outputMintKey),
       createWritableSigner(signerKey),
       createRead(requireNonNullElse(inputStakePoolKey, invokedGlamProgramMeta.publicKey())),
       createRead(requireNonNullElse(outputStakePoolKey, invokedGlamProgramMeta.publicKey())),
-      createRead(solanaAccounts.systemProgram()),
       createRead(jupiterProgramKey),
       createRead(solanaAccounts.associatedTokenAccountProgram()),
       createRead(inputTokenProgramKey),
@@ -1288,6 +1333,298 @@ public final class GlamProgram {
     @Override
     public int l() {
       return 8 + 8 + Borsh.lenVector(data);
+    }
+  }
+
+  public static final Discriminator KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_DISCRIMINATOR = toDiscriminator(31, 162, 4, 146, 60, 225, 15, 0);
+
+  public static Instruction kaminoLendingDepositReserveLiquidityAndObligationCollateral(final AccountMeta invokedGlamProgramMeta,
+                                                                                        final PublicKey glamStateKey,
+                                                                                        final PublicKey glamVaultKey,
+                                                                                        final PublicKey glamSignerKey,
+                                                                                        final PublicKey cpiProgramKey,
+                                                                                        final PublicKey ownerKey,
+                                                                                        final PublicKey obligationKey,
+                                                                                        final PublicKey lendingMarketKey,
+                                                                                        final PublicKey lendingMarketAuthorityKey,
+                                                                                        final PublicKey reserveKey,
+                                                                                        final PublicKey reserveLiquidityMintKey,
+                                                                                        final PublicKey reserveLiquiditySupplyKey,
+                                                                                        final PublicKey reserveCollateralMintKey,
+                                                                                        final PublicKey reserveDestinationDepositCollateralKey,
+                                                                                        final PublicKey userSourceLiquidityKey,
+                                                                                        final PublicKey placeholderUserDestinationCollateralKey,
+                                                                                        final PublicKey collateralTokenProgramKey,
+                                                                                        final PublicKey liquidityTokenProgramKey,
+                                                                                        final PublicKey instructionSysvarAccountKey,
+                                                                                        final long liquidityAmount) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(ownerKey),
+      createWrite(obligationKey),
+      createRead(lendingMarketKey),
+      createRead(lendingMarketAuthorityKey),
+      createWrite(reserveKey),
+      createWrite(reserveLiquidityMintKey),
+      createWrite(reserveLiquiditySupplyKey),
+      createWrite(reserveCollateralMintKey),
+      createWrite(reserveDestinationDepositCollateralKey),
+      createWrite(userSourceLiquidityKey),
+      createRead(placeholderUserDestinationCollateralKey),
+      createRead(collateralTokenProgramKey),
+      createRead(liquidityTokenProgramKey),
+      createRead(instructionSysvarAccountKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, liquidityAmount);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record KaminoLendingDepositReserveLiquidityAndObligationCollateralIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+
+    public static KaminoLendingDepositReserveLiquidityAndObligationCollateralIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static KaminoLendingDepositReserveLiquidityAndObligationCollateralIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var liquidityAmount = getInt64LE(_data, i);
+      return new KaminoLendingDepositReserveLiquidityAndObligationCollateralIxData(discriminator, liquidityAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, liquidityAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator KAMINO_LENDING_INIT_OBLIGATION_DISCRIMINATOR = toDiscriminator(219, 210, 134, 64, 155, 49, 137, 174);
+
+  public static Instruction kaminoLendingInitObligation(final AccountMeta invokedGlamProgramMeta,
+                                                        final SolanaAccounts solanaAccounts,
+                                                        final PublicKey glamStateKey,
+                                                        final PublicKey glamVaultKey,
+                                                        final PublicKey glamSignerKey,
+                                                        final PublicKey cpiProgramKey,
+                                                        final PublicKey obligationOwnerKey,
+                                                        final PublicKey feePayerKey,
+                                                        final PublicKey obligationKey,
+                                                        final PublicKey lendingMarketKey,
+                                                        final PublicKey seed1AccountKey,
+                                                        final PublicKey seed2AccountKey,
+                                                        final PublicKey ownerUserMetadataKey,
+                                                        final InitObligationArgs args) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createRead(obligationOwnerKey),
+      createWritableSigner(feePayerKey),
+      createWrite(obligationKey),
+      createRead(lendingMarketKey),
+      createRead(seed1AccountKey),
+      createRead(seed2AccountKey),
+      createRead(ownerUserMetadataKey),
+      createRead(solanaAccounts.rentSysVar()),
+      createRead(solanaAccounts.systemProgram())
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(args)];
+    int i = writeDiscriminator(KAMINO_LENDING_INIT_OBLIGATION_DISCRIMINATOR, _data, 0);
+    Borsh.write(args, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record KaminoLendingInitObligationIxData(Discriminator discriminator, InitObligationArgs args) implements Borsh {  
+
+    public static KaminoLendingInitObligationIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 10;
+
+    public static KaminoLendingInitObligationIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var args = InitObligationArgs.read(_data, i);
+      return new KaminoLendingInitObligationIxData(discriminator, args);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(args, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator KAMINO_LENDING_INIT_OBLIGATION_FARMS_FOR_RESERVE_DISCRIMINATOR = toDiscriminator(227, 61, 130, 2, 117, 226, 78, 1);
+
+  public static Instruction kaminoLendingInitObligationFarmsForReserve(final AccountMeta invokedGlamProgramMeta,
+                                                                       final SolanaAccounts solanaAccounts,
+                                                                       final PublicKey glamStateKey,
+                                                                       final PublicKey glamVaultKey,
+                                                                       final PublicKey glamSignerKey,
+                                                                       final PublicKey cpiProgramKey,
+                                                                       final PublicKey payerKey,
+                                                                       final PublicKey ownerKey,
+                                                                       final PublicKey obligationKey,
+                                                                       final PublicKey lendingMarketAuthorityKey,
+                                                                       final PublicKey reserveKey,
+                                                                       final PublicKey reserveFarmStateKey,
+                                                                       final PublicKey obligationFarmKey,
+                                                                       final PublicKey lendingMarketKey,
+                                                                       final PublicKey farmsProgramKey,
+                                                                       final int mode) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWritableSigner(payerKey),
+      createRead(ownerKey),
+      createWrite(obligationKey),
+      createWrite(lendingMarketAuthorityKey),
+      createWrite(reserveKey),
+      createWrite(reserveFarmStateKey),
+      createWrite(obligationFarmKey),
+      createRead(lendingMarketKey),
+      createRead(farmsProgramKey),
+      createRead(solanaAccounts.rentSysVar()),
+      createRead(solanaAccounts.systemProgram())
+    );
+
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(KAMINO_LENDING_INIT_OBLIGATION_FARMS_FOR_RESERVE_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) mode;
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record KaminoLendingInitObligationFarmsForReserveIxData(Discriminator discriminator, int mode) implements Borsh {  
+
+    public static KaminoLendingInitObligationFarmsForReserveIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static KaminoLendingInitObligationFarmsForReserveIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var mode = _data[i] & 0xFF;
+      return new KaminoLendingInitObligationFarmsForReserveIxData(discriminator, mode);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) mode;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator KAMINO_LENDING_INIT_USER_METADATA_DISCRIMINATOR = toDiscriminator(200, 95, 140, 132, 190, 65, 17, 161);
+
+  public static Instruction kaminoLendingInitUserMetadata(final AccountMeta invokedGlamProgramMeta,
+                                                          final SolanaAccounts solanaAccounts,
+                                                          final PublicKey glamStateKey,
+                                                          final PublicKey glamVaultKey,
+                                                          final PublicKey glamSignerKey,
+                                                          final PublicKey cpiProgramKey,
+                                                          final PublicKey ownerKey,
+                                                          final PublicKey feePayerKey,
+                                                          final PublicKey userMetadataKey,
+                                                          final PublicKey referrerUserMetadataKey,
+                                                          final PublicKey userLookupTable) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createRead(ownerKey),
+      createWritableSigner(feePayerKey),
+      createWrite(userMetadataKey),
+      createRead(referrerUserMetadataKey),
+      createRead(solanaAccounts.rentSysVar()),
+      createRead(solanaAccounts.systemProgram())
+    );
+
+    final byte[] _data = new byte[40];
+    int i = writeDiscriminator(KAMINO_LENDING_INIT_USER_METADATA_DISCRIMINATOR, _data, 0);
+    userLookupTable.write(_data, i);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record KaminoLendingInitUserMetadataIxData(Discriminator discriminator, PublicKey userLookupTable) implements Borsh {  
+
+    public static KaminoLendingInitUserMetadataIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 40;
+
+    public static KaminoLendingInitUserMetadataIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var userLookupTable = readPubKey(_data, i);
+      return new KaminoLendingInitUserMetadataIxData(discriminator, userLookupTable);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      userLookupTable.write(_data, i);
+      i += 32;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
     }
   }
 
@@ -1657,17 +1994,17 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, MERGE_STAKE_ACCOUNTS_DISCRIMINATOR);
   }
 
-  public static final Discriminator MINT_SHARE_DISCRIMINATOR = toDiscriminator(145, 1, 122, 214, 134, 106, 116, 109);
+  public static final Discriminator MINT_TOKENS_DISCRIMINATOR = toDiscriminator(59, 132, 24, 246, 122, 39, 8, 243);
 
-  public static Instruction mintShare(final AccountMeta invokedGlamProgramMeta,
-                                      final SolanaAccounts solanaAccounts,
-                                      final PublicKey glamStateKey,
-                                      final PublicKey glamMintKey,
-                                      final PublicKey signerKey,
-                                      final PublicKey mintToKey,
-                                      final PublicKey recipientKey,
-                                      final int mintId,
-                                      final long amount) {
+  public static Instruction mintTokens(final AccountMeta invokedGlamProgramMeta,
+                                       final SolanaAccounts solanaAccounts,
+                                       final PublicKey glamStateKey,
+                                       final PublicKey glamMintKey,
+                                       final PublicKey signerKey,
+                                       final PublicKey mintToKey,
+                                       final PublicKey recipientKey,
+                                       final int mintId,
+                                       final long amount) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createWrite(glamMintKey),
@@ -1678,7 +2015,7 @@ public final class GlamProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(MINT_SHARE_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(MINT_TOKENS_DISCRIMINATOR, _data, 0);
     _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amount);
@@ -1686,15 +2023,15 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record MintShareIxData(Discriminator discriminator, int mintId, long amount) implements Borsh {  
+  public record MintTokensIxData(Discriminator discriminator, int mintId, long amount) implements Borsh {  
 
-    public static MintShareIxData read(final Instruction instruction) {
+    public static MintTokensIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 17;
 
-    public static MintShareIxData read(final byte[] _data, final int offset) {
+    public static MintTokensIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -1703,7 +2040,7 @@ public final class GlamProgram {
       final var mintId = _data[i] & 0xFF;
       ++i;
       final var amount = getInt64LE(_data, i);
-      return new MintShareIxData(discriminator, mintId, amount);
+      return new MintTokensIxData(discriminator, mintId, amount);
     }
 
     @Override
@@ -1905,9 +2242,7 @@ public final class GlamProgram {
                                             final PublicKey existingStakeKey,
                                             final PublicKey newStakeKey,
                                             final PublicKey voteKey,
-                                            final PublicKey stakeConfigKey,
-                                            final String newStakeAccountId,
-                                            final int newStakeAccountBump) {
+                                            final PublicKey stakeConfigKey) {
     final var keys = List.of(
       createWritableSigner(signerKey),
       createWrite(stateKey),
@@ -1921,50 +2256,7 @@ public final class GlamProgram {
       createRead(solanaAccounts.systemProgram())
     );
 
-    final byte[] _newStakeAccountId = newStakeAccountId.getBytes(UTF_8);
-    final byte[] _data = new byte[13 + Borsh.lenVector(_newStakeAccountId)];
-    int i = writeDiscriminator(REDELEGATE_STAKE_DISCRIMINATOR, _data, 0);
-    i += Borsh.writeVector(_newStakeAccountId, _data, i);
-    _data[i] = (byte) newStakeAccountBump;
-
-    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
-  }
-
-  public record RedelegateStakeIxData(Discriminator discriminator, String newStakeAccountId, byte[] _newStakeAccountId, int newStakeAccountBump) implements Borsh {  
-
-    public static RedelegateStakeIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static RedelegateStakeIxData createRecord(final Discriminator discriminator, final String newStakeAccountId, final int newStakeAccountBump) {
-      return new RedelegateStakeIxData(discriminator, newStakeAccountId, newStakeAccountId.getBytes(UTF_8), newStakeAccountBump);
-    }
-
-    public static RedelegateStakeIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = parseDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var newStakeAccountId = Borsh.string(_data, i);
-      i += (Integer.BYTES + getInt32LE(_data, i));
-      final var newStakeAccountBump = _data[i] & 0xFF;
-      return new RedelegateStakeIxData(discriminator, newStakeAccountId, newStakeAccountId.getBytes(UTF_8), newStakeAccountBump);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeVector(_newStakeAccountId, _data, i);
-      _data[i] = (byte) newStakeAccountBump;
-      ++i;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 8 + Borsh.lenVector(_newStakeAccountId) + 1;
-    }
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, REDELEGATE_STAKE_DISCRIMINATOR);
   }
 
   public static final Discriminator SET_SUBSCRIBE_REDEEM_ENABLED_DISCRIMINATOR = toDiscriminator(189, 56, 205, 172, 201, 185, 34, 92);
@@ -2087,9 +2379,7 @@ public final class GlamProgram {
                                               final PublicKey vaultKey,
                                               final PublicKey existingStakeKey,
                                               final PublicKey newStakeKey,
-                                              final long lamports,
-                                              final String newStakeAccountId,
-                                              final int newStakeAccountBump) {
+                                              final long lamports) {
     final var keys = List.of(
       createWritableSigner(signerKey),
       createWrite(stateKey),
@@ -2101,32 +2391,20 @@ public final class GlamProgram {
       createRead(solanaAccounts.systemProgram())
     );
 
-    final byte[] _newStakeAccountId = newStakeAccountId.getBytes(UTF_8);
-    final byte[] _data = new byte[21 + Borsh.lenVector(_newStakeAccountId)];
+    final byte[] _data = new byte[16];
     int i = writeDiscriminator(SPLIT_STAKE_ACCOUNT_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, lamports);
-    i += 8;
-    i += Borsh.writeVector(_newStakeAccountId, _data, i);
-    _data[i] = (byte) newStakeAccountBump;
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record SplitStakeAccountIxData(Discriminator discriminator,
-                                        long lamports,
-                                        String newStakeAccountId, byte[] _newStakeAccountId,
-                                        int newStakeAccountBump) implements Borsh {  
+  public record SplitStakeAccountIxData(Discriminator discriminator, long lamports) implements Borsh {  
 
     public static SplitStakeAccountIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static SplitStakeAccountIxData createRecord(final Discriminator discriminator,
-                                                       final long lamports,
-                                                       final String newStakeAccountId,
-                                                       final int newStakeAccountBump) {
-      return new SplitStakeAccountIxData(discriminator, lamports, newStakeAccountId, newStakeAccountId.getBytes(UTF_8), newStakeAccountBump);
-    }
+    public static final int BYTES = 16;
 
     public static SplitStakeAccountIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -2135,11 +2413,7 @@ public final class GlamProgram {
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
-      i += 8;
-      final var newStakeAccountId = Borsh.string(_data, i);
-      i += (Integer.BYTES + getInt32LE(_data, i));
-      final var newStakeAccountBump = _data[i] & 0xFF;
-      return new SplitStakeAccountIxData(discriminator, lamports, newStakeAccountId, newStakeAccountId.getBytes(UTF_8), newStakeAccountBump);
+      return new SplitStakeAccountIxData(discriminator, lamports);
     }
 
     @Override
@@ -2147,15 +2421,12 @@ public final class GlamProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, lamports);
       i += 8;
-      i += Borsh.writeVector(_newStakeAccountId, _data, i);
-      _data[i] = (byte) newStakeAccountBump;
-      ++i;
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 8 + Borsh.lenVector(_newStakeAccountId) + 1;
+      return BYTES;
     }
   }
 
@@ -2365,9 +2636,7 @@ public final class GlamProgram {
                                                    final PublicKey poolTokenAtaKey,
                                                    final PublicKey stakePoolProgramKey,
                                                    final PublicKey tokenProgramKey,
-                                                   final long poolTokenAmount,
-                                                   final String stakeAccountId,
-                                                   final int stakeAccountBump) {
+                                                   final long poolTokenAmount) {
     final var keys = List.of(
       createWritableSigner(signerKey),
       createWrite(stateKey),
@@ -2387,32 +2656,20 @@ public final class GlamProgram {
       createRead(solanaAccounts.stakeProgram())
     );
 
-    final byte[] _stakeAccountId = stakeAccountId.getBytes(UTF_8);
-    final byte[] _data = new byte[21 + Borsh.lenVector(_stakeAccountId)];
+    final byte[] _data = new byte[16];
     int i = writeDiscriminator(STAKE_POOL_WITHDRAW_STAKE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, poolTokenAmount);
-    i += 8;
-    i += Borsh.writeVector(_stakeAccountId, _data, i);
-    _data[i] = (byte) stakeAccountBump;
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record StakePoolWithdrawStakeIxData(Discriminator discriminator,
-                                             long poolTokenAmount,
-                                             String stakeAccountId, byte[] _stakeAccountId,
-                                             int stakeAccountBump) implements Borsh {  
+  public record StakePoolWithdrawStakeIxData(Discriminator discriminator, long poolTokenAmount) implements Borsh {  
 
     public static StakePoolWithdrawStakeIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static StakePoolWithdrawStakeIxData createRecord(final Discriminator discriminator,
-                                                            final long poolTokenAmount,
-                                                            final String stakeAccountId,
-                                                            final int stakeAccountBump) {
-      return new StakePoolWithdrawStakeIxData(discriminator, poolTokenAmount, stakeAccountId, stakeAccountId.getBytes(UTF_8), stakeAccountBump);
-    }
+    public static final int BYTES = 16;
 
     public static StakePoolWithdrawStakeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -2421,11 +2678,7 @@ public final class GlamProgram {
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var poolTokenAmount = getInt64LE(_data, i);
-      i += 8;
-      final var stakeAccountId = Borsh.string(_data, i);
-      i += (Integer.BYTES + getInt32LE(_data, i));
-      final var stakeAccountBump = _data[i] & 0xFF;
-      return new StakePoolWithdrawStakeIxData(discriminator, poolTokenAmount, stakeAccountId, stakeAccountId.getBytes(UTF_8), stakeAccountBump);
+      return new StakePoolWithdrawStakeIxData(discriminator, poolTokenAmount);
     }
 
     @Override
@@ -2433,15 +2686,12 @@ public final class GlamProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, poolTokenAmount);
       i += 8;
-      i += Borsh.writeVector(_stakeAccountId, _data, i);
-      _data[i] = (byte) stakeAccountBump;
-      ++i;
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 8 + Borsh.lenVector(_stakeAccountId) + 1;
+      return BYTES;
     }
   }
 
@@ -2818,18 +3068,18 @@ public final class GlamProgram {
     }
   }
 
-  public static final Discriminator WITHDRAW_ALL_STAKED_JUP_DISCRIMINATOR = toDiscriminator(210, 124, 52, 114, 25, 254, 170, 52);
+  public static final Discriminator WITHDRAW_ALL_UNSTAKED_JUP_DISCRIMINATOR = toDiscriminator(7, 192, 129, 123, 174, 255, 252, 219);
 
-  public static Instruction withdrawAllStakedJup(final AccountMeta invokedGlamProgramMeta,
-                                                 final SolanaAccounts solanaAccounts,
-                                                 final PublicKey stateKey,
-                                                 final PublicKey vaultKey,
-                                                 final PublicKey signerKey,
-                                                 final PublicKey lockerKey,
-                                                 final PublicKey escrowKey,
-                                                 final PublicKey escrowJupAtaKey,
-                                                 final PublicKey vaultJupAtaKey,
-                                                 final PublicKey lockedVoterProgramKey) {
+  public static Instruction withdrawAllUnstakedJup(final AccountMeta invokedGlamProgramMeta,
+                                                   final SolanaAccounts solanaAccounts,
+                                                   final PublicKey stateKey,
+                                                   final PublicKey vaultKey,
+                                                   final PublicKey signerKey,
+                                                   final PublicKey lockerKey,
+                                                   final PublicKey escrowKey,
+                                                   final PublicKey escrowJupAtaKey,
+                                                   final PublicKey vaultJupAtaKey,
+                                                   final PublicKey lockedVoterProgramKey) {
     final var keys = List.of(
       createRead(stateKey),
       createWrite(vaultKey),
@@ -2842,7 +3092,7 @@ public final class GlamProgram {
       createRead(solanaAccounts.tokenProgram())
     );
 
-    return Instruction.createInstruction(invokedGlamProgramMeta, keys, WITHDRAW_ALL_STAKED_JUP_DISCRIMINATOR);
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, WITHDRAW_ALL_UNSTAKED_JUP_DISCRIMINATOR);
   }
 
   public static final Discriminator WITHDRAW_FROM_STAKE_ACCOUNTS_DISCRIMINATOR = toDiscriminator(93, 209, 100, 231, 169, 160, 192, 197);

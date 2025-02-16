@@ -10,7 +10,8 @@ public enum Integration implements Borsh.Enum {
   NativeStaking,
   Marinade,
   JupiterSwap,
-  JupiterVote;
+  JupiterVote,
+  KaminoLending;
 
   public static Integration read(final byte[] _data, final int offset) {
     return Borsh.read(Integration.values(), _data, offset);

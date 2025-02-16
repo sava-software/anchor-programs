@@ -490,9 +490,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         pda.publicKey(),
         validatorVoteAccount,
         solanaAccounts.stakeConfig(),
-        lamports,
-        stakeAccountPDA.id(),
-        pda.nonce()
+        lamports
     );
   }
 
@@ -508,9 +506,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamVaultAccounts.vaultPublicKey(),
         existingStakeAccount,
         newStakeAccountPDA.pda().publicKey(),
-        lamports,
-        newStakeAccountPDA.id(),
-        newStakeAccountPDA.pda().nonce()
+        lamports
     );
   }
 

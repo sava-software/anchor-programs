@@ -306,7 +306,10 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction modifyOrder(final OptionalInt orderId, final ModifyOrderParams modifyOrderParams) {
+  public Instruction modifyOrder(final PublicKey authority,
+                                 final PublicKey user,
+                                 final OptionalInt orderId,
+                                 final ModifyOrderParams modifyOrderParams) {
     return DriftProgram.modifyOrder(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
@@ -318,7 +321,10 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction modifyOrderByUserId(final int userOrderId, final ModifyOrderParams modifyOrderParams) {
+  public Instruction modifyOrderByUserId(final PublicKey authority,
+                                         final PublicKey user,
+                                         final int userOrderId,
+                                         final ModifyOrderParams modifyOrderParams) {
     return DriftProgram.modifyOrderByUserId(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
@@ -331,7 +337,10 @@ final class DriftProgramClientImpl implements DriftProgramClient {
 
 
   @Override
-  public Instruction placeAndTakePerpOrder(final OrderParams params, final OptionalInt successCondition) {
+  public Instruction placeAndTakePerpOrder(final PublicKey authority,
+                                           final PublicKey user,
+                                           final OrderParams params,
+                                           final OptionalInt successCondition) {
     final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
     return DriftProgram.placeAndTakePerpOrder(
         accounts.invokedDriftProgram(),

@@ -328,9 +328,18 @@ public interface DriftProgramClient {
                                   final PublicKey user,
                                   final PositionDirection direction);
 
-  Instruction modifyOrder(final OptionalInt orderId, final ModifyOrderParams modifyOrderParams);
+  Instruction modifyOrder(final PublicKey authority,
+                          final PublicKey user,
+                          final OptionalInt orderId,
+                          final ModifyOrderParams modifyOrderParams);
 
-  Instruction modifyOrderByUserId(final int userOrderId, final ModifyOrderParams modifyOrderParams);
+  Instruction modifyOrderByUserId(final PublicKey authority,
+                                  final PublicKey user,
+                                  final int userOrderId,
+                                  final ModifyOrderParams modifyOrderParams);
 
-  Instruction placeAndTakePerpOrder(final OrderParams params, final OptionalInt successCondition);
+  Instruction placeAndTakePerpOrder(final PublicKey authority,
+                                    final PublicKey user,
+                                    final OrderParams params,
+                                    final OptionalInt successCondition);
 }
