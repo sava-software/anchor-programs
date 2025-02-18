@@ -13,18 +13,18 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 
-// * This struct is a duplicate of SwiftUserOrdersZeroCopy
+// * This struct is a duplicate of SignedMsgUserOrdersZeroCopy
 // * It is used to give anchor an struct to generate the idl for clients
-// * The struct SwiftUserOrdersZeroCopy is used to load the data in efficiently
-public record SwiftUserOrders(PublicKey _address,
-                              Discriminator discriminator,
-                              PublicKey authorityPubkey,
-                              int padding,
-                              SwiftOrderId[] swiftOrderData) implements Borsh {
+// * The struct SignedMsgUserOrdersZeroCopy is used to load the data in efficiently
+public record SignedMsgUserOrders(PublicKey _address,
+                                  Discriminator discriminator,
+                                  PublicKey authorityPubkey,
+                                  int padding,
+                                  SignedMsgOrderId[] signedMsgOrderData) implements Borsh {
 
   public static final int AUTHORITY_PUBKEY_OFFSET = 8;
   public static final int PADDING_OFFSET = 40;
-  public static final int SWIFT_ORDER_DATA_OFFSET = 44;
+  public static final int SIGNED_MSG_ORDER_DATA_OFFSET = 44;
 
   public static Filter createAuthorityPubkeyFilter(final PublicKey authorityPubkey) {
     return Filter.createMemCompFilter(AUTHORITY_PUBKEY_OFFSET, authorityPubkey);
@@ -36,21 +36,21 @@ public record SwiftUserOrders(PublicKey _address,
     return Filter.createMemCompFilter(PADDING_OFFSET, _data);
   }
 
-  public static SwiftUserOrders read(final byte[] _data, final int offset) {
+  public static SignedMsgUserOrders read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
 
-  public static SwiftUserOrders read(final AccountInfo<byte[]> accountInfo) {
+  public static SignedMsgUserOrders read(final AccountInfo<byte[]> accountInfo) {
     return read(accountInfo.pubKey(), accountInfo.data(), 0);
   }
 
-  public static SwiftUserOrders read(final PublicKey _address, final byte[] _data) {
+  public static SignedMsgUserOrders read(final PublicKey _address, final byte[] _data) {
     return read(_address, _data, 0);
   }
 
-  public static final BiFunction<PublicKey, byte[], SwiftUserOrders> FACTORY = SwiftUserOrders::read;
+  public static final BiFunction<PublicKey, byte[], SignedMsgUserOrders> FACTORY = SignedMsgUserOrders::read;
 
-  public static SwiftUserOrders read(final PublicKey _address, final byte[] _data, final int offset) {
+  public static SignedMsgUserOrders read(final PublicKey _address, final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
@@ -60,8 +60,8 @@ public record SwiftUserOrders(PublicKey _address,
     i += 32;
     final var padding = getInt32LE(_data, i);
     i += 4;
-    final var swiftOrderData = Borsh.readVector(SwiftOrderId.class, SwiftOrderId::read, _data, i);
-    return new SwiftUserOrders(_address, discriminator, authorityPubkey, padding, swiftOrderData);
+    final var signedMsgOrderData = Borsh.readVector(SignedMsgOrderId.class, SignedMsgOrderId::read, _data, i);
+    return new SignedMsgUserOrders(_address, discriminator, authorityPubkey, padding, signedMsgOrderData);
   }
 
   @Override
@@ -71,12 +71,12 @@ public record SwiftUserOrders(PublicKey _address,
     i += 32;
     putInt32LE(_data, i, padding);
     i += 4;
-    i += Borsh.writeVector(swiftOrderData, _data, i);
+    i += Borsh.writeVector(signedMsgOrderData, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return 8 + 32 + 4 + Borsh.lenVector(swiftOrderData);
+    return 8 + 32 + 4 + Borsh.lenVector(signedMsgOrderData);
   }
 }

@@ -7,43 +7,43 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record SwiftOrderParamsMessage(OrderParams swiftOrderParams,
-                                      int subAccountId,
-                                      long slot,
-                                      byte[] uuid,
-                                      SwiftTriggerOrderParams takeProfitOrderParams,
-                                      SwiftTriggerOrderParams stopLossOrderParams) implements Borsh {
+public record SignedMsgOrderParamsMessage(OrderParams signedMsgOrderParams,
+                                          int subAccountId,
+                                          long slot,
+                                          byte[] uuid,
+                                          SignedMsgTriggerOrderParams takeProfitOrderParams,
+                                          SignedMsgTriggerOrderParams stopLossOrderParams) implements Borsh {
 
-  public static SwiftOrderParamsMessage read(final byte[] _data, final int offset) {
+  public static SignedMsgOrderParamsMessage read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
     int i = offset;
-    final var swiftOrderParams = OrderParams.read(_data, i);
-    i += Borsh.len(swiftOrderParams);
+    final var signedMsgOrderParams = OrderParams.read(_data, i);
+    i += Borsh.len(signedMsgOrderParams);
     final var subAccountId = getInt16LE(_data, i);
     i += 2;
     final var slot = getInt64LE(_data, i);
     i += 8;
     final var uuid = new byte[8];
     i += Borsh.readArray(uuid, _data, i);
-    final var takeProfitOrderParams = _data[i++] == 0 ? null : SwiftTriggerOrderParams.read(_data, i);
+    final var takeProfitOrderParams = _data[i++] == 0 ? null : SignedMsgTriggerOrderParams.read(_data, i);
     if (takeProfitOrderParams != null) {
       i += Borsh.len(takeProfitOrderParams);
     }
-    final var stopLossOrderParams = _data[i++] == 0 ? null : SwiftTriggerOrderParams.read(_data, i);
-    return new SwiftOrderParamsMessage(swiftOrderParams,
-                                       subAccountId,
-                                       slot,
-                                       uuid,
-                                       takeProfitOrderParams,
-                                       stopLossOrderParams);
+    final var stopLossOrderParams = _data[i++] == 0 ? null : SignedMsgTriggerOrderParams.read(_data, i);
+    return new SignedMsgOrderParamsMessage(signedMsgOrderParams,
+                                           subAccountId,
+                                           slot,
+                                           uuid,
+                                           takeProfitOrderParams,
+                                           stopLossOrderParams);
   }
 
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.write(swiftOrderParams, _data, i);
+    i += Borsh.write(signedMsgOrderParams, _data, i);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     putInt64LE(_data, i, slot);
@@ -56,7 +56,7 @@ public record SwiftOrderParamsMessage(OrderParams swiftOrderParams,
 
   @Override
   public int l() {
-    return Borsh.len(swiftOrderParams)
+    return Borsh.len(signedMsgOrderParams)
          + 2
          + 8
          + Borsh.lenArray(uuid)

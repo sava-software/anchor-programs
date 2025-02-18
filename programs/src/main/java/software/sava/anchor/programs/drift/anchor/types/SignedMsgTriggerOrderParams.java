@@ -5,26 +5,27 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record RFQOrderId(byte[] uuid, long maxTs) implements Borsh {
+public record SignedMsgTriggerOrderParams(long triggerPrice, long baseAssetAmount) implements Borsh {
 
   public static final int BYTES = 16;
 
-  public static RFQOrderId read(final byte[] _data, final int offset) {
+  public static SignedMsgTriggerOrderParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
     int i = offset;
-    final var uuid = new byte[8];
-    i += Borsh.readArray(uuid, _data, i);
-    final var maxTs = getInt64LE(_data, i);
-    return new RFQOrderId(uuid, maxTs);
+    final var triggerPrice = getInt64LE(_data, i);
+    i += 8;
+    final var baseAssetAmount = getInt64LE(_data, i);
+    return new SignedMsgTriggerOrderParams(triggerPrice, baseAssetAmount);
   }
 
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(uuid, _data, i);
-    putInt64LE(_data, i, maxTs);
+    putInt64LE(_data, i, triggerPrice);
+    i += 8;
+    putInt64LE(_data, i, baseAssetAmount);
     i += 8;
     return i - offset;
   }

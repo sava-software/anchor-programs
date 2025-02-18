@@ -10,7 +10,8 @@ public enum EngineFieldName implements Borsh.Enum {
   LockUp,
   DriftMarketIndexesPerp,
   DriftMarketIndexesSpot,
-  DriftOrderTypes;
+  DriftOrderTypes,
+  MaxSwapSlippageBps;
 
   public static EngineFieldName read(final byte[] _data, final int offset) {
     return Borsh.read(EngineFieldName.values(), _data, offset);

@@ -7,13 +7,13 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 
-public record SwiftUserOrdersFixed(PublicKey userPubkey,
-                                   int padding,
-                                   int len) implements Borsh {
+public record SignedMsgUserOrdersFixed(PublicKey userPubkey,
+                                       int padding,
+                                       int len) implements Borsh {
 
   public static final int BYTES = 40;
 
-  public static SwiftUserOrdersFixed read(final byte[] _data, final int offset) {
+  public static SignedMsgUserOrdersFixed read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
@@ -23,7 +23,7 @@ public record SwiftUserOrdersFixed(PublicKey userPubkey,
     final var padding = getInt32LE(_data, i);
     i += 4;
     final var len = getInt32LE(_data, i);
-    return new SwiftUserOrdersFixed(userPubkey, padding, len);
+    return new SignedMsgUserOrdersFixed(userPubkey, padding, len);
   }
 
   @Override

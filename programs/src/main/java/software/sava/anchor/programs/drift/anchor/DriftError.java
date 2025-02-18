@@ -290,8 +290,8 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.InvalidPredictionMarketOrder,
     DriftError.InvalidVerificationIxIndex,
     DriftError.SigVerificationFailed,
-    DriftError.MismatchedSwiftOrderParamsMarketIndex,
-    DriftError.InvalidSwiftOrderParam,
+    DriftError.MismatchedSignedMsgOrderParamsMarketIndex,
+    DriftError.InvalidSignedMsgOrderParam,
     DriftError.PlaceAndTakeOrderSuccessConditionFailed,
     DriftError.InvalidHighLeverageModeConfig,
     DriftError.InvalidRFQUserAccount,
@@ -300,11 +300,11 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.RFQOrderNotFilled,
     DriftError.InvalidRFQOrder,
     DriftError.InvalidRFQMatch,
-    DriftError.InvalidSwiftUserAccount,
-    DriftError.SwiftUserAccountWrongMutability,
-    DriftError.SwiftUserOrdersAccountFull,
-    DriftError.SwiftOrderDoesNotExist,
-    DriftError.InvalidSwiftOrderId,
+    DriftError.InvalidSignedMsgUserAccount,
+    DriftError.SignedMsgUserAccountWrongMutability,
+    DriftError.SignedMsgUserOrdersAccountFull,
+    DriftError.SignedMsgOrderDoesNotExist,
+    DriftError.InvalidSignedMsgOrderId,
     DriftError.InvalidPoolId,
     DriftError.InvalidProtectedMakerModeConfig,
     DriftError.InvalidPythLazerStorageOwner,
@@ -312,7 +312,7 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.InvalidPythLazerMessage,
     DriftError.PythLazerMessagePriceFeedMismatch,
     DriftError.InvalidLiquidateSpotWithSwap,
-    DriftError.SwiftUserContextUserMismatch,
+    DriftError.SignedMsgUserContextUserMismatch,
     DriftError.UserFuelOverflowThresholdNotMet,
     DriftError.FuelOverflowAccountNotFound {
 
@@ -605,8 +605,8 @@ public sealed interface DriftError extends ProgramError permits
       case 6284 -> InvalidPredictionMarketOrder.INSTANCE;
       case 6285 -> InvalidVerificationIxIndex.INSTANCE;
       case 6286 -> SigVerificationFailed.INSTANCE;
-      case 6287 -> MismatchedSwiftOrderParamsMarketIndex.INSTANCE;
-      case 6288 -> InvalidSwiftOrderParam.INSTANCE;
+      case 6287 -> MismatchedSignedMsgOrderParamsMarketIndex.INSTANCE;
+      case 6288 -> InvalidSignedMsgOrderParam.INSTANCE;
       case 6289 -> PlaceAndTakeOrderSuccessConditionFailed.INSTANCE;
       case 6290 -> InvalidHighLeverageModeConfig.INSTANCE;
       case 6291 -> InvalidRFQUserAccount.INSTANCE;
@@ -615,11 +615,11 @@ public sealed interface DriftError extends ProgramError permits
       case 6294 -> RFQOrderNotFilled.INSTANCE;
       case 6295 -> InvalidRFQOrder.INSTANCE;
       case 6296 -> InvalidRFQMatch.INSTANCE;
-      case 6297 -> InvalidSwiftUserAccount.INSTANCE;
-      case 6298 -> SwiftUserAccountWrongMutability.INSTANCE;
-      case 6299 -> SwiftUserOrdersAccountFull.INSTANCE;
-      case 6300 -> SwiftOrderDoesNotExist.INSTANCE;
-      case 6301 -> InvalidSwiftOrderId.INSTANCE;
+      case 6297 -> InvalidSignedMsgUserAccount.INSTANCE;
+      case 6298 -> SignedMsgUserAccountWrongMutability.INSTANCE;
+      case 6299 -> SignedMsgUserOrdersAccountFull.INSTANCE;
+      case 6300 -> SignedMsgOrderDoesNotExist.INSTANCE;
+      case 6301 -> InvalidSignedMsgOrderId.INSTANCE;
       case 6302 -> InvalidPoolId.INSTANCE;
       case 6303 -> InvalidProtectedMakerModeConfig.INSTANCE;
       case 6304 -> InvalidPythLazerStorageOwner.INSTANCE;
@@ -627,7 +627,7 @@ public sealed interface DriftError extends ProgramError permits
       case 6306 -> InvalidPythLazerMessage.INSTANCE;
       case 6307 -> PythLazerMessagePriceFeedMismatch.INSTANCE;
       case 6308 -> InvalidLiquidateSpotWithSwap.INSTANCE;
-      case 6309 -> SwiftUserContextUserMismatch.INSTANCE;
+      case 6309 -> SignedMsgUserContextUserMismatch.INSTANCE;
       case 6310 -> UserFuelOverflowThresholdNotMet.INSTANCE;
       case 6311 -> FuelOverflowAccountNotFound.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
@@ -2632,28 +2632,28 @@ public sealed interface DriftError extends ProgramError permits
   record InvalidVerificationIxIndex(int code, String msg) implements DriftError {
 
     public static final InvalidVerificationIxIndex INSTANCE = new InvalidVerificationIxIndex(
-        6285, "Ed25519 Ix must be before place and make swift order ix"
+        6285, "Ed25519 Ix must be before place and make SignedMsg order ix"
     );
   }
 
   record SigVerificationFailed(int code, String msg) implements DriftError {
 
     public static final SigVerificationFailed INSTANCE = new SigVerificationFailed(
-        6286, "Swift message verificaiton failed"
+        6286, "SignedMsg message verificaiton failed"
     );
   }
 
-  record MismatchedSwiftOrderParamsMarketIndex(int code, String msg) implements DriftError {
+  record MismatchedSignedMsgOrderParamsMarketIndex(int code, String msg) implements DriftError {
 
-    public static final MismatchedSwiftOrderParamsMarketIndex INSTANCE = new MismatchedSwiftOrderParamsMarketIndex(
-        6287, "Market index mismatched b/w taker and maker swift order params"
+    public static final MismatchedSignedMsgOrderParamsMarketIndex INSTANCE = new MismatchedSignedMsgOrderParamsMarketIndex(
+        6287, "Market index mismatched b/w taker and maker SignedMsg order params"
     );
   }
 
-  record InvalidSwiftOrderParam(int code, String msg) implements DriftError {
+  record InvalidSignedMsgOrderParam(int code, String msg) implements DriftError {
 
-    public static final InvalidSwiftOrderParam INSTANCE = new InvalidSwiftOrderParam(
-        6288, "Invalid swift order param"
+    public static final InvalidSignedMsgOrderParam INSTANCE = new InvalidSignedMsgOrderParam(
+        6288, "Invalid SignedMsg order param"
     );
   }
 
@@ -2713,38 +2713,38 @@ public sealed interface DriftError extends ProgramError permits
     );
   }
 
-  record InvalidSwiftUserAccount(int code, String msg) implements DriftError {
+  record InvalidSignedMsgUserAccount(int code, String msg) implements DriftError {
 
-    public static final InvalidSwiftUserAccount INSTANCE = new InvalidSwiftUserAccount(
-        6297, "Invalid swift user account"
+    public static final InvalidSignedMsgUserAccount INSTANCE = new InvalidSignedMsgUserAccount(
+        6297, "Invalid SignedMsg user account"
     );
   }
 
-  record SwiftUserAccountWrongMutability(int code, String msg) implements DriftError {
+  record SignedMsgUserAccountWrongMutability(int code, String msg) implements DriftError {
 
-    public static final SwiftUserAccountWrongMutability INSTANCE = new SwiftUserAccountWrongMutability(
-        6298, "Swift account wrong mutability"
+    public static final SignedMsgUserAccountWrongMutability INSTANCE = new SignedMsgUserAccountWrongMutability(
+        6298, "SignedMsg account wrong mutability"
     );
   }
 
-  record SwiftUserOrdersAccountFull(int code, String msg) implements DriftError {
+  record SignedMsgUserOrdersAccountFull(int code, String msg) implements DriftError {
 
-    public static final SwiftUserOrdersAccountFull INSTANCE = new SwiftUserOrdersAccountFull(
-        6299, "SwiftUserAccount has too many active orders"
+    public static final SignedMsgUserOrdersAccountFull INSTANCE = new SignedMsgUserOrdersAccountFull(
+        6299, "SignedMsgUserAccount has too many active orders"
     );
   }
 
-  record SwiftOrderDoesNotExist(int code, String msg) implements DriftError {
+  record SignedMsgOrderDoesNotExist(int code, String msg) implements DriftError {
 
-    public static final SwiftOrderDoesNotExist INSTANCE = new SwiftOrderDoesNotExist(
-        6300, "Order with swift uuid does not exist"
+    public static final SignedMsgOrderDoesNotExist INSTANCE = new SignedMsgOrderDoesNotExist(
+        6300, "Order with SignedMsg uuid does not exist"
     );
   }
 
-  record InvalidSwiftOrderId(int code, String msg) implements DriftError {
+  record InvalidSignedMsgOrderId(int code, String msg) implements DriftError {
 
-    public static final InvalidSwiftOrderId INSTANCE = new InvalidSwiftOrderId(
-        6301, "Swift order id cannot be 0s"
+    public static final InvalidSignedMsgOrderId INSTANCE = new InvalidSignedMsgOrderId(
+        6301, "SignedMsg order id cannot be 0s"
     );
   }
 
@@ -2797,10 +2797,10 @@ public sealed interface DriftError extends ProgramError permits
     );
   }
 
-  record SwiftUserContextUserMismatch(int code, String msg) implements DriftError {
+  record SignedMsgUserContextUserMismatch(int code, String msg) implements DriftError {
 
-    public static final SwiftUserContextUserMismatch INSTANCE = new SwiftUserContextUserMismatch(
-        6309, "User in swift message does not match user in ix context"
+    public static final SignedMsgUserContextUserMismatch INSTANCE = new SignedMsgUserContextUserMismatch(
+        6309, "User in SignedMsg message does not match user in ix context"
     );
   }
 

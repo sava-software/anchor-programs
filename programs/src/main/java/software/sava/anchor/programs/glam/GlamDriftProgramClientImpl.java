@@ -65,7 +65,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     return fetchUser(rpcClient, user);
   }
 
-
   @Override
   public Instruction deposit(final PublicKey userTokenAccountKey,
                              final PublicKey tokenProgramKey,
@@ -85,18 +84,20 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
     return GlamProgram.driftDeposit(
         invokedProgram,
-        solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
-        user,
-        userStatsKey,
-        driftAccounts.stateKey(),
         glamVaultAccounts.vaultPublicKey(),
-        spotMarketConfig.vaultPDA(),
-        userTokenAccountKey,
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
+        driftAccounts.stateKey(),
+        user,
+        userStatsKey,
+        authority,
+        spotMarketConfig.vaultPDA(),
+        userTokenAccountKey,
+        tokenProgramKey,
         spotMarketConfig.marketIndex(),
-        amount
+        amount,
+        reduceOnly
     );
   }
 
@@ -135,19 +136,21 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
     return GlamProgram.driftWithdraw(
         invokedProgram,
-        solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
-        user,
-        userStatsKey,
-        driftAccounts.stateKey(),
-        driftAccounts.driftSignerPDA(),
         glamVaultAccounts.vaultPublicKey(),
-        userTokenAccountKey,
-        spotMarketConfig.vaultPDA(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
+        driftAccounts.stateKey(),
+        user,
+        userStatsKey,
+        authority,
+        spotMarketConfig.vaultPDA(),
+        driftAccounts.driftSignerPDA(),
+        userTokenAccountKey,
+        tokenProgramKey,
         spotMarketConfig.marketIndex(),
-        amount
+        amount,
+        reduceOnly
     );
   }
 
@@ -260,11 +263,12 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
     return GlamProgram.driftPlaceOrders(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
-        user,
-        driftAccounts.stateKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         driftAccounts.driftProgram(),
+        driftAccounts.stateKey(),
+        user,
+        authority,
         toGlam(orderParams)
     );
   }
@@ -372,6 +376,17 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   private static software.sava.anchor.programs.glam.anchor.types.ModifyOrderParams mapModifyOrderParams(final ModifyOrderParams modifyOrderParams) {
+    final var optionalPolicy = modifyOrderParams.policy();
+    final ModifyOrderPolicy modifyOrderPolicy;
+    if (optionalPolicy.isPresent()) {
+      modifyOrderPolicy = switch (optionalPolicy.getAsInt()) {
+        case 0 -> ModifyOrderPolicy.TryModify;
+        case 1 -> ModifyOrderPolicy.MustModify;
+        default -> throw new IllegalArgumentException("Invalid modify order policy: " + optionalPolicy.getAsInt());
+      };
+    } else {
+      modifyOrderPolicy = null;
+    }
     return new software.sava.anchor.programs.glam.anchor.types.ModifyOrderParams(
         mapDirection(modifyOrderParams.direction()),
         modifyOrderParams.baseAssetAmount(),
@@ -386,7 +401,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         modifyOrderParams.auctionDuration(),
         modifyOrderParams.auctionStartPrice(),
         modifyOrderParams.auctionEndPrice(),
-        modifyOrderParams.policy()
+        modifyOrderPolicy
     );
   }
 

@@ -7,14 +7,14 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record SwiftOrderId(byte[] uuid,
-                           long maxSlot,
-                           int orderId,
-                           int padding) implements Borsh {
+public record SignedMsgOrderId(byte[] uuid,
+                               long maxSlot,
+                               int orderId,
+                               int padding) implements Borsh {
 
   public static final int BYTES = 24;
 
-  public static SwiftOrderId read(final byte[] _data, final int offset) {
+  public static SignedMsgOrderId read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
@@ -26,10 +26,10 @@ public record SwiftOrderId(byte[] uuid,
     final var orderId = getInt32LE(_data, i);
     i += 4;
     final var padding = getInt32LE(_data, i);
-    return new SwiftOrderId(uuid,
-                            maxSlot,
-                            orderId,
-                            padding);
+    return new SignedMsgOrderId(uuid,
+                                maxSlot,
+                                orderId,
+                                padding);
   }
 
   @Override

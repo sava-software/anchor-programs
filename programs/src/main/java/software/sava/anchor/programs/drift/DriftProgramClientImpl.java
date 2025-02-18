@@ -508,16 +508,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
-  public Instruction deleteSwiftUserOrders(final PublicKey swiftUserOrdersKey,
-                                           final PublicKey stateKey) {
-    return DriftProgram.deleteSwiftUserOrders(
-        accounts.invokedDriftProgram(),
-        swiftUserOrdersKey,
-        stateKey,
-        authority
-    );
-  }
-
   public Instruction updateUserPoolId(final int subAccountId, final int poolId) {
     return DriftProgram.updateUserPoolId(
         accounts.invokedDriftProgram(),

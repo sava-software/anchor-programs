@@ -17,7 +17,6 @@ import software.sava.anchor.programs.drift.anchor.types.OracleSource;
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
 import software.sava.anchor.programs.drift.anchor.types.PositionDirection;
 import software.sava.anchor.programs.drift.anchor.types.PrelaunchOracleParams;
-import software.sava.anchor.programs.drift.anchor.types.RFQMatch;
 import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
 import software.sava.anchor.programs.drift.anchor.types.SpotFulfillmentConfigStatus;
 import software.sava.anchor.programs.drift.anchor.types.SpotFulfillmentType;
@@ -136,38 +135,17 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, INITIALIZE_USER_STATS_DISCRIMINATOR);
   }
 
-  public static final Discriminator INITIALIZE_RFQ_USER_DISCRIMINATOR = toDiscriminator(87, 2, 27, 16, 186, 206, 169, 38);
+  public static final Discriminator INITIALIZE_SIGNED_MSG_USER_ORDERS_DISCRIMINATOR = toDiscriminator(164, 99, 156, 126, 156, 57, 99, 180);
 
-  public static Instruction initializeRfqUser(final AccountMeta invokedDriftProgramMeta,
-                                              final PublicKey rfqUserKey,
-                                              final PublicKey authorityKey,
-                                              final PublicKey userKey,
-                                              final PublicKey payerKey,
-                                              final PublicKey rentKey,
-                                              final PublicKey systemProgramKey) {
+  public static Instruction initializeSignedMsgUserOrders(final AccountMeta invokedDriftProgramMeta,
+                                                          final PublicKey signedMsgUserOrdersKey,
+                                                          final PublicKey authorityKey,
+                                                          final PublicKey payerKey,
+                                                          final PublicKey rentKey,
+                                                          final PublicKey systemProgramKey,
+                                                          final int numOrders) {
     final var keys = List.of(
-      createWrite(rfqUserKey),
-      createReadOnlySigner(authorityKey),
-      createWrite(userKey),
-      createWritableSigner(payerKey),
-      createRead(rentKey),
-      createRead(systemProgramKey)
-    );
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, INITIALIZE_RFQ_USER_DISCRIMINATOR);
-  }
-
-  public static final Discriminator INITIALIZE_SWIFT_USER_ORDERS_DISCRIMINATOR = toDiscriminator(26, 91, 2, 246, 96, 153, 117, 194);
-
-  public static Instruction initializeSwiftUserOrders(final AccountMeta invokedDriftProgramMeta,
-                                                      final PublicKey swiftUserOrdersKey,
-                                                      final PublicKey authorityKey,
-                                                      final PublicKey payerKey,
-                                                      final PublicKey rentKey,
-                                                      final PublicKey systemProgramKey,
-                                                      final int numOrders) {
-    final var keys = List.of(
-      createWrite(swiftUserOrdersKey),
+      createWrite(signedMsgUserOrdersKey),
       createReadOnlySigner(authorityKey),
       createWritableSigner(payerKey),
       createRead(rentKey),
@@ -175,28 +153,28 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(INITIALIZE_SWIFT_USER_ORDERS_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(INITIALIZE_SIGNED_MSG_USER_ORDERS_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, numOrders);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record InitializeSwiftUserOrdersIxData(Discriminator discriminator, int numOrders) implements Borsh {  
+  public record InitializeSignedMsgUserOrdersIxData(Discriminator discriminator, int numOrders) implements Borsh {  
 
-    public static InitializeSwiftUserOrdersIxData read(final Instruction instruction) {
+    public static InitializeSignedMsgUserOrdersIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 10;
 
-    public static InitializeSwiftUserOrdersIxData read(final byte[] _data, final int offset) {
+    public static InitializeSignedMsgUserOrdersIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var numOrders = getInt16LE(_data, i);
-      return new InitializeSwiftUserOrdersIxData(discriminator, numOrders);
+      return new InitializeSignedMsgUserOrdersIxData(discriminator, numOrders);
     }
 
     @Override
@@ -213,42 +191,42 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator RESIZE_SWIFT_USER_ORDERS_DISCRIMINATOR = toDiscriminator(36, 57, 40, 90, 193, 150, 249, 53);
+  public static final Discriminator RESIZE_SIGNED_MSG_USER_ORDERS_DISCRIMINATOR = toDiscriminator(137, 10, 87, 150, 18, 115, 79, 168);
 
-  public static Instruction resizeSwiftUserOrders(final AccountMeta invokedDriftProgramMeta,
-                                                  final PublicKey swiftUserOrdersKey,
-                                                  final PublicKey authorityKey,
-                                                  final PublicKey systemProgramKey,
-                                                  final int numOrders) {
+  public static Instruction resizeSignedMsgUserOrders(final AccountMeta invokedDriftProgramMeta,
+                                                      final PublicKey signedMsgUserOrdersKey,
+                                                      final PublicKey authorityKey,
+                                                      final PublicKey systemProgramKey,
+                                                      final int numOrders) {
     final var keys = List.of(
-      createWrite(swiftUserOrdersKey),
+      createWrite(signedMsgUserOrdersKey),
       createWritableSigner(authorityKey),
       createRead(systemProgramKey)
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(RESIZE_SWIFT_USER_ORDERS_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(RESIZE_SIGNED_MSG_USER_ORDERS_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, numOrders);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record ResizeSwiftUserOrdersIxData(Discriminator discriminator, int numOrders) implements Borsh {  
+  public record ResizeSignedMsgUserOrdersIxData(Discriminator discriminator, int numOrders) implements Borsh {  
 
-    public static ResizeSwiftUserOrdersIxData read(final Instruction instruction) {
+    public static ResizeSignedMsgUserOrdersIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 10;
 
-    public static ResizeSwiftUserOrdersIxData read(final byte[] _data, final int offset) {
+    public static ResizeSignedMsgUserOrdersIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var numOrders = getInt16LE(_data, i);
-      return new ResizeSwiftUserOrdersIxData(discriminator, numOrders);
+      return new ResizeSignedMsgUserOrdersIxData(discriminator, numOrders);
     }
 
     @Override
@@ -1109,43 +1087,43 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator PLACE_AND_MAKE_SWIFT_PERP_ORDER_DISCRIMINATOR = toDiscriminator(0, 160, 153, 76, 136, 212, 248, 16);
+  public static final Discriminator PLACE_AND_MAKE_SIGNED_MSG_PERP_ORDER_DISCRIMINATOR = toDiscriminator(16, 26, 123, 131, 94, 29, 175, 98);
 
-  public static Instruction placeAndMakeSwiftPerpOrder(final AccountMeta invokedDriftProgramMeta,
-                                                       final PublicKey stateKey,
-                                                       final PublicKey userKey,
-                                                       final PublicKey userStatsKey,
-                                                       final PublicKey takerKey,
-                                                       final PublicKey takerStatsKey,
-                                                       final PublicKey takerSwiftUserOrdersKey,
-                                                       final PublicKey authorityKey,
-                                                       final OrderParams params,
-                                                       final byte[] swiftOrderUuid) {
+  public static Instruction placeAndMakeSignedMsgPerpOrder(final AccountMeta invokedDriftProgramMeta,
+                                                           final PublicKey stateKey,
+                                                           final PublicKey userKey,
+                                                           final PublicKey userStatsKey,
+                                                           final PublicKey takerKey,
+                                                           final PublicKey takerStatsKey,
+                                                           final PublicKey takerSignedMsgUserOrdersKey,
+                                                           final PublicKey authorityKey,
+                                                           final OrderParams params,
+                                                           final byte[] signedMsgOrderUuid) {
     final var keys = List.of(
       createRead(stateKey),
       createWrite(userKey),
       createWrite(userStatsKey),
       createWrite(takerKey),
       createWrite(takerStatsKey),
-      createRead(takerSwiftUserOrdersKey),
+      createRead(takerSignedMsgUserOrdersKey),
       createReadOnlySigner(authorityKey)
     );
 
-    final byte[] _data = new byte[8 + Borsh.len(params) + Borsh.lenArray(swiftOrderUuid)];
-    int i = writeDiscriminator(PLACE_AND_MAKE_SWIFT_PERP_ORDER_DISCRIMINATOR, _data, 0);
+    final byte[] _data = new byte[8 + Borsh.len(params) + Borsh.lenArray(signedMsgOrderUuid)];
+    int i = writeDiscriminator(PLACE_AND_MAKE_SIGNED_MSG_PERP_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.write(params, _data, i);
-    Borsh.writeArray(swiftOrderUuid, _data, i);
+    Borsh.writeArray(signedMsgOrderUuid, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record PlaceAndMakeSwiftPerpOrderIxData(Discriminator discriminator, OrderParams params, byte[] swiftOrderUuid) implements Borsh {  
+  public record PlaceAndMakeSignedMsgPerpOrderIxData(Discriminator discriminator, OrderParams params, byte[] signedMsgOrderUuid) implements Borsh {  
 
-    public static PlaceAndMakeSwiftPerpOrderIxData read(final Instruction instruction) {
+    public static PlaceAndMakeSignedMsgPerpOrderIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static PlaceAndMakeSwiftPerpOrderIxData read(final byte[] _data, final int offset) {
+    public static PlaceAndMakeSignedMsgPerpOrderIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
@@ -1153,78 +1131,78 @@ public final class DriftProgram {
       int i = offset + discriminator.length();
       final var params = OrderParams.read(_data, i);
       i += Borsh.len(params);
-      final var swiftOrderUuid = new byte[8];
-      Borsh.readArray(swiftOrderUuid, _data, i);
-      return new PlaceAndMakeSwiftPerpOrderIxData(discriminator, params, swiftOrderUuid);
+      final var signedMsgOrderUuid = new byte[8];
+      Borsh.readArray(signedMsgOrderUuid, _data, i);
+      return new PlaceAndMakeSignedMsgPerpOrderIxData(discriminator, params, signedMsgOrderUuid);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.write(params, _data, i);
-      i += Borsh.writeArray(swiftOrderUuid, _data, i);
+      i += Borsh.writeArray(signedMsgOrderUuid, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + Borsh.len(params) + Borsh.lenArray(swiftOrderUuid);
+      return 8 + Borsh.len(params) + Borsh.lenArray(signedMsgOrderUuid);
     }
   }
 
-  public static final Discriminator PLACE_SWIFT_TAKER_ORDER_DISCRIMINATOR = toDiscriminator(50, 89, 120, 78, 254, 15, 104, 140);
+  public static final Discriminator PLACE_SIGNED_MSG_TAKER_ORDER_DISCRIMINATOR = toDiscriminator(32, 79, 101, 139, 25, 6, 98, 15);
 
-  public static Instruction placeSwiftTakerOrder(final AccountMeta invokedDriftProgramMeta,
-                                                 final PublicKey stateKey,
-                                                 final PublicKey userKey,
-                                                 final PublicKey userStatsKey,
-                                                 final PublicKey swiftUserOrdersKey,
-                                                 final PublicKey authorityKey,
-                                                 // the supplied Sysvar could be anything else.
-                                                 // The Instruction Sysvar has not been implemented
-                                                 // in the Anchor framework yet, so this is the safe approach.
-                                                 final PublicKey ixSysvarKey,
-                                                 final byte[] swiftOrderParamsMessageBytes,
-                                                 final boolean isDelegateSigner) {
+  public static Instruction placeSignedMsgTakerOrder(final AccountMeta invokedDriftProgramMeta,
+                                                     final PublicKey stateKey,
+                                                     final PublicKey userKey,
+                                                     final PublicKey userStatsKey,
+                                                     final PublicKey signedMsgUserOrdersKey,
+                                                     final PublicKey authorityKey,
+                                                     // the supplied Sysvar could be anything else.
+                                                     // The Instruction Sysvar has not been implemented
+                                                     // in the Anchor framework yet, so this is the safe approach.
+                                                     final PublicKey ixSysvarKey,
+                                                     final byte[] signedMsgOrderParamsMessageBytes,
+                                                     final boolean isDelegateSigner) {
     final var keys = List.of(
       createRead(stateKey),
       createWrite(userKey),
       createWrite(userStatsKey),
-      createWrite(swiftUserOrdersKey),
+      createWrite(signedMsgUserOrdersKey),
       createReadOnlySigner(authorityKey),
       createRead(ixSysvarKey)
     );
 
-    final byte[] _data = new byte[13 + Borsh.lenVector(swiftOrderParamsMessageBytes)];
-    int i = writeDiscriminator(PLACE_SWIFT_TAKER_ORDER_DISCRIMINATOR, _data, 0);
-    i += Borsh.writeVector(swiftOrderParamsMessageBytes, _data, i);
+    final byte[] _data = new byte[13 + Borsh.lenVector(signedMsgOrderParamsMessageBytes)];
+    int i = writeDiscriminator(PLACE_SIGNED_MSG_TAKER_ORDER_DISCRIMINATOR, _data, 0);
+    i += Borsh.writeVector(signedMsgOrderParamsMessageBytes, _data, i);
     _data[i] = (byte) (isDelegateSigner ? 1 : 0);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record PlaceSwiftTakerOrderIxData(Discriminator discriminator, byte[] swiftOrderParamsMessageBytes, boolean isDelegateSigner) implements Borsh {  
+  public record PlaceSignedMsgTakerOrderIxData(Discriminator discriminator, byte[] signedMsgOrderParamsMessageBytes, boolean isDelegateSigner) implements Borsh {  
 
-    public static PlaceSwiftTakerOrderIxData read(final Instruction instruction) {
+    public static PlaceSignedMsgTakerOrderIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static PlaceSwiftTakerOrderIxData read(final byte[] _data, final int offset) {
+    public static PlaceSignedMsgTakerOrderIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final byte[] swiftOrderParamsMessageBytes = Borsh.readbyteVector(_data, i);
-      i += Borsh.lenVector(swiftOrderParamsMessageBytes);
+      final byte[] signedMsgOrderParamsMessageBytes = Borsh.readbyteVector(_data, i);
+      i += Borsh.lenVector(signedMsgOrderParamsMessageBytes);
       final var isDelegateSigner = _data[i] == 1;
-      return new PlaceSwiftTakerOrderIxData(discriminator, swiftOrderParamsMessageBytes, isDelegateSigner);
+      return new PlaceSignedMsgTakerOrderIxData(discriminator, signedMsgOrderParamsMessageBytes, isDelegateSigner);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeVector(swiftOrderParamsMessageBytes, _data, i);
+      i += Borsh.writeVector(signedMsgOrderParamsMessageBytes, _data, i);
       _data[i] = (byte) (isDelegateSigner ? 1 : 0);
       ++i;
       return i - offset;
@@ -1232,63 +1210,7 @@ public final class DriftProgram {
 
     @Override
     public int l() {
-      return 8 + Borsh.lenVector(swiftOrderParamsMessageBytes) + 1;
-    }
-  }
-
-  public static final Discriminator PLACE_AND_MATCH_RFQ_ORDERS_DISCRIMINATOR = toDiscriminator(111, 3, 51, 243, 178, 174, 219, 100);
-
-  public static Instruction placeAndMatchRfqOrders(final AccountMeta invokedDriftProgramMeta,
-                                                   final PublicKey stateKey,
-                                                   final PublicKey userKey,
-                                                   final PublicKey userStatsKey,
-                                                   final PublicKey authorityKey,
-                                                   // the supplied Sysvar could be anything else.
-                                                   // The Instruction Sysvar has not been implemented
-                                                   // in the Anchor framework yet, so this is the safe approach.
-                                                   final PublicKey ixSysvarKey,
-                                                   final RFQMatch[] rfqMatches) {
-    final var keys = List.of(
-      createRead(stateKey),
-      createWrite(userKey),
-      createWrite(userStatsKey),
-      createReadOnlySigner(authorityKey),
-      createRead(ixSysvarKey)
-    );
-
-    final byte[] _data = new byte[8 + Borsh.lenVector(rfqMatches)];
-    int i = writeDiscriminator(PLACE_AND_MATCH_RFQ_ORDERS_DISCRIMINATOR, _data, 0);
-    Borsh.writeVector(rfqMatches, _data, i);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record PlaceAndMatchRfqOrdersIxData(Discriminator discriminator, RFQMatch[] rfqMatches) implements Borsh {  
-
-    public static PlaceAndMatchRfqOrdersIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static PlaceAndMatchRfqOrdersIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = parseDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var rfqMatches = Borsh.readVector(RFQMatch.class, RFQMatch::read, _data, i);
-      return new PlaceAndMatchRfqOrdersIxData(discriminator, rfqMatches);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeVector(rfqMatches, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 8 + Borsh.lenVector(rfqMatches);
+      return 8 + Borsh.lenVector(signedMsgOrderParamsMessageBytes) + 1;
     }
   }
 
@@ -2391,19 +2313,19 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, FORCE_DELETE_USER_DISCRIMINATOR);
   }
 
-  public static final Discriminator DELETE_SWIFT_USER_ORDERS_DISCRIMINATOR = toDiscriminator(83, 157, 116, 215, 177, 177, 158, 20);
+  public static final Discriminator DELETE_SIGNED_MSG_USER_ORDERS_DISCRIMINATOR = toDiscriminator(221, 247, 128, 253, 212, 254, 46, 153);
 
-  public static Instruction deleteSwiftUserOrders(final AccountMeta invokedDriftProgramMeta,
-                                                  final PublicKey swiftUserOrdersKey,
-                                                  final PublicKey stateKey,
-                                                  final PublicKey authorityKey) {
+  public static Instruction deleteSignedMsgUserOrders(final AccountMeta invokedDriftProgramMeta,
+                                                      final PublicKey signedMsgUserOrdersKey,
+                                                      final PublicKey stateKey,
+                                                      final PublicKey authorityKey) {
     final var keys = List.of(
-      createWrite(swiftUserOrdersKey),
+      createWrite(signedMsgUserOrdersKey),
       createWrite(stateKey),
       createReadOnlySigner(authorityKey)
     );
 
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, DELETE_SWIFT_USER_ORDERS_DISCRIMINATOR);
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, DELETE_SIGNED_MSG_USER_ORDERS_DISCRIMINATOR);
   }
 
   public static final Discriminator RECLAIM_RENT_DISCRIMINATOR = toDiscriminator(218, 200, 19, 197, 227, 89, 192, 22);

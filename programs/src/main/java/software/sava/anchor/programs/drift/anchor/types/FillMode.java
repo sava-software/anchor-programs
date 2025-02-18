@@ -6,8 +6,7 @@ public sealed interface FillMode extends RustEnum permits
   FillMode.Fill,
   FillMode.PlaceAndMake,
   FillMode.PlaceAndTake,
-  FillMode.Liquidation,
-  FillMode.RFQ {
+  FillMode.Liquidation {
 
   static FillMode read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -17,7 +16,6 @@ public sealed interface FillMode extends RustEnum permits
       case 1 -> PlaceAndMake.INSTANCE;
       case 2 -> PlaceAndTake.read(_data, i);
       case 3 -> Liquidation.INSTANCE;
-      case 4 -> RFQ.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [FillMode]", ordinal
       ));
@@ -87,16 +85,6 @@ public sealed interface FillMode extends RustEnum permits
     @Override
     public int ordinal() {
       return 3;
-    }
-  }
-
-  record RFQ() implements EnumNone, FillMode {
-
-    public static final RFQ INSTANCE = new RFQ();
-
-    @Override
-    public int ordinal() {
-      return 4;
     }
   }
 }
