@@ -59,6 +59,11 @@
     "package": "meteora.alpha_vault"
   },
   {
+    "name": "Kamino Farms",
+    "program": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
+    "package": "kamino.farms"
+  },
+  {
     "name": "Kamino Lend",
     "program": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
     "package": "kamino.lend"
