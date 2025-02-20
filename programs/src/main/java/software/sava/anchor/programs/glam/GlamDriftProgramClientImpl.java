@@ -15,6 +15,7 @@ import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
 
 import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.concurrent.CompletableFuture;
 
 import static software.sava.anchor.programs.drift.DriftPDAs.deriveUserStatsAccount;
@@ -157,6 +158,19 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   @Override
   public Instruction settlePnl(final int marketIndex) {
     return delegatedDriftClient.settlePnl(user, feePayer.publicKey(), marketIndex);
+  }
+
+  @Override
+  public Instruction transferPools(final PublicKey authority,
+                                   final PublicKey fromUser,
+                                   final PublicKey toUser,
+                                   final SpotMarketConfig depositFromSpotMarketConfig,
+                                   final SpotMarketConfig depositToSpotMarketConfig,
+                                   final SpotMarketConfig borrowFromSpotMarketConfig,
+                                   final SpotMarketConfig borrowToSpotMarketConfig,
+                                   final OptionalLong depositAmount,
+                                   final OptionalLong borrowAmount) {
+    throw new UnsupportedOperationException("TODO: transferPools");
   }
 
   @Override

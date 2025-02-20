@@ -579,6 +579,125 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator TRANSFER_POOLS_DISCRIMINATOR = toDiscriminator(197, 103, 154, 25, 107, 90, 60, 94);
+
+  public static Instruction transferPools(final AccountMeta invokedDriftProgramMeta,
+                                          final PublicKey fromUserKey,
+                                          final PublicKey toUserKey,
+                                          final PublicKey userStatsKey,
+                                          final PublicKey authorityKey,
+                                          final PublicKey stateKey,
+                                          final PublicKey depositFromSpotMarketVaultKey,
+                                          final PublicKey depositToSpotMarketVaultKey,
+                                          final PublicKey borrowFromSpotMarketVaultKey,
+                                          final PublicKey borrowToSpotMarketVaultKey,
+                                          final PublicKey driftSignerKey,
+                                          final int depositFromMarketIndex,
+                                          final int depositToMarketIndex,
+                                          final int borrowFromMarketIndex,
+                                          final int borrowToMarketIndex,
+                                          final OptionalLong depositAmount,
+                                          final OptionalLong borrowAmount) {
+    final var keys = List.of(
+      createWrite(fromUserKey),
+      createWrite(toUserKey),
+      createWrite(userStatsKey),
+      createReadOnlySigner(authorityKey),
+      createRead(stateKey),
+      createWrite(depositFromSpotMarketVaultKey),
+      createWrite(depositToSpotMarketVaultKey),
+      createWrite(borrowFromSpotMarketVaultKey),
+      createWrite(borrowToSpotMarketVaultKey),
+      createRead(driftSignerKey)
+    );
+
+    final byte[] _data = new byte[
+        16
+        + (depositAmount == null || depositAmount.isEmpty() ? 1 : 9)
+        + (borrowAmount == null || borrowAmount.isEmpty() ? 1 : 9)
+    ];
+    int i = writeDiscriminator(TRANSFER_POOLS_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, depositFromMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, depositToMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, borrowFromMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, borrowToMarketIndex);
+    i += 2;
+    i += Borsh.writeOptional(depositAmount, _data, i);
+    Borsh.writeOptional(borrowAmount, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record TransferPoolsIxData(Discriminator discriminator,
+                                    int depositFromMarketIndex,
+                                    int depositToMarketIndex,
+                                    int borrowFromMarketIndex,
+                                    int borrowToMarketIndex,
+                                    OptionalLong depositAmount,
+                                    OptionalLong borrowAmount) implements Borsh {  
+
+    public static TransferPoolsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static TransferPoolsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var depositFromMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var depositToMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var borrowFromMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var borrowToMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var depositAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+      if (depositAmount.isPresent()) {
+        i += 8;
+      }
+      final var borrowAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+      return new TransferPoolsIxData(discriminator,
+                                     depositFromMarketIndex,
+                                     depositToMarketIndex,
+                                     borrowFromMarketIndex,
+                                     borrowToMarketIndex,
+                                     depositAmount,
+                                     borrowAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, depositFromMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, depositToMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, borrowFromMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, borrowToMarketIndex);
+      i += 2;
+      i += Borsh.writeOptional(depositAmount, _data, i);
+      i += Borsh.writeOptional(borrowAmount, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 2
+           + 2
+           + 2
+           + 2
+           + (depositAmount == null || depositAmount.isEmpty() ? 1 : (1 + 8))
+           + (borrowAmount == null || borrowAmount.isEmpty() ? 1 : (1 + 8));
+    }
+  }
+
   public static final Discriminator PLACE_PERP_ORDER_DISCRIMINATOR = toDiscriminator(69, 161, 93, 202, 120, 126, 76, 185);
 
   public static Instruction placePerpOrder(final AccountMeta invokedDriftProgramMeta,
@@ -7418,31 +7537,38 @@ public final class DriftProgram {
                                                    final PublicKey stateKey,
                                                    final PublicKey spotMarketKey,
                                                    final PublicKey oracleKey,
+                                                   final PublicKey oldOracleKey,
                                                    final PublicKey oracle,
-                                                   final OracleSource oracleSource) {
+                                                   final OracleSource oracleSource,
+                                                   final boolean skipInvariantCheck) {
     final var keys = List.of(
       createReadOnlySigner(adminKey),
       createRead(stateKey),
       createWrite(spotMarketKey),
-      createRead(oracleKey)
+      createRead(oracleKey),
+      createRead(oldOracleKey)
     );
 
-    final byte[] _data = new byte[40 + Borsh.len(oracleSource)];
+    final byte[] _data = new byte[41 + Borsh.len(oracleSource)];
     int i = writeDiscriminator(UPDATE_SPOT_MARKET_ORACLE_DISCRIMINATOR, _data, 0);
     oracle.write(_data, i);
     i += 32;
-    Borsh.write(oracleSource, _data, i);
+    i += Borsh.write(oracleSource, _data, i);
+    _data[i] = (byte) (skipInvariantCheck ? 1 : 0);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record UpdateSpotMarketOracleIxData(Discriminator discriminator, PublicKey oracle, OracleSource oracleSource) implements Borsh {  
+  public record UpdateSpotMarketOracleIxData(Discriminator discriminator,
+                                             PublicKey oracle,
+                                             OracleSource oracleSource,
+                                             boolean skipInvariantCheck) implements Borsh {  
 
     public static UpdateSpotMarketOracleIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 41;
+    public static final int BYTES = 42;
 
     public static UpdateSpotMarketOracleIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -7453,7 +7579,9 @@ public final class DriftProgram {
       final var oracle = readPubKey(_data, i);
       i += 32;
       final var oracleSource = OracleSource.read(_data, i);
-      return new UpdateSpotMarketOracleIxData(discriminator, oracle, oracleSource);
+      i += Borsh.len(oracleSource);
+      final var skipInvariantCheck = _data[i] == 1;
+      return new UpdateSpotMarketOracleIxData(discriminator, oracle, oracleSource, skipInvariantCheck);
     }
 
     @Override
@@ -7462,6 +7590,8 @@ public final class DriftProgram {
       oracle.write(_data, i);
       i += 32;
       i += Borsh.write(oracleSource, _data, i);
+      _data[i] = (byte) (skipInvariantCheck ? 1 : 0);
+      ++i;
       return i - offset;
     }
 
@@ -8718,35 +8848,42 @@ public final class DriftProgram {
   public static final Discriminator UPDATE_PERP_MARKET_ORACLE_DISCRIMINATOR = toDiscriminator(182, 113, 111, 160, 67, 174, 89, 191);
 
   public static Instruction updatePerpMarketOracle(final AccountMeta invokedDriftProgramMeta,
+                                                   final PublicKey adminKey,
                                                    final PublicKey stateKey,
                                                    final PublicKey perpMarketKey,
                                                    final PublicKey oracleKey,
-                                                   final PublicKey adminKey,
+                                                   final PublicKey oldOracleKey,
                                                    final PublicKey oracle,
-                                                   final OracleSource oracleSource) {
+                                                   final OracleSource oracleSource,
+                                                   final boolean skipInvariantCheck) {
     final var keys = List.of(
+      createReadOnlySigner(adminKey),
       createRead(stateKey),
       createWrite(perpMarketKey),
       createRead(oracleKey),
-      createReadOnlySigner(adminKey)
+      createRead(oldOracleKey)
     );
 
-    final byte[] _data = new byte[40 + Borsh.len(oracleSource)];
+    final byte[] _data = new byte[41 + Borsh.len(oracleSource)];
     int i = writeDiscriminator(UPDATE_PERP_MARKET_ORACLE_DISCRIMINATOR, _data, 0);
     oracle.write(_data, i);
     i += 32;
-    Borsh.write(oracleSource, _data, i);
+    i += Borsh.write(oracleSource, _data, i);
+    _data[i] = (byte) (skipInvariantCheck ? 1 : 0);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record UpdatePerpMarketOracleIxData(Discriminator discriminator, PublicKey oracle, OracleSource oracleSource) implements Borsh {  
+  public record UpdatePerpMarketOracleIxData(Discriminator discriminator,
+                                             PublicKey oracle,
+                                             OracleSource oracleSource,
+                                             boolean skipInvariantCheck) implements Borsh {  
 
     public static UpdatePerpMarketOracleIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 41;
+    public static final int BYTES = 42;
 
     public static UpdatePerpMarketOracleIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -8757,7 +8894,9 @@ public final class DriftProgram {
       final var oracle = readPubKey(_data, i);
       i += 32;
       final var oracleSource = OracleSource.read(_data, i);
-      return new UpdatePerpMarketOracleIxData(discriminator, oracle, oracleSource);
+      i += Borsh.len(oracleSource);
+      final var skipInvariantCheck = _data[i] == 1;
+      return new UpdatePerpMarketOracleIxData(discriminator, oracle, oracleSource, skipInvariantCheck);
     }
 
     @Override
@@ -8766,6 +8905,8 @@ public final class DriftProgram {
       oracle.write(_data, i);
       i += 32;
       i += Borsh.write(oracleSource, _data, i);
+      _data[i] = (byte) (skipInvariantCheck ? 1 : 0);
+      ++i;
       return i - offset;
     }
 

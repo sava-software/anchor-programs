@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.concurrent.CompletableFuture;
 
 public interface DriftProgramClient {
@@ -159,9 +160,19 @@ public interface DriftProgramClient {
     return withdraw(user, authority, userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount, false);
   }
 
-  default Instruction settlePnl(int marketIndex) {
+  default Instruction settlePnl(final int marketIndex) {
     return settlePnl(mainUserAccount(), authority(), marketIndex);
   }
+
+  Instruction transferPools(final PublicKey authority,
+                            final PublicKey fromUser,
+                            final PublicKey toUser,
+                            final SpotMarketConfig depositFromSpotMarketConfig,
+                            final SpotMarketConfig depositToSpotMarketConfig,
+                            final SpotMarketConfig borrowFromSpotMarketConfig,
+                            final SpotMarketConfig borrowToSpotMarketConfig,
+                            final OptionalLong depositAmount,
+                            final OptionalLong borrowAmount);
 
   Instruction settlePnl(final PublicKey user,
                         final PublicKey authority,

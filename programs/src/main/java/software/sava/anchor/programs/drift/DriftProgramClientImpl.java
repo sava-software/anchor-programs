@@ -10,6 +10,7 @@ import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 import java.util.OptionalInt;
+import java.util.OptionalLong;
 import java.util.concurrent.CompletableFuture;
 
 import static software.sava.anchor.programs.drift.DriftPDAs.deriveSpotMarketVaultAccount;
@@ -145,6 +146,38 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         spotMarketConfig.marketIndex(),
         amount,
         reduceOnly
+    );
+  }
+
+  @Override
+  public Instruction transferPools(final PublicKey authority,
+                                   final PublicKey fromUser,
+                                   final PublicKey toUser,
+                                   final SpotMarketConfig depositFromSpotMarketConfig,
+                                   final SpotMarketConfig depositToSpotMarketConfig,
+                                   final SpotMarketConfig borrowFromSpotMarketConfig,
+                                   final SpotMarketConfig borrowToSpotMarketConfig,
+                                   final OptionalLong depositAmount,
+                                   final OptionalLong borrowAmount) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    return DriftProgram.transferPools(
+        accounts.invokedDriftProgram(),
+        fromUser,
+        toUser,
+        userStatsPDA.publicKey(),
+        authority,
+        accounts.stateKey(),
+        depositFromSpotMarketConfig.vaultPDA(),
+        depositToSpotMarketConfig.vaultPDA(),
+        borrowFromSpotMarketConfig.vaultPDA(),
+        borrowToSpotMarketConfig.vaultPDA(),
+        accounts.driftSignerPDA(),
+        depositFromSpotMarketConfig.marketIndex(),
+        depositToSpotMarketConfig.marketIndex(),
+        borrowFromSpotMarketConfig.marketIndex(),
+        borrowToSpotMarketConfig.marketIndex(),
+        depositAmount,
+        borrowAmount
     );
   }
 

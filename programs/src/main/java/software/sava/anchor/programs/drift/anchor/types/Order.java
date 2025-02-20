@@ -66,7 +66,7 @@ public record Order(// The slot the order was placed
                     OrderTriggerCondition triggerCondition,
                     // How many slots the auction lasts
                     int auctionDuration,
-                    // Last 8 bits of the slot the order was posted on-chain (not order slot for swift orders)
+                    // Last 8 bits of the slot the order was posted on-chain (not order slot for signed msg orders)
                     int postedSlotTail,
                     byte[] padding) implements Borsh {
 
