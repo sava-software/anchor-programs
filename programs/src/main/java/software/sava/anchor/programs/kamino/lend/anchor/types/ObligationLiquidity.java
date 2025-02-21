@@ -11,19 +11,12 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-// Obligation liquidity state
-public record ObligationLiquidity(// Reserve liquidity is borrowed from
-                                  PublicKey borrowReserve,
-                                  // Borrow rate used for calculating interest (big scaled fraction)
+public record ObligationLiquidity(PublicKey borrowReserve,
                                   BigFractionBytes cumulativeBorrowRateBsf,
                                   long padding,
-                                  // Amount of liquidity borrowed plus interest (scaled fraction)
                                   BigInteger borrowedAmountSf,
-                                  // Liquidity market value in quote currency (scaled fraction)
                                   BigInteger marketValueSf,
-                                  // Risk adjusted liquidity market value in quote currency - DEBUG ONLY - use market_value instead
                                   BigInteger borrowFactorAdjustedMarketValueSf,
-                                  // Amount of liquidity borrowed outside of an elevation group
                                   long borrowedAmountOutsideElevationGroups,
                                   long[] padding2) implements Borsh {
 

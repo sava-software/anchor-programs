@@ -118,7 +118,14 @@ public sealed interface KaminoLendingError extends ProgramError permits
     KaminoLendingError.ObligationOwnersMustMatch,
     KaminoLendingError.ObligationsMustMatch,
     KaminoLendingError.LendingMarketsMustMatch,
-    KaminoLendingError.ObligationAlreadyMarkedForDeleveraging {
+    KaminoLendingError.ObligationCurrentlyMarkedForDeleveraging,
+    KaminoLendingError.MaximumWithdrawValueZero,
+    KaminoLendingError.ZeroMaxLtvAssetsInDeposits,
+    KaminoLendingError.MinLtvAssetsPriority,
+    KaminoLendingError.WorseLTVThanUnhealthyLTV,
+    KaminoLendingError.FarmAccountsMissing,
+    KaminoLendingError.RepayTooSmallForFullLiquidation,
+    KaminoLendingError.InsufficientRepayAmount {
 
   static KaminoLendingError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -237,7 +244,14 @@ public sealed interface KaminoLendingError extends ProgramError permits
       case 6112 -> ObligationOwnersMustMatch.INSTANCE;
       case 6113 -> ObligationsMustMatch.INSTANCE;
       case 6114 -> LendingMarketsMustMatch.INSTANCE;
-      case 6115 -> ObligationAlreadyMarkedForDeleveraging.INSTANCE;
+      case 6115 -> ObligationCurrentlyMarkedForDeleveraging.INSTANCE;
+      case 6116 -> MaximumWithdrawValueZero.INSTANCE;
+      case 6117 -> ZeroMaxLtvAssetsInDeposits.INSTANCE;
+      case 6118 -> MinLtvAssetsPriority.INSTANCE;
+      case 6119 -> WorseLTVThanUnhealthyLTV.INSTANCE;
+      case 6120 -> FarmAccountsMissing.INSTANCE;
+      case 6121 -> RepayTooSmallForFullLiquidation.INSTANCE;
+      case 6122 -> InsufficientRepayAmount.INSTANCE;
       default -> throw new IllegalStateException("Unexpected KaminoLending error code: " + errorCode);
     };
   }
@@ -1047,10 +1061,59 @@ public sealed interface KaminoLendingError extends ProgramError permits
     );
   }
 
-  record ObligationAlreadyMarkedForDeleveraging(int code, String msg) implements KaminoLendingError {
+  record ObligationCurrentlyMarkedForDeleveraging(int code, String msg) implements KaminoLendingError {
 
-    public static final ObligationAlreadyMarkedForDeleveraging INSTANCE = new ObligationAlreadyMarkedForDeleveraging(
+    public static final ObligationCurrentlyMarkedForDeleveraging INSTANCE = new ObligationCurrentlyMarkedForDeleveraging(
         6115, "Obligation is already marked for deleveraging"
+    );
+  }
+
+  record MaximumWithdrawValueZero(int code, String msg) implements KaminoLendingError {
+
+    public static final MaximumWithdrawValueZero INSTANCE = new MaximumWithdrawValueZero(
+        6116, "Maximum withdrawable value of this collateral is zero, LTV needs improved"
+    );
+  }
+
+  record ZeroMaxLtvAssetsInDeposits(int code, String msg) implements KaminoLendingError {
+
+    public static final ZeroMaxLtvAssetsInDeposits INSTANCE = new ZeroMaxLtvAssetsInDeposits(
+        6117, "No max LTV 0 assets allowed in deposits for repay and withdraw"
+    );
+  }
+
+  record MinLtvAssetsPriority(int code, String msg) implements KaminoLendingError {
+
+    public static final MinLtvAssetsPriority INSTANCE = new MinLtvAssetsPriority(
+        6118, "The operation must prioritize the collateral with the lowest LTV"
+    );
+  }
+
+  record WorseLTVThanUnhealthyLTV(int code, String msg) implements KaminoLendingError {
+
+    public static final WorseLTVThanUnhealthyLTV INSTANCE = new WorseLTVThanUnhealthyLTV(
+        6119, "Cannot get the obligation liquidatable"
+    );
+  }
+
+  record FarmAccountsMissing(int code, String msg) implements KaminoLendingError {
+
+    public static final FarmAccountsMissing INSTANCE = new FarmAccountsMissing(
+        6120, "Farm accounts to refresh are missing"
+    );
+  }
+
+  record RepayTooSmallForFullLiquidation(int code, String msg) implements KaminoLendingError {
+
+    public static final RepayTooSmallForFullLiquidation INSTANCE = new RepayTooSmallForFullLiquidation(
+        6121, "Repay amount is too small to satisfy the mandatory full liquidation"
+    );
+  }
+
+  record InsufficientRepayAmount(int code, String msg) implements KaminoLendingError {
+
+    public static final InsufficientRepayAmount INSTANCE = new InsufficientRepayAmount(
+        6122, "Liquidator provided repay amount lower than required by liquidation rules"
     );
   }
 }

@@ -17,18 +17,12 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-// Referrer account -> each owner can have multiple accounts for specific reserves
 public record ReferrerTokenState(PublicKey _address,
                                  Discriminator discriminator,
-                                 // Pubkey of the referrer/owner
                                  PublicKey referrer,
-                                 // Token mint for the account
                                  PublicKey mint,
-                                 // Amount that has been accumulated and not claimed yet -> available to claim (scaled fraction)
                                  BigInteger amountUnclaimedSf,
-                                 // Amount that has been accumulated in total -> both already claimed and unclaimed (scaled fraction)
                                  BigInteger amountCumulativeSf,
-                                 // Referrer token state bump, used for address validation
                                  long bump,
                                  long[] padding) implements Borsh {
 

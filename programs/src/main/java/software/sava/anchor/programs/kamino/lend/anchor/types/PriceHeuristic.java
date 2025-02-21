@@ -5,11 +5,8 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record PriceHeuristic(// Lower value of acceptable price
-                             long lower,
-                             // Upper value of acceptable price
+public record PriceHeuristic(long lower,
                              long upper,
-                             // Number of decimals of the previously defined values
                              long exp) implements Borsh {
 
   public static final int BYTES = 24;

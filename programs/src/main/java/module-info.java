@@ -26,6 +26,7 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.jupiter;
   exports software.sava.anchor.programs.kamino.farms.anchor.types;
   exports software.sava.anchor.programs.kamino.farms.anchor;
+  exports software.sava.anchor.programs.kamino.farms;
   exports software.sava.anchor.programs.kamino.lend.anchor.types;
   exports software.sava.anchor.programs.kamino.lend.anchor;
   exports software.sava.anchor.programs.kamino.liquidity.anchor.types;

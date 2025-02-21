@@ -44,7 +44,7 @@ public interface KaminoAccounts {
 
     return PublicKey.findProgramAddress(
         List.of(
-            KaminoAccountsRecord.LENDING_MARKET_AUTH.getBytes(US_ASCII),
+            "lma".getBytes(US_ASCII),
             lendingMarket.toByteArray()
         ),
         programId
@@ -57,7 +57,7 @@ public interface KaminoAccounts {
 
     return PublicKey.findProgramAddress(
         List.of(
-            KaminoAccountsRecord.RESERVE_LIQ_SUPPLY.getBytes(US_ASCII),
+            "reserve_liq_supply".getBytes(US_ASCII),
             lendingMarket.toByteArray(),
             collateralMint.toByteArray()
         ),
@@ -71,7 +71,7 @@ public interface KaminoAccounts {
 
     return PublicKey.findProgramAddress(
         List.of(
-            KaminoAccountsRecord.FEE_RECEIVER.getBytes(US_ASCII),
+            "fee_receiver".getBytes(US_ASCII),
             lendingMarket.toByteArray(),
             collateralMint.toByteArray()
         ),
@@ -85,7 +85,7 @@ public interface KaminoAccounts {
 
     return PublicKey.findProgramAddress(
         List.of(
-            KaminoAccountsRecord.RESERVE_COLL_MINT.getBytes(US_ASCII),
+            "reserve_coll_mint".getBytes(US_ASCII),
             lendingMarket.toByteArray(),
             collateralMint.toByteArray()
         ),
@@ -99,7 +99,7 @@ public interface KaminoAccounts {
 
     return PublicKey.findProgramAddress(
         List.of(
-            KaminoAccountsRecord.RESERVE_COLL_SUPPLY.getBytes(US_ASCII),
+            "reserve_coll_supply".getBytes(US_ASCII),
             lendingMarket.toByteArray(),
             collateralMint.toByteArray()
         ),
@@ -112,7 +112,7 @@ public interface KaminoAccounts {
 
     return PublicKey.findProgramAddress(
         List.of(
-            KaminoAccountsRecord.BASE_SEED_USER_METADATA.getBytes(US_ASCII),
+            "user_meta".getBytes(US_ASCII),
             user.toByteArray()
         ),
         programId
@@ -127,7 +127,7 @@ public interface KaminoAccounts {
     }
     return PublicKey.findProgramAddress(
         List.of(
-            KaminoAccountsRecord.BASE_SEED_REFERRER_TOKEN_STATE.getBytes(US_ASCII),
+            "referrer_acc".getBytes(US_ASCII),
             referrer.toByteArray(),
             reserve.toByteArray()
         ),
@@ -140,7 +140,7 @@ public interface KaminoAccounts {
 
     return PublicKey.findProgramAddress(
         List.of(
-            KaminoAccountsRecord.BASE_SEED_REFERRER_STATE.getBytes(US_ASCII),
+            "ref_state".getBytes(US_ASCII),
             referrer.toByteArray()
         ),
         programId
@@ -152,7 +152,7 @@ public interface KaminoAccounts {
 
     return PublicKey.findProgramAddress(
         List.of(
-            KaminoAccountsRecord.BASE_SEED_SHORT_URL.getBytes(US_ASCII),
+            "short_url".getBytes(US_ASCII),
             shortUrl.toByteArray()
         ),
         programId

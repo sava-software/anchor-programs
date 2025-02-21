@@ -68,18 +68,11 @@ final class KaminoLendClientImpl implements KaminoLendClient {
     );
   }
 
-  public Instruction refreshObligationFarmsForReserve(final PublicKey obligationKey,
-                                                      final ReservePDAs reservePDAs,
-                                                      final int mode) {
+  public Instruction refreshObligationFarmsForReserve(final PublicKey baseAccountsKey, final int mode) {
     return KaminoLendingProgram.refreshObligationFarmsForReserve(
         kaminoAccounts.invokedProgram(),
         feePayer,
-        obligationKey,
-        reservePDAs.marketAuthority(),
-        null,
-        null,
-        null,
-        reservePDAs.market(),
+        baseAccountsKey,
         kaminoAccounts.farmProgram(),
         solanaAccounts.rentSysVar(),
         solanaAccounts.systemProgram(),

@@ -171,6 +171,7 @@ public final class KaminoLendingProgram {
                                         final PublicKey feeReceiverKey,
                                         final PublicKey reserveCollateralMintKey,
                                         final PublicKey reserveCollateralSupplyKey,
+                                        final PublicKey initialLiquiditySourceKey,
                                         final PublicKey rentKey,
                                         final PublicKey liquidityTokenProgramKey,
                                         final PublicKey collateralTokenProgramKey,
@@ -185,6 +186,7 @@ public final class KaminoLendingProgram {
       createWrite(feeReceiverKey),
       createWrite(reserveCollateralMintKey),
       createWrite(reserveCollateralSupplyKey),
+      createWrite(initialLiquiditySourceKey),
       createRead(rentKey),
       createRead(liquidityTokenProgramKey),
       createRead(collateralTokenProgramKey),
@@ -211,7 +213,7 @@ public final class KaminoLendingProgram {
     final var keys = List.of(
       createWritableSigner(lendingMarketOwnerKey),
       createRead(lendingMarketKey),
-      createWrite(lendingMarketAuthorityKey),
+      createRead(lendingMarketAuthorityKey),
       createWrite(reserveKey),
       createRead(farmsProgramKey),
       createRead(farmsGlobalConfigKey),
@@ -337,7 +339,7 @@ public final class KaminoLendingProgram {
                                        final PublicKey tokenProgramKey) {
     final var keys = List.of(
       createWrite(reserveKey),
-      createWrite(reserveLiquidityMintKey),
+      createRead(reserveLiquidityMintKey),
       createWrite(reserveLiquidityFeeReceiverKey),
       createWrite(reserveSupplyLiquidityKey),
       createRead(lendingMarketKey),
@@ -364,7 +366,7 @@ public final class KaminoLendingProgram {
       createReadOnlySigner(lendingMarketOwnerKey),
       createRead(lendingMarketKey),
       createRead(reserveKey),
-      createWrite(reserveLiquidityMintKey),
+      createRead(reserveLiquidityMintKey),
       createRead(lendingMarketAuthorityKey),
       createWrite(feeVaultKey),
       createWrite(lendingMarketOwnerAtaKey),
@@ -450,6 +452,60 @@ public final class KaminoLendingProgram {
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new SocializeLossIxData(discriminator, liquidityAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, liquidityAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator SOCIALIZE_LOSS_V2_DISCRIMINATOR = toDiscriminator(238, 95, 98, 220, 187, 40, 204, 154);
+
+  public static Instruction socializeLossV2(final AccountMeta invokedKaminoLendingProgramMeta,
+                                            final PublicKey socializeLossAccountsKey,
+                                            final PublicKey farmsAccountsKey,
+                                            final PublicKey lendingMarketAuthorityKey,
+                                            final PublicKey farmsProgramKey,
+                                            final long liquidityAmount) {
+    final var keys = List.of(
+      createRead(socializeLossAccountsKey),
+      createRead(farmsAccountsKey),
+      createRead(lendingMarketAuthorityKey),
+      createRead(farmsProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(SOCIALIZE_LOSS_V2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, liquidityAmount);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record SocializeLossV2IxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+
+    public static SocializeLossV2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static SocializeLossV2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var liquidityAmount = getInt64LE(_data, i);
+      return new SocializeLossV2IxData(discriminator, liquidityAmount);
     }
 
     @Override
@@ -604,7 +660,7 @@ public final class KaminoLendingProgram {
       createWrite(reserveKey),
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),
-      createWrite(reserveLiquidityMintKey),
+      createRead(reserveLiquidityMintKey),
       createWrite(reserveLiquiditySupplyKey),
       createWrite(reserveCollateralMintKey),
       createWrite(userSourceLiquidityKey),
@@ -674,7 +730,7 @@ public final class KaminoLendingProgram {
       createRead(lendingMarketKey),
       createWrite(reserveKey),
       createRead(lendingMarketAuthorityKey),
-      createWrite(reserveLiquidityMintKey),
+      createRead(reserveLiquidityMintKey),
       createWrite(reserveCollateralMintKey),
       createWrite(reserveLiquiditySupplyKey),
       createWrite(userSourceCollateralKey),
@@ -805,7 +861,7 @@ public final class KaminoLendingProgram {
       createWritableSigner(payerKey),
       createRead(ownerKey),
       createWrite(obligationKey),
-      createWrite(lendingMarketAuthorityKey),
+      createRead(lendingMarketAuthorityKey),
       createWrite(reserveKey),
       createWrite(reserveFarmStateKey),
       createWrite(obligationFarmKey),
@@ -858,24 +914,14 @@ public final class KaminoLendingProgram {
 
   public static Instruction refreshObligationFarmsForReserve(final AccountMeta invokedKaminoLendingProgramMeta,
                                                              final PublicKey crankKey,
-                                                             final PublicKey obligationKey,
-                                                             final PublicKey lendingMarketAuthorityKey,
-                                                             final PublicKey reserveKey,
-                                                             final PublicKey reserveFarmStateKey,
-                                                             final PublicKey obligationFarmUserStateKey,
-                                                             final PublicKey lendingMarketKey,
+                                                             final PublicKey baseAccountsKey,
                                                              final PublicKey farmsProgramKey,
                                                              final PublicKey rentKey,
                                                              final PublicKey systemProgramKey,
                                                              final int mode) {
     final var keys = List.of(
-      createWritableSigner(crankKey),
-      createRead(obligationKey),
-      createWrite(lendingMarketAuthorityKey),
-      createRead(reserveKey),
-      createWrite(reserveFarmStateKey),
-      createWrite(obligationFarmUserStateKey),
-      createRead(lendingMarketKey),
+      createReadOnlySigner(crankKey),
+      createRead(baseAccountsKey),
       createRead(farmsProgramKey),
       createRead(rentKey),
       createRead(systemProgramKey)
@@ -993,6 +1039,60 @@ public final class KaminoLendingProgram {
     }
   }
 
+  public static final Discriminator DEPOSIT_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(137, 145, 151, 94, 167, 113, 4, 145);
+
+  public static Instruction depositObligationCollateralV2(final AccountMeta invokedKaminoLendingProgramMeta,
+                                                          final PublicKey depositAccountsKey,
+                                                          final PublicKey lendingMarketAuthorityKey,
+                                                          final PublicKey farmsAccountsKey,
+                                                          final PublicKey farmsProgramKey,
+                                                          final long collateralAmount) {
+    final var keys = List.of(
+      createRead(depositAccountsKey),
+      createRead(lendingMarketAuthorityKey),
+      createRead(farmsAccountsKey),
+      createRead(farmsProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(DEPOSIT_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, collateralAmount);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record DepositObligationCollateralV2IxData(Discriminator discriminator, long collateralAmount) implements Borsh {  
+
+    public static DepositObligationCollateralV2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static DepositObligationCollateralV2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var collateralAmount = getInt64LE(_data, i);
+      return new DepositObligationCollateralV2IxData(discriminator, collateralAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, collateralAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator WITHDRAW_OBLIGATION_COLLATERAL_DISCRIMINATOR = toDiscriminator(37, 116, 205, 103, 243, 192, 92, 198);
 
   public static Instruction withdrawObligationCollateral(final AccountMeta invokedKaminoLendingProgramMeta,
@@ -1057,6 +1157,58 @@ public final class KaminoLendingProgram {
     }
   }
 
+  public static final Discriminator WITHDRAW_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(202, 249, 117, 114, 231, 192, 47, 138);
+
+  public static Instruction withdrawObligationCollateralV2(final AccountMeta invokedKaminoLendingProgramMeta,
+                                                           final PublicKey withdrawAccountsKey,
+                                                           final PublicKey farmsAccountsKey,
+                                                           final PublicKey farmsProgramKey,
+                                                           final long collateralAmount) {
+    final var keys = List.of(
+      createRead(withdrawAccountsKey),
+      createRead(farmsAccountsKey),
+      createRead(farmsProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(WITHDRAW_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, collateralAmount);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record WithdrawObligationCollateralV2IxData(Discriminator discriminator, long collateralAmount) implements Borsh {  
+
+    public static WithdrawObligationCollateralV2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static WithdrawObligationCollateralV2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var collateralAmount = getInt64LE(_data, i);
+      return new WithdrawObligationCollateralV2IxData(discriminator, collateralAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, collateralAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator BORROW_OBLIGATION_LIQUIDITY_DISCRIMINATOR = toDiscriminator(121, 127, 18, 204, 73, 245, 225, 65);
 
   public static Instruction borrowObligationLiquidity(final AccountMeta invokedKaminoLendingProgramMeta,
@@ -1079,7 +1231,7 @@ public final class KaminoLendingProgram {
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),
       createWrite(borrowReserveKey),
-      createWrite(borrowReserveLiquidityMintKey),
+      createRead(borrowReserveLiquidityMintKey),
       createWrite(reserveSourceLiquidityKey),
       createWrite(borrowReserveLiquidityFeeReceiverKey),
       createWrite(userDestinationLiquidityKey),
@@ -1127,6 +1279,58 @@ public final class KaminoLendingProgram {
     }
   }
 
+  public static final Discriminator BORROW_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR = toDiscriminator(161, 128, 143, 245, 171, 199, 194, 6);
+
+  public static Instruction borrowObligationLiquidityV2(final AccountMeta invokedKaminoLendingProgramMeta,
+                                                        final PublicKey borrowAccountsKey,
+                                                        final PublicKey farmsAccountsKey,
+                                                        final PublicKey farmsProgramKey,
+                                                        final long liquidityAmount) {
+    final var keys = List.of(
+      createRead(borrowAccountsKey),
+      createRead(farmsAccountsKey),
+      createRead(farmsProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(BORROW_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, liquidityAmount);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record BorrowObligationLiquidityV2IxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+
+    public static BorrowObligationLiquidityV2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static BorrowObligationLiquidityV2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var liquidityAmount = getInt64LE(_data, i);
+      return new BorrowObligationLiquidityV2IxData(discriminator, liquidityAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, liquidityAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator REPAY_OBLIGATION_LIQUIDITY_DISCRIMINATOR = toDiscriminator(145, 178, 13, 225, 76, 240, 147, 72);
 
   public static Instruction repayObligationLiquidity(final AccountMeta invokedKaminoLendingProgramMeta,
@@ -1145,7 +1349,7 @@ public final class KaminoLendingProgram {
       createWrite(obligationKey),
       createRead(lendingMarketKey),
       createWrite(repayReserveKey),
-      createWrite(reserveLiquidityMintKey),
+      createRead(reserveLiquidityMintKey),
       createWrite(reserveDestinationLiquidityKey),
       createWrite(userSourceLiquidityKey),
       createRead(tokenProgramKey),
@@ -1191,16 +1395,76 @@ public final class KaminoLendingProgram {
     }
   }
 
+  public static final Discriminator REPAY_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR = toDiscriminator(116, 174, 213, 76, 180, 53, 210, 144);
+
+  public static Instruction repayObligationLiquidityV2(final AccountMeta invokedKaminoLendingProgramMeta,
+                                                       final PublicKey repayAccountsKey,
+                                                       final PublicKey farmsAccountsKey,
+                                                       final PublicKey lendingMarketAuthorityKey,
+                                                       final PublicKey farmsProgramKey,
+                                                       final long liquidityAmount) {
+    final var keys = List.of(
+      createRead(repayAccountsKey),
+      createRead(farmsAccountsKey),
+      createRead(lendingMarketAuthorityKey),
+      createRead(farmsProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(REPAY_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, liquidityAmount);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record RepayObligationLiquidityV2IxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+
+    public static RepayObligationLiquidityV2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static RepayObligationLiquidityV2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var liquidityAmount = getInt64LE(_data, i);
+      return new RepayObligationLiquidityV2IxData(discriminator, liquidityAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, liquidityAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator REPAY_AND_WITHDRAW_AND_REDEEM_DISCRIMINATOR = toDiscriminator(2, 54, 152, 3, 148, 96, 109, 218);
 
   public static Instruction repayAndWithdrawAndRedeem(final AccountMeta invokedKaminoLendingProgramMeta,
                                                       final PublicKey repayAccountsKey,
                                                       final PublicKey withdrawAccountsKey,
+                                                      final PublicKey collateralFarmsAccountsKey,
+                                                      final PublicKey debtFarmsAccountsKey,
+                                                      final PublicKey farmsProgramKey,
                                                       final long repayAmount,
                                                       final long withdrawCollateralAmount) {
     final var keys = List.of(
       createRead(repayAccountsKey),
-      createRead(withdrawAccountsKey)
+      createRead(withdrawAccountsKey),
+      createRead(collateralFarmsAccountsKey),
+      createRead(debtFarmsAccountsKey),
+      createRead(farmsProgramKey)
     );
 
     final byte[] _data = new byte[24];
@@ -1248,6 +1512,69 @@ public final class KaminoLendingProgram {
     }
   }
 
+  public static final Discriminator DEPOSIT_AND_WITHDRAW_DISCRIMINATOR = toDiscriminator(141, 153, 39, 15, 64, 61, 88, 84);
+
+  public static Instruction depositAndWithdraw(final AccountMeta invokedKaminoLendingProgramMeta,
+                                               final PublicKey depositAccountsKey,
+                                               final PublicKey withdrawAccountsKey,
+                                               final PublicKey depositFarmsAccountsKey,
+                                               final PublicKey withdrawFarmsAccountsKey,
+                                               final PublicKey farmsProgramKey,
+                                               final long liquidityAmount,
+                                               final long withdrawCollateralAmount) {
+    final var keys = List.of(
+      createRead(depositAccountsKey),
+      createRead(withdrawAccountsKey),
+      createRead(depositFarmsAccountsKey),
+      createRead(withdrawFarmsAccountsKey),
+      createRead(farmsProgramKey)
+    );
+
+    final byte[] _data = new byte[24];
+    int i = writeDiscriminator(DEPOSIT_AND_WITHDRAW_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, liquidityAmount);
+    i += 8;
+    putInt64LE(_data, i, withdrawCollateralAmount);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record DepositAndWithdrawIxData(Discriminator discriminator, long liquidityAmount, long withdrawCollateralAmount) implements Borsh {  
+
+    public static DepositAndWithdrawIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 24;
+
+    public static DepositAndWithdrawIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var liquidityAmount = getInt64LE(_data, i);
+      i += 8;
+      final var withdrawCollateralAmount = getInt64LE(_data, i);
+      return new DepositAndWithdrawIxData(discriminator, liquidityAmount, withdrawCollateralAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, liquidityAmount);
+      i += 8;
+      putInt64LE(_data, i, withdrawCollateralAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_DISCRIMINATOR = toDiscriminator(129, 199, 4, 2, 222, 39, 26, 46);
 
   public static Instruction depositReserveLiquidityAndObligationCollateral(final AccountMeta invokedKaminoLendingProgramMeta,
@@ -1272,7 +1599,7 @@ public final class KaminoLendingProgram {
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),
       createWrite(reserveKey),
-      createWrite(reserveLiquidityMintKey),
+      createRead(reserveLiquidityMintKey),
       createWrite(reserveLiquiditySupplyKey),
       createWrite(reserveCollateralMintKey),
       createWrite(reserveDestinationDepositCollateralKey),
@@ -1322,6 +1649,58 @@ public final class KaminoLendingProgram {
     }
   }
 
+  public static final Discriminator DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(216, 224, 191, 27, 204, 151, 102, 175);
+
+  public static Instruction depositReserveLiquidityAndObligationCollateralV2(final AccountMeta invokedKaminoLendingProgramMeta,
+                                                                             final PublicKey depositAccountsKey,
+                                                                             final PublicKey farmsAccountsKey,
+                                                                             final PublicKey farmsProgramKey,
+                                                                             final long liquidityAmount) {
+    final var keys = List.of(
+      createRead(depositAccountsKey),
+      createRead(farmsAccountsKey),
+      createRead(farmsProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, liquidityAmount);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record DepositReserveLiquidityAndObligationCollateralV2IxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+
+    public static DepositReserveLiquidityAndObligationCollateralV2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static DepositReserveLiquidityAndObligationCollateralV2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var liquidityAmount = getInt64LE(_data, i);
+      return new DepositReserveLiquidityAndObligationCollateralV2IxData(discriminator, liquidityAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, liquidityAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_DISCRIMINATOR = toDiscriminator(75, 93, 93, 220, 34, 150, 218, 196);
 
   public static Instruction withdrawObligationCollateralAndRedeemReserveCollateral(final AccountMeta invokedKaminoLendingProgramMeta,
@@ -1341,12 +1720,12 @@ public final class KaminoLendingProgram {
                                                                                    final PublicKey instructionSysvarAccountKey,
                                                                                    final long collateralAmount) {
     final var keys = List.of(
-      createReadOnlySigner(ownerKey),
+      createWritableSigner(ownerKey),
       createWrite(obligationKey),
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),
       createWrite(withdrawReserveKey),
-      createWrite(reserveLiquidityMintKey),
+      createRead(reserveLiquidityMintKey),
       createWrite(reserveSourceCollateralKey),
       createWrite(reserveCollateralMintKey),
       createWrite(reserveLiquiditySupplyKey),
@@ -1396,6 +1775,58 @@ public final class KaminoLendingProgram {
     }
   }
 
+  public static final Discriminator WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(235, 52, 119, 152, 149, 197, 20, 7);
+
+  public static Instruction withdrawObligationCollateralAndRedeemReserveCollateralV2(final AccountMeta invokedKaminoLendingProgramMeta,
+                                                                                     final PublicKey withdrawAccountsKey,
+                                                                                     final PublicKey farmsAccountsKey,
+                                                                                     final PublicKey farmsProgramKey,
+                                                                                     final long collateralAmount) {
+    final var keys = List.of(
+      createRead(withdrawAccountsKey),
+      createRead(farmsAccountsKey),
+      createRead(farmsProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, collateralAmount);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record WithdrawObligationCollateralAndRedeemReserveCollateralV2IxData(Discriminator discriminator, long collateralAmount) implements Borsh {  
+
+    public static WithdrawObligationCollateralAndRedeemReserveCollateralV2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static WithdrawObligationCollateralAndRedeemReserveCollateralV2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var collateralAmount = getInt64LE(_data, i);
+      return new WithdrawObligationCollateralAndRedeemReserveCollateralV2IxData(discriminator, collateralAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, collateralAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator LIQUIDATE_OBLIGATION_AND_REDEEM_RESERVE_COLLATERAL_DISCRIMINATOR = toDiscriminator(177, 71, 154, 188, 226, 133, 74, 55);
 
   public static Instruction liquidateObligationAndRedeemReserveCollateral(final AccountMeta invokedKaminoLendingProgramMeta,
@@ -1428,10 +1859,10 @@ public final class KaminoLendingProgram {
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),
       createWrite(repayReserveKey),
-      createWrite(repayReserveLiquidityMintKey),
+      createRead(repayReserveLiquidityMintKey),
       createWrite(repayReserveLiquiditySupplyKey),
       createWrite(withdrawReserveKey),
-      createWrite(withdrawReserveLiquidityMintKey),
+      createRead(withdrawReserveLiquidityMintKey),
       createWrite(withdrawReserveCollateralMintKey),
       createWrite(withdrawReserveCollateralSupplyKey),
       createWrite(withdrawReserveLiquiditySupplyKey),
@@ -1479,6 +1910,77 @@ public final class KaminoLendingProgram {
       i += 8;
       final var maxAllowedLtvOverridePercent = getInt64LE(_data, i);
       return new LiquidateObligationAndRedeemReserveCollateralIxData(discriminator, liquidityAmount, minAcceptableReceivedLiquidityAmount, maxAllowedLtvOverridePercent);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, liquidityAmount);
+      i += 8;
+      putInt64LE(_data, i, minAcceptableReceivedLiquidityAmount);
+      i += 8;
+      putInt64LE(_data, i, maxAllowedLtvOverridePercent);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator LIQUIDATE_OBLIGATION_AND_REDEEM_RESERVE_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(162, 161, 35, 143, 30, 187, 185, 103);
+
+  public static Instruction liquidateObligationAndRedeemReserveCollateralV2(final AccountMeta invokedKaminoLendingProgramMeta,
+                                                                            final PublicKey liquidationAccountsKey,
+                                                                            final PublicKey collateralFarmsAccountsKey,
+                                                                            final PublicKey debtFarmsAccountsKey,
+                                                                            final PublicKey farmsProgramKey,
+                                                                            final long liquidityAmount,
+                                                                            final long minAcceptableReceivedLiquidityAmount,
+                                                                            final long maxAllowedLtvOverridePercent) {
+    final var keys = List.of(
+      createRead(liquidationAccountsKey),
+      createRead(collateralFarmsAccountsKey),
+      createRead(debtFarmsAccountsKey),
+      createRead(farmsProgramKey)
+    );
+
+    final byte[] _data = new byte[32];
+    int i = writeDiscriminator(LIQUIDATE_OBLIGATION_AND_REDEEM_RESERVE_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, liquidityAmount);
+    i += 8;
+    putInt64LE(_data, i, minAcceptableReceivedLiquidityAmount);
+    i += 8;
+    putInt64LE(_data, i, maxAllowedLtvOverridePercent);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record LiquidateObligationAndRedeemReserveCollateralV2IxData(Discriminator discriminator,
+                                                                      long liquidityAmount,
+                                                                      long minAcceptableReceivedLiquidityAmount,
+                                                                      long maxAllowedLtvOverridePercent) implements Borsh {  
+
+    public static LiquidateObligationAndRedeemReserveCollateralV2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 32;
+
+    public static LiquidateObligationAndRedeemReserveCollateralV2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var liquidityAmount = getInt64LE(_data, i);
+      i += 8;
+      final var minAcceptableReceivedLiquidityAmount = getInt64LE(_data, i);
+      i += 8;
+      final var maxAllowedLtvOverridePercent = getInt64LE(_data, i);
+      return new LiquidateObligationAndRedeemReserveCollateralV2IxData(discriminator, liquidityAmount, minAcceptableReceivedLiquidityAmount, maxAllowedLtvOverridePercent);
     }
 
     @Override
@@ -1795,7 +2297,7 @@ public final class KaminoLendingProgram {
       createWritableSigner(referrerKey),
       createWrite(referrerTokenStateKey),
       createWrite(reserveKey),
-      createWrite(reserveLiquidityMintKey),
+      createRead(reserveLiquidityMintKey),
       createWrite(reserveSupplyLiquidityKey),
       createWrite(referrerTokenAccountKey),
       createRead(lendingMarketKey),
