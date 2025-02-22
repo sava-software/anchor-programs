@@ -23,7 +23,7 @@ public record ModifyOrderParams(PositionDirection direction,
                                 OptionalInt auctionDuration,
                                 OptionalLong auctionStartPrice,
                                 OptionalLong auctionEndPrice,
-                                ModifyOrderPolicy policy) implements Borsh {
+                                OptionalInt policy) implements Borsh {
 
   public static ModifyOrderParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -82,7 +82,7 @@ public record ModifyOrderParams(PositionDirection direction,
     if (auctionEndPrice.isPresent()) {
       i += 8;
     }
-    final var policy = _data[i++] == 0 ? null : ModifyOrderPolicy.read(_data, i);
+    final var policy = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
     return new ModifyOrderParams(direction,
                                  baseAssetAmount,
                                  price,
@@ -115,7 +115,7 @@ public record ModifyOrderParams(PositionDirection direction,
     i += Borsh.writeOptionalbyte(auctionDuration, _data, i);
     i += Borsh.writeOptional(auctionStartPrice, _data, i);
     i += Borsh.writeOptional(auctionEndPrice, _data, i);
-    i += Borsh.writeOptional(policy, _data, i);
+    i += Borsh.writeOptionalbyte(policy, _data, i);
     return i - offset;
   }
 
@@ -134,6 +134,6 @@ public record ModifyOrderParams(PositionDirection direction,
          + (auctionDuration == null || auctionDuration.isEmpty() ? 1 : (1 + 1))
          + (auctionStartPrice == null || auctionStartPrice.isEmpty() ? 1 : (1 + 8))
          + (auctionEndPrice == null || auctionEndPrice.isEmpty() ? 1 : (1 + 8))
-         + (policy == null ? 1 : (1 + Borsh.len(policy)));
+         + (policy == null || policy.isEmpty() ? 1 : (1 + 1));
   }
 }

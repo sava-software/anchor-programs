@@ -390,17 +390,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   private static software.sava.anchor.programs.glam.anchor.types.ModifyOrderParams mapModifyOrderParams(final ModifyOrderParams modifyOrderParams) {
-    final var optionalPolicy = modifyOrderParams.policy();
-    final ModifyOrderPolicy modifyOrderPolicy;
-    if (optionalPolicy.isPresent()) {
-      modifyOrderPolicy = switch (optionalPolicy.getAsInt()) {
-        case 0 -> ModifyOrderPolicy.TryModify;
-        case 1 -> ModifyOrderPolicy.MustModify;
-        default -> throw new IllegalArgumentException("Invalid modify order policy: " + optionalPolicy.getAsInt());
-      };
-    } else {
-      modifyOrderPolicy = null;
-    }
     return new software.sava.anchor.programs.glam.anchor.types.ModifyOrderParams(
         mapDirection(modifyOrderParams.direction()),
         modifyOrderParams.baseAssetAmount(),
@@ -415,7 +404,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         modifyOrderParams.auctionDuration(),
         modifyOrderParams.auctionStartPrice(),
         modifyOrderParams.auctionEndPrice(),
-        modifyOrderPolicy
+        modifyOrderParams.policy()
     );
   }
 
