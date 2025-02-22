@@ -19,21 +19,21 @@ public interface KaminoAccounts {
       "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr"
   );
 
-  static KaminoAccounts createAccounts(final PublicKey program,
+  static KaminoAccounts createAccounts(final PublicKey kLendProgram,
                                        final PublicKey scopePrices,
                                        final PublicKey farmProgram) {
     return new KaminoAccountsRecord(
-        AccountMeta.createInvoked(program),
+        AccountMeta.createInvoked(kLendProgram),
         scopePrices,
         farmProgram
     );
   }
 
-  static KaminoAccounts createAccounts(final String program,
+  static KaminoAccounts createAccounts(final String kLendProgram,
                                        final String scopePrices,
                                        final String farmProgram) {
     return createAccounts(
-        PublicKey.fromBase58Encoded(program),
+        PublicKey.fromBase58Encoded(kLendProgram),
         PublicKey.fromBase58Encoded(scopePrices),
         PublicKey.fromBase58Encoded(farmProgram)
     );
@@ -159,10 +159,10 @@ public interface KaminoAccounts {
     );
   }
 
-  AccountMeta invokedProgram();
+  AccountMeta invokedKLendProgram();
 
-  default PublicKey program() {
-    return invokedProgram().publicKey();
+  default PublicKey kLendProgram() {
+    return invokedKLendProgram().publicKey();
   }
 
   PublicKey scopePrices();

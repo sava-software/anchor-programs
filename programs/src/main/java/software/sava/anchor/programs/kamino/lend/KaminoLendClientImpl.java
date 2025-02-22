@@ -6,9 +6,11 @@ import software.sava.anchor.programs.kamino.lend.anchor.types.InitObligationArgs
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
+import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 final class KaminoLendClientImpl implements KaminoLendClient {
 
+  private final NativeProgramAccountClient nativeProgramAccountClient;
   private final SolanaAccounts solanaAccounts;
   private final KaminoAccounts kaminoAccounts;
   private final PublicKey owner;
@@ -16,24 +18,24 @@ final class KaminoLendClientImpl implements KaminoLendClient {
   private final PublicKey feePayer;
   private final PublicKey referrer;
 
-  KaminoLendClientImpl(final SolanaAccounts solanaAccounts,
+  KaminoLendClientImpl(final NativeProgramAccountClient nativeProgramAccountClient,
                        final KaminoAccounts kaminoAccounts,
-                       final PublicKey owner,
-                       final PublicKey feePayer,
                        final PublicKey referrer) {
-    this.solanaAccounts = solanaAccounts;
+    this.nativeProgramAccountClient = nativeProgramAccountClient;
+    this.solanaAccounts = nativeProgramAccountClient.solanaAccounts();
     this.kaminoAccounts = kaminoAccounts;
-    this.owner = owner;
-    this.ownerMetadata = KaminoAccounts.userMetadataPda(owner, kaminoAccounts.program()).publicKey();
-    this.feePayer = feePayer;
+    this.owner = nativeProgramAccountClient.ownerPublicKey();
+    this.ownerMetadata = KaminoAccounts.userMetadataPda(owner, kaminoAccounts.kLendProgram()).publicKey();
+    this.feePayer = nativeProgramAccountClient.feePayer().publicKey();
     this.referrer = referrer;
   }
 
+  @Override
   public Instruction initObligation(final PublicKey lendingMarket,
                                     final PublicKey obligationKey,
                                     final InitObligationArgs initObligationArgs) {
     return KaminoLendingProgram.initObligation(
-        kaminoAccounts.invokedProgram(),
+        kaminoAccounts.invokedKLendProgram(),
         owner,
         feePayer,
         obligationKey,
@@ -47,30 +49,33 @@ final class KaminoLendClientImpl implements KaminoLendClient {
     );
   }
 
-  public Instruction refreshReserve(final PublicKey lendingMarket) {
+  @Override
+  public Instruction refreshReserve(final PublicKey lendingMarket, final PublicKey reserveKey) {
     return KaminoLendingProgram.refreshReserve(
-        kaminoAccounts.invokedProgram(),
-        null,
+        kaminoAccounts.invokedKLendProgram(),
+        reserveKey,
         lendingMarket,
-        kaminoAccounts.program(),
-        kaminoAccounts.program(),
-        kaminoAccounts.program(),
+        kaminoAccounts.kLendProgram(),
+        kaminoAccounts.kLendProgram(),
+        kaminoAccounts.kLendProgram(),
         kaminoAccounts.scopePrices()
     );
   }
 
+  @Override
   public Instruction refreshObligation(final PublicKey lendingMarket,
                                        final PublicKey obligationKey) {
     return KaminoLendingProgram.refreshObligation(
-        kaminoAccounts.invokedProgram(),
+        kaminoAccounts.invokedKLendProgram(),
         lendingMarket,
         obligationKey
     );
   }
 
+  @Override
   public Instruction refreshObligationFarmsForReserve(final PublicKey baseAccountsKey, final int mode) {
     return KaminoLendingProgram.refreshObligationFarmsForReserve(
-        kaminoAccounts.invokedProgram(),
+        kaminoAccounts.invokedKLendProgram(),
         feePayer,
         baseAccountsKey,
         kaminoAccounts.farmProgram(),
@@ -80,23 +85,26 @@ final class KaminoLendClientImpl implements KaminoLendClient {
     );
   }
 
+  @Override
   public Instruction depositReserveLiquidityAndObligationCollateral(final PublicKey obligationKey,
+                                                                    final PublicKey reserveKey,
+                                                                    final PublicKey reserveDestinationDepositCollateralKey,
                                                                     final ReservePDAs reservePDAs,
                                                                     final PublicKey sourceTokenAccount,
                                                                     final long liquidityAmount) {
     return KaminoLendingProgram.depositReserveLiquidityAndObligationCollateral(
-        kaminoAccounts.invokedProgram(),
+        kaminoAccounts.invokedKLendProgram(),
         owner,
         obligationKey,
         reservePDAs.market(),
         reservePDAs.marketAuthority(),
-        null,
+        reserveKey,
         reservePDAs.mint(),
         reservePDAs.liquiditySupplyVault(),
         reservePDAs.collateralMint(),
-        null,
+        reservePDAs.collateralSupplyVault(),
         sourceTokenAccount,
-        kaminoAccounts.program(),
+        kaminoAccounts.kLendProgram(),
         reservePDAs.tokenProgram(),
         reservePDAs.tokenProgram(),
         solanaAccounts.instructionsSysVar(),
