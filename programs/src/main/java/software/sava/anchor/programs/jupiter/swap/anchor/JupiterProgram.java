@@ -235,6 +235,25 @@ public final class JupiterProgram {
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, CREATE_TOKEN_LEDGER_DISCRIMINATOR);
   }
 
+  public static final Discriminator CREATE_TOKEN_ACCOUNT_DISCRIMINATOR = toDiscriminator(147, 241, 123, 100, 244, 132, 174, 118);
+
+  public static Instruction createTokenAccount(final AccountMeta invokedJupiterProgramMeta,
+                                               final SolanaAccounts solanaAccounts,
+                                               final PublicKey tokenAccountKey,
+                                               final PublicKey userKey,
+                                               final PublicKey mintKey,
+                                               final PublicKey tokenProgramKey) {
+    final var keys = List.of(
+      createWrite(tokenAccountKey),
+      createWritableSigner(userKey),
+      createRead(mintKey),
+      createRead(tokenProgramKey),
+      createRead(solanaAccounts.systemProgram())
+    );
+
+    return Instruction.createInstruction(invokedJupiterProgramMeta, keys, CREATE_TOKEN_ACCOUNT_DISCRIMINATOR);
+  }
+
   public static final Discriminator EXACT_OUT_ROUTE_DISCRIMINATOR = toDiscriminator(208, 51, 239, 151, 123, 43, 237, 92);
 
   public static Instruction exactOutRoute(final AccountMeta invokedJupiterProgramMeta,

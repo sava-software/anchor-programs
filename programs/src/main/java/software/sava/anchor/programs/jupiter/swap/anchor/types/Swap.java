@@ -74,10 +74,12 @@ public sealed interface Swap extends RustEnum permits
   Swap.SolayerDelegateNoInit,
   Swap.SolayerUndelegateNoInit,
   Swap.TokenMill,
-  Swap.DaoFunBuy,
-  Swap.DaoFunSell,
+  Swap.DaosFunBuy,
+  Swap.DaosFunSell,
   Swap.ZeroFi,
-  Swap.WooFi {
+  Swap.StakeDexWithdrawWrappedSol,
+  Swap.VirtualsBuy,
+  Swap.VirtualsSell {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -148,10 +150,12 @@ public sealed interface Swap extends RustEnum permits
       case 62 -> SolayerDelegateNoInit.INSTANCE;
       case 63 -> SolayerUndelegateNoInit.INSTANCE;
       case 64 -> TokenMill.read(_data, i);
-      case 65 -> DaoFunBuy.INSTANCE;
-      case 66 -> DaoFunSell.INSTANCE;
+      case 65 -> DaosFunBuy.INSTANCE;
+      case 66 -> DaosFunSell.INSTANCE;
       case 67 -> ZeroFi.INSTANCE;
-      case 68 -> WooFi.INSTANCE;
+      case 68 -> StakeDexWithdrawWrappedSol.INSTANCE;
+      case 69 -> VirtualsBuy.INSTANCE;
+      case 70 -> VirtualsSell.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1041,9 +1045,9 @@ public sealed interface Swap extends RustEnum permits
     }
   }
 
-  record DaoFunBuy() implements EnumNone, Swap {
+  record DaosFunBuy() implements EnumNone, Swap {
 
-    public static final DaoFunBuy INSTANCE = new DaoFunBuy();
+    public static final DaosFunBuy INSTANCE = new DaosFunBuy();
 
     @Override
     public int ordinal() {
@@ -1051,9 +1055,9 @@ public sealed interface Swap extends RustEnum permits
     }
   }
 
-  record DaoFunSell() implements EnumNone, Swap {
+  record DaosFunSell() implements EnumNone, Swap {
 
-    public static final DaoFunSell INSTANCE = new DaoFunSell();
+    public static final DaosFunSell INSTANCE = new DaosFunSell();
 
     @Override
     public int ordinal() {
@@ -1071,13 +1075,33 @@ public sealed interface Swap extends RustEnum permits
     }
   }
 
-  record WooFi() implements EnumNone, Swap {
+  record StakeDexWithdrawWrappedSol() implements EnumNone, Swap {
 
-    public static final WooFi INSTANCE = new WooFi();
+    public static final StakeDexWithdrawWrappedSol INSTANCE = new StakeDexWithdrawWrappedSol();
 
     @Override
     public int ordinal() {
       return 68;
+    }
+  }
+
+  record VirtualsBuy() implements EnumNone, Swap {
+
+    public static final VirtualsBuy INSTANCE = new VirtualsBuy();
+
+    @Override
+    public int ordinal() {
+      return 69;
+    }
+  }
+
+  record VirtualsSell() implements EnumNone, Swap {
+
+    public static final VirtualsSell INSTANCE = new VirtualsSell();
+
+    @Override
+    public int ordinal() {
+      return 70;
     }
   }
 }
