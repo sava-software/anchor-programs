@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam_v0.anchor.GlamProgram;
+import software.sava.anchor.programs.glam.anchor.GlamProgram;
 import software.sava.anchor.programs.jupiter.JupiterAccounts;
 import software.sava.anchor.programs.jupiter.governance.anchor.types.GovernanceParameters;
 import software.sava.anchor.programs.jupiter.governance.anchor.types.ProposalInstruction;
@@ -14,15 +14,18 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
 
   private final GlamAccounts glamAccounts;
   private final PublicKey glamKey;
+  private final PublicKey feePayer;
 
   GlamJupiterVoteClientImpl(final SolanaAccounts solanaAccounts,
                             final JupiterAccounts jupiterAccounts,
                             final GlamAccounts glamAccounts,
                             final PublicKey glamKey,
-                            final PublicKey glamVaultKey) {
+                            final PublicKey glamVaultKey,
+                            final PublicKey feePayer) {
     super(solanaAccounts, jupiterAccounts, glamVaultKey);
     this.glamAccounts = glamAccounts;
     this.glamKey = glamKey;
+    this.feePayer = feePayer;
   }
 
   @Override
@@ -39,15 +42,16 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
   public Instruction newEscrow(final PublicKey escrowOwnerKey,
                                final PublicKey escrowKey,
                                final PublicKey payer) {
-    return GlamProgram.initLockedVoterEscrow(
+    return GlamProgram.jupiterVoteNewEscrow(
         glamAccounts.invokedProgram(),
         solanaAccounts,
         glamKey,
         escrowOwnerKey,
         payer,
+        jupiterAccounts.voteProgram(),
         jupiterAccounts.lockerKey(),
         escrowKey,
-        jupiterAccounts.voteProgram()
+        payer
     );
   }
 
@@ -62,15 +66,17 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
           escrowOwnerKey, voter
       ));
     }
-    return GlamProgram.newVote(
+    return GlamProgram.jupiterGovNewVote(
         glamAccounts.invokedProgram(),
         solanaAccounts,
         glamKey,
         escrowOwnerKey,
         payer,
+        jupiterAccounts.govProgram(),
         proposal,
         voteKey,
-        jupiterAccounts.govProgram()
+        payer,
+        voter
     );
   }
 
@@ -80,19 +86,43 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                               final PublicKey proposal,
                               final PublicKey voteKey,
                               final int side) {
-    return GlamProgram.castVote(
+    return GlamProgram.jupiterVoteCastVote(
         glamAccounts.invokedProgram(),
         glamKey,
         escrowOwnerKey,
         voteDelegate,
+        jupiterAccounts.voteProgram(),
         jupiterAccounts.lockerKey(),
         escrowKey,
         proposal,
         voteKey,
         jupiterAccounts.governorKey(),
-        jupiterAccounts.voteProgram(),
         jupiterAccounts.govProgram(),
         side
+    );
+  }
+
+  @Override
+  public Instruction castVote(final PublicKey escrowKey,
+                              final PublicKey voteDelegate,
+                              final PublicKey proposal,
+                              final PublicKey voteKey,
+                              final int side,
+                              final int expectedSide) {
+    return GlamProgram.jupiterVoteCastVoteChecked(
+        glamAccounts.invokedProgram(),
+        glamKey,
+        escrowOwnerKey,
+        voteDelegate,
+        jupiterAccounts.voteProgram(),
+        jupiterAccounts.lockerKey(),
+        escrowKey,
+        proposal,
+        voteKey,
+        jupiterAccounts.governorKey(),
+        jupiterAccounts.govProgram(),
+        side,
+        expectedSide
     );
   }
 
@@ -102,18 +132,118 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                           final PublicKey payerKey,
                                           final PublicKey sourceTokensKey,
                                           final long amount) {
-    return GlamProgram.increaseLockedAmount(
+    return GlamProgram.jupiterVoteIncreaseLockedAmount(
+        glamAccounts.invokedProgram(),
+        glamKey,
+        escrowOwnerKey,
+        payerKey,
+        jupiterAccounts.voteProgram(),
+        jupiterAccounts.lockerKey(),
+        glamKey,
+        escrowTokensKey,
+        sourceTokensKey,
+        solanaAccounts.tokenProgram(),
+        amount
+    );
+  }
+
+  @Override
+  public Instruction toggleMaxLock(final PublicKey lockerKey,
+                                   final PublicKey escrowKey,
+                                   final PublicKey escrowOwnerKey,
+                                   final boolean maxLock) {
+    return GlamProgram.jupiterVoteToggleMaxLock(
+        glamAccounts.invokedProgram(),
+        glamKey,
+        escrowOwnerKey,
+        feePayer,
+        jupiterAccounts.voteProgram(),
+        lockerKey,
+        escrowKey,
+        maxLock
+    );
+  }
+
+  @Override
+  public Instruction withdraw(final PublicKey lockerKey,
+                              final PublicKey escrowKey,
+                              final PublicKey escrowOwnerKey,
+                              final PublicKey escrowTokensKey,
+                              final PublicKey payerKey,
+                              final PublicKey destinationTokensKey) {
+    return GlamProgram.jupiterVoteWithdraw(
+        glamAccounts.invokedProgram(),
+        glamKey,
+        escrowOwnerKey,
+        payerKey,
+        jupiterAccounts.voteProgram(),
+        lockerKey,
+        escrowKey,
+        escrowTokensKey,
+        destinationTokensKey,
+        solanaAccounts.tokenProgram()
+    );
+  }
+
+  @Override
+  public Instruction openPartialUnstaking(final PublicKey lockerKey,
+                                          final PublicKey escrowKey,
+                                          final PublicKey escrowOwnerKey,
+                                          final PublicKey partialUnstakeKey,
+                                          final long amount,
+                                          final String memo) {
+    return GlamProgram.jupiterVoteOpenPartialUnstaking(
         glamAccounts.invokedProgram(),
         solanaAccounts,
         glamKey,
         escrowOwnerKey,
-        payerKey,
-        jupiterAccounts.lockerKey(),
-        escrowTokensKey,
-        sourceTokensKey,
-        escrowKey,
+        feePayer,
         jupiterAccounts.voteProgram(),
-        amount
+        lockerKey,
+        escrowKey,
+        partialUnstakeKey,
+        amount,
+        memo
+    );
+  }
+
+  @Override
+  public Instruction mergePartialUnstaking(final PublicKey lockerKey,
+                                           final PublicKey escrowKey,
+                                           final PublicKey escrowOwnerKey,
+                                           final PublicKey partialUnstakeKey) {
+    return GlamProgram.jupiterVoteMergePartialUnstaking(
+        glamAccounts.invokedProgram(),
+        glamKey,
+        escrowOwnerKey,
+        feePayer,
+        jupiterAccounts.voteProgram(),
+        lockerKey,
+        escrowKey,
+        partialUnstakeKey
+    );
+  }
+
+  @Override
+  public Instruction withdrawPartialUnstaking(final PublicKey lockerKey,
+                                              final PublicKey escrowKey,
+                                              final PublicKey escrowOwnerKey,
+                                              final PublicKey escrowTokensKey,
+                                              final PublicKey partialUnstakeKey,
+                                              final PublicKey payerKey,
+                                              final PublicKey destinationTokensKey) {
+    return GlamProgram.jupiterVoteWithdrawPartialUnstaking(
+        glamAccounts.invokedProgram(),
+        glamKey,
+        escrowOwnerKey,
+        feePayer,
+        jupiterAccounts.voteProgram(),
+        lockerKey,
+        escrowKey,
+        partialUnstakeKey,
+        escrowTokensKey,
+        destinationTokensKey,
+        solanaAccounts.tokenProgram()
     );
   }
 
@@ -130,53 +260,6 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                         final PublicKey escrowOwnerKey,
                                         final long duration) {
     throw new UnsupportedOperationException("TODO: extendLockDuration");
-  }
-
-  @Override
-  public Instruction toggleMaxLock(final PublicKey lockerKey,
-                                   final PublicKey escrowKey,
-                                   final PublicKey escrowOwnerKey,
-                                   final boolean maxLock) {
-    throw new UnsupportedOperationException("TODO: toggleMaxLock");
-  }
-
-  @Override
-  public Instruction withdraw(final PublicKey lockerKey,
-                              final PublicKey escrowKey,
-                              final PublicKey escrowOwnerKey,
-                              final PublicKey escrowTokensKey,
-                              final PublicKey payerKey,
-                              final PublicKey destinationTokensKey) {
-    throw new UnsupportedOperationException("TODO: withdraw");
-  }
-
-  @Override
-  public Instruction openPartialUnstaking(final PublicKey lockerKey,
-                                          final PublicKey escrowKey,
-                                          final PublicKey escrowOwnerKey,
-                                          final PublicKey partialUnstakeKey,
-                                          final long amount,
-                                          final String memo) {
-    throw new UnsupportedOperationException("TODO: openPartialUnstaking");
-  }
-
-  @Override
-  public Instruction mergePartialUnstaking(final PublicKey lockerKey,
-                                           final PublicKey escrowKey,
-                                           final PublicKey escrowOwnerKey,
-                                           final PublicKey partialUnstakeKey) {
-    throw new UnsupportedOperationException("TODO: mergePartialUnstaking");
-  }
-
-  @Override
-  public Instruction withdrawPartialUnstaking(final PublicKey lockerKey,
-                                              final PublicKey escrowKey,
-                                              final PublicKey escrowOwnerKey,
-                                              final PublicKey escrowTokensKey,
-                                              final PublicKey partialUnstakeKey,
-                                              final PublicKey payerKey,
-                                              final PublicKey destinationTokensKey) {
-    throw new UnsupportedOperationException("TODO: withdrawPartialUnstaking");
   }
 
   @Override

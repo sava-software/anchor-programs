@@ -200,18 +200,18 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress vaultPDA(final PublicKey program,
-                                               final PublicKey stateAccount) {
+                                               final PublicKey glamStateAccount) {
     return PublicKey.findProgramAddress(List.of(
       "vault".getBytes(US_ASCII),
-      stateAccount.toByteArray()
+      glamStateAccount.toByteArray()
     ), program);
   }
 
   public static ProgramDerivedAddress vault1PDA(final PublicKey program,
-                                                final PublicKey glamStateAccount) {
+                                                final PublicKey stateAccount) {
     return PublicKey.findProgramAddress(List.of(
       "vault".getBytes(US_ASCII),
-      glamStateAccount.toByteArray()
+      stateAccount.toByteArray()
     ), program);
   }
 

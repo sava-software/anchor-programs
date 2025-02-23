@@ -92,7 +92,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.stateKey(),
         user,
         userStatsKey,
-        authority,
         spotMarketConfig.vaultPDA(),
         userTokenAccountKey,
         tokenProgramKey,
@@ -144,7 +143,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.stateKey(),
         user,
         userStatsKey,
-        authority,
         spotMarketConfig.vaultPDA(),
         driftAccounts.driftSignerPDA(),
         userTokenAccountKey,
@@ -282,7 +280,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
-        authority,
         toGlam(orderParams)
     );
   }
@@ -297,7 +294,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
-        authority,
         orderIds
     );
   }
@@ -324,7 +320,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
-        authority,
         null,
         OptionalInt.empty(),
         mapDirection(direction)
@@ -343,7 +338,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
-        authority,
         MarketType.Spot,
         OptionalInt.empty(),
         mapDirection(direction)
@@ -362,7 +356,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
-        authority,
         MarketType.Perp,
         OptionalInt.empty(),
         mapDirection(direction)
@@ -382,7 +375,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
-        authority,
         marketConfig instanceof PerpMarketConfig ? MarketType.Perp : MarketType.Spot,
         OptionalInt.of(marketConfig.marketIndex()),
         mapDirection(direction)
@@ -421,7 +413,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.driftProgram(),
         driftAccounts.stateKey(),
         user,
-        authority,
         orderId,
         mapModifyOrderParams(modifyOrderParams)
     );

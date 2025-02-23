@@ -1,16 +1,16 @@
 package software.sava.anchor.programs.kamino.lend;
 
 import software.sava.anchor.programs.kamino.KaminoAccounts;
+import software.sava.anchor.programs.kamino.farms.anchor.types.FarmState;
 import software.sava.anchor.programs.kamino.lend.anchor.types.InitObligationArgs;
 import software.sava.anchor.programs.kamino.lend.anchor.types.Reserve;
 import software.sava.core.accounts.PublicKey;
+import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
-import java.net.URI;
-import java.net.http.HttpClient;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -25,6 +25,15 @@ public interface KaminoLendClient {
   static KaminoLendClient createClient(final NativeProgramAccountClient nativeProgramAccountClient,
                                        final PublicKey referrer) {
     return createClient(nativeProgramAccountClient, KaminoAccounts.MAIN_NET, referrer);
+  }
+
+  static CompletableFuture<List<AccountInfo<FarmState>>> fetchFarmStateAccounts(final SolanaRpcClient rpcClient,
+                                                                                final PublicKey kLendProgram) {
+    return rpcClient.getProgramAccounts(
+        kLendProgram,
+        List.of(FarmState.SIZE_FILTER),
+        FarmState.FACTORY
+    );
   }
 
   static CompletableFuture<List<AccountInfo<Reserve>>> fetchReserveAccounts(final SolanaRpcClient rpcClient,
@@ -46,33 +55,19 @@ public interface KaminoLendClient {
     );
   }
 
-  static void main(final String[] args) {
-    final var endpoint = URI.create("https://.solana-mainnet.quiknode.pro/");
-    try (final var httpClient = HttpClient.newHttpClient()) {
-      final var rpcClient = SolanaRpcClient.createClient(endpoint, httpClient);
+  SolanaAccounts solanaAccounts();
 
-      final var programId = KaminoAccounts.MAIN_NET.kLendProgram();
-      final var reserves = fetchReserveAccounts(rpcClient, programId).join();
-      for (final var accountInfo : reserves) {
-        final var reserve = accountInfo.data();
-        System.out.println(reserve);
-        final var marketPDAs = MarketPDAs.createPDAs(programId, reserve.lendingMarket());
-        final var liquidity = reserve.liquidity();
-        final var reservePDAs = ReservePDAs.createPDAs(
-            programId,
-            marketPDAs,
-            liquidity.mintPubkey(),
-            liquidity.tokenProgram()
-        );
-        System.out.println(marketPDAs);
-        System.out.println(reservePDAs);
-      }
-    }
-  }
+  KaminoAccounts kaminoAccounts();
 
   Instruction initObligation(final PublicKey lendingMarket,
                              final PublicKey obligationKey,
                              final InitObligationArgs initObligationArgs);
+
+  Instruction initObligationFarmsForReserve(final Reserve reserve,
+                                            final ReservePDAs reservePDAs,
+                                            final PublicKey obligationKey,
+                                            final PublicKey obligationFarmKey,
+                                            final int mode);
 
   Instruction refreshReserve(final PublicKey lendingMarket, final PublicKey reserveKey);
 

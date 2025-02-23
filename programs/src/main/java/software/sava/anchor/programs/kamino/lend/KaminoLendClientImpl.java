@@ -3,10 +3,29 @@ package software.sava.anchor.programs.kamino.lend;
 import software.sava.anchor.programs.kamino.KaminoAccounts;
 import software.sava.anchor.programs.kamino.lend.anchor.KaminoLendingProgram;
 import software.sava.anchor.programs.kamino.lend.anchor.types.InitObligationArgs;
+import software.sava.anchor.programs.kamino.lend.anchor.types.Obligation;
+import software.sava.anchor.programs.kamino.lend.anchor.types.Reserve;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
+import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
+import software.sava.rpc.json.PrivateKeyEncoding;
+import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
+import software.sava.solana.programs.clients.NativeProgramClient;
+import software.sava.solana.programs.system.SystemProgram;
+import systems.comodal.jsoniter.JsonIterator;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.ZonedDateTime;
+import java.util.HashMap;
+import java.util.Map;
+
+import static java.time.ZoneOffset.UTC;
 
 final class KaminoLendClientImpl implements KaminoLendClient {
 
@@ -31,6 +50,16 @@ final class KaminoLendClientImpl implements KaminoLendClient {
   }
 
   @Override
+  public SolanaAccounts solanaAccounts() {
+    return solanaAccounts;
+  }
+
+  @Override
+  public KaminoAccounts kaminoAccounts() {
+    return kaminoAccounts;
+  }
+
+  @Override
   public Instruction initObligation(final PublicKey lendingMarket,
                                     final PublicKey obligationKey,
                                     final InitObligationArgs initObligationArgs) {
@@ -46,6 +75,45 @@ final class KaminoLendClientImpl implements KaminoLendClient {
         solanaAccounts.rentSysVar(),
         solanaAccounts.systemProgram(),
         initObligationArgs
+    );
+  }
+
+  @Override
+  public Instruction initObligationFarmsForReserve(final Reserve reserve,
+                                                   final ReservePDAs reservePDAs,
+                                                   final PublicKey obligationKey,
+                                                   final PublicKey obligationFarmKey,
+                                                   final int mode) {
+    return initObligationFarmsForReserve(
+        reserve._address(),
+        reserve.farmCollateral(),
+        reservePDAs,
+        obligationKey,
+        obligationFarmKey,
+        mode
+    );
+  }
+
+  public Instruction initObligationFarmsForReserve(final PublicKey reserveKey,
+                                                   final PublicKey reserveFarmStateKey,
+                                                   final ReservePDAs reservePDAs,
+                                                   final PublicKey obligationKey,
+                                                   final PublicKey obligationFarmKey,
+                                                   final int mode) {
+    return KaminoLendingProgram.initObligationFarmsForReserve(
+        kaminoAccounts.invokedKLendProgram(),
+        feePayer,
+        owner,
+        obligationKey,
+        reservePDAs.marketAuthority(),
+        reserveKey,
+        reserveFarmStateKey,
+        obligationFarmKey,
+        reservePDAs.market(),
+        kaminoAccounts.farmProgram(),
+        solanaAccounts.rentSysVar(),
+        solanaAccounts.systemProgram(),
+        mode
     );
   }
 
@@ -110,5 +178,61 @@ final class KaminoLendClientImpl implements KaminoLendClient {
         solanaAccounts.instructionsSysVar(),
         liquidityAmount
     );
+  }
+
+
+  static void main(final String[] args) throws IOException {
+    var jsonConfig = Files.readAllBytes(Path.of(""));
+    var ji = JsonIterator.parse(jsonConfig).skipUntil("privateKey");
+    var signer = PrivateKeyEncoding.fromJsonPrivateKey(ji);
+    var feePayer = signer.publicKey();
+    final var endpoint = "";
+
+    final var solanaAccounts = SolanaAccounts.MAIN_NET;
+    final var nativeClient = NativeProgramClient.createClient(solanaAccounts);
+    final var nativeAccountClient = nativeClient.createAccountClient(AccountMeta.createFeePayer(feePayer));
+    final var kaminoClient = KaminoLendClient.createClient(nativeAccountClient, null);
+
+    try (final var httpClient = HttpClient.newHttpClient()) {
+      final var rpcClient = SolanaRpcClient.createClient(URI.create(endpoint), httpClient);
+
+      final var minRentFuture = rpcClient.getMinimumBalanceForRentExemption(Obligation.BYTES);
+
+      final var programId = kaminoClient.kaminoAccounts().kLendProgram();
+      final var reserves = KaminoLendClient.fetchReserveAccounts(rpcClient, programId).join();
+      final var reserveMap = HashMap.<PublicKey, Map<PublicKey, Reserve>>newHashMap(reserves.size());
+      for (final var accountInfo : reserves) {
+        final var reserve = accountInfo.data();
+        reserveMap.put(reserve.lendingMarket(), Map.of(reserve.liquidity().mintPubkey(), reserve));
+        System.out.println(reserve);
+        final var marketPDAs = MarketPDAs.createPDAs(programId, reserve.lendingMarket());
+        final var liquidity = reserve.liquidity();
+        final var reservePDAs = ReservePDAs.createPDAs(
+            programId,
+            marketPDAs,
+            liquidity.mintPubkey(),
+            liquidity.tokenProgram()
+        );
+        System.out.println(marketPDAs);
+        System.out.println(reservePDAs);
+      }
+
+      final var seed = ZonedDateTime.now(UTC).toString();
+      final var accountWithSeed = PublicKey.createOffCurveAccountWithAsciiSeed(
+          feePayer,
+          seed,
+          kaminoClient.kaminoAccounts().kLendProgram()
+      );
+      final long minRent = minRentFuture.join();
+
+      final var createObligationIx = SystemProgram.createAccountWithSeed(
+          solanaAccounts.invokedSystemProgram(),
+          feePayer,
+          accountWithSeed,
+          minRent,
+          Obligation.BYTES,
+          kaminoClient.kaminoAccounts().kLendProgram()
+      );
+    }
   }
 }
