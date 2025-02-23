@@ -41,10 +41,8 @@ public interface GlamJupiterVoteClient extends JupiterVoteClient {
 
   PublicKey glamKey();
 
-  Instruction castVote(PublicKey escrowKey,
-                       PublicKey voteDelegate,
-                       PublicKey proposal,
-                       PublicKey voteKey,
-                       int side,
-                       int expectedSide);
+  Instruction castVote(final PublicKey proposal,
+                       final PublicKey voteKey,
+                       final int side,
+                       final int expectedSide);
 }

@@ -103,9 +103,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
   }
 
   @Override
-  public Instruction castVote(final PublicKey escrowKey,
-                              final PublicKey voteDelegate,
-                              final PublicKey proposal,
+  public Instruction castVote(final PublicKey proposal,
                               final PublicKey voteKey,
                               final int side,
                               final int expectedSide) {
@@ -113,7 +111,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
         glamAccounts.invokedProgram(),
         glamKey,
         escrowOwnerKey,
-        voteDelegate,
+        feePayer,
         jupiterAccounts.voteProgram(),
         jupiterAccounts.lockerKey(),
         escrowKey,
