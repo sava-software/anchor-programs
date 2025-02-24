@@ -1,5 +1,7 @@
 package software.sava.anchor.programs.kamino;
 
+import software.sava.anchor.programs.kamino.lend.MarketPDAs;
+import software.sava.anchor.programs.kamino.lend.ReservePDAs;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -51,6 +53,10 @@ public interface KaminoAccounts {
     );
   }
 
+  default ProgramDerivedAddress lendingMarketAuthPda(final PublicKey lendingMarket) {
+    return lendingMarketAuthPda(lendingMarket, kLendProgram());
+  }
+
   static ProgramDerivedAddress reserveLiqSupplyPda(final PublicKey lendingMarket,
                                                    final PublicKey collateralMint,
                                                    final PublicKey programId) {
@@ -63,6 +69,10 @@ public interface KaminoAccounts {
         ),
         programId
     );
+  }
+
+  default ProgramDerivedAddress reserveLiqSupplyPda(final PublicKey lendingMarket, final PublicKey collateralMint) {
+    return reserveLiqSupplyPda(lendingMarket, collateralMint, kLendProgram());
   }
 
   static ProgramDerivedAddress reserveFeeVaultPda(final PublicKey lendingMarket,
@@ -79,6 +89,10 @@ public interface KaminoAccounts {
     );
   }
 
+  default ProgramDerivedAddress reserveFeeVaultPda(final PublicKey lendingMarket, final PublicKey collateralMint) {
+    return reserveFeeVaultPda(lendingMarket, collateralMint, kLendProgram());
+  }
+
   static ProgramDerivedAddress reserveCollateralMintPda(final PublicKey lendingMarket,
                                                         final PublicKey collateralMint,
                                                         final PublicKey programId) {
@@ -91,6 +105,11 @@ public interface KaminoAccounts {
         ),
         programId
     );
+  }
+
+  default ProgramDerivedAddress reserveCollateralMintPda(final PublicKey lendingMarket,
+                                                         final PublicKey collateralMint) {
+    return reserveCollateralMintPda(lendingMarket, collateralMint, kLendProgram());
   }
 
   static ProgramDerivedAddress reserveCollateralSupplyPda(final PublicKey lendingMarket,
@@ -107,6 +126,11 @@ public interface KaminoAccounts {
     );
   }
 
+  default ProgramDerivedAddress reserveCollateralSupplyPda(final PublicKey lendingMarket,
+                                                           final PublicKey collateralMint) {
+    return reserveCollateralSupplyPda(lendingMarket, collateralMint, kLendProgram());
+  }
+
   static ProgramDerivedAddress userMetadataPda(final PublicKey user,
                                                final PublicKey programId) {
 
@@ -117,6 +141,10 @@ public interface KaminoAccounts {
         ),
         programId
     );
+  }
+
+  default ProgramDerivedAddress userMetadataPda(final PublicKey user) {
+    return userMetadataPda(user, kLendProgram());
   }
 
   static ProgramDerivedAddress referrerTokenStatePda(final PublicKey referrer,
@@ -135,6 +163,10 @@ public interface KaminoAccounts {
     );
   }
 
+  default ProgramDerivedAddress referrerTokenStatePda(final PublicKey referrer, final PublicKey reserve) {
+    return referrerTokenStatePda(referrer, reserve, kLendProgram());
+  }
+
   static ProgramDerivedAddress referrerStatePda(final PublicKey referrer,
                                                 final PublicKey programId) {
 
@@ -147,6 +179,10 @@ public interface KaminoAccounts {
     );
   }
 
+  default ProgramDerivedAddress referrerStatePda(final PublicKey referrer) {
+    return referrerStatePda(referrer, kLendProgram());
+  }
+
   static ProgramDerivedAddress shortUrlPda(final PublicKey shortUrl,
                                            final PublicKey programId) {
 
@@ -156,6 +192,21 @@ public interface KaminoAccounts {
             shortUrl.toByteArray()
         ),
         programId
+    );
+  }
+
+  default ProgramDerivedAddress shortUrlPda(final PublicKey shortUrl) {
+    return shortUrlPda(shortUrl, kLendProgram());
+  }
+
+  default ReservePDAs createReservePDAs(final MarketPDAs marketPDAs,
+                                        final PublicKey mint,
+                                        final PublicKey tokenProgram) {
+    return ReservePDAs.createPDAs(
+        kLendProgram(),
+        marketPDAs,
+        mint,
+        tokenProgram
     );
   }
 
