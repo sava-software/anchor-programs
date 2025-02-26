@@ -63,15 +63,21 @@ public interface GlamVaultAccounts {
 
   PublicKey glamPublicKey();
 
+  AccountMeta writeGlamState();
+
+  AccountMeta readGlamState();
+
   ProgramDerivedAddress vaultPDA();
 
   default PublicKey vaultPublicKey() {
     return vaultPDA().publicKey();
   }
 
+  AccountMeta writeVault();
+
+  AccountMeta readVault();
+
   ProgramDerivedAddress metadataPDA();
 
   ProgramDerivedAddress shareClassPDA(final int shareId);
-
-  AccountMeta accountMeta(final DynamicGlamAccount dynamicGlamAccount, final boolean write);
 }

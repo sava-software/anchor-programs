@@ -52,6 +52,13 @@ subprojects {
         password = GPR_TOKEN
       }
     }
+    maven {
+      url = "https://maven.pkg.github.com/glamsystems/ix-converter"
+      credentials {
+        username = GPR_USER
+        password = GPR_TOKEN
+      }
+    }
     mavenCentral()
   }
 
@@ -63,6 +70,8 @@ subprojects {
     implementation libs.sava.solana.programs
     implementation libs.sava.solana.web2
     implementation libs.sava.anchor.src.gen
+
+    implementation 'systems.glam:ix-converter:0.0.9'
 
     testImplementation libs.junit.jupiter
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

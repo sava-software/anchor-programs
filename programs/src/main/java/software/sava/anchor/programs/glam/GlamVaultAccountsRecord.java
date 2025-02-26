@@ -7,8 +7,8 @@ import software.sava.core.accounts.meta.AccountMeta;
 public record GlamVaultAccountsRecord(GlamAccounts glamAccounts,
                                       AccountMeta readFeePayer,
                                       AccountMeta writeFeePayer,
-                                      AccountMeta readGlamAccount,
-                                      AccountMeta writeGlamAccount,
+                                      AccountMeta readGlamState,
+                                      AccountMeta writeGlamState,
                                       ProgramDerivedAddress vaultPDA,
                                       AccountMeta readVault,
                                       AccountMeta writeVault,
@@ -23,21 +23,11 @@ public record GlamVaultAccountsRecord(GlamAccounts glamAccounts,
 
   @Override
   public PublicKey glamPublicKey() {
-    return readGlamAccount.publicKey();
+    return readGlamState.publicKey();
   }
 
   @Override
   public ProgramDerivedAddress shareClassPDA(final int shareClassId) {
     return glamAccounts.mintPDA(glamPublicKey(), shareClassId);
-  }
-
-  @Override
-  public AccountMeta accountMeta(final DynamicGlamAccount dynamicGlamAccount, final boolean write) {
-    return switch (dynamicGlamAccount) {
-      case SIGNER ->  write ? writeFeePayer : readFeePayer;
-      case STATE -> write ? writeGlamAccount : readGlamAccount;
-      case VAULT -> write ? writeVault : readVault;
-      case METADATA -> write ? writeMetadata : readMetadata;
-    };
   }
 }
