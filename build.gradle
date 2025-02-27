@@ -53,7 +53,7 @@ subprojects {
       }
     }
     maven {
-      url = "https://maven.pkg.github.com/glamsystems/ix-converter"
+      url = "https://maven.pkg.github.com/glamsystems/ix-proxy"
       credentials {
         username = GPR_USER
         password = GPR_TOKEN

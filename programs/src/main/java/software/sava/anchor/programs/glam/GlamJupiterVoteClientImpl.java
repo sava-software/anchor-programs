@@ -90,7 +90,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
         glamAccounts.invokedProgram(),
         glamKey,
         escrowOwnerKey,
-        voteDelegate,
+        feePayer,
         jupiterAccounts.voteProgram(),
         jupiterAccounts.lockerKey(),
         escrowKey,
