@@ -62,5 +62,5 @@ module software.sava.anchor_programs {
   requires software.sava.rpc;
   requires software.sava.solana_programs;
   requires systems.comodal.json_iterator;
-  requires systems.glam.ix_converter;
+  requires systems.glam.ix_proxy;
 }
