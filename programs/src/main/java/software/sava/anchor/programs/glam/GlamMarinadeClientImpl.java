@@ -9,9 +9,6 @@ import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
-import java.util.Collection;
-import java.util.List;
-
 final class GlamMarinadeClientImpl implements GlamMarinadeClient {
 
   private final SolanaAccounts solanaAccounts;
@@ -57,21 +54,22 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
 
   @Override
   public Instruction marinadeDeposit(final PublicKey mSolTokenAccount, final long lamports) {
-    return GlamProgram.marinadeDepositSol(
+    return GlamProgram.marinadeDeposit(
         invokedProgram,
         solanaAccounts,
-        feePayer.publicKey(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        marinadeAccounts.marinadeProgram(),
         marinadeAccounts.stateProgram(),
-        marinadeAccounts.treasuryReserveSolPDA(),
         marinadeAccounts.mSolTokenMint(),
-        marinadeAccounts.mSolTokenMintAuthorityPDA(),
+        marinadeAccounts.liquidityPoolSolLegAccount(),
         marinadeAccounts.liquidityPoolMSolLegAccount(),
         marinadeAccounts.liquidityPoolMSolLegAuthority(),
-        marinadeAccounts.liquidityPoolSolLegAccount(),
+        marinadeAccounts.treasuryReserveSolPDA(),
         mSolTokenAccount,
-        marinadeAccounts.marinadeProgram(),
+        marinadeAccounts.mSolTokenMintAuthorityPDA(),
+        solanaAccounts.tokenProgram(),
         lamports
     );
   }
@@ -82,21 +80,24 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
                                          final PublicKey mSolTokenAccount,
                                          final PublicKey validatorPublicKey,
                                          final int validatorIndex) {
-    return GlamProgram.marinadeDepositStake(
+    return GlamProgram.marinadeDepositStakeAccount(
         invokedProgram,
         solanaAccounts,
-        feePayer.publicKey(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        marinadeAccounts.marinadeProgram(),
         marinadeAccounts.stateProgram(),
         marinadeProgramState.validatorSystem().validatorList().account(),
         marinadeProgramState.stakeSystem().stakeList().account(),
         stakeAccount,
         findDuplicationKey(validatorPublicKey).publicKey(),
         marinadeAccounts.mSolTokenMint(),
-        marinadeAccounts.mSolTokenMintAuthorityPDA(),
         mSolTokenAccount,
-        marinadeAccounts.marinadeProgram(),
+        marinadeAccounts.mSolTokenMintAuthorityPDA(),
+        solanaAccounts.clockSysVar(),
+        solanaAccounts.tokenProgram(),
+        solanaAccounts.stakeProgram(),
         validatorIndex
     );
   }
@@ -105,42 +106,36 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   public Instruction orderUnstake(final PublicKey mSolTokenAccount,
                                   final PublicKey ticketAccount,
                                   final long lamports) {
-    return GlamProgram.marinadeDelayedUnstake(
+    return GlamProgram.marinadeOrderUnstake(
         invokedProgram,
         solanaAccounts,
-        feePayer.publicKey(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
-        ticketAccount,
+        feePayer.publicKey(),
+        marinadeAccounts.marinadeProgram(),
+        marinadeAccounts.stateProgram(),
         marinadeAccounts.mSolTokenMint(),
         mSolTokenAccount,
-        marinadeAccounts.stateProgram(),
-        marinadeAccounts.treasuryReserveSolPDA(),
-        marinadeAccounts.marinadeProgram(),
+        ticketAccount,
+        solanaAccounts.clockSysVar(),
+        solanaAccounts.tokenProgram(),
         lamports
-    );
-  }
-
-  private Instruction claimTickets() {
-    return GlamProgram.marinadeClaimTickets(
-        glamVaultAccounts.glamAccounts().invokedProgram(),
-        solanaAccounts,
-        feePayer.publicKey(),
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        marinadeAccounts.stateProgram(),
-        marinadeAccounts.treasuryReserveSolPDA(),
-        marinadeAccounts.marinadeProgram()
     );
   }
 
   @Override
   public Instruction claimTicket(final PublicKey ticketAccount) {
-    return claimTickets().extraAccount(AccountMeta.createWrite(ticketAccount));
-  }
-
-  @Override
-  public List<Instruction> claimTickets(final Collection<PublicKey> ticketAccounts) {
-    return List.of(claimTickets().extraAccounts(ticketAccounts, AccountMeta.CREATE_WRITE));
+    return GlamProgram.marinadeClaim(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        marinadeAccounts.marinadeProgram(),
+        marinadeAccounts.stateProgram(),
+        marinadeAccounts.treasuryReserveSolPDA(),
+        ticketAccount,
+        solanaAccounts.clockSysVar()
+    );
   }
 }

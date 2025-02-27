@@ -89,20 +89,9 @@ public final class GlamPDAs {
   }
 
   public static ProgramDerivedAddress mintToPDA(final PublicKey program,
-                                                final PublicKey vaultAccount,
-                                                final SolanaAccounts solanaAccounts,
-                                                final PublicKey msolMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      vaultAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
-      msolMintAccount.toByteArray()
-    ), program);
-  }
-
-  public static ProgramDerivedAddress mintTo1PDA(final PublicKey program,
-                                                 final PublicKey recipientAccount,
-                                                 final PublicKey token2022ProgramAccount,
-                                                 final PublicKey glamMintAccount) {
+                                                final PublicKey recipientAccount,
+                                                final PublicKey token2022ProgramAccount,
+                                                final PublicKey glamMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       recipientAccount.toByteArray(),
       token2022ProgramAccount.toByteArray(),
@@ -110,7 +99,7 @@ public final class GlamPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress mintTo2PDA(final PublicKey program,
+  public static ProgramDerivedAddress mintTo1PDA(final PublicKey program,
                                                  final PublicKey vaultAccount,
                                                  final SolanaAccounts solanaAccounts,
                                                  final PublicKey poolMintAccount) {

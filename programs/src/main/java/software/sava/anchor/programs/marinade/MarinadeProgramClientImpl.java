@@ -7,9 +7,6 @@ import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
-import java.util.Collection;
-import java.util.List;
-
 final class MarinadeProgramClientImpl implements MarinadeProgramClient {
 
   private final NativeProgramAccountClient nativeProgramAccountClient;
@@ -127,10 +124,5 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
         solanaAccounts.clockSysVar(),
         solanaAccounts.systemProgram()
     );
-  }
-
-  @Override
-  public List<Instruction> claimTickets(final Collection<PublicKey> ticketAccounts) {
-    return ticketAccounts.stream().map(this::claimTicket).toList();
   }
 }

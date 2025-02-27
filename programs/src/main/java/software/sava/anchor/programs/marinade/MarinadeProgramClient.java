@@ -87,10 +87,11 @@ public interface MarinadeProgramClient {
   default ProgramDerivedAddress findDuplicationKey(final PublicKey validatorPublicKey) {
     final var marinadeAccounts = marinadeAccounts();
     return PublicKey.findProgramAddress(List.of(
-        marinadeAccounts.stateProgram().toByteArray(),
-        "unique_validator".getBytes(StandardCharsets.UTF_8),
-        validatorPublicKey.toByteArray()
-    ), marinadeAccounts.marinadeProgram());
+            marinadeAccounts.stateProgram().toByteArray(),
+            "unique_validator".getBytes(StandardCharsets.UTF_8),
+            validatorPublicKey.toByteArray()
+        ), marinadeAccounts.marinadeProgram()
+    );
   }
 
   default AccountWithSeed createOffCurveAccountWithSeed(final String asciiSeed) {
@@ -131,5 +132,7 @@ public interface MarinadeProgramClient {
 
   Instruction claimTicket(final PublicKey ticketAccount);
 
-  List<Instruction> claimTickets(final Collection<PublicKey> ticketAccounts);
+  default List<Instruction> claimTickets(final Collection<PublicKey> ticketAccounts) {
+    return ticketAccounts.stream().map(this::claimTicket).toList();
+  }
 }

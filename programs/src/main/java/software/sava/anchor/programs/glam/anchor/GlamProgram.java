@@ -2107,159 +2107,91 @@ public final class GlamProgram {
     }
   }
 
-  public static final Discriminator MARINADE_CLAIM_TICKETS_DISCRIMINATOR = toDiscriminator(14, 146, 182, 30, 205, 47, 134, 189);
+  public static final Discriminator MARINADE_CLAIM_DISCRIMINATOR = toDiscriminator(54, 44, 48, 204, 218, 141, 36, 5);
 
-  public static Instruction marinadeClaimTickets(final AccountMeta invokedGlamProgramMeta,
-                                                 final SolanaAccounts solanaAccounts,
-                                                 final PublicKey signerKey,
-                                                 final PublicKey stateKey,
-                                                 final PublicKey vaultKey,
-                                                 final PublicKey marinadeStateKey,
-                                                 final PublicKey reservePdaKey,
-                                                 final PublicKey marinadeProgramKey) {
+  public static Instruction marinadeClaim(final AccountMeta invokedGlamProgramMeta,
+                                          final SolanaAccounts solanaAccounts,
+                                          final PublicKey glamStateKey,
+                                          final PublicKey glamVaultKey,
+                                          final PublicKey glamSignerKey,
+                                          final PublicKey cpiProgramKey,
+                                          final PublicKey stateKey,
+                                          final PublicKey reservePdaKey,
+                                          final PublicKey ticketAccountKey,
+                                          final PublicKey clockKey) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
       createWrite(stateKey),
-      createWrite(vaultKey),
-      createWrite(marinadeStateKey),
       createWrite(reservePdaKey),
-      createRead(solanaAccounts.rentSysVar()),
-      createRead(solanaAccounts.clockSysVar()),
-      createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.tokenProgram()),
-      createRead(marinadeProgramKey)
+      createWrite(ticketAccountKey),
+      createRead(clockKey),
+      createRead(solanaAccounts.systemProgram())
     );
 
-    return Instruction.createInstruction(invokedGlamProgramMeta, keys, MARINADE_CLAIM_TICKETS_DISCRIMINATOR);
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, MARINADE_CLAIM_DISCRIMINATOR);
   }
 
-  public static final Discriminator MARINADE_DELAYED_UNSTAKE_DISCRIMINATOR = toDiscriminator(117, 66, 3, 222, 230, 94, 129, 95);
+  public static final Discriminator MARINADE_DEPOSIT_DISCRIMINATOR = toDiscriminator(62, 236, 248, 28, 222, 232, 182, 73);
 
-  public static Instruction marinadeDelayedUnstake(final AccountMeta invokedGlamProgramMeta,
-                                                   final SolanaAccounts solanaAccounts,
-                                                   final PublicKey signerKey,
-                                                   final PublicKey stateKey,
-                                                   final PublicKey vaultKey,
-                                                   final PublicKey ticketKey,
-                                                   final PublicKey msolMintKey,
-                                                   final PublicKey burnMsolFromKey,
-                                                   final PublicKey marinadeStateKey,
-                                                   final PublicKey reservePdaKey,
-                                                   final PublicKey marinadeProgramKey,
-                                                   final long msolAmount) {
+  public static Instruction marinadeDeposit(final AccountMeta invokedGlamProgramMeta,
+                                            final SolanaAccounts solanaAccounts,
+                                            final PublicKey glamStateKey,
+                                            final PublicKey glamVaultKey,
+                                            final PublicKey glamSignerKey,
+                                            final PublicKey cpiProgramKey,
+                                            final PublicKey stateKey,
+                                            final PublicKey msolMintKey,
+                                            final PublicKey liqPoolSolLegPdaKey,
+                                            final PublicKey liqPoolMsolLegKey,
+                                            final PublicKey liqPoolMsolLegAuthorityKey,
+                                            final PublicKey reservePdaKey,
+                                            final PublicKey mintToKey,
+                                            final PublicKey msolMintAuthorityKey,
+                                            final PublicKey tokenProgramKey,
+                                            final long lamports) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
       createWrite(stateKey),
-      createWrite(vaultKey),
-      createWrite(ticketKey),
       createWrite(msolMintKey),
-      createWrite(burnMsolFromKey),
-      createWrite(marinadeStateKey),
-      createWrite(reservePdaKey),
-      createRead(solanaAccounts.rentSysVar()),
-      createRead(solanaAccounts.clockSysVar()),
-      createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.tokenProgram()),
-      createRead(marinadeProgramKey)
-    );
-
-    final byte[] _data = new byte[16];
-    int i = writeDiscriminator(MARINADE_DELAYED_UNSTAKE_DISCRIMINATOR, _data, 0);
-    putInt64LE(_data, i, msolAmount);
-
-    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
-  }
-
-  public record MarinadeDelayedUnstakeIxData(Discriminator discriminator, long msolAmount) implements Borsh {  
-
-    public static MarinadeDelayedUnstakeIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 16;
-
-    public static MarinadeDelayedUnstakeIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = parseDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var msolAmount = getInt64LE(_data, i);
-      return new MarinadeDelayedUnstakeIxData(discriminator, msolAmount);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, msolAmount);
-      i += 8;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
-  public static final Discriminator MARINADE_DEPOSIT_SOL_DISCRIMINATOR = toDiscriminator(64, 140, 200, 40, 56, 218, 181, 68);
-
-  public static Instruction marinadeDepositSol(final AccountMeta invokedGlamProgramMeta,
-                                               final SolanaAccounts solanaAccounts,
-                                               final PublicKey signerKey,
-                                               final PublicKey stateKey,
-                                               final PublicKey vaultKey,
-                                               final PublicKey marinadeStateKey,
-                                               final PublicKey reservePdaKey,
-                                               final PublicKey msolMintKey,
-                                               final PublicKey msolMintAuthorityKey,
-                                               final PublicKey liqPoolMsolLegKey,
-                                               final PublicKey liqPoolMsolLegAuthorityKey,
-                                               final PublicKey liqPoolSolLegPdaKey,
-                                               final PublicKey mintToKey,
-                                               final PublicKey marinadeProgramKey,
-                                               final long lamports) {
-    final var keys = List.of(
-      createWritableSigner(signerKey),
-      createRead(stateKey),
-      createWrite(vaultKey),
-      createWrite(marinadeStateKey),
-      createWrite(reservePdaKey),
-      createWrite(msolMintKey),
-      createWrite(msolMintAuthorityKey),
-      createWrite(liqPoolMsolLegKey),
-      createWrite(liqPoolMsolLegAuthorityKey),
       createWrite(liqPoolSolLegPdaKey),
+      createWrite(liqPoolMsolLegKey),
+      createRead(liqPoolMsolLegAuthorityKey),
+      createWrite(reservePdaKey),
       createWrite(mintToKey),
-      createRead(marinadeProgramKey),
-      createRead(solanaAccounts.associatedTokenAccountProgram()),
+      createRead(msolMintAuthorityKey),
       createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.tokenProgram())
+      createRead(tokenProgramKey)
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(MARINADE_DEPOSIT_SOL_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(MARINADE_DEPOSIT_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, lamports);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record MarinadeDepositSolIxData(Discriminator discriminator, long lamports) implements Borsh {  
+  public record MarinadeDepositIxData(Discriminator discriminator, long lamports) implements Borsh {  
 
-    public static MarinadeDepositSolIxData read(final Instruction instruction) {
+    public static MarinadeDepositIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 16;
 
-    public static MarinadeDepositSolIxData read(final byte[] _data, final int offset) {
+    public static MarinadeDepositIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
-      return new MarinadeDepositSolIxData(discriminator, lamports);
+      return new MarinadeDepositIxData(discriminator, lamports);
     }
 
     @Override
@@ -2276,67 +2208,69 @@ public final class GlamProgram {
     }
   }
 
-  public static final Discriminator MARINADE_DEPOSIT_STAKE_DISCRIMINATOR = toDiscriminator(69, 207, 194, 211, 186, 55, 199, 130);
+  public static final Discriminator MARINADE_DEPOSIT_STAKE_ACCOUNT_DISCRIMINATOR = toDiscriminator(141, 230, 58, 103, 56, 205, 159, 138);
 
-  public static Instruction marinadeDepositStake(final AccountMeta invokedGlamProgramMeta,
-                                                 final SolanaAccounts solanaAccounts,
-                                                 final PublicKey signerKey,
-                                                 final PublicKey stateKey,
-                                                 final PublicKey vaultKey,
-                                                 final PublicKey marinadeStateKey,
-                                                 final PublicKey validatorListKey,
-                                                 final PublicKey stakeListKey,
-                                                 final PublicKey vaultStakeAccountKey,
-                                                 final PublicKey duplicationFlagKey,
-                                                 final PublicKey msolMintKey,
-                                                 final PublicKey msolMintAuthorityKey,
-                                                 final PublicKey mintToKey,
-                                                 final PublicKey marinadeProgramKey,
-                                                 final int validatorIdx) {
+  public static Instruction marinadeDepositStakeAccount(final AccountMeta invokedGlamProgramMeta,
+                                                        final SolanaAccounts solanaAccounts,
+                                                        final PublicKey glamStateKey,
+                                                        final PublicKey glamVaultKey,
+                                                        final PublicKey glamSignerKey,
+                                                        final PublicKey cpiProgramKey,
+                                                        final PublicKey stateKey,
+                                                        final PublicKey validatorListKey,
+                                                        final PublicKey stakeListKey,
+                                                        final PublicKey stakeAccountKey,
+                                                        final PublicKey duplicationFlagKey,
+                                                        final PublicKey msolMintKey,
+                                                        final PublicKey mintToKey,
+                                                        final PublicKey msolMintAuthorityKey,
+                                                        final PublicKey clockKey,
+                                                        final PublicKey tokenProgramKey,
+                                                        final PublicKey stakeProgramKey,
+                                                        final int validatorIdx) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createRead(stateKey),
-      createWrite(vaultKey),
-      createWrite(marinadeStateKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(stateKey),
       createWrite(validatorListKey),
       createWrite(stakeListKey),
-      createWrite(vaultStakeAccountKey),
+      createWrite(stakeAccountKey),
       createWrite(duplicationFlagKey),
       createWrite(msolMintKey),
-      createRead(msolMintAuthorityKey),
       createWrite(mintToKey),
-      createRead(solanaAccounts.clockSysVar()),
+      createRead(msolMintAuthorityKey),
+      createRead(clockKey),
       createRead(solanaAccounts.rentSysVar()),
-      createRead(marinadeProgramKey),
-      createRead(solanaAccounts.associatedTokenAccountProgram()),
       createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.tokenProgram()),
-      createRead(solanaAccounts.stakeProgram())
+      createRead(tokenProgramKey),
+      createRead(stakeProgramKey)
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(MARINADE_DEPOSIT_STAKE_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(MARINADE_DEPOSIT_STAKE_ACCOUNT_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, validatorIdx);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record MarinadeDepositStakeIxData(Discriminator discriminator, int validatorIdx) implements Borsh {  
+  public record MarinadeDepositStakeAccountIxData(Discriminator discriminator, int validatorIdx) implements Borsh {  
 
-    public static MarinadeDepositStakeIxData read(final Instruction instruction) {
+    public static MarinadeDepositStakeAccountIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 12;
 
-    public static MarinadeDepositStakeIxData read(final byte[] _data, final int offset) {
+    public static MarinadeDepositStakeAccountIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var validatorIdx = getInt32LE(_data, i);
-      return new MarinadeDepositStakeIxData(discriminator, validatorIdx);
+      return new MarinadeDepositStakeAccountIxData(discriminator, validatorIdx);
     }
 
     @Override
@@ -2357,32 +2291,31 @@ public final class GlamProgram {
 
   public static Instruction marinadeLiquidUnstake(final AccountMeta invokedGlamProgramMeta,
                                                   final SolanaAccounts solanaAccounts,
-                                                  final PublicKey signerKey,
+                                                  final PublicKey glamStateKey,
+                                                  final PublicKey glamVaultKey,
+                                                  final PublicKey glamSignerKey,
+                                                  final PublicKey cpiProgramKey,
                                                   final PublicKey stateKey,
-                                                  final PublicKey vaultKey,
-                                                  final PublicKey marinadeStateKey,
                                                   final PublicKey msolMintKey,
                                                   final PublicKey liqPoolSolLegPdaKey,
                                                   final PublicKey liqPoolMsolLegKey,
                                                   final PublicKey treasuryMsolAccountKey,
                                                   final PublicKey getMsolFromKey,
-                                                  final PublicKey getMsolFromAuthorityKey,
-                                                  final PublicKey marinadeProgramKey,
+                                                  final PublicKey tokenProgramKey,
                                                   final long msolAmount) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createRead(stateKey),
-      createWrite(vaultKey),
-      createWrite(marinadeStateKey),
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(stateKey),
       createWrite(msolMintKey),
       createWrite(liqPoolSolLegPdaKey),
       createWrite(liqPoolMsolLegKey),
       createWrite(treasuryMsolAccountKey),
       createWrite(getMsolFromKey),
-      createWrite(getMsolFromAuthorityKey),
-      createRead(marinadeProgramKey),
-      createRead(solanaAccounts.tokenProgram()),
-      createRead(solanaAccounts.systemProgram())
+      createRead(solanaAccounts.systemProgram()),
+      createRead(tokenProgramKey)
     );
 
     final byte[] _data = new byte[16];
@@ -2408,6 +2341,74 @@ public final class GlamProgram {
       int i = offset + discriminator.length();
       final var msolAmount = getInt64LE(_data, i);
       return new MarinadeLiquidUnstakeIxData(discriminator, msolAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, msolAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator MARINADE_ORDER_UNSTAKE_DISCRIMINATOR = toDiscriminator(202, 3, 33, 27, 183, 156, 57, 231);
+
+  public static Instruction marinadeOrderUnstake(final AccountMeta invokedGlamProgramMeta,
+                                                 final SolanaAccounts solanaAccounts,
+                                                 final PublicKey glamStateKey,
+                                                 final PublicKey glamVaultKey,
+                                                 final PublicKey glamSignerKey,
+                                                 final PublicKey cpiProgramKey,
+                                                 final PublicKey stateKey,
+                                                 final PublicKey msolMintKey,
+                                                 final PublicKey burnMsolFromKey,
+                                                 final PublicKey newTicketAccountKey,
+                                                 final PublicKey clockKey,
+                                                 final PublicKey tokenProgramKey,
+                                                 final long msolAmount) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(stateKey),
+      createWrite(msolMintKey),
+      createWrite(burnMsolFromKey),
+      createWrite(newTicketAccountKey),
+      createRead(clockKey),
+      createRead(solanaAccounts.rentSysVar()),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(MARINADE_ORDER_UNSTAKE_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, msolAmount);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record MarinadeOrderUnstakeIxData(Discriminator discriminator, long msolAmount) implements Borsh {  
+
+    public static MarinadeOrderUnstakeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static MarinadeOrderUnstakeIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var msolAmount = getInt64LE(_data, i);
+      return new MarinadeOrderUnstakeIxData(discriminator, msolAmount);
     }
 
     @Override

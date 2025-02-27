@@ -70,8 +70,7 @@ subprojects {
     implementation libs.sava.solana.programs
     implementation libs.sava.solana.web2
     implementation libs.sava.anchor.src.gen
-
-    implementation 'systems.glam:ix-converter:0.0.9'
+    implementation libs.glam.ix.converter
 
     testImplementation libs.junit.jupiter
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
