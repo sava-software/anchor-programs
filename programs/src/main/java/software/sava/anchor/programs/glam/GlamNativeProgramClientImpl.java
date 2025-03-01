@@ -323,4 +323,14 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
     final var extraAccounts = stakeAccounts.stream().map(StakeAccount::address).toList();
     return List.of(deactivateStakeAccounts().extraAccounts(extraAccounts, AccountMeta.CREATE_WRITE));
   }
+
+  @Override
+  public Instruction jupiterSetMaxSwapSlippage(final int slippageBps) {
+    return GlamProgram.jupiterSetMaxSwapSlippage(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        feePayer.publicKey(),
+        slippageBps
+    );
+  }
 }
