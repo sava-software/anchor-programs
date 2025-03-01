@@ -250,7 +250,7 @@ public sealed interface GlamError extends ProgramError permits
   record SubscribeRedeemDisable(int code, String msg) implements GlamError {
 
     public static final SubscribeRedeemDisable INSTANCE = new SubscribeRedeemDisable(
-        51002, "Fund is disabled for subscription and redemption"
+        51002, "Subscription and redemption disabled"
     );
   }
 

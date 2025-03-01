@@ -16,7 +16,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
   private final SolanaAccounts solanaAccounts;
   private final GlamVaultAccounts glamVaultAccounts;
   private final AccountMeta invokedProgram;
-  private final AccountMeta manager;
+  private final AccountMeta feePayer;
   private final JupiterAccounts jupiterAccounts;
   private final PublicKey swapProgram;
 
@@ -26,7 +26,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
     this.solanaAccounts = glamProgramAccountClient.solanaAccounts();
     this.glamVaultAccounts = glamProgramAccountClient.vaultAccounts();
     this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProgram();
-    this.manager = glamProgramAccountClient.feePayer();
+    this.feePayer = glamProgramAccountClient.feePayer();
     this.jupiterAccounts = jupiterAccounts;
     this.swapProgram = jupiterAccounts.swapProgram();
   }
@@ -61,13 +61,13 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        swapProgram,
         inputVaultATA,
         outputVaultATA,
         inputMintKey, outputMintKey,
-        manager.publicKey(),
         inputProgramStateKey,
         outputProgramStateKey,
-        swapProgram,
         inputTokenProgram, outputTokenProgram,
         amount,
         swapInstruction.data()

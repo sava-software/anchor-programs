@@ -32,6 +32,7 @@ public record Quote(// The address of the signer generated within an enclave.
                     byte[] padding2,
                     PublicKey stagingEd25519Signer,
                     byte[] stagingSecp256k1Signer,
+                    byte[] ethSigner,
                     // Reserved.
                     byte[] ebuf4,
                     byte[] ebuf3,
@@ -79,7 +80,9 @@ public record Quote(// The address of the signer generated within an enclave.
     i += 32;
     final var stagingSecp256k1Signer = new byte[64];
     i += Borsh.readArray(stagingSecp256k1Signer, _data, i);
-    final var ebuf4 = new byte[32];
+    final var ethSigner = new byte[20];
+    i += Borsh.readArray(ethSigner, _data, i);
+    final var ebuf4 = new byte[12];
     i += Borsh.readArray(ebuf4, _data, i);
     final var ebuf3 = new byte[128];
     i += Borsh.readArray(ebuf3, _data, i);
@@ -104,6 +107,7 @@ public record Quote(// The address of the signer generated within an enclave.
                      padding2,
                      stagingEd25519Signer,
                      stagingSecp256k1Signer,
+                     ethSigner,
                      ebuf4,
                      ebuf3,
                      ebuf2,
@@ -138,6 +142,7 @@ public record Quote(// The address of the signer generated within an enclave.
     stagingEd25519Signer.write(_data, i);
     i += 32;
     i += Borsh.writeArray(stagingSecp256k1Signer, _data, i);
+    i += Borsh.writeArray(ethSigner, _data, i);
     i += Borsh.writeArray(ebuf4, _data, i);
     i += Borsh.writeArray(ebuf3, _data, i);
     i += Borsh.writeArray(ebuf2, _data, i);

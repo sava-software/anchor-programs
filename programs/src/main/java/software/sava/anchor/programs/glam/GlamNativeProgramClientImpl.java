@@ -92,7 +92,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
 
   @Override
   public Instruction syncNative(final PublicKey tokenAccount) {
-    throw new UnsupportedOperationException();
+    return nativeProgramClient.syncNative(tokenAccount);
   }
 
   @Override
@@ -248,14 +248,33 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   public Instruction reDelegateStakeAccount(final StakeAccount delegatedStakeAccount,
                                             final PublicKey uninitializedStakeAccount,
                                             final PublicKey validatorVoteAccount) {
-    throw new UnsupportedOperationException();
+    return GlamProgram.redelegateStake(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        delegatedStakeAccount.address(),
+        uninitializedStakeAccount,
+        validatorVoteAccount,
+        solanaAccounts.stakeConfig()
+    );
   }
 
   @Override
   public Instruction splitStakeAccount(final StakeAccount splitStakeAccount,
                                        final PublicKey unInitializedStakeAccount,
                                        final long lamports) {
-    throw new UnsupportedOperationException();
+    return GlamProgram.splitStakeAccount(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        splitStakeAccount.address(),
+        unInitializedStakeAccount,
+        lamports
+    );
   }
 
   @Override
@@ -263,9 +282,9 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
     return GlamProgram.mergeStakeAccounts(
         invokedProgram,
         solanaAccounts,
-        feePayer.publicKey(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
         destinationStakeAccount.address(),
         srcStakeAccount
     );
@@ -282,9 +301,9 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
     return GlamProgram.deactivateStakeAccounts(
         invokedProgram,
         solanaAccounts,
-        feePayer.publicKey(),
         glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey()
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey()
     );
   }
 

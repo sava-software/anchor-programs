@@ -14,6 +14,7 @@ import software.sava.anchor.programs.switchboard.on_demand.anchor.types.Permissi
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedCloseParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedInitParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSetConfigsParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSubmitResponseConsensusParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSubmitResponseManyParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSubmitResponseParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSubmitResponseSVMParams;
@@ -799,6 +800,63 @@ public final class SbOnDemandProgram {
       int i = offset + discriminator.length();
       final var params = PullFeedSubmitResponseParams.read(_data, i);
       return new PullFeedSubmitResponseIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(params);
+    }
+  }
+
+  public static final Discriminator PULL_FEED_SUBMIT_RESPONSE_CONSENSUS_DISCRIMINATOR = toDiscriminator(239, 124, 39, 184, 147, 222, 16, 248);
+
+  public static Instruction pullFeedSubmitResponseConsensus(final AccountMeta invokedSbOnDemandProgramMeta,
+                                                            final SolanaAccounts solanaAccounts,
+                                                            final PublicKey queueKey,
+                                                            final PublicKey programStateKey,
+                                                            final PublicKey payerKey,
+                                                            final PublicKey rewardVaultKey,
+                                                            final PullFeedSubmitResponseConsensusParams params) {
+    final var keys = List.of(
+      createRead(queueKey),
+      createRead(programStateKey),
+      createRead(solanaAccounts.slotHashesSysVar()),
+      createWritableSigner(payerKey),
+      createRead(solanaAccounts.systemProgram()),
+      createWrite(rewardVaultKey),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.wrappedSolTokenMint()),
+      createRead(solanaAccounts.instructionsSysVar())
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(PULL_FEED_SUBMIT_RESPONSE_CONSENSUS_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record PullFeedSubmitResponseConsensusIxData(Discriminator discriminator, PullFeedSubmitResponseConsensusParams params) implements Borsh {  
+
+    public static PullFeedSubmitResponseConsensusIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static PullFeedSubmitResponseConsensusIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = PullFeedSubmitResponseConsensusParams.read(_data, i);
+      return new PullFeedSubmitResponseConsensusIxData(discriminator, params);
     }
 
     @Override

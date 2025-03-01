@@ -44,15 +44,15 @@ public final class GlamProgram {
   public static Instruction addMint(final AccountMeta invokedGlamProgramMeta,
                                     final SolanaAccounts solanaAccounts,
                                     final PublicKey glamStateKey,
+                                    final PublicKey glamSignerKey,
                                     final PublicKey newMintKey,
-                                    final PublicKey signerKey,
                                     final PublicKey extraAccountMetaListKey,
                                     final PublicKey openfundsMetadataKey,
                                     final MintModel mintModel) {
     final var keys = List.of(
       createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
       createWrite(newMintKey),
-      createWritableSigner(signerKey),
       createWrite(extraAccountMetaListKey),
       createWrite(requireNonNullElse(openfundsMetadataKey, invokedGlamProgramMeta.publicKey())),
       createRead(solanaAccounts.systemProgram()),
@@ -100,18 +100,18 @@ public final class GlamProgram {
   public static Instruction burnTokens(final AccountMeta invokedGlamProgramMeta,
                                        final SolanaAccounts solanaAccounts,
                                        final PublicKey glamStateKey,
+                                       final PublicKey glamSignerKey,
                                        final PublicKey glamMintKey,
                                        final PublicKey fromAtaKey,
                                        final PublicKey fromKey,
-                                       final PublicKey signerKey,
                                        final int mintId,
                                        final long amount) {
     final var keys = List.of(
       createRead(glamStateKey),
+      createWritableSigner(glamSignerKey),
       createWrite(glamMintKey),
       createWrite(fromAtaKey),
       createRead(fromKey),
-      createWritableSigner(signerKey),
       createRead(solanaAccounts.token2022Program())
     );
 
@@ -165,19 +165,19 @@ public final class GlamProgram {
   public static Instruction closeMint(final AccountMeta invokedGlamProgramMeta,
                                       final SolanaAccounts solanaAccounts,
                                       final PublicKey glamStateKey,
-                                      final PublicKey vaultKey,
+                                      final PublicKey glamVaultKey,
+                                      final PublicKey glamSignerKey,
                                       final PublicKey glamMintKey,
                                       final PublicKey extraAccountMetaListKey,
                                       final PublicKey metadataKey,
-                                      final PublicKey signerKey,
                                       final int mintId) {
     final var keys = List.of(
       createWrite(glamStateKey),
-      createWrite(vaultKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(glamMintKey),
       createWrite(extraAccountMetaListKey),
       createWrite(metadataKey),
-      createWritableSigner(signerKey),
       createRead(solanaAccounts.token2022Program())
     );
 
@@ -224,15 +224,15 @@ public final class GlamProgram {
 
   public static Instruction closeState(final AccountMeta invokedGlamProgramMeta,
                                        final SolanaAccounts solanaAccounts,
-                                       final PublicKey stateKey,
-                                       final PublicKey metadataKey,
-                                       final PublicKey vaultKey,
-                                       final PublicKey signerKey) {
+                                       final PublicKey glamStateKey,
+                                       final PublicKey glamVaultKey,
+                                       final PublicKey glamSignerKey,
+                                       final PublicKey metadataKey) {
     final var keys = List.of(
-      createWrite(stateKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(metadataKey),
-      createWrite(vaultKey),
-      createWritableSigner(signerKey),
       createRead(solanaAccounts.systemProgram())
     );
 
@@ -243,13 +243,13 @@ public final class GlamProgram {
 
   public static Instruction closeTokenAccounts(final AccountMeta invokedGlamProgramMeta,
                                                final SolanaAccounts solanaAccounts,
-                                               final PublicKey stateKey,
-                                               final PublicKey vaultKey,
-                                               final PublicKey signerKey) {
+                                               final PublicKey glamStateKey,
+                                               final PublicKey glamVaultKey,
+                                               final PublicKey glamSignerKey) {
     final var keys = List.of(
-      createWrite(stateKey),
-      createWrite(vaultKey),
-      createWritableSigner(signerKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createRead(solanaAccounts.tokenProgram()),
       createRead(solanaAccounts.token2022Program())
     );
@@ -261,13 +261,13 @@ public final class GlamProgram {
 
   public static Instruction deactivateStakeAccounts(final AccountMeta invokedGlamProgramMeta,
                                                     final SolanaAccounts solanaAccounts,
-                                                    final PublicKey signerKey,
-                                                    final PublicKey stateKey,
-                                                    final PublicKey vaultKey) {
+                                                    final PublicKey glamStateKey,
+                                                    final PublicKey glamVaultKey,
+                                                    final PublicKey glamSignerKey) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createRead(stateKey),
-      createWrite(vaultKey),
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createRead(solanaAccounts.clockSysVar()),
       createRead(solanaAccounts.stakeProgram())
     );
@@ -1010,22 +1010,22 @@ public final class GlamProgram {
   public static Instruction forceTransferTokens(final AccountMeta invokedGlamProgramMeta,
                                                 final SolanaAccounts solanaAccounts,
                                                 final PublicKey glamStateKey,
+                                                final PublicKey glamSignerKey,
                                                 final PublicKey glamMintKey,
                                                 final PublicKey fromAtaKey,
                                                 final PublicKey toAtaKey,
                                                 final PublicKey fromKey,
                                                 final PublicKey toKey,
-                                                final PublicKey signerKey,
                                                 final int mintId,
                                                 final long amount) {
     final var keys = List.of(
       createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
       createWrite(glamMintKey),
       createWrite(fromAtaKey),
       createWrite(toAtaKey),
       createRead(fromKey),
       createRead(toKey),
-      createWritableSigner(signerKey),
       createRead(solanaAccounts.token2022Program())
     );
 
@@ -1078,17 +1078,17 @@ public final class GlamProgram {
 
   public static Instruction initializeAndDelegateStake(final AccountMeta invokedGlamProgramMeta,
                                                        final SolanaAccounts solanaAccounts,
-                                                       final PublicKey signerKey,
-                                                       final PublicKey stateKey,
-                                                       final PublicKey vaultKey,
+                                                       final PublicKey glamStateKey,
+                                                       final PublicKey glamVaultKey,
+                                                       final PublicKey glamSignerKey,
                                                        final PublicKey vaultStakeAccountKey,
                                                        final PublicKey voteKey,
                                                        final PublicKey stakeConfigKey,
                                                        final long lamports) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createWrite(stateKey),
-      createWrite(vaultKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(vaultStakeAccountKey),
       createRead(voteKey),
       createRead(stakeConfigKey),
@@ -1142,15 +1142,15 @@ public final class GlamProgram {
 
   public static Instruction initializeState(final AccountMeta invokedGlamProgramMeta,
                                             final SolanaAccounts solanaAccounts,
-                                            final PublicKey stateKey,
-                                            final PublicKey vaultKey,
-                                            final PublicKey signerKey,
+                                            final PublicKey glamStateKey,
+                                            final PublicKey glamVaultKey,
+                                            final PublicKey glamSignerKey,
                                             final PublicKey openfundsMetadataKey,
                                             final StateModel state) {
     final var keys = List.of(
-      createWrite(stateKey),
-      createWrite(vaultKey),
-      createWritableSigner(signerKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(requireNonNullElse(openfundsMetadataKey, invokedGlamProgramMeta.publicKey())),
       createRead(solanaAccounts.systemProgram())
     );
@@ -1256,12 +1256,12 @@ public final class GlamProgram {
   public static final Discriminator JUPITER_SET_MAX_SWAP_SLIPPAGE_DISCRIMINATOR = toDiscriminator(110, 79, 13, 71, 208, 111, 56, 66);
 
   public static Instruction jupiterSetMaxSwapSlippage(final AccountMeta invokedGlamProgramMeta,
-                                                      final PublicKey stateKey,
-                                                      final PublicKey signerKey,
+                                                      final PublicKey glamStateKey,
+                                                      final PublicKey glamSignerKey,
                                                       final long slippage) {
     final var keys = List.of(
-      createWrite(stateKey),
-      createWritableSigner(signerKey)
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey)
     );
 
     final byte[] _data = new byte[16];
@@ -1307,31 +1307,31 @@ public final class GlamProgram {
 
   public static Instruction jupiterSwap(final AccountMeta invokedGlamProgramMeta,
                                         final SolanaAccounts solanaAccounts,
-                                        final PublicKey stateKey,
-                                        final PublicKey vaultKey,
+                                        final PublicKey glamStateKey,
+                                        final PublicKey glamVaultKey,
+                                        final PublicKey glamSignerKey,
+                                        final PublicKey cpiProgramKey,
                                         final PublicKey inputVaultAtaKey,
                                         final PublicKey outputVaultAtaKey,
                                         final PublicKey inputMintKey,
                                         final PublicKey outputMintKey,
-                                        final PublicKey signerKey,
                                         final PublicKey inputStakePoolKey,
                                         final PublicKey outputStakePoolKey,
-                                        final PublicKey jupiterProgramKey,
                                         final PublicKey inputTokenProgramKey,
                                         final PublicKey outputTokenProgramKey,
                                         final long amount,
                                         final byte[] data) {
     final var keys = List.of(
-      createWrite(stateKey),
-      createWrite(vaultKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
       createWrite(inputVaultAtaKey),
       createWrite(outputVaultAtaKey),
       createRead(inputMintKey),
       createRead(outputMintKey),
-      createWritableSigner(signerKey),
       createRead(requireNonNullElse(inputStakePoolKey, invokedGlamProgramMeta.publicKey())),
       createRead(requireNonNullElse(outputStakePoolKey, invokedGlamProgramMeta.publicKey())),
-      createRead(jupiterProgramKey),
       createRead(solanaAccounts.associatedTokenAccountProgram()),
       createRead(inputTokenProgramKey),
       createRead(outputTokenProgramKey)
@@ -2429,15 +2429,15 @@ public final class GlamProgram {
 
   public static Instruction mergeStakeAccounts(final AccountMeta invokedGlamProgramMeta,
                                                final SolanaAccounts solanaAccounts,
-                                               final PublicKey signerKey,
-                                               final PublicKey stateKey,
-                                               final PublicKey vaultKey,
+                                               final PublicKey glamStateKey,
+                                               final PublicKey glamVaultKey,
+                                               final PublicKey glamSignerKey,
                                                final PublicKey toStakeKey,
                                                final PublicKey fromStakeKey) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createWrite(stateKey),
-      createWrite(vaultKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(toStakeKey),
       createWrite(fromStakeKey),
       createRead(solanaAccounts.clockSysVar()),
@@ -2454,16 +2454,16 @@ public final class GlamProgram {
   public static Instruction mintTokens(final AccountMeta invokedGlamProgramMeta,
                                        final SolanaAccounts solanaAccounts,
                                        final PublicKey glamStateKey,
+                                       final PublicKey glamSignerKey,
                                        final PublicKey glamMintKey,
-                                       final PublicKey signerKey,
                                        final PublicKey mintToKey,
                                        final PublicKey recipientKey,
                                        final int mintId,
                                        final long amount) {
     final var keys = List.of(
       createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
       createWrite(glamMintKey),
-      createWritableSigner(signerKey),
       createWrite(mintToKey),
       createRead(recipientKey),
       createRead(solanaAccounts.token2022Program())
@@ -2597,17 +2597,17 @@ public final class GlamProgram {
 
   public static Instruction redelegateStake(final AccountMeta invokedGlamProgramMeta,
                                             final SolanaAccounts solanaAccounts,
-                                            final PublicKey signerKey,
-                                            final PublicKey stateKey,
-                                            final PublicKey vaultKey,
+                                            final PublicKey glamStateKey,
+                                            final PublicKey glamVaultKey,
+                                            final PublicKey glamSignerKey,
                                             final PublicKey existingStakeKey,
                                             final PublicKey newStakeKey,
                                             final PublicKey voteKey,
                                             final PublicKey stakeConfigKey) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createWrite(stateKey),
-      createWrite(vaultKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(existingStakeKey),
       createWrite(newStakeKey),
       createRead(voteKey),
@@ -2623,12 +2623,12 @@ public final class GlamProgram {
   public static final Discriminator SET_SUBSCRIBE_REDEEM_ENABLED_DISCRIMINATOR = toDiscriminator(189, 56, 205, 172, 201, 185, 34, 92);
 
   public static Instruction setSubscribeRedeemEnabled(final AccountMeta invokedGlamProgramMeta,
-                                                      final PublicKey stateKey,
-                                                      final PublicKey signerKey,
+                                                      final PublicKey glamStateKey,
+                                                      final PublicKey glamSignerKey,
                                                       final boolean enabled) {
     final var keys = List.of(
-      createWrite(stateKey),
-      createWritableSigner(signerKey)
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey)
     );
 
     final byte[] _data = new byte[9];
@@ -2675,14 +2675,14 @@ public final class GlamProgram {
   public static Instruction setTokenAccountsStates(final AccountMeta invokedGlamProgramMeta,
                                                    final SolanaAccounts solanaAccounts,
                                                    final PublicKey glamStateKey,
+                                                   final PublicKey glamSignerKey,
                                                    final PublicKey glamMintKey,
-                                                   final PublicKey signerKey,
                                                    final int mintId,
                                                    final boolean frozen) {
     final var keys = List.of(
       createRead(glamStateKey),
+      createWritableSigner(glamSignerKey),
       createWrite(glamMintKey),
-      createWritableSigner(signerKey),
       createRead(solanaAccounts.token2022Program())
     );
 
@@ -2735,16 +2735,16 @@ public final class GlamProgram {
 
   public static Instruction splitStakeAccount(final AccountMeta invokedGlamProgramMeta,
                                               final SolanaAccounts solanaAccounts,
-                                              final PublicKey signerKey,
-                                              final PublicKey stateKey,
-                                              final PublicKey vaultKey,
+                                              final PublicKey glamStateKey,
+                                              final PublicKey glamVaultKey,
+                                              final PublicKey glamSignerKey,
                                               final PublicKey existingStakeKey,
                                               final PublicKey newStakeKey,
                                               final long lamports) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createWrite(stateKey),
-      createWrite(vaultKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(existingStakeKey),
       createWrite(newStakeKey),
       createRead(solanaAccounts.clockSysVar()),
@@ -2795,9 +2795,9 @@ public final class GlamProgram {
 
   public static Instruction stakePoolDepositSol(final AccountMeta invokedGlamProgramMeta,
                                                 final SolanaAccounts solanaAccounts,
-                                                final PublicKey signerKey,
-                                                final PublicKey stateKey,
-                                                final PublicKey vaultKey,
+                                                final PublicKey glamStateKey,
+                                                final PublicKey glamVaultKey,
+                                                final PublicKey glamSignerKey,
                                                 final PublicKey stakePoolKey,
                                                 final PublicKey withdrawAuthorityKey,
                                                 final PublicKey reserveStakeKey,
@@ -2808,9 +2808,9 @@ public final class GlamProgram {
                                                 final PublicKey tokenProgramKey,
                                                 final long lamports) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createRead(stateKey),
-      createWrite(vaultKey),
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(stakePoolKey),
       createRead(withdrawAuthorityKey),
       createWrite(reserveStakeKey),
@@ -2866,9 +2866,9 @@ public final class GlamProgram {
 
   public static Instruction stakePoolDepositStake(final AccountMeta invokedGlamProgramMeta,
                                                   final SolanaAccounts solanaAccounts,
-                                                  final PublicKey signerKey,
-                                                  final PublicKey stateKey,
-                                                  final PublicKey vaultKey,
+                                                  final PublicKey glamStateKey,
+                                                  final PublicKey glamVaultKey,
+                                                  final PublicKey glamSignerKey,
                                                   final PublicKey vaultStakeAccountKey,
                                                   final PublicKey mintToKey,
                                                   final PublicKey poolMintKey,
@@ -2882,9 +2882,9 @@ public final class GlamProgram {
                                                   final PublicKey stakePoolProgramKey,
                                                   final PublicKey tokenProgramKey) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createWrite(stateKey),
-      createWrite(vaultKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(vaultStakeAccountKey),
       createWrite(mintToKey),
       createWrite(poolMintKey),
@@ -2911,9 +2911,9 @@ public final class GlamProgram {
 
   public static Instruction stakePoolWithdrawSol(final AccountMeta invokedGlamProgramMeta,
                                                  final SolanaAccounts solanaAccounts,
-                                                 final PublicKey signerKey,
-                                                 final PublicKey stateKey,
-                                                 final PublicKey vaultKey,
+                                                 final PublicKey glamStateKey,
+                                                 final PublicKey glamVaultKey,
+                                                 final PublicKey glamSignerKey,
                                                  final PublicKey stakePoolKey,
                                                  final PublicKey withdrawAuthorityKey,
                                                  final PublicKey reserveStakeKey,
@@ -2924,9 +2924,9 @@ public final class GlamProgram {
                                                  final PublicKey tokenProgramKey,
                                                  final long poolTokenAmount) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createRead(stateKey),
-      createWrite(vaultKey),
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(stakePoolKey),
       createRead(withdrawAuthorityKey),
       createWrite(reserveStakeKey),
@@ -2984,9 +2984,9 @@ public final class GlamProgram {
 
   public static Instruction stakePoolWithdrawStake(final AccountMeta invokedGlamProgramMeta,
                                                    final SolanaAccounts solanaAccounts,
-                                                   final PublicKey signerKey,
-                                                   final PublicKey stateKey,
-                                                   final PublicKey vaultKey,
+                                                   final PublicKey glamStateKey,
+                                                   final PublicKey glamVaultKey,
+                                                   final PublicKey glamSignerKey,
                                                    final PublicKey vaultStakeAccountKey,
                                                    final PublicKey poolMintKey,
                                                    final PublicKey feeAccountKey,
@@ -2999,9 +2999,9 @@ public final class GlamProgram {
                                                    final PublicKey tokenProgramKey,
                                                    final long poolTokenAmount) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createWrite(stateKey),
-      createWrite(vaultKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(vaultStakeAccountKey),
       createWrite(poolMintKey),
       createWrite(feeAccountKey),
@@ -3204,19 +3204,77 @@ public final class GlamProgram {
     }
   }
 
+  public static final Discriminator TRANSFER_SOL_TO_WSOL_DISCRIMINATOR = toDiscriminator(42, 189, 85, 229, 150, 198, 3, 195);
+
+  public static Instruction transferSolToWsol(final AccountMeta invokedGlamProgramMeta,
+                                              final SolanaAccounts solanaAccounts,
+                                              final PublicKey glamStateKey,
+                                              final PublicKey glamVaultKey,
+                                              final PublicKey glamSignerKey,
+                                              final PublicKey toKey,
+                                              final long lamports) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createWrite(toKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.associatedTokenAccountProgram())
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(TRANSFER_SOL_TO_WSOL_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, lamports);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record TransferSolToWsolIxData(Discriminator discriminator, long lamports) implements Borsh {  
+
+    public static TransferSolToWsolIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static TransferSolToWsolIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var lamports = getInt64LE(_data, i);
+      return new TransferSolToWsolIxData(discriminator, lamports);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, lamports);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator UPDATE_MINT_DISCRIMINATOR = toDiscriminator(212, 203, 57, 78, 75, 245, 222, 5);
 
   public static Instruction updateMint(final AccountMeta invokedGlamProgramMeta,
                                        final SolanaAccounts solanaAccounts,
                                        final PublicKey glamStateKey,
+                                       final PublicKey glamSignerKey,
                                        final PublicKey glamMintKey,
-                                       final PublicKey signerKey,
                                        final int mintId,
                                        final MintModel mintModel) {
     final var keys = List.of(
       createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
       createWrite(glamMintKey),
-      createWritableSigner(signerKey),
       createRead(solanaAccounts.token2022Program())
     );
 
@@ -3265,12 +3323,12 @@ public final class GlamProgram {
   public static final Discriminator UPDATE_STATE_DISCRIMINATOR = toDiscriminator(135, 112, 215, 75, 247, 185, 53, 176);
 
   public static Instruction updateState(final AccountMeta invokedGlamProgramMeta,
-                                        final PublicKey stateKey,
-                                        final PublicKey signerKey,
+                                        final PublicKey glamStateKey,
+                                        final PublicKey glamSignerKey,
                                         final StateModel state) {
     final var keys = List.of(
-      createWrite(stateKey),
-      createWritableSigner(signerKey)
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(state)];
@@ -3312,21 +3370,21 @@ public final class GlamProgram {
   public static final Discriminator WITHDRAW_DISCRIMINATOR = toDiscriminator(183, 18, 70, 156, 148, 109, 161, 34);
 
   public static Instruction withdraw(final AccountMeta invokedGlamProgramMeta,
-                                     final PublicKey stateKey,
-                                     final PublicKey vaultKey,
+                                     final PublicKey glamStateKey,
+                                     final PublicKey glamVaultKey,
+                                     final PublicKey glamSignerKey,
                                      final PublicKey assetKey,
                                      final PublicKey vaultAtaKey,
                                      final PublicKey signerAtaKey,
-                                     final PublicKey signerKey,
                                      final PublicKey tokenProgramKey,
                                      final long amount) {
     final var keys = List.of(
-      createWrite(stateKey),
-      createWrite(vaultKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createRead(assetKey),
       createWrite(vaultAtaKey),
       createWrite(signerAtaKey),
-      createWritableSigner(signerKey),
       createRead(tokenProgramKey)
     );
 
@@ -3373,13 +3431,13 @@ public final class GlamProgram {
 
   public static Instruction withdrawFromStakeAccounts(final AccountMeta invokedGlamProgramMeta,
                                                       final SolanaAccounts solanaAccounts,
-                                                      final PublicKey signerKey,
-                                                      final PublicKey stateKey,
-                                                      final PublicKey vaultKey) {
+                                                      final PublicKey glamStateKey,
+                                                      final PublicKey glamVaultKey,
+                                                      final PublicKey glamSignerKey) {
     final var keys = List.of(
-      createWritableSigner(signerKey),
-      createWrite(stateKey),
-      createWrite(vaultKey),
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createRead(solanaAccounts.clockSysVar()),
       createRead(solanaAccounts.stakeHistorySysVar()),
       createRead(solanaAccounts.stakeProgram())
@@ -3392,16 +3450,15 @@ public final class GlamProgram {
 
   public static Instruction wsolUnwrap(final AccountMeta invokedGlamProgramMeta,
                                        final SolanaAccounts solanaAccounts,
-                                       final PublicKey stateKey,
-                                       final PublicKey vaultKey,
-                                       final PublicKey vaultWsolAtaKey,
-                                       final PublicKey signerKey) {
+                                       final PublicKey glamStateKey,
+                                       final PublicKey glamVaultKey,
+                                       final PublicKey glamSignerKey,
+                                       final PublicKey vaultWsolAtaKey) {
     final var keys = List.of(
-      createRead(stateKey),
-      createWrite(vaultKey),
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(vaultWsolAtaKey),
-      createRead(solanaAccounts.wrappedSolTokenMint()),
-      createWritableSigner(signerKey),
       createRead(solanaAccounts.tokenProgram())
     );
 
@@ -3412,17 +3469,18 @@ public final class GlamProgram {
 
   public static Instruction wsolWrap(final AccountMeta invokedGlamProgramMeta,
                                      final SolanaAccounts solanaAccounts,
-                                     final PublicKey stateKey,
-                                     final PublicKey vaultKey,
+                                     final PublicKey glamStateKey,
+                                     final PublicKey glamVaultKey,
+                                     final PublicKey glamSignerKey,
                                      final PublicKey vaultWsolAtaKey,
-                                     final PublicKey signerKey,
+                                     final PublicKey wsolMintKey,
                                      final long lamports) {
     final var keys = List.of(
-      createRead(stateKey),
-      createWrite(vaultKey),
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
       createWrite(vaultWsolAtaKey),
-      createRead(solanaAccounts.wrappedSolTokenMint()),
-      createWritableSigner(signerKey),
+      createRead(wsolMintKey),
       createRead(solanaAccounts.systemProgram()),
       createRead(solanaAccounts.tokenProgram()),
       createRead(solanaAccounts.associatedTokenAccountProgram())

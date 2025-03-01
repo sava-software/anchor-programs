@@ -56,7 +56,13 @@ public sealed interface SbOnDemandError extends ProgramError permits
     SbOnDemandError.InvalidConstraint,
     SbOnDemandError.InvalidDelegationGroup,
     SbOnDemandError.OracleKeyNotFound,
-    SbOnDemandError.GuardianReregisterAttempt {
+    SbOnDemandError.GuardianReregisterAttempt,
+    SbOnDemandError.InvalidManySubmissionCount,
+    SbOnDemandError.MissingSecpIx,
+    SbOnDemandError.ChecksumMismatch,
+    SbOnDemandError.InvalidSubmissionFeedsCount,
+    SbOnDemandError.InvalidSecpSignatureOraclesCount,
+    SbOnDemandError.InvalidEthAddress {
 
   static SbOnDemandError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -114,6 +120,12 @@ public sealed interface SbOnDemandError extends ProgramError permits
       case 6051 -> InvalidDelegationGroup.INSTANCE;
       case 6052 -> OracleKeyNotFound.INSTANCE;
       case 6053 -> GuardianReregisterAttempt.INSTANCE;
+      case 6054 -> InvalidManySubmissionCount.INSTANCE;
+      case 6055 -> MissingSecpIx.INSTANCE;
+      case 6056 -> ChecksumMismatch.INSTANCE;
+      case 6057 -> InvalidSubmissionFeedsCount.INSTANCE;
+      case 6058 -> InvalidSecpSignatureOraclesCount.INSTANCE;
+      case 6059 -> InvalidEthAddress.INSTANCE;
       default -> throw new IllegalStateException("Unexpected SbOnDemand error code: " + errorCode);
     };
   }
@@ -493,6 +505,48 @@ public sealed interface SbOnDemandError extends ProgramError permits
 
     public static final GuardianReregisterAttempt INSTANCE = new GuardianReregisterAttempt(
         6053, "null"
+    );
+  }
+
+  record InvalidManySubmissionCount(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidManySubmissionCount INSTANCE = new InvalidManySubmissionCount(
+        6054, "null"
+    );
+  }
+
+  record MissingSecpIx(int code, String msg) implements SbOnDemandError {
+
+    public static final MissingSecpIx INSTANCE = new MissingSecpIx(
+        6055, "null"
+    );
+  }
+
+  record ChecksumMismatch(int code, String msg) implements SbOnDemandError {
+
+    public static final ChecksumMismatch INSTANCE = new ChecksumMismatch(
+        6056, "null"
+    );
+  }
+
+  record InvalidSubmissionFeedsCount(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidSubmissionFeedsCount INSTANCE = new InvalidSubmissionFeedsCount(
+        6057, "null"
+    );
+  }
+
+  record InvalidSecpSignatureOraclesCount(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidSecpSignatureOraclesCount INSTANCE = new InvalidSecpSignatureOraclesCount(
+        6058, "null"
+    );
+  }
+
+  record InvalidEthAddress(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidEthAddress INSTANCE = new InvalidEthAddress(
+        6059, "null"
     );
   }
 }

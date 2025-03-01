@@ -68,6 +68,9 @@ public record Order(// The slot the order was placed
                     int auctionDuration,
                     // Last 8 bits of the slot the order was posted on-chain (not order slot for signed msg orders)
                     int postedSlotTail,
+                    // Bitflags for further classification
+                    // 0: is_signed_message
+                    int bitFlags,
                     byte[] padding) implements Borsh {
 
   public static final int BYTES = 96;
@@ -125,7 +128,9 @@ public record Order(// The slot the order was placed
     ++i;
     final var postedSlotTail = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[2];
+    final var bitFlags = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[1];
     Borsh.readArray(padding, _data, i);
     return new Order(slot,
                      price,
@@ -151,6 +156,7 @@ public record Order(// The slot the order was placed
                      triggerCondition,
                      auctionDuration,
                      postedSlotTail,
+                     bitFlags,
                      padding);
   }
 
@@ -198,6 +204,8 @@ public record Order(// The slot the order was placed
     _data[i] = (byte) auctionDuration;
     ++i;
     _data[i] = (byte) postedSlotTail;
+    ++i;
+    _data[i] = (byte) bitFlags;
     ++i;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;

@@ -49,7 +49,7 @@ public record PullFeedAccountData(PublicKey _address,
                                   CompactResult[] historicalResults,
                                   byte[] ebuf4,
                                   byte[] ebuf3,
-                                  byte[] ebuf2) implements Borsh {
+                                  long[] submissionTimestamps) implements Borsh {
 
   public static final int BYTES = 3208;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -79,7 +79,7 @@ public record PullFeedAccountData(PublicKey _address,
   public static final int HISTORICAL_RESULTS_OFFSET = 2408;
   public static final int EBUF4_OFFSET = 2920;
   public static final int EBUF3_OFFSET = 2928;
-  public static final int EBUF2_OFFSET = 2952;
+  public static final int SUBMISSION_TIMESTAMPS_OFFSET = 2952;
 
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);
@@ -211,8 +211,8 @@ public record PullFeedAccountData(PublicKey _address,
     i += Borsh.readArray(ebuf4, _data, i);
     final var ebuf3 = new byte[24];
     i += Borsh.readArray(ebuf3, _data, i);
-    final var ebuf2 = new byte[256];
-    Borsh.readArray(ebuf2, _data, i);
+    final var submissionTimestamps = new long[32];
+    Borsh.readArray(submissionTimestamps, _data, i);
     return new PullFeedAccountData(_address,
                                    discriminator,
                                    submissions,
@@ -237,7 +237,7 @@ public record PullFeedAccountData(PublicKey _address,
                                    historicalResults,
                                    ebuf4,
                                    ebuf3,
-                                   ebuf2);
+                                   submissionTimestamps);
   }
 
   @Override
@@ -277,7 +277,7 @@ public record PullFeedAccountData(PublicKey _address,
     i += Borsh.writeArray(historicalResults, _data, i);
     i += Borsh.writeArray(ebuf4, _data, i);
     i += Borsh.writeArray(ebuf3, _data, i);
-    i += Borsh.writeArray(ebuf2, _data, i);
+    i += Borsh.writeArray(submissionTimestamps, _data, i);
     return i - offset;
   }
 

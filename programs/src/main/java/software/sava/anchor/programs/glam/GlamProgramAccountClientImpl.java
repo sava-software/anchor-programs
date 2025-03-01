@@ -349,8 +349,9 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
-        wrappedSolPDA().publicKey(),
         feePayer.publicKey(),
+        wrappedSolPDA().publicKey(),
+        solanaAccounts.wrappedSolTokenMint(),
         lamports
     );
   }
@@ -367,8 +368,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
-        wrappedSolPDA().publicKey(),
-        feePayer.publicKey()
+        feePayer.publicKey(),
+        wrappedSolPDA().publicKey()
     );
   }
 
@@ -390,7 +391,15 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction transferSolLamports(final PublicKey toPublicKey, final long lamports) {
-    throw new UnsupportedOperationException("TODO: transferSolLamports");
+    return GlamProgram.transferSolToWsol(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        toPublicKey,
+        lamports
+    );
   }
 
   @Override
@@ -482,9 +491,9 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     return GlamProgram.withdrawFromStakeAccounts(
         invokedProgram,
         solanaAccounts,
-        feePayer.publicKey(),
         glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey()
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey()
     );
   }
 
