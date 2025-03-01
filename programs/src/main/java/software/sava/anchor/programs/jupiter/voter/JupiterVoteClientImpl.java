@@ -14,8 +14,9 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
 
   JupiterVoteClientImpl(final SolanaAccounts solanaAccounts,
                         final JupiterAccounts accounts,
-                        final PublicKey escrowOwnerKey) {
-    super(solanaAccounts, accounts, escrowOwnerKey);
+                        final PublicKey escrowOwnerKey,
+                        final PublicKey feePayer) {
+    super(solanaAccounts, accounts, escrowOwnerKey, feePayer);
   }
 
   @Override
@@ -236,7 +237,8 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
         jupiterAccounts.lockerKey(),
         jupiterAccounts.governorKey(),
         smartWalletKey,
-        params);
+        params
+    );
   }
 
   @Override

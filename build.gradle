@@ -70,6 +70,7 @@ subprojects {
     implementation libs.sava.solana.programs
     implementation libs.sava.solana.web2
     implementation libs.sava.anchor.src.gen
+
     implementation libs.glam.ix.proxy
 
     testImplementation libs.junit.jupiter

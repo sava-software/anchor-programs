@@ -1,12 +1,7 @@
 package software.sava.anchor.programs.jupiter.voter;
 
 import software.sava.anchor.programs.jupiter.JupiterAccounts;
-import software.sava.anchor.programs.jupiter.governance.anchor.GovernProgram;
-import software.sava.anchor.programs.jupiter.governance.anchor.types.GovernanceParameters;
-import software.sava.anchor.programs.jupiter.governance.anchor.types.ProposalInstruction;
-import software.sava.anchor.programs.jupiter.voter.anchor.LockedVoterProgram;
 import software.sava.anchor.programs.jupiter.voter.anchor.types.Escrow;
-import software.sava.anchor.programs.jupiter.voter.anchor.types.LockerParams;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
@@ -21,10 +16,12 @@ public abstract class BaseJupiterVoteClient implements JupiterVoteClient {
   protected final PublicKey ownerJupATA;
   protected final PublicKey escrowKey;
   protected final PublicKey escrowJupATA;
+  protected final PublicKey feePayer;
 
   protected BaseJupiterVoteClient(final SolanaAccounts solanaAccounts,
                                   final JupiterAccounts jupiterAccounts,
-                                  final PublicKey escrowOwnerKey) {
+                                  final PublicKey escrowOwnerKey,
+                                  final PublicKey feePayer) {
     this.solanaAccounts = solanaAccounts;
     this.jupiterAccounts = jupiterAccounts;
     this.escrowOwnerKey = escrowOwnerKey;
@@ -32,6 +29,7 @@ public abstract class BaseJupiterVoteClient implements JupiterVoteClient {
     this.ownerJupATA = findATA(solanaAccounts, escrowOwnerKey, jupTokenMint).publicKey();
     this.escrowKey = jupiterAccounts.deriveEscrow(escrowOwnerKey).publicKey();
     this.escrowJupATA = findATA(solanaAccounts, escrowKey, jupTokenMint).publicKey();
+    this.feePayer = feePayer;
   }
 
   @Override
@@ -42,6 +40,11 @@ public abstract class BaseJupiterVoteClient implements JupiterVoteClient {
   @Override
   public final JupiterAccounts jupiterAccounts() {
     return jupiterAccounts;
+  }
+
+  @Override
+  public final PublicKey feePayer() {
+    return feePayer;
   }
 
   @Override

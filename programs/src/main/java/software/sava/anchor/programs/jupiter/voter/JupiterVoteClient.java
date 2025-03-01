@@ -4,13 +4,16 @@ import software.sava.anchor.programs.jupiter.JupiterAccounts;
 import software.sava.anchor.programs.jupiter.governance.anchor.types.GovernanceParameters;
 import software.sava.anchor.programs.jupiter.governance.anchor.types.Proposal;
 import software.sava.anchor.programs.jupiter.governance.anchor.types.ProposalInstruction;
+import software.sava.anchor.programs.jupiter.governance.anchor.types.Vote;
 import software.sava.anchor.programs.jupiter.voter.anchor.types.Escrow;
 import software.sava.anchor.programs.jupiter.voter.anchor.types.LockerParams;
+import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
+import software.sava.solana.programs.system.SystemProgram;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -19,8 +22,15 @@ public interface JupiterVoteClient {
 
   static JupiterVoteClient createClient(final SolanaAccounts solanaAccounts,
                                         final JupiterAccounts jupiterAccounts,
+                                        final PublicKey escrowOwnerKey,
+                                        final PublicKey feePayer) {
+    return new JupiterVoteClientImpl(solanaAccounts, jupiterAccounts, escrowOwnerKey, feePayer);
+  }
+
+  static JupiterVoteClient createClient(final SolanaAccounts solanaAccounts,
+                                        final JupiterAccounts jupiterAccounts,
                                         final PublicKey escrowOwnerKey) {
-    return new JupiterVoteClientImpl(solanaAccounts, jupiterAccounts, escrowOwnerKey);
+    return createClient(solanaAccounts, jupiterAccounts, escrowOwnerKey, escrowOwnerKey);
   }
 
   static JupiterVoteClient createClient(final PublicKey escrowOwnerKey) {
@@ -30,6 +40,8 @@ public interface JupiterVoteClient {
   SolanaAccounts solanaAccounts();
 
   JupiterAccounts jupiterAccounts();
+
+  PublicKey feePayer();
 
   default CompletableFuture<List<AccountInfo<Escrow>>> fetchEscrowAccountsForDelegate(final SolanaRpcClient rpcClient,
                                                                                       final PublicKey delegate) {
@@ -50,6 +62,25 @@ public interface JupiterVoteClient {
         jupiterAccounts().govProgram(),
         List.of(Proposal.createGovernorFilter(governorKey)),
         Proposal.FACTORY
+    );
+  }
+
+  default AccountWithSeed createOffCurveGovAccountWithSeed(final PublicKey feePayer, final String asciiSeed) {
+    return PublicKey.createOffCurveAccountWithAsciiSeed(feePayer, asciiSeed, jupiterAccounts().govProgram());
+  }
+
+  default AccountWithSeed createOffCurveGovAccountWithSeed(final String asciiSeed) {
+    return createOffCurveGovAccountWithSeed(feePayer(), asciiSeed);
+  }
+
+  default Instruction createVoteAccountWithSeedIx(final AccountWithSeed accountWithSeed, final long minRentLamports) {
+    return SystemProgram.createAccountWithSeed(
+        solanaAccounts().invokedSystemProgram(),
+        feePayer(),
+        accountWithSeed,
+        minRentLamports,
+        Vote.BYTES,
+        jupiterAccounts().govProgram()
     );
   }
 
