@@ -5,6 +5,11 @@
     "idlURL": "https://raw.githubusercontent.com/drift-labs/protocol-v2/refs/heads/master/sdk/src/idl/drift.json"
   },
   {
+    "name": "Drift Vaults",
+    "program": "vAuLTsyrvSfZRuRB3XgvkPwNGgYSs9YRYymVebLKoxR",
+    "package": "drift.vaults"
+  },
+  {
     "name": "Glam v0",
     "program": "GLAMpLuXu78TA4ao3DPZvT1zQ7woxoQ8ahdYbhnqY9mP",
     "package": "glam_v0"
