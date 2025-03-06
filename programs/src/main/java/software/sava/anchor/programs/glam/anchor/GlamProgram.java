@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.OptionalInt;
 
 import software.sava.anchor.programs.glam.anchor.types.InitObligationArgs;
+import software.sava.anchor.programs.glam.anchor.types.LiquidityParameterByStrategy;
 import software.sava.anchor.programs.glam.anchor.types.MarketType;
 import software.sava.anchor.programs.glam.anchor.types.MintModel;
 import software.sava.anchor.programs.glam.anchor.types.ModifyOrderParams;
@@ -2447,6 +2448,425 @@ public final class GlamProgram {
     );
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, MERGE_STAKE_ACCOUNTS_DISCRIMINATOR);
+  }
+
+  public static final Discriminator METEORA_DLMM_ADD_LIQUIDITY_BY_STRATEGY_DISCRIMINATOR = toDiscriminator(81, 139, 59, 146, 176, 196, 240, 216);
+
+  public static Instruction meteoraDlmmAddLiquidityByStrategy(final AccountMeta invokedGlamProgramMeta,
+                                                              final PublicKey glamStateKey,
+                                                              final PublicKey glamVaultKey,
+                                                              final PublicKey glamSignerKey,
+                                                              final PublicKey cpiProgramKey,
+                                                              final PublicKey positionKey,
+                                                              final PublicKey lbPairKey,
+                                                              final PublicKey binArrayBitmapExtensionKey,
+                                                              final PublicKey userTokenXKey,
+                                                              final PublicKey userTokenYKey,
+                                                              final PublicKey reserveXKey,
+                                                              final PublicKey reserveYKey,
+                                                              final PublicKey tokenXMintKey,
+                                                              final PublicKey tokenYMintKey,
+                                                              final PublicKey binArrayLowerKey,
+                                                              final PublicKey binArrayUpperKey,
+                                                              final PublicKey tokenXProgramKey,
+                                                              final PublicKey tokenYProgramKey,
+                                                              final PublicKey eventAuthorityKey,
+                                                              final PublicKey programKey,
+                                                              final LiquidityParameterByStrategy params) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(positionKey),
+      createWrite(lbPairKey),
+      createWrite(binArrayBitmapExtensionKey),
+      createWrite(userTokenXKey),
+      createWrite(userTokenYKey),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createWrite(binArrayLowerKey),
+      createWrite(binArrayUpperKey),
+      createRead(tokenXProgramKey),
+      createRead(tokenYProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(METEORA_DLMM_ADD_LIQUIDITY_BY_STRATEGY_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record MeteoraDlmmAddLiquidityByStrategyIxData(Discriminator discriminator, LiquidityParameterByStrategy params) implements Borsh {  
+
+    public static MeteoraDlmmAddLiquidityByStrategyIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 105;
+
+    public static MeteoraDlmmAddLiquidityByStrategyIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = LiquidityParameterByStrategy.read(_data, i);
+      return new MeteoraDlmmAddLiquidityByStrategyIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator METEORA_DLMM_CLAIM_FEE_DISCRIMINATOR = toDiscriminator(78, 116, 98, 78, 50, 82, 72, 37);
+
+  public static Instruction meteoraDlmmClaimFee(final AccountMeta invokedGlamProgramMeta,
+                                                final PublicKey glamStateKey,
+                                                final PublicKey glamVaultKey,
+                                                final PublicKey glamSignerKey,
+                                                final PublicKey cpiProgramKey,
+                                                final PublicKey lbPairKey,
+                                                final PublicKey positionKey,
+                                                final PublicKey binArrayLowerKey,
+                                                final PublicKey binArrayUpperKey,
+                                                final PublicKey reserveXKey,
+                                                final PublicKey reserveYKey,
+                                                final PublicKey userTokenXKey,
+                                                final PublicKey userTokenYKey,
+                                                final PublicKey tokenXMintKey,
+                                                final PublicKey tokenYMintKey,
+                                                final PublicKey tokenProgramKey,
+                                                final PublicKey eventAuthorityKey,
+                                                final PublicKey programKey) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(lbPairKey),
+      createWrite(positionKey),
+      createWrite(binArrayLowerKey),
+      createWrite(binArrayUpperKey),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createWrite(userTokenXKey),
+      createWrite(userTokenYKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createRead(tokenProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, METEORA_DLMM_CLAIM_FEE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator METEORA_DLMM_CLOSE_POSITION_DISCRIMINATOR = toDiscriminator(186, 117, 42, 24, 221, 194, 34, 143);
+
+  public static Instruction meteoraDlmmClosePosition(final AccountMeta invokedGlamProgramMeta,
+                                                     final PublicKey glamStateKey,
+                                                     final PublicKey glamVaultKey,
+                                                     final PublicKey glamSignerKey,
+                                                     final PublicKey cpiProgramKey,
+                                                     final PublicKey positionKey,
+                                                     final PublicKey lbPairKey,
+                                                     final PublicKey binArrayLowerKey,
+                                                     final PublicKey binArrayUpperKey,
+                                                     final PublicKey eventAuthorityKey,
+                                                     final PublicKey programKey) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(positionKey),
+      createWrite(lbPairKey),
+      createWrite(binArrayLowerKey),
+      createWrite(binArrayUpperKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, METEORA_DLMM_CLOSE_POSITION_DISCRIMINATOR);
+  }
+
+  public static final Discriminator METEORA_DLMM_INITIALIZE_POSITION_DISCRIMINATOR = toDiscriminator(223, 94, 215, 96, 175, 181, 195, 204);
+
+  public static Instruction meteoraDlmmInitializePosition(final AccountMeta invokedGlamProgramMeta,
+                                                          final SolanaAccounts solanaAccounts,
+                                                          final PublicKey glamStateKey,
+                                                          final PublicKey glamVaultKey,
+                                                          final PublicKey glamSignerKey,
+                                                          final PublicKey cpiProgramKey,
+                                                          final PublicKey payerKey,
+                                                          final PublicKey positionKey,
+                                                          final PublicKey lbPairKey,
+                                                          final PublicKey eventAuthorityKey,
+                                                          final PublicKey programKey,
+                                                          final int lowerBinId,
+                                                          final int width) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWritableSigner(payerKey),
+      createWritableSigner(positionKey),
+      createRead(lbPairKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.rentSysVar()),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(METEORA_DLMM_INITIALIZE_POSITION_DISCRIMINATOR, _data, 0);
+    putInt32LE(_data, i, lowerBinId);
+    i += 4;
+    putInt32LE(_data, i, width);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record MeteoraDlmmInitializePositionIxData(Discriminator discriminator, int lowerBinId, int width) implements Borsh {  
+
+    public static MeteoraDlmmInitializePositionIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static MeteoraDlmmInitializePositionIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var lowerBinId = getInt32LE(_data, i);
+      i += 4;
+      final var width = getInt32LE(_data, i);
+      return new MeteoraDlmmInitializePositionIxData(discriminator, lowerBinId, width);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, lowerBinId);
+      i += 4;
+      putInt32LE(_data, i, width);
+      i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator METEORA_DLMM_REMOVE_LIQUIDITY_BY_RANGE_DISCRIMINATOR = toDiscriminator(223, 12, 177, 181, 96, 109, 60, 124);
+
+  public static Instruction meteoraDlmmRemoveLiquidityByRange(final AccountMeta invokedGlamProgramMeta,
+                                                              final PublicKey glamStateKey,
+                                                              final PublicKey glamVaultKey,
+                                                              final PublicKey glamSignerKey,
+                                                              final PublicKey cpiProgramKey,
+                                                              final PublicKey positionKey,
+                                                              final PublicKey lbPairKey,
+                                                              final PublicKey binArrayBitmapExtensionKey,
+                                                              final PublicKey userTokenXKey,
+                                                              final PublicKey userTokenYKey,
+                                                              final PublicKey reserveXKey,
+                                                              final PublicKey reserveYKey,
+                                                              final PublicKey tokenXMintKey,
+                                                              final PublicKey tokenYMintKey,
+                                                              final PublicKey binArrayLowerKey,
+                                                              final PublicKey binArrayUpperKey,
+                                                              final PublicKey tokenXProgramKey,
+                                                              final PublicKey tokenYProgramKey,
+                                                              final PublicKey eventAuthorityKey,
+                                                              final PublicKey programKey,
+                                                              final int fromBinId,
+                                                              final int toBinId,
+                                                              final int bpsToRemove) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(positionKey),
+      createWrite(lbPairKey),
+      createWrite(binArrayBitmapExtensionKey),
+      createWrite(userTokenXKey),
+      createWrite(userTokenYKey),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createWrite(binArrayLowerKey),
+      createWrite(binArrayUpperKey),
+      createRead(tokenXProgramKey),
+      createRead(tokenYProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[18];
+    int i = writeDiscriminator(METEORA_DLMM_REMOVE_LIQUIDITY_BY_RANGE_DISCRIMINATOR, _data, 0);
+    putInt32LE(_data, i, fromBinId);
+    i += 4;
+    putInt32LE(_data, i, toBinId);
+    i += 4;
+    putInt16LE(_data, i, bpsToRemove);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record MeteoraDlmmRemoveLiquidityByRangeIxData(Discriminator discriminator,
+                                                        int fromBinId,
+                                                        int toBinId,
+                                                        int bpsToRemove) implements Borsh {  
+
+    public static MeteoraDlmmRemoveLiquidityByRangeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 18;
+
+    public static MeteoraDlmmRemoveLiquidityByRangeIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var fromBinId = getInt32LE(_data, i);
+      i += 4;
+      final var toBinId = getInt32LE(_data, i);
+      i += 4;
+      final var bpsToRemove = getInt16LE(_data, i);
+      return new MeteoraDlmmRemoveLiquidityByRangeIxData(discriminator, fromBinId, toBinId, bpsToRemove);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, fromBinId);
+      i += 4;
+      putInt32LE(_data, i, toBinId);
+      i += 4;
+      putInt16LE(_data, i, bpsToRemove);
+      i += 2;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator METEORA_DLMM_SWAP_DISCRIMINATOR = toDiscriminator(127, 64, 37, 138, 173, 243, 207, 84);
+
+  public static Instruction meteoraDlmmSwap(final AccountMeta invokedGlamProgramMeta,
+                                            final PublicKey glamStateKey,
+                                            final PublicKey glamVaultKey,
+                                            final PublicKey glamSignerKey,
+                                            final PublicKey cpiProgramKey,
+                                            final PublicKey lbPairKey,
+                                            final PublicKey binArrayBitmapExtensionKey,
+                                            final PublicKey reserveXKey,
+                                            final PublicKey reserveYKey,
+                                            final PublicKey userTokenInKey,
+                                            final PublicKey userTokenOutKey,
+                                            final PublicKey tokenXMintKey,
+                                            final PublicKey tokenYMintKey,
+                                            final PublicKey oracleKey,
+                                            final PublicKey hostFeeInKey,
+                                            final PublicKey tokenXProgramKey,
+                                            final PublicKey tokenYProgramKey,
+                                            final PublicKey eventAuthorityKey,
+                                            final PublicKey programKey,
+                                            final long amountIn,
+                                            final long minAmountOut) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(lbPairKey),
+      createRead(binArrayBitmapExtensionKey),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createWrite(userTokenInKey),
+      createWrite(userTokenOutKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createWrite(oracleKey),
+      createWrite(hostFeeInKey),
+      createRead(tokenXProgramKey),
+      createRead(tokenYProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[24];
+    int i = writeDiscriminator(METEORA_DLMM_SWAP_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, amountIn);
+    i += 8;
+    putInt64LE(_data, i, minAmountOut);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record MeteoraDlmmSwapIxData(Discriminator discriminator, long amountIn, long minAmountOut) implements Borsh {  
+
+    public static MeteoraDlmmSwapIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 24;
+
+    public static MeteoraDlmmSwapIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amountIn = getInt64LE(_data, i);
+      i += 8;
+      final var minAmountOut = getInt64LE(_data, i);
+      return new MeteoraDlmmSwapIxData(discriminator, amountIn, minAmountOut);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amountIn);
+      i += 8;
+      putInt64LE(_data, i, minAmountOut);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
   }
 
   public static final Discriminator MINT_TOKENS_DISCRIMINATOR = toDiscriminator(59, 132, 24, 246, 122, 39, 8, 243);

@@ -243,6 +243,116 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator INITIALIZE_SIGNED_MSG_WS_DELEGATES_DISCRIMINATOR = toDiscriminator(40, 132, 96, 219, 184, 193, 80, 8);
+
+  public static Instruction initializeSignedMsgWsDelegates(final AccountMeta invokedDriftProgramMeta,
+                                                           final PublicKey signedMsgWsDelegatesKey,
+                                                           final PublicKey authorityKey,
+                                                           final PublicKey rentKey,
+                                                           final PublicKey systemProgramKey,
+                                                           final PublicKey[] delegates) {
+    final var keys = List.of(
+      createWrite(signedMsgWsDelegatesKey),
+      createWritableSigner(authorityKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.lenVector(delegates)];
+    int i = writeDiscriminator(INITIALIZE_SIGNED_MSG_WS_DELEGATES_DISCRIMINATOR, _data, 0);
+    Borsh.writeVector(delegates, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record InitializeSignedMsgWsDelegatesIxData(Discriminator discriminator, PublicKey[] delegates) implements Borsh {  
+
+    public static InitializeSignedMsgWsDelegatesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static InitializeSignedMsgWsDelegatesIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var delegates = Borsh.readPublicKeyVector(_data, i);
+      return new InitializeSignedMsgWsDelegatesIxData(discriminator, delegates);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeVector(delegates, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.lenVector(delegates);
+    }
+  }
+
+  public static final Discriminator CHANGE_SIGNED_MSG_WS_DELEGATE_STATUS_DISCRIMINATOR = toDiscriminator(252, 202, 252, 219, 179, 27, 84, 138);
+
+  public static Instruction changeSignedMsgWsDelegateStatus(final AccountMeta invokedDriftProgramMeta,
+                                                            final PublicKey signedMsgWsDelegatesKey,
+                                                            final PublicKey authorityKey,
+                                                            final PublicKey systemProgramKey,
+                                                            final PublicKey delegate,
+                                                            final boolean add) {
+    final var keys = List.of(
+      createWrite(signedMsgWsDelegatesKey),
+      createWritableSigner(authorityKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[41];
+    int i = writeDiscriminator(CHANGE_SIGNED_MSG_WS_DELEGATE_STATUS_DISCRIMINATOR, _data, 0);
+    delegate.write(_data, i);
+    i += 32;
+    _data[i] = (byte) (add ? 1 : 0);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record ChangeSignedMsgWsDelegateStatusIxData(Discriminator discriminator, PublicKey delegate, boolean add) implements Borsh {  
+
+    public static ChangeSignedMsgWsDelegateStatusIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 41;
+
+    public static ChangeSignedMsgWsDelegateStatusIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var delegate = readPubKey(_data, i);
+      i += 32;
+      final var add = _data[i] == 1;
+      return new ChangeSignedMsgWsDelegateStatusIxData(discriminator, delegate, add);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      delegate.write(_data, i);
+      i += 32;
+      _data[i] = (byte) (add ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator INITIALIZE_FUEL_OVERFLOW_DISCRIMINATOR = toDiscriminator(88, 223, 132, 161, 208, 88, 142, 42);
 
   public static Instruction initializeFuelOverflow(final AccountMeta invokedDriftProgramMeta,
@@ -10710,29 +10820,36 @@ public final class DriftProgram {
                                                            final PublicKey protectedMakerModeConfigKey,
                                                            final PublicKey stateKey,
                                                            final int maxUsers,
-                                                           final boolean reduceOnly) {
+                                                           final boolean reduceOnly,
+                                                           final OptionalInt currentUsers) {
     final var keys = List.of(
       createWritableSigner(adminKey),
       createWrite(protectedMakerModeConfigKey),
       createRead(stateKey)
     );
 
-    final byte[] _data = new byte[13];
+    final byte[] _data = new byte[
+        13
+        + (currentUsers == null || currentUsers.isEmpty() ? 1 : 5)
+    ];
     int i = writeDiscriminator(UPDATE_PROTECTED_MAKER_MODE_CONFIG_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, maxUsers);
     i += 4;
     _data[i] = (byte) (reduceOnly ? 1 : 0);
+    ++i;
+    Borsh.writeOptional(currentUsers, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record UpdateProtectedMakerModeConfigIxData(Discriminator discriminator, int maxUsers, boolean reduceOnly) implements Borsh {  
+  public record UpdateProtectedMakerModeConfigIxData(Discriminator discriminator,
+                                                     int maxUsers,
+                                                     boolean reduceOnly,
+                                                     OptionalInt currentUsers) implements Borsh {  
 
     public static UpdateProtectedMakerModeConfigIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
-
-    public static final int BYTES = 13;
 
     public static UpdateProtectedMakerModeConfigIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -10743,7 +10860,9 @@ public final class DriftProgram {
       final var maxUsers = getInt32LE(_data, i);
       i += 4;
       final var reduceOnly = _data[i] == 1;
-      return new UpdateProtectedMakerModeConfigIxData(discriminator, maxUsers, reduceOnly);
+      ++i;
+      final var currentUsers = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+      return new UpdateProtectedMakerModeConfigIxData(discriminator, maxUsers, reduceOnly, currentUsers);
     }
 
     @Override
@@ -10753,12 +10872,13 @@ public final class DriftProgram {
       i += 4;
       _data[i] = (byte) (reduceOnly ? 1 : 0);
       ++i;
+      i += Borsh.writeOptional(currentUsers, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return BYTES;
+      return 8 + 4 + 1 + (currentUsers == null || currentUsers.isEmpty() ? 1 : (1 + 4));
     }
   }
 

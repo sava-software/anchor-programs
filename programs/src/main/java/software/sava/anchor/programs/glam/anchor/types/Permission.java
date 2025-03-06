@@ -31,7 +31,11 @@ public enum Permission implements Borsh.Enum {
   JupiterSwapLst,
   KaminoInit,
   KaminoDeposit,
-  DriftModifyOrders;
+  DriftModifyOrders,
+  MeteoraDlmmInitPosition,
+  MeteoraDlmmClosePosition,
+  MeteoraDlmmLiquidity,
+  MeteoraDlmmSwap;
 
   public static Permission read(final byte[] _data, final int offset) {
     return Borsh.read(Permission.values(), _data, offset);
