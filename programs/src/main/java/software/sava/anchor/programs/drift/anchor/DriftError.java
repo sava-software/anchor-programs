@@ -314,7 +314,8 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.InvalidLiquidateSpotWithSwap,
     DriftError.SignedMsgUserContextUserMismatch,
     DriftError.UserFuelOverflowThresholdNotMet,
-    DriftError.FuelOverflowAccountNotFound {
+    DriftError.FuelOverflowAccountNotFound,
+    DriftError.InvalidTransferPerpPosition {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -630,6 +631,7 @@ public sealed interface DriftError extends ProgramError permits
       case 6309 -> SignedMsgUserContextUserMismatch.INSTANCE;
       case 6310 -> UserFuelOverflowThresholdNotMet.INSTANCE;
       case 6311 -> FuelOverflowAccountNotFound.INSTANCE;
+      case 6312 -> InvalidTransferPerpPosition.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2815,6 +2817,13 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final FuelOverflowAccountNotFound INSTANCE = new FuelOverflowAccountNotFound(
         6311, "FuelOverflow account not found"
+    );
+  }
+
+  record InvalidTransferPerpPosition(int code, String msg) implements DriftError {
+
+    public static final InvalidTransferPerpPosition INSTANCE = new InvalidTransferPerpPosition(
+        6312, "Invalid Transfer Perp Position"
     );
   }
 }

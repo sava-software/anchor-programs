@@ -23,7 +23,8 @@ public enum OrderActionExplanation implements Borsh.Enum {
   OrderFilledWithAMMJitLPSplit,
   OrderFilledWithLPJit,
   DeriskLp,
-  OrderFilledWithOpenbookV2;
+  OrderFilledWithOpenbookV2,
+  TransferPerpPosition;
 
   public static OrderActionExplanation read(final byte[] _data, final int offset) {
     return Borsh.read(OrderActionExplanation.values(), _data, offset);

@@ -808,6 +808,69 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator TRANSFER_PERP_POSITION_DISCRIMINATOR = toDiscriminator(23, 172, 188, 168, 134, 210, 3, 108);
+
+  public static Instruction transferPerpPosition(final AccountMeta invokedDriftProgramMeta,
+                                                 final PublicKey fromUserKey,
+                                                 final PublicKey toUserKey,
+                                                 final PublicKey userStatsKey,
+                                                 final PublicKey authorityKey,
+                                                 final PublicKey stateKey,
+                                                 final int marketIndex,
+                                                 final OptionalLong amount) {
+    final var keys = List.of(
+      createWrite(fromUserKey),
+      createWrite(toUserKey),
+      createWrite(userStatsKey),
+      createReadOnlySigner(authorityKey),
+      createRead(stateKey)
+    );
+
+    final byte[] _data = new byte[
+        10
+        + (amount == null || amount.isEmpty() ? 1 : 9)
+    ];
+    int i = writeDiscriminator(TRANSFER_PERP_POSITION_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, marketIndex);
+    i += 2;
+    Borsh.writeOptional(amount, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record TransferPerpPositionIxData(Discriminator discriminator, int marketIndex, OptionalLong amount) implements Borsh {  
+
+    public static TransferPerpPositionIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static TransferPerpPositionIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var marketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var amount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+      return new TransferPerpPositionIxData(discriminator, marketIndex, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, marketIndex);
+      i += 2;
+      i += Borsh.writeOptional(amount, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 2 + (amount == null || amount.isEmpty() ? 1 : (1 + 8));
+    }
+  }
+
   public static final Discriminator PLACE_PERP_ORDER_DISCRIMINATOR = toDiscriminator(69, 161, 93, 202, 120, 126, 76, 185);
 
   public static Instruction placePerpOrder(final AccountMeta invokedDriftProgramMeta,
