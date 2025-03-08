@@ -4,19 +4,16 @@ import software.sava.anchor.programs.drift.*;
 import software.sava.anchor.programs.drift.anchor.types.ModifyOrderParams;
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
 import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
-import software.sava.anchor.programs.drift.anchor.types.User;
 import software.sava.anchor.programs.glam.anchor.GlamProgram;
 import software.sava.anchor.programs.glam.anchor.types.*;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
-import software.sava.rpc.json.http.client.SolanaRpcClient;
-import software.sava.rpc.json.http.response.AccountInfo;
 
+import java.nio.charset.StandardCharsets;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.concurrent.CompletableFuture;
 
 import static software.sava.anchor.programs.drift.DriftPDAs.deriveUserStatsAccount;
 
@@ -62,16 +59,42 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
-  public CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient) {
-    return fetchUser(rpcClient, user);
+  public Instruction initializeUser(final PublicKey user,
+                                    final PublicKey authority,
+                                    final PublicKey payerKey,
+                                    final int subAccountId,
+                                    final String name) {
+    final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
+    return GlamProgram.driftInitializeUser(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        driftAccounts.driftProgram(),
+        user,
+        userStatsKey,
+        driftAccounts.stateKey(),
+        payerKey,
+        subAccountId,
+        name.getBytes(StandardCharsets.UTF_8)
+    );
   }
 
   @Override
-  public Instruction deposit(final PublicKey userTokenAccountKey,
-                             final PublicKey tokenProgramKey,
-                             final SpotMarketConfig spotMarketConfig,
-                             final long amount) {
-    return deposit(user, authority(), userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount);
+  public Instruction initializeUserStats(final PublicKey authority, final PublicKey payerKey) {
+    final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
+    return GlamProgram.driftInitializeUserStats(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        driftAccounts.driftProgram(),
+        userStatsKey,
+        driftAccounts.stateKey(),
+        payerKey
+    );
   }
 
   @Override
@@ -108,21 +131,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                      final SpotMarketConfig spotMarketConfig,
                                      final long amount) {
     throw new UnsupportedOperationException("TODO: transferDeposit");
-  }
-
-  @Override
-  public Instruction withdraw(final PublicKey userTokenAccountKey,
-                              final PublicKey tokenProgramKey,
-                              final SpotMarketConfig spotMarketConfig,
-                              final long amount) {
-    return withdraw(
-        user,
-        authority(),
-        userTokenAccountKey,
-        tokenProgramKey,
-        spotMarketConfig,
-        amount
-    );
   }
 
   @Override
@@ -169,6 +177,15 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                    final OptionalLong depositAmount,
                                    final OptionalLong borrowAmount) {
     throw new UnsupportedOperationException("TODO: transferPools");
+  }
+
+  @Override
+  public Instruction transferPerpPosition(final PublicKey authority,
+                                          final PublicKey fromUser,
+                                          final PublicKey toUser,
+                                          final PerpMarketConfig perpMarketConfig,
+                                          final OptionalLong amount) {
+    throw new UnsupportedOperationException("TODO: transferPerpPosition");
   }
 
   @Override

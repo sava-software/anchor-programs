@@ -6,6 +6,7 @@ import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.lookup.AddressLookupTable;
+import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
@@ -84,7 +85,9 @@ public interface DriftProgramClient {
     return DriftPDAs.derivePerpMarketAccount(driftAccounts(), marketIndex);
   }
 
-  CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient);
+  default CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient) {
+    return fetchUser(rpcClient, mainUserAccount());
+  }
 
   default CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient, final User user) {
     return rpcClient.getAccountInfo(user._address(), User.FACTORY);
@@ -110,10 +113,52 @@ public interface DriftProgramClient {
     );
   }
 
-  Instruction deposit(final PublicKey userTokenAccountKey,
-                      final PublicKey tokenProgramKey,
-                      final SpotMarketConfig spotMarketConfig,
-                      final long amount);
+  Instruction initializeUser(final PublicKey user,
+                             final PublicKey authority,
+                             final PublicKey payerKey,
+                             final int subAccountId,
+                             final String name);
+
+  default Instruction initializeUser(final PublicKey payerKey,
+                                     final int subAccountId,
+                                     final String name) {
+    return initializeUser(mainUserAccount(), authority(), payerKey, subAccountId, name);
+  }
+
+  default Instruction initializeUser(final PublicKey user,
+                                     final PublicKey authority,
+                                     final PublicKey payerKey,
+                                     final int subAccountId,
+                                     final String name,
+                                     final PublicKey referrer,
+                                     final PublicKey referrerStats) {
+    final var initUserIx = initializeUser(user, authority, payerKey, subAccountId, name);
+    return initUserIx.extraAccounts(List.of(
+        AccountMeta.createWrite(referrer),
+        AccountMeta.createWrite(referrerStats)
+    ));
+  }
+
+  default Instruction initializeUser(final PublicKey payerKey,
+                                     final int subAccountId,
+                                     final String name,
+                                     final PublicKey referrer,
+                                     final PublicKey referrerStats) {
+    return initializeUser(mainUserAccount(), authority(), payerKey, subAccountId, name, referrer, referrerStats);
+  }
+
+  Instruction initializeUserStats(final PublicKey authority, final PublicKey payerKey);
+
+  default Instruction initializeUserStats(final PublicKey payerKey) {
+    return initializeUserStats(authority(), payerKey);
+  }
+
+  default Instruction deposit(final PublicKey userTokenAccountKey,
+                              final PublicKey tokenProgramKey,
+                              final SpotMarketConfig spotMarketConfig,
+                              final long amount) {
+    return deposit(mainUserAccount(), authority(), userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount);
+  }
 
   Instruction deposit(final PublicKey user,
                       final PublicKey authority,
@@ -138,10 +183,12 @@ public interface DriftProgramClient {
                               final SpotMarketConfig spotMarketConfig,
                               final long amount);
 
-  Instruction withdraw(final PublicKey userTokenAccountKey,
-                       final PublicKey tokenProgramKey,
-                       final SpotMarketConfig spotMarketConfig,
-                       final long amount);
+  default Instruction withdraw(final PublicKey userTokenAccountKey,
+                               final PublicKey tokenProgramKey,
+                               final SpotMarketConfig spotMarketConfig,
+                               final long amount) {
+    return withdraw(mainUserAccount(), authority(), userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount);
+  }
 
   Instruction withdraw(final PublicKey user,
                        final PublicKey authority,
@@ -173,6 +220,19 @@ public interface DriftProgramClient {
                             final SpotMarketConfig borrowToSpotMarketConfig,
                             final OptionalLong depositAmount,
                             final OptionalLong borrowAmount);
+
+  Instruction transferPerpPosition(final PublicKey authority,
+                                   final PublicKey fromUser,
+                                   final PublicKey toUser,
+                                   final PerpMarketConfig perpMarketConfig,
+                                   final OptionalLong amount);
+
+  default Instruction transferPerpPosition(PublicKey fromUser,
+                                           PublicKey toUser,
+                                           PerpMarketConfig perpMarketConfig,
+                                           OptionalLong amount) {
+    return transferPerpPosition(authority(), fromUser, toUser, perpMarketConfig, amount);
+  }
 
   Instruction settlePnl(final PublicKey user,
                         final PublicKey authority,

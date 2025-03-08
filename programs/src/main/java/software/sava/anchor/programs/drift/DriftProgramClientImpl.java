@@ -1,17 +1,18 @@
 package software.sava.anchor.programs.drift;
 
 import software.sava.anchor.programs.drift.anchor.DriftProgram;
-import software.sava.anchor.programs.drift.anchor.types.*;
+import software.sava.anchor.programs.drift.anchor.types.ModifyOrderParams;
+import software.sava.anchor.programs.drift.anchor.types.OrderParams;
+import software.sava.anchor.programs.drift.anchor.types.PositionDirection;
+import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
-import software.sava.rpc.json.http.client.SolanaRpcClient;
-import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
+import java.nio.charset.StandardCharsets;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
-import java.util.concurrent.CompletableFuture;
 
 import static software.sava.anchor.programs.drift.DriftPDAs.deriveSpotMarketVaultAccount;
 import static software.sava.anchor.programs.drift.DriftPDAs.deriveUserStatsAccount;
@@ -59,17 +60,38 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public CompletableFuture<AccountInfo<User>> fetchUser(final SolanaRpcClient rpcClient) {
-    return fetchUser(rpcClient, user);
+  public Instruction initializeUser(final PublicKey user,
+                                    final PublicKey authority,
+                                    final PublicKey payerKey,
+                                    final int subAccountId,
+                                    final String name) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    return DriftProgram.initializeUser(
+        accounts.invokedDriftProgram(),
+        user,
+        userStatsPDA.publicKey(),
+        accounts.stateKey(),
+        authority,
+        payerKey,
+        solanaAccounts.rentSysVar(),
+        solanaAccounts.systemProgram(),
+        subAccountId,
+        name.getBytes(StandardCharsets.UTF_8)
+    );
   }
 
-
   @Override
-  public Instruction deposit(final PublicKey userTokenAccountKey,
-                             final PublicKey tokenProgramKey,
-                             final SpotMarketConfig spotMarketConfig,
-                             final long amount) {
-    return deposit(user, authority, userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount);
+  public Instruction initializeUserStats(final PublicKey authority, final PublicKey payerKey) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    return DriftProgram.initializeUserStats(
+        accounts.invokedDriftProgram(),
+        userStatsPDA.publicKey(),
+        accounts.stateKey(),
+        authority,
+        payerKey,
+        solanaAccounts.rentSysVar(),
+        solanaAccounts.systemProgram()
+    );
   }
 
   @Override
@@ -114,14 +136,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         spotMarketConfig.marketIndex(),
         amount
     );
-  }
-
-  @Override
-  public Instruction withdraw(final PublicKey userTokenAccountKey,
-                              final PublicKey tokenProgramKey,
-                              final SpotMarketConfig spotMarketConfig,
-                              final long amount) {
-    return withdraw(user, authority, userTokenAccountKey, tokenProgramKey, spotMarketConfig, amount);
   }
 
   @Override
@@ -178,6 +192,25 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         borrowToSpotMarketConfig.marketIndex(),
         depositAmount,
         borrowAmount
+    );
+  }
+
+  @Override
+  public Instruction transferPerpPosition(final PublicKey authority,
+                                          final PublicKey fromUser,
+                                          final PublicKey toUser,
+                                          final PerpMarketConfig perpMarketConfig,
+                                          final OptionalLong amount) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
+    return DriftProgram.transferPerpPosition(
+        accounts.invokedDriftProgram(),
+        fromUser,
+        toUser,
+        userStatsPDA.publicKey(),
+        authority,
+        accounts.stateKey(),
+        perpMarketConfig.marketIndex(),
+        amount
     );
   }
 
