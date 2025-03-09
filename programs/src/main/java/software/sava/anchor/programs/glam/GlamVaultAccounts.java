@@ -4,9 +4,18 @@ import software.sava.anchor.programs.glam.anchor.GlamPDAs;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
+import systems.comodal.jsoniter.JsonIterator;
 import systems.glam.ix.proxy.DynamicAccount;
 import systems.glam.ix.proxy.DynamicAccountConfig;
+import systems.glam.ix.proxy.ProgramMapConfig;
+import systems.glam.ix.proxy.TransactionMapper;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.function.Function;
 
 public interface GlamVaultAccounts {
@@ -83,6 +92,54 @@ public interface GlamVaultAccounts {
       default -> throw new IllegalStateException("Unknown dynamic account type: " + accountConfig.name());
     };
   };
+
+  static List<ProgramMapConfig> loadMappingConfigs() {
+    final var packagePath = GlamVaultAccounts.class.getPackage().getName().replace('.', '/');
+    final var classLoader = GlamVaultAccounts.class.getClassLoader();
+    final var basePackage = classLoader.getResource(packagePath + "/drift.json");
+    if (basePackage == null) {
+      throw new IllegalStateException("Failed to find mappings resource directory at " + packagePath);
+    }
+    try {
+      final var basePath = Paths.get(basePackage.toURI()).getParent();
+      try (final var paths = Files.walk(basePath, 1)) {
+        return paths.parallel()
+            .filter(Files::isRegularFile)
+            .filter(Files::isReadable)
+            .filter(f -> f.getFileName().toString().endsWith(".json"))
+            .map(filePath -> {
+              try {
+                final var ji = JsonIterator.parse(Files.readAllBytes(filePath));
+                return ProgramMapConfig.parseConfig(ji);
+              } catch (final IOException e) {
+                throw new UncheckedIOException(e);
+              }
+            })
+            .toList();
+      }
+    } catch (final IOException e) {
+      throw new UncheckedIOException(e);
+    } catch (final URISyntaxException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  static TransactionMapper<GlamVaultAccounts> createMapper(final AccountMeta invokedGlamProgram,
+                                                           final List<ProgramMapConfig> mappingConfigs) {
+    return TransactionMapper.createMapper(
+        invokedGlamProgram,
+        GlamVaultAccounts.DYNAMIC_ACCOUNT_FACTORY,
+        mappingConfigs
+    );
+  }
+
+  static TransactionMapper<GlamVaultAccounts> createMapper(final AccountMeta invokedGlamProgram) {
+    return createMapper(invokedGlamProgram, loadMappingConfigs());
+  }
+
+  default TransactionMapper<GlamVaultAccounts> createMapper() {
+    return createMapper(glamAccounts().invokedProgram());
+  }
 
   GlamAccounts glamAccounts();
 
