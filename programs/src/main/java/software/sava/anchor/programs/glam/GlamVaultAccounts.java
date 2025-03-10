@@ -6,14 +6,15 @@ import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import systems.comodal.jsoniter.JsonIterator;
+import systems.glam.ix.proxy.IndexedAccountMeta;
 import systems.glam.ix.proxy.ProgramMapConfig;
 import systems.glam.ix.proxy.TransactionMapper;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
-import java.net.URISyntaxException;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
 
 public interface GlamVaultAccounts {
@@ -68,16 +69,13 @@ public interface GlamVaultAccounts {
     return GlamVaultAccounts.createV0Accounts(GlamAccounts.MAIN_NET_VO, feePayer, glamPublicKey);
   }
 
-  static List<ProgramMapConfig> loadMappingConfigs() {
-    final var packagePath = GlamVaultAccounts.class.getPackage().getName().replace('.', '/');
-    final var classLoader = GlamVaultAccounts.class.getClassLoader();
-    final var basePackage = classLoader.getResource(packagePath + "/drift.json");
-    if (basePackage == null) {
-      throw new IllegalStateException("Failed to find mappings resource directory at " + packagePath);
-    }
+  static List<ProgramMapConfig> loadMappingConfigs(final Path mappingsDirectory) {
+
+
+    final var accountMetaCache = new HashMap<AccountMeta, AccountMeta>(256);
+    final var indexedAccountMetaCache = new HashMap<IndexedAccountMeta, IndexedAccountMeta>(256);
     try {
-      final var basePath = Paths.get(basePackage.toURI()).getParent();
-      try (final var paths = Files.walk(basePath, 1)) {
+      try (final var paths = Files.walk(mappingsDirectory, 1)) {
         return paths.parallel()
             .filter(Files::isRegularFile)
             .filter(Files::isReadable)
@@ -85,7 +83,7 @@ public interface GlamVaultAccounts {
             .map(filePath -> {
               try {
                 final var ji = JsonIterator.parse(Files.readAllBytes(filePath));
-                return ProgramMapConfig.parseConfig(ji);
+                return ProgramMapConfig.parseConfig(accountMetaCache, indexedAccountMetaCache, ji);
               } catch (final IOException e) {
                 throw new UncheckedIOException(e);
               }
@@ -94,8 +92,6 @@ public interface GlamVaultAccounts {
       }
     } catch (final IOException e) {
       throw new UncheckedIOException(e);
-    } catch (final URISyntaxException e) {
-      throw new RuntimeException(e);
     }
   }
 
@@ -110,8 +106,9 @@ public interface GlamVaultAccounts {
   }
 
   static TransactionMapper<GlamVaultAccounts> createMapper(final AccountMeta invokedGlamProgram,
+                                                           final Path mappingsDirectory,
                                                            final DynamicGlamAccountFactory dynamicGlamAccountFactory) {
-    return createMapper(invokedGlamProgram, loadMappingConfigs(), dynamicGlamAccountFactory);
+    return createMapper(invokedGlamProgram, loadMappingConfigs(mappingsDirectory), dynamicGlamAccountFactory);
   }
 
   GlamAccounts glamAccounts();

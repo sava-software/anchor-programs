@@ -7,6 +7,8 @@ import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import systems.glam.ix.proxy.TransactionMapper;
 
+import java.nio.file.Path;
+
 public interface GlamAccounts {
 
   GlamAccounts MAIN_NET = createAccounts(
@@ -49,7 +51,8 @@ public interface GlamAccounts {
 
   ProgramDerivedAddress mintPDA(final PublicKey glamPublicKey, final int shareClassId);
 
-  default TransactionMapper<GlamVaultAccounts> createMapper(final DynamicGlamAccountFactory dynamicGlamAccountFactory) {
-    return GlamVaultAccounts.createMapper(invokedProgram(), dynamicGlamAccountFactory);
+  default TransactionMapper<GlamVaultAccounts> createMapper(final Path mappingsDirectory,
+                                                            final DynamicGlamAccountFactory dynamicGlamAccountFactory) {
+    return GlamVaultAccounts.createMapper(invokedProgram(), mappingsDirectory, dynamicGlamAccountFactory);
   }
 }
