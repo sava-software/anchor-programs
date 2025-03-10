@@ -30,6 +30,7 @@ public sealed interface GlamError extends ProgramError permits
     GlamError.InvalidStableCoinPriceForSubscribe,
     GlamError.SubscribeRedeemDisable,
     GlamError.InvalidPolicyAccount,
+    GlamError.PricingError,
     GlamError.PriceTooOld,
     GlamError.TransfersDisabled,
     GlamError.AmountTooBig,
@@ -64,7 +65,8 @@ public sealed interface GlamError extends ProgramError permits
       case 51001 -> InvalidStableCoinPriceForSubscribe.INSTANCE;
       case 51002 -> SubscribeRedeemDisable.INSTANCE;
       case 51003 -> InvalidPolicyAccount.INSTANCE;
-      case 51004 -> PriceTooOld.INSTANCE;
+      case 51004 -> PricingError.INSTANCE;
+      case 51005 -> PriceTooOld.INSTANCE;
       case 52000 -> TransfersDisabled.INSTANCE;
       case 52001 -> AmountTooBig.INSTANCE;
       case 52002 -> LockUp.INSTANCE;
@@ -261,10 +263,17 @@ public sealed interface GlamError extends ProgramError permits
     );
   }
 
+  record PricingError(int code, String msg) implements GlamError {
+
+    public static final PricingError INSTANCE = new PricingError(
+        51004, "Pricing error"
+    );
+  }
+
   record PriceTooOld(int code, String msg) implements GlamError {
 
     public static final PriceTooOld INSTANCE = new PriceTooOld(
-        51004, "Price is too old"
+        51005, "Price is too old"
     );
   }
 

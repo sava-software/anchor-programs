@@ -276,6 +276,27 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, DEACTIVATE_STAKE_ACCOUNTS_DISCRIMINATOR);
   }
 
+  public static final Discriminator DRIFT_BALANCE_VALUE_USD_DISCRIMINATOR = toDiscriminator(152, 248, 238, 80, 92, 122, 40, 131);
+
+  public static Instruction driftBalanceValueUsd(final AccountMeta invokedGlamProgramMeta,
+                                                 final PublicKey glamStateKey,
+                                                 final PublicKey glamVaultKey,
+                                                 final PublicKey signerKey,
+                                                 final PublicKey stateKey,
+                                                 final PublicKey userKey,
+                                                 final PublicKey userStatsKey) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(signerKey),
+      createRead(stateKey),
+      createRead(userKey),
+      createRead(userStatsKey)
+    );
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, DRIFT_BALANCE_VALUE_USD_DISCRIMINATOR);
+  }
+
   public static final Discriminator DRIFT_CANCEL_ORDERS_DISCRIMINATOR = toDiscriminator(98, 107, 48, 79, 97, 60, 99, 58);
 
   public static Instruction driftCancelOrders(final AccountMeta invokedGlamProgramMeta,
@@ -1320,7 +1341,6 @@ public final class GlamProgram {
                                         final PublicKey outputStakePoolKey,
                                         final PublicKey inputTokenProgramKey,
                                         final PublicKey outputTokenProgramKey,
-                                        final long amount,
                                         final byte[] data) {
     final var keys = List.of(
       createWrite(glamStateKey),
@@ -1338,16 +1358,14 @@ public final class GlamProgram {
       createRead(outputTokenProgramKey)
     );
 
-    final byte[] _data = new byte[20 + Borsh.lenVector(data)];
+    final byte[] _data = new byte[12 + Borsh.lenVector(data)];
     int i = writeDiscriminator(JUPITER_SWAP_DISCRIMINATOR, _data, 0);
-    putInt64LE(_data, i, amount);
-    i += 8;
     Borsh.writeVector(data, _data, i);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record JupiterSwapIxData(Discriminator discriminator, long amount, byte[] data) implements Borsh {  
+  public record JupiterSwapIxData(Discriminator discriminator, byte[] data) implements Borsh {  
 
     public static JupiterSwapIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -1359,24 +1377,20 @@ public final class GlamProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var amount = getInt64LE(_data, i);
-      i += 8;
       final byte[] data = Borsh.readbyteVector(_data, i);
-      return new JupiterSwapIxData(discriminator, amount, data);
+      return new JupiterSwapIxData(discriminator, data);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, amount);
-      i += 8;
       i += Borsh.writeVector(data, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 8 + Borsh.lenVector(data);
+      return 8 + Borsh.lenVector(data);
     }
   }
 
@@ -3562,6 +3576,64 @@ public final class GlamProgram {
     }
   }
 
+  public static final Discriminator SYSTEM_TRANSFER_DISCRIMINATOR = toDiscriminator(167, 164, 195, 155, 219, 152, 191, 230);
+
+  public static Instruction systemTransfer(final AccountMeta invokedGlamProgramMeta,
+                                           final SolanaAccounts solanaAccounts,
+                                           final PublicKey glamStateKey,
+                                           final PublicKey glamVaultKey,
+                                           final PublicKey glamSignerKey,
+                                           final PublicKey toKey,
+                                           final long lamports) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(toKey),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.associatedTokenAccountProgram())
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(SYSTEM_TRANSFER_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, lamports);
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
+  }
+
+  public record SystemTransferIxData(Discriminator discriminator, long lamports) implements Borsh {  
+
+    public static SystemTransferIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static SystemTransferIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var lamports = getInt64LE(_data, i);
+      return new SystemTransferIxData(discriminator, lamports);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, lamports);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator TRANSFER_HOOK_DISCRIMINATOR = toDiscriminator(105, 37, 101, 197, 75, 251, 102, 26);
 
   public static Instruction transferHook(final AccountMeta invokedGlamProgramMeta,
@@ -3614,64 +3686,6 @@ public final class GlamProgram {
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, amount);
-      i += 8;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
-  public static final Discriminator TRANSFER_SOL_TO_WSOL_DISCRIMINATOR = toDiscriminator(42, 189, 85, 229, 150, 198, 3, 195);
-
-  public static Instruction transferSolToWsol(final AccountMeta invokedGlamProgramMeta,
-                                              final SolanaAccounts solanaAccounts,
-                                              final PublicKey glamStateKey,
-                                              final PublicKey glamVaultKey,
-                                              final PublicKey glamSignerKey,
-                                              final PublicKey toKey,
-                                              final long lamports) {
-    final var keys = List.of(
-      createRead(glamStateKey),
-      createWrite(glamVaultKey),
-      createWritableSigner(glamSignerKey),
-      createWrite(toKey),
-      createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.tokenProgram()),
-      createRead(solanaAccounts.associatedTokenAccountProgram())
-    );
-
-    final byte[] _data = new byte[16];
-    int i = writeDiscriminator(TRANSFER_SOL_TO_WSOL_DISCRIMINATOR, _data, 0);
-    putInt64LE(_data, i, lamports);
-
-    return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
-  }
-
-  public record TransferSolToWsolIxData(Discriminator discriminator, long lamports) implements Borsh {  
-
-    public static TransferSolToWsolIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 16;
-
-    public static TransferSolToWsolIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = parseDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var lamports = getInt64LE(_data, i);
-      return new TransferSolToWsolIxData(discriminator, lamports);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, lamports);
       i += 8;
       return i - offset;
     }

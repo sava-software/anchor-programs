@@ -105,12 +105,10 @@ public interface GlamJupiterProgramClient {
                                              final AccountMeta inputTokenProgram,
                                              final PublicKey outputMintKey,
                                              final AccountMeta outputTokenProgram,
-                                             final long amount,
                                              final Instruction swapInstruction) {
     return swapUncheckedAndNoWrap(
         null, inputMintKey, inputTokenProgram,
         null, outputMintKey, outputTokenProgram,
-        amount,
         swapInstruction
     );
   }
@@ -119,26 +117,22 @@ public interface GlamJupiterProgramClient {
                                              final PublicKey inputMintKey,
                                              final PublicKey outputProgramStateKey,
                                              final PublicKey outputMintKey,
-                                             final long amount,
                                              final Instruction swapInstruction) {
     final var tokenProgram = solanaAccounts().readTokenProgram();
     return swapUncheckedAndNoWrap(
         inputProgramStateKey, inputMintKey, tokenProgram,
         outputProgramStateKey, outputMintKey, tokenProgram,
-        amount,
         swapInstruction
     );
   }
 
   default Instruction swapUncheckedAndNoWrap(final PublicKey inputMintKey,
                                              final PublicKey outputMintKey,
-                                             final long amount,
                                              final Instruction swapInstruction) {
     final var tokenProgram = solanaAccounts().readTokenProgram();
     return swapUncheckedAndNoWrap(
         null, inputMintKey, tokenProgram,
         null, outputMintKey, tokenProgram,
-        amount,
         swapInstruction
     );
   }
@@ -149,7 +143,6 @@ public interface GlamJupiterProgramClient {
                                      final PublicKey outputProgramStateKey,
                                      final PublicKey outputMintKey,
                                      final AccountMeta outputTokenProgram,
-                                     final long amount,
                                      final Instruction swapInstruction);
 
   default List<Instruction> swapUnchecked(final PublicKey inputMintKey,

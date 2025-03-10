@@ -169,16 +169,6 @@ public final class GlamPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress toPDA(final PublicKey program,
-                                            final PublicKey glamVaultAccount,
-                                            final SolanaAccounts solanaAccounts) {
-    return PublicKey.findProgramAddress(List.of(
-      glamVaultAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
-      solanaAccounts.wrappedSolTokenMint().toByteArray()
-    ), program);
-  }
-
   public static ProgramDerivedAddress toAtaPDA(final PublicKey program,
                                                final PublicKey toAccount,
                                                final PublicKey token2022ProgramAccount,

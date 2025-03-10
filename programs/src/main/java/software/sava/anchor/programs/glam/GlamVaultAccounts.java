@@ -70,8 +70,6 @@ public interface GlamVaultAccounts {
   }
 
   static List<ProgramMapConfig> loadMappingConfigs(final Path mappingsDirectory) {
-
-
     final var accountMetaCache = new HashMap<AccountMeta, AccountMeta>(256);
     final var indexedAccountMetaCache = new HashMap<IndexedAccountMeta, IndexedAccountMeta>(256);
     try {

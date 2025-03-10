@@ -54,7 +54,6 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                   final PublicKey outputProgramStateKey,
                                   final PublicKey outputMintKey,
                                   final PublicKey outputTokenProgram,
-                                  final long amount,
                                   final Instruction swapInstruction) {
     return GlamProgram.jupiterSwap(
         invokedProgram,
@@ -69,7 +68,6 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         inputProgramStateKey,
         outputProgramStateKey,
         inputTokenProgram, outputTokenProgram,
-        amount,
         swapInstruction.data()
     ).extraAccounts(swapInstruction.accounts());
   }
@@ -129,7 +127,6 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         outputProgramStateKey,
         outputMintKey,
         outputTokenProgramKey,
-        amount,
         swapInstruction
     );
 
@@ -154,7 +151,6 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                             final PublicKey outputProgramStateKey,
                                             final PublicKey outputMintKey,
                                             final AccountMeta outputTokenProgram,
-                                            final long amount,
                                             final Instruction swapInstruction) {
     final var inputTokenProgramKey = inputTokenProgram.publicKey();
     final var inputVaultATA = glamProgramAccountClient.findATA(inputTokenProgramKey, inputMintKey).publicKey();
@@ -171,7 +167,6 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
         outputProgramStateKey,
         outputMintKey,
         outputTokenProgram.publicKey(),
-        amount,
         swapInstruction
     );
   }
@@ -189,7 +184,6 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
     final var glamJupiterSwap = swapUncheckedAndNoWrap(
         inputProgramStateKey, inputMintKey, inputTokenProgram,
         outputProgramStateKey, outputMintKey, outputTokenProgram,
-        amount,
         swapInstruction
     );
     return wrapSOL && inputMintKey.equals(solanaAccounts.wrappedSolTokenMint())

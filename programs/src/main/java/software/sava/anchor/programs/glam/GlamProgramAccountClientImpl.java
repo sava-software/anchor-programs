@@ -391,7 +391,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction transferSolLamports(final PublicKey toPublicKey, final long lamports) {
-    return GlamProgram.transferSolToWsol(
+    return GlamProgram.systemTransfer(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
