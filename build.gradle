@@ -86,14 +86,6 @@ subprojects {
     }
   }
 
-  sourceSets {
-    main {
-      resources {
-        srcDirs "src/main/resources"
-      }
-    }
-  }
-
   tasks.register('sourcesJar', Jar) {
     from sourceSets.main.allJava
     archiveClassifier.set('sources')

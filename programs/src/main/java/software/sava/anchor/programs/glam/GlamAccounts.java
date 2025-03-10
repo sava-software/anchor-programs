@@ -1,9 +1,11 @@
 package software.sava.anchor.programs.glam;
 
+import software.sava.anchor.programs.glam.proxy.DynamicGlamAccountFactory;
 import software.sava.anchor.programs.glam_v0.GlamV0AccountsRecord;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
+import systems.glam.ix.proxy.TransactionMapper;
 
 public interface GlamAccounts {
 
@@ -46,4 +48,8 @@ public interface GlamAccounts {
   AccountMeta invokedProgram();
 
   ProgramDerivedAddress mintPDA(final PublicKey glamPublicKey, final int shareClassId);
+
+  default TransactionMapper<GlamVaultAccounts> createMapper(final DynamicGlamAccountFactory dynamicGlamAccountFactory) {
+    return GlamVaultAccounts.createMapper(invokedProgram(), dynamicGlamAccountFactory);
+  }
 }
