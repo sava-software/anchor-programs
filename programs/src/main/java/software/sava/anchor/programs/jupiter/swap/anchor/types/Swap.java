@@ -5,6 +5,7 @@ import software.sava.core.borsh.RustEnum;
 
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
+import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public sealed interface Swap extends RustEnum permits
@@ -49,7 +50,12 @@ public sealed interface Swap extends RustEnum permits
   Swap.MeteoraDlmm,
   Swap.OpenBookV2,
   Swap.RaydiumClmmV2,
+  Swap.StakeDexPrefundWithdrawStakeAndDepositStake,
   Swap.Clone,
+  Swap.SanctumS,
+  Swap.SanctumSAddLiquidity,
+  Swap.SanctumSRemoveLiquidity,
+  Swap.RaydiumCP,
   Swap.WhirlpoolSwapV2,
   Swap.OneIntro,
   Swap.PumpdotfunWrappedBuy,
@@ -70,6 +76,8 @@ public sealed interface Swap extends RustEnum permits
   Swap.TokenMill,
   Swap.DaosFunBuy,
   Swap.DaosFunSell,
+  Swap.ZeroFi,
+  Swap.StakeDexWithdrawWrappedSol,
   Swap.VirtualsBuy,
   Swap.VirtualsSell,
   Swap.Perena,
@@ -121,32 +129,39 @@ public sealed interface Swap extends RustEnum permits
       case 38 -> MeteoraDlmm.INSTANCE;
       case 39 -> OpenBookV2.read(_data, i);
       case 40 -> RaydiumClmmV2.INSTANCE;
-      case 41 -> Clone.read(_data, i);
-      case 42 -> WhirlpoolSwapV2.read(_data, i);
-      case 43 -> OneIntro.INSTANCE;
-      case 44 -> PumpdotfunWrappedBuy.INSTANCE;
-      case 45 -> PumpdotfunWrappedSell.INSTANCE;
-      case 46 -> PerpsV2.INSTANCE;
-      case 47 -> PerpsV2AddLiquidity.INSTANCE;
-      case 48 -> PerpsV2RemoveLiquidity.INSTANCE;
-      case 49 -> MoonshotWrappedBuy.INSTANCE;
-      case 50 -> MoonshotWrappedSell.INSTANCE;
-      case 51 -> StabbleStableSwap.INSTANCE;
-      case 52 -> StabbleWeightedSwap.INSTANCE;
-      case 53 -> Obric.read(_data, i);
-      case 54 -> FoxBuyFromEstimatedCost.INSTANCE;
-      case 55 -> FoxClaimPartial.read(_data, i);
-      case 56 -> SolFi.read(_data, i);
-      case 57 -> SolayerDelegateNoInit.INSTANCE;
-      case 58 -> SolayerUndelegateNoInit.INSTANCE;
-      case 59 -> TokenMill.read(_data, i);
-      case 60 -> DaosFunBuy.INSTANCE;
-      case 61 -> DaosFunSell.INSTANCE;
-      case 62 -> VirtualsBuy.INSTANCE;
-      case 63 -> VirtualsSell.INSTANCE;
-      case 64 -> Perena.read(_data, i);
-      case 65 -> PumpdotfunAmmBuy.INSTANCE;
-      case 66 -> PumpdotfunAmmSell.INSTANCE;
+      case 41 -> StakeDexPrefundWithdrawStakeAndDepositStake.read(_data, i);
+      case 42 -> Clone.read(_data, i);
+      case 43 -> SanctumS.read(_data, i);
+      case 44 -> SanctumSAddLiquidity.read(_data, i);
+      case 45 -> SanctumSRemoveLiquidity.read(_data, i);
+      case 46 -> RaydiumCP.INSTANCE;
+      case 47 -> WhirlpoolSwapV2.read(_data, i);
+      case 48 -> OneIntro.INSTANCE;
+      case 49 -> PumpdotfunWrappedBuy.INSTANCE;
+      case 50 -> PumpdotfunWrappedSell.INSTANCE;
+      case 51 -> PerpsV2.INSTANCE;
+      case 52 -> PerpsV2AddLiquidity.INSTANCE;
+      case 53 -> PerpsV2RemoveLiquidity.INSTANCE;
+      case 54 -> MoonshotWrappedBuy.INSTANCE;
+      case 55 -> MoonshotWrappedSell.INSTANCE;
+      case 56 -> StabbleStableSwap.INSTANCE;
+      case 57 -> StabbleWeightedSwap.INSTANCE;
+      case 58 -> Obric.read(_data, i);
+      case 59 -> FoxBuyFromEstimatedCost.INSTANCE;
+      case 60 -> FoxClaimPartial.read(_data, i);
+      case 61 -> SolFi.read(_data, i);
+      case 62 -> SolayerDelegateNoInit.INSTANCE;
+      case 63 -> SolayerUndelegateNoInit.INSTANCE;
+      case 64 -> TokenMill.read(_data, i);
+      case 65 -> DaosFunBuy.INSTANCE;
+      case 66 -> DaosFunSell.INSTANCE;
+      case 67 -> ZeroFi.INSTANCE;
+      case 68 -> StakeDexWithdrawWrappedSol.INSTANCE;
+      case 69 -> VirtualsBuy.INSTANCE;
+      case 70 -> VirtualsSell.INSTANCE;
+      case 71 -> Perena.read(_data, i);
+      case 72 -> PumpdotfunAmmBuy.INSTANCE;
+      case 73 -> PumpdotfunAmmSell.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -630,6 +645,18 @@ public sealed interface Swap extends RustEnum permits
     }
   }
 
+  record StakeDexPrefundWithdrawStakeAndDepositStake(int val) implements EnumInt32, Swap {
+
+    public static StakeDexPrefundWithdrawStakeAndDepositStake read(final byte[] _data, int i) {
+      return new StakeDexPrefundWithdrawStakeAndDepositStake(getInt32LE(_data, i));
+    }
+
+    @Override
+    public int ordinal() {
+      return 41;
+    }
+  }
+
   record Clone(int poolIndex,
                boolean quantityIsInput,
                boolean quantityIsCollateral) implements Swap {
@@ -668,7 +695,139 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 41;
+      return 42;
+    }
+  }
+
+  record SanctumS(int srcLstValueCalcAccs,
+                  int dstLstValueCalcAccs,
+                  int srcLstIndex,
+                  int dstLstIndex) implements Swap {
+
+    public static final int BYTES = 10;
+
+    public static SanctumS read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      int i = offset;
+      final var srcLstValueCalcAccs = _data[i] & 0xFF;
+      ++i;
+      final var dstLstValueCalcAccs = _data[i] & 0xFF;
+      ++i;
+      final var srcLstIndex = getInt32LE(_data, i);
+      i += 4;
+      final var dstLstIndex = getInt32LE(_data, i);
+      return new SanctumS(srcLstValueCalcAccs,
+                          dstLstValueCalcAccs,
+                          srcLstIndex,
+                          dstLstIndex);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      _data[i] = (byte) srcLstValueCalcAccs;
+      ++i;
+      _data[i] = (byte) dstLstValueCalcAccs;
+      ++i;
+      putInt32LE(_data, i, srcLstIndex);
+      i += 4;
+      putInt32LE(_data, i, dstLstIndex);
+      i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+
+    @Override
+    public int ordinal() {
+      return 43;
+    }
+  }
+
+  record SanctumSAddLiquidity(int lstValueCalcAccs, int lstIndex) implements Swap {
+
+    public static final int BYTES = 5;
+
+    public static SanctumSAddLiquidity read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      int i = offset;
+      final var lstValueCalcAccs = _data[i] & 0xFF;
+      ++i;
+      final var lstIndex = getInt32LE(_data, i);
+      return new SanctumSAddLiquidity(lstValueCalcAccs, lstIndex);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      _data[i] = (byte) lstValueCalcAccs;
+      ++i;
+      putInt32LE(_data, i, lstIndex);
+      i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+
+    @Override
+    public int ordinal() {
+      return 44;
+    }
+  }
+
+  record SanctumSRemoveLiquidity(int lstValueCalcAccs, int lstIndex) implements Swap {
+
+    public static final int BYTES = 5;
+
+    public static SanctumSRemoveLiquidity read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      int i = offset;
+      final var lstValueCalcAccs = _data[i] & 0xFF;
+      ++i;
+      final var lstIndex = getInt32LE(_data, i);
+      return new SanctumSRemoveLiquidity(lstValueCalcAccs, lstIndex);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      _data[i] = (byte) lstValueCalcAccs;
+      ++i;
+      putInt32LE(_data, i, lstIndex);
+      i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+
+    @Override
+    public int ordinal() {
+      return 45;
+    }
+  }
+
+  record RaydiumCP() implements EnumNone, Swap {
+
+    public static final RaydiumCP INSTANCE = new RaydiumCP();
+
+    @Override
+    public int ordinal() {
+      return 46;
     }
   }
 
@@ -701,7 +860,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 42;
+      return 47;
     }
   }
 
@@ -711,7 +870,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 43;
+      return 48;
     }
   }
 
@@ -721,7 +880,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 44;
+      return 49;
     }
   }
 
@@ -731,7 +890,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 45;
+      return 50;
     }
   }
 
@@ -741,7 +900,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 46;
+      return 51;
     }
   }
 
@@ -751,7 +910,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 47;
+      return 52;
     }
   }
 
@@ -761,7 +920,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 48;
+      return 53;
     }
   }
 
@@ -771,7 +930,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 49;
+      return 54;
     }
   }
 
@@ -781,7 +940,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 50;
+      return 55;
     }
   }
 
@@ -791,7 +950,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 51;
+      return 56;
     }
   }
 
@@ -801,7 +960,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 52;
+      return 57;
     }
   }
 
@@ -816,7 +975,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 53;
+      return 58;
     }
   }
 
@@ -826,7 +985,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 54;
+      return 59;
     }
   }
 
@@ -841,7 +1000,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 55;
+      return 60;
     }
   }
 
@@ -856,7 +1015,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 56;
+      return 61;
     }
   }
 
@@ -866,7 +1025,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 57;
+      return 62;
     }
   }
 
@@ -876,7 +1035,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 58;
+      return 63;
     }
   }
 
@@ -888,7 +1047,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 59;
+      return 64;
     }
   }
 
@@ -898,7 +1057,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 60;
+      return 65;
     }
   }
 
@@ -908,7 +1067,27 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 61;
+      return 66;
+    }
+  }
+
+  record ZeroFi() implements EnumNone, Swap {
+
+    public static final ZeroFi INSTANCE = new ZeroFi();
+
+    @Override
+    public int ordinal() {
+      return 67;
+    }
+  }
+
+  record StakeDexWithdrawWrappedSol() implements EnumNone, Swap {
+
+    public static final StakeDexWithdrawWrappedSol INSTANCE = new StakeDexWithdrawWrappedSol();
+
+    @Override
+    public int ordinal() {
+      return 68;
     }
   }
 
@@ -918,7 +1097,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 62;
+      return 69;
     }
   }
 
@@ -928,7 +1107,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 63;
+      return 70;
     }
   }
 
@@ -964,7 +1143,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 64;
+      return 71;
     }
   }
 
@@ -974,7 +1153,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 65;
+      return 72;
     }
   }
 
@@ -984,7 +1163,7 @@ public sealed interface Swap extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 66;
+      return 73;
     }
   }
 }

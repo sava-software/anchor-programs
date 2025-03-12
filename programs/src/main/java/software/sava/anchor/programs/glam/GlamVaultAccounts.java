@@ -44,31 +44,6 @@ public interface GlamVaultAccounts {
     return GlamVaultAccounts.createAccounts(GlamAccounts.MAIN_NET, feePayer, glamPublicKey);
   }
 
-  static GlamVaultAccounts createV0Accounts(final GlamAccounts glamAccounts,
-                                            final PublicKey feePayer,
-                                            final PublicKey glamPublicKey) {
-    final var program = glamAccounts.program();
-    final var vaultPDA = software.sava.anchor.programs.glam_v0.anchor.GlamPDAs.vaultPDA(program, glamPublicKey);
-    final var metadataPDA = software.sava.anchor.programs.glam_v0.anchor.GlamPDAs.metadataPDA(program, glamPublicKey);
-    return new GlamVaultAccountsRecord(
-        glamAccounts,
-        AccountMeta.createReadOnlySigner(feePayer),
-        AccountMeta.createWritableSigner(feePayer),
-        AccountMeta.createRead(glamPublicKey),
-        AccountMeta.createWrite(glamPublicKey),
-        vaultPDA,
-        AccountMeta.createRead(vaultPDA.publicKey()),
-        AccountMeta.createWrite(vaultPDA.publicKey()),
-        metadataPDA,
-        AccountMeta.createRead(metadataPDA.publicKey()),
-        AccountMeta.createWrite(metadataPDA.publicKey())
-    );
-  }
-
-  static GlamVaultAccounts createV0Accounts(final PublicKey feePayer, final PublicKey glamPublicKey) {
-    return GlamVaultAccounts.createV0Accounts(GlamAccounts.MAIN_NET_VO, feePayer, glamPublicKey);
-  }
-
   static List<ProgramMapConfig> loadMappingConfigs(final Path mappingsDirectory) {
     final var accountMetaCache = new HashMap<AccountMeta, AccountMeta>(256);
     final var indexedAccountMetaCache = new HashMap<IndexedAccountMeta, IndexedAccountMeta>(256);
