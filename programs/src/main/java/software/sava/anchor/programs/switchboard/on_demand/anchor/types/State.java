@@ -26,20 +26,18 @@ public record State(PublicKey _address,
                     PublicKey guardianQueue,
                     long reserved1,
                     long epochLength,
-                    StateEpochInfo currentEpoch,
-                    StateEpochInfo nextEpoch,
-                    StateEpochInfo finalizedEpoch,
-                    PublicKey stakePool,
-                    PublicKey stakeProgram,
+                    byte[] reserved2,
                     PublicKey switchMint,
                     short[] sgxAdvisories,
                     int advisoriesLen,
                     int padding2,
                     int flatRewardCutPercentage,
                     int enableSlashing,
-                    int subsidyAmount,
+                    int padding3,
                     long lutSlot,
                     int baseReward,
+                    byte[] padding4,
+                    long subsidyAmount,
                     byte[] ebuf6,
                     byte[] ebuf5,
                     byte[] ebuf4,
@@ -62,21 +60,19 @@ public record State(PublicKey _address,
   public static final int GUARDIAN_QUEUE_OFFSET = 48;
   public static final int RESERVED1_OFFSET = 80;
   public static final int EPOCH_LENGTH_OFFSET = 88;
-  public static final int CURRENT_EPOCH_OFFSET = 96;
-  public static final int NEXT_EPOCH_OFFSET = 120;
-  public static final int FINALIZED_EPOCH_OFFSET = 144;
-  public static final int STAKE_POOL_OFFSET = 168;
-  public static final int STAKE_PROGRAM_OFFSET = 200;
+  public static final int RESERVED2_OFFSET = 96;
   public static final int SWITCH_MINT_OFFSET = 232;
   public static final int SGX_ADVISORIES_OFFSET = 264;
   public static final int ADVISORIES_LEN_OFFSET = 328;
   public static final int PADDING2_OFFSET = 329;
   public static final int FLAT_REWARD_CUT_PERCENTAGE_OFFSET = 330;
   public static final int ENABLE_SLASHING_OFFSET = 331;
-  public static final int SUBSIDY_AMOUNT_OFFSET = 332;
+  public static final int PADDING3_OFFSET = 332;
   public static final int LUT_SLOT_OFFSET = 336;
   public static final int BASE_REWARD_OFFSET = 344;
-  public static final int EBUF6_OFFSET = 348;
+  public static final int PADDING4_OFFSET = 348;
+  public static final int SUBSIDY_AMOUNT_OFFSET = 352;
+  public static final int EBUF6_OFFSET = 360;
   public static final int EBUF5_OFFSET = 376;
   public static final int EBUF4_OFFSET = 408;
   public static final int EBUF3_OFFSET = 472;
@@ -115,26 +111,6 @@ public record State(PublicKey _address,
     return Filter.createMemCompFilter(EPOCH_LENGTH_OFFSET, _data);
   }
 
-  public static Filter createCurrentEpochFilter(final StateEpochInfo currentEpoch) {
-    return Filter.createMemCompFilter(CURRENT_EPOCH_OFFSET, currentEpoch.write());
-  }
-
-  public static Filter createNextEpochFilter(final StateEpochInfo nextEpoch) {
-    return Filter.createMemCompFilter(NEXT_EPOCH_OFFSET, nextEpoch.write());
-  }
-
-  public static Filter createFinalizedEpochFilter(final StateEpochInfo finalizedEpoch) {
-    return Filter.createMemCompFilter(FINALIZED_EPOCH_OFFSET, finalizedEpoch.write());
-  }
-
-  public static Filter createStakePoolFilter(final PublicKey stakePool) {
-    return Filter.createMemCompFilter(STAKE_POOL_OFFSET, stakePool);
-  }
-
-  public static Filter createStakeProgramFilter(final PublicKey stakeProgram) {
-    return Filter.createMemCompFilter(STAKE_PROGRAM_OFFSET, stakeProgram);
-  }
-
   public static Filter createSwitchMintFilter(final PublicKey switchMint) {
     return Filter.createMemCompFilter(SWITCH_MINT_OFFSET, switchMint);
   }
@@ -155,10 +131,10 @@ public record State(PublicKey _address,
     return Filter.createMemCompFilter(ENABLE_SLASHING_OFFSET, new byte[]{(byte) enableSlashing});
   }
 
-  public static Filter createSubsidyAmountFilter(final int subsidyAmount) {
+  public static Filter createPadding3Filter(final int padding3) {
     final byte[] _data = new byte[4];
-    putInt32LE(_data, 0, subsidyAmount);
-    return Filter.createMemCompFilter(SUBSIDY_AMOUNT_OFFSET, _data);
+    putInt32LE(_data, 0, padding3);
+    return Filter.createMemCompFilter(PADDING3_OFFSET, _data);
   }
 
   public static Filter createLutSlotFilter(final long lutSlot) {
@@ -171,6 +147,12 @@ public record State(PublicKey _address,
     final byte[] _data = new byte[4];
     putInt32LE(_data, 0, baseReward);
     return Filter.createMemCompFilter(BASE_REWARD_OFFSET, _data);
+  }
+
+  public static Filter createSubsidyAmountFilter(final long subsidyAmount) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, subsidyAmount);
+    return Filter.createMemCompFilter(SUBSIDY_AMOUNT_OFFSET, _data);
   }
 
   public static State read(final byte[] _data, final int offset) {
@@ -209,16 +191,8 @@ public record State(PublicKey _address,
     i += 8;
     final var epochLength = getInt64LE(_data, i);
     i += 8;
-    final var currentEpoch = StateEpochInfo.read(_data, i);
-    i += Borsh.len(currentEpoch);
-    final var nextEpoch = StateEpochInfo.read(_data, i);
-    i += Borsh.len(nextEpoch);
-    final var finalizedEpoch = StateEpochInfo.read(_data, i);
-    i += Borsh.len(finalizedEpoch);
-    final var stakePool = readPubKey(_data, i);
-    i += 32;
-    final var stakeProgram = readPubKey(_data, i);
-    i += 32;
+    final var reserved2 = new byte[136];
+    i += Borsh.readArray(reserved2, _data, i);
     final var switchMint = readPubKey(_data, i);
     i += 32;
     final var sgxAdvisories = new short[32];
@@ -231,13 +205,17 @@ public record State(PublicKey _address,
     ++i;
     final var enableSlashing = _data[i] & 0xFF;
     ++i;
-    final var subsidyAmount = getInt32LE(_data, i);
+    final var padding3 = getInt32LE(_data, i);
     i += 4;
     final var lutSlot = getInt64LE(_data, i);
     i += 8;
     final var baseReward = getInt32LE(_data, i);
     i += 4;
-    final var ebuf6 = new byte[28];
+    final var padding4 = new byte[4];
+    i += Borsh.readArray(padding4, _data, i);
+    final var subsidyAmount = getInt64LE(_data, i);
+    i += 8;
+    final var ebuf6 = new byte[16];
     i += Borsh.readArray(ebuf6, _data, i);
     final var ebuf5 = new byte[32];
     i += Borsh.readArray(ebuf5, _data, i);
@@ -259,20 +237,18 @@ public record State(PublicKey _address,
                      guardianQueue,
                      reserved1,
                      epochLength,
-                     currentEpoch,
-                     nextEpoch,
-                     finalizedEpoch,
-                     stakePool,
-                     stakeProgram,
+                     reserved2,
                      switchMint,
                      sgxAdvisories,
                      advisoriesLen,
                      padding2,
                      flatRewardCutPercentage,
                      enableSlashing,
-                     subsidyAmount,
+                     padding3,
                      lutSlot,
                      baseReward,
+                     padding4,
+                     subsidyAmount,
                      ebuf6,
                      ebuf5,
                      ebuf4,
@@ -299,13 +275,7 @@ public record State(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, epochLength);
     i += 8;
-    i += Borsh.write(currentEpoch, _data, i);
-    i += Borsh.write(nextEpoch, _data, i);
-    i += Borsh.write(finalizedEpoch, _data, i);
-    stakePool.write(_data, i);
-    i += 32;
-    stakeProgram.write(_data, i);
-    i += 32;
+    i += Borsh.writeArray(reserved2, _data, i);
     switchMint.write(_data, i);
     i += 32;
     i += Borsh.writeArray(sgxAdvisories, _data, i);
@@ -317,12 +287,15 @@ public record State(PublicKey _address,
     ++i;
     _data[i] = (byte) enableSlashing;
     ++i;
-    putInt32LE(_data, i, subsidyAmount);
+    putInt32LE(_data, i, padding3);
     i += 4;
     putInt64LE(_data, i, lutSlot);
     i += 8;
     putInt32LE(_data, i, baseReward);
     i += 4;
+    i += Borsh.writeArray(padding4, _data, i);
+    putInt64LE(_data, i, subsidyAmount);
+    i += 8;
     i += Borsh.writeArray(ebuf6, _data, i);
     i += Borsh.writeArray(ebuf5, _data, i);
     i += Borsh.writeArray(ebuf4, _data, i);

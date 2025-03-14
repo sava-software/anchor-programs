@@ -4,7 +4,6 @@ import java.util.List;
 
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
-import software.sava.core.accounts.SolanaAccounts;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
@@ -101,17 +100,6 @@ public final class GlamPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress mintTo1PDA(final PublicKey program,
-                                                 final PublicKey glamVaultAccount,
-                                                 final SolanaAccounts solanaAccounts,
-                                                 final PublicKey poolMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      glamVaultAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
-      poolMintAccount.toByteArray()
-    ), program);
-  }
-
   public static ProgramDerivedAddress openfundsMetadataPDA(final PublicKey program,
                                                            final PublicKey glamStateAccount) {
     return PublicKey.findProgramAddress(List.of(
@@ -188,27 +176,6 @@ public final class GlamPDAs {
       glamVaultAccount.toByteArray(),
       tokenProgramAccount.toByteArray(),
       assetAccount.toByteArray()
-    ), program);
-  }
-
-  public static ProgramDerivedAddress vaultWsolAtaPDA(final PublicKey program,
-                                                      final PublicKey glamVaultAccount,
-                                                      final SolanaAccounts solanaAccounts) {
-    return PublicKey.findProgramAddress(List.of(
-      glamVaultAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
-      solanaAccounts.wrappedSolTokenMint().toByteArray()
-    ), program);
-  }
-
-  public static ProgramDerivedAddress vaultWsolAta1PDA(final PublicKey program,
-                                                       final PublicKey glamVaultAccount,
-                                                       final SolanaAccounts solanaAccounts,
-                                                       final PublicKey wsolMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      glamVaultAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
-      wsolMintAccount.toByteArray()
     ), program);
   }
 

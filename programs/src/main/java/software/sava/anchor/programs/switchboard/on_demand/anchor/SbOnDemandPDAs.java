@@ -69,6 +69,17 @@ public final class SbOnDemandPDAs {
     ), program);
   }
 
+  public static ProgramDerivedAddress rewardVaultPDA(final PublicKey program,
+                                                     final PublicKey vaultAccount,
+                                                     final SolanaAccounts solanaAccounts,
+                                                     final PublicKey switchMintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      vaultAccount.toByteArray(),
+      solanaAccounts.tokenProgram().toByteArray(),
+      switchMintAccount.toByteArray()
+    ), program);
+  }
+
   public static ProgramDerivedAddress statePDA(final PublicKey program) {
     return PublicKey.findProgramAddress(List.of(
       "STATE".getBytes(US_ASCII)
@@ -80,6 +91,17 @@ public final class SbOnDemandPDAs {
     return PublicKey.findProgramAddress(List.of(
       "OracleRandomnessStats".getBytes(US_ASCII),
       oracleAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress subsidyVaultPDA(final PublicKey program,
+                                                      final PublicKey programStateAccount,
+                                                      final SolanaAccounts solanaAccounts,
+                                                      final PublicKey switchMintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      programStateAccount.toByteArray(),
+      solanaAccounts.tokenProgram().toByteArray(),
+      switchMintAccount.toByteArray()
     ), program);
   }
 

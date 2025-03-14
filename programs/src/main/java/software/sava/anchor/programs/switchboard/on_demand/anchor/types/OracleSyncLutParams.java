@@ -2,11 +2,11 @@ package software.sava.anchor.programs.switchboard.on_demand.anchor.types;
 
 import software.sava.core.borsh.Borsh;
 
-public record QueueInitDelegationGroupParams() implements Borsh {
+public record OracleSyncLutParams() implements Borsh {
 
-  private static final QueueInitDelegationGroupParams INSTANCE = new QueueInitDelegationGroupParams();
+  private static final OracleSyncLutParams INSTANCE = new OracleSyncLutParams();
 
-  public static QueueInitDelegationGroupParams read(final byte[] _data, final int offset) {
+  public static OracleSyncLutParams read(final byte[] _data, final int offset) {
     return INSTANCE;
   }
 

@@ -58,11 +58,11 @@ public record QueueAccountData(PublicKey _address,
                                PublicKey mint,
                                long lutSlot,
                                int allowSubsidies,
-                               // Reserved.
                                byte[] ebuf6,
-                               byte[] ebuf5,
+                               PublicKey ncn,
+                               long resrved,
+                               VaultInfo[] vaults,
                                byte[] ebuf4,
-                               byte[] ebuf3,
                                byte[] ebuf2,
                                byte[] ebuf1) implements Borsh {
 
@@ -93,9 +93,10 @@ public record QueueAccountData(PublicKey _address,
   public static final int LUT_SLOT_OFFSET = 5256;
   public static final int ALLOW_SUBSIDIES_OFFSET = 5264;
   public static final int EBUF6_OFFSET = 5265;
-  public static final int EBUF5_OFFSET = 5288;
-  public static final int EBUF4_OFFSET = 5320;
-  public static final int EBUF3_OFFSET = 5384;
+  public static final int NCN_OFFSET = 5280;
+  public static final int RESRVED_OFFSET = 5312;
+  public static final int VAULTS_OFFSET = 5320;
+  public static final int EBUF4_OFFSET = 5480;
   public static final int EBUF2_OFFSET = 5512;
   public static final int EBUF1_OFFSET = 5768;
 
@@ -193,6 +194,16 @@ public record QueueAccountData(PublicKey _address,
     return Filter.createMemCompFilter(ALLOW_SUBSIDIES_OFFSET, new byte[]{(byte) allowSubsidies});
   }
 
+  public static Filter createNcnFilter(final PublicKey ncn) {
+    return Filter.createMemCompFilter(NCN_OFFSET, ncn);
+  }
+
+  public static Filter createResrvedFilter(final long resrved) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, resrved);
+    return Filter.createMemCompFilter(RESRVED_OFFSET, _data);
+  }
+
   public static QueueAccountData read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -253,14 +264,16 @@ public record QueueAccountData(PublicKey _address,
     i += 8;
     final var allowSubsidies = _data[i] & 0xFF;
     ++i;
-    final var ebuf6 = new byte[23];
+    final var ebuf6 = new byte[15];
     i += Borsh.readArray(ebuf6, _data, i);
-    final var ebuf5 = new byte[32];
-    i += Borsh.readArray(ebuf5, _data, i);
-    final var ebuf4 = new byte[64];
+    final var ncn = readPubKey(_data, i);
+    i += 32;
+    final var resrved = getInt64LE(_data, i);
+    i += 8;
+    final var vaults = new VaultInfo[4];
+    i += Borsh.readArray(vaults, VaultInfo::read, _data, i);
+    final var ebuf4 = new byte[32];
     i += Borsh.readArray(ebuf4, _data, i);
-    final var ebuf3 = new byte[128];
-    i += Borsh.readArray(ebuf3, _data, i);
     final var ebuf2 = new byte[256];
     i += Borsh.readArray(ebuf2, _data, i);
     final var ebuf1 = new byte[512];
@@ -288,9 +301,10 @@ public record QueueAccountData(PublicKey _address,
                                 lutSlot,
                                 allowSubsidies,
                                 ebuf6,
-                                ebuf5,
+                                ncn,
+                                resrved,
+                                vaults,
                                 ebuf4,
-                                ebuf3,
                                 ebuf2,
                                 ebuf1);
   }
@@ -337,9 +351,12 @@ public record QueueAccountData(PublicKey _address,
     _data[i] = (byte) allowSubsidies;
     ++i;
     i += Borsh.writeArray(ebuf6, _data, i);
-    i += Borsh.writeArray(ebuf5, _data, i);
+    ncn.write(_data, i);
+    i += 32;
+    putInt64LE(_data, i, resrved);
+    i += 8;
+    i += Borsh.writeArray(vaults, _data, i);
     i += Borsh.writeArray(ebuf4, _data, i);
-    i += Borsh.writeArray(ebuf3, _data, i);
     i += Borsh.writeArray(ebuf2, _data, i);
     i += Borsh.writeArray(ebuf1, _data, i);
     return i - offset;

@@ -7,7 +7,7 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record OracleEpochInfo(long id,
                               long reserved1,
-                              long slotEnd,
+                              long reserved,
                               long slashScore,
                               long rewardScore,
                               long stakeScore) implements Borsh {
@@ -23,7 +23,7 @@ public record OracleEpochInfo(long id,
     i += 8;
     final var reserved1 = getInt64LE(_data, i);
     i += 8;
-    final var slotEnd = getInt64LE(_data, i);
+    final var reserved = getInt64LE(_data, i);
     i += 8;
     final var slashScore = getInt64LE(_data, i);
     i += 8;
@@ -32,7 +32,7 @@ public record OracleEpochInfo(long id,
     final var stakeScore = getInt64LE(_data, i);
     return new OracleEpochInfo(id,
                                reserved1,
-                               slotEnd,
+                               reserved,
                                slashScore,
                                rewardScore,
                                stakeScore);
@@ -45,7 +45,7 @@ public record OracleEpochInfo(long id,
     i += 8;
     putInt64LE(_data, i, reserved1);
     i += 8;
-    putInt64LE(_data, i, slotEnd);
+    putInt64LE(_data, i, reserved);
     i += 8;
     putInt64LE(_data, i, slashScore);
     i += 8;

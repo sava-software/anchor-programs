@@ -35,7 +35,7 @@ public record OracleAccountData(PublicKey _address,
                                 byte[] padding1,
                                 long lutSlot,
                                 long lastRewardEpoch,
-                                byte[] ebuf4,
+                                PublicKey operator,
                                 byte[] ebuf3,
                                 byte[] ebuf2,
                                 byte[] ebuf1) implements Borsh {
@@ -58,8 +58,8 @@ public record OracleAccountData(PublicKey _address,
   public static final int PADDING1_OFFSET = 3657;
   public static final int LUT_SLOT_OFFSET = 3664;
   public static final int LAST_REWARD_EPOCH_OFFSET = 3672;
-  public static final int EBUF4_OFFSET = 3680;
-  public static final int EBUF3_OFFSET = 3696;
+  public static final int OPERATOR_OFFSET = 3680;
+  public static final int EBUF3_OFFSET = 3712;
   public static final int EBUF2_OFFSET = 3728;
   public static final int EBUF1_OFFSET = 3792;
 
@@ -103,6 +103,10 @@ public record OracleAccountData(PublicKey _address,
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, lastRewardEpoch);
     return Filter.createMemCompFilter(LAST_REWARD_EPOCH_OFFSET, _data);
+  }
+
+  public static Filter createOperatorFilter(final PublicKey operator) {
+    return Filter.createMemCompFilter(OPERATOR_OFFSET, operator);
   }
 
   public static OracleAccountData read(final byte[] _data, final int offset) {
@@ -149,9 +153,9 @@ public record OracleAccountData(PublicKey _address,
     i += 8;
     final var lastRewardEpoch = getInt64LE(_data, i);
     i += 8;
-    final var ebuf4 = new byte[16];
-    i += Borsh.readArray(ebuf4, _data, i);
-    final var ebuf3 = new byte[32];
+    final var operator = readPubKey(_data, i);
+    i += 32;
+    final var ebuf3 = new byte[16];
     i += Borsh.readArray(ebuf3, _data, i);
     final var ebuf2 = new byte[64];
     i += Borsh.readArray(ebuf2, _data, i);
@@ -171,7 +175,7 @@ public record OracleAccountData(PublicKey _address,
                                  padding1,
                                  lutSlot,
                                  lastRewardEpoch,
-                                 ebuf4,
+                                 operator,
                                  ebuf3,
                                  ebuf2,
                                  ebuf1);
@@ -200,7 +204,8 @@ public record OracleAccountData(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, lastRewardEpoch);
     i += 8;
-    i += Borsh.writeArray(ebuf4, _data, i);
+    operator.write(_data, i);
+    i += 32;
     i += Borsh.writeArray(ebuf3, _data, i);
     i += Borsh.writeArray(ebuf2, _data, i);
     i += Borsh.writeArray(ebuf1, _data, i);

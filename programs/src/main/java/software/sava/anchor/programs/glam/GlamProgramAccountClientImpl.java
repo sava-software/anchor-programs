@@ -19,7 +19,6 @@ import software.sava.solana.programs.stake.StakeAccount;
 import software.sava.solana.programs.stake.StakeAuthorize;
 import software.sava.solana.programs.stake.StakeState;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -28,7 +27,7 @@ import static software.sava.core.accounts.meta.AccountMeta.createFeePayer;
 final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   private final SolanaAccounts solanaAccounts;
-  private final NativeProgramClient nativeProgramClient;
+  private final GlamNativeProgramClient nativeProgramClient;
   private final NativeProgramAccountClient nativeProgramAccountClient;
   private final GlamVaultAccounts glamVaultAccounts;
   private final AccountMeta invokedProgram;
@@ -343,34 +342,29 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public Instruction transferLamportsAndSyncNative(final long lamports) {
-    return GlamProgram.wsolWrap(
+  public Instruction transferSolLamports(final PublicKey toPublicKey, final long lamports) {
+    return GlamProgram.systemTransfer(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
-        wrappedSolPDA().publicKey(),
-        solanaAccounts.wrappedSolTokenMint(),
+        toPublicKey,
         lamports
     );
   }
 
   @Override
   public List<Instruction> wrapSOL(final long lamports) {
-    return List.of(transferLamportsAndSyncNative(lamports));
+    final var wrappedSolPDA = wrappedSolPDA().publicKey();
+    final var transferIx = transferSolLamports(wrappedSolPDA, lamports);
+    final var syncNativeIx = nativeProgramClient.syncNative(wrappedSolPDA);
+    return List.of(transferIx, syncNativeIx);
   }
 
   @Override
   public Instruction unwrapSOL() {
-    return GlamProgram.wsolUnwrap(
-        invokedProgram,
-        solanaAccounts,
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        feePayer.publicKey(),
-        wrappedSolPDA().publicKey()
-    );
+    return closeTokenAccount(wrappedSolPDA().publicKey());
   }
 
   @Override
@@ -387,19 +381,6 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                            final long space,
                                            final PublicKey programOwner) {
     return nativeProgramAccountClient.createAccountWithSeed(accountWithSeed, lamports, space, programOwner);
-  }
-
-  @Override
-  public Instruction transferSolLamports(final PublicKey toPublicKey, final long lamports) {
-    return GlamProgram.systemTransfer(
-        invokedProgram,
-        solanaAccounts,
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        feePayer.publicKey(),
-        toPublicKey,
-        lamports
-    );
   }
 
   @Override
@@ -460,56 +441,62 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public Instruction transferToken(final PublicKey fromTokenAccount,
+  public Instruction transferToken(final AccountMeta invokedTokenProgram,
+                                   final PublicKey fromTokenAccount,
                                    final PublicKey toTokenAccount,
-                                   final long lamports) {
-    throw new UnsupportedOperationException("TODO: transferToken");
+                                   final long scaledAmount) {
+    return GlamProgram.tokenTransfer(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        invokedTokenProgram.publicKey(),
+        fromTokenAccount,
+        toTokenAccount,
+        scaledAmount
+    );
   }
 
   @Override
-  public Instruction transferTokenChecked(final PublicKey fromTokenAccount,
+  public Instruction transferTokenChecked(final AccountMeta invokedTokenProgram,
+                                          final PublicKey fromTokenAccount,
                                           final PublicKey toTokenAccount,
-                                          final long lamports,
+                                          final long scaledAmount,
                                           final int decimals,
                                           final PublicKey tokenMint) {
-    throw new UnsupportedOperationException("TODO: transferTokenChecked");
+    return GlamProgram.tokenTransferChecked(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        invokedTokenProgram.publicKey(),
+        fromTokenAccount,
+        tokenMint,
+        toTokenAccount,
+        scaledAmount,
+        decimals
+    );
   }
 
   @Override
-  public Instruction closeTokenAccount(final PublicKey tokenAccount) {
-    throw new UnsupportedOperationException("TODO: closeTokenAccount");
+  public Instruction closeTokenAccount(final AccountMeta invokedTokenProgram, final PublicKey tokenAccount) {
+    return GlamProgram.tokenCloseAccount(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        invokedTokenProgram.publicKey(),
+        tokenAccount
+    );
   }
-
 
   @Override
   public Instruction deactivateStakeAccount(final PublicKey stakeAccount) {
     return nativeProgramClient.deactivateStakeAccount(stakeAccount, null);
   }
 
-
-  private Instruction closeStakeAccounts() {
-    return GlamProgram.withdrawFromStakeAccounts(
-        invokedProgram,
-        solanaAccounts,
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        feePayer.publicKey()
-    );
-  }
-
-  @Override
-  public Instruction closeStakeAccount(final AccountInfo<StakeAccount> stakeAccountInfo) {
-    return closeStakeAccounts().extraAccount(stakeAccountInfo.pubKey(), AccountMeta.CREATE_WRITE);
-  }
-
-  @Override
-  public List<Instruction> closeStakeAccounts(final Collection<AccountInfo<StakeAccount>> stakeAccounts) {
-    final var extraAccounts = stakeAccounts.stream().map(AccountInfo::pubKey).toList();
-    return List.of(closeStakeAccounts().extraAccounts(extraAccounts, AccountMeta.CREATE_WRITE));
-  }
-
   @Override
   public Instruction withdrawStakeAccount(final StakeAccount stakeAccount, final long lamports) {
-    throw new UnsupportedOperationException("TODO: withdrawStakeAccount with specific amount of lamports");
+    return nativeProgramClient.withdrawStakeAccount(stakeAccount, ownerPublicKey(), lamports);
   }
 }

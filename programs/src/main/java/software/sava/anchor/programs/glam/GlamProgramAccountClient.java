@@ -109,6 +109,4 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
   NativeProgramAccountClient delegatedNativeProgramAccountClient();
 
   GlamVaultAccounts vaultAccounts();
-
-  Instruction transferLamportsAndSyncNative(final long lamports);
 }

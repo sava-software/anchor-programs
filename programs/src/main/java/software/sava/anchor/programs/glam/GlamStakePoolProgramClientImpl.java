@@ -12,8 +12,6 @@ import software.sava.solana.programs.stakepool.StakePoolProgram;
 import software.sava.solana.programs.stakepool.StakePoolProgramClient;
 import software.sava.solana.programs.stakepool.StakePoolState;
 
-import static software.sava.solana.programs.stakepool.StakePoolProgramClient.findStakePoolWithdrawAuthority;
-
 final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient {
 
   private final GlamProgramAccountClient glamProgramAccountClient;
@@ -56,72 +54,113 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
   }
 
   @Override
-  public Instruction depositSol(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+  public Instruction depositSol(final PublicKey stakePoolProgram,
+                                final StakePoolState stakePoolState,
                                 final PublicKey poolTokenATA,
                                 final long lamportsIn) {
-    final var stakePoolState = stakePoolStateAccountInfo.data();
-    final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
+    final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
     return GlamProgram.stakePoolDepositSol(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
-        stakePoolStateAccountInfo.owner(),
+        stakePoolProgram,
         stakePoolState.address(),
         stakePoolWithdrawAuthority.publicKey(),
         stakePoolState.reserveStake(),
-        stakePoolState.poolMint(),
-        stakePoolState.managerFeeAccount(),
         poolTokenATA,
+        stakePoolState.managerFeeAccount(),
+        glamVaultAccounts.vaultPublicKey(),
+        stakePoolState.poolMint(),
         stakePoolState.tokenProgramId(),
         lamportsIn
     );
   }
 
   @Override
-  public Instruction depositSolWithSlippage(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+  public Instruction depositSolWithSlippage(final PublicKey stakePoolProgram,
+                                            final StakePoolState stakePoolState,
                                             final PublicKey poolTokenATA,
                                             final long lamportsIn,
                                             final long minimumPoolTokensOut) {
-    throw new UnsupportedOperationException("TODO: depositSolWithSlippage");
+    final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
+    return GlamProgram.stakePoolDepositSolWithSlippage(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        stakePoolProgram,
+        stakePoolState.address(),
+        stakePoolWithdrawAuthority.publicKey(),
+        stakePoolState.reserveStake(),
+        poolTokenATA,
+        stakePoolState.managerFeeAccount(),
+        glamVaultAccounts.vaultPublicKey(),
+        stakePoolState.poolMint(),
+        stakePoolState.tokenProgramId(),
+        lamportsIn,
+        minimumPoolTokensOut
+    );
   }
 
   @Override
-  public Instruction depositStake(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+  public Instruction depositStake(final PublicKey stakePoolProgram,
+                                  final StakePoolState stakePoolState,
                                   final PublicKey depositStakeAccount,
                                   final PublicKey validatorStakeAccount,
                                   final PublicKey poolTokenATA) {
-    final var stakePoolState = stakePoolStateAccountInfo.data();
-    final var stakePoolWithdrawAuthority = findStakePoolWithdrawAuthority(stakePoolStateAccountInfo);
+    final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
     return GlamProgram.stakePoolDepositStake(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
-        depositStakeAccount,
-        poolTokenATA,
-        stakePoolState.poolMint(),
-        stakePoolState.managerFeeAccount(),
+        stakePoolProgram,
         stakePoolState.address(),
-        stakePoolState.stakeDepositAuthority(),
-        stakePoolWithdrawAuthority.publicKey(),
         stakePoolState.validatorList(),
+        stakePoolWithdrawAuthority.publicKey(),
+        depositStakeAccount,
         validatorStakeAccount,
         stakePoolState.reserveStake(),
-        stakePoolStateAccountInfo.owner(),
+        poolTokenATA,
+        stakePoolState.managerFeeAccount(),
+        glamVaultAccounts.vaultPublicKey(),
+        stakePoolState.poolMint(),
         stakePoolState.tokenProgramId()
     );
   }
 
   @Override
-  public Instruction depositStakeWithSlippage(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+  public Instruction depositStakeWithSlippage(final PublicKey stakePoolProgram,
+                                              final StakePoolState stakePoolState,
                                               final PublicKey depositStakeAccount,
                                               final PublicKey validatorStakeAccount,
                                               final PublicKey poolTokenATA,
                                               final long minimumPoolTokensOut) {
-    throw new UnsupportedOperationException("TODO: depositStakeWithSlippage");
+    final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
+    return GlamProgram.stakePoolDepositStakeWithSlippage(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        stakePoolProgram,
+        stakePoolState.address(),
+        stakePoolState.validatorList(),
+        stakePoolWithdrawAuthority.publicKey(),
+        depositStakeAccount,
+        validatorStakeAccount,
+        stakePoolState.reserveStake(),
+        poolTokenATA,
+        stakePoolState.managerFeeAccount(),
+        glamVaultAccounts.vaultPublicKey(),
+        stakePoolState.poolMint(),
+        stakePoolState.tokenProgramId(),
+        minimumPoolTokensOut
+    );
   }
 
   @Override
@@ -129,32 +168,49 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                  final StakePoolState stakePoolState,
                                  final PublicKey poolTokenATA,
                                  final long poolTokenAmount) {
-    final var stakePoolWithdrawAuthority = StakePoolProgram.
-        findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
+    final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
     return GlamProgram.stakePoolWithdrawSol(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
+        stakePoolProgram,
         stakePoolState.address(),
         stakePoolWithdrawAuthority.publicKey(),
-        stakePoolState.reserveStake(),
-        stakePoolState.poolMint(),
-        stakePoolState.managerFeeAccount(),
         poolTokenATA,
-        stakePoolProgram,
+        stakePoolState.reserveStake(),
+        stakePoolState.managerFeeAccount(),
+        stakePoolState.poolMint(),
         stakePoolState.tokenProgramId(),
         poolTokenAmount
     );
   }
 
   @Override
-  public Instruction withdrawSolWithSlippage(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+  public Instruction withdrawSolWithSlippage(final PublicKey stakePoolProgram,
+                                             final StakePoolState stakePoolState,
                                              final PublicKey poolTokenATA,
                                              final long poolTokenAmount,
                                              final long lamportsOut) {
-    throw new UnsupportedOperationException("TODO: withdrawSolWithSlippage");
+    final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
+    return GlamProgram.stakePoolWithdrawSolWithSlippage(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        stakePoolProgram,
+        stakePoolState.address(),
+        stakePoolWithdrawAuthority.publicKey(),
+        poolTokenATA,
+        stakePoolState.reserveStake(),
+        stakePoolState.managerFeeAccount(),
+        stakePoolState.poolMint(),
+        stakePoolState.tokenProgramId(),
+        poolTokenAmount,
+        lamportsOut
+    );
   }
 
   @Override
@@ -165,47 +221,56 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                    final PublicKey stakeAccountWithdrawalAuthority,
                                    final PublicKey poolTokenATA,
                                    final long poolTokenAmount) {
-    final var stakePoolWithdrawAuthority = StakePoolProgram
-        .findStakePoolWithdrawAuthority(stakePoolState.address(), poolProgram);
+    final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), poolProgram);
     return GlamProgram.stakePoolWithdrawStake(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
-        uninitializedStakeAccount,
-        stakePoolState.poolMint(),
-        stakePoolState.managerFeeAccount(),
-        stakePoolState.address(),
-        stakePoolWithdrawAuthority.publicKey(),
-        stakePoolState.validatorList(),
-        validatorOrReserveStakeAccount,
-        poolTokenATA,
         poolProgram,
+        stakePoolState.address(),
+        stakePoolState.validatorList(),
+        stakePoolWithdrawAuthority.publicKey(),
+        validatorOrReserveStakeAccount,
+        uninitializedStakeAccount,
+        poolTokenATA,
+        stakePoolState.managerFeeAccount(),
+        stakePoolState.poolMint(),
         stakePoolState.tokenProgramId(),
         poolTokenAmount
     );
   }
 
   @Override
-  public Instruction withdrawStakeWithSlippage(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
+  public Instruction withdrawStakeWithSlippage(final PublicKey poolProgram,
+                                               final StakePoolState stakePoolState,
                                                final PublicKey validatorOrReserveStakeAccount,
                                                final PublicKey uninitializedStakeAccount,
                                                final PublicKey stakeAccountWithdrawalAuthority,
                                                final PublicKey poolTokenATA,
                                                final long poolTokenAmount,
                                                final long lamportsOut) {
-    throw new UnsupportedOperationException("TODO: withdrawStakeWithSlippage");
-  }
-
-  @Override
-  public Instruction withdrawStakeWithSlippage(final AccountInfo<StakePoolState> stakePoolStateAccountInfo,
-                                               final PublicKey validatorOrReserveStakeAccount,
-                                               final PublicKey uninitializedStakeAccount,
-                                               final PublicKey poolTokenATA,
-                                               final long poolTokenAmount,
-                                               final long lamportsOut) {
-    throw new UnsupportedOperationException("TODO: withdrawStakeWithSlippage");
+    final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), poolProgram);
+    return GlamProgram.stakePoolWithdrawStakeWithSlippage(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        poolProgram,
+        stakePoolState.address(),
+        stakePoolState.validatorList(),
+        stakePoolWithdrawAuthority.publicKey(),
+        validatorOrReserveStakeAccount,
+        uninitializedStakeAccount,
+        poolTokenATA,
+        stakePoolState.managerFeeAccount(),
+        stakePoolState.poolMint(),
+        stakePoolState.tokenProgramId(),
+        poolTokenAmount,
+        lamportsOut
+    );
   }
 
   @Override

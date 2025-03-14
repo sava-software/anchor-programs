@@ -10,7 +10,8 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 
 public record UpdatePerpMarketSummaryStatsParams(OptionalLong quoteAssetAmountWithUnsettledLp,
                                                  OptionalLong netUnsettledFundingPnl,
-                                                 Boolean updateAmmSummaryStats) implements Borsh {
+                                                 Boolean updateAmmSummaryStats,
+                                                 Boolean excludeTotalLiqFee) implements Borsh {
 
   public static UpdatePerpMarketSummaryStatsParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -26,7 +27,14 @@ public record UpdatePerpMarketSummaryStatsParams(OptionalLong quoteAssetAmountWi
       i += 8;
     }
     final var updateAmmSummaryStats = _data[i++] == 0 ? null : _data[i] == 1;
-    return new UpdatePerpMarketSummaryStatsParams(quoteAssetAmountWithUnsettledLp, netUnsettledFundingPnl, updateAmmSummaryStats);
+    if (updateAmmSummaryStats != null) {
+      ++i;
+    }
+    final var excludeTotalLiqFee = _data[i++] == 0 ? null : _data[i] == 1;
+    return new UpdatePerpMarketSummaryStatsParams(quoteAssetAmountWithUnsettledLp,
+                                                  netUnsettledFundingPnl,
+                                                  updateAmmSummaryStats,
+                                                  excludeTotalLiqFee);
   }
 
   @Override
@@ -35,11 +43,12 @@ public record UpdatePerpMarketSummaryStatsParams(OptionalLong quoteAssetAmountWi
     i += Borsh.writeOptional(quoteAssetAmountWithUnsettledLp, _data, i);
     i += Borsh.writeOptional(netUnsettledFundingPnl, _data, i);
     i += Borsh.writeOptional(updateAmmSummaryStats, _data, i);
+    i += Borsh.writeOptional(excludeTotalLiqFee, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return (quoteAssetAmountWithUnsettledLp == null || quoteAssetAmountWithUnsettledLp.isEmpty() ? 1 : (1 + 8)) + (netUnsettledFundingPnl == null || netUnsettledFundingPnl.isEmpty() ? 1 : (1 + 8)) + (updateAmmSummaryStats == null ? 1 : (1 + 1));
+    return (quoteAssetAmountWithUnsettledLp == null || quoteAssetAmountWithUnsettledLp.isEmpty() ? 1 : (1 + 8)) + (netUnsettledFundingPnl == null || netUnsettledFundingPnl.isEmpty() ? 1 : (1 + 8)) + (updateAmmSummaryStats == null ? 1 : (1 + 1)) + (excludeTotalLiqFee == null ? 1 : (1 + 1));
   }
 }

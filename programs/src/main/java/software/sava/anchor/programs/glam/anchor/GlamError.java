@@ -26,6 +26,7 @@ public sealed interface GlamError extends ProgramError permits
     GlamError.InvalidSwap,
     GlamError.InvalidTokenAccount,
     GlamError.InvalidVoteSide,
+    GlamError.MultipleStakeAccountsDisallowed,
     GlamError.InvalidAssetPrice,
     GlamError.InvalidStableCoinPriceForSubscribe,
     GlamError.SubscribeRedeemDisable,
@@ -61,6 +62,7 @@ public sealed interface GlamError extends ProgramError permits
       case 50002 -> InvalidSwap.INSTANCE;
       case 50003 -> InvalidTokenAccount.INSTANCE;
       case 50004 -> InvalidVoteSide.INSTANCE;
+      case 50005 -> MultipleStakeAccountsDisallowed.INSTANCE;
       case 51000 -> InvalidAssetPrice.INSTANCE;
       case 51001 -> InvalidStableCoinPriceForSubscribe.INSTANCE;
       case 51002 -> SubscribeRedeemDisable.INSTANCE;
@@ -232,6 +234,13 @@ public sealed interface GlamError extends ProgramError permits
 
     public static final InvalidVoteSide INSTANCE = new InvalidVoteSide(
         50004, "Invalid vote side"
+    );
+  }
+
+  record MultipleStakeAccountsDisallowed(int code, String msg) implements GlamError {
+
+    public static final MultipleStakeAccountsDisallowed INSTANCE = new MultipleStakeAccountsDisallowed(
+        50005, "Multiple stake accounts disallowed"
     );
   }
 

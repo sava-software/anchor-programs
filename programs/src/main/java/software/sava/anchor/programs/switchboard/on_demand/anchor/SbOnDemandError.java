@@ -62,7 +62,18 @@ public sealed interface SbOnDemandError extends ProgramError permits
     SbOnDemandError.ChecksumMismatch,
     SbOnDemandError.InvalidSubmissionFeedsCount,
     SbOnDemandError.InvalidSecpSignatureOraclesCount,
-    SbOnDemandError.InvalidEthAddress {
+    SbOnDemandError.InvalidEthAddress,
+    SbOnDemandError.NoLutKeysAdded,
+    SbOnDemandError.InvalidVaultOperatorDelegation,
+    SbOnDemandError.InvalidVaultTokenAccount,
+    SbOnDemandError.InvalidRemainingAccounts,
+    SbOnDemandError.SubsidiesNotAllowed,
+    SbOnDemandError.MissingVod,
+    SbOnDemandError.InvalidVodEpoch,
+    SbOnDemandError.InvalidOracleSubsidyWallet,
+    SbOnDemandError.InvalidOperator,
+    SbOnDemandError.Max128SampleValue,
+    SbOnDemandError.RewardAlreadyPaid {
 
   static SbOnDemandError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -126,6 +137,17 @@ public sealed interface SbOnDemandError extends ProgramError permits
       case 6057 -> InvalidSubmissionFeedsCount.INSTANCE;
       case 6058 -> InvalidSecpSignatureOraclesCount.INSTANCE;
       case 6059 -> InvalidEthAddress.INSTANCE;
+      case 6060 -> NoLutKeysAdded.INSTANCE;
+      case 6061 -> InvalidVaultOperatorDelegation.INSTANCE;
+      case 6062 -> InvalidVaultTokenAccount.INSTANCE;
+      case 6063 -> InvalidRemainingAccounts.INSTANCE;
+      case 6064 -> SubsidiesNotAllowed.INSTANCE;
+      case 6065 -> MissingVod.INSTANCE;
+      case 6066 -> InvalidVodEpoch.INSTANCE;
+      case 6067 -> InvalidOracleSubsidyWallet.INSTANCE;
+      case 6068 -> InvalidOperator.INSTANCE;
+      case 6069 -> Max128SampleValue.INSTANCE;
+      case 6070 -> RewardAlreadyPaid.INSTANCE;
       default -> throw new IllegalStateException("Unexpected SbOnDemand error code: " + errorCode);
     };
   }
@@ -547,6 +569,83 @@ public sealed interface SbOnDemandError extends ProgramError permits
 
     public static final InvalidEthAddress INSTANCE = new InvalidEthAddress(
         6059, "null"
+    );
+  }
+
+  record NoLutKeysAdded(int code, String msg) implements SbOnDemandError {
+
+    public static final NoLutKeysAdded INSTANCE = new NoLutKeysAdded(
+        6060, "null"
+    );
+  }
+
+  record InvalidVaultOperatorDelegation(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidVaultOperatorDelegation INSTANCE = new InvalidVaultOperatorDelegation(
+        6061, "null"
+    );
+  }
+
+  record InvalidVaultTokenAccount(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidVaultTokenAccount INSTANCE = new InvalidVaultTokenAccount(
+        6062, "null"
+    );
+  }
+
+  record InvalidRemainingAccounts(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidRemainingAccounts INSTANCE = new InvalidRemainingAccounts(
+        6063, "null"
+    );
+  }
+
+  record SubsidiesNotAllowed(int code, String msg) implements SbOnDemandError {
+
+    public static final SubsidiesNotAllowed INSTANCE = new SubsidiesNotAllowed(
+        6064, "null"
+    );
+  }
+
+  record MissingVod(int code, String msg) implements SbOnDemandError {
+
+    public static final MissingVod INSTANCE = new MissingVod(
+        6065, "null"
+    );
+  }
+
+  record InvalidVodEpoch(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidVodEpoch INSTANCE = new InvalidVodEpoch(
+        6066, "null"
+    );
+  }
+
+  record InvalidOracleSubsidyWallet(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidOracleSubsidyWallet INSTANCE = new InvalidOracleSubsidyWallet(
+        6067, "null"
+    );
+  }
+
+  record InvalidOperator(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidOperator INSTANCE = new InvalidOperator(
+        6068, "null"
+    );
+  }
+
+  record Max128SampleValue(int code, String msg) implements SbOnDemandError {
+
+    public static final Max128SampleValue INSTANCE = new Max128SampleValue(
+        6069, "null"
+    );
+  }
+
+  record RewardAlreadyPaid(int code, String msg) implements SbOnDemandError {
+
+    public static final RewardAlreadyPaid INSTANCE = new RewardAlreadyPaid(
+        6070, "null"
     );
   }
 }

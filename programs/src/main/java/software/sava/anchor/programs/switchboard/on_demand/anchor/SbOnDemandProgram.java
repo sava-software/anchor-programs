@@ -6,14 +6,18 @@ import software.sava.anchor.programs.switchboard.on_demand.anchor.types.Guardian
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.GuardianRegisterParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.GuardianUnregisterParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleHeartbeatParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleHeartbeatV2Params;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleInitParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleInitSVMParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleResetLutParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleSetConfigsParams;
-import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleUpdateDelegationParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleSetOperatorParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.OracleSyncLutParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PermissionSetParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedCloseParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedInitParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSetConfigsParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSubmitResponseConsensusLightParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSubmitResponseConsensusParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSubmitResponseManyParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeedSubmitResponseParams;
@@ -21,17 +25,21 @@ import software.sava.anchor.programs.switchboard.on_demand.anchor.types.PullFeed
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueAddMrEnclaveParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueAllowSubsidiesParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueGarbageCollectParams;
-import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueInitDelegationGroupParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueInitParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueInitSVMParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueOverrideSVMParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueuePaySubsidyParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueRemoveMrEnclaveParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueResetVaultParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueSetConfigsParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueSetNcnParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueSetVaultParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.RandomnessCommitParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.RandomnessInitParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.RandomnessRevealParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.StateInitParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.StateSetConfigsParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.TestUpdateOracleStatsParams;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -239,8 +247,8 @@ public final class SbOnDemandProgram {
       createRead(solanaAccounts.wrappedSolTokenMint()),
       createWrite(queueEscrowKey),
       createRead(stakeProgramKey),
-      createWrite(delegationPoolKey),
-      createWrite(delegationGroupKey)
+      createRead(delegationPoolKey),
+      createRead(delegationGroupKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
@@ -279,6 +287,61 @@ public final class SbOnDemandProgram {
     }
   }
 
+  public static final Discriminator ORACLE_HEARTBEAT_V2_DISCRIMINATOR = toDiscriminator(122, 231, 66, 32, 226, 62, 144, 103);
+
+  public static Instruction oracleHeartbeatV2(final AccountMeta invokedSbOnDemandProgramMeta,
+                                              final PublicKey oracleKey,
+                                              final PublicKey oracleStatsKey,
+                                              final PublicKey oracleSignerKey,
+                                              final PublicKey queueKey,
+                                              final PublicKey gcNodeKey,
+                                              final PublicKey programStateKey,
+                                              final OracleHeartbeatV2Params params) {
+    final var keys = List.of(
+      createWrite(oracleKey),
+      createWrite(oracleStatsKey),
+      createReadOnlySigner(oracleSignerKey),
+      createWrite(queueKey),
+      createWrite(gcNodeKey),
+      createWrite(programStateKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(ORACLE_HEARTBEAT_V2_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record OracleHeartbeatV2IxData(Discriminator discriminator, OracleHeartbeatV2Params params) implements Borsh {  
+
+    public static OracleHeartbeatV2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static OracleHeartbeatV2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = OracleHeartbeatV2Params.read(_data, i);
+      return new OracleHeartbeatV2IxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(params);
+    }
+  }
+
   public static final Discriminator ORACLE_INIT_DISCRIMINATOR = toDiscriminator(21, 158, 66, 65, 60, 221, 148, 61);
 
   public static Instruction oracleInit(final AccountMeta invokedSbOnDemandProgramMeta,
@@ -289,8 +352,6 @@ public final class SbOnDemandProgram {
                                        final PublicKey payerKey,
                                        final PublicKey lutSignerKey,
                                        final PublicKey lutKey,
-                                       final PublicKey stakeProgramKey,
-                                       final PublicKey stakePoolKey,
                                        final OracleInitParams params) {
     final var keys = List.of(
       createWritableSigner(oracleKey),
@@ -301,9 +362,7 @@ public final class SbOnDemandProgram {
       createRead(solanaAccounts.tokenProgram()),
       createRead(lutSignerKey),
       createWrite(lutKey),
-      createRead(solanaAccounts.addressLookupTableProgram()),
-      createRead(stakeProgramKey),
-      createRead(stakePoolKey)
+      createRead(solanaAccounts.addressLookupTableProgram())
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
@@ -405,6 +464,66 @@ public final class SbOnDemandProgram {
     }
   }
 
+  public static final Discriminator ORACLE_RESET_LUT_DISCRIMINATOR = toDiscriminator(147, 244, 108, 198, 152, 219, 0, 22);
+
+  public static Instruction oracleResetLut(final AccountMeta invokedSbOnDemandProgramMeta,
+                                           final SolanaAccounts solanaAccounts,
+                                           final PublicKey oracleKey,
+                                           final PublicKey authorityKey,
+                                           final PublicKey payerKey,
+                                           final PublicKey programStateKey,
+                                           final PublicKey lutSignerKey,
+                                           final PublicKey lutKey,
+                                           final OracleResetLutParams params) {
+    final var keys = List.of(
+      createWrite(oracleKey),
+      createReadOnlySigner(authorityKey),
+      createWritableSigner(payerKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(programStateKey),
+      createRead(lutSignerKey),
+      createWrite(lutKey),
+      createRead(solanaAccounts.addressLookupTableProgram())
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(ORACLE_RESET_LUT_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record OracleResetLutIxData(Discriminator discriminator, OracleResetLutParams params) implements Borsh {  
+
+    public static OracleResetLutIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static OracleResetLutIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = OracleResetLutParams.read(_data, i);
+      return new OracleResetLutIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator ORACLE_SET_CONFIGS_DISCRIMINATOR = toDiscriminator(129, 111, 223, 4, 191, 188, 70, 180);
 
   public static Instruction oracleSetConfigs(final AccountMeta invokedSbOnDemandProgramMeta,
@@ -452,71 +571,116 @@ public final class SbOnDemandProgram {
     }
   }
 
-  public static final Discriminator ORACLE_UPDATE_DELEGATION_DISCRIMINATOR = toDiscriminator(46, 198, 113, 223, 160, 189, 118, 90);
+  public static final Discriminator ORACLE_SET_OPERATOR_DISCRIMINATOR = toDiscriminator(210, 232, 155, 124, 69, 176, 242, 133);
 
-  public static Instruction oracleUpdateDelegation(final AccountMeta invokedSbOnDemandProgramMeta,
-                                                   final SolanaAccounts solanaAccounts,
-                                                   final PublicKey oracleKey,
-                                                   final PublicKey oracleStatsKey,
-                                                   final PublicKey queueKey,
-                                                   final PublicKey authorityKey,
-                                                   final PublicKey programStateKey,
-                                                   final PublicKey payerKey,
-                                                   final PublicKey delegationPoolKey,
-                                                   final PublicKey lutSignerKey,
-                                                   final PublicKey lutKey,
-                                                   final PublicKey switchMintKey,
-                                                   final PublicKey wsolVaultKey,
-                                                   final PublicKey switchVaultKey,
-                                                   final PublicKey stakeProgramKey,
-                                                   final PublicKey stakePoolKey,
-                                                   final PublicKey delegationGroupKey,
-                                                   final OracleUpdateDelegationParams params) {
+  public static Instruction oracleSetOperator(final AccountMeta invokedSbOnDemandProgramMeta,
+                                              final PublicKey oracleKey,
+                                              final PublicKey authorityKey,
+                                              final PublicKey operatorKey,
+                                              final OracleSetOperatorParams params) {
     final var keys = List.of(
       createWrite(oracleKey),
-      createRead(oracleStatsKey),
-      createRead(queueKey),
       createReadOnlySigner(authorityKey),
-      createWrite(programStateKey),
-      createWritableSigner(payerKey),
-      createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.tokenProgram()),
-      createWrite(delegationPoolKey),
-      createRead(lutSignerKey),
-      createWrite(lutKey),
-      createRead(solanaAccounts.addressLookupTableProgram()),
-      createRead(switchMintKey),
-      createRead(solanaAccounts.wrappedSolTokenMint()),
-      createWrite(wsolVaultKey),
-      createWrite(switchVaultKey),
-      createRead(stakeProgramKey),
-      createRead(stakePoolKey),
-      createRead(delegationGroupKey)
+      createRead(operatorKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ORACLE_UPDATE_DELEGATION_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(ORACLE_SET_OPERATOR_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
   }
 
-  public record OracleUpdateDelegationIxData(Discriminator discriminator, OracleUpdateDelegationParams params) implements Borsh {  
+  public record OracleSetOperatorIxData(Discriminator discriminator, OracleSetOperatorParams params) implements Borsh {  
 
-    public static OracleUpdateDelegationIxData read(final Instruction instruction) {
+    public static OracleSetOperatorIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 16;
+    public static final int BYTES = 8;
 
-    public static OracleUpdateDelegationIxData read(final byte[] _data, final int offset) {
+    public static OracleSetOperatorIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var params = OracleUpdateDelegationParams.read(_data, i);
-      return new OracleUpdateDelegationIxData(discriminator, params);
+      final var params = OracleSetOperatorParams.read(_data, i);
+      return new OracleSetOperatorIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator ORACLE_SYNC_LUT_DISCRIMINATOR = toDiscriminator(138, 99, 12, 59, 18, 170, 171, 45);
+
+  public static Instruction oracleSyncLut(final AccountMeta invokedSbOnDemandProgramMeta,
+                                          final SolanaAccounts solanaAccounts,
+                                          final PublicKey oracleKey,
+                                          final PublicKey queueKey,
+                                          final PublicKey ncnKey,
+                                          final PublicKey vaultKey,
+                                          final PublicKey stateKey,
+                                          final PublicKey authorityKey,
+                                          final PublicKey operatorKey,
+                                          final PublicKey ncnOperatorStateKey,
+                                          final PublicKey operatorVaultTicketKey,
+                                          final PublicKey vaultOperatorDelegationKey,
+                                          final PublicKey lutSignerKey,
+                                          final PublicKey lutKey,
+                                          final PublicKey payerKey,
+                                          final OracleSyncLutParams params) {
+    final var keys = List.of(
+      createRead(oracleKey),
+      createRead(queueKey),
+      createRead(ncnKey),
+      createRead(vaultKey),
+      createRead(stateKey),
+      createReadOnlySigner(authorityKey),
+      createRead(operatorKey),
+      createRead(ncnOperatorStateKey),
+      createRead(operatorVaultTicketKey),
+      createRead(vaultOperatorDelegationKey),
+      createRead(lutSignerKey),
+      createWrite(lutKey),
+      createRead(solanaAccounts.addressLookupTableProgram()),
+      createReadOnlySigner(payerKey),
+      createRead(solanaAccounts.systemProgram())
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(ORACLE_SYNC_LUT_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record OracleSyncLutIxData(Discriminator discriminator, OracleSyncLutParams params) implements Borsh {  
+
+    public static OracleSyncLutIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 8;
+
+    public static OracleSyncLutIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = OracleSyncLutParams.read(_data, i);
+      return new OracleSyncLutIxData(discriminator, params);
     }
 
     @Override
@@ -872,6 +1036,56 @@ public final class SbOnDemandProgram {
     }
   }
 
+  public static final Discriminator PULL_FEED_SUBMIT_RESPONSE_CONSENSUS_LIGHT_DISCRIMINATOR = toDiscriminator(178, 179, 88, 144, 175, 130, 157, 87);
+
+  public static Instruction pullFeedSubmitResponseConsensusLight(final AccountMeta invokedSbOnDemandProgramMeta,
+                                                                 final SolanaAccounts solanaAccounts,
+                                                                 final PublicKey queueKey,
+                                                                 final PublicKey programStateKey,
+                                                                 final PullFeedSubmitResponseConsensusLightParams params) {
+    final var keys = List.of(
+      createRead(queueKey),
+      createRead(programStateKey),
+      createRead(solanaAccounts.slotHashesSysVar()),
+      createRead(solanaAccounts.instructionsSysVar())
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(PULL_FEED_SUBMIT_RESPONSE_CONSENSUS_LIGHT_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record PullFeedSubmitResponseConsensusLightIxData(Discriminator discriminator, PullFeedSubmitResponseConsensusLightParams params) implements Borsh {  
+
+    public static PullFeedSubmitResponseConsensusLightIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static PullFeedSubmitResponseConsensusLightIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = PullFeedSubmitResponseConsensusLightParams.read(_data, i);
+      return new PullFeedSubmitResponseConsensusLightIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(params);
+    }
+  }
+
   public static final Discriminator PULL_FEED_SUBMIT_RESPONSE_MANY_DISCRIMINATOR = toDiscriminator(47, 156, 45, 25, 200, 71, 37, 215);
 
   public static Instruction pullFeedSubmitResponseMany(final AccountMeta invokedSbOnDemandProgramMeta,
@@ -1208,70 +1422,6 @@ public final class SbOnDemandProgram {
     }
   }
 
-  public static final Discriminator QUEUE_INIT_DELEGATION_GROUP_DISCRIMINATOR = toDiscriminator(239, 146, 75, 158, 20, 166, 159, 14);
-
-  public static Instruction queueInitDelegationGroup(final AccountMeta invokedSbOnDemandProgramMeta,
-                                                     final SolanaAccounts solanaAccounts,
-                                                     final PublicKey queueKey,
-                                                     final PublicKey payerKey,
-                                                     final PublicKey programStateKey,
-                                                     final PublicKey lutSignerKey,
-                                                     final PublicKey lutKey,
-                                                     final PublicKey delegationGroupKey,
-                                                     final PublicKey stakeProgramKey,
-                                                     final PublicKey stakePoolKey,
-                                                     final QueueInitDelegationGroupParams params) {
-    final var keys = List.of(
-      createWrite(queueKey),
-      createWritableSigner(payerKey),
-      createRead(solanaAccounts.systemProgram()),
-      createRead(programStateKey),
-      createRead(lutSignerKey),
-      createWrite(lutKey),
-      createRead(solanaAccounts.addressLookupTableProgram()),
-      createWrite(delegationGroupKey),
-      createRead(stakeProgramKey),
-      createRead(stakePoolKey)
-    );
-
-    final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_INIT_DELEGATION_GROUP_DISCRIMINATOR, _data, 0);
-    Borsh.write(params, _data, i);
-
-    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
-  }
-
-  public record QueueInitDelegationGroupIxData(Discriminator discriminator, QueueInitDelegationGroupParams params) implements Borsh {  
-
-    public static QueueInitDelegationGroupIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 8;
-
-    public static QueueInitDelegationGroupIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = parseDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var params = QueueInitDelegationGroupParams.read(_data, i);
-      return new QueueInitDelegationGroupIxData(discriminator, params);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(params, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
   public static final Discriminator QUEUE_INIT_SVM_DISCRIMINATOR = toDiscriminator(175, 94, 119, 151, 45, 144, 173, 235);
 
   public static Instruction queueInitSvm(final AccountMeta invokedSbOnDemandProgramMeta,
@@ -1390,6 +1540,72 @@ public final class SbOnDemandProgram {
     }
   }
 
+  public static final Discriminator QUEUE_PAY_SUBSIDY_DISCRIMINATOR = toDiscriminator(85, 84, 51, 251, 144, 57, 105, 200);
+
+  public static Instruction queuePaySubsidy(final AccountMeta invokedSbOnDemandProgramMeta,
+                                            final SolanaAccounts solanaAccounts,
+                                            final PublicKey queueKey,
+                                            final PublicKey programStateKey,
+                                            final PublicKey vaultKey,
+                                            final PublicKey rewardVaultKey,
+                                            final PublicKey subsidyVaultKey,
+                                            final PublicKey switchMintKey,
+                                            final PublicKey vaultConfigKey,
+                                            final PublicKey payerKey,
+                                            final QueuePaySubsidyParams params) {
+    final var keys = List.of(
+      createWrite(queueKey),
+      createRead(programStateKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(vaultKey),
+      createWrite(rewardVaultKey),
+      createWrite(subsidyVaultKey),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.associatedTokenAccountProgram()),
+      createRead(solanaAccounts.wrappedSolTokenMint()),
+      createRead(switchMintKey),
+      createRead(vaultConfigKey),
+      createWritableSigner(payerKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(QUEUE_PAY_SUBSIDY_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record QueuePaySubsidyIxData(Discriminator discriminator, QueuePaySubsidyParams params) implements Borsh {  
+
+    public static QueuePaySubsidyIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 8;
+
+    public static QueuePaySubsidyIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = QueuePaySubsidyParams.read(_data, i);
+      return new QueuePaySubsidyIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator QUEUE_REMOVE_MR_ENCLAVE_DISCRIMINATOR = toDiscriminator(3, 64, 135, 33, 190, 133, 68, 252);
 
   public static Instruction queueRemoveMrEnclave(final AccountMeta invokedSbOnDemandProgramMeta,
@@ -1428,6 +1644,61 @@ public final class SbOnDemandProgram {
       int i = offset + discriminator.length();
       final var params = QueueRemoveMrEnclaveParams.read(_data, i);
       return new QueueRemoveMrEnclaveIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator QUEUE_RESET_VAULT_DISCRIMINATOR = toDiscriminator(232, 255, 48, 111, 240, 168, 253, 40);
+
+  public static Instruction queueResetVault(final AccountMeta invokedSbOnDemandProgramMeta,
+                                            final PublicKey queueKey,
+                                            final PublicKey authorityKey,
+                                            final PublicKey stateKey,
+                                            final PublicKey ncnKey,
+                                            final PublicKey vaultKey,
+                                            final QueueResetVaultParams params) {
+    final var keys = List.of(
+      createWrite(queueKey),
+      createReadOnlySigner(authorityKey),
+      createRead(stateKey),
+      createRead(ncnKey),
+      createRead(vaultKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(QUEUE_RESET_VAULT_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record QueueResetVaultIxData(Discriminator discriminator, QueueResetVaultParams params) implements Borsh {  
+
+    public static QueueResetVaultIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 8;
+
+    public static QueueResetVaultIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = QueueResetVaultParams.read(_data, i);
+      return new QueueResetVaultIxData(discriminator, params);
     }
 
     @Override
@@ -1489,6 +1760,114 @@ public final class SbOnDemandProgram {
     @Override
     public int l() {
       return 8 + Borsh.len(params);
+    }
+  }
+
+  public static final Discriminator QUEUE_SET_NCN_DISCRIMINATOR = toDiscriminator(232, 223, 179, 12, 20, 136, 181, 219);
+
+  public static Instruction queueSetNcn(final AccountMeta invokedSbOnDemandProgramMeta,
+                                        final PublicKey queueKey,
+                                        final PublicKey authorityKey,
+                                        final PublicKey stateKey,
+                                        final PublicKey ncnKey,
+                                        final QueueSetNcnParams params) {
+    final var keys = List.of(
+      createWrite(queueKey),
+      createReadOnlySigner(authorityKey),
+      createRead(stateKey),
+      createRead(ncnKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(QUEUE_SET_NCN_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record QueueSetNcnIxData(Discriminator discriminator, QueueSetNcnParams params) implements Borsh {  
+
+    public static QueueSetNcnIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 8;
+
+    public static QueueSetNcnIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = QueueSetNcnParams.read(_data, i);
+      return new QueueSetNcnIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator QUEUE_SET_VAULT_DISCRIMINATOR = toDiscriminator(48, 47, 102, 99, 241, 249, 196, 246);
+
+  public static Instruction queueSetVault(final AccountMeta invokedSbOnDemandProgramMeta,
+                                          final PublicKey queueKey,
+                                          final PublicKey authorityKey,
+                                          final PublicKey stateKey,
+                                          final PublicKey ncnKey,
+                                          final PublicKey vaultKey,
+                                          final QueueSetVaultParams params) {
+    final var keys = List.of(
+      createWrite(queueKey),
+      createReadOnlySigner(authorityKey),
+      createRead(stateKey),
+      createRead(ncnKey),
+      createRead(vaultKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(QUEUE_SET_VAULT_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record QueueSetVaultIxData(Discriminator discriminator, QueueSetVaultParams params) implements Borsh {  
+
+    public static QueueSetVaultIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static QueueSetVaultIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = QueueSetVaultParams.read(_data, i);
+      return new QueueSetVaultIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
     }
   }
 
@@ -1761,7 +2140,7 @@ public final class SbOnDemandProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 219;
+    public static final int BYTES = 153;
 
     public static StateSetConfigsIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -1771,6 +2150,54 @@ public final class SbOnDemandProgram {
       int i = offset + discriminator.length();
       final var params = StateSetConfigsParams.read(_data, i);
       return new StateSetConfigsIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator TEST_UPDATE_ORACLE_STATS_DISCRIMINATOR = toDiscriminator(175, 48, 162, 252, 154, 197, 149, 187);
+
+  public static Instruction testUpdateOracleStats(final AccountMeta invokedSbOnDemandProgramMeta,
+                                                  // The OracleStats account to update.
+                                                  final PublicKey oracleStatsKey,
+                                                  final TestUpdateOracleStatsParams params) {
+    final var keys = List.of(
+      createWrite(oracleStatsKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(TEST_UPDATE_ORACLE_STATS_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record TestUpdateOracleStatsIxData(Discriminator discriminator, TestUpdateOracleStatsParams params) implements Borsh {  
+
+    public static TestUpdateOracleStatsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static TestUpdateOracleStatsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = TestUpdateOracleStatsParams.read(_data, i);
+      return new TestUpdateOracleStatsIxData(discriminator, params);
     }
 
     @Override
