@@ -28,87 +28,12 @@ public record SpotMarketConfig(String symbol,
                                PublicKey phoenixMarket,
                                PublicKey openbookMarket,
                                PublicKey pythFeedId,
+                               long pythLazerId,
                                AccountMeta readMarketPDA,
                                AccountMeta writeMarketPDA,
-                               PublicKey vaultPDA) implements SrcGen, MarketConfig {
+                               PublicKey vaultPDA) implements MarketConfig {
 
   private static final System.Logger logger = System.getLogger(MarketConfig.class.getName());
-
-  static SpotMarketConfig createConfig(final String symbol,
-                                       final int marketIndex,
-                                       final String launchTs,
-                                       final String oracle,
-                                       final OracleSource oracleSource,
-                                       final String pythPullOraclePDA,
-                                       final String mint,
-                                       final String serumMarket,
-                                       final String phoenixMarket,
-                                       final String openbookMarket,
-                                       final String pythFeedId,
-                                       final String marketPDA,
-                                       final String vaultPDA) {
-    final var marketPDAKey = PublicKey.fromBase58Encoded(marketPDA);
-    final AccountMeta readOracle;
-    final AccountMeta writeOracle;
-    if (oracle == null) {
-      readOracle = null;
-      writeOracle = null;
-    } else {
-      final var oracleKey = PublicKey.fromBase58Encoded(oracle);
-      readOracle = AccountMeta.createRead(oracleKey);
-      writeOracle = AccountMeta.createWrite(oracleKey);
-    }
-    return new SpotMarketConfig(
-        symbol,
-        marketIndex,
-        launchTs == null ? null : Instant.parse(launchTs),
-        readOracle, writeOracle,
-        oracleSource,
-        SrcGen.fromBase58Encoded(pythPullOraclePDA),
-        SrcGen.fromBase58Encoded(mint),
-        SrcGen.fromBase58Encoded(serumMarket),
-        SrcGen.fromBase58Encoded(phoenixMarket),
-        SrcGen.fromBase58Encoded(openbookMarket),
-        SrcGen.fromBase58Encoded(pythFeedId),
-        AccountMeta.createRead(marketPDAKey),
-        AccountMeta.createWrite(marketPDAKey),
-        SrcGen.fromBase58Encoded(vaultPDA)
-    );
-  }
-
-  @Override
-  public String toSrc(final DriftAccounts driftAccounts) {
-    return String.format("""
-            createConfig(
-                "%s",
-                %d,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s
-            )""",
-        symbol,
-        marketIndex,
-        launchTs == null ? null : '"' + launchTs.toString() + '"',
-        SrcGen.pubKeyConstant(readOracle.publicKey()),
-        oracleSource == null ? null : "OracleSource." + oracleSource.name(),
-        SrcGen.pubKeyConstant(pythPullOraclePDA),
-        SrcGen.pubKeyConstant(mint),
-        SrcGen.pubKeyConstant(serumMarket),
-        SrcGen.pubKeyConstant(phoenixMarket),
-        SrcGen.pubKeyConstant(openbookMarket),
-        SrcGen.pubKeyConstant(pythFeedId),
-        SrcGen.pubKeyConstant(readMarketPDA.publicKey()),
-        SrcGen.pubKeyConstant(vaultPDA)
-    );
-  }
 
   public static List<SpotMarketConfig> parseConfigs(final JsonIterator ji, final DriftAccounts driftAccounts) {
     final var configs = new ArrayList<SpotMarketConfig>();
@@ -173,6 +98,7 @@ public record SpotMarketConfig(String symbol,
     private PublicKey phoenixMarket;
     private PublicKey openbookMarket;
     private PublicKey pythFeedId;
+    private long pythLazerId;
 
     private SpotMarketConfig create(final DriftAccounts driftAccounts) {
       final AccountMeta readOracle;
@@ -200,6 +126,7 @@ public record SpotMarketConfig(String symbol,
           phoenixMarket,
           openbookMarket,
           pythFeedId,
+          pythLazerId,
           AccountMeta.createRead(marketPDA),
           AccountMeta.createWrite(marketPDA),
           DriftPDAs.deriveSpotMarketVaultAccount(driftAccounts, marketIndex).publicKey()
@@ -229,7 +156,9 @@ public record SpotMarketConfig(String symbol,
       } else if (fieldEquals("openbookMarket", buf, offset, len)) {
         openbookMarket = PublicKeyEncoding.parseBase58Encoded(ji);
       } else if (fieldEquals("pythFeedId", buf, offset, len)) {
-        pythFeedId = ji.applyChars(SrcGen.DECODE_HEX);
+        pythFeedId = ji.applyChars(GenerateMarketConstants.DECODE_HEX);
+      } else if (fieldEquals("pythLazerId", buf, offset, len)) {
+        pythLazerId = ji.readLong();
       } else {
         ji.skip();
       }

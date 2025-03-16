@@ -9,18 +9,27 @@ import java.util.List;
 
 public interface DriftExtraAccounts {
 
-  static DriftExtraAccounts createExtraAccounts(final DriftAccounts driftAccounts) {
-    final int numSpotMarkets = driftAccounts.spotMarkets().numMarkets();
+  static DriftExtraAccounts createExtraAccounts(final SpotMarkets spotMarkets, final PerpMarkets perpMarkets) {
+    final int numSpotMarkets = spotMarkets.numMarkets();
     final int size = Integer.bitCount(numSpotMarkets) == 1
         ? numSpotMarkets
         : Integer.highestOneBit(numSpotMarkets) << 1;
-    final var oracles = HashMap.<PublicKey, AccountMeta>newHashMap(size);
-    final var spotMarkets = HashMap.<PublicKey, AccountMeta>newHashMap(size);
-    final var perpMarkets = HashMap.<PublicKey, AccountMeta>newHashMap(8);
-    return new DriftExtraAccountsRecord(driftAccounts, oracles, spotMarkets, perpMarkets);
+    final var oracleMetas = HashMap.<PublicKey, AccountMeta>newHashMap(size);
+    final var spotMarketMetas = HashMap.<PublicKey, AccountMeta>newHashMap(size);
+    final var perpMarketMetas = HashMap.<PublicKey, AccountMeta>newHashMap(8);
+    return new DriftExtraAccountsRecord(
+        spotMarkets.marketConfig(0),
+        spotMarkets,
+        perpMarkets,
+        oracleMetas,
+        spotMarketMetas,
+        perpMarketMetas
+    );
   }
 
-  DriftAccounts driftAccounts();
+  SpotMarkets spotMarkets();
+
+  PerpMarkets perpMarkets();
 
   List<AccountMeta> toList();
 

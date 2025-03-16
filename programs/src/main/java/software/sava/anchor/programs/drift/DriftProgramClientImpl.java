@@ -33,10 +33,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     this.accounts = accounts;
     this.authority = nativeProgramAccountClient.ownerPublicKey();
     this.user = DriftPDAs.deriveMainUserAccount(accounts, authority).publicKey();
-    this.quoteSpotMarketVaultAccountKey = deriveSpotMarketVaultAccount(
-        accounts,
-        accounts.defaultQuoteMarket().marketIndex()
-    ).publicKey();
+    this.quoteSpotMarketVaultAccountKey = deriveSpotMarketVaultAccount(accounts, 0).publicKey();
   }
 
   @Override

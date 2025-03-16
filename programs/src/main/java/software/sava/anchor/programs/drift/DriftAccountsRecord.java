@@ -3,41 +3,12 @@ package software.sava.anchor.programs.drift;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 
+import java.util.List;
+
 record DriftAccountsRecord(AccountMeta invokedDriftProgram,
                            PublicKey driftSignerPDA,
                            PublicKey marketLookupTable,
+                           List<PublicKey> marketLookupTables,
                            PublicKey serumLookupTable,
-                           PublicKey stateKey,
-                           SpotMarketConfig defaultQuoteMarket,
-                           SpotMarkets spotMarkets,
-                           PerpMarkets perpMarkets) implements DriftAccounts {
-  @Override
-  public SpotMarketConfig spotMarketConfig(final int index) {
-    return spotMarkets.marketConfig(index);
-  }
-
-  @Override
-  public SpotMarketConfig spotMarketConfig(final DriftAsset symbol) {
-    return spotMarkets.forAsset(symbol);
-  }
-
-  @Override
-  public SpotMarketConfig spotMarketConfig(final String symbol) {
-    return spotMarkets.forAsset(symbol);
-  }
-
-  @Override
-  public PerpMarketConfig perpMarketConfig(final int index) {
-    return perpMarkets.marketConfig(index);
-  }
-
-  @Override
-  public PerpMarketConfig perpMarketConfig(final DriftProduct product) {
-    return perpMarkets.forProduct(product);
-  }
-
-  @Override
-  public PerpMarketConfig perpMarketConfig(final String product) {
-    return perpMarkets.forProduct(product);
-  }
+                           PublicKey stateKey) implements DriftAccounts {
 }

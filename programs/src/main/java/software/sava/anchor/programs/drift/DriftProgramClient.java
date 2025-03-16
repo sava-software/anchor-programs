@@ -37,28 +37,13 @@ public interface DriftProgramClient {
 
   DriftAccounts driftAccounts();
 
+  @Deprecated
   default CompletableFuture<AccountInfo<AddressLookupTable>> fetchMarketsLookupTable(final SolanaRpcClient rpcClient) {
     return rpcClient.getAccountInfo(driftAccounts().marketLookupTable(), AddressLookupTable.FACTORY);
   }
 
-  default DriftExtraAccounts extraAccounts() {
-    return DriftExtraAccounts.createExtraAccounts(driftAccounts());
-  }
-
-  default SpotMarketConfig spotMarket(final String symbol) {
-    return driftAccounts().spotMarketConfig(symbol);
-  }
-
-  default SpotMarketConfig spotMarket(final DriftAsset symbol) {
-    return driftAccounts().spotMarketConfig(symbol);
-  }
-
-  default PerpMarketConfig perpMarket(final DriftProduct product) {
-    return driftAccounts().perpMarketConfig(product);
-  }
-
-  default PerpMarketConfig perpMarket(final String product) {
-    return driftAccounts().perpMarketConfig(product);
+  default CompletableFuture<List<AccountInfo<AddressLookupTable>>> fetchMarketLookupTables(final SolanaRpcClient rpcClient) {
+    return rpcClient.getMultipleAccounts(driftAccounts().marketLookupTables(), AddressLookupTable.FACTORY);
   }
 
   PublicKey mainUserAccount();

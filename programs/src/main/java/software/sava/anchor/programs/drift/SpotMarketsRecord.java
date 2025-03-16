@@ -4,17 +4,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-record SpotMarketsRecord(List<SpotMarketConfig> markets,
-                         Map<String, SpotMarketConfig> byAsset) implements SpotMarkets {
+record SpotMarketsRecord(List<SpotMarketConfig> markets, Map<String, SpotMarketConfig> byAsset) implements SpotMarkets {
 
   @Override
   public SpotMarketConfig marketConfig(final int index) {
     return markets.get(index);
-  }
-
-  @Override
-  public SpotMarketConfig forAsset(final DriftAsset asset) {
-    return forAsset(asset.name());
   }
 
   @Override

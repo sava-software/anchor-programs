@@ -1,19 +1,16 @@
 package software.sava.anchor.program.examples;
 
-import software.sava.anchor.programs.drift.DriftAsset;
-import software.sava.anchor.programs.drift.DriftProgramClient;
+import software.sava.anchor.programs.drift.DynamicPerpMarkets;
+import software.sava.anchor.programs.drift.DynamicSpotMarkets;
 import software.sava.anchor.programs.drift.MarketConfig;
 import software.sava.anchor.programs.drift.anchor.DriftProgram;
 import software.sava.anchor.programs.drift.anchor.types.MarketType;
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
-import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.lookup.AddressLookupTable;
-import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
 import software.sava.core.tx.TransactionSkeleton;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
-import software.sava.solana.programs.clients.NativeProgramClient;
 import software.sava.solana.web2.jupiter.client.http.JupiterClient;
 import software.sava.solana.web2.jupiter.client.http.response.TokenContext;
 
@@ -28,6 +25,12 @@ public final class ParseDriftPlaceOrdersTransaction {
 
   public static void main(final String[] args) {
     try (final var httpClient = HttpClient.newHttpClient()) {
+      // Fetch token contexts to make use of convenient scaled value conversions.
+      final var jupiterClient = JupiterClient.createClient(httpClient);
+      final var verifiedTokensFuture = jupiterClient.verifiedTokenMap();
+
+      final var perpMarketsFuture = DynamicPerpMarkets.fetchMarkets(httpClient);
+      final var spotMarketsFuture = DynamicSpotMarkets.fetchMarkets(httpClient);
 
       final var rpcClient = SolanaRpcClient.createClient(MAIN_NET.getEndpoint(), httpClient);
 
@@ -79,32 +82,24 @@ public final class ParseDriftPlaceOrdersTransaction {
       final OrderParams[] orderParamsArray = placeOrdersIxData.params();
       final OrderParams orderParams = orderParamsArray[0];
 
-      // Fetch token contexts to make use of convenient scaled value conversions.
-      final var jupiterClient = JupiterClient.createClient(httpClient);
-      final var verifiedTokens = jupiterClient.verifiedTokenMap().join();
-
-      // Create Drift Client to map market indexes from the order to its configuration.
-      final var nativeProgramClient = NativeProgramClient.createClient();
-      final var nativeProgramAccountClient = nativeProgramClient
-          .createAccountClient(AccountMeta.createFeePayer(PublicKey.NONE));
-      final var driftClient = DriftProgramClient.createClient(nativeProgramAccountClient);
-
-      final var driftAccounts = driftClient.driftAccounts();
       final MarketConfig marketConfig;
       final TokenContext baseTokenContext;
+      final var spotMarketConfigs = spotMarketsFuture.join().mainNet();
+      final var verifiedTokens = verifiedTokensFuture.join();
       if (orderParams.marketType() == MarketType.Perp) {
-        final var perpMarketConfig = driftAccounts.perpMarketConfig(orderParams.marketIndex());
-        final var spotConfig = driftClient.spotMarket(perpMarketConfig.baseAssetSymbol());
+        final var perpMarketConfigs = perpMarketsFuture.join().mainNet();
+        final var perpMarketConfig = perpMarketConfigs.marketConfig(orderParams.marketIndex());
+        final var spotConfig = spotMarketConfigs.forAsset(perpMarketConfig.baseAssetSymbol());
         baseTokenContext = verifiedTokens.get(spotConfig.mint());
         marketConfig = perpMarketConfig;
       } else {
-        final var spotConfig = driftAccounts.spotMarketConfig(orderParams.marketIndex());
+        final var spotConfig = spotMarketConfigs.marketConfig(orderParams.marketIndex());
         baseTokenContext = verifiedTokens.get(spotConfig.mint());
         marketConfig = spotConfig;
       }
 
       // Assume all Drift markets are priced in USDC
-      final var usdcTokenMint = driftClient.spotMarket(DriftAsset.USDC).mint();
+      final var usdcTokenMint = spotMarketConfigs.forAsset("USDC").mint();
       final var usdcTokenContext = verifiedTokens.get(usdcTokenMint);
 
       // Limit Long 0.1 @ 111 on SOL-PERP [reduceOnly=false] [postOnly=MustPostOnly]

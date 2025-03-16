@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static software.sava.anchor.programs.drift.SpotMarketConfig.parseOracleSource;
 import static systems.comodal.jsoniter.JsonIterator.fieldEquals;
@@ -28,76 +27,9 @@ public record PerpMarketConfig(String fullName,
                                OracleSource oracleSource,
                                PublicKey pythPullOraclePDA,
                                PublicKey pythFeedId,
+                               long pythLazerId,
                                AccountMeta readMarketPDA,
-                               AccountMeta writeMarketPDA) implements SrcGen, MarketConfig {
-
-  static PerpMarketConfig createConfig(final String fullName,
-                                       final Set<String> categories,
-                                       final String symbol,
-                                       final String baseAssetSymbol,
-                                       final int marketIndex,
-                                       final String launchTs,
-                                       final String oracle,
-                                       final OracleSource oracleSource,
-                                       final String pythPullOraclePDA,
-                                       final String pythFeedId,
-                                       final String marketPDA) {
-    final var marketPDAKey = PublicKey.fromBase58Encoded(marketPDA);
-    final AccountMeta readOracle;
-    final AccountMeta writeOracle;
-    if (oracle == null) {
-      readOracle = null;
-      writeOracle = null;
-    } else {
-      final var oracleKey = PublicKey.fromBase58Encoded(oracle);
-      readOracle = AccountMeta.createRead(oracleKey);
-      writeOracle = AccountMeta.createWrite(oracleKey);
-    }
-    return new PerpMarketConfig(
-        fullName,
-        categories,
-        symbol,
-        baseAssetSymbol,
-        marketIndex,
-        Instant.parse(launchTs),
-        readOracle, writeOracle,
-        oracleSource,
-        SrcGen.fromBase58Encoded(pythPullOraclePDA),
-        SrcGen.fromBase58Encoded(pythFeedId),
-        AccountMeta.createRead(marketPDAKey),
-        AccountMeta.createWrite(marketPDAKey)
-    );
-  }
-
-  @Override
-  public String toSrc(final DriftAccounts driftAccounts) {
-    return String.format("""
-            createConfig(
-                "%s",
-                Set.of(%s),
-                "%s",
-                "%s",
-                %d,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s,
-                %s
-            )""",
-        fullName,
-        categories.isEmpty() ? null : categories.stream().collect(Collectors.joining("\", \"", "\"", "\"")),
-        symbol,
-        baseAssetSymbol,
-        marketIndex,
-        launchTs == null ? null : '"' + launchTs.toString() + '"',
-        SrcGen.pubKeyConstant(readOracle.publicKey()),
-        oracleSource == null ? null : "OracleSource." + oracleSource.name(),
-        SrcGen.pubKeyConstant(pythPullOraclePDA),
-        SrcGen.pubKeyConstant(pythFeedId),
-        SrcGen.pubKeyConstant(readMarketPDA.publicKey())
-    );
-  }
+                               AccountMeta writeMarketPDA) implements MarketConfig {
 
   public static List<PerpMarketConfig> parseConfigs(final JsonIterator ji, final DriftAccounts driftAccounts) {
     final var configs = new ArrayList<PerpMarketConfig>();
@@ -128,6 +60,7 @@ public record PerpMarketConfig(String fullName,
     private PublicKey oracle;
     private OracleSource oracleSource;
     private PublicKey pythFeedId;
+    private long pythLazerId;
 
     private PerpMarketConfig create(final DriftAccounts driftAccounts) {
       final AccountMeta readOracle;
@@ -153,6 +86,7 @@ public record PerpMarketConfig(String fullName,
           oracleSource,
           pythPullOraclePDA,
           pythFeedId,
+          pythLazerId,
           AccountMeta.createRead(marketPDA),
           AccountMeta.createWrite(marketPDA)
       );
@@ -181,7 +115,9 @@ public record PerpMarketConfig(String fullName,
       } else if (fieldEquals("launchTs", buf, offset, len)) {
         launchTs = Instant.ofEpochMilli(ji.readLong());
       } else if (fieldEquals("pythFeedId", buf, offset, len)) {
-        pythFeedId = ji.applyChars(DECODE_HEX);
+        pythFeedId = ji.applyChars(GenerateMarketConstants.DECODE_HEX);
+      } else if (fieldEquals("pythLazerId", buf, offset, len)) {
+        pythLazerId = ji.readLong();
       } else {
         ji.skip();
       }

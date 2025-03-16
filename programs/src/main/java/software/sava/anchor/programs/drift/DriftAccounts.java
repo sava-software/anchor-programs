@@ -3,7 +3,8 @@ package software.sava.anchor.programs.drift;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 
-import static software.sava.anchor.programs.drift.DriftAsset.USDC;
+import java.util.List;
+
 import static software.sava.anchor.programs.drift.DriftPDAs.deriveSignerAccount;
 import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 
@@ -12,17 +13,15 @@ public interface DriftAccounts {
   DriftAccounts MAIN_NET = createAddressConstants(
       "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
       "D9cnvzswDikQDf53k4HpQ3KJ9y1Fv3HGGDFYMXnK5T6c",
-      "GPZkp76cJtNL2mphCvT6FXkJCVPpouidnacckR6rzKDN",
-      SpotMarketConfigs.MAIN_NET,
-      PerpMarketConfigs.MAIN_NET
+      "EiWSskK5HXnBTptiS5DH6gpAJRVNQ3cAhTKBGaiaysAb",
+      "GPZkp76cJtNL2mphCvT6FXkJCVPpouidnacckR6rzKDN"
   );
 
   DriftAccounts DEV_NET = createAddressConstants(
       "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
       "FaMS3U4uBojvGn5FSDEPimddcXsCfwkKsFgMVVnDdxGb",
       null,
-      SpotMarketConfigs.DEV_NET,
-      PerpMarketConfigs.DEV_NET
+      null
   );
 
   AccountMeta invokedDriftProgram();
@@ -37,55 +36,34 @@ public interface DriftAccounts {
 
   PublicKey marketLookupTable();
 
+  List<PublicKey> marketLookupTables();
+
   PublicKey serumLookupTable();
-
-  SpotMarketConfig defaultQuoteMarket();
-
-  SpotMarkets spotMarkets();
-
-  SpotMarketConfig spotMarketConfig(final int index);
-
-  SpotMarketConfig spotMarketConfig(final DriftAsset symbol);
-
-  SpotMarketConfig spotMarketConfig(final String symbol);
-
-  PerpMarkets perpMarkets();
-
-  PerpMarketConfig perpMarketConfig(final int index);
-
-  PerpMarketConfig perpMarketConfig(final DriftProduct product);
-
-  PerpMarketConfig perpMarketConfig(final String product);
 
   static DriftAccounts createAddressConstants(final PublicKey driftProgram,
                                               final PublicKey marketLookupTable,
-                                              final PublicKey serumLookupTable,
-                                              final SpotMarkets spotMarkets,
-                                              final PerpMarkets perpMarkets) {
+                                              final PublicKey marketLookupTable2,
+                                              final PublicKey serumLookupTable) {
     final var driftSigner = deriveSignerAccount(driftProgram).publicKey();
     return new DriftAccountsRecord(
         AccountMeta.createInvoked(driftProgram),
         driftSigner,
         marketLookupTable,
+        marketLookupTable2 == null ? List.of(marketLookupTable) : List.of(marketLookupTable, marketLookupTable2),
         serumLookupTable,
-        DriftPDAs.deriveStateAccount(driftProgram).publicKey(),
-        spotMarkets.forAsset(USDC),
-        spotMarkets,
-        perpMarkets
+        DriftPDAs.deriveStateAccount(driftProgram).publicKey()
     );
   }
 
   static DriftAccounts createAddressConstants(final String driftProgram,
                                               final String marketLookupTable,
-                                              final String serumLookupTable,
-                                              final SpotMarkets spotMarkets,
-                                              final PerpMarkets perpMarkets) {
+                                              final String marketLookupTable2,
+                                              final String serumLookupTable) {
     return createAddressConstants(
         fromBase58Encoded(driftProgram),
         fromBase58Encoded(marketLookupTable),
-        serumLookupTable == null ? null : fromBase58Encoded(driftProgram),
-        spotMarkets,
-        perpMarkets
+        marketLookupTable2 == null ? null : fromBase58Encoded(marketLookupTable2),
+        serumLookupTable == null ? null : fromBase58Encoded(driftProgram)
     );
   }
 }
