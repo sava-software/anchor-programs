@@ -82,7 +82,8 @@ public sealed interface Swap extends RustEnum permits
   Swap.VirtualsSell,
   Swap.Perena,
   Swap.PumpdotfunAmmBuy,
-  Swap.PumpdotfunAmmSell {
+  Swap.PumpdotfunAmmSell,
+  Swap.Gamma {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -162,6 +163,7 @@ public sealed interface Swap extends RustEnum permits
       case 71 -> Perena.read(_data, i);
       case 72 -> PumpdotfunAmmBuy.INSTANCE;
       case 73 -> PumpdotfunAmmSell.INSTANCE;
+      case 74 -> Gamma.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1164,6 +1166,16 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 73;
+    }
+  }
+
+  record Gamma() implements EnumNone, Swap {
+
+    public static final Gamma INSTANCE = new Gamma();
+
+    @Override
+    public int ordinal() {
+      return 74;
     }
   }
 }
