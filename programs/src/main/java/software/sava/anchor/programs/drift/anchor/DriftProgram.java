@@ -146,7 +146,7 @@ public final class DriftProgram {
                                                           final int numOrders) {
     final var keys = List.of(
       createWrite(signedMsgUserOrdersKey),
-      createReadOnlySigner(authorityKey),
+      createRead(authorityKey),
       createWritableSigner(payerKey),
       createRead(rentKey),
       createRead(systemProgramKey)
@@ -196,11 +196,15 @@ public final class DriftProgram {
   public static Instruction resizeSignedMsgUserOrders(final AccountMeta invokedDriftProgramMeta,
                                                       final PublicKey signedMsgUserOrdersKey,
                                                       final PublicKey authorityKey,
+                                                      final PublicKey userKey,
+                                                      final PublicKey payerKey,
                                                       final PublicKey systemProgramKey,
                                                       final int numOrders) {
     final var keys = List.of(
       createWrite(signedMsgUserOrdersKey),
-      createWritableSigner(authorityKey),
+      createRead(authorityKey),
+      createRead(userKey),
+      createWritableSigner(payerKey),
       createRead(systemProgramKey)
     );
 

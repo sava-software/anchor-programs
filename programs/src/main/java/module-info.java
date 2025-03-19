@@ -48,6 +48,8 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.moonshot.anchor;
   exports software.sava.anchor.programs.pump.anchor.types;
   exports software.sava.anchor.programs.pump.anchor;
+  exports software.sava.anchor.programs.pyth.lazer.anchor.types;
+  exports software.sava.anchor.programs.pyth.lazer.anchor;
   exports software.sava.anchor.programs.pyth.push.anchor.types;
   exports software.sava.anchor.programs.pyth.push.anchor;
   exports software.sava.anchor.programs.pyth.receiver.anchor.types;

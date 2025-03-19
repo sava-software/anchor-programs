@@ -104,10 +104,7 @@ public interface KaminoLendClient {
 
   Instruction refreshReserve(final PublicKey lendingMarket, final PublicKey reserveKey);
 
-  Instruction refreshObligation(final PublicKey lendingMarket,
-                                final PublicKey obligationKey);
-
-  Instruction refreshObligationFarmsForReserve(final PublicKey baseAccountsKey, final int mode);
+  Instruction refreshObligation(final PublicKey lendingMarket, final PublicKey obligationKey);
 
   Instruction depositReserveLiquidityAndObligationCollateral(final PublicKey obligationKey,
                                                              final PublicKey reserveKey,

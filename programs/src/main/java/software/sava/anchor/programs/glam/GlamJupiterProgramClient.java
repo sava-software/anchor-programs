@@ -5,6 +5,7 @@ import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
+import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 import java.util.List;
 import java.util.Map;
@@ -85,6 +86,8 @@ public interface GlamJupiterProgramClient {
                                         final Instruction swapInstruction) {
     return swapChecked(inputMintKey, outputMintKey, amount, swapInstruction, true);
   }
+
+  NativeProgramAccountClient nativeProgramAccountClient();
 
   Map<PublicKey, Instruction> createSwapTokenAccountsIdempotent(final AccountMeta inputTokenProgram,
                                                                 final PublicKey inputMintKey,

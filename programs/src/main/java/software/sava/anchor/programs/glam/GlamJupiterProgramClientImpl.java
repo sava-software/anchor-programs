@@ -50,6 +50,11 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
     return jupiterAccounts;
   }
 
+  @Override
+  public NativeProgramAccountClient nativeProgramAccountClient() {
+    return programAccountClient;
+  }
+
   private Instruction jupiterSwap(final PublicKey inputVaultATA,
                                   final PublicKey outputVaultATA,
                                   final PublicKey inputProgramStateKey,

@@ -73,9 +73,14 @@
     "package": "kamino.liquidity"
   },
   {
-    "name": "Pyth Receiver Oracle",
-    "program": "rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ",
-    "package": "pyth.receiver"
+    "name": "Pyth Push",
+    "program": "pythWSnswVUd12oZpeFP8e9CVaEqJg25g1Vtc2biRsT",
+    "package": "pyth.push"
+  },
+  {
+    "name": "Pyth Lazer",
+    "program": "pytd2yyk641x7ak7mkaasSJVXh6YYZnC7wTmtgAyxPt",
+    "package": "pyth.lazer"
   },
   {
     "name": "Switchboard On-Demand",

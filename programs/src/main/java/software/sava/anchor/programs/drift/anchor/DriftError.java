@@ -315,7 +315,8 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.SignedMsgUserContextUserMismatch,
     DriftError.UserFuelOverflowThresholdNotMet,
     DriftError.FuelOverflowAccountNotFound,
-    DriftError.InvalidTransferPerpPosition {
+    DriftError.InvalidTransferPerpPosition,
+    DriftError.InvalidSignedMsgUserOrdersResize {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -632,6 +633,7 @@ public sealed interface DriftError extends ProgramError permits
       case 6310 -> UserFuelOverflowThresholdNotMet.INSTANCE;
       case 6311 -> FuelOverflowAccountNotFound.INSTANCE;
       case 6312 -> InvalidTransferPerpPosition.INSTANCE;
+      case 6313 -> InvalidSignedMsgUserOrdersResize.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2824,6 +2826,13 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final InvalidTransferPerpPosition INSTANCE = new InvalidTransferPerpPosition(
         6312, "Invalid Transfer Perp Position"
+    );
+  }
+
+  record InvalidSignedMsgUserOrdersResize(int code, String msg) implements DriftError {
+
+    public static final InvalidSignedMsgUserOrdersResize INSTANCE = new InvalidSignedMsgUserOrdersResize(
+        6313, "Invalid SignedMsgUserOrders resize"
     );
   }
 }
