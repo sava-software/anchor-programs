@@ -33,6 +33,9 @@ public sealed interface GlamError extends ProgramError permits
     GlamError.InvalidPolicyAccount,
     GlamError.PricingError,
     GlamError.PriceTooOld,
+    GlamError.InvalidLedgerEntry,
+    GlamError.UnpricedExternalAccounts,
+    GlamError.VaultNotPriced,
     GlamError.TransfersDisabled,
     GlamError.AmountTooBig,
     GlamError.LockUp {
@@ -69,6 +72,9 @@ public sealed interface GlamError extends ProgramError permits
       case 51003 -> InvalidPolicyAccount.INSTANCE;
       case 51004 -> PricingError.INSTANCE;
       case 51005 -> PriceTooOld.INSTANCE;
+      case 51006 -> InvalidLedgerEntry.INSTANCE;
+      case 51007 -> UnpricedExternalAccounts.INSTANCE;
+      case 51008 -> VaultNotPriced.INSTANCE;
       case 52000 -> TransfersDisabled.INSTANCE;
       case 52001 -> AmountTooBig.INSTANCE;
       case 52002 -> LockUp.INSTANCE;
@@ -283,6 +289,27 @@ public sealed interface GlamError extends ProgramError permits
 
     public static final PriceTooOld INSTANCE = new PriceTooOld(
         51005, "Price is too old"
+    );
+  }
+
+  record InvalidLedgerEntry(int code, String msg) implements GlamError {
+
+    public static final InvalidLedgerEntry INSTANCE = new InvalidLedgerEntry(
+        51006, "Invalid ledger entry"
+    );
+  }
+
+  record UnpricedExternalAccounts(int code, String msg) implements GlamError {
+
+    public static final UnpricedExternalAccounts INSTANCE = new UnpricedExternalAccounts(
+        51007, "Not all external vault accounts are priced"
+    );
+  }
+
+  record VaultNotPriced(int code, String msg) implements GlamError {
+
+    public static final VaultNotPriced INSTANCE = new VaultNotPriced(
+        51008, "No priced assets found"
     );
   }
 

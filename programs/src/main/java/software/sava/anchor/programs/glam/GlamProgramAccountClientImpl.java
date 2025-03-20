@@ -482,6 +482,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   public Instruction closeTokenAccount(final AccountMeta invokedTokenProgram, final PublicKey tokenAccount) {
     return GlamProgram.tokenCloseAccount(
         invokedProgram,
+        solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),

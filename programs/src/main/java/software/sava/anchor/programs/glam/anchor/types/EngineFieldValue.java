@@ -24,7 +24,8 @@ public sealed interface EngineFieldValue extends RustEnum permits
   EngineFieldValue.URI,
   EngineFieldValue.Timestamp,
   EngineFieldValue.VecPubkey,
-  EngineFieldValue.VecU32 {
+  EngineFieldValue.VecU32,
+  EngineFieldValue.VecPricedAssets {
 
   static EngineFieldValue read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -44,6 +45,7 @@ public sealed interface EngineFieldValue extends RustEnum permits
       case 11 -> Timestamp.read(_data, i);
       case 12 -> VecPubkey.read(_data, i);
       case 13 -> VecU32.read(_data, i);
+      case 14 -> VecPricedAssets.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [EngineFieldValue]", ordinal
       ));
@@ -266,6 +268,34 @@ public sealed interface EngineFieldValue extends RustEnum permits
     @Override
     public int ordinal() {
       return 13;
+    }
+  }
+
+  record VecPricedAssets(PricedAssets[] val) implements EngineFieldValue {
+
+    public static VecPricedAssets read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var val = Borsh.readVector(PricedAssets.class, PricedAssets::read, _data, offset);
+      return new VecPricedAssets(val);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      i += Borsh.writeVector(val, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 1 + Borsh.lenVector(val);
+    }
+
+    @Override
+    public int ordinal() {
+      return 14;
     }
   }
 }

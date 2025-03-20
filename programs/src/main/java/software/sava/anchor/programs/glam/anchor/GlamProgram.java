@@ -1730,39 +1730,40 @@ public final class GlamProgram {
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, JUPITER_VOTE_WITHDRAW_PARTIAL_UNSTAKING_DISCRIMINATOR);
   }
 
-  public static final Discriminator KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_DISCRIMINATOR = toDiscriminator(31, 162, 4, 146, 60, 225, 15, 0);
+  public static final Discriminator KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(93, 120, 106, 112, 40, 45, 84, 32);
 
-  public static Instruction kaminoLendingDepositReserveLiquidityAndObligationCollateral(final AccountMeta invokedGlamProgramMeta,
-                                                                                        final PublicKey glamStateKey,
-                                                                                        final PublicKey glamVaultKey,
-                                                                                        final PublicKey glamSignerKey,
-                                                                                        final PublicKey cpiProgramKey,
-                                                                                        final PublicKey ownerKey,
-                                                                                        final PublicKey obligationKey,
-                                                                                        final PublicKey lendingMarketKey,
-                                                                                        final PublicKey lendingMarketAuthorityKey,
-                                                                                        final PublicKey reserveKey,
-                                                                                        final PublicKey reserveLiquidityMintKey,
-                                                                                        final PublicKey reserveLiquiditySupplyKey,
-                                                                                        final PublicKey reserveCollateralMintKey,
-                                                                                        final PublicKey reserveDestinationDepositCollateralKey,
-                                                                                        final PublicKey userSourceLiquidityKey,
-                                                                                        final PublicKey placeholderUserDestinationCollateralKey,
-                                                                                        final PublicKey collateralTokenProgramKey,
-                                                                                        final PublicKey liquidityTokenProgramKey,
-                                                                                        final PublicKey instructionSysvarAccountKey,
-                                                                                        final long liquidityAmount) {
+  public static Instruction kaminoLendingDepositReserveLiquidityAndObligationCollateralV2(final AccountMeta invokedGlamProgramMeta,
+                                                                                          final PublicKey glamStateKey,
+                                                                                          final PublicKey glamVaultKey,
+                                                                                          final PublicKey glamSignerKey,
+                                                                                          final PublicKey cpiProgramKey,
+                                                                                          final PublicKey obligationKey,
+                                                                                          final PublicKey lendingMarketKey,
+                                                                                          final PublicKey lendingMarketAuthorityKey,
+                                                                                          final PublicKey reserveKey,
+                                                                                          final PublicKey reserveLiquidityMintKey,
+                                                                                          final PublicKey reserveLiquiditySupplyKey,
+                                                                                          final PublicKey reserveCollateralMintKey,
+                                                                                          final PublicKey reserveDestinationDepositCollateralKey,
+                                                                                          final PublicKey userSourceLiquidityKey,
+                                                                                          final PublicKey placeholderUserDestinationCollateralKey,
+                                                                                          final PublicKey collateralTokenProgramKey,
+                                                                                          final PublicKey liquidityTokenProgramKey,
+                                                                                          final PublicKey instructionSysvarAccountKey,
+                                                                                          final PublicKey obligationFarmUserStateKey,
+                                                                                          final PublicKey reserveFarmStateKey,
+                                                                                          final PublicKey farmsProgramKey,
+                                                                                          final long liquidityAmount) {
     final var keys = List.of(
       createRead(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
-      createWrite(ownerKey),
       createWrite(obligationKey),
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),
       createWrite(reserveKey),
-      createWrite(reserveLiquidityMintKey),
+      createRead(reserveLiquidityMintKey),
       createWrite(reserveLiquiditySupplyKey),
       createWrite(reserveCollateralMintKey),
       createWrite(reserveDestinationDepositCollateralKey),
@@ -1770,32 +1771,35 @@ public final class GlamProgram {
       createRead(placeholderUserDestinationCollateralKey),
       createRead(collateralTokenProgramKey),
       createRead(liquidityTokenProgramKey),
-      createRead(instructionSysvarAccountKey)
+      createRead(instructionSysvarAccountKey),
+      createWrite(obligationFarmUserStateKey),
+      createWrite(reserveFarmStateKey),
+      createRead(farmsProgramKey)
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, _data);
   }
 
-  public record KaminoLendingDepositReserveLiquidityAndObligationCollateralIxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
+  public record KaminoLendingDepositReserveLiquidityAndObligationCollateralV2IxData(Discriminator discriminator, long liquidityAmount) implements Borsh {  
 
-    public static KaminoLendingDepositReserveLiquidityAndObligationCollateralIxData read(final Instruction instruction) {
+    public static KaminoLendingDepositReserveLiquidityAndObligationCollateralV2IxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 16;
 
-    public static KaminoLendingDepositReserveLiquidityAndObligationCollateralIxData read(final byte[] _data, final int offset) {
+    public static KaminoLendingDepositReserveLiquidityAndObligationCollateralV2IxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
-      return new KaminoLendingDepositReserveLiquidityAndObligationCollateralIxData(discriminator, liquidityAmount);
+      return new KaminoLendingDepositReserveLiquidityAndObligationCollateralV2IxData(discriminator, liquidityAmount);
     }
 
     @Override
@@ -1820,7 +1824,6 @@ public final class GlamProgram {
                                                         final PublicKey glamVaultKey,
                                                         final PublicKey glamSignerKey,
                                                         final PublicKey cpiProgramKey,
-                                                        final PublicKey obligationOwnerKey,
                                                         final PublicKey feePayerKey,
                                                         final PublicKey obligationKey,
                                                         final PublicKey lendingMarketKey,
@@ -1833,7 +1836,6 @@ public final class GlamProgram {
       createRead(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
-      createRead(obligationOwnerKey),
       createWritableSigner(feePayerKey),
       createWrite(obligationKey),
       createRead(lendingMarketKey),
@@ -1891,7 +1893,6 @@ public final class GlamProgram {
                                                                        final PublicKey glamSignerKey,
                                                                        final PublicKey cpiProgramKey,
                                                                        final PublicKey payerKey,
-                                                                       final PublicKey ownerKey,
                                                                        final PublicKey obligationKey,
                                                                        final PublicKey lendingMarketAuthorityKey,
                                                                        final PublicKey reserveKey,
@@ -1906,9 +1907,8 @@ public final class GlamProgram {
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
       createWritableSigner(payerKey),
-      createRead(ownerKey),
       createWrite(obligationKey),
-      createWrite(lendingMarketAuthorityKey),
+      createRead(lendingMarketAuthorityKey),
       createWrite(reserveKey),
       createWrite(reserveFarmStateKey),
       createWrite(obligationFarmKey),
@@ -1965,7 +1965,6 @@ public final class GlamProgram {
                                                           final PublicKey glamVaultKey,
                                                           final PublicKey glamSignerKey,
                                                           final PublicKey cpiProgramKey,
-                                                          final PublicKey ownerKey,
                                                           final PublicKey feePayerKey,
                                                           final PublicKey userMetadataKey,
                                                           final PublicKey referrerUserMetadataKey,
@@ -1975,7 +1974,6 @@ public final class GlamProgram {
       createRead(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
-      createRead(ownerKey),
       createWritableSigner(feePayerKey),
       createWrite(userMetadataKey),
       createRead(referrerUserMetadataKey),
@@ -2824,6 +2822,51 @@ public final class GlamProgram {
     }
   }
 
+  public static final Discriminator PRICE_STAKES_DISCRIMINATOR = toDiscriminator(0, 60, 60, 103, 201, 94, 72, 223);
+
+  public static Instruction priceStakes(final AccountMeta invokedGlamProgramMeta,
+                                        final PublicKey glamStateKey,
+                                        final PublicKey glamVaultKey,
+                                        final PublicKey glamSignerKey) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey)
+    );
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, PRICE_STAKES_DISCRIMINATOR);
+  }
+
+  public static final Discriminator PRICE_TICKETS_DISCRIMINATOR = toDiscriminator(253, 18, 224, 98, 226, 43, 65, 76);
+
+  public static Instruction priceTickets(final AccountMeta invokedGlamProgramMeta,
+                                         final PublicKey glamStateKey,
+                                         final PublicKey glamVaultKey,
+                                         final PublicKey glamSignerKey) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey)
+    );
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, PRICE_TICKETS_DISCRIMINATOR);
+  }
+
+  public static final Discriminator PRICE_VAULT_DISCRIMINATOR = toDiscriminator(47, 213, 36, 17, 183, 5, 141, 45);
+
+  public static Instruction priceVault(final AccountMeta invokedGlamProgramMeta,
+                                       final PublicKey glamStateKey,
+                                       final PublicKey glamVaultKey,
+                                       final PublicKey glamSignerKey) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey)
+    );
+
+    return Instruction.createInstruction(invokedGlamProgramMeta, keys, PRICE_VAULT_DISCRIMINATOR);
+  }
+
   public static final Discriminator REDEEM_DISCRIMINATOR = toDiscriminator(184, 12, 86, 149, 70, 196, 97, 225);
 
   public static Instruction redeem(final AccountMeta invokedGlamProgramMeta,
@@ -3301,7 +3344,7 @@ public final class GlamProgram {
                                                 final PublicKey tokenProgramKey,
                                                 final long lamportsIn) {
     final var keys = List.of(
-      createRead(glamStateKey),
+      createWrite(glamStateKey),
       createWrite(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
@@ -3374,7 +3417,7 @@ public final class GlamProgram {
                                                             final long lamportsIn,
                                                             final long minimumPoolTokensOut) {
     final var keys = List.of(
-      createRead(glamStateKey),
+      createWrite(glamStateKey),
       createWrite(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
@@ -3884,9 +3927,7 @@ public final class GlamProgram {
       createWrite(stakeKey),
       createWrite(newStakeKey),
       createRead(voteKey),
-      createRead(stakeConfigKey),
-      createRead(solanaAccounts.clockSysVar()),
-      createRead(solanaAccounts.systemProgram())
+      createRead(stakeConfigKey)
     );
 
     return Instruction.createInstruction(invokedGlamProgramMeta, keys, STAKE_REDELEGATE_DISCRIMINATOR);
@@ -4153,6 +4194,7 @@ public final class GlamProgram {
   public static final Discriminator TOKEN_CLOSE_ACCOUNT_DISCRIMINATOR = toDiscriminator(240, 32, 179, 154, 96, 110, 43, 79);
 
   public static Instruction tokenCloseAccount(final AccountMeta invokedGlamProgramMeta,
+                                              final SolanaAccounts solanaAccounts,
                                               final PublicKey glamStateKey,
                                               final PublicKey glamVaultKey,
                                               final PublicKey glamSignerKey,
@@ -4163,6 +4205,7 @@ public final class GlamProgram {
       createWrite(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(tokenAccountKey)
     );
 
