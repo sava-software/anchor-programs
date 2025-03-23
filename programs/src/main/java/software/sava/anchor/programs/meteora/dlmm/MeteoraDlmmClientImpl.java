@@ -1,13 +1,16 @@
 package software.sava.anchor.programs.meteora.dlmm;
 
 import software.sava.anchor.programs.meteora.MeteoraAccounts;
-import software.sava.anchor.programs.meteora.MeteoraPDAs;
 import software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram;
-import software.sava.anchor.programs.meteora.dlmm.anchor.types.LiquidityParameterByStrategy;
+import software.sava.anchor.programs.meteora.dlmm.anchor.types.*;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
+import software.sava.rpc.json.http.client.SolanaRpcClient;
+
+import java.net.URI;
+import java.net.http.HttpClient;
 
 final class MeteoraDlmmClientImpl implements MeteoraDlmmClient {
 
@@ -98,18 +101,192 @@ final class MeteoraDlmmClientImpl implements MeteoraDlmmClient {
     );
   }
 
+  @Override
+  public Instruction addLiquidityByStrategyOneSide(final PublicKey positionKey,
+                                                   final PublicKey lbPairKey,
+                                                   final PublicKey binArrayBitmapExtensionKey,
+                                                   final PublicKey userTokenKey,
+                                                   final PublicKey reserveKey,
+                                                   final PublicKey tokenMintKey,
+                                                   final PublicKey binArrayLowerKey,
+                                                   final PublicKey binArrayUpperKey,
+                                                   final PublicKey tokenProgramKey,
+                                                   final LiquidityParameterByStrategyOneSide liquidityParameter) {
+    return LbClmmProgram.addLiquidityByStrategyOneSide(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenKey,
+        reserveKey,
+        tokenMintKey,
+        binArrayLowerKey, binArrayUpperKey,
+        owner,
+        tokenProgramKey,
+        meteoraAccounts.eventAuthority().publicKey(),
+        meteoraAccounts.dlmmProgram(),
+        liquidityParameter
+    );
+  }
+
+  @Override
+  public Instruction addLiquidity(final PublicKey positionKey,
+                                  final PublicKey lbPairKey,
+                                  final PublicKey binArrayBitmapExtensionKey,
+                                  final PublicKey userTokenXKey,
+                                  final PublicKey userTokenYKey,
+                                  final PublicKey reserveXKey,
+                                  final PublicKey reserveYKey,
+                                  final PublicKey tokenXMintKey,
+                                  final PublicKey tokenYMintKey,
+                                  final PublicKey binArrayLowerKey,
+                                  final PublicKey binArrayUpperKey,
+                                  final PublicKey tokenXProgramKey,
+                                  final PublicKey tokenYProgramKey,
+                                  final LiquidityParameter liquidityParameter) {
+    return LbClmmProgram.addLiquidity(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        binArrayLowerKey, binArrayUpperKey,
+        owner,
+        tokenXProgramKey, tokenYProgramKey,
+        meteoraAccounts.eventAuthority().publicKey(),
+        meteoraAccounts.dlmmProgram(),
+        liquidityParameter
+    );
+  }
+
+  @Override
+  public Instruction addLiquidityOneSide(final PublicKey positionKey,
+                                         final PublicKey lbPairKey,
+                                         final PublicKey binArrayBitmapExtensionKey,
+                                         final PublicKey userTokenKey,
+                                         final PublicKey reserveKey,
+                                         final PublicKey tokenMintKey,
+                                         final PublicKey binArrayLowerKey,
+                                         final PublicKey binArrayUpperKey,
+                                         final PublicKey tokenProgramKey,
+                                         final LiquidityOneSideParameter liquidityParameter) {
+    return LbClmmProgram.addLiquidityOneSide(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenKey,
+        reserveKey,
+        tokenMintKey,
+        binArrayLowerKey, binArrayUpperKey,
+        owner,
+        tokenProgramKey,
+        meteoraAccounts.eventAuthority().publicKey(),
+        meteoraAccounts.dlmmProgram(),
+        liquidityParameter
+    );
+  }
+
+  @Override
+  public Instruction addLiquidityOneSidePrecise(final PublicKey positionKey,
+                                                final PublicKey lbPairKey,
+                                                final PublicKey binArrayBitmapExtensionKey,
+                                                final PublicKey userTokenKey,
+                                                final PublicKey reserveKey,
+                                                final PublicKey tokenMintKey,
+                                                final PublicKey binArrayLowerKey,
+                                                final PublicKey binArrayUpperKey,
+                                                final PublicKey tokenProgramKey,
+                                                final AddLiquiditySingleSidePreciseParameter liquidityParameter) {
+    return LbClmmProgram.addLiquidityOneSidePrecise(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenKey,
+        reserveKey,
+        tokenMintKey,
+        binArrayLowerKey, binArrayUpperKey,
+        owner,
+        tokenProgramKey,
+        meteoraAccounts.eventAuthority().publicKey(),
+        meteoraAccounts.dlmmProgram(),
+        liquidityParameter
+    );
+  }
+
+  @Override
+  public Instruction addLiquidityByWeight(final PublicKey positionKey,
+                                          final PublicKey lbPairKey,
+                                          final PublicKey binArrayBitmapExtensionKey,
+                                          final PublicKey userTokenXKey,
+                                          final PublicKey userTokenYKey,
+                                          final PublicKey reserveXKey,
+                                          final PublicKey reserveYKey,
+                                          final PublicKey tokenXMintKey,
+                                          final PublicKey tokenYMintKey,
+                                          final PublicKey binArrayLowerKey,
+                                          final PublicKey binArrayUpperKey,
+                                          final PublicKey tokenXProgramKey,
+                                          final PublicKey tokenYProgramKey,
+                                          final LiquidityParameterByWeight liquidityParameter) {
+    return LbClmmProgram.addLiquidityByWeight(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        binArrayLowerKey, binArrayUpperKey,
+        owner,
+        tokenXProgramKey, tokenYProgramKey,
+        meteoraAccounts.eventAuthority().publicKey(),
+        meteoraAccounts.dlmmProgram(),
+        liquidityParameter
+    );
+  }
 
   public static void main(String[] args) {
     var accounts = MeteoraAccounts.MAIN_NET;
     var solAccounts = SolanaAccounts.MAIN_NET;
 
-    var lbPair = PublicKey.fromBase58Encoded("5rCf1DM8LjKTw4YqhnoLcngyZYeNnQqztScTogYHAS6");
-    final var pda = MeteoraPDAs.reservePDA(
-        lbPair,
-        PublicKey.fromBase58Encoded("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v"),
-        accounts.dlmmProgram()
-    );
+    final var rpcEndpoint = URI.create("https://mainnet.helius-rpc.com/?api-key=");
 
-    System.out.println(pda);
+    try (final var httpClient = HttpClient.newHttpClient()) {
+      final var rpcClient = SolanaRpcClient.createClient(
+          rpcEndpoint,
+          httpClient,
+          response -> {
+            System.out.println(new String(response.body()));
+            return true;
+          }
+      );
+
+      final var solUSDC = rpcClient.getAccountInfo(
+          PublicKey.fromBase58Encoded("5rCf1DM8LjKTw4YqhnoLcngyZYeNnQqztScTogYHAS6"),
+          LbPair.FACTORY
+      ).join();
+      System.out.println(solUSDC.data());
+
+//      final var lbPairs = rpcClient.getProgramAccounts(
+//          accounts.dlmmProgram(),
+//          List.of(
+//              LbPair.SIZE_FILTER,
+//              Filter.createMemCompFilter(0, accounts.lbPairDiscriminator().data()),
+//              LbPair.createPairTypeFilter(PairType.Permissionless.ordinal()),
+//              LbPair.createTokenXMintFilter(solAccounts.wrappedSolTokenMint())
+////              ,
+////              LbPair.createTokenYMintFilter(MarinadeAccounts.MAIN_NET.mSolTokenMint())
+//          ),
+//          LbPair.FACTORY
+//      ).join();
+//      for (final var accountInfo : lbPairs) {
+//        System.out.println(accountInfo.data());
+//      }
+//      System.out.println(lbPairs.size());
+    }
   }
 }

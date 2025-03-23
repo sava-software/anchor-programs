@@ -3,6 +3,7 @@ package software.sava.anchor.programs.meteora;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
+import software.sava.core.programs.Discriminator;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ public interface MeteoraAccounts {
 
   MeteoraAccounts MAIN_NET = createAccounts(
       "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
+      new int[]{33, 11, 49, 98, 181, 101, 177, 13},
       "Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB",
       "FEESngU3neckdwib9X3KWqdL7Mjmqk9XNp3uh5JbP4KP",
       "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi",
@@ -21,8 +23,8 @@ public interface MeteoraAccounts {
       "MERLuDFBMmsHnsBPZw2sDQZHvXFMwp8EdjudcU2HKky"
   );
 
-
   static MeteoraAccounts createAccounts(final PublicKey dlmmProgram,
+                                        final Discriminator lbPairDiscriminator,
                                         final PublicKey dynamicAmmPoolsProgram,
                                         final PublicKey m3m3StakeForFeeProgram,
                                         final PublicKey vaultProgram,
@@ -38,6 +40,7 @@ public interface MeteoraAccounts {
         dlmmProgram,
         AccountMeta.createInvoked(dlmmProgram),
         eventAuthority,
+        lbPairDiscriminator,
         AccountMeta.createInvoked(dynamicAmmPoolsProgram),
         AccountMeta.createInvoked(m3m3StakeForFeeProgram),
         AccountMeta.createInvoked(vaultProgram),
@@ -49,6 +52,7 @@ public interface MeteoraAccounts {
   }
 
   static MeteoraAccounts createAccounts(final String dlmmProgram,
+                                        final int[] lbPairDiscriminator,
                                         final String dynamicAmmPoolsProgram,
                                         final String m3m3StakeForFeeProgram,
                                         final String vaultProgram,
@@ -58,6 +62,7 @@ public interface MeteoraAccounts {
                                         final String mercurialStableSwapProgram) {
     return createAccounts(
         fromBase58Encoded(dlmmProgram),
+        Discriminator.toDiscriminator(lbPairDiscriminator),
         fromBase58Encoded(dynamicAmmPoolsProgram),
         fromBase58Encoded(m3m3StakeForFeeProgram),
         fromBase58Encoded(vaultProgram),
@@ -73,6 +78,8 @@ public interface MeteoraAccounts {
   AccountMeta invokedDlmmProgram();
 
   ProgramDerivedAddress eventAuthority();
+
+  Discriminator lbPairDiscriminator();
 
   AccountMeta invokedDynamicAmmPoolsProgram();
 
