@@ -550,4 +550,470 @@ public interface MeteoraDlmmClient {
         liquidityParameter
     );
   }
+
+  Instruction removeLiquidityByRange(final PublicKey positionKey,
+                                     final PublicKey lbPairKey,
+                                     final PublicKey binArrayBitmapExtensionKey,
+                                     final PublicKey userTokenXKey,
+                                     final PublicKey userTokenYKey,
+                                     final PublicKey reserveXKey,
+                                     final PublicKey reserveYKey,
+                                     final PublicKey tokenXMintKey,
+                                     final PublicKey tokenYMintKey,
+                                     final PublicKey binArrayLowerKey,
+                                     final PublicKey binArrayUpperKey,
+                                     final PublicKey tokenXProgramKey,
+                                     final PublicKey tokenYProgramKey,
+                                     final int fromBinId,
+                                     final int toBinId,
+                                     final int bpsToRemove);
+
+  default Instruction removeLiquidityByRange(final PublicKey positionKey,
+                                             final PublicKey lbPairKey,
+                                             final PublicKey binArrayBitmapExtensionKey,
+                                             final PublicKey userTokenXKey,
+                                             final PublicKey userTokenYKey,
+                                             final PublicKey reserveXKey,
+                                             final PublicKey reserveYKey,
+                                             final PublicKey tokenXMintKey,
+                                             final PublicKey tokenYMintKey,
+                                             final PublicKey tokenXProgramKey,
+                                             final PublicKey tokenYProgramKey,
+                                             final int fromBinId,
+                                             final int toBinId,
+                                             final int bpsToRemove) {
+    final var programId = meteoraAccounts().dlmmProgram();
+    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(fromBinId), programId);
+    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(toBinId), programId);
+
+    return removeLiquidityByRange(
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        tokenXProgramKey, tokenYProgramKey,
+        fromBinId, toBinId, bpsToRemove
+    );
+  }
+
+  default Instruction removeLiquidityByRange(final PublicKey positionKey,
+                                             final LbPair lbPair,
+                                             final PublicKey binArrayBitmapExtensionKey,
+                                             final PublicKey userTokenXKey,
+                                             final PublicKey userTokenYKey,
+                                             final PublicKey tokenXProgramKey,
+                                             final PublicKey tokenYProgramKey,
+                                             final int fromBinId,
+                                             final int toBinId,
+                                             final int bpsToRemove) {
+    final var lbPairKey = lbPair._address();
+    return removeLiquidityByRange(
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        lbPair.reserveX(), lbPair.reserveY(),
+        lbPair.tokenXMint(), lbPair.tokenYMint(),
+        tokenXProgramKey, tokenYProgramKey,
+        fromBinId, toBinId, bpsToRemove
+    );
+  }
+
+  default Instruction removeLiquidityByRange(final PublicKey positionKey,
+                                             final PublicKey lbPairKey,
+                                             final PublicKey binArrayBitmapExtensionKey,
+                                             final PublicKey userTokenXKey,
+                                             final PublicKey userTokenYKey,
+                                             final PublicKey tokenXMintKey,
+                                             final PublicKey tokenYMintKey,
+                                             final PublicKey tokenXProgramKey,
+                                             final PublicKey tokenYProgramKey,
+                                             final int fromBinId,
+                                             final int toBinId,
+                                             final int bpsToRemove) {
+    final var programId = meteoraAccounts().dlmmProgram();
+
+    final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
+    final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
+
+    return removeLiquidityByRange(
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey.publicKey(), reserveYKey.publicKey(),
+        tokenXMintKey, tokenYMintKey,
+        tokenXProgramKey, tokenYProgramKey,
+        fromBinId, toBinId, bpsToRemove
+    );
+  }
+
+  Instruction removeLiquidity(final PublicKey positionKey,
+                              final PublicKey lbPairKey,
+                              final PublicKey binArrayBitmapExtensionKey,
+                              final PublicKey userTokenXKey,
+                              final PublicKey userTokenYKey,
+                              final PublicKey reserveXKey,
+                              final PublicKey reserveYKey,
+                              final PublicKey tokenXMintKey,
+                              final PublicKey tokenYMintKey,
+                              final PublicKey binArrayLowerKey,
+                              final PublicKey binArrayUpperKey,
+                              final PublicKey tokenXProgramKey,
+                              final PublicKey tokenYProgramKey,
+                              final BinLiquidityReduction[] binLiquidityRemoval);
+
+  default Instruction removeLiquidity(final PublicKey positionKey,
+                                      final PublicKey lbPairKey,
+                                      final PublicKey binArrayBitmapExtensionKey,
+                                      final PublicKey userTokenXKey,
+                                      final PublicKey userTokenYKey,
+                                      final PublicKey reserveXKey,
+                                      final PublicKey reserveYKey,
+                                      final PublicKey tokenXMintKey,
+                                      final PublicKey tokenYMintKey,
+                                      final PublicKey tokenXProgramKey,
+                                      final PublicKey tokenYProgramKey,
+                                      final BinLiquidityReduction[] binLiquidityRemoval) {
+    int minBidId = binLiquidityRemoval[0].binId();
+    int maxBidId = minBidId;
+    int binId;
+    for (int i = 1; i < binLiquidityRemoval.length; ++i) {
+      binId = binLiquidityRemoval[i].binId();
+      if (binId < minBidId) {
+        minBidId = binId;
+      } else if (binId > maxBidId) {
+        maxBidId = binId;
+      }
+    }
+
+    final var programId = meteoraAccounts().dlmmProgram();
+    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(minBidId), programId);
+    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(maxBidId), programId);
+
+    return removeLiquidity(
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        tokenXProgramKey, tokenYProgramKey,
+        binLiquidityRemoval
+    );
+  }
+
+  default Instruction removeLiquidity(final PublicKey positionKey,
+                                      final LbPair lbPair,
+                                      final PublicKey binArrayBitmapExtensionKey,
+                                      final PublicKey userTokenXKey,
+                                      final PublicKey userTokenYKey,
+                                      final PublicKey tokenXProgramKey,
+                                      final PublicKey tokenYProgramKey,
+                                      final BinLiquidityReduction[] binLiquidityRemoval) {
+    return removeLiquidity(
+        positionKey,
+        lbPair._address(),
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        lbPair.reserveX(), lbPair.reserveY(),
+        lbPair.tokenXMint(), lbPair.tokenYMint(),
+        tokenXProgramKey, tokenYProgramKey,
+        binLiquidityRemoval
+    );
+  }
+
+  default Instruction removeLiquidity(final PublicKey positionKey,
+                                      final PublicKey lbPairKey,
+                                      final PublicKey binArrayBitmapExtensionKey,
+                                      final PublicKey userTokenXKey,
+                                      final PublicKey userTokenYKey,
+                                      final PublicKey tokenXMintKey,
+                                      final PublicKey tokenYMintKey,
+                                      final PublicKey tokenXProgramKey,
+                                      final PublicKey tokenYProgramKey,
+                                      final BinLiquidityReduction[] binLiquidityRemoval) {
+    final var programId = meteoraAccounts().dlmmProgram();
+    final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
+    final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
+
+    return removeLiquidity(
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey.publicKey(), reserveYKey.publicKey(),
+        tokenXMintKey, tokenYMintKey,
+        tokenXProgramKey, tokenYProgramKey,
+        binLiquidityRemoval
+    );
+  }
+
+  Instruction removeAllLiquidity(final PublicKey positionKey,
+                                 final PublicKey lbPairKey,
+                                 final PublicKey binArrayBitmapExtensionKey,
+                                 final PublicKey userTokenXKey,
+                                 final PublicKey userTokenYKey,
+                                 final PublicKey reserveXKey,
+                                 final PublicKey reserveYKey,
+                                 final PublicKey tokenXMintKey,
+                                 final PublicKey tokenYMintKey,
+                                 final PublicKey binArrayLowerKey,
+                                 final PublicKey binArrayUpperKey,
+                                 final PublicKey tokenXProgramKey,
+                                 final PublicKey tokenYProgramKey);
+
+  default Instruction removeAllLiquidity(final PublicKey positionKey,
+                                         final PublicKey lbPairKey,
+                                         final PublicKey binArrayBitmapExtensionKey,
+                                         final PublicKey userTokenXKey,
+                                         final PublicKey userTokenYKey,
+                                         final PublicKey reserveXKey,
+                                         final PublicKey reserveYKey,
+                                         final PublicKey tokenXMintKey,
+                                         final PublicKey tokenYMintKey,
+                                         final int minBidId,
+                                         final int maxBidId,
+                                         final PublicKey tokenXProgramKey,
+                                         final PublicKey tokenYProgramKey) {
+    final var programId = meteoraAccounts().dlmmProgram();
+    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(minBidId), programId);
+    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(maxBidId), programId);
+
+    return removeAllLiquidity(
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        tokenXProgramKey, tokenYProgramKey
+    );
+  }
+
+  default Instruction removeAllLiquidity(final PublicKey positionKey,
+                                         final PublicKey lbPairKey,
+                                         final PublicKey binArrayBitmapExtensionKey,
+                                         final PublicKey userTokenXKey,
+                                         final PublicKey userTokenYKey,
+                                         final PublicKey tokenXMintKey,
+                                         final PublicKey tokenYMintKey,
+                                         final int minBidId,
+                                         final int maxBidId,
+                                         final PublicKey tokenXProgramKey,
+                                         final PublicKey tokenYProgramKey) {
+    final var programId = meteoraAccounts().dlmmProgram();
+    final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
+    final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
+
+    return removeAllLiquidity(
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey.publicKey(), reserveYKey.publicKey(),
+        tokenXMintKey, tokenYMintKey,
+        minBidId, maxBidId,
+        tokenXProgramKey, tokenYProgramKey
+    );
+  }
+
+  default Instruction removeAllLiquidity(final Position position,
+                                         final PublicKey binArrayBitmapExtensionKey,
+                                         final PublicKey userTokenXKey,
+                                         final PublicKey userTokenYKey,
+                                         final PublicKey tokenXMintKey,
+                                         final PublicKey tokenYMintKey,
+                                         final PublicKey tokenXProgramKey,
+                                         final PublicKey tokenYProgramKey) {
+    final var programId = meteoraAccounts().dlmmProgram();
+    final var lbPairKey = position.lbPair();
+    final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
+    final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
+
+    return removeAllLiquidity(
+        position._address(),
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey.publicKey(), reserveYKey.publicKey(),
+        tokenXMintKey, tokenYMintKey,
+        position.lowerBinId(), position.upperBinId(),
+        tokenXProgramKey, tokenYProgramKey
+    );
+  }
+
+  Instruction claimFee(final PublicKey lbPairKey,
+                       final PublicKey positionKey,
+                       final PublicKey binArrayLowerKey,
+                       final PublicKey binArrayUpperKey,
+                       final PublicKey reserveXKey,
+                       final PublicKey reserveYKey,
+                       final PublicKey userTokenXKey,
+                       final PublicKey userTokenYKey,
+                       final PublicKey tokenXMintKey,
+                       final PublicKey tokenYMintKey,
+                       final PublicKey tokenProgramKey);
+
+  default Instruction claimFee(final PublicKey lbPairKey,
+                               final PublicKey positionKey,
+                               final int minBidId,
+                               final int maxBidId,
+                               final PublicKey reserveXKey,
+                               final PublicKey reserveYKey,
+                               final PublicKey userTokenXKey,
+                               final PublicKey userTokenYKey,
+                               final PublicKey tokenXMintKey,
+                               final PublicKey tokenYMintKey,
+                               final PublicKey tokenProgramKey) {
+    final var programId = meteoraAccounts().dlmmProgram();
+    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(minBidId), programId);
+    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(maxBidId), programId);
+
+    return claimFee(
+        lbPairKey,
+        positionKey,
+        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        reserveXKey, reserveYKey,
+        userTokenXKey, userTokenYKey,
+        tokenXMintKey, tokenYMintKey,
+        tokenProgramKey
+    );
+  }
+
+  default Instruction claimFee(final PublicKey lbPairKey,
+                               final PublicKey positionKey,
+                               final int minBidId,
+                               final int maxBidId,
+                               final PublicKey userTokenXKey,
+                               final PublicKey userTokenYKey,
+                               final PublicKey tokenXMintKey,
+                               final PublicKey tokenYMintKey,
+                               final PublicKey tokenProgramKey) {
+    final var programId = meteoraAccounts().dlmmProgram();
+    final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
+    final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
+
+    return claimFee(
+        lbPairKey,
+        positionKey,
+        minBidId, maxBidId,
+        reserveXKey.publicKey(), reserveYKey.publicKey(),
+        userTokenXKey, userTokenYKey,
+        tokenXMintKey, tokenYMintKey,
+        tokenProgramKey
+    );
+  }
+
+  default Instruction claimFee(final Position position,
+                               final PublicKey userTokenXKey,
+                               final PublicKey userTokenYKey,
+                               final PublicKey tokenXMintKey,
+                               final PublicKey tokenYMintKey,
+                               final PublicKey tokenProgramKey) {
+    final var programId = meteoraAccounts().dlmmProgram();
+    final var lbPairKey = position.lbPair();
+    final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
+    final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
+
+    return claimFee(
+        lbPairKey,
+        position._address(),
+        position.lowerBinId(), position.upperBinId(),
+        reserveXKey.publicKey(), reserveYKey.publicKey(),
+        userTokenXKey, userTokenYKey,
+        tokenXMintKey, tokenYMintKey,
+        tokenProgramKey
+    );
+  }
+
+  Instruction claimReward(final PublicKey lbPairKey,
+                          final PublicKey positionKey,
+                          final PublicKey binArrayLowerKey,
+                          final PublicKey binArrayUpperKey,
+                          final PublicKey rewardVaultKey,
+                          final PublicKey rewardMintKey,
+                          final PublicKey userTokenAccountKey,
+                          final PublicKey tokenProgramKey,
+                          final int rewardIndex);
+
+  default Instruction claimReward(final PublicKey lbPairKey,
+                                  final PublicKey positionKey,
+                                  final int minBidId,
+                                  final int maxBidId,
+                                  final PublicKey rewardMintKey,
+                                  final PublicKey userTokenAccountKey,
+                                  final PublicKey tokenProgramKey,
+                                  final int rewardIndex) {
+    final var programId = meteoraAccounts().dlmmProgram();
+    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(minBidId), programId);
+    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(maxBidId), programId);
+    final var rewardVaultKey = MeteoraPDAs.rewardVaultPDA(lbPairKey, rewardIndex, programId).publicKey();
+
+    return claimReward(
+        lbPairKey,
+        positionKey,
+        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        rewardVaultKey, rewardMintKey,
+        userTokenAccountKey,
+        tokenProgramKey,
+        rewardIndex
+    );
+  }
+
+  default Instruction claimReward(final Position position,
+                                  final PublicKey rewardMintKey,
+                                  final PublicKey userTokenAccountKey,
+                                  final PublicKey tokenProgramKey,
+                                  final int rewardIndex) {
+    return claimReward(
+        position.lbPair(),
+        position._address(),
+        position.lowerBinId(), position.upperBinId(),
+        rewardMintKey,
+        userTokenAccountKey,
+        tokenProgramKey,
+        rewardIndex
+    );
+  }
+
+  Instruction closePosition(final PublicKey positionKey,
+                            final PublicKey lbPairKey,
+                            final PublicKey binArrayLowerKey,
+                            final PublicKey binArrayUpperKey,
+                            final PublicKey rentReceiverKey);
+
+  default Instruction closePosition(final PublicKey positionKey,
+                                    final PublicKey lbPairKey,
+                                    final PublicKey binArrayLowerKey,
+                                    final PublicKey binArrayUpperKey) {
+    return closePosition(
+        positionKey,
+        lbPairKey,
+        binArrayLowerKey, binArrayUpperKey,
+        feePayer().publicKey()
+    );
+  }
+
+  default Instruction closePosition(final Position position, final PublicKey rentReceiverKey) {
+    final var lbPairKey = position.lbPair();
+    final var programId = meteoraAccounts().dlmmProgram();
+    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(position.lowerBinId()), programId);
+    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(position.upperBinId()), programId);
+    return closePosition(
+        position._address(),
+        lbPairKey,
+        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        rentReceiverKey
+    );
+  }
+
+  default Instruction closePosition(final Position position) {
+    return closePosition(position, feePayer().publicKey());
+  }
 }

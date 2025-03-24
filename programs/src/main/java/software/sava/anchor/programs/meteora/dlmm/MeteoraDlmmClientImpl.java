@@ -12,42 +12,10 @@ import software.sava.rpc.json.http.client.SolanaRpcClient;
 import java.net.URI;
 import java.net.http.HttpClient;
 
-final class MeteoraDlmmClientImpl implements MeteoraDlmmClient {
-
-  private final SolanaAccounts solanaAccounts;
-  private final MeteoraAccounts meteoraAccounts;
-  private final PublicKey owner;
-  private final AccountMeta feePayer;
-
-  MeteoraDlmmClientImpl(final SolanaAccounts solanaAccounts,
-                        final MeteoraAccounts meteoraAccounts,
-                        final PublicKey owner,
-                        final AccountMeta feePayer) {
-    this.solanaAccounts = solanaAccounts;
-    this.meteoraAccounts = meteoraAccounts;
-    this.owner = owner;
-    this.feePayer = feePayer;
-  }
-
-  @Override
-  public SolanaAccounts solanaAccounts() {
-    return solanaAccounts;
-  }
-
-  @Override
-  public MeteoraAccounts meteoraAccounts() {
-    return meteoraAccounts;
-  }
-
-  @Override
-  public PublicKey owner() {
-    return owner;
-  }
-
-  @Override
-  public AccountMeta feePayer() {
-    return feePayer;
-  }
+record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
+                             MeteoraAccounts meteoraAccounts,
+                             PublicKey owner,
+                             AccountMeta feePayer) implements MeteoraDlmmClient {
 
   @Override
   public Instruction initializePosition(final PublicKey positionKey,
@@ -246,6 +214,173 @@ final class MeteoraDlmmClientImpl implements MeteoraDlmmClient {
         meteoraAccounts.eventAuthority().publicKey(),
         meteoraAccounts.dlmmProgram(),
         liquidityParameter
+    );
+  }
+
+  @Override
+  public Instruction removeLiquidityByRange(final PublicKey positionKey,
+                                            final PublicKey lbPairKey,
+                                            final PublicKey binArrayBitmapExtensionKey,
+                                            final PublicKey userTokenXKey,
+                                            final PublicKey userTokenYKey,
+                                            final PublicKey reserveXKey,
+                                            final PublicKey reserveYKey,
+                                            final PublicKey tokenXMintKey,
+                                            final PublicKey tokenYMintKey,
+                                            final PublicKey binArrayLowerKey,
+                                            final PublicKey binArrayUpperKey,
+                                            final PublicKey tokenXProgramKey,
+                                            final PublicKey tokenYProgramKey,
+                                            final int fromBinId,
+                                            final int toBinId,
+                                            final int bpsToRemove) {
+    return LbClmmProgram.removeLiquidityByRange(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        binArrayLowerKey, binArrayUpperKey,
+        owner,
+        tokenXProgramKey, tokenYProgramKey,
+        meteoraAccounts.eventAuthority().publicKey(),
+        meteoraAccounts.dlmmProgram(),
+        fromBinId, toBinId, bpsToRemove
+    );
+  }
+
+  @Override
+  public Instruction removeLiquidity(final PublicKey positionKey,
+                                     final PublicKey lbPairKey,
+                                     final PublicKey binArrayBitmapExtensionKey,
+                                     final PublicKey userTokenXKey,
+                                     final PublicKey userTokenYKey,
+                                     final PublicKey reserveXKey,
+                                     final PublicKey reserveYKey,
+                                     final PublicKey tokenXMintKey,
+                                     final PublicKey tokenYMintKey,
+                                     final PublicKey binArrayLowerKey,
+                                     final PublicKey binArrayUpperKey,
+                                     final PublicKey tokenXProgramKey,
+                                     final PublicKey tokenYProgramKey,
+                                     final BinLiquidityReduction[] binLiquidityRemoval) {
+    return LbClmmProgram.removeLiquidity(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        binArrayLowerKey, binArrayUpperKey,
+        owner,
+        tokenXProgramKey, tokenYProgramKey,
+        meteoraAccounts.eventAuthority().publicKey(),
+        meteoraAccounts.dlmmProgram(),
+        binLiquidityRemoval
+    );
+  }
+
+  @Override
+  public Instruction removeAllLiquidity(final PublicKey positionKey,
+                                        final PublicKey lbPairKey,
+                                        final PublicKey binArrayBitmapExtensionKey,
+                                        final PublicKey userTokenXKey,
+                                        final PublicKey userTokenYKey,
+                                        final PublicKey reserveXKey,
+                                        final PublicKey reserveYKey,
+                                        final PublicKey tokenXMintKey,
+                                        final PublicKey tokenYMintKey,
+                                        final PublicKey binArrayLowerKey,
+                                        final PublicKey binArrayUpperKey,
+                                        final PublicKey tokenXProgramKey,
+                                        final PublicKey tokenYProgramKey) {
+    return LbClmmProgram.removeAllLiquidity(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        binArrayLowerKey, binArrayUpperKey,
+        owner,
+        tokenXProgramKey, tokenYProgramKey,
+        meteoraAccounts.eventAuthority().publicKey(),
+        meteoraAccounts.dlmmProgram()
+    );
+  }
+
+  @Override
+  public Instruction claimFee(final PublicKey lbPairKey,
+                              final PublicKey positionKey,
+                              final PublicKey binArrayLowerKey,
+                              final PublicKey binArrayUpperKey,
+                              final PublicKey reserveXKey,
+                              final PublicKey reserveYKey,
+                              final PublicKey userTokenXKey,
+                              final PublicKey userTokenYKey,
+                              final PublicKey tokenXMintKey,
+                              final PublicKey tokenYMintKey,
+                              final PublicKey tokenProgramKey) {
+    return LbClmmProgram.claimFee(
+        meteoraAccounts.invokedDlmmProgram(),
+        lbPairKey,
+        positionKey,
+        binArrayLowerKey, binArrayUpperKey,
+        owner,
+        reserveXKey, reserveYKey,
+        userTokenXKey, userTokenYKey,
+        tokenXMintKey, tokenYMintKey,
+        tokenProgramKey,
+        meteoraAccounts.eventAuthority().publicKey(),
+        meteoraAccounts.dlmmProgram()
+    );
+  }
+
+  @Override
+  public Instruction claimReward(final PublicKey lbPairKey,
+                                 final PublicKey positionKey,
+                                 final PublicKey binArrayLowerKey,
+                                 final PublicKey binArrayUpperKey,
+                                 final PublicKey rewardVaultKey,
+                                 final PublicKey rewardMintKey,
+                                 final PublicKey userTokenAccountKey,
+                                 final PublicKey tokenProgramKey,
+                                 final int rewardIndex) {
+    return LbClmmProgram.claimReward(
+        meteoraAccounts.invokedDlmmProgram(),
+        lbPairKey,
+        positionKey,
+        binArrayLowerKey, binArrayUpperKey,
+        owner,
+        rewardVaultKey,
+        rewardMintKey,
+        userTokenAccountKey,
+        tokenProgramKey,
+        meteoraAccounts.eventAuthority().publicKey(),
+        meteoraAccounts.dlmmProgram(),
+        rewardIndex
+    );
+  }
+
+  @Override
+  public Instruction closePosition(final PublicKey positionKey,
+                                   final PublicKey lbPairKey,
+                                   final PublicKey binArrayLowerKey,
+                                   final PublicKey binArrayUpperKey,
+                                   final PublicKey rentReceiverKey) {
+    return LbClmmProgram.closePosition(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayLowerKey, binArrayUpperKey,
+        owner,
+        rentReceiverKey,
+        meteoraAccounts.eventAuthority().publicKey(),
+        meteoraAccounts.dlmmProgram()
     );
   }
 
