@@ -14,6 +14,7 @@ public interface MeteoraAccounts {
   MeteoraAccounts MAIN_NET = createAccounts(
       "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
       new int[]{33, 11, 49, 98, 181, 101, 177, 13},
+      new int[]{117, 176, 212, 199, 245, 180, 133, 182},
       "Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB",
       "FEESngU3neckdwib9X3KWqdL7Mjmqk9XNp3uh5JbP4KP",
       "24Uqj9JCLxUeoC3hGfh5W3s9FM9uCHDS2SG3LYwBpyTi",
@@ -25,6 +26,7 @@ public interface MeteoraAccounts {
 
   static MeteoraAccounts createAccounts(final PublicKey dlmmProgram,
                                         final Discriminator lbPairDiscriminator,
+                                        final Discriminator positionV2Discriminator,
                                         final PublicKey dynamicAmmPoolsProgram,
                                         final PublicKey m3m3StakeForFeeProgram,
                                         final PublicKey vaultProgram,
@@ -41,6 +43,7 @@ public interface MeteoraAccounts {
         AccountMeta.createInvoked(dlmmProgram),
         eventAuthority,
         lbPairDiscriminator,
+        positionV2Discriminator,
         AccountMeta.createInvoked(dynamicAmmPoolsProgram),
         AccountMeta.createInvoked(m3m3StakeForFeeProgram),
         AccountMeta.createInvoked(vaultProgram),
@@ -53,6 +56,7 @@ public interface MeteoraAccounts {
 
   static MeteoraAccounts createAccounts(final String dlmmProgram,
                                         final int[] lbPairDiscriminator,
+                                        final int[] positionV2Discriminator,
                                         final String dynamicAmmPoolsProgram,
                                         final String m3m3StakeForFeeProgram,
                                         final String vaultProgram,
@@ -63,6 +67,7 @@ public interface MeteoraAccounts {
     return createAccounts(
         fromBase58Encoded(dlmmProgram),
         Discriminator.toDiscriminator(lbPairDiscriminator),
+        Discriminator.toDiscriminator(positionV2Discriminator),
         fromBase58Encoded(dynamicAmmPoolsProgram),
         fromBase58Encoded(m3m3StakeForFeeProgram),
         fromBase58Encoded(vaultProgram),
@@ -80,6 +85,8 @@ public interface MeteoraAccounts {
   ProgramDerivedAddress eventAuthority();
 
   Discriminator lbPairDiscriminator();
+
+  Discriminator positionV2Discriminator();
 
   AccountMeta invokedDynamicAmmPoolsProgram();
 

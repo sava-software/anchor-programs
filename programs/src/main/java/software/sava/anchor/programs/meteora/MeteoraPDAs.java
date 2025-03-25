@@ -123,7 +123,7 @@ public final class MeteoraPDAs {
   }
 
   public static ProgramDerivedAddress binArrayPdA(final PublicKey lbPair,
-                                                  final long binArrayIndex,
+                                                  final int binArrayIndex,
                                                   final PublicKey programId) {
     final byte[] binArrayIndexBytes = new byte[Long.BYTES];
     ByteUtil.putInt64LE(binArrayIndexBytes, 0, binArrayIndex);
@@ -182,6 +182,5 @@ public final class MeteoraPDAs {
   }
 
   private MeteoraPDAs() {
-
   }
 }
