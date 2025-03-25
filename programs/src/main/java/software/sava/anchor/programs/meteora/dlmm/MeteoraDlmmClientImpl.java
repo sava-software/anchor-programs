@@ -8,6 +8,7 @@ import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
+import software.sava.solana.web2.jupiter.client.http.JupiterClient;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -391,6 +392,8 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
     final var rpcEndpoint = URI.create("https://mainnet.helius-rpc.com/?api-key=");
 
     try (final var httpClient = HttpClient.newHttpClient()) {
+      final var jupiter = JupiterClient.createClient(httpClient);
+
       final var rpcClient = SolanaRpcClient.createClient(
           rpcEndpoint,
           httpClient,
@@ -400,28 +403,12 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
           }
       );
 
-      final var solUSDC = rpcClient.getAccountInfo(
-          PublicKey.fromBase58Encoded("5rCf1DM8LjKTw4YqhnoLcngyZYeNnQqztScTogYHAS6"),
+      final var lbPairAccountInfo = rpcClient.getAccountInfo(
+          PublicKey.fromBase58Encoded("7ubS3GccjhQY99AYNKXjNJqnXjaokEdfdV915xnCb96r"),
           LbPair.FACTORY
       ).join();
-      System.out.println(solUSDC.data());
 
-//      final var lbPairs = rpcClient.getProgramAccounts(
-//          accounts.dlmmProgram(),
-//          List.of(
-//              LbPair.SIZE_FILTER,
-//              Filter.createMemCompFilter(0, accounts.lbPairDiscriminator().data()),
-//              LbPair.createPairTypeFilter(PairType.Permissionless.ordinal()),
-//              LbPair.createTokenXMintFilter(solAccounts.wrappedSolTokenMint())
-////              ,
-////              LbPair.createTokenYMintFilter(MarinadeAccounts.MAIN_NET.mSolTokenMint())
-//          ),
-//          LbPair.FACTORY
-//      ).join();
-//      for (final var accountInfo : lbPairs) {
-//        System.out.println(accountInfo.data());
-//      }
-//      System.out.println(lbPairs.size());
+      final var lbPair = lbPairAccountInfo.data();
     }
   }
 }

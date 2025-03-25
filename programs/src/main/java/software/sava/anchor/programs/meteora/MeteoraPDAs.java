@@ -1,6 +1,5 @@
 package software.sava.anchor.programs.meteora;
 
-import software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmConstants;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.encoding.ByteUtil;
@@ -134,17 +133,6 @@ public final class MeteoraPDAs {
             binArrayIndexBytes
         ), programId
     );
-  }
-
-
-  public static int bidIdToArrayIndex(final int binId) {
-    final int idx = binId / (int) LbClmmConstants.MAX_BIN_PER_ARRAY;
-    if (binId < 0) {
-      final int rem = binId % (int) LbClmmConstants.MAX_BIN_PER_ARRAY;
-      return rem != 0 ? idx - 1 : idx;
-    } else {
-      return idx;
-    }
   }
 
   public static ProgramDerivedAddress binArrayBitmapExtension(final PublicKey lbPair, final PublicKey programId) {

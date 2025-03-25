@@ -9,7 +9,7 @@ import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
-import static software.sava.anchor.programs.meteora.MeteoraPDAs.bidIdToArrayIndex;
+import static software.sava.anchor.programs.meteora.dlmm.DlmmUtils.bidIdToArrayIndex;
 
 public interface MeteoraDlmmClient {
 
@@ -823,7 +823,7 @@ public interface MeteoraDlmmClient {
     );
   }
 
-  default Instruction removeAllLiquidity(final Position position,
+  default Instruction removeAllLiquidity(final PositionV2 position,
                                          final PublicKey binArrayBitmapExtensionKey,
                                          final PublicKey userTokenXKey,
                                          final PublicKey userTokenYKey,
@@ -910,7 +910,7 @@ public interface MeteoraDlmmClient {
     );
   }
 
-  default Instruction claimFee(final Position position,
+  default Instruction claimFee(final PositionV2 position,
                                final PublicKey userTokenXKey,
                                final PublicKey userTokenYKey,
                                final PublicKey tokenXMintKey,
@@ -966,7 +966,7 @@ public interface MeteoraDlmmClient {
     );
   }
 
-  default Instruction claimReward(final Position position,
+  default Instruction claimReward(final PositionV2 position,
                                   final PublicKey rewardMintKey,
                                   final PublicKey userTokenAccountKey,
                                   final PublicKey tokenProgramKey,
@@ -1000,7 +1000,7 @@ public interface MeteoraDlmmClient {
     );
   }
 
-  default Instruction closePosition(final Position position, final PublicKey rentReceiverKey) {
+  default Instruction closePosition(final PositionV2 position, final PublicKey rentReceiverKey) {
     final var lbPairKey = position.lbPair();
     final var programId = meteoraAccounts().dlmmProgram();
     final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, bidIdToArrayIndex(position.lowerBinId()), programId);
@@ -1013,7 +1013,7 @@ public interface MeteoraDlmmClient {
     );
   }
 
-  default Instruction closePosition(final Position position) {
+  default Instruction closePosition(final PositionV2 position) {
     return closePosition(position, feePayer().publicKey());
   }
 }
