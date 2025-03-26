@@ -20,7 +20,35 @@ import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 final class MeteoraDlmmTests {
 
   @Test
-  public void testWithdrawAndClosePosition() {
+  void testBinPricing() {
+    final int baseScale = 8;
+    final int quoteScale = 6;
+    final int scaleDifference = DlmmUtils.scaleDifference(baseScale, quoteScale);
+
+    final int binId = 17221;
+    final var mathContext = DlmmUtils.mathContext(binId, quoteScale);
+
+    final int stepSize = 4;
+    final var binStepBase = DlmmUtils.binStepBase(stepSize);
+
+    final var binPrice = DlmmUtils.binPrice(binStepBase, binId, scaleDifference, mathContext);
+    assertEquals("97948.085085", binPrice.toPlainString());
+
+    double calculatedBinId = DlmmUtils.calculateBinId(binPrice, binStepBase, scaleDifference);
+    assertEquals(binId, Math.round(calculatedBinId));
+
+    final double binStepBaseDouble = binStepBase.doubleValue();
+    assertEquals(binStepBaseDouble, DlmmUtils.binStepBaseDouble(stepSize));
+
+    final double doubleBinPrice = DlmmUtils.binPrice(binStepBaseDouble, binId, scaleDifference);
+    assertEquals(97948.08508503261, doubleBinPrice);
+
+    calculatedBinId = DlmmUtils.calculateBinId(doubleBinPrice, binStepBaseDouble, scaleDifference);
+    assertEquals(binId, Math.round(calculatedBinId));
+  }
+
+  @Test
+  void testWithdrawAndClosePosition() {
     final var solAccounts = SolanaAccounts.MAIN_NET;
     final var metAccounts = MeteoraAccounts.MAIN_NET;
 

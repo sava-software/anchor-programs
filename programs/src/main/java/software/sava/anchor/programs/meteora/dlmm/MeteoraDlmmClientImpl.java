@@ -10,6 +10,7 @@ import software.sava.core.rpc.Filter;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.PrivateKeyEncoding;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
+import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.rpc.json.http.response.InnerInstructions;
 import software.sava.rpc.json.http.response.TxSimulation;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
@@ -24,6 +25,7 @@ import java.net.http.HttpClient;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static software.sava.solana.programs.compute_budget.ComputeBudgetProgram.MAX_COMPUTE_BUDGET;
@@ -32,6 +34,18 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
                              MeteoraAccounts meteoraAccounts,
                              PublicKey owner,
                              AccountMeta feePayer) implements MeteoraDlmmClient {
+
+  public CompletableFuture<List<AccountInfo<PositionV2>>> fetchPositions(final SolanaRpcClient rpcClient) {
+    return rpcClient.getProgramAccounts(
+        meteoraAccounts.dlmmProgram(),
+        List.of(
+            PositionV2.SIZE_FILTER,
+            Filter.createMemCompFilter(0, meteoraAccounts.positionV2Discriminator().data()),
+            PositionV2.createOwnerFilter(owner)
+        ),
+        PositionV2.FACTORY
+    );
+  }
 
   @Override
   public Instruction initializePosition(final PublicKey positionKey,
@@ -444,50 +458,55 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
           }
       );
 
-      final var positionAccountInfo = rpcClient.getProgramAccounts(
-          accounts.dlmmProgram(),
-          List.of(
-              PositionV2.SIZE_FILTER,
-              Filter.createMemCompFilter(0, accounts.positionV2Discriminator().data()),
-              PositionV2.createOwnerFilter(signer.publicKey())
-          ),
-          PositionV2.FACTORY
-      ).join();
-      final var position = positionAccountInfo.getFirst().data();
 
-      final var lbPairKey = position.lbPair();
-
+      final var lbPairKey = PublicKey.fromBase58Encoded("7ubS3GccjhQY99AYNKXjNJqnXjaokEdfdV915xnCb96r");
       final var lbPairAccountInfo = rpcClient.getAccountInfo(lbPairKey, LbPair.FACTORY).join();
-
       final var lbPair = lbPairAccountInfo.data();
+
+      final var positionKey = PublicKey.createOffCurveAccountWithAsciiSeed(
+          signer.publicKey(),
+          lbPairKey.toBase58(),
+          accounts.dlmmProgram()
+      ).publicKey();
 
       final var tokenXAccount = nativeAccountClient.findATA(lbPair.tokenXMint()).publicKey();
       System.out.println("User X Account: " + tokenXAccount);
       final var tokenYAccount = nativeAccountClient.findATA(lbPair.tokenYMint()).publicKey();
       System.out.println("User Y Account: " + tokenYAccount);
 
-      final var removeLiquidityIx = dlmmClient.removeLiquidityByRange(
-          position,
-          lbPair,
+      final int lowerBinId = 0;
+      final int width = 69;
+
+      final var initializePositionIx = dlmmClient.initializePosition(positionKey, lbPairKey, lowerBinId, width);
+
+      final byte[] parameters = new byte[64];
+      parameters[0] = 1;
+      final var strategyParams = new StrategyParameters(
+          lowerBinId, lowerBinId + width,
+          StrategyType.BidAskOneSide,
+          parameters
+      );
+      final long amount = 69420;
+      final var params = new LiquidityParameterByStrategyOneSide(
+          amount,
+          lbPair.activeId(),
+          10,
+          strategyParams
+      );
+      final var addLiquidityIx = dlmmClient.addLiquidityByStrategyOneSide(
+          positionKey, lbPair,
           null,
-          tokenXAccount, tokenYAccount,
-          solAccounts.tokenProgram(), solAccounts.tokenProgram(),
-          DlmmUtils.BASIS_POINT_MAX
+          tokenXAccount,
+          lbPair.reserveX(),
+          lbPair.tokenXMint(),
+          solAccounts.tokenProgram(),
+          params
       );
-
-      final var claimFeeIx = dlmmClient.claimFee(
-          position, lbPair,
-          tokenXAccount, tokenYAccount,
-          solAccounts.tokenProgram()
-      );
-
-      final var closePositionIx = dlmmClient.closePosition(position);
 
       final var simulationInstructions = List.of(
           simulationBudget, simulationPrice,
-          removeLiquidityIx,
-          claimFeeIx,
-          closePositionIx
+          initializePositionIx,
+          addLiquidityIx
       );
       final var simulationTransaction = nativeAccountClient.createTransaction(simulationInstructions);
       final var encodedSimulationTx = simulationTransaction.base64EncodeToString();
@@ -519,18 +538,17 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
       );
       final var instructions = List.of(
           computeBudget, computePrice,
-          removeLiquidityIx,
-          claimFeeIx,
-          closePositionIx
+          initializePositionIx,
+          addLiquidityIx
       );
       final var transaction = nativeAccountClient.createTransaction(instructions);
       transaction.setRecentBlockHash(simulationResult.replacementBlockHash().blockhash());
       transaction.sign(signer);
       final var encodedTx = transaction.base64EncodeToString();
       System.out.println(encodedTx);
-      final var sendFuture = sendClient.sendTransaction(encodedTx);
-      final var sendResult = sendFuture.join();
-      System.out.println(sendResult);
+//      final var sendFuture = sendClient.sendTransaction(encodedTx);
+//      final var sendResult = sendFuture.join();
+//      System.out.println(sendResult);
     }
   }
 

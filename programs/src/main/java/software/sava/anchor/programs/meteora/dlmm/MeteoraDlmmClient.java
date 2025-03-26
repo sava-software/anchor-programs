@@ -165,12 +165,11 @@ public interface MeteoraDlmmClient {
                                                     final PublicKey lbPairKey,
                                                     final PublicKey binArrayBitmapExtensionKey,
                                                     final PublicKey userTokenKey,
+                                                    final PublicKey reserveKey,
                                                     final PublicKey tokenMintKey,
                                                     final PublicKey tokenProgramKey,
                                                     final LiquidityParameterByStrategyOneSide liquidityParameter) {
     final var programId = meteoraAccounts().dlmmProgram();
-
-    final var reserveKey = MeteoraPDAs.reservePDA(lbPairKey, tokenMintKey, programId).publicKey();
 
     final var strategyParameters = liquidityParameter.strategyParameters();
     final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(strategyParameters.minBinId()), programId);
@@ -193,6 +192,7 @@ public interface MeteoraDlmmClient {
                                                     final LbPair lbPair,
                                                     final PublicKey binArrayBitmapExtensionKey,
                                                     final PublicKey userTokenKey,
+                                                    final PublicKey reserveKey,
                                                     final PublicKey tokenMintKey,
                                                     final PublicKey tokenProgramKey,
                                                     final LiquidityParameterByStrategyOneSide liquidityParameter) {
@@ -201,6 +201,7 @@ public interface MeteoraDlmmClient {
         lbPair._address(),
         binArrayBitmapExtensionKey,
         userTokenKey,
+        reserveKey,
         tokenMintKey,
         tokenProgramKey,
         liquidityParameter
