@@ -20,6 +20,7 @@ import software.sava.solana.web2.helius.client.http.HeliusClient;
 import systems.comodal.jsoniter.JsonIterator;
 
 import java.io.IOException;
+import java.math.MathContext;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.nio.file.Files;
@@ -31,13 +32,15 @@ import java.util.stream.Collectors;
 
 import static java.util.Objects.requireNonNullElse;
 import static software.sava.anchor.programs.meteora.dlmm.DlmmUtils.NO_REMAINING_ACCOUNTS;
-import static software.sava.solana.programs.compute_budget.ComputeBudgetProgram.MAX_COMPUTE_BUDGET;
 
 record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
                              MeteoraAccounts meteoraAccounts,
                              PublicKey owner,
-                             AccountMeta feePayer) implements MeteoraDlmmClient {
+                             AccountMeta feePayer,
+                             PublicKey memoProgram,
+                             PublicKey eventAuthority) implements MeteoraDlmmClient {
 
+  @Override
   public CompletableFuture<List<AccountInfo<PositionV2>>> fetchPositions(final SolanaRpcClient rpcClient) {
     return rpcClient.getProgramAccounts(
         meteoraAccounts.dlmmProgram(),
@@ -63,7 +66,7 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
         owner,
         solanaAccounts.systemProgram(),
         solanaAccounts.rentSysVar(),
-        meteoraAccounts.eventAuthority().publicKey(),
+        eventAuthority,
         meteoraAccounts.dlmmProgram(),
         lowerBinId,
         width
@@ -82,25 +85,22 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
                                             final PublicKey tokenYMintKey,
                                             final PublicKey tokenXProgramKey,
                                             final PublicKey tokenYProgramKey,
-                                            final PublicKey binArrayLowerKey,
-                                            final PublicKey binArrayUpperKey,
                                             final LiquidityParameterByStrategy liquidityParameter,
                                             final RemainingAccountsInfo remainingAccountsInfo) {
-    return appendAccounts(binArrayLowerKey, binArrayUpperKey, LbClmmProgram.addLiquidityByStrategy2(
-            meteoraAccounts.invokedDlmmProgram(),
-            positionKey,
-            lbPairKey,
-            binArrayBitmapExtensionKey,
-            userTokenXKey, userTokenYKey,
-            reserveXKey, reserveYKey,
-            tokenXMintKey, tokenYMintKey,
-            owner,
-            tokenXProgramKey, tokenYProgramKey,
-            meteoraAccounts.eventAuthority().publicKey(),
-            meteoraAccounts.dlmmProgram(),
-            liquidityParameter,
-            requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
-        )
+    return LbClmmProgram.addLiquidityByStrategy2(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        owner,
+        tokenXProgramKey, tokenYProgramKey,
+        eventAuthority,
+        meteoraAccounts.dlmmProgram(),
+        liquidityParameter,
+        requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
     );
   }
 
@@ -116,25 +116,22 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
                                   final PublicKey tokenYMintKey,
                                   final PublicKey tokenXProgramKey,
                                   final PublicKey tokenYProgramKey,
-                                  final PublicKey binArrayLowerKey,
-                                  final PublicKey binArrayUpperKey,
                                   final LiquidityParameter liquidityParameter,
                                   final RemainingAccountsInfo remainingAccountsInfo) {
-    return appendAccounts(binArrayLowerKey, binArrayUpperKey, LbClmmProgram.addLiquidity2(
-            meteoraAccounts.invokedDlmmProgram(),
-            positionKey,
-            lbPairKey,
-            binArrayBitmapExtensionKey,
-            userTokenXKey, userTokenYKey,
-            reserveXKey, reserveYKey,
-            tokenXMintKey, tokenYMintKey,
-            owner,
-            tokenXProgramKey, tokenYProgramKey,
-            meteoraAccounts.eventAuthority().publicKey(),
-            meteoraAccounts.dlmmProgram(),
-            liquidityParameter,
-            requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
-        )
+    return LbClmmProgram.addLiquidity2(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        owner,
+        tokenXProgramKey, tokenYProgramKey,
+        eventAuthority,
+        meteoraAccounts.dlmmProgram(),
+        liquidityParameter,
+        requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
     );
   }
 
@@ -146,25 +143,22 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
                                                 final PublicKey reserveKey,
                                                 final PublicKey tokenMintKey,
                                                 final PublicKey tokenProgramKey,
-                                                final PublicKey binArrayLowerKey,
-                                                final PublicKey binArrayUpperKey,
                                                 final AddLiquiditySingleSidePreciseParameter2 liquidityParameter,
                                                 final RemainingAccountsInfo remainingAccountsInfo) {
-    return appendAccounts(binArrayLowerKey, binArrayUpperKey, LbClmmProgram.addLiquidityOneSidePrecise2(
-            meteoraAccounts.invokedDlmmProgram(),
-            positionKey,
-            lbPairKey,
-            binArrayBitmapExtensionKey,
-            userTokenKey,
-            reserveKey,
-            tokenMintKey,
-            owner,
-            tokenProgramKey,
-            meteoraAccounts.eventAuthority().publicKey(),
-            meteoraAccounts.dlmmProgram(),
-            liquidityParameter,
-            remainingAccountsInfo
-        )
+    return LbClmmProgram.addLiquidityOneSidePrecise2(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenKey,
+        reserveKey,
+        tokenMintKey,
+        owner,
+        tokenProgramKey,
+        eventAuthority,
+        meteoraAccounts.dlmmProgram(),
+        liquidityParameter,
+        remainingAccountsInfo
     );
   }
 
@@ -180,28 +174,25 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
                                             final PublicKey tokenYMintKey,
                                             final PublicKey tokenXProgramKey,
                                             final PublicKey tokenYProgramKey,
-                                            final PublicKey binArrayLowerKey,
-                                            final PublicKey binArrayUpperKey,
                                             final int fromBinId,
                                             final int toBinId,
                                             final int bpsToRemove,
                                             final RemainingAccountsInfo remainingAccountsInfo) {
-    return appendAccounts(binArrayLowerKey, binArrayUpperKey, LbClmmProgram.removeLiquidityByRange2(
-            meteoraAccounts.invokedDlmmProgram(),
-            positionKey,
-            lbPairKey,
-            binArrayBitmapExtensionKey,
-            userTokenXKey, userTokenYKey,
-            reserveXKey, reserveYKey,
-            tokenXMintKey, tokenYMintKey,
-            owner,
-            tokenXProgramKey, tokenYProgramKey,
-            solanaAccounts.memoProgram(),
-            meteoraAccounts.eventAuthority().publicKey(),
-            meteoraAccounts.dlmmProgram(),
-            fromBinId, toBinId, bpsToRemove,
-            requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
-        )
+    return LbClmmProgram.removeLiquidityByRange2(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        owner,
+        tokenXProgramKey, tokenYProgramKey,
+        memoProgram,
+        eventAuthority,
+        meteoraAccounts.dlmmProgram(),
+        fromBinId, toBinId, bpsToRemove,
+        requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
     );
   }
 
@@ -217,26 +208,23 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
                                      final PublicKey tokenYMintKey,
                                      final PublicKey tokenXProgramKey,
                                      final PublicKey tokenYProgramKey,
-                                     final PublicKey binArrayLowerKey,
-                                     final PublicKey binArrayUpperKey,
                                      final BinLiquidityReduction[] binLiquidityRemoval,
                                      final RemainingAccountsInfo remainingAccountsInfo) {
-    return appendAccounts(binArrayLowerKey, binArrayUpperKey, LbClmmProgram.removeLiquidity2(
-            meteoraAccounts.invokedDlmmProgram(),
-            positionKey,
-            lbPairKey,
-            binArrayBitmapExtensionKey,
-            userTokenXKey, userTokenYKey,
-            reserveXKey, reserveYKey,
-            tokenXMintKey, tokenYMintKey,
-            owner,
-            tokenXProgramKey, tokenYProgramKey,
-            solanaAccounts.memoProgram(),
-            meteoraAccounts.eventAuthority().publicKey(),
-            meteoraAccounts.dlmmProgram(),
-            binLiquidityRemoval,
-            requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
-        )
+    return LbClmmProgram.removeLiquidity2(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        lbPairKey,
+        binArrayBitmapExtensionKey,
+        userTokenXKey, userTokenYKey,
+        reserveXKey, reserveYKey,
+        tokenXMintKey, tokenYMintKey,
+        owner,
+        tokenXProgramKey, tokenYProgramKey,
+        memoProgram,
+        eventAuthority,
+        meteoraAccounts.dlmmProgram(),
+        binLiquidityRemoval,
+        requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
     );
   }
 
@@ -251,26 +239,23 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
                               final PublicKey tokenYMintKey,
                               final PublicKey tokenXProgramKey,
                               final PublicKey tokenYProgramKey,
-                              final PublicKey binArrayLowerKey,
-                              final PublicKey binArrayUpperKey,
                               final int minBinId,
                               final int maxBinId,
                               final RemainingAccountsInfo remainingAccountsInfo) {
-    return appendAccounts(binArrayLowerKey, binArrayUpperKey, LbClmmProgram.claimFee2(
-            meteoraAccounts.invokedDlmmProgram(),
-            lbPairKey,
-            positionKey,
-            owner,
-            reserveXKey, reserveYKey,
-            userTokenXKey, userTokenYKey,
-            tokenXMintKey, tokenYMintKey,
-            tokenXProgramKey, tokenYProgramKey,
-            solanaAccounts.memoProgram(),
-            meteoraAccounts.eventAuthority().publicKey(),
-            meteoraAccounts.dlmmProgram(),
-            minBinId, maxBinId,
-            requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
-        )
+    return LbClmmProgram.claimFee2(
+        meteoraAccounts.invokedDlmmProgram(),
+        lbPairKey,
+        positionKey,
+        owner,
+        reserveXKey, reserveYKey,
+        userTokenXKey, userTokenYKey,
+        tokenXMintKey, tokenYMintKey,
+        tokenXProgramKey, tokenYProgramKey,
+        memoProgram,
+        eventAuthority,
+        meteoraAccounts.dlmmProgram(),
+        minBinId, maxBinId,
+        requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
     );
   }
 
@@ -281,54 +266,37 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
                                  final PublicKey rewardMintKey,
                                  final PublicKey userTokenAccountKey,
                                  final PublicKey tokenProgramKey,
-                                 final PublicKey binArrayLowerKey,
-                                 final PublicKey binArrayUpperKey,
                                  final int rewardIndex,
                                  final int minBidId,
                                  final int maxBidId,
                                  final RemainingAccountsInfo remainingAccountsInfo) {
-    return appendAccounts(binArrayLowerKey, binArrayUpperKey, LbClmmProgram.claimReward2(
-            meteoraAccounts.invokedDlmmProgram(),
-            lbPairKey,
-            positionKey,
-            owner,
-            rewardVaultKey,
-            rewardMintKey,
-            userTokenAccountKey,
-            tokenProgramKey,
-            solanaAccounts.memoProgram(),
-            meteoraAccounts.eventAuthority().publicKey(),
-            meteoraAccounts.dlmmProgram(),
-            rewardIndex,
-            minBidId, maxBidId,
-            requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
-        )
+    return LbClmmProgram.claimReward2(
+        meteoraAccounts.invokedDlmmProgram(),
+        lbPairKey,
+        positionKey,
+        owner,
+        rewardVaultKey,
+        rewardMintKey,
+        userTokenAccountKey,
+        tokenProgramKey,
+        memoProgram,
+        eventAuthority,
+        meteoraAccounts.dlmmProgram(),
+        rewardIndex,
+        minBidId, maxBidId,
+        requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
     );
   }
 
   @Override
-  public Instruction closePosition(final PublicKey positionKey,
-                                   final PublicKey rentReceiverKey,
-                                   final PublicKey binArrayLowerKey,
-                                   final PublicKey binArrayUpperKey) {
-    return appendAccounts(binArrayLowerKey, binArrayUpperKey, LbClmmProgram.closePosition2(
-            meteoraAccounts.invokedDlmmProgram(),
-            positionKey,
-            owner,
-            rentReceiverKey,
-            meteoraAccounts.eventAuthority().publicKey(),
-            meteoraAccounts.dlmmProgram()
-        )
-    );
-  }
-
-  private static Instruction appendAccounts(final PublicKey binArrayLowerKey,
-                                            final PublicKey binArrayUpperKey,
-                                            final Instruction instruction) {
-    return instruction.extraAccounts(List.of(
-            AccountMeta.createWrite(binArrayLowerKey),
-            AccountMeta.createWrite(binArrayUpperKey)
-        )
+  public Instruction closePosition(final PublicKey positionKey, final PublicKey rentReceiverKey) {
+    return LbClmmProgram.closePosition2(
+        meteoraAccounts.invokedDlmmProgram(),
+        positionKey,
+        owner,
+        rentReceiverKey,
+        eventAuthority,
+        meteoraAccounts.dlmmProgram()
     );
   }
 
@@ -346,12 +314,6 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
     final var rpcEndpoint = URI.create("https://mainnet.helius-rpc.com/?api-key=" + apiKey);
     final var stakedEndpoint = URI.create("https://staked.helius-rpc.com/?api-key=" + apiKey);
 
-    final var simulationBudget = ComputeBudgetProgram.setComputeUnitLimit(
-        solAccounts.invokedComputeBudgetProgram(), MAX_COMPUTE_BUDGET
-    );
-    final var simulationPrice = ComputeBudgetProgram.setComputeUnitPrice(
-        solAccounts.invokedComputeBudgetProgram(), 0
-    );
     try (final var httpClient = HttpClient.newHttpClient()) {
       final var heliusClient = HeliusClient.createHttpClient(
           URI.create("https://mainnet.helius-rpc.com/?api-key=" + apiKey),
@@ -367,6 +329,33 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
           }
       );
 
+      final var lbPairKey = PublicKey.fromBase58Encoded("2dBPJGLgNDZnzA32452zV2u6vensbo28dveBvecDg6X1");
+
+      final var lbPairAccountInfo = rpcClient.getAccountInfo(lbPairKey, LbPair.FACTORY).join();
+      final var lbPair = lbPairAccountInfo.data();
+
+      final var binStepBase = DlmmUtils.binStepBase(lbPair.binStep());
+      System.out.println(DlmmUtils.binPrice(binStepBase, lbPair.activeId(), 0, MathContext.DECIMAL64).toPlainString());
+
+      final var tokenXAccount = nativeAccountClient.findATA(lbPair.tokenXMint()).publicKey();
+      System.out.println("User X Account: " + tokenXAccount);
+      final var tokenYAccount = nativeAccountClient.findATA(lbPair.tokenYMint()).publicKey();
+      System.out.println("User Y Account: " + tokenYAccount);
+
+//      final var instructions = addLiquidityOneSidePrecise(
+//          dlmmClient,
+//          lbPair,
+//          tokenXAccount
+//      );
+
+      final var instructions = removeLiquidityByRange(
+          rpcClient,
+          nativeAccountClient,
+          dlmmClient,
+          lbPair,
+          tokenXAccount, tokenYAccount
+      );
+
       final var sendClient = SolanaRpcClient.createClient(
           stakedEndpoint,
           httpClient,
@@ -376,57 +365,99 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
           }
       );
 
-
-      final var lbPairKey = PublicKey.fromBase58Encoded("7ubS3GccjhQY99AYNKXjNJqnXjaokEdfdV915xnCb96r");
-      final var lbPairAccountInfo = rpcClient.getAccountInfo(lbPairKey, LbPair.FACTORY).join();
-      final var lbPair = lbPairAccountInfo.data();
-
-      final var positionKey = PublicKey.createOffCurveAccountWithAsciiSeed(
-          signer.publicKey(),
-          lbPairKey.toBase58(),
-          accounts.dlmmProgram()
-      ).publicKey();
-
-      final var tokenXAccount = nativeAccountClient.findATA(lbPair.tokenXMint()).publicKey();
-      System.out.println("User X Account: " + tokenXAccount);
-      final var tokenYAccount = nativeAccountClient.findATA(lbPair.tokenYMint()).publicKey();
-      System.out.println("User Y Account: " + tokenYAccount);
-
-      final int lowerBinId = 0;
-      final int width = 69;
-
-      final var initializePositionIx = dlmmClient.initializePosition(positionKey, lbPairKey, lowerBinId, width);
-
-      final byte[] parameters = new byte[64];
-      parameters[0] = 1;
-      final var bins = new CompressedBinDepositAmount[69];
-      for (int i = 0; i < 69; i++) {
-        bins[0] = new CompressedBinDepositAmount(i, 1_000 + i);
-      }
-      final long amount = 69420;
-      final var params = new AddLiquiditySingleSidePreciseParameter2(
-          bins,
-          0,
-          10
-      );
-      final var addLiquidityIx = dlmmClient.addLiquidityOneSidePrecise(
-          positionKey, lbPair,
-          null,
-          tokenXAccount,
-          lbPair.tokenXMint(),
-          solAccounts.tokenProgram(),
-          params,
-          null
-      );
-
-      final var simulationInstructions = List.of(initializePositionIx, addLiquidityIx);
-      simulateAndSend(signer, nativeAccountClient, rpcClient, heliusClient, solAccounts, simulationInstructions);
+      simulateAndSend(signer, nativeAccountClient, rpcClient, sendClient, heliusClient, solAccounts, instructions);
     }
+  }
+
+  private static List<Instruction> removeLiquidityByRange(final SolanaRpcClient rpcClient,
+                                                          final NativeProgramAccountClient nativeClient,
+                                                          final MeteoraDlmmClient dlmmClient,
+                                                          final LbPair lbPair,
+                                                          final PublicKey userTokenX, final PublicKey userTokenY) {
+    final var positionAccounts = dlmmClient.fetchPositions(rpcClient).join();
+
+    final var position = positionAccounts.getFirst().data();
+    final var binAccountMetas = dlmmClient.deriveBinAccounts(position);
+
+    final var solAccounts = dlmmClient.solanaAccounts();
+    final var createXAccount = nativeClient.createATAForOwnerFundedByFeePayer(
+        true, userTokenX, lbPair.tokenXMint()
+    );
+    final var createYAccount = nativeClient.createATAForOwnerFundedByFeePayer(
+        true, userTokenY, lbPair.tokenYMint()
+    );
+
+    final var removeLiquidityByRangeIx = dlmmClient.removeLiquidityByRange(
+        position,
+        lbPair,
+        null,
+        userTokenX, userTokenY,
+        solAccounts.tokenProgram(), solAccounts.tokenProgram(),
+        DlmmUtils.BASIS_POINT_MAX,
+        null
+    ).extraAccounts(binAccountMetas);
+
+    final var claimFeeIx = dlmmClient.claimFee(
+        lbPair, position,
+        userTokenX, userTokenY,
+        solAccounts.tokenProgram(), solAccounts.tokenProgram(),
+        null
+    ).extraAccounts(binAccountMetas);
+
+    final var closePositionIx = dlmmClient.closePosition(position).extraAccounts(binAccountMetas);
+
+    return List.of(
+        createXAccount,
+        createYAccount,
+        removeLiquidityByRangeIx,
+        claimFeeIx,
+        closePositionIx
+    );
+  }
+
+  private static List<Instruction> addLiquidityOneSidePrecise(final MeteoraDlmmClient dlmmClient,
+                                                              final LbPair lbPair,
+                                                              final PublicKey tokenAccount) {
+    final var positionKey = PublicKey.createOffCurveAccountWithAsciiSeed(
+        dlmmClient.owner(),
+        new String(lbPair._address().toByteArray()),
+        dlmmClient.meteoraAccounts().dlmmProgram()
+    ).publicKey();
+
+    final int lowerBinId = 0;
+    final int width = 69;
+
+    final var initializePositionIx = dlmmClient.initializePosition(positionKey, lbPair._address(), lowerBinId, width);
+
+    final byte[] parameters = new byte[64];
+    parameters[0] = 1;
+    final var bins = new CompressedBinDepositAmount[69];
+    for (int i = 0; i < 69; i++) {
+      bins[0] = new CompressedBinDepositAmount(i, 1_000 + i);
+    }
+    final long amount = 69420;
+    final var params = new AddLiquiditySingleSidePreciseParameter2(
+        bins,
+        0,
+        10
+    );
+    final var addLiquidityIx = dlmmClient.addLiquidityOneSidePrecise(
+        positionKey, lbPair,
+        null,
+        tokenAccount,
+        lbPair.tokenXMint(),
+        dlmmClient.solanaAccounts().tokenProgram(),
+        params,
+        null
+    );
+
+    return List.of(initializePositionIx, addLiquidityIx);
   }
 
   private static void simulateAndSend(final Signer signer,
                                       final NativeProgramAccountClient nativeAccountClient,
                                       final SolanaRpcClient rpcClient,
+                                      final SolanaRpcClient sendClient,
                                       final HeliusClient heliusClient,
                                       final SolanaAccounts solAccounts,
                                       final List<Instruction> simulationInstructions) {
@@ -438,7 +469,7 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
     System.out.println(encodedSimulationTx);
 
     for (final var ix : simulationTransaction.instructions()) {
-      System.out.println(ix.programId());
+      System.out.println("\n\nprogram: " + ix.programId());
       for (final var account : ix.accounts()) {
         System.out.println(account);
       }

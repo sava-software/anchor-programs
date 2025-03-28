@@ -1,6 +1,5 @@
 package software.sava.anchor.programs.meteora.dlmm;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.sava.anchor.programs.meteora.MeteoraAccounts;
 import software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram;
@@ -16,7 +15,8 @@ import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram.REMOVE_LIQUIDITY_BY_RANGE_DISCRIMINATOR;
+import static software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram.CLAIM_FEE2_DISCRIMINATOR;
+import static software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram.REMOVE_LIQUIDITY_BY_RANGE2_DISCRIMINATOR;
 import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 
 final class MeteoraDlmmTests {
@@ -66,7 +66,6 @@ final class MeteoraDlmmTests {
     assertEquals(binId, Math.round(calculatedBinId));
   }
 
-  @Disabled
   @Test
   void testWithdrawAndClosePosition() {
     final var solAccounts = SolanaAccounts.MAIN_NET;
@@ -76,26 +75,29 @@ final class MeteoraDlmmTests {
     final var nativeAccountClient = NativeProgramAccountClient.createClient(feePayer);
     final var dlmmClient = MeteoraDlmmClient.createClient(nativeAccountClient);
 
-    var position = fromBase58Encoded("3kiuXd5MYdZHYBi7M4JN1gReHKbYAawNKp5Qu6NCq81s");
-    var lbPair = fromBase58Encoded("7ubS3GccjhQY99AYNKXjNJqnXjaokEdfdV915xnCb96r");
-    var userTokenX = fromBase58Encoded("APXcu3pekbBg9vQCiXSRFrfi5So1WMWwWFPfFWWrEtRd");
-    var userTokenY = fromBase58Encoded("6mMCJrZj65Y6YYvxkN3SMG6Rp8wbCFoYNikogAVbWxTP");
-    var reserveX = fromBase58Encoded("81GLeor2tJ9dut4YUE7BzGE4WfTtD4LbvMwLsrmw7wTg");
-    var reserveY = fromBase58Encoded("9mBxhiBNki6FjcmXeFGfKDf6o4fGXZ8JtG4jxNDeiv6u");
-    var xMint = fromBase58Encoded("cbbtcf3aa214zXHbiAZQwf4122FBYbraNdFqgw4iMij");
-    var yMint = fromBase58Encoded("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
-    var binArrayLower = fromBase58Encoded("Dvc26RoDiWjTNEYgjXeJcQzvSUDBLmBsfE3qdFNz87ho");
-    var binArrayUpper = fromBase58Encoded("C1hytWutcuBiVfzZ1aWsQFaiPmQ2ZuubjGmXQ6i296Bj");
+    var position = fromBase58Encoded("6RukQNq3q4nRwEvMxHF4sAKYeYLrMS9u5C68ebCkRhSo");
+    var lbPair = fromBase58Encoded("2dBPJGLgNDZnzA32452zV2u6vensbo28dveBvecDg6X1");
+    var userTokenX = fromBase58Encoded("ARda5vKyfs2YXApqbf8jQpFX31jopRhx8FheZ1pU1qzT");
+    var userTokenY = fromBase58Encoded("BJyBao69dq82iLhM7KrSUP3LsfVu49UHkkrMC41YYQpy");
+    var reserveX = fromBase58Encoded("76mR3RnAziZGa6CzrfdJNkN6rh9KLea2FszvgF2LMJvS");
+    var reserveY = fromBase58Encoded("AcSwnB4eQ1mH95V4LvaPLiiHAFSk6rsLX41Y9jCSecVF");
+    var xMint = fromBase58Encoded("mSoLzYCxHdYgdzU16g5QSh3i5K3z3KZK7ytfqcJm7So");
+    var yMint = fromBase58Encoded("So11111111111111111111111111111111111111112");
+    var binArrayLower = fromBase58Encoded("6Na8HRhAR4obBzAey4n11vr8NJD56hFuVAtrTNaEhDYg");
+
+    final int lowerBinId = 2425;
+    final int upperBinId = 2436;
+    var binArrayAccountMetas = dlmmClient.deriveBinAccounts(lbPair, lowerBinId, upperBinId);
 
     final byte[] data = Base64.getDecoder().decode("""
-        AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAUPDPVl6eB0qtYSlYif4b0tHW4ZfMrzSctd89y3PLhgsgZVptMisqbLPyOg7fZs2CQOE2DMuXlL92ZesAuwoosCnoIvcaabwzb5Xwz716AtZNyfeliY7G4hkFwJfcvp+vHCZp9BdL0pvK5f+U4bKek1/C1GEGxxLi5lwN5oXbBFYlOjnuSzdPAQON1JegxUBEfLiPuCv00dTpMU1d6utSIL0mgTJvNB6AFBBQo0CY/JUlbLNfPkiYoX7c/7efde54ezBOnhL7yE6CbJMszp4mQMzhVZDBxic7CSVwi6O4UgsLwo6rtEvQ8ELxTzGhysMZHRjuE4vB+KkS616/w2rAGVvsAHnzegnnEt4Y0glkzQZYqYmipUStCh6Ob1If3x7Xdei36UwGPC91tyb3e4r0kn2Lc2xUUQEIXqcI6TpfK2FTjG+nrzvtutOj1l82qryXQxsbvkwtL24OR8pgIDRS9dYQbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpsnDWf6mMUc8CEwUTWJYrrzV0K+1ZydlEXpwNDIXHzZEDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAkec9F6VSbUSOWJrqWv58Is1hxbZqhqQnqyYjCVFOVcAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFDQAFAsBcFQANAAkDAAAAAAAAAAAGEAcDBgkBBQIOCggEAAsLDAYSGlJmmPBKaRpFQwAAhUMAABAnBg4DBwgEAAUCCQEOCgsMBgipIE+JiOhGiQYIBwMIBAAADAYIe4ZRADFEYmI=
+        AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAgRDPVl6eB0qtYSlYif4b0tHW4ZfMrzSctd89y3PLhgsgZP0RY6Q0W/frzwgb8tnEGSapiDquhyHhfkmp1muCulzVCsBEtVZftYLWi/JVJP7pM8wht+/nNVfX0Gu0HtOpTIWqA+yQzqjmLux3w7/C2B02Tqi6U0esHGgo87U30CvG+MCHjZjfXHR2P1EBor4P6rxSVuBFovATqVpsXS7g1B1JkvRMtUjSS3E0YWcPOiIGR22BXeLO6LVQhD5AQ4utEiBOnhL7yE6CbJMszp4mQMzhVZDBxic7CSVwi6O4UgsLyOzdiddVSoOFDTXcEcLijCzeBdioHPFW72ST8uULYUChggVni5HWPKTOcOlR4oWEv+EfPZZCCPw8HbhCZjHbn4C2K6B09yLJ1BFPLY9woAxmACM3ub+QyHNlem0gHbTIAGm4hX/quBhPtof2NGGMA12sQ53BrrO1WYoPAAAAAAAQbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpsnDWf6mMUc8CEwUTWJYrrzV0K+1ZydlEXpwNDIXHzZEDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABUpTWpkpIQZNJOhxYNo4fHw1td28kruB5B+oQEEFRI2MlyWPTiSJ8bs9ECkUjg2DC1oTmdr/EIQEjnvY2+n4WQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABw0ABQLsXRUADQAJAwAAAAAAAAAAEAYABAAJDgsBARAGAAUACg4LAQEGEAIIBgQFAwcJCgALCw8MBgEWzALDkTWRkc15CQAAhAkAABAnAAAAAAYPCAIAAwcEBQkKCwsPDAYBFHC/ZasckH+7eQkAAIQJAAAAAAAABgYCAAAMBgEIrlojc7ook+I=
         """.stripTrailing());
 
     final var skeleton = TransactionSkeleton.deserializeSkeleton(data);
     final var instructions = skeleton.parseLegacyInstructions();
-    assertEquals(5, instructions.length);
+    assertEquals(7, instructions.length);
 
-    var withdrawIx = instructions[2];
+    var withdrawIx = instructions[4];
     assertEquals(metAccounts.dlmmProgram(), withdrawIx.programId().publicKey());
     var accounts = withdrawIx.accounts();
     assertEquals(16, accounts.size());
@@ -109,19 +111,20 @@ final class MeteoraDlmmTests {
     assertEquals(AccountMeta.createWrite(reserveY), accounts.get(6));
     assertEquals(AccountMeta.createRead(xMint), accounts.get(7));
     assertEquals(AccountMeta.createRead(yMint), accounts.get(8));
-    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.get(9));
-    assertEquals(AccountMeta.createWrite(binArrayUpper), accounts.get(10));
-    assertEquals(AccountMeta.createFeePayer(feePayer), accounts.get(11));
-    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(12));
-    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(13));
-    assertEquals(AccountMeta.createRead(metAccounts.eventAuthority().publicKey()), accounts.get(14));
-    assertEquals(AccountMeta.createWrite(metAccounts.dlmmProgram()), accounts.getLast());
+    assertEquals(AccountMeta.createFeePayer(feePayer), accounts.get(9));
+    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(10));
+    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(11));
+    assertEquals(AccountMeta.createRead(solAccounts.readMemoProgramV2().publicKey()), accounts.get(12));
+    assertEquals(AccountMeta.createRead(metAccounts.eventAuthority().publicKey()), accounts.get(13));
+    assertEquals(AccountMeta.createWrite(metAccounts.dlmmProgram()), accounts.get(14));
+    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.getLast());
 
-    var removeLiquidityData = LbClmmProgram.RemoveLiquidityByRangeIxData.read(withdrawIx);
-    assertEquals(REMOVE_LIQUIDITY_BY_RANGE_DISCRIMINATOR, removeLiquidityData.discriminator());
-    assertEquals(17221, removeLiquidityData.fromBinId());
-    assertEquals(17285, removeLiquidityData.toBinId());
+    var removeLiquidityData = LbClmmProgram.RemoveLiquidityByRange2IxData.read(withdrawIx);
+    assertEquals(REMOVE_LIQUIDITY_BY_RANGE2_DISCRIMINATOR, removeLiquidityData.discriminator());
+    assertEquals(lowerBinId, removeLiquidityData.fromBinId());
+    assertEquals(upperBinId, removeLiquidityData.toBinId());
     assertEquals(DlmmUtils.BASIS_POINT_MAX, removeLiquidityData.bpsToRemove());
+    assertEquals(0, removeLiquidityData.remainingAccountsInfo().slices().length);
 
     var removeLiquidityByRangeIx = dlmmClient.removeLiquidityByRange(
         position,
@@ -134,10 +137,11 @@ final class MeteoraDlmmTests {
         removeLiquidityData.fromBinId(), removeLiquidityData.toBinId(),
         DlmmUtils.BASIS_POINT_MAX,
         null
-    );
+    ).extraAccounts(binArrayAccountMetas);
 
     assertEquals(metAccounts.invokedDlmmProgram(), removeLiquidityByRangeIx.programId());
     accounts = removeLiquidityByRangeIx.accounts();
+    assertEquals(16, accounts.size());
 
     assertEquals(AccountMeta.createWrite(position), accounts.getFirst());
     assertEquals(AccountMeta.createWrite(lbPair), accounts.get(1));
@@ -148,39 +152,45 @@ final class MeteoraDlmmTests {
     assertEquals(AccountMeta.createWrite(reserveY), accounts.get(6));
     assertEquals(AccountMeta.createRead(xMint), accounts.get(7));
     assertEquals(AccountMeta.createRead(yMint), accounts.get(8));
-    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.get(9));
-    assertEquals(AccountMeta.createWrite(binArrayUpper), accounts.get(10));
-    assertEquals(AccountMeta.createReadOnlySigner(feePayer), accounts.get(11));
-    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(12));
-    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(13));
-    assertEquals(AccountMeta.createRead(metAccounts.eventAuthority().publicKey()), accounts.get(14));
-    assertEquals(AccountMeta.createRead(metAccounts.dlmmProgram()), accounts.getLast());
+    assertEquals(AccountMeta.createReadOnlySigner(feePayer), accounts.get(9));
+    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(10));
+    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(11));
+    assertEquals(AccountMeta.createRead(solAccounts.readMemoProgramV2().publicKey()), accounts.get(12));
+    assertEquals(AccountMeta.createRead(metAccounts.eventAuthority().publicKey()), accounts.get(13));
+    assertEquals(AccountMeta.createRead(metAccounts.dlmmProgram()), accounts.get(14));
+    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.getLast());
 
     assertArrayEquals(
         Arrays.copyOfRange(withdrawIx.data(), withdrawIx.offset(), withdrawIx.offset() + withdrawIx.len()),
         removeLiquidityByRangeIx.data()
     );
 
-
-    var claimFeeIx = instructions[3];
+    var claimFeeIx = instructions[5];
     assertEquals(metAccounts.dlmmProgram(), claimFeeIx.programId().publicKey());
     accounts = claimFeeIx.accounts();
-    assertEquals(14, accounts.size());
+    assertEquals(15, accounts.size());
+
+    var claimFeeData = LbClmmProgram.ClaimFee2IxData.read(claimFeeIx);
+    assertEquals(CLAIM_FEE2_DISCRIMINATOR, claimFeeData.discriminator());
+    assertEquals(lowerBinId, claimFeeData.minBinId());
+    assertEquals(upperBinId, claimFeeData.maxBinId());
+    assertEquals(0, claimFeeData.remainingAccountsInfo().slices().length);
 
     assertEquals(AccountMeta.createWrite(lbPair), accounts.getFirst());
     assertEquals(AccountMeta.createWrite(position), accounts.get(1));
-    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.get(2));
-    assertEquals(AccountMeta.createWrite(binArrayUpper), accounts.get(3));
-    assertEquals(AccountMeta.createFeePayer(feePayer), accounts.get(4));
-    assertEquals(AccountMeta.createWrite(reserveX), accounts.get(5));
-    assertEquals(AccountMeta.createWrite(reserveY), accounts.get(6));
-    assertEquals(AccountMeta.createWrite(userTokenX), accounts.get(7));
-    assertEquals(AccountMeta.createWrite(userTokenY), accounts.get(8));
-    assertEquals(AccountMeta.createRead(xMint), accounts.get(9));
-    assertEquals(AccountMeta.createRead(yMint), accounts.get(10));
-    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(11));
+    assertEquals(AccountMeta.createFeePayer(feePayer), accounts.get(2));
+    assertEquals(AccountMeta.createWrite(reserveX), accounts.get(3));
+    assertEquals(AccountMeta.createWrite(reserveY), accounts.get(4));
+    assertEquals(AccountMeta.createWrite(userTokenX), accounts.get(5));
+    assertEquals(AccountMeta.createWrite(userTokenY), accounts.get(6));
+    assertEquals(AccountMeta.createRead(xMint), accounts.get(7));
+    assertEquals(AccountMeta.createRead(yMint), accounts.get(8));
+    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(9));
+    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(10));
+    assertEquals(AccountMeta.createRead(solAccounts.readMemoProgramV2().publicKey()), accounts.get(11));
     assertEquals(AccountMeta.createRead(metAccounts.eventAuthority().publicKey()), accounts.get(12));
-    assertEquals(AccountMeta.createWrite(metAccounts.dlmmProgram()), accounts.getLast());
+    assertEquals(AccountMeta.createWrite(metAccounts.dlmmProgram()), accounts.get(13));
+    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.getLast());
 
     var claimFeeIx2 = dlmmClient.claimFee(
         lbPair,
@@ -191,66 +201,76 @@ final class MeteoraDlmmTests {
         solAccounts.tokenProgram(), solAccounts.tokenProgram(),
         removeLiquidityData.fromBinId(), removeLiquidityData.toBinId(),
         null
-    );
+    ).extraAccounts(binArrayAccountMetas);
 
     assertEquals(metAccounts.invokedDlmmProgram(), claimFeeIx2.programId());
     accounts = claimFeeIx2.accounts();
+    assertEquals(15, accounts.size());
 
     assertEquals(AccountMeta.createWrite(lbPair), accounts.getFirst());
     assertEquals(AccountMeta.createWrite(position), accounts.get(1));
-    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.get(2));
-    assertEquals(AccountMeta.createWrite(binArrayUpper), accounts.get(3));
-    assertEquals(AccountMeta.createReadOnlySigner(feePayer), accounts.get(4));
-    assertEquals(AccountMeta.createWrite(reserveX), accounts.get(5));
-    assertEquals(AccountMeta.createWrite(reserveY), accounts.get(6));
-    assertEquals(AccountMeta.createWrite(userTokenX), accounts.get(7));
-    assertEquals(AccountMeta.createWrite(userTokenY), accounts.get(8));
-    assertEquals(AccountMeta.createRead(xMint), accounts.get(9));
-    assertEquals(AccountMeta.createRead(yMint), accounts.get(10));
-    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(11));
+    assertEquals(AccountMeta.createReadOnlySigner(feePayer), accounts.get(2));
+    assertEquals(AccountMeta.createWrite(reserveX), accounts.get(3));
+    assertEquals(AccountMeta.createWrite(reserveY), accounts.get(4));
+    assertEquals(AccountMeta.createWrite(userTokenX), accounts.get(5));
+    assertEquals(AccountMeta.createWrite(userTokenY), accounts.get(6));
+    assertEquals(AccountMeta.createRead(xMint), accounts.get(7));
+    assertEquals(AccountMeta.createRead(yMint), accounts.get(8));
+    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(9));
+    assertEquals(AccountMeta.createRead(solAccounts.tokenProgram()), accounts.get(10));
+    assertEquals(AccountMeta.createRead(solAccounts.readMemoProgramV2().publicKey()), accounts.get(11));
     assertEquals(AccountMeta.createRead(metAccounts.eventAuthority().publicKey()), accounts.get(12));
-    assertEquals(AccountMeta.createRead(metAccounts.dlmmProgram()), accounts.getLast());
+    assertEquals(AccountMeta.createRead(metAccounts.dlmmProgram()), accounts.get(13));
+    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.getLast());
 
     assertArrayEquals(
         Arrays.copyOfRange(claimFeeIx.data(), claimFeeIx.offset(), claimFeeIx.offset() + claimFeeIx.len()),
         claimFeeIx2.data()
     );
 
-    var closePositionIx = instructions[4];
+    var closePositionIx = instructions[6];
     assertEquals(metAccounts.dlmmProgram(), closePositionIx.programId().publicKey());
     accounts = closePositionIx.accounts();
-    assertEquals(8, accounts.size());
+    assertEquals(6, accounts.size());
 
     assertEquals(AccountMeta.createWrite(position), accounts.getFirst());
-    assertEquals(AccountMeta.createWrite(lbPair), accounts.get(1));
-    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.get(2));
-    assertEquals(AccountMeta.createWrite(binArrayUpper), accounts.get(3));
-    assertEquals(AccountMeta.createFeePayer(feePayer), accounts.get(4));
-    assertEquals(AccountMeta.createFeePayer(feePayer), accounts.get(5));
-    assertEquals(AccountMeta.createRead(metAccounts.eventAuthority().publicKey()), accounts.get(6));
-    assertEquals(AccountMeta.createWrite(metAccounts.dlmmProgram()), accounts.getLast());
+    assertEquals(AccountMeta.createFeePayer(feePayer), accounts.get(1));
+    assertEquals(AccountMeta.createFeePayer(feePayer), accounts.get(2));
+    assertEquals(AccountMeta.createRead(metAccounts.eventAuthority().publicKey()), accounts.get(3));
+    assertEquals(AccountMeta.createWrite(metAccounts.dlmmProgram()), accounts.get(4));
+    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.getLast());
 
-    var closePositionIx2 = dlmmClient.closePosition(
-        position,
-        lbPair,
-        removeLiquidityData.fromBinId(), removeLiquidityData.toBinId()
-    );
+    var closePositionIx2 = dlmmClient.closePosition(position).extraAccounts(binArrayAccountMetas);
 
     assertEquals(metAccounts.invokedDlmmProgram(), closePositionIx2.programId());
     accounts = closePositionIx2.accounts();
+    assertEquals(6, accounts.size());
 
     assertEquals(AccountMeta.createWrite(position), accounts.getFirst());
-    assertEquals(AccountMeta.createWrite(lbPair), accounts.get(1));
-    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.get(2));
-    assertEquals(AccountMeta.createWrite(binArrayUpper), accounts.get(3));
-    assertEquals(AccountMeta.createReadOnlySigner(feePayer), accounts.get(4));
-    assertEquals(AccountMeta.createWrite(feePayer), accounts.get(5));
-    assertEquals(AccountMeta.createRead(metAccounts.eventAuthority().publicKey()), accounts.get(6));
-    assertEquals(AccountMeta.createRead(metAccounts.dlmmProgram()), accounts.getLast());
+    assertEquals(AccountMeta.createReadOnlySigner(feePayer), accounts.get(1));
+    assertEquals(AccountMeta.createWrite(feePayer), accounts.get(2));
+    assertEquals(AccountMeta.createRead(metAccounts.eventAuthority().publicKey()), accounts.get(3));
+    assertEquals(AccountMeta.createRead(metAccounts.dlmmProgram()), accounts.get(4));
+    assertEquals(AccountMeta.createWrite(binArrayLower), accounts.getLast());
 
     assertArrayEquals(
         Arrays.copyOfRange(closePositionIx.data(), closePositionIx.offset(), closePositionIx.offset() + closePositionIx.len()),
         closePositionIx2.data()
     );
+  }
+
+  void testAddLiquidityByStrategy2() {
+    final byte[] data = Base64.getDecoder().decode("""
+        AgbEjRDSiisDGnrKSlbmFewlI3mxknJIu7kBxl0u1zJ43xRa+ITnJ965SQoWblTdLAS/KwkO7uhNq3xPD12diAd9hErqoRbpeJXJmWJ9OzYCzzAl3JLrQ+BvxJJ5c9TCyp4fFhxVwVwap7e4nyCn6krwq9LZs2Uc3XbIih0XEroOAgAJEQz1ZengdKrWEpWIn+G9LR1uGXzK80nLXfPctzy4YLIGUKwES1Vl+1gtaL8lUk/ukzzCG37+c1V9fQa7Qe06lMgYIFZ4uR1jykznDpUeKFhL/hHz2WQgj8PB24QmYx25+E/RFjpDRb9+vPCBvy2cQZJqmIOq6HIeF+SanWa4K6XNWqA+yQzqjmLux3w7/C2B02Tqi6U0esHGgo87U30CvG+OzdiddVSoOFDTXcEcLijCzeBdioHPFW72ST8uULYUCowIeNmN9cdHY/UQGivg/qvFJW4EWi8BOpWmxdLuDUHUmS9Ey1SNJLcTRhZw86IgZHbYFd4s7otVCEPkBDi60SIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAACycNZ/qYxRzwITBRNYliuvNXQr7VnJ2URenA0MhcfNkQTp4S+8hOgmyTLM6eJkDM4VWQwcYnOwklcIujuFILC8C2K6B09yLJ1BFPLY9woAxmACM3ub+QyHNlem0gHbTIAGm4hX/quBhPtof2NGGMA12sQ53BrrO1WYoPAAAAAAAQan1RcZLFxRIYzJTD1K8X9Y2u4Im6H9ROPb2YoAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKkMq5vJoCWD+PYS1pW9N0Wt6okiRnFPuHkDzGJz8tGejwkKAAUChj0DAAwIAAECAAgPCwwQ28DqR76/ZlB5CQAADAAAAAkGAAYADQgQAQEJBgAHAA4IEAEBCAIABwwCAAAA+rAIGQAAAAAQAQcBEQwPAQIMBgcEBQ0OABAQCwwDcQPdldpvjXbVAAAAAAAAAAD6sAgZAAAAAJsJAAAKAAAAeQkAAIQJAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAEAEAMHAAABCQoACQPtLAAAAAAAAA==
+        """.stripTrailing());
+
+    var skeleton = TransactionSkeleton.deserializeSkeleton(data);
+    var instructions = skeleton.parseLegacyInstructions();
+    assertEquals(9, instructions.length);
+
+    final var addLiquidityInstruction = instructions[6];
+
+    final var ixData = LbClmmProgram.AddLiquidityByStrategy2IxData.read(addLiquidityInstruction);
+    System.out.println(ixData);
   }
 }

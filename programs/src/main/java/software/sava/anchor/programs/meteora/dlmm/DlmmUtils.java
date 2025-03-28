@@ -71,6 +71,14 @@ public final class DlmmUtils {
     return binStepBase.pow(binId, mathContext).movePointLeft(scaleDifference);
   }
 
+  public static BigDecimal binPrice(final int binStep,
+                                    final int binId,
+                                    final int scaleDifference,
+                                    final MathContext mathContext) {
+    final var binStepBase = DlmmUtils.binStepBase(binStep);
+    return binPrice(binStepBase, binId, scaleDifference, mathContext);
+  }
+
   public static double binId(final BigDecimal price, final int scaleDifference, final BigDecimal binStepBase) {
     final var adjustedPrice = price.movePointRight(scaleDifference);
     return binId(adjustedPrice.doubleValue(), binStepBase.doubleValue());

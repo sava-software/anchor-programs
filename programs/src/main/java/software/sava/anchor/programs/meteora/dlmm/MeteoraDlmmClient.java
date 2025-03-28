@@ -7,10 +7,15 @@ import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
+import software.sava.rpc.json.http.client.SolanaRpcClient;
+import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.stream.IntStream;
+
 import static software.sava.anchor.programs.meteora.dlmm.DlmmUtils.binIdToArrayIndex;
-import static software.sava.anchor.programs.meteora.dlmm.DlmmUtils.binIdToArrayUpperIndex;
 
 public interface MeteoraDlmmClient {
 
@@ -18,7 +23,14 @@ public interface MeteoraDlmmClient {
                                         final MeteoraAccounts meteoraAccounts,
                                         final PublicKey owner,
                                         final AccountMeta feePayer) {
-    return new MeteoraDlmmClientImpl(solanaAccounts, meteoraAccounts, owner, feePayer);
+    return new MeteoraDlmmClientImpl(
+        solanaAccounts,
+        meteoraAccounts,
+        owner,
+        feePayer,
+        solanaAccounts.readMemoProgramV2().publicKey(),
+        meteoraAccounts.eventAuthority().publicKey()
+    );
   }
 
   static MeteoraDlmmClient createClient(final PublicKey owner, final AccountMeta feePayer) {
@@ -44,6 +56,43 @@ public interface MeteoraDlmmClient {
     return createClient(nativeProgramAccountClient, MeteoraAccounts.MAIN_NET);
   }
 
+  static List<AccountMeta> deriveBinAccounts(final PublicKey programId,
+                                             final PublicKey lbPairKey,
+                                             final int lowerBinId,
+                                             final int upperBinId) {
+    final int lowerBinIndex = binIdToArrayIndex(lowerBinId);
+    final int upperBinIndex = binIdToArrayIndex(upperBinId);
+    if (lowerBinIndex == upperBinIndex) {
+      return List.of(AccountMeta.createWrite(MeteoraPDAs.binArrayPdA(lbPairKey, lowerBinIndex, programId).publicKey()));
+    } else {
+      return IntStream.rangeClosed(lowerBinIndex, upperBinIndex)
+          .mapToObj(binIndex -> MeteoraPDAs.binArrayPdA(lbPairKey, binIndex, programId).publicKey())
+          .map(AccountMeta.CREATE_WRITE)
+          .toList();
+    }
+  }
+
+  static List<AccountMeta> deriveBinAccounts(final PublicKey programId,
+                                             final PositionV2 positionV2) {
+    return deriveBinAccounts(programId, positionV2.lbPair(), positionV2.lowerBinId(), positionV2.upperBinId());
+  }
+
+  static Instruction appendBinAccounts(final PublicKey programId,
+                                       final PublicKey lbPairKey,
+                                       final int lowerBinId,
+                                       final int upperBinId,
+                                       final Instruction instruction) {
+    return instruction.extraAccounts(deriveBinAccounts(programId, lbPairKey, lowerBinId, upperBinId));
+  }
+
+  default Instruction appendBinAccounts(final PublicKey lbPairKey,
+                                        final int lowerBinId,
+                                        final int upperBinId,
+                                        final Instruction instruction) {
+    final var programId = meteoraAccounts().dlmmProgram();
+    return appendBinAccounts(programId, lbPairKey, lowerBinId, upperBinId, instruction);
+  }
+
   SolanaAccounts solanaAccounts();
 
   MeteoraAccounts meteoraAccounts();
@@ -51,6 +100,19 @@ public interface MeteoraDlmmClient {
   PublicKey owner();
 
   AccountMeta feePayer();
+
+  default List<AccountMeta> deriveBinAccounts(final PublicKey lbPairKey,
+                                              final int lowerBinId,
+                                              final int upperBinId) {
+    return deriveBinAccounts(meteoraAccounts().dlmmProgram(), lbPairKey, lowerBinId, upperBinId);
+  }
+
+
+  default List<AccountMeta> deriveBinAccounts(final PositionV2 positionV2) {
+    return deriveBinAccounts(positionV2.lbPair(), positionV2.lowerBinId(), positionV2.upperBinId());
+  }
+
+  CompletableFuture<List<AccountInfo<PositionV2>>> fetchPositions(final SolanaRpcClient rpcClient);
 
   Instruction initializePosition(final PublicKey positionKey,
                                  final PublicKey lbPairKey,
@@ -68,41 +130,8 @@ public interface MeteoraDlmmClient {
                                      final PublicKey tokenYMintKey,
                                      final PublicKey tokenXProgramKey,
                                      final PublicKey tokenYProgramKey,
-                                     final PublicKey binArrayLowerKey,
-                                     final PublicKey binArrayUpperKey,
                                      final LiquidityParameterByStrategy liquidityParameter,
                                      final RemainingAccountsInfo remainingAccountsInfo);
-
-  default Instruction addLiquidityByStrategy(final PublicKey positionKey,
-                                             final PublicKey lbPairKey,
-                                             final PublicKey binArrayBitmapExtensionKey,
-                                             final PublicKey userTokenXKey,
-                                             final PublicKey userTokenYKey,
-                                             final PublicKey reserveXKey,
-                                             final PublicKey reserveYKey,
-                                             final PublicKey tokenXMintKey,
-                                             final PublicKey tokenYMintKey,
-                                             final PublicKey tokenXProgramKey,
-                                             final PublicKey tokenYProgramKey,
-                                             final LiquidityParameterByStrategy liquidityParameter,
-                                             final RemainingAccountsInfo remainingAccountsInfo) {
-    final var strategyParameters = liquidityParameter.strategyParameters();
-    final var programId = meteoraAccounts().dlmmProgram();
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(strategyParameters.minBinId()), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(strategyParameters.maxBinId()), programId);
-
-    return addLiquidityByStrategy(
-        positionKey,
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenXKey, userTokenYKey,
-        reserveXKey, reserveYKey,
-        tokenXMintKey, tokenYMintKey,
-        tokenXProgramKey, tokenYProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        liquidityParameter,
-        remainingAccountsInfo
-    );
-  }
 
   default Instruction addLiquidityByStrategy(final PublicKey positionKey,
                                              final LbPair lbPair,
@@ -165,53 +194,8 @@ public interface MeteoraDlmmClient {
                            final PublicKey tokenYMintKey,
                            final PublicKey tokenXProgramKey,
                            final PublicKey tokenYProgramKey,
-                           final PublicKey binArrayLowerKey,
-                           final PublicKey binArrayUpperKey,
                            final LiquidityParameter liquidityParameter,
                            final RemainingAccountsInfo remainingAccountsInfo);
-
-  default Instruction addLiquidity(final PublicKey positionKey,
-                                   final PublicKey lbPairKey,
-                                   final PublicKey binArrayBitmapExtensionKey,
-                                   final PublicKey userTokenXKey,
-                                   final PublicKey userTokenYKey,
-                                   final PublicKey reserveXKey,
-                                   final PublicKey reserveYKey,
-                                   final PublicKey tokenXMintKey,
-                                   final PublicKey tokenYMintKey,
-                                   final PublicKey tokenXProgramKey,
-                                   final PublicKey tokenYProgramKey,
-                                   final LiquidityParameter liquidityParameter,
-                                   final RemainingAccountsInfo remainingAccountsInfo) {
-    final var binLiquidityDist = liquidityParameter.binLiquidityDist();
-    int minBidId = binLiquidityDist[0].binId();
-    int maxBidId = minBidId;
-    int binId;
-    for (int i = 1; i < binLiquidityDist.length; ++i) {
-      binId = binLiquidityDist[i].binId();
-      if (binId < minBidId) {
-        minBidId = binId;
-      } else if (binId > maxBidId) {
-        maxBidId = binId;
-      }
-    }
-
-    final var programId = meteoraAccounts().dlmmProgram();
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBidId), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBidId), programId);
-
-    return addLiquidity(
-        positionKey,
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenXKey, userTokenYKey,
-        reserveXKey, reserveYKey,
-        tokenXMintKey, tokenYMintKey,
-        tokenXProgramKey, tokenYProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        liquidityParameter,
-        remainingAccountsInfo
-    );
-  }
 
   default Instruction addLiquidity(final PublicKey positionKey,
                                    final LbPair lbPair,
@@ -270,8 +254,6 @@ public interface MeteoraDlmmClient {
                                          final PublicKey reserveKey,
                                          final PublicKey tokenMintKey,
                                          final PublicKey tokenProgramKey,
-                                         final PublicKey binArrayLowerKey,
-                                         final PublicKey binArrayUpperKey,
                                          final AddLiquiditySingleSidePreciseParameter2 liquidityParameter,
                                          final RemainingAccountsInfo remainingAccountsInfo);
 
@@ -285,22 +267,6 @@ public interface MeteoraDlmmClient {
                                                  final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
     final var reserveKey = MeteoraPDAs.reservePDA(lbPairKey, tokenMintKey, programId).publicKey();
-
-    final var bins = liquidityParameter.bins();
-    int minBidId = bins[0].binId();
-    int maxBidId = minBidId;
-    int binId;
-    for (int i = 1; i < bins.length; ++i) {
-      binId = bins[i].binId();
-      if (binId < minBidId) {
-        minBidId = binId;
-      } else if (binId > maxBidId) {
-        maxBidId = binId;
-      }
-    }
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBidId), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBidId), programId);
-
     return addLiquidityOneSidePrecise(
         positionKey,
         lbPairKey,
@@ -308,7 +274,7 @@ public interface MeteoraDlmmClient {
         userTokenKey,
         reserveKey,
         tokenMintKey,
-        tokenProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(), liquidityParameter,
+        tokenProgramKey, liquidityParameter,
         remainingAccountsInfo
     );
   }
@@ -344,44 +310,10 @@ public interface MeteoraDlmmClient {
                                      final PublicKey tokenYMintKey,
                                      final PublicKey tokenXProgramKey,
                                      final PublicKey tokenYProgramKey,
-                                     final PublicKey binArrayLowerKey,
-                                     final PublicKey binArrayUpperKey,
                                      final int fromBinId,
                                      final int toBinId,
                                      final int bpsToRemove,
                                      final RemainingAccountsInfo remainingAccountsInfo);
-
-  default Instruction removeLiquidityByRange(final PublicKey positionKey,
-                                             final PublicKey lbPairKey,
-                                             final PublicKey binArrayBitmapExtensionKey,
-                                             final PublicKey userTokenXKey,
-                                             final PublicKey userTokenYKey,
-                                             final PublicKey reserveXKey,
-                                             final PublicKey reserveYKey,
-                                             final PublicKey tokenXMintKey,
-                                             final PublicKey tokenYMintKey,
-                                             final PublicKey tokenXProgramKey,
-                                             final PublicKey tokenYProgramKey,
-                                             final int fromBinId,
-                                             final int toBinId,
-                                             final int bpsToRemove,
-                                             final RemainingAccountsInfo remainingAccountsInfo) {
-    final var programId = meteoraAccounts().dlmmProgram();
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(fromBinId), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(toBinId), programId);
-
-    return removeLiquidityByRange(
-        positionKey,
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenXKey, userTokenYKey,
-        reserveXKey, reserveYKey,
-        tokenXMintKey, tokenYMintKey,
-        tokenXProgramKey, tokenYProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        fromBinId, toBinId, bpsToRemove,
-        remainingAccountsInfo
-    );
-  }
 
   default Instruction removeLiquidityByRange(final PublicKey positionKey,
                                              final LbPair lbPair,
@@ -501,52 +433,8 @@ public interface MeteoraDlmmClient {
                               final PublicKey tokenYMintKey,
                               final PublicKey tokenXProgramKey,
                               final PublicKey tokenYProgramKey,
-                              final PublicKey binArrayLowerKey,
-                              final PublicKey binArrayUpperKey,
                               final BinLiquidityReduction[] binLiquidityRemoval,
                               final RemainingAccountsInfo remainingAccountsInfo);
-
-  default Instruction removeLiquidity(final PublicKey positionKey,
-                                      final PublicKey lbPairKey,
-                                      final PublicKey binArrayBitmapExtensionKey,
-                                      final PublicKey userTokenXKey,
-                                      final PublicKey userTokenYKey,
-                                      final PublicKey reserveXKey,
-                                      final PublicKey reserveYKey,
-                                      final PublicKey tokenXMintKey,
-                                      final PublicKey tokenYMintKey,
-                                      final PublicKey tokenXProgramKey,
-                                      final PublicKey tokenYProgramKey,
-                                      final BinLiquidityReduction[] binLiquidityRemoval,
-                                      final RemainingAccountsInfo remainingAccountsInfo) {
-    int minBidId = binLiquidityRemoval[0].binId();
-    int maxBidId = minBidId;
-    int binId;
-    for (int i = 1; i < binLiquidityRemoval.length; ++i) {
-      binId = binLiquidityRemoval[i].binId();
-      if (binId < minBidId) {
-        minBidId = binId;
-      } else if (binId > maxBidId) {
-        maxBidId = binId;
-      }
-    }
-
-    final var programId = meteoraAccounts().dlmmProgram();
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBidId), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBidId), programId);
-
-    return removeLiquidity(
-        positionKey,
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenXKey, userTokenYKey,
-        reserveXKey, reserveYKey,
-        tokenXMintKey, tokenYMintKey,
-        tokenXProgramKey, tokenYProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        binLiquidityRemoval,
-        remainingAccountsInfo
-    );
-  }
 
   default Instruction removeLiquidity(final PublicKey positionKey,
                                       final LbPair lbPair,
@@ -608,37 +496,9 @@ public interface MeteoraDlmmClient {
                        final PublicKey tokenYMintKey,
                        final PublicKey tokenXProgramKey,
                        final PublicKey tokenYProgramKey,
-                       final PublicKey binArrayLowerKey,
-                       final PublicKey binArrayUpperKey,
                        final int minBinId,
                        final int maxBinId,
                        final RemainingAccountsInfo remainingAccountsInfo);
-
-  default Instruction claimFee(final PublicKey lbPairKey,
-                               final PublicKey positionKey,
-                               final PublicKey reserveXKey,
-                               final PublicKey reserveYKey,
-                               final PublicKey userTokenXKey,
-                               final PublicKey userTokenYKey,
-                               final PublicKey tokenXMintKey,
-                               final PublicKey tokenYMintKey,
-                               final PublicKey tokenXProgramKey,
-                               final PublicKey tokenYProgramKey,
-                               final int minBinId,
-                               final int maxBinId,
-                               final RemainingAccountsInfo remainingAccountsInfo) {
-    final var programId = meteoraAccounts().dlmmProgram();
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBinId), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBinId), programId);
-
-    return claimFee(
-        lbPairKey,
-        positionKey,
-        reserveXKey, reserveYKey, userTokenXKey, userTokenYKey, tokenXMintKey, tokenYMintKey, tokenXProgramKey, tokenYProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        minBinId, maxBinId,
-        remainingAccountsInfo
-    );
-  }
 
   default Instruction claimFee(final PublicKey lbPairKey,
                                final PublicKey positionKey,
@@ -692,8 +552,8 @@ public interface MeteoraDlmmClient {
     );
   }
 
-  default Instruction claimFee(final PositionV2 position,
-                               final LbPair lbPair,
+  default Instruction claimFee(final LbPair lbPair,
+                               final PositionV2 position,
                                final PublicKey userTokenXKey,
                                final PublicKey userTokenYKey,
                                final PublicKey tokenXProgramKey,
@@ -717,8 +577,6 @@ public interface MeteoraDlmmClient {
                           final PublicKey rewardMintKey,
                           final PublicKey userTokenAccountKey,
                           final PublicKey tokenProgramKey,
-                          final PublicKey binArrayLowerKey,
-                          final PublicKey binArrayUpperKey,
                           final int rewardIndex,
                           final int minBidId,
                           final int maxBidId,
@@ -734,14 +592,12 @@ public interface MeteoraDlmmClient {
                                   final int maxBidId,
                                   final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBidId), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBidId), programId);
     final var rewardVaultKey = MeteoraPDAs.rewardVaultPDA(lbPairKey, rewardIndex, programId).publicKey();
 
     return claimReward(
         lbPairKey,
         positionKey,
-        rewardVaultKey, rewardMintKey, userTokenAccountKey, tokenProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        rewardVaultKey, rewardMintKey, userTokenAccountKey, tokenProgramKey,
         rewardIndex,
         minBidId, maxBidId,
         remainingAccountsInfo
@@ -766,40 +622,15 @@ public interface MeteoraDlmmClient {
     );
   }
 
-  Instruction closePosition(final PublicKey positionKey,
-                            final PublicKey rentReceiverKey,
-                            final PublicKey binArrayLowerKey,
-                            final PublicKey binArrayUpperKey);
 
-  default Instruction closePosition(final PublicKey positionKey,
-                                    final PublicKey rentReceiverKey,
-                                    final PublicKey lbPairKey,
-                                    final int lowerBinId,
-                                    final int upperBinId) {
-    final var programId = meteoraAccounts().dlmmProgram();
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(lowerBinId), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(upperBinId), programId);
-    return closePosition(
-        positionKey,
-        rentReceiverKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey()
-    );
-  }
+  Instruction closePosition(final PublicKey positionKey, final PublicKey rentReceiverKey);
 
-  default Instruction closePosition(final PublicKey positionKey,
-                                    final PublicKey lbPairKey,
-                                    final int lowerBinId,
-                                    final int upperBinId) {
-    return closePosition(positionKey, feePayer().publicKey(), lbPairKey, lowerBinId, upperBinId);
+  default Instruction closePosition(final PublicKey positionKey) {
+    return closePosition(positionKey, feePayer().publicKey());
   }
 
   default Instruction closePosition(final PositionV2 position, final PublicKey rentReceiverKey) {
-    return closePosition(
-        position._address(),
-        rentReceiverKey,
-        position.lbPair(),
-        position.lowerBinId(), position.upperBinId()
-    );
+    return closePosition(position._address(), rentReceiverKey);
   }
 
   default Instruction closePosition(final PositionV2 position) {
