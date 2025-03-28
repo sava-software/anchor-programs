@@ -53,6 +53,11 @@
     "package": "meteora.dlmm"
   },
   {
+    "name": "Meteora DLMM",
+    "program": "tLBro6JJuZNnpoad3p8pXKohE9f7f7tBZJpaeh6pXt1",
+    "package": "meteora.staging.dlmm"
+  },
+  {
     "name": "Meteora Alpha Vault",
     "program": "vaU6kP7iNEGkbmPkLmZfGwiGxd4Mob24QQCie5R9kd2",
     "package": "meteora.alpha_vault"

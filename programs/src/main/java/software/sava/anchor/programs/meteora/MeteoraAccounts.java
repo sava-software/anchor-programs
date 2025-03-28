@@ -12,7 +12,8 @@ import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 public interface MeteoraAccounts {
 
   MeteoraAccounts MAIN_NET = createAccounts(
-      "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
+      // "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
+      "tLBro6JJuZNnpoad3p8pXKohE9f7f7tBZJpaeh6pXt1",
       new int[]{33, 11, 49, 98, 181, 101, 177, 13},
       new int[]{117, 176, 212, 199, 245, 180, 133, 182},
       "Eo7WjKq67rjJQSZxS6z3YkapzY3eMj6Xy8X5EQVn5UaB",

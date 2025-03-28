@@ -4,16 +4,21 @@ import java.util.List;
 import java.util.OptionalInt;
 
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.AddLiquiditySingleSidePreciseParameter;
+import software.sava.anchor.programs.meteora.dlmm.anchor.types.AddLiquiditySingleSidePreciseParameter2;
+import software.sava.anchor.programs.meteora.dlmm.anchor.types.BaseFeeParameter;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.BinLiquidityReduction;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.CustomizableParams;
-import software.sava.anchor.programs.meteora.dlmm.anchor.types.FeeParameter;
+import software.sava.anchor.programs.meteora.dlmm.anchor.types.DynamicFeeParameter;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.InitPermissionPairIx;
+import software.sava.anchor.programs.meteora.dlmm.anchor.types.InitPresetParameters2Ix;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.InitPresetParametersIx;
+import software.sava.anchor.programs.meteora.dlmm.anchor.types.InitializeLbPair2Params;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.LiquidityOneSideParameter;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.LiquidityParameter;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.LiquidityParameterByStrategy;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.LiquidityParameterByStrategyOneSide;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.LiquidityParameterByWeight;
+import software.sava.anchor.programs.meteora.dlmm.anchor.types.RemainingAccountsInfo;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.borsh.Borsh;
@@ -132,7 +137,10 @@ public final class LbClmmProgram {
                                                        final PublicKey reserveYKey,
                                                        final PublicKey oracleKey,
                                                        final PublicKey adminKey,
-                                                       final PublicKey tokenProgramKey,
+                                                       final PublicKey tokenBadgeXKey,
+                                                       final PublicKey tokenBadgeYKey,
+                                                       final PublicKey tokenProgramXKey,
+                                                       final PublicKey tokenProgramYKey,
                                                        final PublicKey systemProgramKey,
                                                        final PublicKey rentKey,
                                                        final PublicKey eventAuthorityKey,
@@ -148,7 +156,10 @@ public final class LbClmmProgram {
       createWrite(reserveYKey),
       createWrite(oracleKey),
       createWritableSigner(adminKey),
-      createRead(tokenProgramKey),
+      createRead(requireNonNullElse(tokenBadgeXKey, invokedLbClmmProgramMeta.publicKey())),
+      createRead(requireNonNullElse(tokenBadgeYKey, invokedLbClmmProgramMeta.publicKey())),
+      createRead(tokenProgramXKey),
+      createRead(tokenProgramYKey),
       createRead(systemProgramKey),
       createRead(rentKey),
       createRead(eventAuthorityKey),
@@ -168,7 +179,7 @@ public final class LbClmmProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 25;
+    public static final int BYTES = 20;
 
     public static InitializePermissionLbPairIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -207,7 +218,7 @@ public final class LbClmmProgram {
                                                                        final PublicKey funderKey,
                                                                        final PublicKey tokenProgramKey,
                                                                        final PublicKey systemProgramKey,
-                                                                       final PublicKey rentKey,
+                                                                       final PublicKey userTokenYKey,
                                                                        final PublicKey eventAuthorityKey,
                                                                        final PublicKey programKey,
                                                                        final CustomizableParams params) {
@@ -223,7 +234,7 @@ public final class LbClmmProgram {
       createWritableSigner(funderKey),
       createRead(tokenProgramKey),
       createRead(systemProgramKey),
-      createRead(rentKey),
+      createRead(userTokenYKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -1339,10 +1350,15 @@ public final class LbClmmProgram {
                                                 final PublicKey tokenYMintKey,
                                                 final PublicKey receiverTokenXKey,
                                                 final PublicKey receiverTokenYKey,
+                                                final PublicKey claimFeeOperatorKey,
+                                                // operator
+                                                final PublicKey operatorKey,
                                                 final PublicKey tokenXProgramKey,
                                                 final PublicKey tokenYProgramKey,
+                                                final PublicKey memoProgramKey,
                                                 final long amountX,
-                                                final long amountY) {
+                                                final long amountY,
+                                                final RemainingAccountsInfo remainingAccountsInfo) {
     final var keys = List.of(
       createWrite(lbPairKey),
       createWrite(reserveXKey),
@@ -1351,26 +1367,32 @@ public final class LbClmmProgram {
       createRead(tokenYMintKey),
       createWrite(receiverTokenXKey),
       createWrite(receiverTokenYKey),
+      createRead(claimFeeOperatorKey),
+      createReadOnlySigner(operatorKey),
       createRead(tokenXProgramKey),
-      createRead(tokenYProgramKey)
+      createRead(tokenYProgramKey),
+      createRead(memoProgramKey)
     );
 
-    final byte[] _data = new byte[24];
+    final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
     int i = writeDiscriminator(WITHDRAW_PROTOCOL_FEE_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amountX);
     i += 8;
     putInt64LE(_data, i, amountY);
+    i += 8;
+    Borsh.write(remainingAccountsInfo, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record WithdrawProtocolFeeIxData(Discriminator discriminator, long amountX, long amountY) implements Borsh {  
+  public record WithdrawProtocolFeeIxData(Discriminator discriminator,
+                                          long amountX,
+                                          long amountY,
+                                          RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
 
     public static WithdrawProtocolFeeIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
-
-    public static final int BYTES = 24;
 
     public static WithdrawProtocolFeeIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -1381,7 +1403,9 @@ public final class LbClmmProgram {
       final var amountX = getInt64LE(_data, i);
       i += 8;
       final var amountY = getInt64LE(_data, i);
-      return new WithdrawProtocolFeeIxData(discriminator, amountX, amountY);
+      i += 8;
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new WithdrawProtocolFeeIxData(discriminator, amountX, amountY, remainingAccountsInfo);
     }
 
     @Override
@@ -1391,12 +1415,13 @@ public final class LbClmmProgram {
       i += 8;
       putInt64LE(_data, i, amountY);
       i += 8;
+      i += Borsh.write(remainingAccountsInfo, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return BYTES;
+      return 8 + 8 + 8 + Borsh.len(remainingAccountsInfo);
     }
   }
 
@@ -1406,6 +1431,7 @@ public final class LbClmmProgram {
                                              final PublicKey lbPairKey,
                                              final PublicKey rewardVaultKey,
                                              final PublicKey rewardMintKey,
+                                             final PublicKey tokenBadgeKey,
                                              final PublicKey adminKey,
                                              final PublicKey tokenProgramKey,
                                              final PublicKey systemProgramKey,
@@ -1419,6 +1445,7 @@ public final class LbClmmProgram {
       createWrite(lbPairKey),
       createWrite(rewardVaultKey),
       createRead(rewardMintKey),
+      createRead(requireNonNullElse(tokenBadgeKey, invokedLbClmmProgramMeta.publicKey())),
       createWritableSigner(adminKey),
       createRead(tokenProgramKey),
       createRead(systemProgramKey),
@@ -1495,7 +1522,8 @@ public final class LbClmmProgram {
                                        final PublicKey programKey,
                                        final long rewardIndex,
                                        final long amount,
-                                       final boolean carryForward) {
+                                       final boolean carryForward,
+                                       final RemainingAccountsInfo remainingAccountsInfo) {
     final var keys = List.of(
       createWrite(lbPairKey),
       createWrite(rewardVaultKey),
@@ -1508,13 +1536,15 @@ public final class LbClmmProgram {
       createRead(programKey)
     );
 
-    final byte[] _data = new byte[25];
+    final byte[] _data = new byte[25 + Borsh.len(remainingAccountsInfo)];
     int i = writeDiscriminator(FUND_REWARD_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     putInt64LE(_data, i, amount);
     i += 8;
     _data[i] = (byte) (carryForward ? 1 : 0);
+    ++i;
+    Borsh.write(remainingAccountsInfo, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
@@ -1522,13 +1552,12 @@ public final class LbClmmProgram {
   public record FundRewardIxData(Discriminator discriminator,
                                  long rewardIndex,
                                  long amount,
-                                 boolean carryForward) implements Borsh {  
+                                 boolean carryForward,
+                                 RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
 
     public static FundRewardIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
-
-    public static final int BYTES = 25;
 
     public static FundRewardIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -1541,7 +1570,13 @@ public final class LbClmmProgram {
       final var amount = getInt64LE(_data, i);
       i += 8;
       final var carryForward = _data[i] == 1;
-      return new FundRewardIxData(discriminator, rewardIndex, amount, carryForward);
+      ++i;
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new FundRewardIxData(discriminator,
+                                  rewardIndex,
+                                  amount,
+                                  carryForward,
+                                  remainingAccountsInfo);
     }
 
     @Override
@@ -1553,12 +1588,13 @@ public final class LbClmmProgram {
       i += 8;
       _data[i] = (byte) (carryForward ? 1 : 0);
       ++i;
+      i += Borsh.write(remainingAccountsInfo, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return BYTES;
+      return 8 + 8 + 8 + 1 + Borsh.len(remainingAccountsInfo);
     }
   }
 
@@ -1816,14 +1852,14 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_POSITION_DISCRIMINATOR);
   }
 
-  public static final Discriminator UPDATE_FEE_PARAMETERS_DISCRIMINATOR = toDiscriminator(128, 128, 208, 91, 246, 53, 31, 176);
+  public static final Discriminator UPDATE_BASE_FEE_PARAMETERS_DISCRIMINATOR = toDiscriminator(75, 168, 223, 161, 16, 195, 3, 47);
 
-  public static Instruction updateFeeParameters(final AccountMeta invokedLbClmmProgramMeta,
-                                                final PublicKey lbPairKey,
-                                                final PublicKey adminKey,
-                                                final PublicKey eventAuthorityKey,
-                                                final PublicKey programKey,
-                                                final FeeParameter feeParameter) {
+  public static Instruction updateBaseFeeParameters(final AccountMeta invokedLbClmmProgramMeta,
+                                                    final PublicKey lbPairKey,
+                                                    final PublicKey adminKey,
+                                                    final PublicKey eventAuthorityKey,
+                                                    final PublicKey programKey,
+                                                    final BaseFeeParameter feeParameter) {
     final var keys = List.of(
       createWrite(lbPairKey),
       createReadOnlySigner(adminKey),
@@ -1832,28 +1868,81 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(feeParameter)];
-    int i = writeDiscriminator(UPDATE_FEE_PARAMETERS_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(UPDATE_BASE_FEE_PARAMETERS_DISCRIMINATOR, _data, 0);
     Borsh.write(feeParameter, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record UpdateFeeParametersIxData(Discriminator discriminator, FeeParameter feeParameter) implements Borsh {  
+  public record UpdateBaseFeeParametersIxData(Discriminator discriminator, BaseFeeParameter feeParameter) implements Borsh {  
 
-    public static UpdateFeeParametersIxData read(final Instruction instruction) {
+    public static UpdateBaseFeeParametersIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 12;
+    public static final int BYTES = 13;
 
-    public static UpdateFeeParametersIxData read(final byte[] _data, final int offset) {
+    public static UpdateBaseFeeParametersIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var feeParameter = FeeParameter.read(_data, i);
-      return new UpdateFeeParametersIxData(discriminator, feeParameter);
+      final var feeParameter = BaseFeeParameter.read(_data, i);
+      return new UpdateBaseFeeParametersIxData(discriminator, feeParameter);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(feeParameter, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_DYNAMIC_FEE_PARAMETERS_DISCRIMINATOR = toDiscriminator(92, 161, 46, 246, 255, 189, 22, 22);
+
+  public static Instruction updateDynamicFeeParameters(final AccountMeta invokedLbClmmProgramMeta,
+                                                       final PublicKey lbPairKey,
+                                                       final PublicKey adminKey,
+                                                       final PublicKey eventAuthorityKey,
+                                                       final PublicKey programKey,
+                                                       final DynamicFeeParameter feeParameter) {
+    final var keys = List.of(
+      createWrite(lbPairKey),
+      createReadOnlySigner(adminKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(feeParameter)];
+    int i = writeDiscriminator(UPDATE_DYNAMIC_FEE_PARAMETERS_DISCRIMINATOR, _data, 0);
+    Borsh.write(feeParameter, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record UpdateDynamicFeeParametersIxData(Discriminator discriminator, DynamicFeeParameter feeParameter) implements Borsh {  
+
+    public static UpdateDynamicFeeParametersIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 22;
+
+    public static UpdateDynamicFeeParametersIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var feeParameter = DynamicFeeParameter.read(_data, i);
+      return new UpdateDynamicFeeParametersIxData(discriminator, feeParameter);
     }
 
     @Override
@@ -1953,7 +2042,7 @@ public final class LbClmmProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 36;
+    public static final int BYTES = 28;
 
     public static InitializePresetParameterIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -1991,6 +2080,21 @@ public final class LbClmmProgram {
     );
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_PRESET_PARAMETER_DISCRIMINATOR);
+  }
+
+  public static final Discriminator CLOSE_PRESET_PARAMETER2_DISCRIMINATOR = toDiscriminator(39, 25, 95, 107, 116, 17, 115, 28);
+
+  public static Instruction closePresetParameter2(final AccountMeta invokedLbClmmProgramMeta,
+                                                  final PublicKey presetParameterKey,
+                                                  final PublicKey adminKey,
+                                                  final PublicKey rentReceiverKey) {
+    final var keys = List.of(
+      createWrite(presetParameterKey),
+      createWritableSigner(adminKey),
+      createWrite(rentReceiverKey)
+    );
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_PRESET_PARAMETER2_DISCRIMINATOR);
   }
 
   public static final Discriminator REMOVE_ALL_LIQUIDITY_DISCRIMINATOR = toDiscriminator(10, 51, 61, 35, 112, 105, 24, 85);
@@ -2034,15 +2138,54 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, REMOVE_ALL_LIQUIDITY_DISCRIMINATOR);
   }
 
-  public static final Discriminator TOGGLE_PAIR_STATUS_DISCRIMINATOR = toDiscriminator(61, 115, 52, 23, 46, 13, 31, 144);
+  public static final Discriminator SET_PAIR_STATUS_DISCRIMINATOR = toDiscriminator(67, 248, 231, 137, 154, 149, 217, 174);
 
-  public static Instruction togglePairStatus(final AccountMeta invokedLbClmmProgramMeta, final PublicKey lbPairKey, final PublicKey adminKey) {
+  public static Instruction setPairStatus(final AccountMeta invokedLbClmmProgramMeta,
+                                          final PublicKey lbPairKey,
+                                          final PublicKey adminKey,
+                                          final int status) {
     final var keys = List.of(
       createWrite(lbPairKey),
       createReadOnlySigner(adminKey)
     );
 
-    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, TOGGLE_PAIR_STATUS_DISCRIMINATOR);
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(SET_PAIR_STATUS_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) status;
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record SetPairStatusIxData(Discriminator discriminator, int status) implements Borsh {  
+
+    public static SetPairStatusIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static SetPairStatusIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var status = _data[i] & 0xFF;
+      return new SetPairStatusIxData(discriminator, status);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) status;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
   }
 
   public static final Discriminator MIGRATE_POSITION_DISCRIMINATOR = toDiscriminator(15, 132, 59, 50, 199, 6, 251, 46);
@@ -2113,9 +2256,11 @@ public final class LbClmmProgram {
                                                      final PublicKey funderKey,
                                                      final PublicKey binArrayKey,
                                                      final PublicKey tokenProgramKey,
+                                                     final PublicKey memoProgramKey,
                                                      final PublicKey eventAuthorityKey,
                                                      final PublicKey programKey,
-                                                     final long rewardIndex) {
+                                                     final long rewardIndex,
+                                                     final RemainingAccountsInfo remainingAccountsInfo) {
     final var keys = List.of(
       createWrite(lbPairKey),
       createWrite(rewardVaultKey),
@@ -2124,24 +2269,25 @@ public final class LbClmmProgram {
       createReadOnlySigner(funderKey),
       createWrite(binArrayKey),
       createRead(tokenProgramKey),
+      createRead(memoProgramKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
 
-    final byte[] _data = new byte[16];
+    final byte[] _data = new byte[16 + Borsh.len(remainingAccountsInfo)];
     int i = writeDiscriminator(WITHDRAW_INELIGIBLE_REWARD_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, rewardIndex);
+    i += 8;
+    Borsh.write(remainingAccountsInfo, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
   }
 
-  public record WithdrawIneligibleRewardIxData(Discriminator discriminator, long rewardIndex) implements Borsh {  
+  public record WithdrawIneligibleRewardIxData(Discriminator discriminator, long rewardIndex, RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
 
     public static WithdrawIneligibleRewardIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
-
-    public static final int BYTES = 16;
 
     public static WithdrawIneligibleRewardIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -2150,7 +2296,9 @@ public final class LbClmmProgram {
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
-      return new WithdrawIneligibleRewardIxData(discriminator, rewardIndex);
+      i += 8;
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new WithdrawIneligibleRewardIxData(discriminator, rewardIndex, remainingAccountsInfo);
     }
 
     @Override
@@ -2158,12 +2306,13 @@ public final class LbClmmProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, rewardIndex);
       i += 8;
+      i += Borsh.write(remainingAccountsInfo, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return BYTES;
+      return 8 + 8 + Borsh.len(remainingAccountsInfo);
     }
   }
 
@@ -2535,6 +2684,1278 @@ public final class LbClmmProgram {
     public int l() {
       return BYTES;
     }
+  }
+
+  public static final Discriminator SET_PAIR_STATUS_PERMISSIONLESS_DISCRIMINATOR = toDiscriminator(78, 59, 152, 211, 70, 183, 46, 208);
+
+  public static Instruction setPairStatusPermissionless(final AccountMeta invokedLbClmmProgramMeta,
+                                                        final PublicKey lbPairKey,
+                                                        final PublicKey creatorKey,
+                                                        final int status) {
+    final var keys = List.of(
+      createWrite(lbPairKey),
+      createReadOnlySigner(creatorKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(SET_PAIR_STATUS_PERMISSIONLESS_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) status;
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record SetPairStatusPermissionlessIxData(Discriminator discriminator, int status) implements Borsh {  
+
+    public static SetPairStatusPermissionlessIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static SetPairStatusPermissionlessIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var status = _data[i] & 0xFF;
+      return new SetPairStatusPermissionlessIxData(discriminator, status);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) status;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INITIALIZE_TOKEN_BADGE_DISCRIMINATOR = toDiscriminator(253, 77, 205, 95, 27, 224, 89, 223);
+
+  public static Instruction initializeTokenBadge(final AccountMeta invokedLbClmmProgramMeta,
+                                                 final PublicKey tokenMintKey,
+                                                 final PublicKey tokenBadgeKey,
+                                                 final PublicKey adminKey,
+                                                 final PublicKey systemProgramKey) {
+    final var keys = List.of(
+      createRead(tokenMintKey),
+      createWrite(tokenBadgeKey),
+      createWritableSigner(adminKey),
+      createRead(systemProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, INITIALIZE_TOKEN_BADGE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator CREATE_CLAIM_PROTOCOL_FEE_OPERATOR_DISCRIMINATOR = toDiscriminator(51, 19, 150, 252, 105, 157, 48, 91);
+
+  public static Instruction createClaimProtocolFeeOperator(final AccountMeta invokedLbClmmProgramMeta,
+                                                           final PublicKey claimFeeOperatorKey,
+                                                           final PublicKey operatorKey,
+                                                           final PublicKey adminKey,
+                                                           final PublicKey systemProgramKey) {
+    final var keys = List.of(
+      createWrite(claimFeeOperatorKey),
+      createRead(operatorKey),
+      createWritableSigner(adminKey),
+      createRead(systemProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CREATE_CLAIM_PROTOCOL_FEE_OPERATOR_DISCRIMINATOR);
+  }
+
+  public static final Discriminator CLOSE_CLAIM_PROTOCOL_FEE_OPERATOR_DISCRIMINATOR = toDiscriminator(8, 41, 87, 35, 80, 48, 121, 26);
+
+  public static Instruction closeClaimProtocolFeeOperator(final AccountMeta invokedLbClmmProgramMeta,
+                                                          final PublicKey claimFeeOperatorKey,
+                                                          final PublicKey rentReceiverKey,
+                                                          final PublicKey adminKey) {
+    final var keys = List.of(
+      createWrite(claimFeeOperatorKey),
+      createWrite(rentReceiverKey),
+      createReadOnlySigner(adminKey)
+    );
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_CLAIM_PROTOCOL_FEE_OPERATOR_DISCRIMINATOR);
+  }
+
+  public static final Discriminator INITIALIZE_PRESET_PARAMETER2_DISCRIMINATOR = toDiscriminator(184, 7, 240, 171, 103, 47, 183, 121);
+
+  public static Instruction initializePresetParameter2(final AccountMeta invokedLbClmmProgramMeta,
+                                                       final PublicKey presetParameterKey,
+                                                       final PublicKey adminKey,
+                                                       final PublicKey systemProgramKey,
+                                                       final InitPresetParameters2Ix ix) {
+    final var keys = List.of(
+      createWrite(presetParameterKey),
+      createWritableSigner(adminKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(ix)];
+    int i = writeDiscriminator(INITIALIZE_PRESET_PARAMETER2_DISCRIMINATOR, _data, 0);
+    Borsh.write(ix, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record InitializePresetParameter2IxData(Discriminator discriminator, InitPresetParameters2Ix ix) implements Borsh {  
+
+    public static InitializePresetParameter2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 31;
+
+    public static InitializePresetParameter2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var ix = InitPresetParameters2Ix.read(_data, i);
+      return new InitializePresetParameter2IxData(discriminator, ix);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(ix, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INITIALIZE_LB_PAIR2_DISCRIMINATOR = toDiscriminator(73, 59, 36, 120, 237, 83, 108, 198);
+
+  public static Instruction initializeLbPair2(final AccountMeta invokedLbClmmProgramMeta,
+                                              final PublicKey lbPairKey,
+                                              final PublicKey binArrayBitmapExtensionKey,
+                                              final PublicKey tokenMintXKey,
+                                              final PublicKey tokenMintYKey,
+                                              final PublicKey reserveXKey,
+                                              final PublicKey reserveYKey,
+                                              final PublicKey oracleKey,
+                                              final PublicKey presetParameterKey,
+                                              final PublicKey funderKey,
+                                              final PublicKey tokenBadgeXKey,
+                                              final PublicKey tokenBadgeYKey,
+                                              final PublicKey tokenProgramXKey,
+                                              final PublicKey tokenProgramYKey,
+                                              final PublicKey systemProgramKey,
+                                              final PublicKey eventAuthorityKey,
+                                              final PublicKey programKey,
+                                              final InitializeLbPair2Params params) {
+    final var keys = List.of(
+      createWrite(lbPairKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
+      createRead(tokenMintXKey),
+      createRead(tokenMintYKey),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createWrite(oracleKey),
+      createRead(presetParameterKey),
+      createWritableSigner(funderKey),
+      createRead(requireNonNullElse(tokenBadgeXKey, invokedLbClmmProgramMeta.publicKey())),
+      createRead(requireNonNullElse(tokenBadgeYKey, invokedLbClmmProgramMeta.publicKey())),
+      createRead(tokenProgramXKey),
+      createRead(tokenProgramYKey),
+      createRead(systemProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(INITIALIZE_LB_PAIR2_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record InitializeLbPair2IxData(Discriminator discriminator, InitializeLbPair2Params params) implements Borsh {  
+
+    public static InitializeLbPair2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 108;
+
+    public static InitializeLbPair2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = InitializeLbPair2Params.read(_data, i);
+      return new InitializeLbPair2IxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INITIALIZE_CUSTOMIZABLE_PERMISSIONLESS_LB_PAIR2_DISCRIMINATOR = toDiscriminator(243, 73, 129, 126, 51, 19, 241, 107);
+
+  public static Instruction initializeCustomizablePermissionlessLbPair2(final AccountMeta invokedLbClmmProgramMeta,
+                                                                        final PublicKey lbPairKey,
+                                                                        final PublicKey binArrayBitmapExtensionKey,
+                                                                        final PublicKey tokenMintXKey,
+                                                                        final PublicKey tokenMintYKey,
+                                                                        final PublicKey reserveXKey,
+                                                                        final PublicKey reserveYKey,
+                                                                        final PublicKey oracleKey,
+                                                                        final PublicKey userTokenXKey,
+                                                                        final PublicKey funderKey,
+                                                                        final PublicKey tokenBadgeXKey,
+                                                                        final PublicKey tokenBadgeYKey,
+                                                                        final PublicKey tokenProgramXKey,
+                                                                        final PublicKey tokenProgramYKey,
+                                                                        final PublicKey systemProgramKey,
+                                                                        final PublicKey userTokenYKey,
+                                                                        final PublicKey eventAuthorityKey,
+                                                                        final PublicKey programKey,
+                                                                        final CustomizableParams params) {
+    final var keys = List.of(
+      createWrite(lbPairKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
+      createRead(tokenMintXKey),
+      createRead(tokenMintYKey),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createWrite(oracleKey),
+      createRead(userTokenXKey),
+      createWritableSigner(funderKey),
+      createRead(requireNonNullElse(tokenBadgeXKey, invokedLbClmmProgramMeta.publicKey())),
+      createRead(requireNonNullElse(tokenBadgeYKey, invokedLbClmmProgramMeta.publicKey())),
+      createRead(tokenProgramXKey),
+      createRead(tokenProgramYKey),
+      createRead(systemProgramKey),
+      createRead(userTokenYKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(INITIALIZE_CUSTOMIZABLE_PERMISSIONLESS_LB_PAIR2_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record InitializeCustomizablePermissionlessLbPair2IxData(Discriminator discriminator, CustomizableParams params) implements Borsh {  
+
+    public static InitializeCustomizablePermissionlessLbPair2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static InitializeCustomizablePermissionlessLbPair2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = CustomizableParams.read(_data, i);
+      return new InitializeCustomizablePermissionlessLbPair2IxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(params);
+    }
+  }
+
+  public static final Discriminator CLAIM_FEE2_DISCRIMINATOR = toDiscriminator(112, 191, 101, 171, 28, 144, 127, 187);
+
+  public static Instruction claimFee2(final AccountMeta invokedLbClmmProgramMeta,
+                                      final PublicKey lbPairKey,
+                                      final PublicKey positionKey,
+                                      final PublicKey senderKey,
+                                      final PublicKey reserveXKey,
+                                      final PublicKey reserveYKey,
+                                      final PublicKey userTokenXKey,
+                                      final PublicKey userTokenYKey,
+                                      final PublicKey tokenXMintKey,
+                                      final PublicKey tokenYMintKey,
+                                      final PublicKey tokenProgramXKey,
+                                      final PublicKey tokenProgramYKey,
+                                      final PublicKey memoProgramKey,
+                                      final PublicKey eventAuthorityKey,
+                                      final PublicKey programKey,
+                                      final int minBinId,
+                                      final int maxBinId,
+                                      final RemainingAccountsInfo remainingAccountsInfo) {
+    final var keys = List.of(
+      createWrite(lbPairKey),
+      createWrite(positionKey),
+      createReadOnlySigner(senderKey),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createWrite(userTokenXKey),
+      createWrite(userTokenYKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createRead(tokenProgramXKey),
+      createRead(tokenProgramYKey),
+      createRead(memoProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[16 + Borsh.len(remainingAccountsInfo)];
+    int i = writeDiscriminator(CLAIM_FEE2_DISCRIMINATOR, _data, 0);
+    putInt32LE(_data, i, minBinId);
+    i += 4;
+    putInt32LE(_data, i, maxBinId);
+    i += 4;
+    Borsh.write(remainingAccountsInfo, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record ClaimFee2IxData(Discriminator discriminator,
+                                int minBinId,
+                                int maxBinId,
+                                RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
+
+    public static ClaimFee2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static ClaimFee2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var minBinId = getInt32LE(_data, i);
+      i += 4;
+      final var maxBinId = getInt32LE(_data, i);
+      i += 4;
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new ClaimFee2IxData(discriminator, minBinId, maxBinId, remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, minBinId);
+      i += 4;
+      putInt32LE(_data, i, maxBinId);
+      i += 4;
+      i += Borsh.write(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 4 + 4 + Borsh.len(remainingAccountsInfo);
+    }
+  }
+
+  public static final Discriminator CLAIM_REWARD2_DISCRIMINATOR = toDiscriminator(190, 3, 127, 119, 178, 87, 157, 183);
+
+  public static Instruction claimReward2(final AccountMeta invokedLbClmmProgramMeta,
+                                         final PublicKey lbPairKey,
+                                         final PublicKey positionKey,
+                                         final PublicKey senderKey,
+                                         final PublicKey rewardVaultKey,
+                                         final PublicKey rewardMintKey,
+                                         final PublicKey userTokenAccountKey,
+                                         final PublicKey tokenProgramKey,
+                                         final PublicKey memoProgramKey,
+                                         final PublicKey eventAuthorityKey,
+                                         final PublicKey programKey,
+                                         final long rewardIndex,
+                                         final int minBinId,
+                                         final int maxBinId,
+                                         final RemainingAccountsInfo remainingAccountsInfo) {
+    final var keys = List.of(
+      createWrite(lbPairKey),
+      createWrite(positionKey),
+      createReadOnlySigner(senderKey),
+      createWrite(rewardVaultKey),
+      createRead(rewardMintKey),
+      createWrite(userTokenAccountKey),
+      createRead(tokenProgramKey),
+      createRead(memoProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
+    int i = writeDiscriminator(CLAIM_REWARD2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, rewardIndex);
+    i += 8;
+    putInt32LE(_data, i, minBinId);
+    i += 4;
+    putInt32LE(_data, i, maxBinId);
+    i += 4;
+    Borsh.write(remainingAccountsInfo, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record ClaimReward2IxData(Discriminator discriminator,
+                                   long rewardIndex,
+                                   int minBinId,
+                                   int maxBinId,
+                                   RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
+
+    public static ClaimReward2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static ClaimReward2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var rewardIndex = getInt64LE(_data, i);
+      i += 8;
+      final var minBinId = getInt32LE(_data, i);
+      i += 4;
+      final var maxBinId = getInt32LE(_data, i);
+      i += 4;
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new ClaimReward2IxData(discriminator,
+                                    rewardIndex,
+                                    minBinId,
+                                    maxBinId,
+                                    remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, rewardIndex);
+      i += 8;
+      putInt32LE(_data, i, minBinId);
+      i += 4;
+      putInt32LE(_data, i, maxBinId);
+      i += 4;
+      i += Borsh.write(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 8 + 4 + 4 + Borsh.len(remainingAccountsInfo);
+    }
+  }
+
+  public static final Discriminator ADD_LIQUIDITY2_DISCRIMINATOR = toDiscriminator(228, 162, 78, 28, 70, 219, 116, 115);
+
+  public static Instruction addLiquidity2(final AccountMeta invokedLbClmmProgramMeta,
+                                          final PublicKey positionKey,
+                                          final PublicKey lbPairKey,
+                                          final PublicKey binArrayBitmapExtensionKey,
+                                          final PublicKey userTokenXKey,
+                                          final PublicKey userTokenYKey,
+                                          final PublicKey reserveXKey,
+                                          final PublicKey reserveYKey,
+                                          final PublicKey tokenXMintKey,
+                                          final PublicKey tokenYMintKey,
+                                          final PublicKey senderKey,
+                                          final PublicKey tokenXProgramKey,
+                                          final PublicKey tokenYProgramKey,
+                                          final PublicKey eventAuthorityKey,
+                                          final PublicKey programKey,
+                                          final LiquidityParameter liquidityParameter,
+                                          final RemainingAccountsInfo remainingAccountsInfo) {
+    final var keys = List.of(
+      createWrite(positionKey),
+      createWrite(lbPairKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
+      createWrite(userTokenXKey),
+      createWrite(userTokenYKey),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createReadOnlySigner(senderKey),
+      createRead(tokenXProgramKey),
+      createRead(tokenYProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
+    int i = writeDiscriminator(ADD_LIQUIDITY2_DISCRIMINATOR, _data, 0);
+    i += Borsh.write(liquidityParameter, _data, i);
+    Borsh.write(remainingAccountsInfo, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record AddLiquidity2IxData(Discriminator discriminator, LiquidityParameter liquidityParameter, RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
+
+    public static AddLiquidity2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static AddLiquidity2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var liquidityParameter = LiquidityParameter.read(_data, i);
+      i += Borsh.len(liquidityParameter);
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new AddLiquidity2IxData(discriminator, liquidityParameter, remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(liquidityParameter, _data, i);
+      i += Borsh.write(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo);
+    }
+  }
+
+  public static final Discriminator ADD_LIQUIDITY_BY_STRATEGY2_DISCRIMINATOR = toDiscriminator(3, 221, 149, 218, 111, 141, 118, 213);
+
+  public static Instruction addLiquidityByStrategy2(final AccountMeta invokedLbClmmProgramMeta,
+                                                    final PublicKey positionKey,
+                                                    final PublicKey lbPairKey,
+                                                    final PublicKey binArrayBitmapExtensionKey,
+                                                    final PublicKey userTokenXKey,
+                                                    final PublicKey userTokenYKey,
+                                                    final PublicKey reserveXKey,
+                                                    final PublicKey reserveYKey,
+                                                    final PublicKey tokenXMintKey,
+                                                    final PublicKey tokenYMintKey,
+                                                    final PublicKey senderKey,
+                                                    final PublicKey tokenXProgramKey,
+                                                    final PublicKey tokenYProgramKey,
+                                                    final PublicKey eventAuthorityKey,
+                                                    final PublicKey programKey,
+                                                    final LiquidityParameterByStrategy liquidityParameter,
+                                                    final RemainingAccountsInfo remainingAccountsInfo) {
+    final var keys = List.of(
+      createWrite(positionKey),
+      createWrite(lbPairKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
+      createWrite(userTokenXKey),
+      createWrite(userTokenYKey),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createReadOnlySigner(senderKey),
+      createRead(tokenXProgramKey),
+      createRead(tokenYProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
+    int i = writeDiscriminator(ADD_LIQUIDITY_BY_STRATEGY2_DISCRIMINATOR, _data, 0);
+    i += Borsh.write(liquidityParameter, _data, i);
+    Borsh.write(remainingAccountsInfo, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record AddLiquidityByStrategy2IxData(Discriminator discriminator, LiquidityParameterByStrategy liquidityParameter, RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
+
+    public static AddLiquidityByStrategy2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static AddLiquidityByStrategy2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var liquidityParameter = LiquidityParameterByStrategy.read(_data, i);
+      i += Borsh.len(liquidityParameter);
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new AddLiquidityByStrategy2IxData(discriminator, liquidityParameter, remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(liquidityParameter, _data, i);
+      i += Borsh.write(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo);
+    }
+  }
+
+  public static final Discriminator ADD_LIQUIDITY_ONE_SIDE_PRECISE2_DISCRIMINATOR = toDiscriminator(33, 51, 163, 201, 117, 98, 125, 231);
+
+  public static Instruction addLiquidityOneSidePrecise2(final AccountMeta invokedLbClmmProgramMeta,
+                                                        final PublicKey positionKey,
+                                                        final PublicKey lbPairKey,
+                                                        final PublicKey binArrayBitmapExtensionKey,
+                                                        final PublicKey userTokenKey,
+                                                        final PublicKey reserveKey,
+                                                        final PublicKey tokenMintKey,
+                                                        final PublicKey senderKey,
+                                                        final PublicKey tokenProgramKey,
+                                                        final PublicKey eventAuthorityKey,
+                                                        final PublicKey programKey,
+                                                        final AddLiquiditySingleSidePreciseParameter2 liquidityParameter,
+                                                        final RemainingAccountsInfo remainingAccountsInfo) {
+    final var keys = List.of(
+      createWrite(positionKey),
+      createWrite(lbPairKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
+      createWrite(userTokenKey),
+      createWrite(reserveKey),
+      createRead(tokenMintKey),
+      createReadOnlySigner(senderKey),
+      createRead(tokenProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
+    int i = writeDiscriminator(ADD_LIQUIDITY_ONE_SIDE_PRECISE2_DISCRIMINATOR, _data, 0);
+    i += Borsh.write(liquidityParameter, _data, i);
+    Borsh.write(remainingAccountsInfo, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record AddLiquidityOneSidePrecise2IxData(Discriminator discriminator, AddLiquiditySingleSidePreciseParameter2 liquidityParameter, RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
+
+    public static AddLiquidityOneSidePrecise2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static AddLiquidityOneSidePrecise2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var liquidityParameter = AddLiquiditySingleSidePreciseParameter2.read(_data, i);
+      i += Borsh.len(liquidityParameter);
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new AddLiquidityOneSidePrecise2IxData(discriminator, liquidityParameter, remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(liquidityParameter, _data, i);
+      i += Borsh.write(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo);
+    }
+  }
+
+  public static final Discriminator REMOVE_LIQUIDITY2_DISCRIMINATOR = toDiscriminator(230, 215, 82, 127, 241, 101, 227, 146);
+
+  public static Instruction removeLiquidity2(final AccountMeta invokedLbClmmProgramMeta,
+                                             final PublicKey positionKey,
+                                             final PublicKey lbPairKey,
+                                             final PublicKey binArrayBitmapExtensionKey,
+                                             final PublicKey userTokenXKey,
+                                             final PublicKey userTokenYKey,
+                                             final PublicKey reserveXKey,
+                                             final PublicKey reserveYKey,
+                                             final PublicKey tokenXMintKey,
+                                             final PublicKey tokenYMintKey,
+                                             final PublicKey senderKey,
+                                             final PublicKey tokenXProgramKey,
+                                             final PublicKey tokenYProgramKey,
+                                             final PublicKey memoProgramKey,
+                                             final PublicKey eventAuthorityKey,
+                                             final PublicKey programKey,
+                                             final BinLiquidityReduction[] binLiquidityRemoval,
+                                             final RemainingAccountsInfo remainingAccountsInfo) {
+    final var keys = List.of(
+      createWrite(positionKey),
+      createWrite(lbPairKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
+      createWrite(userTokenXKey),
+      createWrite(userTokenYKey),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createReadOnlySigner(senderKey),
+      createRead(tokenXProgramKey),
+      createRead(tokenYProgramKey),
+      createRead(memoProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.lenVector(binLiquidityRemoval) + Borsh.len(remainingAccountsInfo)];
+    int i = writeDiscriminator(REMOVE_LIQUIDITY2_DISCRIMINATOR, _data, 0);
+    i += Borsh.writeVector(binLiquidityRemoval, _data, i);
+    Borsh.write(remainingAccountsInfo, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record RemoveLiquidity2IxData(Discriminator discriminator, BinLiquidityReduction[] binLiquidityRemoval, RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
+
+    public static RemoveLiquidity2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static RemoveLiquidity2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var binLiquidityRemoval = Borsh.readVector(BinLiquidityReduction.class, BinLiquidityReduction::read, _data, i);
+      i += Borsh.lenVector(binLiquidityRemoval);
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new RemoveLiquidity2IxData(discriminator, binLiquidityRemoval, remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeVector(binLiquidityRemoval, _data, i);
+      i += Borsh.write(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.lenVector(binLiquidityRemoval) + Borsh.len(remainingAccountsInfo);
+    }
+  }
+
+  public static final Discriminator REMOVE_LIQUIDITY_BY_RANGE2_DISCRIMINATOR = toDiscriminator(204, 2, 195, 145, 53, 145, 145, 205);
+
+  public static Instruction removeLiquidityByRange2(final AccountMeta invokedLbClmmProgramMeta,
+                                                    final PublicKey positionKey,
+                                                    final PublicKey lbPairKey,
+                                                    final PublicKey binArrayBitmapExtensionKey,
+                                                    final PublicKey userTokenXKey,
+                                                    final PublicKey userTokenYKey,
+                                                    final PublicKey reserveXKey,
+                                                    final PublicKey reserveYKey,
+                                                    final PublicKey tokenXMintKey,
+                                                    final PublicKey tokenYMintKey,
+                                                    final PublicKey senderKey,
+                                                    final PublicKey tokenXProgramKey,
+                                                    final PublicKey tokenYProgramKey,
+                                                    final PublicKey memoProgramKey,
+                                                    final PublicKey eventAuthorityKey,
+                                                    final PublicKey programKey,
+                                                    final int fromBinId,
+                                                    final int toBinId,
+                                                    final int bpsToRemove,
+                                                    final RemainingAccountsInfo remainingAccountsInfo) {
+    final var keys = List.of(
+      createWrite(positionKey),
+      createWrite(lbPairKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
+      createWrite(userTokenXKey),
+      createWrite(userTokenYKey),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createReadOnlySigner(senderKey),
+      createRead(tokenXProgramKey),
+      createRead(tokenYProgramKey),
+      createRead(memoProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[18 + Borsh.len(remainingAccountsInfo)];
+    int i = writeDiscriminator(REMOVE_LIQUIDITY_BY_RANGE2_DISCRIMINATOR, _data, 0);
+    putInt32LE(_data, i, fromBinId);
+    i += 4;
+    putInt32LE(_data, i, toBinId);
+    i += 4;
+    putInt16LE(_data, i, bpsToRemove);
+    i += 2;
+    Borsh.write(remainingAccountsInfo, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record RemoveLiquidityByRange2IxData(Discriminator discriminator,
+                                              int fromBinId,
+                                              int toBinId,
+                                              int bpsToRemove,
+                                              RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
+
+    public static RemoveLiquidityByRange2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static RemoveLiquidityByRange2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var fromBinId = getInt32LE(_data, i);
+      i += 4;
+      final var toBinId = getInt32LE(_data, i);
+      i += 4;
+      final var bpsToRemove = getInt16LE(_data, i);
+      i += 2;
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new RemoveLiquidityByRange2IxData(discriminator,
+                                               fromBinId,
+                                               toBinId,
+                                               bpsToRemove,
+                                               remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, fromBinId);
+      i += 4;
+      putInt32LE(_data, i, toBinId);
+      i += 4;
+      putInt16LE(_data, i, bpsToRemove);
+      i += 2;
+      i += Borsh.write(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 4 + 4 + 2 + Borsh.len(remainingAccountsInfo);
+    }
+  }
+
+  public static final Discriminator SWAP2_DISCRIMINATOR = toDiscriminator(65, 75, 63, 76, 235, 91, 91, 136);
+
+  public static Instruction swap2(final AccountMeta invokedLbClmmProgramMeta,
+                                  final PublicKey lbPairKey,
+                                  final PublicKey binArrayBitmapExtensionKey,
+                                  final PublicKey reserveXKey,
+                                  final PublicKey reserveYKey,
+                                  final PublicKey userTokenInKey,
+                                  final PublicKey userTokenOutKey,
+                                  final PublicKey tokenXMintKey,
+                                  final PublicKey tokenYMintKey,
+                                  final PublicKey oracleKey,
+                                  final PublicKey hostFeeInKey,
+                                  final PublicKey userKey,
+                                  final PublicKey tokenXProgramKey,
+                                  final PublicKey tokenYProgramKey,
+                                  final PublicKey memoProgramKey,
+                                  final PublicKey eventAuthorityKey,
+                                  final PublicKey programKey,
+                                  final long amountIn,
+                                  final long minAmountOut,
+                                  final RemainingAccountsInfo remainingAccountsInfo) {
+    final var keys = List.of(
+      createWrite(lbPairKey),
+      createRead(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createWrite(userTokenInKey),
+      createWrite(userTokenOutKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createWrite(oracleKey),
+      createWrite(requireNonNullElse(hostFeeInKey, invokedLbClmmProgramMeta.publicKey())),
+      createReadOnlySigner(userKey),
+      createRead(tokenXProgramKey),
+      createRead(tokenYProgramKey),
+      createRead(memoProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
+    int i = writeDiscriminator(SWAP2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, amountIn);
+    i += 8;
+    putInt64LE(_data, i, minAmountOut);
+    i += 8;
+    Borsh.write(remainingAccountsInfo, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record Swap2IxData(Discriminator discriminator,
+                            long amountIn,
+                            long minAmountOut,
+                            RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
+
+    public static Swap2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static Swap2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amountIn = getInt64LE(_data, i);
+      i += 8;
+      final var minAmountOut = getInt64LE(_data, i);
+      i += 8;
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new Swap2IxData(discriminator, amountIn, minAmountOut, remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amountIn);
+      i += 8;
+      putInt64LE(_data, i, minAmountOut);
+      i += 8;
+      i += Borsh.write(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 8 + 8 + Borsh.len(remainingAccountsInfo);
+    }
+  }
+
+  public static final Discriminator SWAP_EXACT_OUT2_DISCRIMINATOR = toDiscriminator(43, 215, 247, 132, 137, 60, 243, 81);
+
+  public static Instruction swapExactOut2(final AccountMeta invokedLbClmmProgramMeta,
+                                          final PublicKey lbPairKey,
+                                          final PublicKey binArrayBitmapExtensionKey,
+                                          final PublicKey reserveXKey,
+                                          final PublicKey reserveYKey,
+                                          final PublicKey userTokenInKey,
+                                          final PublicKey userTokenOutKey,
+                                          final PublicKey tokenXMintKey,
+                                          final PublicKey tokenYMintKey,
+                                          final PublicKey oracleKey,
+                                          final PublicKey hostFeeInKey,
+                                          final PublicKey userKey,
+                                          final PublicKey tokenXProgramKey,
+                                          final PublicKey tokenYProgramKey,
+                                          final PublicKey memoProgramKey,
+                                          final PublicKey eventAuthorityKey,
+                                          final PublicKey programKey,
+                                          final long maxInAmount,
+                                          final long outAmount,
+                                          final RemainingAccountsInfo remainingAccountsInfo) {
+    final var keys = List.of(
+      createWrite(lbPairKey),
+      createRead(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createWrite(userTokenInKey),
+      createWrite(userTokenOutKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createWrite(oracleKey),
+      createWrite(requireNonNullElse(hostFeeInKey, invokedLbClmmProgramMeta.publicKey())),
+      createReadOnlySigner(userKey),
+      createRead(tokenXProgramKey),
+      createRead(tokenYProgramKey),
+      createRead(memoProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
+    int i = writeDiscriminator(SWAP_EXACT_OUT2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, maxInAmount);
+    i += 8;
+    putInt64LE(_data, i, outAmount);
+    i += 8;
+    Borsh.write(remainingAccountsInfo, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record SwapExactOut2IxData(Discriminator discriminator,
+                                    long maxInAmount,
+                                    long outAmount,
+                                    RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
+
+    public static SwapExactOut2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static SwapExactOut2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var maxInAmount = getInt64LE(_data, i);
+      i += 8;
+      final var outAmount = getInt64LE(_data, i);
+      i += 8;
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new SwapExactOut2IxData(discriminator, maxInAmount, outAmount, remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, maxInAmount);
+      i += 8;
+      putInt64LE(_data, i, outAmount);
+      i += 8;
+      i += Borsh.write(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 8 + 8 + Borsh.len(remainingAccountsInfo);
+    }
+  }
+
+  public static final Discriminator SWAP_WITH_PRICE_IMPACT2_DISCRIMINATOR = toDiscriminator(74, 98, 192, 214, 177, 51, 75, 51);
+
+  public static Instruction swapWithPriceImpact2(final AccountMeta invokedLbClmmProgramMeta,
+                                                 final PublicKey lbPairKey,
+                                                 final PublicKey binArrayBitmapExtensionKey,
+                                                 final PublicKey reserveXKey,
+                                                 final PublicKey reserveYKey,
+                                                 final PublicKey userTokenInKey,
+                                                 final PublicKey userTokenOutKey,
+                                                 final PublicKey tokenXMintKey,
+                                                 final PublicKey tokenYMintKey,
+                                                 final PublicKey oracleKey,
+                                                 final PublicKey hostFeeInKey,
+                                                 final PublicKey userKey,
+                                                 final PublicKey tokenXProgramKey,
+                                                 final PublicKey tokenYProgramKey,
+                                                 final PublicKey memoProgramKey,
+                                                 final PublicKey eventAuthorityKey,
+                                                 final PublicKey programKey,
+                                                 final long amountIn,
+                                                 final OptionalInt activeId,
+                                                 final int maxPriceImpactBps,
+                                                 final RemainingAccountsInfo remainingAccountsInfo) {
+    final var keys = List.of(
+      createWrite(lbPairKey),
+      createRead(requireNonNullElse(binArrayBitmapExtensionKey, invokedLbClmmProgramMeta.publicKey())),
+      createWrite(reserveXKey),
+      createWrite(reserveYKey),
+      createWrite(userTokenInKey),
+      createWrite(userTokenOutKey),
+      createRead(tokenXMintKey),
+      createRead(tokenYMintKey),
+      createWrite(oracleKey),
+      createWrite(requireNonNullElse(hostFeeInKey, invokedLbClmmProgramMeta.publicKey())),
+      createReadOnlySigner(userKey),
+      createRead(tokenXProgramKey),
+      createRead(tokenYProgramKey),
+      createRead(memoProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[
+        18
+        + (activeId == null || activeId.isEmpty() ? 1 : 5) + Borsh.len(remainingAccountsInfo)
+    ];
+    int i = writeDiscriminator(SWAP_WITH_PRICE_IMPACT2_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, amountIn);
+    i += 8;
+    i += Borsh.writeOptional(activeId, _data, i);
+    putInt16LE(_data, i, maxPriceImpactBps);
+    i += 2;
+    Borsh.write(remainingAccountsInfo, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record SwapWithPriceImpact2IxData(Discriminator discriminator,
+                                           long amountIn,
+                                           OptionalInt activeId,
+                                           int maxPriceImpactBps,
+                                           RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
+
+    public static SwapWithPriceImpact2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static SwapWithPriceImpact2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amountIn = getInt64LE(_data, i);
+      i += 8;
+      final var activeId = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+      if (activeId.isPresent()) {
+        i += 4;
+      }
+      final var maxPriceImpactBps = getInt16LE(_data, i);
+      i += 2;
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new SwapWithPriceImpact2IxData(discriminator,
+                                            amountIn,
+                                            activeId,
+                                            maxPriceImpactBps,
+                                            remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amountIn);
+      i += 8;
+      i += Borsh.writeOptional(activeId, _data, i);
+      putInt16LE(_data, i, maxPriceImpactBps);
+      i += 2;
+      i += Borsh.write(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 8 + (activeId == null || activeId.isEmpty() ? 1 : (1 + 4)) + 2 + Borsh.len(remainingAccountsInfo);
+    }
+  }
+
+  public static final Discriminator CLOSE_POSITION2_DISCRIMINATOR = toDiscriminator(174, 90, 35, 115, 186, 40, 147, 226);
+
+  public static Instruction closePosition2(final AccountMeta invokedLbClmmProgramMeta,
+                                           final PublicKey positionKey,
+                                           final PublicKey senderKey,
+                                           final PublicKey rentReceiverKey,
+                                           final PublicKey eventAuthorityKey,
+                                           final PublicKey programKey) {
+    final var keys = List.of(
+      createWrite(positionKey),
+      createReadOnlySigner(senderKey),
+      createWrite(rentReceiverKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_POSITION2_DISCRIMINATOR);
+  }
+
+  public static final Discriminator UPDATE_FEES_AND_REWARD2_DISCRIMINATOR = toDiscriminator(32, 142, 184, 154, 103, 65, 184, 88);
+
+  public static Instruction updateFeesAndReward2(final AccountMeta invokedLbClmmProgramMeta,
+                                                 final PublicKey positionKey,
+                                                 final PublicKey lbPairKey,
+                                                 final PublicKey ownerKey,
+                                                 final int minBinId,
+                                                 final int maxBinId) {
+    final var keys = List.of(
+      createWrite(positionKey),
+      createWrite(lbPairKey),
+      createReadOnlySigner(ownerKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(UPDATE_FEES_AND_REWARD2_DISCRIMINATOR, _data, 0);
+    putInt32LE(_data, i, minBinId);
+    i += 4;
+    putInt32LE(_data, i, maxBinId);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record UpdateFeesAndReward2IxData(Discriminator discriminator, int minBinId, int maxBinId) implements Borsh {  
+
+    public static UpdateFeesAndReward2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static UpdateFeesAndReward2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var minBinId = getInt32LE(_data, i);
+      i += 4;
+      final var maxBinId = getInt32LE(_data, i);
+      return new UpdateFeesAndReward2IxData(discriminator, minBinId, maxBinId);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, minBinId);
+      i += 4;
+      putInt32LE(_data, i, maxBinId);
+      i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator CLOSE_POSITION_IF_EMPTY_DISCRIMINATOR = toDiscriminator(59, 124, 212, 118, 91, 152, 110, 157);
+
+  public static Instruction closePositionIfEmpty(final AccountMeta invokedLbClmmProgramMeta,
+                                                 final PublicKey positionKey,
+                                                 final PublicKey senderKey,
+                                                 final PublicKey rentReceiverKey,
+                                                 final PublicKey eventAuthorityKey,
+                                                 final PublicKey programKey) {
+    final var keys = List.of(
+      createWrite(positionKey),
+      createReadOnlySigner(senderKey),
+      createWrite(rentReceiverKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_POSITION_IF_EMPTY_DISCRIMINATOR);
   }
 
   private LbClmmProgram() {

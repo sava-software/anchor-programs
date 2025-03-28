@@ -83,7 +83,8 @@ public sealed interface Swap extends RustEnum permits
   Swap.Perena,
   Swap.PumpdotfunAmmBuy,
   Swap.PumpdotfunAmmSell,
-  Swap.Gamma {
+  Swap.Gamma,
+  Swap.MeteoraDlmmSwapV2 {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -164,6 +165,7 @@ public sealed interface Swap extends RustEnum permits
       case 72 -> PumpdotfunAmmBuy.INSTANCE;
       case 73 -> PumpdotfunAmmSell.INSTANCE;
       case 74 -> Gamma.INSTANCE;
+      case 75 -> MeteoraDlmmSwapV2.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1176,6 +1178,18 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 74;
+    }
+  }
+
+  record MeteoraDlmmSwapV2(RemainingAccountsInfo val) implements BorshEnum, Swap {
+
+    public static MeteoraDlmmSwapV2 read(final byte[] _data, final int offset) {
+      return new MeteoraDlmmSwapV2(RemainingAccountsInfo.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 75;
     }
   }
 }

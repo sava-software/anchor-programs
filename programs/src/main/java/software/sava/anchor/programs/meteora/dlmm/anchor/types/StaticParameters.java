@@ -8,7 +8,7 @@ import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 
 // Parameter that set by the protocol
-public record StaticParameters(// Used for base fee calculation. base_fee_rate = base_factor * bin_step
+public record StaticParameters(// Used for base fee calculation. base_fee_rate = base_factor * bin_step * 10 * 10^base_fee_power_factor
                                int baseFactor,
                                // Filter period determine high frequency trading time window.
                                int filterPeriod,
@@ -26,6 +26,8 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
                                int maxBinId,
                                // Portion of swap fees retained by the protocol by controlling protocol_share parameter. protocol_swap_fee = protocol_share * total_swap_fee
                                int protocolShare,
+                               // Base fee power factor
+                               int baseFeePowerFactor,
                                // Padding for bytemuck safe alignment
                                byte[] padding) implements Borsh {
 
@@ -54,7 +56,9 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
     i += 4;
     final var protocolShare = getInt16LE(_data, i);
     i += 2;
-    final var padding = new byte[6];
+    final var baseFeePowerFactor = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[5];
     Borsh.readArray(padding, _data, i);
     return new StaticParameters(baseFactor,
                                 filterPeriod,
@@ -65,6 +69,7 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
                                 minBinId,
                                 maxBinId,
                                 protocolShare,
+                                baseFeePowerFactor,
                                 padding);
   }
 
@@ -89,6 +94,8 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
     i += 4;
     putInt16LE(_data, i, protocolShare);
     i += 2;
+    _data[i] = (byte) baseFeePowerFactor;
+    ++i;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

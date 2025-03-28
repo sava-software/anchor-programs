@@ -9,7 +9,7 @@ import static software.sava.core.encoding.ByteUtil.putInt32LE;
 
 public record InitPresetParametersIx(// Bin step. Represent the price increment / decrement.
                                      int binStep,
-                                     // Used for base fee calculation. base_fee_rate = base_factor * bin_step
+                                     // Used for base fee calculation. base_fee_rate = base_factor * bin_step * 10 * 10^base_fee_power_factor
                                      int baseFactor,
                                      // Filter period determine high frequency trading time window.
                                      int filterPeriod,
@@ -21,14 +21,10 @@ public record InitPresetParametersIx(// Bin step. Represent the price increment 
                                      int variableFeeControl,
                                      // Maximum number of bin crossed can be accumulated. Used to cap volatile fee rate.
                                      int maxVolatilityAccumulator,
-                                     // Min bin id supported by the pool based on the configured bin step.
-                                     int minBinId,
-                                     // Max bin id supported by the pool based on the configured bin step.
-                                     int maxBinId,
                                      // Portion of swap fees retained by the protocol by controlling protocol_share parameter. protocol_swap_fee = protocol_share * total_swap_fee
                                      int protocolShare) implements Borsh {
 
-  public static final int BYTES = 28;
+  public static final int BYTES = 20;
 
   public static InitPresetParametersIx read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -49,10 +45,6 @@ public record InitPresetParametersIx(// Bin step. Represent the price increment 
     i += 4;
     final var maxVolatilityAccumulator = getInt32LE(_data, i);
     i += 4;
-    final var minBinId = getInt32LE(_data, i);
-    i += 4;
-    final var maxBinId = getInt32LE(_data, i);
-    i += 4;
     final var protocolShare = getInt16LE(_data, i);
     return new InitPresetParametersIx(binStep,
                                       baseFactor,
@@ -61,8 +53,6 @@ public record InitPresetParametersIx(// Bin step. Represent the price increment 
                                       reductionFactor,
                                       variableFeeControl,
                                       maxVolatilityAccumulator,
-                                      minBinId,
-                                      maxBinId,
                                       protocolShare);
   }
 
@@ -82,10 +72,6 @@ public record InitPresetParametersIx(// Bin step. Represent the price increment 
     putInt32LE(_data, i, variableFeeControl);
     i += 4;
     putInt32LE(_data, i, maxVolatilityAccumulator);
-    i += 4;
-    putInt32LE(_data, i, minBinId);
-    i += 4;
-    putInt32LE(_data, i, maxBinId);
     i += 4;
     putInt16LE(_data, i, protocolShare);
     i += 2;

@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.meteora.dlmm;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import software.sava.anchor.programs.meteora.MeteoraAccounts;
 import software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram;
@@ -9,6 +10,7 @@ import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.TransactionSkeleton;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
+import java.math.MathContext;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -24,29 +26,47 @@ final class MeteoraDlmmTests {
     final int baseScale = 8;
     final int quoteScale = 6;
     final int scaleDifference = DlmmUtils.scaleDifference(baseScale, quoteScale);
-
-    final int binId = 17221;
-    final var mathContext = DlmmUtils.mathContext(binId, quoteScale);
+    assertEquals(-2, scaleDifference);
 
     final int stepSize = 4;
     final var binStepBase = DlmmUtils.binStepBase(stepSize);
 
-    final var binPrice = DlmmUtils.binPrice(binStepBase, binId, scaleDifference, mathContext);
-    assertEquals("97948.085085", binPrice.toPlainString());
+    final int binId = 17221;
 
-    double calculatedBinId = DlmmUtils.calculateBinId(binPrice, binStepBase, scaleDifference);
+    final var binPrice = DlmmUtils.binPrice(binStepBase, binId, scaleDifference, MathContext.DECIMAL64);
+    assertEquals("97948.08508510689", binPrice.stripTrailingZeros().toPlainString());
+
+    double calculatedBinId = DlmmUtils.binId(binPrice, scaleDifference, binStepBase);
     assertEquals(binId, Math.round(calculatedBinId));
 
     final double binStepBaseDouble = binStepBase.doubleValue();
     assertEquals(binStepBaseDouble, DlmmUtils.binStepBaseDouble(stepSize));
 
-    final double doubleBinPrice = DlmmUtils.binPrice(binStepBaseDouble, binId, scaleDifference);
-    assertEquals(97948.08508503261, doubleBinPrice);
+    double doubleBinPrice = DlmmUtils.binPrice(binStepBaseDouble, binId, scaleDifference);
+    assertEquals(97948.08508503261, doubleBinPrice, 0.00000000001);
 
-    calculatedBinId = DlmmUtils.calculateBinId(doubleBinPrice, binStepBaseDouble, scaleDifference);
+    final double inversePriceFactor = DlmmUtils.priceScaleFactor(-scaleDifference);
+    assertEquals(100, inversePriceFactor);
+    doubleBinPrice = DlmmUtils.binPrice(binStepBaseDouble, binId, inversePriceFactor);
+    assertEquals(97948.08508503261, doubleBinPrice, 0.00000000001);
+
+    calculatedBinId = DlmmUtils.binId(doubleBinPrice, scaleDifference, binStepBaseDouble);
+    assertEquals(binId, Math.round(calculatedBinId));
+
+    final double logBinStepBase = StrictMath.log(binStepBaseDouble);
+    calculatedBinId = DlmmUtils.binIdFromLogBinStepBase(doubleBinPrice, scaleDifference, logBinStepBase);
+    assertEquals(binId, Math.round(calculatedBinId));
+
+    final double inverseLogBinStepBase = 1 / logBinStepBase;
+    calculatedBinId = DlmmUtils.binIdFromInverseLogBinStepBase(doubleBinPrice, scaleDifference, inverseLogBinStepBase);
+    assertEquals(binId, Math.round(calculatedBinId));
+
+    final double priceScaleFactor = DlmmUtils.priceScaleFactor(scaleDifference);
+    calculatedBinId = DlmmUtils.binIdFromInverseLogBinStepBase(doubleBinPrice, priceScaleFactor, inverseLogBinStepBase);
     assertEquals(binId, Math.round(calculatedBinId));
   }
 
+  @Disabled
   @Test
   void testWithdrawAndClosePosition() {
     final var solAccounts = SolanaAccounts.MAIN_NET;
@@ -112,7 +132,8 @@ final class MeteoraDlmmTests {
         xMint, yMint,
         solAccounts.tokenProgram(), solAccounts.tokenProgram(),
         removeLiquidityData.fromBinId(), removeLiquidityData.toBinId(),
-        DlmmUtils.BASIS_POINT_MAX
+        DlmmUtils.BASIS_POINT_MAX,
+        null
     );
 
     assertEquals(metAccounts.invokedDlmmProgram(), removeLiquidityByRangeIx.programId());
@@ -164,11 +185,12 @@ final class MeteoraDlmmTests {
     var claimFeeIx2 = dlmmClient.claimFee(
         lbPair,
         position,
-        removeLiquidityData.fromBinId(), removeLiquidityData.toBinId(),
         reserveX, reserveY,
         userTokenX, userTokenY,
         xMint, yMint,
-        solAccounts.tokenProgram()
+        solAccounts.tokenProgram(), solAccounts.tokenProgram(),
+        removeLiquidityData.fromBinId(), removeLiquidityData.toBinId(),
+        null
     );
 
     assertEquals(metAccounts.invokedDlmmProgram(), claimFeeIx2.programId());

@@ -66,11 +66,12 @@ public interface MeteoraDlmmClient {
                                      final PublicKey reserveYKey,
                                      final PublicKey tokenXMintKey,
                                      final PublicKey tokenYMintKey,
-                                     final PublicKey binArrayLowerKey,
-                                     final PublicKey binArrayUpperKey,
                                      final PublicKey tokenXProgramKey,
                                      final PublicKey tokenYProgramKey,
-                                     final LiquidityParameterByStrategy liquidityParameter);
+                                     final PublicKey binArrayLowerKey,
+                                     final PublicKey binArrayUpperKey,
+                                     final LiquidityParameterByStrategy liquidityParameter,
+                                     final RemainingAccountsInfo remainingAccountsInfo);
 
   default Instruction addLiquidityByStrategy(final PublicKey positionKey,
                                              final PublicKey lbPairKey,
@@ -83,7 +84,8 @@ public interface MeteoraDlmmClient {
                                              final PublicKey tokenYMintKey,
                                              final PublicKey tokenXProgramKey,
                                              final PublicKey tokenYProgramKey,
-                                             final LiquidityParameterByStrategy liquidityParameter) {
+                                             final LiquidityParameterByStrategy liquidityParameter,
+                                             final RemainingAccountsInfo remainingAccountsInfo) {
     final var strategyParameters = liquidityParameter.strategyParameters();
     final var programId = meteoraAccounts().dlmmProgram();
     final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(strategyParameters.minBinId()), programId);
@@ -96,9 +98,9 @@ public interface MeteoraDlmmClient {
         userTokenXKey, userTokenYKey,
         reserveXKey, reserveYKey,
         tokenXMintKey, tokenYMintKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        tokenXProgramKey, tokenYProgramKey,
-        liquidityParameter
+        tokenXProgramKey, tokenYProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        liquidityParameter,
+        remainingAccountsInfo
     );
   }
 
@@ -109,17 +111,18 @@ public interface MeteoraDlmmClient {
                                              final PublicKey userTokenYKey,
                                              final PublicKey tokenXProgramKey,
                                              final PublicKey tokenYProgramKey,
-                                             final LiquidityParameterByStrategy liquidityParameter) {
-    final var lbPairKey = lbPair._address();
+                                             final LiquidityParameterByStrategy liquidityParameter,
+                                             final RemainingAccountsInfo remainingAccountsInfo) {
     return addLiquidityByStrategy(
         positionKey,
-        lbPairKey,
+        lbPair._address(),
         binArrayBitmapExtensionKey,
         userTokenXKey, userTokenYKey,
         lbPair.reserveX(), lbPair.reserveY(),
         lbPair.tokenXMint(), lbPair.tokenYMint(),
         tokenXProgramKey, tokenYProgramKey,
-        liquidityParameter
+        liquidityParameter,
+        remainingAccountsInfo
     );
   }
 
@@ -132,9 +135,9 @@ public interface MeteoraDlmmClient {
                                              final PublicKey tokenYMintKey,
                                              final PublicKey tokenXProgramKey,
                                              final PublicKey tokenYProgramKey,
-                                             final LiquidityParameterByStrategy liquidityParameter) {
+                                             final LiquidityParameterByStrategy liquidityParameter,
+                                             final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
-
     final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
     final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
 
@@ -146,65 +149,8 @@ public interface MeteoraDlmmClient {
         reserveXKey.publicKey(), reserveYKey.publicKey(),
         tokenXMintKey, tokenYMintKey,
         tokenXProgramKey, tokenYProgramKey,
-        liquidityParameter
-    );
-  }
-
-  Instruction addLiquidityByStrategyOneSide(final PublicKey positionKey,
-                                            final PublicKey lbPairKey,
-                                            final PublicKey binArrayBitmapExtensionKey,
-                                            final PublicKey userTokenKey,
-                                            final PublicKey reserveKey,
-                                            final PublicKey tokenMintKey,
-                                            final PublicKey binArrayLowerKey,
-                                            final PublicKey binArrayUpperKey,
-                                            final PublicKey tokenProgramKey,
-                                            final LiquidityParameterByStrategyOneSide liquidityParameter);
-
-  default Instruction addLiquidityByStrategyOneSide(final PublicKey positionKey,
-                                                    final PublicKey lbPairKey,
-                                                    final PublicKey binArrayBitmapExtensionKey,
-                                                    final PublicKey userTokenKey,
-                                                    final PublicKey reserveKey,
-                                                    final PublicKey tokenMintKey,
-                                                    final PublicKey tokenProgramKey,
-                                                    final LiquidityParameterByStrategyOneSide liquidityParameter) {
-    final var programId = meteoraAccounts().dlmmProgram();
-
-    final var strategyParameters = liquidityParameter.strategyParameters();
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(strategyParameters.minBinId()), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(strategyParameters.maxBinId()), programId);
-
-    return addLiquidityByStrategyOneSide(
-        positionKey,
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenKey,
-        reserveKey,
-        tokenMintKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        tokenProgramKey,
-        liquidityParameter
-    );
-  }
-
-  default Instruction addLiquidityByStrategyOneSide(final PublicKey positionKey,
-                                                    final LbPair lbPair,
-                                                    final PublicKey binArrayBitmapExtensionKey,
-                                                    final PublicKey userTokenKey,
-                                                    final PublicKey reserveKey,
-                                                    final PublicKey tokenMintKey,
-                                                    final PublicKey tokenProgramKey,
-                                                    final LiquidityParameterByStrategyOneSide liquidityParameter) {
-    return addLiquidityByStrategyOneSide(
-        positionKey,
-        lbPair._address(),
-        binArrayBitmapExtensionKey,
-        userTokenKey,
-        reserveKey,
-        tokenMintKey,
-        tokenProgramKey,
-        liquidityParameter
+        liquidityParameter,
+        remainingAccountsInfo
     );
   }
 
@@ -217,11 +163,12 @@ public interface MeteoraDlmmClient {
                            final PublicKey reserveYKey,
                            final PublicKey tokenXMintKey,
                            final PublicKey tokenYMintKey,
-                           final PublicKey binArrayLowerKey,
-                           final PublicKey binArrayUpperKey,
                            final PublicKey tokenXProgramKey,
                            final PublicKey tokenYProgramKey,
-                           final LiquidityParameter liquidityParameter);
+                           final PublicKey binArrayLowerKey,
+                           final PublicKey binArrayUpperKey,
+                           final LiquidityParameter liquidityParameter,
+                           final RemainingAccountsInfo remainingAccountsInfo);
 
   default Instruction addLiquidity(final PublicKey positionKey,
                                    final PublicKey lbPairKey,
@@ -234,7 +181,8 @@ public interface MeteoraDlmmClient {
                                    final PublicKey tokenYMintKey,
                                    final PublicKey tokenXProgramKey,
                                    final PublicKey tokenYProgramKey,
-                                   final LiquidityParameter liquidityParameter) {
+                                   final LiquidityParameter liquidityParameter,
+                                   final RemainingAccountsInfo remainingAccountsInfo) {
     final var binLiquidityDist = liquidityParameter.binLiquidityDist();
     int minBidId = binLiquidityDist[0].binId();
     int maxBidId = minBidId;
@@ -259,9 +207,9 @@ public interface MeteoraDlmmClient {
         userTokenXKey, userTokenYKey,
         reserveXKey, reserveYKey,
         tokenXMintKey, tokenYMintKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        tokenXProgramKey, tokenYProgramKey,
-        liquidityParameter
+        tokenXProgramKey, tokenYProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        liquidityParameter,
+        remainingAccountsInfo
     );
   }
 
@@ -272,7 +220,8 @@ public interface MeteoraDlmmClient {
                                    final PublicKey userTokenYKey,
                                    final PublicKey tokenXProgramKey,
                                    final PublicKey tokenYProgramKey,
-                                   final LiquidityParameter liquidityParameter) {
+                                   final LiquidityParameter liquidityParameter,
+                                   final RemainingAccountsInfo remainingAccountsInfo) {
     return addLiquidity(
         positionKey,
         lbPair._address(),
@@ -281,7 +230,8 @@ public interface MeteoraDlmmClient {
         lbPair.reserveX(), lbPair.reserveY(),
         lbPair.tokenXMint(), lbPair.tokenYMint(),
         tokenXProgramKey, tokenYProgramKey,
-        liquidityParameter
+        liquidityParameter,
+        remainingAccountsInfo
     );
   }
 
@@ -294,7 +244,8 @@ public interface MeteoraDlmmClient {
                                    final PublicKey tokenYMintKey,
                                    final PublicKey tokenXProgramKey,
                                    final PublicKey tokenYProgramKey,
-                                   final LiquidityParameter liquidityParameter) {
+                                   final LiquidityParameter liquidityParameter,
+                                   final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
     final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
     final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
@@ -307,76 +258,8 @@ public interface MeteoraDlmmClient {
         reserveXKey.publicKey(), reserveYKey.publicKey(),
         tokenXMintKey, tokenYMintKey,
         tokenXProgramKey, tokenYProgramKey,
-        liquidityParameter
-    );
-  }
-
-  Instruction addLiquidityOneSide(final PublicKey positionKey,
-                                  final PublicKey lbPairKey,
-                                  final PublicKey binArrayBitmapExtensionKey,
-                                  final PublicKey userTokenKey,
-                                  final PublicKey reserveKey,
-                                  final PublicKey tokenMintKey,
-                                  final PublicKey binArrayLowerKey,
-                                  final PublicKey binArrayUpperKey,
-                                  final PublicKey tokenProgramKey,
-                                  final LiquidityOneSideParameter liquidityParameter);
-
-  default Instruction addLiquidityOneSide(final PublicKey positionKey,
-                                          final PublicKey lbPairKey,
-                                          final PublicKey binArrayBitmapExtensionKey,
-                                          final PublicKey userTokenKey,
-                                          final PublicKey tokenMintKey,
-                                          final PublicKey tokenProgramKey,
-                                          final LiquidityOneSideParameter liquidityParameter) {
-    final var programId = meteoraAccounts().dlmmProgram();
-
-    final var reserveKey = MeteoraPDAs.reservePDA(lbPairKey, tokenMintKey, programId).publicKey();
-
-    final var binLiquidityDist = liquidityParameter.binLiquidityDist();
-    int minBidId = binLiquidityDist[0].binId();
-    int maxBidId = minBidId;
-    int binId;
-    for (int i = 1; i < binLiquidityDist.length; ++i) {
-      binId = binLiquidityDist[i].binId();
-      if (binId < minBidId) {
-        minBidId = binId;
-      } else if (binId > maxBidId) {
-        maxBidId = binId;
-      }
-    }
-
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBidId), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBidId), programId);
-
-    return addLiquidityOneSide(
-        positionKey,
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenKey,
-        reserveKey,
-        tokenMintKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        tokenProgramKey,
-        liquidityParameter
-    );
-  }
-
-  default Instruction addLiquidityOneSide(final PublicKey positionKey,
-                                          final LbPair lbPair,
-                                          final PublicKey binArrayBitmapExtensionKey,
-                                          final PublicKey userTokenKey,
-                                          final PublicKey tokenMintKey,
-                                          final PublicKey tokenProgramKey,
-                                          final LiquidityOneSideParameter liquidityParameter) {
-    return addLiquidityOneSide(
-        positionKey,
-        lbPair._address(),
-        binArrayBitmapExtensionKey,
-        userTokenKey,
-        tokenMintKey,
-        tokenProgramKey,
-        liquidityParameter
+        liquidityParameter,
+        remainingAccountsInfo
     );
   }
 
@@ -386,10 +269,11 @@ public interface MeteoraDlmmClient {
                                          final PublicKey userTokenKey,
                                          final PublicKey reserveKey,
                                          final PublicKey tokenMintKey,
+                                         final PublicKey tokenProgramKey,
                                          final PublicKey binArrayLowerKey,
                                          final PublicKey binArrayUpperKey,
-                                         final PublicKey tokenProgramKey,
-                                         final AddLiquiditySingleSidePreciseParameter liquidityParameter);
+                                         final AddLiquiditySingleSidePreciseParameter2 liquidityParameter,
+                                         final RemainingAccountsInfo remainingAccountsInfo);
 
   default Instruction addLiquidityOneSidePrecise(final PublicKey positionKey,
                                                  final PublicKey lbPairKey,
@@ -397,9 +281,9 @@ public interface MeteoraDlmmClient {
                                                  final PublicKey userTokenKey,
                                                  final PublicKey tokenMintKey,
                                                  final PublicKey tokenProgramKey,
-                                                 final AddLiquiditySingleSidePreciseParameter liquidityParameter) {
+                                                 final AddLiquiditySingleSidePreciseParameter2 liquidityParameter,
+                                                 final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
-
     final var reserveKey = MeteoraPDAs.reservePDA(lbPairKey, tokenMintKey, programId).publicKey();
 
     final var bins = liquidityParameter.bins();
@@ -414,7 +298,6 @@ public interface MeteoraDlmmClient {
         maxBidId = binId;
       }
     }
-
     final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBidId), programId);
     final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBidId), programId);
 
@@ -425,9 +308,8 @@ public interface MeteoraDlmmClient {
         userTokenKey,
         reserveKey,
         tokenMintKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        tokenProgramKey,
-        liquidityParameter
+        tokenProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(), liquidityParameter,
+        remainingAccountsInfo
     );
   }
 
@@ -437,7 +319,8 @@ public interface MeteoraDlmmClient {
                                                  final PublicKey userTokenKey,
                                                  final PublicKey tokenMintKey,
                                                  final PublicKey tokenProgramKey,
-                                                 final AddLiquiditySingleSidePreciseParameter liquidityParameter) {
+                                                 final AddLiquiditySingleSidePreciseParameter2 liquidityParameter,
+                                                 final RemainingAccountsInfo remainingAccountsInfo) {
     return addLiquidityOneSidePrecise(
         positionKey,
         lbPair._address(),
@@ -445,111 +328,8 @@ public interface MeteoraDlmmClient {
         userTokenKey,
         tokenMintKey,
         tokenProgramKey,
-        liquidityParameter
-    );
-  }
-
-  Instruction addLiquidityByWeight(final PublicKey positionKey,
-                                   final PublicKey lbPairKey,
-                                   final PublicKey binArrayBitmapExtensionKey,
-                                   final PublicKey userTokenXKey,
-                                   final PublicKey userTokenYKey,
-                                   final PublicKey reserveXKey,
-                                   final PublicKey reserveYKey,
-                                   final PublicKey tokenXMintKey,
-                                   final PublicKey tokenYMintKey,
-                                   final PublicKey binArrayLowerKey,
-                                   final PublicKey binArrayUpperKey,
-                                   final PublicKey tokenXProgramKey,
-                                   final PublicKey tokenYProgramKey,
-                                   final LiquidityParameterByWeight liquidityParameter);
-
-  default Instruction addLiquidityByWeight(final PublicKey positionKey,
-                                           final PublicKey lbPairKey,
-                                           final PublicKey binArrayBitmapExtensionKey,
-                                           final PublicKey userTokenXKey,
-                                           final PublicKey userTokenYKey,
-                                           final PublicKey reserveXKey,
-                                           final PublicKey reserveYKey,
-                                           final PublicKey tokenXMintKey,
-                                           final PublicKey tokenYMintKey,
-                                           final PublicKey tokenXProgramKey,
-                                           final PublicKey tokenYProgramKey,
-                                           final LiquidityParameterByWeight liquidityParameter) {
-    final var programId = meteoraAccounts().dlmmProgram();
-
-    final var binLiquidityDist = liquidityParameter.binLiquidityDist();
-    int minBidId = binLiquidityDist[0].binId();
-    int maxBidId = minBidId;
-    int binId;
-    for (int i = 1; i < binLiquidityDist.length; ++i) {
-      binId = binLiquidityDist[i].binId();
-      if (binId < minBidId) {
-        minBidId = binId;
-      } else if (binId > maxBidId) {
-        maxBidId = binId;
-      }
-    }
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBidId), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBidId), programId);
-
-    return addLiquidityByWeight(
-        positionKey,
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenXKey, userTokenYKey,
-        reserveXKey, reserveYKey,
-        tokenXMintKey, tokenYMintKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        tokenXProgramKey, tokenYProgramKey,
-        liquidityParameter
-    );
-  }
-
-  default Instruction addLiquidityByWeight(final PublicKey positionKey,
-                                           final LbPair lbPair,
-                                           final PublicKey binArrayBitmapExtensionKey,
-                                           final PublicKey userTokenXKey,
-                                           final PublicKey userTokenYKey,
-                                           final PublicKey tokenXProgramKey,
-                                           final PublicKey tokenYProgramKey,
-                                           final LiquidityParameterByWeight liquidityParameter) {
-    return addLiquidityByWeight(
-        positionKey,
-        lbPair._address(),
-        binArrayBitmapExtensionKey,
-        userTokenXKey, userTokenYKey,
-        lbPair.reserveX(), lbPair.reserveY(),
-        lbPair.tokenXMint(), lbPair.tokenYMint(),
-        tokenXProgramKey, tokenYProgramKey,
-        liquidityParameter
-    );
-  }
-
-  default Instruction addLiquidityByWeight(final PublicKey positionKey,
-                                           final PublicKey lbPairKey,
-                                           final PublicKey binArrayBitmapExtensionKey,
-                                           final PublicKey userTokenXKey,
-                                           final PublicKey userTokenYKey,
-                                           final PublicKey tokenXMintKey,
-                                           final PublicKey tokenYMintKey,
-                                           final PublicKey tokenXProgramKey,
-                                           final PublicKey tokenYProgramKey,
-                                           final LiquidityParameterByWeight liquidityParameter) {
-    final var programId = meteoraAccounts().dlmmProgram();
-
-    final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
-    final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
-
-    return addLiquidityByWeight(
-        positionKey,
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenXKey, userTokenYKey,
-        reserveXKey.publicKey(), reserveYKey.publicKey(),
-        tokenXMintKey, tokenYMintKey,
-        tokenXProgramKey, tokenYProgramKey,
-        liquidityParameter
+        liquidityParameter,
+        remainingAccountsInfo
     );
   }
 
@@ -562,13 +342,14 @@ public interface MeteoraDlmmClient {
                                      final PublicKey reserveYKey,
                                      final PublicKey tokenXMintKey,
                                      final PublicKey tokenYMintKey,
-                                     final PublicKey binArrayLowerKey,
-                                     final PublicKey binArrayUpperKey,
                                      final PublicKey tokenXProgramKey,
                                      final PublicKey tokenYProgramKey,
+                                     final PublicKey binArrayLowerKey,
+                                     final PublicKey binArrayUpperKey,
                                      final int fromBinId,
                                      final int toBinId,
-                                     final int bpsToRemove);
+                                     final int bpsToRemove,
+                                     final RemainingAccountsInfo remainingAccountsInfo);
 
   default Instruction removeLiquidityByRange(final PublicKey positionKey,
                                              final PublicKey lbPairKey,
@@ -583,7 +364,8 @@ public interface MeteoraDlmmClient {
                                              final PublicKey tokenYProgramKey,
                                              final int fromBinId,
                                              final int toBinId,
-                                             final int bpsToRemove) {
+                                             final int bpsToRemove,
+                                             final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
     final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(fromBinId), programId);
     final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(toBinId), programId);
@@ -595,9 +377,9 @@ public interface MeteoraDlmmClient {
         userTokenXKey, userTokenYKey,
         reserveXKey, reserveYKey,
         tokenXMintKey, tokenYMintKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        tokenXProgramKey, tokenYProgramKey,
-        fromBinId, toBinId, bpsToRemove
+        tokenXProgramKey, tokenYProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        fromBinId, toBinId, bpsToRemove,
+        remainingAccountsInfo
     );
   }
 
@@ -610,7 +392,8 @@ public interface MeteoraDlmmClient {
                                              final PublicKey tokenYProgramKey,
                                              final int fromBinId,
                                              final int toBinId,
-                                             final int bpsToRemove) {
+                                             final int bpsToRemove,
+                                             final RemainingAccountsInfo remainingAccountsInfo) {
     final var lbPairKey = lbPair._address();
     return removeLiquidityByRange(
         positionKey,
@@ -620,7 +403,8 @@ public interface MeteoraDlmmClient {
         lbPair.reserveX(), lbPair.reserveY(),
         lbPair.tokenXMint(), lbPair.tokenYMint(),
         tokenXProgramKey, tokenYProgramKey,
-        fromBinId, toBinId, bpsToRemove
+        fromBinId, toBinId, bpsToRemove,
+        remainingAccountsInfo
     );
   }
 
@@ -635,7 +419,8 @@ public interface MeteoraDlmmClient {
                                              final PublicKey tokenYProgramKey,
                                              final int fromBinId,
                                              final int toBinId,
-                                             final int bpsToRemove) {
+                                             final int bpsToRemove,
+                                             final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
 
     final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
@@ -649,7 +434,8 @@ public interface MeteoraDlmmClient {
         reserveXKey.publicKey(), reserveYKey.publicKey(),
         tokenXMintKey, tokenYMintKey,
         tokenXProgramKey, tokenYProgramKey,
-        fromBinId, toBinId, bpsToRemove
+        fromBinId, toBinId, bpsToRemove,
+        remainingAccountsInfo
     );
   }
 
@@ -661,7 +447,8 @@ public interface MeteoraDlmmClient {
                                              final PublicKey tokenYMintKey,
                                              final PublicKey tokenXProgramKey,
                                              final PublicKey tokenYProgramKey,
-                                             final int bpsToRemove) {
+                                             final int bpsToRemove,
+                                             final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
 
     final var lbPairKey = positionV2.lbPair();
@@ -676,7 +463,8 @@ public interface MeteoraDlmmClient {
         reserveXKey.publicKey(), reserveYKey.publicKey(),
         tokenXMintKey, tokenYMintKey,
         tokenXProgramKey, tokenYProgramKey,
-        positionV2.lowerBinId(), positionV2.upperBinId(), bpsToRemove
+        positionV2.lowerBinId(), positionV2.upperBinId(), bpsToRemove,
+        remainingAccountsInfo
     );
   }
 
@@ -687,7 +475,8 @@ public interface MeteoraDlmmClient {
                                              final PublicKey userTokenYKey,
                                              final PublicKey tokenXProgramKey,
                                              final PublicKey tokenYProgramKey,
-                                             final int bpsToRemove) {
+                                             final int bpsToRemove,
+                                             final RemainingAccountsInfo remainingAccountsInfo) {
     return removeLiquidityByRange(
         positionV2._address(),
         positionV2.lbPair(),
@@ -696,7 +485,8 @@ public interface MeteoraDlmmClient {
         lbPair.reserveX(), lbPair.reserveY(),
         lbPair.tokenXMint(), lbPair.tokenYMint(),
         tokenXProgramKey, tokenYProgramKey,
-        positionV2.lowerBinId(), positionV2.upperBinId(), bpsToRemove
+        positionV2.lowerBinId(), positionV2.upperBinId(), bpsToRemove,
+        remainingAccountsInfo
     );
   }
 
@@ -709,11 +499,12 @@ public interface MeteoraDlmmClient {
                               final PublicKey reserveYKey,
                               final PublicKey tokenXMintKey,
                               final PublicKey tokenYMintKey,
-                              final PublicKey binArrayLowerKey,
-                              final PublicKey binArrayUpperKey,
                               final PublicKey tokenXProgramKey,
                               final PublicKey tokenYProgramKey,
-                              final BinLiquidityReduction[] binLiquidityRemoval);
+                              final PublicKey binArrayLowerKey,
+                              final PublicKey binArrayUpperKey,
+                              final BinLiquidityReduction[] binLiquidityRemoval,
+                              final RemainingAccountsInfo remainingAccountsInfo);
 
   default Instruction removeLiquidity(final PublicKey positionKey,
                                       final PublicKey lbPairKey,
@@ -726,7 +517,8 @@ public interface MeteoraDlmmClient {
                                       final PublicKey tokenYMintKey,
                                       final PublicKey tokenXProgramKey,
                                       final PublicKey tokenYProgramKey,
-                                      final BinLiquidityReduction[] binLiquidityRemoval) {
+                                      final BinLiquidityReduction[] binLiquidityRemoval,
+                                      final RemainingAccountsInfo remainingAccountsInfo) {
     int minBidId = binLiquidityRemoval[0].binId();
     int maxBidId = minBidId;
     int binId;
@@ -750,9 +542,9 @@ public interface MeteoraDlmmClient {
         userTokenXKey, userTokenYKey,
         reserveXKey, reserveYKey,
         tokenXMintKey, tokenYMintKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        tokenXProgramKey, tokenYProgramKey,
-        binLiquidityRemoval
+        tokenXProgramKey, tokenYProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        binLiquidityRemoval,
+        remainingAccountsInfo
     );
   }
 
@@ -763,7 +555,8 @@ public interface MeteoraDlmmClient {
                                       final PublicKey userTokenYKey,
                                       final PublicKey tokenXProgramKey,
                                       final PublicKey tokenYProgramKey,
-                                      final BinLiquidityReduction[] binLiquidityRemoval) {
+                                      final BinLiquidityReduction[] binLiquidityRemoval,
+                                      final RemainingAccountsInfo remainingAccountsInfo) {
     return removeLiquidity(
         positionKey,
         lbPair._address(),
@@ -772,7 +565,8 @@ public interface MeteoraDlmmClient {
         lbPair.reserveX(), lbPair.reserveY(),
         lbPair.tokenXMint(), lbPair.tokenYMint(),
         tokenXProgramKey, tokenYProgramKey,
-        binLiquidityRemoval
+        binLiquidityRemoval,
+        remainingAccountsInfo
     );
   }
 
@@ -785,7 +579,8 @@ public interface MeteoraDlmmClient {
                                       final PublicKey tokenYMintKey,
                                       final PublicKey tokenXProgramKey,
                                       final PublicKey tokenYProgramKey,
-                                      final BinLiquidityReduction[] binLiquidityRemoval) {
+                                      final BinLiquidityReduction[] binLiquidityRemoval,
+                                      final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
     final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
     final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
@@ -798,152 +593,64 @@ public interface MeteoraDlmmClient {
         reserveXKey.publicKey(), reserveYKey.publicKey(),
         tokenXMintKey, tokenYMintKey,
         tokenXProgramKey, tokenYProgramKey,
-        binLiquidityRemoval
-    );
-  }
-
-  Instruction removeAllLiquidity(final PublicKey positionKey,
-                                 final PublicKey lbPairKey,
-                                 final PublicKey binArrayBitmapExtensionKey,
-                                 final PublicKey userTokenXKey,
-                                 final PublicKey userTokenYKey,
-                                 final PublicKey reserveXKey,
-                                 final PublicKey reserveYKey,
-                                 final PublicKey tokenXMintKey,
-                                 final PublicKey tokenYMintKey,
-                                 final PublicKey binArrayLowerKey,
-                                 final PublicKey binArrayUpperKey,
-                                 final PublicKey tokenXProgramKey,
-                                 final PublicKey tokenYProgramKey);
-
-  default Instruction removeAllLiquidity(final PublicKey positionKey,
-                                         final PublicKey lbPairKey,
-                                         final PublicKey binArrayBitmapExtensionKey,
-                                         final PublicKey userTokenXKey,
-                                         final PublicKey userTokenYKey,
-                                         final PublicKey reserveXKey,
-                                         final PublicKey reserveYKey,
-                                         final PublicKey tokenXMintKey,
-                                         final PublicKey tokenYMintKey,
-                                         final int minBidId,
-                                         final int maxBidId,
-                                         final PublicKey tokenXProgramKey,
-                                         final PublicKey tokenYProgramKey) {
-    final var programId = meteoraAccounts().dlmmProgram();
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBidId), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBidId), programId);
-
-    return removeAllLiquidity(
-        positionKey,
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenXKey, userTokenYKey,
-        reserveXKey, reserveYKey,
-        tokenXMintKey, tokenYMintKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        tokenXProgramKey, tokenYProgramKey
-    );
-  }
-
-  default Instruction removeAllLiquidity(final PublicKey positionKey,
-                                         final PublicKey lbPairKey,
-                                         final PublicKey binArrayBitmapExtensionKey,
-                                         final PublicKey userTokenXKey,
-                                         final PublicKey userTokenYKey,
-                                         final PublicKey tokenXMintKey,
-                                         final PublicKey tokenYMintKey,
-                                         final int minBidId,
-                                         final int maxBidId,
-                                         final PublicKey tokenXProgramKey,
-                                         final PublicKey tokenYProgramKey) {
-    final var programId = meteoraAccounts().dlmmProgram();
-    final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
-    final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
-
-    return removeAllLiquidity(
-        positionKey,
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenXKey, userTokenYKey,
-        reserveXKey.publicKey(), reserveYKey.publicKey(),
-        tokenXMintKey, tokenYMintKey,
-        minBidId, maxBidId,
-        tokenXProgramKey, tokenYProgramKey
-    );
-  }
-
-  default Instruction removeAllLiquidity(final PositionV2 position,
-                                         final PublicKey binArrayBitmapExtensionKey,
-                                         final PublicKey userTokenXKey,
-                                         final PublicKey userTokenYKey,
-                                         final PublicKey tokenXMintKey,
-                                         final PublicKey tokenYMintKey,
-                                         final PublicKey tokenXProgramKey,
-                                         final PublicKey tokenYProgramKey) {
-    final var programId = meteoraAccounts().dlmmProgram();
-    final var lbPairKey = position.lbPair();
-    final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
-    final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
-
-    return removeAllLiquidity(
-        position._address(),
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenXKey, userTokenYKey,
-        reserveXKey.publicKey(), reserveYKey.publicKey(),
-        tokenXMintKey, tokenYMintKey,
-        position.lowerBinId(), position.upperBinId(),
-        tokenXProgramKey, tokenYProgramKey
+        binLiquidityRemoval,
+        remainingAccountsInfo
     );
   }
 
   Instruction claimFee(final PublicKey lbPairKey,
                        final PublicKey positionKey,
-                       final PublicKey binArrayLowerKey,
-                       final PublicKey binArrayUpperKey,
                        final PublicKey reserveXKey,
                        final PublicKey reserveYKey,
                        final PublicKey userTokenXKey,
                        final PublicKey userTokenYKey,
                        final PublicKey tokenXMintKey,
                        final PublicKey tokenYMintKey,
-                       final PublicKey tokenProgramKey);
+                       final PublicKey tokenXProgramKey,
+                       final PublicKey tokenYProgramKey,
+                       final PublicKey binArrayLowerKey,
+                       final PublicKey binArrayUpperKey,
+                       final int minBinId,
+                       final int maxBinId,
+                       final RemainingAccountsInfo remainingAccountsInfo);
 
   default Instruction claimFee(final PublicKey lbPairKey,
                                final PublicKey positionKey,
-                               final int minBidId,
-                               final int maxBidId,
                                final PublicKey reserveXKey,
                                final PublicKey reserveYKey,
                                final PublicKey userTokenXKey,
                                final PublicKey userTokenYKey,
                                final PublicKey tokenXMintKey,
                                final PublicKey tokenYMintKey,
-                               final PublicKey tokenProgramKey) {
+                               final PublicKey tokenXProgramKey,
+                               final PublicKey tokenYProgramKey,
+                               final int minBinId,
+                               final int maxBinId,
+                               final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
-    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBidId), programId);
-    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBidId), programId);
+    final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBinId), programId);
+    final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBinId), programId);
 
     return claimFee(
         lbPairKey,
         positionKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        reserveXKey, reserveYKey,
-        userTokenXKey, userTokenYKey,
-        tokenXMintKey, tokenYMintKey,
-        tokenProgramKey
+        reserveXKey, reserveYKey, userTokenXKey, userTokenYKey, tokenXMintKey, tokenYMintKey, tokenXProgramKey, tokenYProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        minBinId, maxBinId,
+        remainingAccountsInfo
     );
   }
 
   default Instruction claimFee(final PublicKey lbPairKey,
                                final PublicKey positionKey,
-                               final int minBidId,
-                               final int maxBidId,
                                final PublicKey userTokenXKey,
                                final PublicKey userTokenYKey,
                                final PublicKey tokenXMintKey,
                                final PublicKey tokenYMintKey,
-                               final PublicKey tokenProgramKey) {
+                               final PublicKey tokenXProgramKey,
+                               final PublicKey tokenYProgramKey,
+                               final int minBidId,
+                               final int maxBidId,
+                               final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
     final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
     final var reserveYKey = MeteoraPDAs.reservePDA(lbPairKey, tokenYMintKey, programId);
@@ -951,11 +658,12 @@ public interface MeteoraDlmmClient {
     return claimFee(
         lbPairKey,
         positionKey,
-        minBidId, maxBidId,
         reserveXKey.publicKey(), reserveYKey.publicKey(),
         userTokenXKey, userTokenYKey,
         tokenXMintKey, tokenYMintKey,
-        tokenProgramKey
+        tokenXProgramKey, tokenYProgramKey,
+        minBidId, maxBidId,
+        remainingAccountsInfo
     );
   }
 
@@ -964,7 +672,9 @@ public interface MeteoraDlmmClient {
                                final PublicKey userTokenYKey,
                                final PublicKey tokenXMintKey,
                                final PublicKey tokenYMintKey,
-                               final PublicKey tokenProgramKey) {
+                               final PublicKey tokenXProgramKey,
+                               final PublicKey tokenYProgramKey,
+                               final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
     final var lbPairKey = position.lbPair();
     final var reserveXKey = MeteoraPDAs.reservePDA(lbPairKey, tokenXMintKey, programId);
@@ -973,11 +683,12 @@ public interface MeteoraDlmmClient {
     return claimFee(
         lbPairKey,
         position._address(),
-        position.lowerBinId(), position.upperBinId(),
         reserveXKey.publicKey(), reserveYKey.publicKey(),
         userTokenXKey, userTokenYKey,
         tokenXMintKey, tokenYMintKey,
-        tokenProgramKey
+        tokenXProgramKey, tokenYProgramKey,
+        position.lowerBinId(), position.upperBinId(),
+        remainingAccountsInfo
     );
   }
 
@@ -985,36 +696,43 @@ public interface MeteoraDlmmClient {
                                final LbPair lbPair,
                                final PublicKey userTokenXKey,
                                final PublicKey userTokenYKey,
-                               final PublicKey tokenProgramKey) {
+                               final PublicKey tokenXProgramKey,
+                               final PublicKey tokenYProgramKey,
+                               final RemainingAccountsInfo remainingAccountsInfo) {
     return claimFee(
         position.lbPair(),
         position._address(),
-        position.lowerBinId(), position.upperBinId(),
         lbPair.reserveX(), lbPair.reserveY(),
         userTokenXKey, userTokenYKey,
         lbPair.tokenXMint(), lbPair.tokenYMint(),
-        tokenProgramKey
+        tokenXProgramKey, tokenYProgramKey,
+        position.lowerBinId(), position.upperBinId(),
+        remainingAccountsInfo
     );
   }
 
   Instruction claimReward(final PublicKey lbPairKey,
                           final PublicKey positionKey,
-                          final PublicKey binArrayLowerKey,
-                          final PublicKey binArrayUpperKey,
                           final PublicKey rewardVaultKey,
                           final PublicKey rewardMintKey,
                           final PublicKey userTokenAccountKey,
                           final PublicKey tokenProgramKey,
-                          final int rewardIndex);
+                          final PublicKey binArrayLowerKey,
+                          final PublicKey binArrayUpperKey,
+                          final int rewardIndex,
+                          final int minBidId,
+                          final int maxBidId,
+                          final RemainingAccountsInfo remainingAccountsInfo);
 
   default Instruction claimReward(final PublicKey lbPairKey,
                                   final PublicKey positionKey,
-                                  final int minBidId,
-                                  final int maxBidId,
                                   final PublicKey rewardMintKey,
                                   final PublicKey userTokenAccountKey,
                                   final PublicKey tokenProgramKey,
-                                  final int rewardIndex) {
+                                  final int rewardIndex,
+                                  final int minBidId,
+                                  final int maxBidId,
+                                  final RemainingAccountsInfo remainingAccountsInfo) {
     final var programId = meteoraAccounts().dlmmProgram();
     final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(minBidId), programId);
     final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(maxBidId), programId);
@@ -1023,11 +741,10 @@ public interface MeteoraDlmmClient {
     return claimReward(
         lbPairKey,
         positionKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        rewardVaultKey, rewardMintKey,
-        userTokenAccountKey,
-        tokenProgramKey,
-        rewardIndex
+        rewardVaultKey, rewardMintKey, userTokenAccountKey, tokenProgramKey, binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
+        rewardIndex,
+        minBidId, maxBidId,
+        remainingAccountsInfo
     );
   }
 
@@ -1035,49 +752,37 @@ public interface MeteoraDlmmClient {
                                   final PublicKey rewardMintKey,
                                   final PublicKey userTokenAccountKey,
                                   final PublicKey tokenProgramKey,
-                                  final int rewardIndex) {
+                                  final int rewardIndex,
+                                  final RemainingAccountsInfo remainingAccountsInfo) {
     return claimReward(
         position.lbPair(),
         position._address(),
-        position.lowerBinId(), position.upperBinId(),
         rewardMintKey,
         userTokenAccountKey,
         tokenProgramKey,
-        rewardIndex
+        rewardIndex,
+        position.lowerBinId(), position.upperBinId(),
+        remainingAccountsInfo
     );
   }
 
   Instruction closePosition(final PublicKey positionKey,
-                            final PublicKey lbPairKey,
+                            final PublicKey rentReceiverKey,
                             final PublicKey binArrayLowerKey,
-                            final PublicKey binArrayUpperKey,
-                            final PublicKey rentReceiverKey);
+                            final PublicKey binArrayUpperKey);
 
   default Instruction closePosition(final PublicKey positionKey,
-                                    final PublicKey lbPairKey,
-                                    final PublicKey binArrayLowerKey,
-                                    final PublicKey binArrayUpperKey) {
-    return closePosition(
-        positionKey,
-        lbPairKey,
-        binArrayLowerKey, binArrayUpperKey,
-        feePayer().publicKey()
-    );
-  }
-
-  default Instruction closePosition(final PublicKey positionKey,
+                                    final PublicKey rentReceiverKey,
                                     final PublicKey lbPairKey,
                                     final int lowerBinId,
-                                    final int upperBinId,
-                                    final PublicKey rentReceiverKey) {
+                                    final int upperBinId) {
     final var programId = meteoraAccounts().dlmmProgram();
     final var binArrayLowerKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayIndex(lowerBinId), programId);
     final var binArrayUpperKey = MeteoraPDAs.binArrayPdA(lbPairKey, binIdToArrayUpperIndex(upperBinId), programId);
     return closePosition(
         positionKey,
-        lbPairKey,
-        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey(),
-        rentReceiverKey
+        rentReceiverKey,
+        binArrayLowerKey.publicKey(), binArrayUpperKey.publicKey()
     );
   }
 
@@ -1085,20 +790,15 @@ public interface MeteoraDlmmClient {
                                     final PublicKey lbPairKey,
                                     final int lowerBinId,
                                     final int upperBinId) {
-    return closePosition(
-        positionKey,
-        lbPairKey,
-        lowerBinId, upperBinId,
-        feePayer().publicKey()
-    );
+    return closePosition(positionKey, feePayer().publicKey(), lbPairKey, lowerBinId, upperBinId);
   }
 
   default Instruction closePosition(final PositionV2 position, final PublicKey rentReceiverKey) {
     return closePosition(
         position._address(),
+        rentReceiverKey,
         position.lbPair(),
-        position.lowerBinId(), position.upperBinId(),
-        rentReceiverKey
+        position.lowerBinId(), position.upperBinId()
     );
   }
 

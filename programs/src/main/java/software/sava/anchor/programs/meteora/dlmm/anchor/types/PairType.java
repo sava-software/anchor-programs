@@ -7,7 +7,8 @@ public enum PairType implements Borsh.Enum {
 
   Permissionless,
   Permission,
-  CustomizablePermissionless;
+  CustomizablePermissionless,
+  PermissionlessV2;
 
   public static PairType read(final byte[] _data, final int offset) {
     return Borsh.read(PairType.values(), _data, offset);

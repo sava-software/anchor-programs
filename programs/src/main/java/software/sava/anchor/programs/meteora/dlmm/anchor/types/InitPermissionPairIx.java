@@ -10,11 +10,11 @@ import static software.sava.core.encoding.ByteUtil.putInt32LE;
 public record InitPermissionPairIx(int activeId,
                                    int binStep,
                                    int baseFactor,
-                                   int minBinId,
-                                   int maxBinId,
-                                   int activationType) implements Borsh {
+                                   int baseFeePowerFactor,
+                                   int activationType,
+                                   int protocolShare) implements Borsh {
 
-  public static final int BYTES = 17;
+  public static final int BYTES = 12;
 
   public static InitPermissionPairIx read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -27,17 +27,17 @@ public record InitPermissionPairIx(int activeId,
     i += 2;
     final var baseFactor = getInt16LE(_data, i);
     i += 2;
-    final var minBinId = getInt32LE(_data, i);
-    i += 4;
-    final var maxBinId = getInt32LE(_data, i);
-    i += 4;
+    final var baseFeePowerFactor = _data[i] & 0xFF;
+    ++i;
     final var activationType = _data[i] & 0xFF;
+    ++i;
+    final var protocolShare = getInt16LE(_data, i);
     return new InitPermissionPairIx(activeId,
                                     binStep,
                                     baseFactor,
-                                    minBinId,
-                                    maxBinId,
-                                    activationType);
+                                    baseFeePowerFactor,
+                                    activationType,
+                                    protocolShare);
   }
 
   @Override
@@ -49,12 +49,12 @@ public record InitPermissionPairIx(int activeId,
     i += 2;
     putInt16LE(_data, i, baseFactor);
     i += 2;
-    putInt32LE(_data, i, minBinId);
-    i += 4;
-    putInt32LE(_data, i, maxBinId);
-    i += 4;
+    _data[i] = (byte) baseFeePowerFactor;
+    ++i;
     _data[i] = (byte) activationType;
     ++i;
+    putInt16LE(_data, i, protocolShare);
+    i += 2;
     return i - offset;
   }
 

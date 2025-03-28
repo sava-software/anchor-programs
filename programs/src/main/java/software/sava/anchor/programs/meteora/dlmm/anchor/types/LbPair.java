@@ -38,8 +38,8 @@ public record LbPair(PublicKey _address,
                      byte[] baseFactorSeed,
                      // Activation type
                      int activationType,
-                     // padding 0
-                     int padding0,
+                     // Allow pool creator to enable/disable pool with restricted validation. Only applicable for customizable permissionless pair type.
+                     int creatorPoolOnOffControl,
                      // Token X mint
                      PublicKey tokenXMint,
                      // Token Y mint
@@ -76,6 +76,10 @@ public record LbPair(PublicKey _address,
                      long padding4,
                      // Pool creator
                      PublicKey creator,
+                     // token_mint_x_program_flag
+                     int tokenMintXProgramFlag,
+                     // token_mint_y_program_flag
+                     int tokenMintYProgramFlag,
                      // Reserved space for future use
                      byte[] reserved) implements Borsh {
 
@@ -93,7 +97,7 @@ public record LbPair(PublicKey _address,
   public static final int REQUIRE_BASE_FACTOR_SEED_OFFSET = 83;
   public static final int BASE_FACTOR_SEED_OFFSET = 84;
   public static final int ACTIVATION_TYPE_OFFSET = 86;
-  public static final int PADDING0_OFFSET = 87;
+  public static final int CREATOR_POOL_ON_OFF_CONTROL_OFFSET = 87;
   public static final int TOKEN_X_MINT_OFFSET = 88;
   public static final int TOKEN_Y_MINT_OFFSET = 120;
   public static final int RESERVE_X_OFFSET = 152;
@@ -112,7 +116,9 @@ public record LbPair(PublicKey _address,
   public static final int PADDING3_OFFSET = 832;
   public static final int PADDING4_OFFSET = 840;
   public static final int CREATOR_OFFSET = 848;
-  public static final int RESERVED_OFFSET = 880;
+  public static final int TOKEN_MINT_X_PROGRAM_FLAG_OFFSET = 880;
+  public static final int TOKEN_MINT_Y_PROGRAM_FLAG_OFFSET = 881;
+  public static final int RESERVED_OFFSET = 882;
 
   public static Filter createParametersFilter(final StaticParameters parameters) {
     return Filter.createMemCompFilter(PARAMETERS_OFFSET, parameters.write());
@@ -150,8 +156,8 @@ public record LbPair(PublicKey _address,
     return Filter.createMemCompFilter(ACTIVATION_TYPE_OFFSET, new byte[]{(byte) activationType});
   }
 
-  public static Filter createPadding0Filter(final int padding0) {
-    return Filter.createMemCompFilter(PADDING0_OFFSET, new byte[]{(byte) padding0});
+  public static Filter createCreatorPoolOnOffControlFilter(final int creatorPoolOnOffControl) {
+    return Filter.createMemCompFilter(CREATOR_POOL_ON_OFF_CONTROL_OFFSET, new byte[]{(byte) creatorPoolOnOffControl});
   }
 
   public static Filter createTokenXMintFilter(final PublicKey tokenXMint) {
@@ -214,6 +220,14 @@ public record LbPair(PublicKey _address,
     return Filter.createMemCompFilter(CREATOR_OFFSET, creator);
   }
 
+  public static Filter createTokenMintXProgramFlagFilter(final int tokenMintXProgramFlag) {
+    return Filter.createMemCompFilter(TOKEN_MINT_X_PROGRAM_FLAG_OFFSET, new byte[]{(byte) tokenMintXProgramFlag});
+  }
+
+  public static Filter createTokenMintYProgramFlagFilter(final int tokenMintYProgramFlag) {
+    return Filter.createMemCompFilter(TOKEN_MINT_Y_PROGRAM_FLAG_OFFSET, new byte[]{(byte) tokenMintYProgramFlag});
+  }
+
   public static LbPair read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -256,7 +270,7 @@ public record LbPair(PublicKey _address,
     i += Borsh.readArray(baseFactorSeed, _data, i);
     final var activationType = _data[i] & 0xFF;
     ++i;
-    final var padding0 = _data[i] & 0xFF;
+    final var creatorPoolOnOffControl = _data[i] & 0xFF;
     ++i;
     final var tokenXMint = readPubKey(_data, i);
     i += 32;
@@ -294,7 +308,11 @@ public record LbPair(PublicKey _address,
     i += 8;
     final var creator = readPubKey(_data, i);
     i += 32;
-    final var reserved = new byte[24];
+    final var tokenMintXProgramFlag = _data[i] & 0xFF;
+    ++i;
+    final var tokenMintYProgramFlag = _data[i] & 0xFF;
+    ++i;
+    final var reserved = new byte[22];
     Borsh.readArray(reserved, _data, i);
     return new LbPair(_address,
                       discriminator,
@@ -309,7 +327,7 @@ public record LbPair(PublicKey _address,
                       requireBaseFactorSeed,
                       baseFactorSeed,
                       activationType,
-                      padding0,
+                      creatorPoolOnOffControl,
                       tokenXMint,
                       tokenYMint,
                       reserveX,
@@ -328,6 +346,8 @@ public record LbPair(PublicKey _address,
                       padding3,
                       padding4,
                       creator,
+                      tokenMintXProgramFlag,
+                      tokenMintYProgramFlag,
                       reserved);
   }
 
@@ -351,7 +371,7 @@ public record LbPair(PublicKey _address,
     i += Borsh.writeArray(baseFactorSeed, _data, i);
     _data[i] = (byte) activationType;
     ++i;
-    _data[i] = (byte) padding0;
+    _data[i] = (byte) creatorPoolOnOffControl;
     ++i;
     tokenXMint.write(_data, i);
     i += 32;
@@ -383,6 +403,10 @@ public record LbPair(PublicKey _address,
     i += 8;
     creator.write(_data, i);
     i += 32;
+    _data[i] = (byte) tokenMintXProgramFlag;
+    ++i;
+    _data[i] = (byte) tokenMintYProgramFlag;
+    ++i;
     i += Borsh.writeArray(reserved, _data, i);
     return i - offset;
   }

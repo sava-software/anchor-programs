@@ -22,6 +22,10 @@ public record CustomizableParams(// Pool price
                                  boolean hasAlphaVault,
                                  // Decide when does the pool start trade. None = Now
                                  OptionalLong activationPoint,
+                                 // Pool creator have permission to enable/disable pool with restricted program validation. Only applicable for customizable permissionless pool.
+                                 boolean creatorPoolOnOffControl,
+                                 // Base fee power factor
+                                 int baseFeePowerFactor,
                                  // Padding, for future use
                                  byte[] padding) implements Borsh {
 
@@ -44,7 +48,11 @@ public record CustomizableParams(// Pool price
     if (activationPoint.isPresent()) {
       i += 8;
     }
-    final var padding = new byte[64];
+    final var creatorPoolOnOffControl = _data[i] == 1;
+    ++i;
+    final var baseFeePowerFactor = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[62];
     Borsh.readArray(padding, _data, i);
     return new CustomizableParams(activeId,
                                   binStep,
@@ -52,6 +60,8 @@ public record CustomizableParams(// Pool price
                                   activationType,
                                   hasAlphaVault,
                                   activationPoint,
+                                  creatorPoolOnOffControl,
+                                  baseFeePowerFactor,
                                   padding);
   }
 
@@ -69,6 +79,10 @@ public record CustomizableParams(// Pool price
     _data[i] = (byte) (hasAlphaVault ? 1 : 0);
     ++i;
     i += Borsh.writeOptional(activationPoint, _data, i);
+    _data[i] = (byte) (creatorPoolOnOffControl ? 1 : 0);
+    ++i;
+    _data[i] = (byte) baseFeePowerFactor;
+    ++i;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
@@ -81,6 +95,8 @@ public record CustomizableParams(// Pool price
          + 1
          + 1
          + (activationPoint == null || activationPoint.isEmpty() ? 1 : (1 + 8))
+         + 1
+         + 1
          + Borsh.lenArray(padding);
   }
 }

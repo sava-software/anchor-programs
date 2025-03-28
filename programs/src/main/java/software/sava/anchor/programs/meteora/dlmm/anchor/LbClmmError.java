@@ -68,7 +68,24 @@ public sealed interface LbClmmError extends ProgramError permits
     LbClmmError.InvalidBinStep,
     LbClmmError.InvalidBaseFee,
     LbClmmError.InvalidPreActivationDuration,
-    LbClmmError.AlreadyPassPreActivationSwapPoint {
+    LbClmmError.AlreadyPassPreActivationSwapPoint,
+    LbClmmError.InvalidStatus,
+    LbClmmError.ExceededMaxOracleLength,
+    LbClmmError.InvalidMinimumLiquidity,
+    LbClmmError.NotSupportMint,
+    LbClmmError.UnsupportedMintExtension,
+    LbClmmError.UnsupportNativeMintToken2022,
+    LbClmmError.UnmatchTokenMint,
+    LbClmmError.UnsupportedTokenMint,
+    LbClmmError.InsufficientRemainingAccounts,
+    LbClmmError.InvalidRemainingAccountSlice,
+    LbClmmError.DuplicatedRemainingAccountTypes,
+    LbClmmError.MissingRemainingAccountForTransferHook,
+    LbClmmError.NoTransferHookProgram,
+    LbClmmError.ZeroFundedAmount,
+    LbClmmError.InvalidSide,
+    LbClmmError.InvalidResizeLength,
+    LbClmmError.NotSupportAtTheMoment {
 
   static LbClmmError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -138,6 +155,23 @@ public sealed interface LbClmmError extends ProgramError permits
       case 6063 -> InvalidBaseFee.INSTANCE;
       case 6064 -> InvalidPreActivationDuration.INSTANCE;
       case 6065 -> AlreadyPassPreActivationSwapPoint.INSTANCE;
+      case 6066 -> InvalidStatus.INSTANCE;
+      case 6067 -> ExceededMaxOracleLength.INSTANCE;
+      case 6068 -> InvalidMinimumLiquidity.INSTANCE;
+      case 6069 -> NotSupportMint.INSTANCE;
+      case 6070 -> UnsupportedMintExtension.INSTANCE;
+      case 6071 -> UnsupportNativeMintToken2022.INSTANCE;
+      case 6072 -> UnmatchTokenMint.INSTANCE;
+      case 6073 -> UnsupportedTokenMint.INSTANCE;
+      case 6074 -> InsufficientRemainingAccounts.INSTANCE;
+      case 6075 -> InvalidRemainingAccountSlice.INSTANCE;
+      case 6076 -> DuplicatedRemainingAccountTypes.INSTANCE;
+      case 6077 -> MissingRemainingAccountForTransferHook.INSTANCE;
+      case 6078 -> NoTransferHookProgram.INSTANCE;
+      case 6079 -> ZeroFundedAmount.INSTANCE;
+      case 6080 -> InvalidSide.INSTANCE;
+      case 6081 -> InvalidResizeLength.INSTANCE;
+      case 6082 -> NotSupportAtTheMoment.INSTANCE;
       default -> throw new IllegalStateException("Unexpected LbClmm error code: " + errorCode);
     };
   }
@@ -601,6 +635,125 @@ public sealed interface LbClmmError extends ProgramError permits
 
     public static final AlreadyPassPreActivationSwapPoint INSTANCE = new AlreadyPassPreActivationSwapPoint(
         6065, "Already pass pre-activation swap point"
+    );
+  }
+
+  record InvalidStatus(int code, String msg) implements LbClmmError {
+
+    public static final InvalidStatus INSTANCE = new InvalidStatus(
+        6066, "Invalid status"
+    );
+  }
+
+  record ExceededMaxOracleLength(int code, String msg) implements LbClmmError {
+
+    public static final ExceededMaxOracleLength INSTANCE = new ExceededMaxOracleLength(
+        6067, "Exceed max oracle length"
+    );
+  }
+
+  record InvalidMinimumLiquidity(int code, String msg) implements LbClmmError {
+
+    public static final InvalidMinimumLiquidity INSTANCE = new InvalidMinimumLiquidity(
+        6068, "Invalid minimum liquidity"
+    );
+  }
+
+  record NotSupportMint(int code, String msg) implements LbClmmError {
+
+    public static final NotSupportMint INSTANCE = new NotSupportMint(
+        6069, "Not support token_2022 mint extension"
+    );
+  }
+
+  record UnsupportedMintExtension(int code, String msg) implements LbClmmError {
+
+    public static final UnsupportedMintExtension INSTANCE = new UnsupportedMintExtension(
+        6070, "Unsupported mint extension"
+    );
+  }
+
+  record UnsupportNativeMintToken2022(int code, String msg) implements LbClmmError {
+
+    public static final UnsupportNativeMintToken2022 INSTANCE = new UnsupportNativeMintToken2022(
+        6071, "Unsupported native mint token2022"
+    );
+  }
+
+  record UnmatchTokenMint(int code, String msg) implements LbClmmError {
+
+    public static final UnmatchTokenMint INSTANCE = new UnmatchTokenMint(
+        6072, "Unmatch token mint"
+    );
+  }
+
+  record UnsupportedTokenMint(int code, String msg) implements LbClmmError {
+
+    public static final UnsupportedTokenMint INSTANCE = new UnsupportedTokenMint(
+        6073, "Unsupported token mint"
+    );
+  }
+
+  record InsufficientRemainingAccounts(int code, String msg) implements LbClmmError {
+
+    public static final InsufficientRemainingAccounts INSTANCE = new InsufficientRemainingAccounts(
+        6074, "Insufficient remaining accounts"
+    );
+  }
+
+  record InvalidRemainingAccountSlice(int code, String msg) implements LbClmmError {
+
+    public static final InvalidRemainingAccountSlice INSTANCE = new InvalidRemainingAccountSlice(
+        6075, "Invalid remaining account slice"
+    );
+  }
+
+  record DuplicatedRemainingAccountTypes(int code, String msg) implements LbClmmError {
+
+    public static final DuplicatedRemainingAccountTypes INSTANCE = new DuplicatedRemainingAccountTypes(
+        6076, "Duplicated remaining account types"
+    );
+  }
+
+  record MissingRemainingAccountForTransferHook(int code, String msg) implements LbClmmError {
+
+    public static final MissingRemainingAccountForTransferHook INSTANCE = new MissingRemainingAccountForTransferHook(
+        6077, "Missing remaining account for transfer hook"
+    );
+  }
+
+  record NoTransferHookProgram(int code, String msg) implements LbClmmError {
+
+    public static final NoTransferHookProgram INSTANCE = new NoTransferHookProgram(
+        6078, "Remaining account was passed for transfer hook but there's no hook program"
+    );
+  }
+
+  record ZeroFundedAmount(int code, String msg) implements LbClmmError {
+
+    public static final ZeroFundedAmount INSTANCE = new ZeroFundedAmount(
+        6079, "Zero funded amount"
+    );
+  }
+
+  record InvalidSide(int code, String msg) implements LbClmmError {
+
+    public static final InvalidSide INSTANCE = new InvalidSide(
+        6080, "Invalid side"
+    );
+  }
+
+  record InvalidResizeLength(int code, String msg) implements LbClmmError {
+
+    public static final InvalidResizeLength INSTANCE = new InvalidResizeLength(
+        6081, "Invalid resize length"
+    );
+  }
+
+  record NotSupportAtTheMoment(int code, String msg) implements LbClmmError {
+
+    public static final NotSupportAtTheMoment INSTANCE = new NotSupportAtTheMoment(
+        6082, "Not support at the moment"
     );
   }
 }
