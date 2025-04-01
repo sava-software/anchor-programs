@@ -1,12 +1,14 @@
 package software.sava.anchor.programs.meteora.dlmm;
 
 import software.sava.anchor.programs.meteora.MeteoraAccounts;
+import software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmConstants;
 import software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.*;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.Signer;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
+import software.sava.core.accounts.token.TokenAccount;
 import software.sava.core.rpc.Filter;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.PrivateKeyEncoding;
@@ -20,6 +22,7 @@ import software.sava.solana.web2.helius.client.http.HeliusClient;
 import systems.comodal.jsoniter.JsonIterator;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.MathContext;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -61,6 +64,28 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
     return LbClmmProgram.initializePosition(
         meteoraAccounts.invokedDlmmProgram(),
         feePayer.publicKey(),
+        positionKey,
+        lbPairKey,
+        owner,
+        solanaAccounts.systemProgram(),
+        solanaAccounts.rentSysVar(),
+        eventAuthority,
+        meteoraAccounts.dlmmProgram(),
+        lowerBinId,
+        width
+    );
+  }
+
+  @Override
+  public Instruction initializePositionWithSeeds(final PublicKey positionKey,
+                                                 final PublicKey baseKey,
+                                                 final PublicKey lbPairKey,
+                                                 final int lowerBinId,
+                                                 final int width) {
+    return LbClmmProgram.initializePositionPda(
+        meteoraAccounts.invokedDlmmProgram(),
+        feePayer.publicKey(),
+        baseKey,
         positionKey,
         lbPairKey,
         owner,
@@ -158,7 +183,7 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
         eventAuthority,
         meteoraAccounts.dlmmProgram(),
         liquidityParameter,
-        remainingAccountsInfo
+        requireNonNullElse(remainingAccountsInfo, NO_REMAINING_ACCOUNTS)
     );
   }
 
@@ -335,26 +360,68 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
       final var lbPair = lbPairAccountInfo.data();
 
       final var binStepBase = DlmmUtils.binStepBase(lbPair.binStep());
-      System.out.println(DlmmUtils.binPrice(binStepBase, lbPair.activeId(), 0, MathContext.DECIMAL64).toPlainString());
+      final var activePrice = DlmmUtils.binPrice(binStepBase, lbPair.activeId(), 0, MathContext.DECIMAL64);
+      System.out.println(activePrice.toPlainString());
 
       final var tokenXAccount = nativeAccountClient.findATA(lbPair.tokenXMint()).publicKey();
       System.out.println("User X Account: " + tokenXAccount);
       final var tokenYAccount = nativeAccountClient.findATA(lbPair.tokenYMint()).publicKey();
       System.out.println("User Y Account: " + tokenYAccount);
 
-//      final var instructions = addLiquidityOneSidePrecise(
+      final var tokenXAccountInfo = rpcClient.getAccountInfo(tokenXAccount, TokenAccount.FACTORY).join();
+      System.out.println("User X Account Info: " + tokenXAccountInfo.data());
+
+//      final var tokenYAccountInfo = rpcClient.getAccountInfo(tokenYAccount, TokenAccount.FACTORY).join();
+//      System.out.println("User Y Account Info: " + tokenYAccountInfo.data());
+
+      final int scaleDifference = 0;
+
+//      final var positionKeyPair = Signer.generatePrivateKeyPairBytes();
+//      final var positionSigner = Signer.createFromKeyPair(positionKeyPair);
+
+//      final var instructions = addLiquidityByStrategy(
+//          nativeAccountClient,
 //          dlmmClient,
 //          lbPair,
-//          tokenXAccount
+////          positionSigner.publicKey(),
+//          0,
+//          tokenXAccount,
+//          420_000_000,
+//          tokenYAccount,
+//          activePrice.multiply(new BigDecimal("0.998")).doubleValue(),
+//          scaleDifference,
+//          (int) LbClmmConstants.MAX_BIN_PER_POSITION >> 1
 //      );
 
-      final var instructions = removeLiquidityByRange(
-          rpcClient,
+//      final var instructions = bidLiquidityOneSidePrecise(
+//          nativeAccountClient,
+//          dlmmClient,
+//          lbPair,
+//          tokenYAccount,
+//          420_000_000,
+//          activePrice.multiply(new BigDecimal("0.996")).doubleValue(),
+//          scaleDifference,
+//          (int) LbClmmConstants.MAX_BIN_PER_POSITION >> 2
+//      );
+
+      final var instructions = askLiquidityOneSidePrecise(
           nativeAccountClient,
           dlmmClient,
           lbPair,
-          tokenXAccount, tokenYAccount
+          tokenYAccount,
+          tokenXAccountInfo.data().amount(),
+          activePrice.multiply(new BigDecimal("0.996")).doubleValue(),
+          scaleDifference,
+          (int) LbClmmConstants.MAX_BIN_PER_POSITION >> 2
       );
+
+//      final var instructions = removeLiquidityByRange(
+//          rpcClient,
+//          nativeAccountClient,
+//          dlmmClient,
+//          lbPair,
+//          tokenXAccount, tokenYAccount
+//      );
 
       final var sendClient = SolanaRpcClient.createClient(
           stakedEndpoint,
@@ -365,8 +432,201 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
           }
       );
 
-      simulateAndSend(signer, nativeAccountClient, rpcClient, sendClient, heliusClient, solAccounts, instructions);
+      simulateAndSend(true, List.of(signer), nativeAccountClient, rpcClient, sendClient, heliusClient, solAccounts, instructions);
     }
+  }
+
+  private static void wrapSol(final List<Instruction> instructions,
+                              final NativeProgramAccountClient nativeClient,
+                              final LbPair lbPair,
+                              final long xAmount,
+                              final long yAmount) {
+    final var solAccounts = nativeClient.solanaAccounts();
+    final var wSolMint = solAccounts.wrappedSolTokenMint();
+    if (xAmount > 0 && lbPair.tokenXMint().equals(wSolMint)) {
+      instructions.add(nativeClient.createATAForOwnerFundedByFeePayer(
+          true, nativeClient.wrappedSolPDA().publicKey(), wSolMint
+      ));
+      instructions.addAll(nativeClient.wrapSOL(xAmount));
+    } else if (yAmount > 0 && lbPair.tokenYMint().equals(wSolMint)) {
+      instructions.add(nativeClient.createATAForOwnerFundedByFeePayer(
+          true, nativeClient.wrappedSolPDA().publicKey(), wSolMint
+      ));
+      instructions.addAll(nativeClient.wrapSOL(yAmount));
+    }
+  }
+
+  private static List<Instruction> addLiquidityByStrategy(final NativeProgramAccountClient nativeClient,
+                                                          final MeteoraDlmmClient dlmmClient,
+                                                          final LbPair lbPair,
+                                                          final long xAmount,
+                                                          final PublicKey tokenXAccount,
+                                                          final long yAmount,
+                                                          final PublicKey tokenYAccount,
+                                                          final double targetPrice,
+                                                          final int scaleDifference,
+                                                          final int width) {
+    final var solAccounts = dlmmClient.solanaAccounts();
+    final var instructions = new ArrayList<Instruction>();
+    wrapSol(instructions, nativeClient, lbPair, xAmount, yAmount);
+
+    final double inverseLogBinStepBase = DlmmUtils.inverseLogBinStepBase(lbPair.binStep());
+    final double priceScaleFactor = DlmmUtils.priceScaleFactor(scaleDifference);
+    final double binId = DlmmUtils.binIdFromInverseLogBinStepBase(targetPrice, priceScaleFactor, inverseLogBinStepBase);
+    final int upperBinId = (int) binId;
+    final int lowerBinId = upperBinId - (width - 1);
+
+    System.out.println(DlmmUtils.binPrice(lbPair.binStep(), lowerBinId, scaleDifference, MathContext.DECIMAL64).toPlainString());
+    System.out.println(DlmmUtils.binPrice(lbPair.binStep(), upperBinId, scaleDifference, MathContext.DECIMAL64).toPlainString());
+
+    final var lbPairKey = lbPair._address();
+    final var positionKey = dlmmClient.derivePositionAccount(lbPairKey, lowerBinId, width).publicKey();
+    final var initializePositionIx = dlmmClient.initializePositionWithSeeds(positionKey, lbPairKey, lowerBinId, width);
+    instructions.add(initializePositionIx);
+
+    final var binAccountMetas = dlmmClient.deriveBinAccounts(lbPairKey, lowerBinId, upperBinId);
+
+    final byte[] parameters = new byte[64];
+//    parameters[0] = 1;
+    final var params = new LiquidityParameterByStrategy(
+        xAmount, yAmount,
+        lbPair.activeId(),
+        10,
+        new StrategyParameters(lowerBinId, upperBinId, StrategyType.BidAskImBalanced, parameters)
+    );
+
+    final var tokenProgram = solAccounts.tokenProgram();
+    final var addLiquidityIx = dlmmClient.addLiquidityByStrategy(
+        positionKey,
+        lbPair,
+        null,
+        tokenXAccount, tokenYAccount,
+        tokenProgram, tokenProgram,
+        params,
+        null
+    ).extraAccounts(binAccountMetas);
+    instructions.add(addLiquidityIx);
+
+    return instructions;
+  }
+
+  private static List<Instruction> askLiquidityOneSidePrecise(final NativeProgramAccountClient nativeClient,
+                                                              final MeteoraDlmmClient dlmmClient,
+                                                              final LbPair lbPair,
+                                                              final PublicKey tokenAccount,
+                                                              final long scaledAmount,
+                                                              final double targetPrice,
+                                                              final int scaleDifference,
+                                                              final int width) {
+    final var instructions = new ArrayList<Instruction>();
+    wrapSol(instructions, nativeClient, lbPair, scaledAmount, 0);
+
+    final double inverseLogBinStepBase = DlmmUtils.inverseLogBinStepBase(lbPair.binStep());
+    final double priceScaleFactor = DlmmUtils.priceScaleFactor(scaleDifference);
+    final double binId = DlmmUtils.binIdFromInverseLogBinStepBase(targetPrice, priceScaleFactor, inverseLogBinStepBase);
+    final int lowerBinId = (int) binId;
+    final int upperBinId = lowerBinId + (width - 1);
+
+    System.out.println(DlmmUtils.binPrice(lbPair.binStep(), lowerBinId, scaleDifference, MathContext.DECIMAL64).toPlainString());
+    for (int b = lowerBinId; b <= upperBinId; ++b) {
+      final double binPrice = DlmmUtils.binPrice(lbPair.binStep(), b, priceScaleFactor);
+      System.out.println(binPrice);
+    }
+    System.out.println(DlmmUtils.binPrice(lbPair.binStep(), upperBinId, scaleDifference, MathContext.DECIMAL64).toPlainString());
+
+    final var lbPairKey = lbPair._address();
+    final var positionKey = dlmmClient.derivePositionAccount(lbPairKey, lowerBinId, width).publicKey();
+    final var initializePositionIx = dlmmClient.initializePositionWithSeeds(positionKey, lbPairKey, lowerBinId, width);
+    instructions.add(initializePositionIx);
+
+    final var binAccountMetas = dlmmClient.deriveBinAccounts(lbPairKey, lowerBinId, upperBinId);
+
+    final double binStepBase = DlmmUtils.binStepBase(lbPair.binStep()).doubleValue();
+    double binPrice = DlmmUtils.binPrice(binStepBase, lowerBinId, priceScaleFactor);
+
+    final int amountPerBin = (int) (scaledAmount / width);
+    final var bins = new CompressedBinDepositAmount[width];
+    bins[0] = new CompressedBinDepositAmount(lowerBinId, (scaledAmount % width) != 0 ? amountPerBin + 1 : amountPerBin);
+    for (int i = 1, b = lowerBinId + 1; i < width; ++i, ++b) {
+      bins[i] = new CompressedBinDepositAmount(b, amountPerBin);
+    }
+
+    final var params = new AddLiquiditySingleSidePreciseParameter2(
+        bins,
+        1,
+//        (long) StrictMath.pow(10, tokenScale),
+        Long.MAX_VALUE
+//        DlmmUtils.U64_MAX
+    );
+
+    final var addLiquidityIx = dlmmClient.askLiquidityPrecise(
+        positionKey,
+        lbPair,
+        null,
+        tokenAccount,
+        dlmmClient.solanaAccounts().tokenProgram(),
+        params,
+        null
+    ).extraAccounts(binAccountMetas);
+    instructions.add(addLiquidityIx);
+
+    return instructions;
+  }
+
+  private static List<Instruction> bidLiquidityOneSidePrecise(final NativeProgramAccountClient nativeClient,
+                                                              final MeteoraDlmmClient dlmmClient,
+                                                              final LbPair lbPair,
+                                                              final PublicKey tokenAccount,
+                                                              final long scaledAmount,
+                                                              final double targetPrice,
+                                                              final int scaleDifference,
+                                                              final int width) {
+    final var instructions = new ArrayList<Instruction>();
+    wrapSol(instructions, nativeClient, lbPair, 0, scaledAmount);
+
+    final double inverseLogBinStepBase = DlmmUtils.inverseLogBinStepBase(lbPair.binStep());
+    final double priceScaleFactor = DlmmUtils.priceScaleFactor(scaleDifference);
+    final double binId = DlmmUtils.binIdFromInverseLogBinStepBase(targetPrice, priceScaleFactor, inverseLogBinStepBase);
+    final int upperBinId = (int) binId;
+    final int lowerBinId = upperBinId - (width - 1);
+
+    System.out.println(DlmmUtils.binPrice(lbPair.binStep(), lowerBinId, scaleDifference, MathContext.DECIMAL64).toPlainString());
+    System.out.println(DlmmUtils.binPrice(lbPair.binStep(), upperBinId, scaleDifference, MathContext.DECIMAL64).toPlainString());
+
+    final var lbPairKey = lbPair._address();
+    final var positionKey = dlmmClient.derivePositionAccount(lbPairKey, lowerBinId, width).publicKey();
+    final var initializePositionIx = dlmmClient.initializePositionWithSeeds(positionKey, lbPairKey, lowerBinId, width);
+    instructions.add(initializePositionIx);
+
+    final var binAccountMetas = dlmmClient.deriveBinAccounts(lbPairKey, lowerBinId, upperBinId);
+
+    final int amountPerBin = (int) (scaledAmount / width);
+    final var bins = new CompressedBinDepositAmount[width];
+    bins[0] = new CompressedBinDepositAmount(upperBinId, (scaledAmount % width) != 0 ? amountPerBin + 1 : amountPerBin);
+    for (int i = 1, b = upperBinId - 1; i < width; i++, --b) {
+      bins[i] = new CompressedBinDepositAmount(b, amountPerBin);
+    }
+
+    final var params = new AddLiquiditySingleSidePreciseParameter2(
+        bins,
+        1,
+//        (long) StrictMath.pow(10, tokenScale),
+        Long.MAX_VALUE
+//        DlmmUtils.U64_MAX
+    );
+
+    final var addLiquidityIx = dlmmClient.bidLiquidityPrecise(
+        positionKey,
+        lbPair,
+        null,
+        tokenAccount,
+        dlmmClient.solanaAccounts().tokenProgram(),
+        params,
+        null
+    ).extraAccounts(binAccountMetas);
+    instructions.add(addLiquidityIx);
+
+    return instructions;
   }
 
   private static List<Instruction> removeLiquidityByRange(final SolanaRpcClient rpcClient,
@@ -387,74 +647,63 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
         true, userTokenY, lbPair.tokenYMint()
     );
 
-    final var removeLiquidityByRangeIx = dlmmClient.removeLiquidityByRange(
-        position,
+    final var tokenProgram = solAccounts.tokenProgram();
+//    final var removeLiquidityIx = dlmmClient.removeLiquidityByRange(
+//        position,
+//        lbPair,
+//        null,
+//        userTokenX, userTokenY,
+//        tokenProgram, tokenProgram,
+//        DlmmUtils.BASIS_POINT_MAX,
+//        null
+//    ).extraAccounts(binAccountMetas);
+
+
+    final var binReduction = new BinLiquidityReduction[position.upperBinId() - position.lowerBinId() + 1];
+    for (int i = 0, b = position.lowerBinId(); i < binReduction.length; ++i, ++b) {
+      binReduction[i] = new BinLiquidityReduction(b, DlmmUtils.BASIS_POINT_MAX);
+    }
+    final var removeLiquidityIx = dlmmClient.removeLiquidity(
+        position._address(),
         lbPair,
         null,
         userTokenX, userTokenY,
-        solAccounts.tokenProgram(), solAccounts.tokenProgram(),
-        DlmmUtils.BASIS_POINT_MAX,
+        tokenProgram, tokenProgram,
+        binReduction,
         null
     ).extraAccounts(binAccountMetas);
 
     final var claimFeeIx = dlmmClient.claimFee(
         lbPair, position,
         userTokenX, userTokenY,
-        solAccounts.tokenProgram(), solAccounts.tokenProgram(),
+        tokenProgram, tokenProgram,
         null
     ).extraAccounts(binAccountMetas);
 
     final var closePositionIx = dlmmClient.closePosition(position).extraAccounts(binAccountMetas);
 
-    return List.of(
+    final var wSolMint = solAccounts.wrappedSolTokenMint();
+
+    return wSolMint.equals(lbPair.tokenXMint()) || wSolMint.equals(lbPair.tokenYMint())
+        ? List.of(
         createXAccount,
         createYAccount,
-        removeLiquidityByRangeIx,
+        removeLiquidityIx,
+        claimFeeIx,
+        closePositionIx,
+        nativeClient.unwrapSOL()
+    )
+        : List.of(
+        createXAccount,
+        createYAccount,
+        removeLiquidityIx,
         claimFeeIx,
         closePositionIx
     );
   }
 
-  private static List<Instruction> addLiquidityOneSidePrecise(final MeteoraDlmmClient dlmmClient,
-                                                              final LbPair lbPair,
-                                                              final PublicKey tokenAccount) {
-    final var positionKey = PublicKey.createOffCurveAccountWithAsciiSeed(
-        dlmmClient.owner(),
-        new String(lbPair._address().toByteArray()),
-        dlmmClient.meteoraAccounts().dlmmProgram()
-    ).publicKey();
-
-    final int lowerBinId = 0;
-    final int width = 69;
-
-    final var initializePositionIx = dlmmClient.initializePosition(positionKey, lbPair._address(), lowerBinId, width);
-
-    final byte[] parameters = new byte[64];
-    parameters[0] = 1;
-    final var bins = new CompressedBinDepositAmount[69];
-    for (int i = 0; i < 69; i++) {
-      bins[0] = new CompressedBinDepositAmount(i, 1_000 + i);
-    }
-    final long amount = 69420;
-    final var params = new AddLiquiditySingleSidePreciseParameter2(
-        bins,
-        0,
-        10
-    );
-    final var addLiquidityIx = dlmmClient.addLiquidityOneSidePrecise(
-        positionKey, lbPair,
-        null,
-        tokenAccount,
-        lbPair.tokenXMint(),
-        dlmmClient.solanaAccounts().tokenProgram(),
-        params,
-        null
-    );
-
-    return List.of(initializePositionIx, addLiquidityIx);
-  }
-
-  private static void simulateAndSend(final Signer signer,
+  private static void simulateAndSend(final boolean simulateOnly,
+                                      final List<Signer> signers,
                                       final NativeProgramAccountClient nativeAccountClient,
                                       final SolanaRpcClient rpcClient,
                                       final SolanaRpcClient sendClient,
@@ -465,7 +714,9 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
     final var encodedSimulationTx = simulationTransaction.base64EncodeToString();
 
     final var simulationFuture = rpcClient.simulateTransaction(encodedSimulationTx);
-    final var feeFuture = heliusClient.getRecommendedTransactionPriorityFeeEstimate(encodedSimulationTx);
+
+    final var feeFuture = simulateOnly ? null : heliusClient.getRecommendedTransactionPriorityFeeEstimate(encodedSimulationTx);
+
     System.out.println(encodedSimulationTx);
 
     for (final var ix : simulationTransaction.instructions()) {
@@ -478,30 +729,34 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
     final var simulationResult = simulationFuture.join();
     logSimulationResult(simulationResult);
 
+    if (simulateOnly || simulationResult.error() != null) {
+      return;
+    }
+
     final var computeBudget = ComputeBudgetProgram.setComputeUnitLimit(
         solAccounts.invokedComputeBudgetProgram(),
         simulationResult.unitsConsumed().getAsInt()
     );
 
+    final var instructions = new ArrayList<Instruction>();
+    instructions.add(computeBudget);
     final var recommendedFee = feeFuture.join();
     System.out.println(recommendedFee.toPlainString());
     final var computePrice = ComputeBudgetProgram.setComputeUnitPrice(
         solAccounts.invokedComputeBudgetProgram(),
         recommendedFee.longValue()
     );
-    final var instructions = new ArrayList<Instruction>();
-    instructions.add(computeBudget);
     instructions.add(computePrice);
     instructions.addAll(simulationInstructions);
 
     final var transaction = nativeAccountClient.createTransaction(instructions);
     transaction.setRecentBlockHash(simulationResult.replacementBlockHash().blockhash());
-    transaction.sign(signer);
+    transaction.sign(signers);
     final var encodedTx = transaction.base64EncodeToString();
     System.out.println(encodedTx);
-//      final var sendFuture = sendClient.sendTransaction(encodedTx);
-//      final var sendResult = sendFuture.join();
-//      System.out.println(sendResult);
+    final var sendFuture = sendClient.sendTransaction(encodedTx);
+    final var sendResult = sendFuture.join();
+    System.out.println(sendResult);
   }
 
   private static void logSimulationResult(final TxSimulation simulationResult) {

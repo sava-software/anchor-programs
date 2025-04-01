@@ -45,6 +45,10 @@ public final class DlmmUtils {
     return BigDecimal.ONE.add(binStepNum);
   }
 
+  public static double inverseLogBinStepBase(final int binStep) {
+    return 1 / StrictMath.log1p(binStep * 0.0001d);
+  }
+
   public static double priceScaleFactor(final int scaleDifference) {
     return StrictMath.pow(10, scaleDifference);
   }

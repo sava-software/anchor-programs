@@ -13,13 +13,16 @@ import java.math.MathContext;
 import java.util.Arrays;
 import java.util.Base64;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram.CLAIM_FEE2_DISCRIMINATOR;
 import static software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram.REMOVE_LIQUIDITY_BY_RANGE2_DISCRIMINATOR;
 import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 
 final class MeteoraDlmmTests {
+
+  private static byte[] data(final String base64Encoded) {
+    return Base64.getDecoder().decode(base64Encoded.stripTrailing());
+  }
 
   @Test
   void testBinPricing() {
@@ -28,8 +31,8 @@ final class MeteoraDlmmTests {
     final int scaleDifference = DlmmUtils.scaleDifference(baseScale, quoteScale);
     assertEquals(-2, scaleDifference);
 
-    final int stepSize = 4;
-    final var binStepBase = DlmmUtils.binStepBase(stepSize);
+    final int binStep = 4;
+    final var binStepBase = DlmmUtils.binStepBase(binStep);
 
     final int binId = 17221;
 
@@ -40,7 +43,7 @@ final class MeteoraDlmmTests {
     assertEquals(binId, Math.round(calculatedBinId));
 
     final double binStepBaseDouble = binStepBase.doubleValue();
-    assertEquals(binStepBaseDouble, DlmmUtils.binStepBaseDouble(stepSize));
+    assertEquals(binStepBaseDouble, DlmmUtils.binStepBaseDouble(binStep));
 
     double doubleBinPrice = DlmmUtils.binPrice(binStepBaseDouble, binId, scaleDifference);
     assertEquals(97948.08508503261, doubleBinPrice, 0.00000000001);
@@ -58,11 +61,15 @@ final class MeteoraDlmmTests {
     assertEquals(binId, Math.round(calculatedBinId));
 
     final double inverseLogBinStepBase = 1 / logBinStepBase;
-    calculatedBinId = DlmmUtils.binIdFromInverseLogBinStepBase(doubleBinPrice, scaleDifference, inverseLogBinStepBase);
+    final double inverseLogBinStepBase2 = DlmmUtils.inverseLogBinStepBase(binStep);
+    assertNotEquals(inverseLogBinStepBase, inverseLogBinStepBase2, 0.0000000002);
+    assertEquals(inverseLogBinStepBase, inverseLogBinStepBase2, 0.0000000003);
+
+    calculatedBinId = DlmmUtils.binIdFromInverseLogBinStepBase(doubleBinPrice, scaleDifference, inverseLogBinStepBase2);
     assertEquals(binId, Math.round(calculatedBinId));
 
     final double priceScaleFactor = DlmmUtils.priceScaleFactor(scaleDifference);
-    calculatedBinId = DlmmUtils.binIdFromInverseLogBinStepBase(doubleBinPrice, priceScaleFactor, inverseLogBinStepBase);
+    calculatedBinId = DlmmUtils.binIdFromInverseLogBinStepBase(doubleBinPrice, priceScaleFactor, inverseLogBinStepBase2);
     assertEquals(binId, Math.round(calculatedBinId));
   }
 
@@ -89,9 +96,9 @@ final class MeteoraDlmmTests {
     final int upperBinId = 2436;
     var binArrayAccountMetas = dlmmClient.deriveBinAccounts(lbPair, lowerBinId, upperBinId);
 
-    final byte[] data = Base64.getDecoder().decode("""
+    final byte[] data = data("""
         AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAgRDPVl6eB0qtYSlYif4b0tHW4ZfMrzSctd89y3PLhgsgZP0RY6Q0W/frzwgb8tnEGSapiDquhyHhfkmp1muCulzVCsBEtVZftYLWi/JVJP7pM8wht+/nNVfX0Gu0HtOpTIWqA+yQzqjmLux3w7/C2B02Tqi6U0esHGgo87U30CvG+MCHjZjfXHR2P1EBor4P6rxSVuBFovATqVpsXS7g1B1JkvRMtUjSS3E0YWcPOiIGR22BXeLO6LVQhD5AQ4utEiBOnhL7yE6CbJMszp4mQMzhVZDBxic7CSVwi6O4UgsLyOzdiddVSoOFDTXcEcLijCzeBdioHPFW72ST8uULYUChggVni5HWPKTOcOlR4oWEv+EfPZZCCPw8HbhCZjHbn4C2K6B09yLJ1BFPLY9woAxmACM3ub+QyHNlem0gHbTIAGm4hX/quBhPtof2NGGMA12sQ53BrrO1WYoPAAAAAAAQbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpsnDWf6mMUc8CEwUTWJYrrzV0K+1ZydlEXpwNDIXHzZEDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABUpTWpkpIQZNJOhxYNo4fHw1td28kruB5B+oQEEFRI2MlyWPTiSJ8bs9ECkUjg2DC1oTmdr/EIQEjnvY2+n4WQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABw0ABQLsXRUADQAJAwAAAAAAAAAAEAYABAAJDgsBARAGAAUACg4LAQEGEAIIBgQFAwcJCgALCw8MBgEWzALDkTWRkc15CQAAhAkAABAnAAAAAAYPCAIAAwcEBQkKCwsPDAYBFHC/ZasckH+7eQkAAIQJAAAAAAAABgYCAAAMBgEIrlojc7ook+I=
-        """.stripTrailing());
+        """);
 
     final var skeleton = TransactionSkeleton.deserializeSkeleton(data);
     final var instructions = skeleton.parseLegacyInstructions();
@@ -259,10 +266,11 @@ final class MeteoraDlmmTests {
     );
   }
 
+  @Test
   void testAddLiquidityByStrategy2() {
-    final byte[] data = Base64.getDecoder().decode("""
+    final byte[] data = data("""
         AgbEjRDSiisDGnrKSlbmFewlI3mxknJIu7kBxl0u1zJ43xRa+ITnJ965SQoWblTdLAS/KwkO7uhNq3xPD12diAd9hErqoRbpeJXJmWJ9OzYCzzAl3JLrQ+BvxJJ5c9TCyp4fFhxVwVwap7e4nyCn6krwq9LZs2Uc3XbIih0XEroOAgAJEQz1ZengdKrWEpWIn+G9LR1uGXzK80nLXfPctzy4YLIGUKwES1Vl+1gtaL8lUk/ukzzCG37+c1V9fQa7Qe06lMgYIFZ4uR1jykznDpUeKFhL/hHz2WQgj8PB24QmYx25+E/RFjpDRb9+vPCBvy2cQZJqmIOq6HIeF+SanWa4K6XNWqA+yQzqjmLux3w7/C2B02Tqi6U0esHGgo87U30CvG+OzdiddVSoOFDTXcEcLijCzeBdioHPFW72ST8uULYUCowIeNmN9cdHY/UQGivg/qvFJW4EWi8BOpWmxdLuDUHUmS9Ey1SNJLcTRhZw86IgZHbYFd4s7otVCEPkBDi60SIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIyXJY9OJInxuz0QKRSODYMLWhOZ2v8QhASOe9jb6fhZAwZGb+UhFzL/7K26csOb57yM5bvF9xJrLEObOkAAAACycNZ/qYxRzwITBRNYliuvNXQr7VnJ2URenA0MhcfNkQTp4S+8hOgmyTLM6eJkDM4VWQwcYnOwklcIujuFILC8C2K6B09yLJ1BFPLY9woAxmACM3ub+QyHNlem0gHbTIAGm4hX/quBhPtof2NGGMA12sQ53BrrO1WYoPAAAAAAAQan1RcZLFxRIYzJTD1K8X9Y2u4Im6H9ROPb2YoAAAAABt324ddloZPZy+FGzut5rBy0he1fWzeROoz1hX7/AKkMq5vJoCWD+PYS1pW9N0Wt6okiRnFPuHkDzGJz8tGejwkKAAUChj0DAAwIAAECAAgPCwwQ28DqR76/ZlB5CQAADAAAAAkGAAYADQgQAQEJBgAHAA4IEAEBCAIABwwCAAAA+rAIGQAAAAAQAQcBEQwPAQIMBgcEBQ0OABAQCwwDcQPdldpvjXbVAAAAAAAAAAD6sAgZAAAAAJsJAAAKAAAAeQkAAIQJAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAEAEAMHAAABCQoACQPtLAAAAAAAAA==
-        """.stripTrailing());
+        """);
 
     var skeleton = TransactionSkeleton.deserializeSkeleton(data);
     var instructions = skeleton.parseLegacyInstructions();
@@ -271,6 +279,40 @@ final class MeteoraDlmmTests {
     final var addLiquidityInstruction = instructions[6];
 
     final var ixData = LbClmmProgram.AddLiquidityByStrategy2IxData.read(addLiquidityInstruction);
+    System.out.println(ixData);
+  }
+
+  @Test
+  void removeLiquidity() {
+    // X5D6ejt1cB9QkFYMs8bBaRjgomWDw5wUQoCLWtzWknCNFWPWBSUqCX2KUs6tbWkMnnmMyMmjrqg1sqaf4tNvkyK
+    final byte[] data = data("""
+        AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAgRDPVl6eB0qtYSlYif4b0tHW4ZfMrzSctd89y3PLhgsgZP0RY6Q0W/frzwgb8tnEGSapiDquhyHhfkmp1muCulzVqgPskM6o5i7sd8O/wtgdNk6oulNHrBxoKPO1N9ArxvjAh42Y31x0dj9RAaK+D+q8UlbgRaLwE6labF0u4NQdSZL0TLVI0ktxNGFnDzoiBkdtgV3izui1UIQ+QEOLrRIgTp4S+8hOgmyTLM6eJkDM4VWQwcYnOwklcIujuFILC8js3YnXVUqDhQ013BHC4ows3gXYqBzxVu9kk/LlC2FAr2wnaf9FDLSbYyDx8g/sa5yzeaENHLC3D/7UOokkB1thggVni5HWPKTOcOlR4oWEv+EfPZZCCPw8HbhCZjHbn4C2K6B09yLJ1BFPLY9woAxmACM3ub+QyHNlem0gHbTIAGm4hX/quBhPtof2NGGMA12sQ53BrrO1WYoPAAAAAAAQbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpsnDWf6mMUc8CEwUTWJYrrzV0K+1ZydlEXpwNDIXHzZEDBkZv5SEXMv/srbpyw5vnvIzlu8X3EmssQ5s6QAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABUpTWpkpIQZNJOhxYNo4fHw1td28kruB5B+oQEEFRI2MlyWPTiSJ8bs9ECkUjg2DC1oTmdr/EIQEjnvY2+n4WQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACA0ABQLsXRUADQAJAwAAAAAAAAAAEAYAAwAJDgsBARAGAAQACg4LAQEFEAcIBQMEAgYJCgALCw8MBQHiAebXUn/xZeOSIwAAAG0JAAAQJ24JAAAQJ28JAAAQJ3AJAAAQJ3EJAAAQJ3IJAAAQJ3MJAAAQJ3QJAAAQJ3UJAAAQJ3YJAAAQJ3cJAAAQJ3gJAAAQJ3kJAAAQJ3oJAAAQJ3sJAAAQJ3wJAAAQJ30JAAAQJ34JAAAQJ38JAAAQJ4AJAAAQJ4EJAAAQJ4IJAAAQJ4MJAAAQJ4QJAAAQJ4UJAAAQJ4YJAAAQJ4cJAAAQJ4gJAAAQJ4kJAAAQJ4oJAAAQJ4sJAAAQJ4wJAAAQJ40JAAAQJ44JAAAQJ48JAAAQJwAAAAAFDwgHAAIGAwQJCgsLDwwFARRwv2WrHJB/u20JAACPCQAAAAAAAAUGBwAADAUBCK5aI3O6KJPiCwMEAAABCQ==
+        """);
+
+    var skeleton = TransactionSkeleton.deserializeSkeleton(data);
+    var instructions = skeleton.parseLegacyInstructions();
+    assertEquals(8, instructions.length);
+
+    var removeLiquidityInstruction = instructions[4];
+
+    var ixData = LbClmmProgram.RemoveLiquidity2IxData.read(removeLiquidityInstruction);
+    System.out.println(ixData);
+  }
+
+  @Test
+  void bidLiquidityPrecise() {
+    // 2HZ6427mE5YNnriRwYxTzT6dh2QshFCvDLNfPBkXkLAKY26rkKtVcsYDgbE1S6KgUd2QHCSLPvfbQGRdAbYfrSYN
+    final byte[] data = data("""
+        AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAcODPVl6eB0qtYSlYif4b0tHW4ZfMrzSctd89y3PLhgsgZP0RY6Q0W/frzwgb8tnEGSapiDquhyHhfkmp1muCulzZkvRMtUjSS3E0YWcPOiIGR22BXeLO6LVQhD5AQ4utEiBOnhL7yE6CbJMszp4mQMzhVZDBxic7CSVwi6O4UgsLwRlIJ471hphGD+CmkiPzNLpbL53hA1DsnS2iC0u2cRWY7N2J11VKg4UNNdwRwuKMLN4F2Kgc8VbvZJPy5QthQKGCBWeLkdY8pM5w6VHihYS/4R89lkII/DwduEJmMdufgGm4hX/quBhPtof2NGGMA12sQ53BrrO1WYoPAAAAAAAQbd9uHXZaGT2cvhRs7reawctIXtX1s3kTqM9YV+/wCpBqfVFxksXFEhjMlMPUrxf1ja7gibof1E49vZigAAAACycNZ/qYxRzwITBRNYliuvNXQr7VnJ2URenA0MhcfNkQMGRm/lIRcy/+ytunLDm+e8jOW7xfcSayxDmzpAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACMlyWPTiSJ8bs9ECkUjg2DC1oTmdr/EIQEjnvY2+n4WQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABwsABQLsXRUACwAJAwAAAAAAAAAADQYAAgAHDAgBAQwCAAIMAgAAAACxCBkAAAAACAECAREDCQAABAYADAkKAxAuUn2SVY3kmWsJAAARAAAAAwsEBgMCBQcACAoDAagBITOjyXVifecRAAAAewkAAFv7eAF6CQAAWvt4AXkJAABa+3gBeAkAAFr7eAF3CQAAWvt4AXYJAABa+3gBdQkAAFr7eAF0CQAAWvt4AXMJAABa+3gBcgkAAFr7eAFxCQAAWvt4AXAJAABa+3gBbwkAAFr7eAFuCQAAWvt4AW0JAABa+3gBbAkAAFr7eAFrCQAAWvt4AQEAAAAAAAAA//////////8AAAAA
+        """);
+
+    var skeleton = TransactionSkeleton.deserializeSkeleton(data);
+    var instructions = skeleton.parseLegacyInstructions();
+    assertEquals(7, instructions.length);
+
+    var addLiquidityInstruction = instructions[6];
+
+    var ixData = LbClmmProgram.AddLiquidityOneSidePrecise2IxData.read(addLiquidityInstruction);
     System.out.println(ixData);
   }
 }

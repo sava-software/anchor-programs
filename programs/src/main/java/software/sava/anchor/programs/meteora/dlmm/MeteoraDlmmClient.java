@@ -3,6 +3,7 @@ package software.sava.anchor.programs.meteora.dlmm;
 import software.sava.anchor.programs.meteora.MeteoraAccounts;
 import software.sava.anchor.programs.meteora.MeteoraPDAs;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.*;
+import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -118,6 +119,37 @@ public interface MeteoraDlmmClient {
                                  final PublicKey lbPairKey,
                                  final int lowerBinId,
                                  final int width);
+
+  default ProgramDerivedAddress derivePositionAccount(final PublicKey lbPairKey,
+                                                      final int lowerBinId,
+                                                      final int width) {
+    return MeteoraPDAs.positionPDA(
+        lbPairKey,
+        feePayer().publicKey(),
+        lowerBinId,
+        width,
+        meteoraAccounts().dlmmProgram()
+    );
+  }
+
+  Instruction initializePositionWithSeeds(final PublicKey positionKey,
+                                          final PublicKey baseKey,
+                                          final PublicKey lbPairKey,
+                                          final int lowerBinId,
+                                          final int width);
+
+  default Instruction initializePositionWithSeeds(final PublicKey positionKey,
+                                                  final PublicKey lbPairKey,
+                                                  final int lowerBinId,
+                                                  final int width) {
+    return initializePositionWithSeeds(
+        positionKey,
+        feePayer().publicKey(),
+        lbPairKey,
+        lowerBinId,
+        width
+    );
+  }
 
   Instruction addLiquidityByStrategy(final PublicKey positionKey,
                                      final PublicKey lbPairKey,
@@ -257,42 +289,40 @@ public interface MeteoraDlmmClient {
                                          final AddLiquiditySingleSidePreciseParameter2 liquidityParameter,
                                          final RemainingAccountsInfo remainingAccountsInfo);
 
-  default Instruction addLiquidityOneSidePrecise(final PublicKey positionKey,
-                                                 final PublicKey lbPairKey,
-                                                 final PublicKey binArrayBitmapExtensionKey,
-                                                 final PublicKey userTokenKey,
-                                                 final PublicKey tokenMintKey,
-                                                 final PublicKey tokenProgramKey,
-                                                 final AddLiquiditySingleSidePreciseParameter2 liquidityParameter,
-                                                 final RemainingAccountsInfo remainingAccountsInfo) {
-    final var programId = meteoraAccounts().dlmmProgram();
-    final var reserveKey = MeteoraPDAs.reservePDA(lbPairKey, tokenMintKey, programId).publicKey();
-    return addLiquidityOneSidePrecise(
-        positionKey,
-        lbPairKey,
-        binArrayBitmapExtensionKey,
-        userTokenKey,
-        reserveKey,
-        tokenMintKey,
-        tokenProgramKey, liquidityParameter,
-        remainingAccountsInfo
-    );
-  }
-
-  default Instruction addLiquidityOneSidePrecise(final PublicKey positionKey,
-                                                 final LbPair lbPair,
-                                                 final PublicKey binArrayBitmapExtensionKey,
-                                                 final PublicKey userTokenKey,
-                                                 final PublicKey tokenMintKey,
-                                                 final PublicKey tokenProgramKey,
-                                                 final AddLiquiditySingleSidePreciseParameter2 liquidityParameter,
-                                                 final RemainingAccountsInfo remainingAccountsInfo) {
+  default Instruction bidLiquidityPrecise(final PublicKey positionKey,
+                                          final LbPair lbPair,
+                                          final PublicKey binArrayBitmapExtensionKey,
+                                          final PublicKey userTokenKey,
+                                          final PublicKey tokenProgramKey,
+                                          final AddLiquiditySingleSidePreciseParameter2 liquidityParameter,
+                                          final RemainingAccountsInfo remainingAccountsInfo) {
     return addLiquidityOneSidePrecise(
         positionKey,
         lbPair._address(),
         binArrayBitmapExtensionKey,
         userTokenKey,
-        tokenMintKey,
+        lbPair.reserveY(),
+        lbPair.tokenYMint(),
+        tokenProgramKey,
+        liquidityParameter,
+        remainingAccountsInfo
+    );
+  }
+
+  default Instruction askLiquidityPrecise(final PublicKey positionKey,
+                                          final LbPair lbPair,
+                                          final PublicKey binArrayBitmapExtensionKey,
+                                          final PublicKey userTokenKey,
+                                          final PublicKey tokenProgramKey,
+                                          final AddLiquiditySingleSidePreciseParameter2 liquidityParameter,
+                                          final RemainingAccountsInfo remainingAccountsInfo) {
+    return addLiquidityOneSidePrecise(
+        positionKey,
+        lbPair._address(),
+        binArrayBitmapExtensionKey,
+        userTokenKey,
+        lbPair.reserveX(),
+        lbPair.tokenXMint(),
         tokenProgramKey,
         liquidityParameter,
         remainingAccountsInfo
