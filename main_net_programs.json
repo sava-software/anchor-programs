@@ -14,12 +14,6 @@
     "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc"
   },
   {
-    "name": "Glam Staging",
-    "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc",
-    "package": "glam.staging",
-    "idlFile": "idls/glam/glam_protocol.json"
-  },
-  {
     "name": "Jupiter DCA",
     "program": "DCA265Vj8a9CEuX1eb1LWRnDT7uK6q1xMipnNyatn23M",
     "package": "jupiter.dca"

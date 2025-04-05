@@ -84,7 +84,8 @@ public sealed interface Swap extends RustEnum permits
   Swap.PumpdotfunAmmBuy,
   Swap.PumpdotfunAmmSell,
   Swap.Gamma,
-  Swap.MeteoraDlmmSwapV2 {
+  Swap.MeteoraDlmmSwapV2,
+  Swap.Woofi {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -166,6 +167,7 @@ public sealed interface Swap extends RustEnum permits
       case 73 -> PumpdotfunAmmSell.INSTANCE;
       case 74 -> Gamma.INSTANCE;
       case 75 -> MeteoraDlmmSwapV2.read(_data, i);
+      case 76 -> Woofi.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1190,6 +1192,16 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 75;
+    }
+  }
+
+  record Woofi() implements EnumNone, Swap {
+
+    public static final Woofi INSTANCE = new Woofi();
+
+    @Override
+    public int ordinal() {
+      return 76;
     }
   }
 }
