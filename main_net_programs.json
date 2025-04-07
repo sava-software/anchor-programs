@@ -14,6 +14,17 @@
     "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc"
   },
   {
+    "name": "Jito Tip Distribution",
+    "program": "4R3gSG8BpU4t19KYj8CfnbtRpnT8gtk4dvTHxVRwc2r7",
+    "package": "jito.tip_distribution"
+  },
+  {
+    "name": "Jito Tip Router",
+    "program": "RouterBmuRBkPUbgEDMtdvTZ75GBdSREZR5uGUxxxpb",
+    "package": "jito.tip_router",
+    "idlURL": "https://raw.githubusercontent.com/jito-foundation/jito-tip-router/refs/heads/master/idl/jito_tip_router.json"
+  },
+  {
     "name": "Jupiter DCA",
     "program": "DCA265Vj8a9CEuX1eb1LWRnDT7uK6q1xMipnNyatn23M",
     "package": "jupiter.dca"

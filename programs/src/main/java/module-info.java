@@ -12,6 +12,10 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.glam;
   exports software.sava.anchor.programs.jito.steward.anchor.types;
   exports software.sava.anchor.programs.jito.steward.anchor;
+  exports software.sava.anchor.programs.jito.tip_distribution.anchor.types;
+  exports software.sava.anchor.programs.jito.tip_distribution.anchor;
+  exports software.sava.anchor.programs.jito.tip_router.anchor.types;
+  exports software.sava.anchor.programs.jito.tip_router.anchor;
   exports software.sava.anchor.programs.jupiter.dca.anchor.types;
   exports software.sava.anchor.programs.jupiter.dca.anchor;
   exports software.sava.anchor.programs.jupiter.governance.anchor.types;
