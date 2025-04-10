@@ -5,22 +5,22 @@ import software.sava.core.borsh.Borsh;
 // * Delegate ACL
 public enum Permission implements Borsh.Enum {
 
-  DriftInitialize,
+  DriftInit,
   DriftUpdateUser,
   DriftDeleteUser,
   DriftDeposit,
   DriftWithdraw,
-  DriftPlaceOrders,
-  DriftCancelOrders,
+  DriftOrders,
+  DriftBorrow,
   DriftPerpMarket,
   DriftSpotMarket,
   Stake,
   Unstake,
-  LiquidUnstake,
+  DeprecatedLiquidUnstake,
   JupiterSwapAllowlisted,
   JupiterSwapAny,
-  WSolWrap,
-  WSolUnwrap,
+  WSol,
+  DeprecatedWSolUnwrap,
   MintTokens,
   BurnTokens,
   ForceTransferTokens,
@@ -29,14 +29,18 @@ public enum Permission implements Borsh.Enum {
   VoteOnProposal,
   UnstakeJup,
   JupiterSwapLst,
+  JupiterSwapPriceable,
   KaminoInit,
   KaminoDeposit,
-  DriftModifyOrders,
-  MeteoraDlmmInitPosition,
-  MeteoraDlmmClosePosition,
+  KaminoBorrow,
+  KaminoWithdraw,
+  MeteoraDlmmPosition,
   MeteoraDlmmLiquidity,
+  MeteoraDlmmClaim,
   MeteoraDlmmSwap,
-  TransferToAllowlisted;
+  TransferToAllowlisted,
+  WithdrawJup,
+  ClaimJup;
 
   public static Permission read(final byte[] _data, final int offset) {
     return Borsh.read(Permission.values(), _data, offset);

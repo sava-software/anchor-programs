@@ -4,12 +4,14 @@ import java.lang.Boolean;
 import java.lang.String;
 
 import java.util.OptionalInt;
+import java.util.OptionalLong;
 
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
+import static software.sava.core.encoding.ByteUtil.getInt64LE;
 
 public record MintModel(String symbol, byte[] _symbol,
                         String name, byte[] _name,
@@ -22,6 +24,11 @@ public record MintModel(String symbol, byte[] _symbol,
                         OptionalInt lockUpPeriodInSeconds,
                         PublicKey permanentDelegate,
                         Boolean defaultAccountStateFrozen,
+                        FeeStructure feeStructure,
+                        FeeParams feeParams,
+                        Valuation valuation,
+                        OptionalLong minSubscription,
+                        OptionalLong minRedemption,
                         Boolean isRawOpenfunds,
                         MintOpenfundsModel rawOpenfunds) implements Borsh {
 
@@ -36,6 +43,11 @@ public record MintModel(String symbol, byte[] _symbol,
                                        final OptionalInt lockUpPeriodInSeconds,
                                        final PublicKey permanentDelegate,
                                        final Boolean defaultAccountStateFrozen,
+                                       final FeeStructure feeStructure,
+                                       final FeeParams feeParams,
+                                       final Valuation valuation,
+                                       final OptionalLong minSubscription,
+                                       final OptionalLong minRedemption,
                                        final Boolean isRawOpenfunds,
                                        final MintOpenfundsModel rawOpenfunds) {
     return new MintModel(symbol, Borsh.getBytes(symbol),
@@ -49,6 +61,11 @@ public record MintModel(String symbol, byte[] _symbol,
                          lockUpPeriodInSeconds,
                          permanentDelegate,
                          defaultAccountStateFrozen,
+                         feeStructure,
+                         feeParams,
+                         valuation,
+                         minSubscription,
+                         minRedemption,
                          isRawOpenfunds,
                          rawOpenfunds);
   }
@@ -102,6 +119,26 @@ public record MintModel(String symbol, byte[] _symbol,
     if (defaultAccountStateFrozen != null) {
       ++i;
     }
+    final var feeStructure = _data[i++] == 0 ? null : FeeStructure.read(_data, i);
+    if (feeStructure != null) {
+      i += Borsh.len(feeStructure);
+    }
+    final var feeParams = _data[i++] == 0 ? null : FeeParams.read(_data, i);
+    if (feeParams != null) {
+      i += Borsh.len(feeParams);
+    }
+    final var valuation = _data[i++] == 0 ? null : Valuation.read(_data, i);
+    if (valuation != null) {
+      i += Borsh.len(valuation);
+    }
+    final var minSubscription = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+    if (minSubscription.isPresent()) {
+      i += 8;
+    }
+    final var minRedemption = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+    if (minRedemption.isPresent()) {
+      i += 8;
+    }
     final var isRawOpenfunds = _data[i++] == 0 ? null : _data[i] == 1;
     if (isRawOpenfunds != null) {
       ++i;
@@ -118,6 +155,11 @@ public record MintModel(String symbol, byte[] _symbol,
                          lockUpPeriodInSeconds,
                          permanentDelegate,
                          defaultAccountStateFrozen,
+                         feeStructure,
+                         feeParams,
+                         valuation,
+                         minSubscription,
+                         minRedemption,
                          isRawOpenfunds,
                          rawOpenfunds);
   }
@@ -146,6 +188,11 @@ public record MintModel(String symbol, byte[] _symbol,
     i += Borsh.writeOptional(lockUpPeriodInSeconds, _data, i);
     i += Borsh.writeOptional(permanentDelegate, _data, i);
     i += Borsh.writeOptional(defaultAccountStateFrozen, _data, i);
+    i += Borsh.writeOptional(feeStructure, _data, i);
+    i += Borsh.writeOptional(feeParams, _data, i);
+    i += Borsh.writeOptional(valuation, _data, i);
+    i += Borsh.writeOptional(minSubscription, _data, i);
+    i += Borsh.writeOptional(minRedemption, _data, i);
     i += Borsh.writeOptional(isRawOpenfunds, _data, i);
     i += Borsh.writeOptional(rawOpenfunds, _data, i);
     return i - offset;
@@ -164,6 +211,11 @@ public record MintModel(String symbol, byte[] _symbol,
          + (lockUpPeriodInSeconds == null || lockUpPeriodInSeconds.isEmpty() ? 1 : (1 + 4))
          + (permanentDelegate == null ? 1 : (1 + 32))
          + (defaultAccountStateFrozen == null ? 1 : (1 + 1))
+         + (feeStructure == null ? 1 : (1 + Borsh.len(feeStructure)))
+         + (feeParams == null ? 1 : (1 + Borsh.len(feeParams)))
+         + (valuation == null ? 1 : (1 + Borsh.len(valuation)))
+         + (minSubscription == null || minSubscription.isEmpty() ? 1 : (1 + 8))
+         + (minRedemption == null || minRedemption.isEmpty() ? 1 : (1 + 8))
          + (isRawOpenfunds == null ? 1 : (1 + 1))
          + (rawOpenfunds == null ? 1 : (1 + Borsh.len(rawOpenfunds)));
   }

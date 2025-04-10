@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.anchor.GlamProgram;
+import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -186,7 +186,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
     if (stakeAuthorize != StakeAuthorize.Staker) {
       throw new IllegalStateException("Only the Staker authority may be changed.");
     }
-    return GlamProgram.stakeAuthorize(
+    return GlamProtocolProgram.stakeAuthorize(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -232,7 +232,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
                                             final PublicKey staker,
                                             final PublicKey withdrawer,
                                             final LockUp lockUp) {
-    return GlamProgram.stakeInitialize(
+    return GlamProtocolProgram.stakeInitialize(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -253,7 +253,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   public Instruction delegateStakeAccount(final PublicKey initializedStakeAccount,
                                           final PublicKey validatorVoteAccount,
                                           final PublicKey stakeAuthority) {
-    return GlamProgram.stakeDelegateStake(
+    return GlamProtocolProgram.stakeDelegateStake(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -269,7 +269,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   public Instruction reDelegateStakeAccount(final StakeAccount delegatedStakeAccount,
                                             final PublicKey uninitializedStakeAccount,
                                             final PublicKey validatorVoteAccount) {
-    return GlamProgram.stakeRedelegate(
+    return GlamProtocolProgram.stakeRedelegate(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -286,7 +286,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   public Instruction splitStakeAccount(final StakeAccount splitStakeAccount,
                                        final PublicKey unInitializedStakeAccount,
                                        final long lamports) {
-    return GlamProgram.stakeSplit(
+    return GlamProtocolProgram.stakeSplit(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -300,7 +300,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
 
   @Override
   public Instruction mergeStakeAccounts(final StakeAccount destinationStakeAccount, final PublicKey srcStakeAccount) {
-    return GlamProgram.stakeMerge(
+    return GlamProtocolProgram.stakeMerge(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -315,7 +315,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   public Instruction withdrawStakeAccount(final StakeAccount stakeAccount,
                                           final PublicKey recipient,
                                           final long lamports) {
-    return GlamProgram.stakeWithdraw(
+    return GlamProtocolProgram.stakeWithdraw(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -327,7 +327,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   }
 
   private Instruction deactivateStakeAccount(final PublicKey delegatedStakeAccount) {
-    return GlamProgram.stakeDeactivate(
+    return GlamProtocolProgram.stakeDeactivate(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -351,7 +351,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   public Instruction moveStake(final StakeAccount sourceStakeAccount,
                                final PublicKey destinationStakeAccount,
                                final long lamports) {
-    return GlamProgram.stakeMoveStake(
+    return GlamProtocolProgram.stakeMoveStake(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -367,7 +367,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
   public Instruction moveLamports(final StakeAccount sourceStakeAccount,
                                   final PublicKey destinationStakeAccount,
                                   final long lamports) {
-    return GlamProgram.stakeMoveLamports(
+    return GlamProtocolProgram.stakeMoveLamports(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -381,7 +381,7 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
 
   @Override
   public Instruction jupiterSetMaxSwapSlippage(final int slippageBps) {
-    return GlamProgram.jupiterSetMaxSwapSlippage(
+    return GlamProtocolProgram.jupiterSetMaxSwapSlippage(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         feePayer.publicKey(),

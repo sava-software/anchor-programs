@@ -4,7 +4,7 @@ import software.sava.anchor.programs.drift.*;
 import software.sava.anchor.programs.drift.anchor.types.ModifyOrderParams;
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
 import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
-import software.sava.anchor.programs.glam.anchor.GlamProgram;
+import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.anchor.programs.glam.anchor.types.*;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -65,7 +65,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                     final int subAccountId,
                                     final String name) {
     final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
-    return GlamProgram.driftInitializeUser(
+    return GlamProtocolProgram.driftInitializeUser(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -84,7 +84,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   @Override
   public Instruction initializeUserStats(final PublicKey authority, final PublicKey payerKey) {
     final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
-    return GlamProgram.driftInitializeUserStats(
+    return GlamProtocolProgram.driftInitializeUserStats(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -106,7 +106,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                              final long amount,
                              final boolean reduceOnly) {
     final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
-    return GlamProgram.driftDeposit(
+    return GlamProtocolProgram.driftDeposit(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
@@ -142,7 +142,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                               final long amount,
                               final boolean reduceOnly) {
     final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
-    return GlamProgram.driftWithdraw(
+    return GlamProtocolProgram.driftWithdraw(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
@@ -163,7 +163,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
   @Override
   public Instruction settlePnl(final int marketIndex) {
-    return delegatedDriftClient.settlePnl(user, feePayer.publicKey(), marketIndex);
+    throw new UnsupportedOperationException("TODO: settlePNL");
   }
 
   @Override
@@ -289,7 +289,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
   @Override
   public Instruction placeOrders(final OrderParams[] orderParams, final PublicKey authority, final PublicKey user) {
-    return GlamProgram.driftPlaceOrders(
+    return GlamProtocolProgram.driftPlaceOrders(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
@@ -303,7 +303,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
 
   @Override
   public Instruction cancelOrders(final PublicKey authority, final PublicKey user, final int[] orderIds) {
-    return GlamProgram.driftCancelOrdersByIds(
+    return GlamProtocolProgram.driftCancelOrdersByIds(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
@@ -329,7 +329,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   public Instruction cancelAllOrders(final PublicKey authority,
                                      final PublicKey user,
                                      final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
-    return GlamProgram.driftCancelOrders(
+    return GlamProtocolProgram.driftCancelOrders(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
@@ -347,7 +347,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   public Instruction cancelAllSpotOrders(final PublicKey authority,
                                          final PublicKey user,
                                          final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
-    return GlamProgram.driftCancelOrders(
+    return GlamProtocolProgram.driftCancelOrders(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
@@ -365,7 +365,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   public Instruction cancelAllPerpOrders(final PublicKey authority,
                                          final PublicKey user,
                                          final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
-    return GlamProgram.driftCancelOrders(
+    return GlamProtocolProgram.driftCancelOrders(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
@@ -384,7 +384,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                      final PublicKey user,
                                      final MarketConfig marketConfig,
                                      final software.sava.anchor.programs.drift.anchor.types.PositionDirection direction) {
-    return GlamProgram.driftCancelOrders(
+    return GlamProtocolProgram.driftCancelOrders(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
@@ -422,7 +422,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                  final PublicKey user,
                                  final OptionalInt orderId,
                                  final software.sava.anchor.programs.drift.anchor.types.ModifyOrderParams modifyOrderParams) {
-    return GlamProgram.driftModifyOrder(
+    return GlamProtocolProgram.driftModifyOrder(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),

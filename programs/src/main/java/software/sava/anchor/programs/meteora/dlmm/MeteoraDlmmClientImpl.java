@@ -38,6 +38,34 @@ record MeteoraDlmmClientImpl(SolanaAccounts solanaAccounts,
   }
 
   @Override
+  public CompletableFuture<List<AccountInfo<LbPair>>> fetchPairs(final SolanaRpcClient rpcClient) {
+    return rpcClient.getProgramAccounts(
+        meteoraAccounts.dlmmProgram(),
+        List.of(
+            LbPair.SIZE_FILTER,
+            Filter.createMemCompFilter(0, meteoraAccounts.lbPairDiscriminator().data())
+        ),
+        LbPair.FACTORY
+    );
+  }
+
+  @Override
+  public CompletableFuture<List<AccountInfo<LbPair>>> fetchPairs(final SolanaRpcClient rpcClient,
+                                                                 final PublicKey xMint,
+                                                                 final PublicKey yMint) {
+    return rpcClient.getProgramAccounts(
+        meteoraAccounts.dlmmProgram(),
+        List.of(
+            LbPair.SIZE_FILTER,
+            Filter.createMemCompFilter(0, meteoraAccounts.lbPairDiscriminator().data()),
+            LbPair.createTokenXMintFilter(xMint),
+            LbPair.createTokenYMintFilter(yMint)
+        ),
+        LbPair.FACTORY
+    );
+  }
+
+  @Override
   public Instruction initializePosition(final PublicKey positionKey,
                                         final PublicKey lbPairKey,
                                         final int lowerBinId,

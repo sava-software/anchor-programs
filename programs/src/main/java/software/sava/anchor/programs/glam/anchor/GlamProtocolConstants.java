@@ -1,6 +1,12 @@
 package software.sava.anchor.programs.glam.anchor;
 
-public final class GlamConstants {
+public final class GlamProtocolConstants {
+
+  public static final String SEED_ACCOUNT_POLICY = """
+      account-policy""";
+
+  public static final String SEED_ESCROW = """
+      escrow""";
 
   public static final String SEED_METADATA = """
       metadata""";
@@ -14,6 +20,6 @@ public final class GlamConstants {
   public static final String SEED_VAULT = """
       vault""";
 
-  private GlamConstants() {
+  private GlamProtocolConstants() {
   }
 }

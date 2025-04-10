@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.anchor.GlamProgram;
+import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.anchor.programs.jupiter.JupiterAccounts;
 import software.sava.anchor.programs.jupiter.governance.anchor.types.GovernanceParameters;
 import software.sava.anchor.programs.jupiter.governance.anchor.types.ProposalInstruction;
@@ -40,7 +40,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
   public Instruction newEscrow(final PublicKey escrowOwnerKey,
                                final PublicKey escrowKey,
                                final PublicKey payer) {
-    return GlamProgram.jupiterVoteNewEscrow(
+    return GlamProtocolProgram.jupiterVoteNewEscrow(
         glamAccounts.invokedProgram(),
         solanaAccounts,
         glamKey,
@@ -64,7 +64,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
           escrowOwnerKey, voter
       ));
     }
-    return GlamProgram.jupiterGovNewVote(
+    return GlamProtocolProgram.jupiterGovNewVote(
         glamAccounts.invokedProgram(),
         solanaAccounts,
         glamKey,
@@ -84,7 +84,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                               final PublicKey proposal,
                               final PublicKey voteKey,
                               final int side) {
-    return GlamProgram.jupiterVoteCastVote(
+    return GlamProtocolProgram.jupiterVoteCastVote(
         glamAccounts.invokedProgram(),
         glamKey,
         escrowOwnerKey,
@@ -105,7 +105,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                               final PublicKey voteKey,
                               final int side,
                               final int expectedSide) {
-    return GlamProgram.jupiterVoteCastVoteChecked(
+    return GlamProtocolProgram.jupiterVoteCastVoteChecked(
         glamAccounts.invokedProgram(),
         glamKey,
         escrowOwnerKey,
@@ -128,7 +128,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                           final PublicKey payerKey,
                                           final PublicKey sourceTokensKey,
                                           final long amount) {
-    return GlamProgram.jupiterVoteIncreaseLockedAmount(
+    return GlamProtocolProgram.jupiterVoteIncreaseLockedAmount(
         glamAccounts.invokedProgram(),
         glamKey,
         escrowOwnerKey,
@@ -148,7 +148,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                    final PublicKey escrowKey,
                                    final PublicKey escrowOwnerKey,
                                    final boolean maxLock) {
-    return GlamProgram.jupiterVoteToggleMaxLock(
+    return GlamProtocolProgram.jupiterVoteToggleMaxLock(
         glamAccounts.invokedProgram(),
         glamKey,
         escrowOwnerKey,
@@ -167,7 +167,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                               final PublicKey escrowTokensKey,
                               final PublicKey payerKey,
                               final PublicKey destinationTokensKey) {
-    return GlamProgram.jupiterVoteWithdraw(
+    return GlamProtocolProgram.jupiterVoteWithdraw(
         glamAccounts.invokedProgram(),
         glamKey,
         escrowOwnerKey,
@@ -188,7 +188,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                           final PublicKey partialUnstakeKey,
                                           final long amount,
                                           final String memo) {
-    return GlamProgram.jupiterVoteOpenPartialUnstaking(
+    return GlamProtocolProgram.jupiterVoteOpenPartialUnstaking(
         glamAccounts.invokedProgram(),
         solanaAccounts,
         glamKey,
@@ -208,7 +208,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                            final PublicKey escrowKey,
                                            final PublicKey escrowOwnerKey,
                                            final PublicKey partialUnstakeKey) {
-    return GlamProgram.jupiterVoteMergePartialUnstaking(
+    return GlamProtocolProgram.jupiterVoteMergePartialUnstaking(
         glamAccounts.invokedProgram(),
         glamKey,
         escrowOwnerKey,
@@ -228,7 +228,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                               final PublicKey partialUnstakeKey,
                                               final PublicKey payerKey,
                                               final PublicKey destinationTokensKey) {
-    return GlamProgram.jupiterVoteWithdrawPartialUnstaking(
+    return GlamProtocolProgram.jupiterVoteWithdrawPartialUnstaking(
         glamAccounts.invokedProgram(),
         glamKey,
         escrowOwnerKey,

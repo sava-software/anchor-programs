@@ -25,7 +25,12 @@ public sealed interface EngineFieldValue extends RustEnum permits
   EngineFieldValue.Timestamp,
   EngineFieldValue.VecPubkey,
   EngineFieldValue.VecU32,
-  EngineFieldValue.VecPricedAssets {
+  EngineFieldValue.VecPricedAssets,
+  EngineFieldValue.Ledger,
+  EngineFieldValue.FeeStructure,
+  EngineFieldValue.FeeParams,
+  EngineFieldValue.AccruedFees,
+  EngineFieldValue.Valuation {
 
   static EngineFieldValue read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -46,6 +51,11 @@ public sealed interface EngineFieldValue extends RustEnum permits
       case 12 -> VecPubkey.read(_data, i);
       case 13 -> VecU32.read(_data, i);
       case 14 -> VecPricedAssets.read(_data, i);
+      case 15 -> Ledger.read(_data, i);
+      case 16 -> FeeStructure.read(_data, i);
+      case 17 -> FeeParams.read(_data, i);
+      case 18 -> AccruedFees.read(_data, i);
+      case 19 -> Valuation.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [EngineFieldValue]", ordinal
       ));
@@ -296,6 +306,82 @@ public sealed interface EngineFieldValue extends RustEnum permits
     @Override
     public int ordinal() {
       return 14;
+    }
+  }
+
+  record Ledger(LedgerEntry[] val) implements EngineFieldValue {
+
+    public static Ledger read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var val = Borsh.readVector(LedgerEntry.class, LedgerEntry::read, _data, offset);
+      return new Ledger(val);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      i += Borsh.writeVector(val, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 1 + Borsh.lenVector(val);
+    }
+
+    @Override
+    public int ordinal() {
+      return 15;
+    }
+  }
+
+  record FeeStructure(FeeStructure val) implements BorshEnum, EngineFieldValue {
+
+    public static FeeStructure read(final byte[] _data, final int offset) {
+      return new FeeStructure(FeeStructure.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 16;
+    }
+  }
+
+  record FeeParams(FeeParams val) implements BorshEnum, EngineFieldValue {
+
+    public static FeeParams read(final byte[] _data, final int offset) {
+      return new FeeParams(FeeParams.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 17;
+    }
+  }
+
+  record AccruedFees(AccruedFees val) implements BorshEnum, EngineFieldValue {
+
+    public static AccruedFees read(final byte[] _data, final int offset) {
+      return new AccruedFees(AccruedFees.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 18;
+    }
+  }
+
+  record Valuation(Valuation val) implements BorshEnum, EngineFieldValue {
+
+    public static Valuation read(final byte[] _data, final int offset) {
+      return new Valuation(Valuation.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 19;
     }
   }
 }

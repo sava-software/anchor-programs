@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.anchor.GlamProgram;
+import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -59,7 +59,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                 final PublicKey poolTokenATA,
                                 final long lamportsIn) {
     final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
-    return GlamProgram.stakePoolDepositSol(
+    return GlamProtocolProgram.stakePoolDepositSol(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -85,7 +85,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                             final long lamportsIn,
                                             final long minimumPoolTokensOut) {
     final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
-    return GlamProgram.stakePoolDepositSolWithSlippage(
+    return GlamProtocolProgram.stakePoolDepositSolWithSlippage(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -112,7 +112,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                   final PublicKey validatorStakeAccount,
                                   final PublicKey poolTokenATA) {
     final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
-    return GlamProgram.stakePoolDepositStake(
+    return GlamProtocolProgram.stakePoolDepositStake(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -141,7 +141,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                               final PublicKey poolTokenATA,
                                               final long minimumPoolTokensOut) {
     final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
-    return GlamProgram.stakePoolDepositStakeWithSlippage(
+    return GlamProtocolProgram.stakePoolDepositStakeWithSlippage(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -169,7 +169,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                  final PublicKey poolTokenATA,
                                  final long poolTokenAmount) {
     final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
-    return GlamProgram.stakePoolWithdrawSol(
+    return GlamProtocolProgram.stakePoolWithdrawSol(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -194,7 +194,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                              final long poolTokenAmount,
                                              final long lamportsOut) {
     final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), stakePoolProgram);
-    return GlamProgram.stakePoolWithdrawSolWithSlippage(
+    return GlamProtocolProgram.stakePoolWithdrawSolWithSlippage(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -222,7 +222,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                    final PublicKey poolTokenATA,
                                    final long poolTokenAmount) {
     final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), poolProgram);
-    return GlamProgram.stakePoolWithdrawStake(
+    return GlamProtocolProgram.stakePoolWithdrawStake(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -252,7 +252,7 @@ final class GlamStakePoolProgramClientImpl implements GlamStakePoolProgramClient
                                                final long poolTokenAmount,
                                                final long lamportsOut) {
     final var stakePoolWithdrawAuthority = StakePoolProgram.findStakePoolWithdrawAuthority(stakePoolState.address(), poolProgram);
-    return GlamProgram.stakePoolWithdrawStakeWithSlippage(
+    return GlamProtocolProgram.stakePoolWithdrawStakeWithSlippage(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),

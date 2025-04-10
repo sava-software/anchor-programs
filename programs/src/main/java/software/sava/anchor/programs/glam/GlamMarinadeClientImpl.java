@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.anchor.GlamProgram;
+import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.anchor.programs.marinade.MarinadeAccounts;
 import software.sava.anchor.programs.marinade.anchor.types.State;
 import software.sava.core.accounts.PublicKey;
@@ -54,7 +54,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
 
   @Override
   public Instruction marinadeDeposit(final PublicKey mSolTokenAccount, final long lamports) {
-    return GlamProgram.marinadeDeposit(
+    return GlamProtocolProgram.marinadeDeposit(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -80,7 +80,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
                                          final PublicKey mSolTokenAccount,
                                          final PublicKey validatorPublicKey,
                                          final int validatorIndex) {
-    return GlamProgram.marinadeDepositStakeAccount(
+    return GlamProtocolProgram.marinadeDepositStakeAccount(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -106,7 +106,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   public Instruction orderUnstake(final PublicKey mSolTokenAccount,
                                   final PublicKey ticketAccount,
                                   final long lamports) {
-    return GlamProgram.marinadeOrderUnstake(
+    return GlamProtocolProgram.marinadeOrderUnstake(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -125,7 +125,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
 
   @Override
   public Instruction claimTicket(final PublicKey ticketAccount) {
-    return GlamProgram.marinadeClaim(
+    return GlamProtocolProgram.marinadeClaim(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),

@@ -115,6 +115,12 @@ public interface MeteoraDlmmClient {
 
   CompletableFuture<List<AccountInfo<PositionV2>>> fetchPositions(final SolanaRpcClient rpcClient);
 
+  CompletableFuture<List<AccountInfo<LbPair>>> fetchPairs(final SolanaRpcClient rpcClient);
+
+  CompletableFuture<List<AccountInfo<LbPair>>> fetchPairs(final SolanaRpcClient rpcClient,
+                                                          final PublicKey xMint,
+                                                          final PublicKey yMint);
+
   Instruction initializePosition(final PublicKey positionKey,
                                  final PublicKey lbPairKey,
                                  final int lowerBinId,
@@ -651,8 +657,7 @@ public interface MeteoraDlmmClient {
         remainingAccountsInfo
     );
   }
-
-
+  
   Instruction closePosition(final PublicKey positionKey, final PublicKey rentReceiverKey);
 
   default Instruction closePosition(final PublicKey positionKey) {

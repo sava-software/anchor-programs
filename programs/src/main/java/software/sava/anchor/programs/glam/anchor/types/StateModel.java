@@ -3,11 +3,14 @@ package software.sava.anchor.programs.glam.anchor.types;
 import java.lang.Boolean;
 import java.lang.String;
 
+import java.util.OptionalLong;
+
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
+import static software.sava.core.encoding.ByteUtil.getInt64LE;
 
 public record StateModel(PublicKey id,
                          AccountType accountType,
@@ -25,6 +28,8 @@ public record StateModel(PublicKey id,
                          int[] driftMarketIndexesPerp,
                          int[] driftMarketIndexesSpot,
                          int[] driftOrderTypes,
+                         PublicKey baseAsset,
+                         OptionalLong maxCap,
                          Metadata metadata,
                          FundOpenfundsModel rawOpenfunds) implements Borsh {
 
@@ -44,6 +49,8 @@ public record StateModel(PublicKey id,
                                         final int[] driftMarketIndexesPerp,
                                         final int[] driftMarketIndexesSpot,
                                         final int[] driftOrderTypes,
+                                        final PublicKey baseAsset,
+                                        final OptionalLong maxCap,
                                         final Metadata metadata,
                                         final FundOpenfundsModel rawOpenfunds) {
     return new StateModel(id,
@@ -62,6 +69,8 @@ public record StateModel(PublicKey id,
                           driftMarketIndexesPerp,
                           driftMarketIndexesSpot,
                           driftOrderTypes,
+                          baseAsset,
+                          maxCap,
                           metadata,
                           rawOpenfunds);
   }
@@ -135,6 +144,14 @@ public record StateModel(PublicKey id,
     if (driftOrderTypes != null) {
       i += Borsh.lenVector(driftOrderTypes);
     }
+    final var baseAsset = _data[i++] == 0 ? null : readPubKey(_data, i);
+    if (baseAsset != null) {
+      i += 32;
+    }
+    final var maxCap = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+    if (maxCap.isPresent()) {
+      i += 8;
+    }
     final var metadata = _data[i++] == 0 ? null : Metadata.read(_data, i);
     if (metadata != null) {
       i += Borsh.len(metadata);
@@ -156,6 +173,8 @@ public record StateModel(PublicKey id,
                           driftMarketIndexesPerp,
                           driftMarketIndexesSpot,
                           driftOrderTypes,
+                          baseAsset,
+                          maxCap,
                           metadata,
                           rawOpenfunds);
   }
@@ -219,6 +238,8 @@ public record StateModel(PublicKey id,
       _data[i++] = 1;
       i += Borsh.writeVector(driftOrderTypes, _data, i);
     }
+    i += Borsh.writeOptional(baseAsset, _data, i);
+    i += Borsh.writeOptional(maxCap, _data, i);
     i += Borsh.writeOptional(metadata, _data, i);
     i += Borsh.writeOptional(rawOpenfunds, _data, i);
     return i - offset;
@@ -242,6 +263,8 @@ public record StateModel(PublicKey id,
          + (driftMarketIndexesPerp == null || driftMarketIndexesPerp.length == 0 ? 1 : (1 + Borsh.lenVector(driftMarketIndexesPerp)))
          + (driftMarketIndexesSpot == null || driftMarketIndexesSpot.length == 0 ? 1 : (1 + Borsh.lenVector(driftMarketIndexesSpot)))
          + (driftOrderTypes == null || driftOrderTypes.length == 0 ? 1 : (1 + Borsh.lenVector(driftOrderTypes)))
+         + (baseAsset == null ? 1 : (1 + 32))
+         + (maxCap == null || maxCap.isEmpty() ? 1 : (1 + 8))
          + (metadata == null ? 1 : (1 + Borsh.len(metadata)))
          + (rawOpenfunds == null ? 1 : (1 + Borsh.len(rawOpenfunds)));
   }

@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.anchor.GlamProgram;
+import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -343,7 +343,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction transferSolLamports(final PublicKey toPublicKey, final long lamports) {
-    return GlamProgram.systemTransfer(
+    return GlamProtocolProgram.systemTransfer(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
@@ -445,7 +445,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                    final PublicKey fromTokenAccount,
                                    final PublicKey toTokenAccount,
                                    final long scaledAmount) {
-    return GlamProgram.tokenTransfer(
+    return GlamProtocolProgram.tokenTransfer(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
@@ -464,7 +464,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                           final long scaledAmount,
                                           final int decimals,
                                           final PublicKey tokenMint) {
-    return GlamProgram.tokenTransferChecked(
+    return GlamProtocolProgram.tokenTransferChecked(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
@@ -480,7 +480,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction closeTokenAccount(final AccountMeta invokedTokenProgram, final PublicKey tokenAccount) {
-    return GlamProgram.tokenCloseAccount(
+    return GlamProtocolProgram.tokenCloseAccount(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),

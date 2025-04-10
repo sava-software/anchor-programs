@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.anchor.GlamProgram;
+import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.anchor.programs.jupiter.JupiterAccounts;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -64,7 +64,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                   final PublicKey outputMintKey,
                                   final PublicKey outputTokenProgram,
                                   final Instruction swapInstruction) {
-    return GlamProgram.jupiterSwap(
+    return GlamProtocolProgram.jupiterSwap(
         invokedProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
