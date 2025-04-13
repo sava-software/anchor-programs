@@ -11,5 +11,6 @@ record JupiterccountsRecord(PublicKey swapProgram, AccountMeta invokedSwapProgra
                             PublicKey jupTokenMint,
                             PublicKey jupBaseKey,
                             PublicKey lockerKey,
-                            PublicKey governorKey) implements JupiterAccounts {
+                            PublicKey governorKey,
+                            AccountMeta invokedMerkleDistributorProgram) implements JupiterAccounts {
 }

@@ -300,4 +300,35 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                     final ProposalInstruction[] instructions) {
     throw new UnsupportedOperationException("TODO: createProposal");
   }
+
+  @Override
+  public Instruction newClaimAndStake(final PublicKey claimStatusKey,
+                                      final PublicKey fromKey,
+                                      final PublicKey distributor,
+                                      final PublicKey operator,
+                                      final PublicKey escrowTokensKey,
+                                      final PublicKey tokenProgram,
+                                      final long amountUnlocked,
+                                      final long amountLocked,
+                                      final byte[][] proof) {
+    return GlamProtocolProgram.merkleDistributorNewClaimAndStake(
+        glamAccounts.invokedProgram(),
+        solanaAccounts,
+        glamKey,
+        escrowOwnerKey,
+        feePayer,
+        jupiterAccounts.invokedMerkleDistributorProgram().publicKey(),
+        distributor,
+        claimStatusKey,
+        fromKey,
+        tokenProgram,
+        jupiterAccounts.voteProgram(),
+        jupiterAccounts.lockerKey(),
+        escrowKey,
+        escrowTokensKey,
+        amountUnlocked,
+        amountLocked,
+        proof
+    );
+  }
 }

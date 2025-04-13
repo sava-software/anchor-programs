@@ -11,6 +11,8 @@ import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
+import software.sava.solana.programs.token.AssociatedTokenProgram;
+import software.sava.solana.web2.jupiter.client.http.response.ClaimProof;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -260,4 +262,54 @@ public interface JupiterVoteClient {
                              final int proposalType,
                              final int maxOption,
                              final ProposalInstruction[] instructions);
+
+  Instruction newClaimAndStake(final PublicKey distributor,
+                               final PublicKey claimStatusKey,
+                               final PublicKey fromKey,
+                               final PublicKey operator,
+                               final PublicKey escrowTokensKey,
+                               final PublicKey tokenProgram,
+                               final long amountUnlocked,
+                               final long amountLocked,
+                               final byte[][] proof);
+
+  default Instruction newClaimAndStake(final PublicKey operator,
+                                       final PublicKey tokenProgram,
+                                       final ClaimProof claimProof) {
+    final var distributor = claimProof.merkleTree();
+    final var claimStatusKey = jupiterAccounts().deriveClaimStatus(escrowOwnerKey(), distributor).publicKey();
+    final var mint = claimProof.mint();
+    final var solanaAccounts = solanaAccounts();
+    final var distributorTokensKey = AssociatedTokenProgram.findATA(
+        solanaAccounts,
+        distributor,
+        tokenProgram,
+        mint
+    ).publicKey();
+    final var escrowTokensKey = AssociatedTokenProgram.findATA(
+        solanaAccounts,
+        escrowKey(),
+        tokenProgram,
+        mint
+    ).publicKey();
+    return newClaimAndStake(
+        claimStatusKey,
+        distributorTokensKey,
+        distributor,
+        operator,
+        escrowTokensKey,
+        tokenProgram,
+        claimProof.amount(),
+        claimProof.lockedAmount(),
+        claimProof.proof()
+    );
+  }
+
+  default Instruction newClaimAndStake(final PublicKey operator, final ClaimProof claimProof) {
+    return newClaimAndStake(operator, solanaAccounts().tokenProgram(), claimProof);
+  }
+
+  default Instruction newClaimAndStake(final ClaimProof claimProof) {
+    return newClaimAndStake(feePayer(), claimProof);
+  }
 }

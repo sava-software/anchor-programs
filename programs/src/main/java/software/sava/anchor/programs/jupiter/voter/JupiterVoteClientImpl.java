@@ -4,6 +4,7 @@ import software.sava.anchor.programs.jupiter.JupiterAccounts;
 import software.sava.anchor.programs.jupiter.governance.anchor.GovernProgram;
 import software.sava.anchor.programs.jupiter.governance.anchor.types.GovernanceParameters;
 import software.sava.anchor.programs.jupiter.governance.anchor.types.ProposalInstruction;
+import software.sava.anchor.programs.jupiter.merkle.distributor.anchor.MerkleDistributorProgram;
 import software.sava.anchor.programs.jupiter.voter.anchor.LockedVoterProgram;
 import software.sava.anchor.programs.jupiter.voter.anchor.types.LockerParams;
 import software.sava.core.accounts.PublicKey;
@@ -283,6 +284,35 @@ final class JupiterVoteClientImpl extends BaseJupiterVoteClient implements Jupit
         proposalType,
         maxOption,
         instructions
+    );
+  }
+
+  @Override
+  public Instruction newClaimAndStake(final PublicKey claimStatusKey,
+                                      final PublicKey fromKey,
+                                      final PublicKey distributor,
+                                      final PublicKey operator,
+                                      final PublicKey escrowTokensKey,
+                                      final PublicKey tokenProgram,
+                                      final long amountUnlocked,
+                                      final long amountLocked,
+                                      final byte[][] proof) {
+    return MerkleDistributorProgram.newClaimAndStake(
+        jupiterAccounts.invokedMerkleDistributorProgram(),
+        distributor,
+        claimStatusKey,
+        fromKey,
+        escrowOwnerKey,
+        operator,
+        tokenProgram,
+        solanaAccounts.systemProgram(),
+        jupiterAccounts.voteProgram(),
+        jupiterAccounts.lockerKey(),
+        escrowKey,
+        escrowTokensKey,
+        amountUnlocked,
+        amountLocked,
+        proof
     );
   }
 }

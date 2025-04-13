@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.jupiter;
 
+import software.sava.anchor.programs.jupiter.merkle.distributor.anchor.MerkleDistributorPDAs;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -25,7 +26,8 @@ public interface JupiterAccounts {
       "voTpe3tHQ7AjQHMapgSue2HJFAh2cGsdokqN3XqmVSj",
       "GovaE4iu227srtG2s3tZzB4RmWBzw8sTwrCLZz7kN7rY",
       "JUPyiwrYJFskUPiHa7hkeR8VUtAeFoSYbKedZNsDvCN",
-      "bJ1TRoFo2P6UHVwqdiipp6Qhp2HaaHpLowZ5LHet8Gm"
+      "bJ1TRoFo2P6UHVwqdiipp6Qhp2HaaHpLowZ5LHet8Gm",
+      "DiS3nNjFVMieMgmiQFm6wgJL7nevk4NrhXKLbtEH1Z2R"
   );
 
   static JupiterAccounts createAccounts(final PublicKey swapProgram,
@@ -34,7 +36,8 @@ public interface JupiterAccounts {
                                         final PublicKey voteProgram,
                                         final PublicKey govProgram,
                                         final PublicKey jupTokenMint,
-                                        final PublicKey jupBaseKey) {
+                                        final PublicKey jupBaseKey,
+                                        final PublicKey merkleDistributorProgram) {
     return new JupiterccountsRecord(
         swapProgram, createInvoked(swapProgram),
         limitOrderProgram, createInvoked(limitOrderProgram),
@@ -44,7 +47,8 @@ public interface JupiterAccounts {
         jupTokenMint,
         jupBaseKey,
         deriveLocker(voteProgram, jupBaseKey).publicKey(),
-        deriveGovernor(govProgram, jupBaseKey).publicKey()
+        deriveGovernor(govProgram, jupBaseKey).publicKey(),
+        createInvoked(merkleDistributorProgram)
     );
   }
 
@@ -54,7 +58,8 @@ public interface JupiterAccounts {
                                         final String voteProgram,
                                         final String govProgram,
                                         final String jupTokenMint,
-                                        final String jupBaseKey) {
+                                        final String jupBaseKey,
+                                        final String merkleDistributorProgram) {
     return createAccounts(
         fromBase58Encoded(swapProgram),
         fromBase58Encoded(limitOrderProgram),
@@ -62,7 +67,8 @@ public interface JupiterAccounts {
         fromBase58Encoded(voteProgram),
         fromBase58Encoded(govProgram),
         fromBase58Encoded(jupTokenMint),
-        fromBase58Encoded(jupBaseKey)
+        fromBase58Encoded(jupBaseKey),
+        fromBase58Encoded(merkleDistributorProgram)
     );
   }
 
@@ -234,4 +240,10 @@ public interface JupiterAccounts {
   PublicKey lockerKey();
 
   PublicKey governorKey();
+
+  AccountMeta invokedMerkleDistributorProgram();
+
+  default ProgramDerivedAddress deriveClaimStatus(final PublicKey claimantAccount, final PublicKey distributorAccount) {
+    return MerkleDistributorPDAs.claimStatusPDA(invokedMerkleDistributorProgram().publicKey(), claimantAccount, distributorAccount);
+  }
 }
