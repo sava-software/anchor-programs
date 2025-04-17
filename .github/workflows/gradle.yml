@@ -24,7 +24,7 @@ jobs:
           path: anchor-src-gen
 
       - uses: oracle-actions/setup-java@v1
-        if: ${{ vars.GRADLE_JAVA_VERSION != vars.JAVA_VERSION }}
+        if: ${{ vars.GRADLE_JAVA_VERSION != vars.JAVA_VERSION_GA }}
         with:
           website: ${{ vars.JDK_SRC }}
           release: ${{ vars.GRADLE_JAVA_VERSION }}
@@ -33,21 +33,21 @@ jobs:
           printf "org.gradle.java.home=%s" "$JAVA_HOME" > gradle.properties
           printf "org.gradle.java.home=%s" "$JAVA_HOME" > anchor-src-gen/gradle.properties
           java --version
-        if: ${{ vars.GRADLE_JAVA_VERSION != vars.JAVA_VERSION }}
+        if: ${{ vars.GRADLE_JAVA_VERSION != vars.JAVA_VERSION_GA }}
 
       - uses: oracle-actions/setup-java@v1
         with:
           website: ${{ vars.JDK_SRC }}
-          release: ${{ vars.JAVA_VERSION }}
+          release: ${{ vars.JAVA_VERSION_GA }}
 
       - uses: gradle/actions/wrapper-validation@v3
 
       - name: Generate Source & Check
         run: |
           cd ./anchor-src-gen
-          ./genSrc.sh --tjv="${{ vars.JAVA_VERSION }}" --tl=2 --bdm=200 --nt=5 --sd="../programs/src/main/java" --bp="software.sava.anchor.programs" --mn="software.sava.anchor_programs" --p="../main_net_programs.json" --rpc="${{ secrets.RPC_URL }}"
+          ./genSrc.sh --tjv="${{ vars.JAVA_VERSION_GA }}" --tl=2 --bdm=200 --nt=5 --sd="../programs/src/main/java" --bp="software.sava.anchor.programs" --mn="software.sava.anchor_programs" --p="../main_net_programs.json" --rpc="${{ secrets.RPC_URL }}"
           cd ..
-          ./gradlew --stacktrace --no-daemon -PjavaVersion=${{ vars.JAVA_VERSION }} check
+          ./gradlew --stacktrace --no-daemon -PjavaVersion=${{ vars.JAVA_VERSION_GA }} check
         env:
           GITHUB_ACTOR: ${{ secrets.GITHUB_ACTOR }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
