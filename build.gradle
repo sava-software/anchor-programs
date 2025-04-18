@@ -8,8 +8,8 @@ final GPR_USER = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR
 final GPR_TOKEN = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
 
 subprojects {
-  apply plugin: 'java-library'
-  apply plugin: 'maven-publish'
+  apply(plugin: 'java-library')
+  apply(plugin: 'maven-publish')
 
   project.group = 'software.sava'
   project.version = "$VERSION"

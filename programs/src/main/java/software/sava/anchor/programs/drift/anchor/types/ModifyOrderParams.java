@@ -15,7 +15,7 @@ public record ModifyOrderParams(PositionDirection direction,
                                 OptionalLong price,
                                 Boolean reduceOnly,
                                 PostOnlyParam postOnly,
-                                Boolean immediateOrCancel,
+                                OptionalInt immediateOrCancel,
                                 OptionalLong maxTs,
                                 OptionalLong triggerPrice,
                                 OrderTriggerCondition triggerCondition,
@@ -50,8 +50,8 @@ public record ModifyOrderParams(PositionDirection direction,
     if (postOnly != null) {
       i += Borsh.len(postOnly);
     }
-    final var immediateOrCancel = _data[i++] == 0 ? null : _data[i] == 1;
-    if (immediateOrCancel != null) {
+    final var immediateOrCancel = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
+    if (immediateOrCancel.isPresent()) {
       ++i;
     }
     final var maxTs = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
@@ -107,7 +107,7 @@ public record ModifyOrderParams(PositionDirection direction,
     i += Borsh.writeOptional(price, _data, i);
     i += Borsh.writeOptional(reduceOnly, _data, i);
     i += Borsh.writeOptional(postOnly, _data, i);
-    i += Borsh.writeOptional(immediateOrCancel, _data, i);
+    i += Borsh.writeOptionalbyte(immediateOrCancel, _data, i);
     i += Borsh.writeOptional(maxTs, _data, i);
     i += Borsh.writeOptional(triggerPrice, _data, i);
     i += Borsh.writeOptional(triggerCondition, _data, i);
@@ -126,7 +126,7 @@ public record ModifyOrderParams(PositionDirection direction,
          + (price == null || price.isEmpty() ? 1 : (1 + 8))
          + (reduceOnly == null ? 1 : (1 + 1))
          + (postOnly == null ? 1 : (1 + Borsh.len(postOnly)))
-         + (immediateOrCancel == null ? 1 : (1 + 1))
+         + (immediateOrCancel == null || immediateOrCancel.isEmpty() ? 1 : (1 + 1))
          + (maxTs == null || maxTs.isEmpty() ? 1 : (1 + 8))
          + (triggerPrice == null || triggerPrice.isEmpty() ? 1 : (1 + 8))
          + (triggerCondition == null ? 1 : (1 + Borsh.len(triggerCondition)))

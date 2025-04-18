@@ -111,8 +111,7 @@
   {
     "name": "metaDAO Autocrat",
     "program": "autowMzCbM29YXMgVG3T62Hkgo7RcyrvgQQkd54fDQL",
-    "package": "metadao.autocrat",
-    "idlFile": "idls/metadao/autocrat.json"
+    "package": "metadao.autocrat"
   },
   {
     "name": "metaDAO amm",
