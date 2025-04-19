@@ -38,7 +38,8 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.InvalidPricingOracle,
     GlamProtocolError.PricingError,
     GlamProtocolError.PriceTooOld,
-    GlamProtocolError.UnpricedExternalAccounts,
+    GlamProtocolError.ExternalAccountsNotPriced,
+    GlamProtocolError.VaultAssetsNotPriced,
     GlamProtocolError.VaultNotPriced,
     GlamProtocolError.PositiveAumRequired,
     GlamProtocolError.MathError,
@@ -84,10 +85,11 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 51100 -> InvalidPricingOracle.INSTANCE;
       case 51101 -> PricingError.INSTANCE;
       case 51102 -> PriceTooOld.INSTANCE;
-      case 51103 -> UnpricedExternalAccounts.INSTANCE;
-      case 51104 -> VaultNotPriced.INSTANCE;
-      case 51105 -> PositiveAumRequired.INSTANCE;
-      case 51106 -> MathError.INSTANCE;
+      case 51103 -> ExternalAccountsNotPriced.INSTANCE;
+      case 51104 -> VaultAssetsNotPriced.INSTANCE;
+      case 51105 -> VaultNotPriced.INSTANCE;
+      case 51106 -> PositiveAumRequired.INSTANCE;
+      case 51107 -> MathError.INSTANCE;
       case 52000 -> TransfersDisabled.INSTANCE;
       case 52001 -> InvalidPolicyAccount.INSTANCE;
       case 52002 -> AmountTooBig.INSTANCE;
@@ -341,31 +343,38 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record UnpricedExternalAccounts(int code, String msg) implements GlamProtocolError {
+  record ExternalAccountsNotPriced(int code, String msg) implements GlamProtocolError {
 
-    public static final UnpricedExternalAccounts INSTANCE = new UnpricedExternalAccounts(
+    public static final ExternalAccountsNotPriced INSTANCE = new ExternalAccountsNotPriced(
         51103, "Not all external vault accounts are priced"
+    );
+  }
+
+  record VaultAssetsNotPriced(int code, String msg) implements GlamProtocolError {
+
+    public static final VaultAssetsNotPriced INSTANCE = new VaultAssetsNotPriced(
+        51104, "Not all vault assets are priced"
     );
   }
 
   record VaultNotPriced(int code, String msg) implements GlamProtocolError {
 
     public static final VaultNotPriced INSTANCE = new VaultNotPriced(
-        51104, "No priced assets found"
+        51105, "No priced assets found"
     );
   }
 
   record PositiveAumRequired(int code, String msg) implements GlamProtocolError {
 
     public static final PositiveAumRequired INSTANCE = new PositiveAumRequired(
-        51105, "AUM must be positive"
+        51106, "AUM must be positive"
     );
   }
 
   record MathError(int code, String msg) implements GlamProtocolError {
 
     public static final MathError INSTANCE = new MathError(
-        51106, "Math error"
+        51107, "Math error"
     );
   }
 
