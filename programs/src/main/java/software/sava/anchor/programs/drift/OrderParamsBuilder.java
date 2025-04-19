@@ -15,7 +15,7 @@ public final class OrderParamsBuilder {
   private int userOrderId;
   private long baseAssetAmount;
   private long price;
-  private int marketIndex = -1;
+  private int marketIndex;
   private boolean reduceOnly;
   private PostOnlyParam postOnly = PostOnlyParam.MustPostOnly;
   private EnumSet<OrderParamsBitFlag> orderParams;
@@ -146,6 +146,20 @@ public final class OrderParamsBuilder {
 
   public OrderParamsBuilder postOnly(final PostOnlyParam postOnly) {
     this.postOnly = postOnly;
+    return this;
+  }
+
+  public EnumSet<OrderParamsBitFlag> orderParams() {
+    return orderParams;
+  }
+
+  public OrderParamsBuilder orderParam(final OrderParamsBitFlag orderParam) {
+    this.orderParams.add(orderParam);
+    return this;
+  }
+
+  public OrderParamsBuilder orderParams(final EnumSet<OrderParamsBitFlag> orderParams) {
+    this.orderParams = orderParams;
     return this;
   }
 
