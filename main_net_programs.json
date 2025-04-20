@@ -14,6 +14,11 @@
     "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc"
   },
   {
+    "name": "GLAM Policy Program",
+    "program": "po1iCYakK3gHCLbuju4wGzFowTMpAJxkqK1iwUqMonY",
+    "package": "glam.policy"
+  },
+  {
     "name": "Jito Tip Distribution",
     "program": "4R3gSG8BpU4t19KYj8CfnbtRpnT8gtk4dvTHxVRwc2r7",
     "package": "jito.tip_distribution"
@@ -30,14 +35,14 @@
     "package": "jupiter.dca"
   },
   {
-    "name": "Jupiter Limit Order",
-    "program": "jupoNjAxXgZ4rjzxzPMP4oxduvQsQtZzyknqvzYNrNu",
-    "package": "jupiter.limit"
-  },
-  {
     "name": "Jupiter Governance",
     "program": "GovaE4iu227srtG2s3tZzB4RmWBzw8sTwrCLZz7kN7rY",
     "package": "jupiter.governance"
+  },
+  {
+    "name": "Jupiter Limit Order",
+    "program": "jupoNjAxXgZ4rjzxzPMP4oxduvQsQtZzyknqvzYNrNu",
+    "package": "jupiter.limit"
   },
   {
     "name": "Jupiter Locked Voter",
@@ -48,30 +53,6 @@
     "name": "Jupiter Swap",
     "program": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
     "package": "jupiter.swap"
-  },
-  {
-    "name": "merkle distributor",
-    "program": "DiS3nNjFVMieMgmiQFm6wgJL7nevk4NrhXKLbtEH1Z2R",
-    "package": "jupiter.merkle.distributor"
-  },
-  {
-    "name": "Marinade",
-    "program": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD"
-  },
-  {
-    "name": "Meteora DLMM",
-    "program": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
-    "package": "meteora.dlmm"
-  },
-  {
-    "name": "Meteora DLMM",
-    "program": "tLBro6JJuZNnpoad3p8pXKohE9f7f7tBZJpaeh6pXt1",
-    "package": "meteora.staging.dlmm"
-  },
-  {
-    "name": "Meteora Alpha Vault",
-    "program": "vaU6kP7iNEGkbmPkLmZfGwiGxd4Mob24QQCie5R9kd2",
-    "package": "meteora.alpha_vault"
   },
   {
     "name": "Kamino Farms",
@@ -89,24 +70,8 @@
     "package": "kamino.liquidity"
   },
   {
-    "name": "Pyth Push",
-    "program": "pythWSnswVUd12oZpeFP8e9CVaEqJg25g1Vtc2biRsT",
-    "package": "pyth.push"
-  },
-  {
-    "name": "Pyth Lazer",
-    "program": "pytd2yyk641x7ak7mkaasSJVXh6YYZnC7wTmtgAyxPt",
-    "package": "pyth.lazer"
-  },
-  {
-    "name": "Switchboard On-Demand",
-    "program": "SBondMDrcV3K4kxZR1HNVT7osZxAHVHgYXL5Ze1oMUv",
-    "package": "switchboard.on_demand"
-  },
-  {
-    "name": "Moonshot",
-    "program": "MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG",
-    "package": "moonshot"
+    "name": "Marinade",
+    "program": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD"
   },
   {
     "name": "metaDAO Autocrat",
@@ -119,8 +84,53 @@
     "package": "metadao.amm"
   },
   {
+    "name": "merkle distributor",
+    "program": "DiS3nNjFVMieMgmiQFm6wgJL7nevk4NrhXKLbtEH1Z2R",
+    "package": "jupiter.merkle.distributor"
+  },
+  {
     "name": "metaDAO Conditional Vault",
     "program": "VLTX1ishMBbcX3rdBWGssxawAo1Q2X2qxYFYqiGodVg",
     "package": "metadao.conditional_vault"
+  },
+  {
+    "name": "Meteora Alpha Vault",
+    "program": "vaU6kP7iNEGkbmPkLmZfGwiGxd4Mob24QQCie5R9kd2",
+    "package": "meteora.alpha_vault"
+  },
+  {
+    "name": "Meteora DLMM",
+    "program": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
+    "package": "meteora.dlmm"
+  },
+  {
+    "name": "Meteora DLMM Staging",
+    "program": "tLBro6JJuZNnpoad3p8pXKohE9f7f7tBZJpaeh6pXt1",
+    "package": "meteora.staging.dlmm"
+  },
+  {
+    "name": "Moonshot",
+    "program": "MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG",
+    "package": "moonshot"
+  },
+  {
+    "name": "Pyth Lazer",
+    "program": "pytd2yyk641x7ak7mkaasSJVXh6YYZnC7wTmtgAyxPt",
+    "package": "pyth.lazer"
+  },
+  {
+    "name": "Pyth Push",
+    "program": "pythWSnswVUd12oZpeFP8e9CVaEqJg25g1Vtc2biRsT",
+    "package": "pyth.push"
+  },
+  {
+    "name": "Raydium Launchpad",
+    "program": "LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj",
+    "package": "raydium.launchpad"
+  },
+  {
+    "name": "Switchboard On-Demand",
+    "program": "SBondMDrcV3K4kxZR1HNVT7osZxAHVHgYXL5Ze1oMUv",
+    "package": "switchboard.on_demand"
   }
 ]
