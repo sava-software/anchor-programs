@@ -1944,7 +1944,7 @@ public final class GlamProtocolProgram {
       createWrite(rewardsVaultKey),
       createWrite(rewardsTreasuryVaultKey),
       createRead(farmVaultsAuthorityKey),
-      createRead(scopePricesKey),
+      createRead(requireNonNullElse(scopePricesKey, invokedGlamProtocolProgramMeta.publicKey())),
       createRead(tokenProgramKey)
     );
 
@@ -2022,11 +2022,11 @@ public final class GlamProtocolProgram {
       createWrite(reserveSourceLiquidityKey),
       createWrite(borrowReserveLiquidityFeeReceiverKey),
       createWrite(userDestinationLiquidityKey),
-      createWrite(referrerTokenStateKey),
+      createWrite(requireNonNullElse(referrerTokenStateKey, invokedGlamProtocolProgramMeta.publicKey())),
       createRead(tokenProgramKey),
       createRead(instructionSysvarAccountKey),
-      createWrite(obligationFarmUserStateKey),
-      createWrite(reserveFarmStateKey),
+      createWrite(requireNonNullElse(obligationFarmUserStateKey, invokedGlamProtocolProgramMeta.publicKey())),
+      createWrite(requireNonNullElse(reserveFarmStateKey, invokedGlamProtocolProgramMeta.publicKey())),
       createRead(farmsProgramKey)
     );
 
@@ -2107,12 +2107,12 @@ public final class GlamProtocolProgram {
       createWrite(reserveCollateralMintKey),
       createWrite(reserveDestinationDepositCollateralKey),
       createWrite(userSourceLiquidityKey),
-      createRead(placeholderUserDestinationCollateralKey),
+      createRead(requireNonNullElse(placeholderUserDestinationCollateralKey, invokedGlamProtocolProgramMeta.publicKey())),
       createRead(collateralTokenProgramKey),
       createRead(liquidityTokenProgramKey),
       createRead(instructionSysvarAccountKey),
-      createWrite(obligationFarmUserStateKey),
-      createWrite(reserveFarmStateKey),
+      createWrite(requireNonNullElse(obligationFarmUserStateKey, invokedGlamProtocolProgramMeta.publicKey())),
+      createWrite(requireNonNullElse(reserveFarmStateKey, invokedGlamProtocolProgramMeta.publicKey())),
       createRead(farmsProgramKey)
     );
 
@@ -2315,7 +2315,7 @@ public final class GlamProtocolProgram {
       createRead(cpiProgramKey),
       createWritableSigner(feePayerKey),
       createWrite(userMetadataKey),
-      createRead(referrerUserMetadataKey),
+      createRead(requireNonNullElse(referrerUserMetadataKey, invokedGlamProtocolProgramMeta.publicKey())),
       createRead(solanaAccounts.rentSysVar()),
       createRead(solanaAccounts.systemProgram())
     );
@@ -2392,8 +2392,8 @@ public final class GlamProtocolProgram {
       createWrite(userSourceLiquidityKey),
       createRead(tokenProgramKey),
       createRead(instructionSysvarAccountKey),
-      createWrite(obligationFarmUserStateKey),
-      createWrite(reserveFarmStateKey),
+      createWrite(requireNonNullElse(obligationFarmUserStateKey, invokedGlamProtocolProgramMeta.publicKey())),
+      createWrite(requireNonNullElse(reserveFarmStateKey, invokedGlamProtocolProgramMeta.publicKey())),
       createRead(lendingMarketAuthorityKey),
       createRead(farmsProgramKey)
     );
@@ -2475,12 +2475,12 @@ public final class GlamProtocolProgram {
       createWrite(reserveCollateralMintKey),
       createWrite(reserveLiquiditySupplyKey),
       createWrite(userDestinationLiquidityKey),
-      createRead(placeholderUserDestinationCollateralKey),
+      createRead(requireNonNullElse(placeholderUserDestinationCollateralKey, invokedGlamProtocolProgramMeta.publicKey())),
       createRead(collateralTokenProgramKey),
       createRead(liquidityTokenProgramKey),
       createRead(instructionSysvarAccountKey),
-      createWrite(obligationFarmUserStateKey),
-      createWrite(reserveFarmStateKey),
+      createWrite(requireNonNullElse(obligationFarmUserStateKey, invokedGlamProtocolProgramMeta.publicKey())),
+      createWrite(requireNonNullElse(reserveFarmStateKey, invokedGlamProtocolProgramMeta.publicKey())),
       createRead(farmsProgramKey)
     );
 
@@ -2886,7 +2886,7 @@ public final class GlamProtocolProgram {
       createRead(cpiProgramKey),
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedGlamProtocolProgramMeta.publicKey())),
       createWrite(userTokenXKey),
       createWrite(userTokenYKey),
       createWrite(reserveXKey),
@@ -2968,7 +2968,7 @@ public final class GlamProtocolProgram {
       createRead(cpiProgramKey),
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedGlamProtocolProgramMeta.publicKey())),
       createWrite(userTokenXKey),
       createWrite(userTokenYKey),
       createWrite(reserveXKey),
@@ -3046,7 +3046,7 @@ public final class GlamProtocolProgram {
       createRead(cpiProgramKey),
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedGlamProtocolProgramMeta.publicKey())),
       createWrite(userTokenKey),
       createWrite(reserveKey),
       createRead(tokenMintKey),
@@ -3496,7 +3496,7 @@ public final class GlamProtocolProgram {
       createRead(cpiProgramKey),
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedGlamProtocolProgramMeta.publicKey())),
       createWrite(userTokenXKey),
       createWrite(userTokenYKey),
       createWrite(reserveXKey),
@@ -3582,7 +3582,7 @@ public final class GlamProtocolProgram {
       createRead(cpiProgramKey),
       createWrite(positionKey),
       createWrite(lbPairKey),
-      createWrite(binArrayBitmapExtensionKey),
+      createWrite(requireNonNullElse(binArrayBitmapExtensionKey, invokedGlamProtocolProgramMeta.publicKey())),
       createWrite(userTokenXKey),
       createWrite(userTokenYKey),
       createWrite(reserveXKey),
@@ -3689,7 +3689,7 @@ public final class GlamProtocolProgram {
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
       createWrite(lbPairKey),
-      createRead(binArrayBitmapExtensionKey),
+      createRead(requireNonNullElse(binArrayBitmapExtensionKey, invokedGlamProtocolProgramMeta.publicKey())),
       createWrite(reserveXKey),
       createWrite(reserveYKey),
       createWrite(userTokenInKey),
@@ -3697,7 +3697,7 @@ public final class GlamProtocolProgram {
       createRead(tokenXMintKey),
       createRead(tokenYMintKey),
       createWrite(oracleKey),
-      createWrite(hostFeeInKey),
+      createWrite(requireNonNullElse(hostFeeInKey, invokedGlamProtocolProgramMeta.publicKey())),
       createRead(tokenXProgramKey),
       createRead(tokenYProgramKey),
       createRead(memoProgramKey),
@@ -3788,7 +3788,7 @@ public final class GlamProtocolProgram {
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
       createWrite(lbPairKey),
-      createRead(binArrayBitmapExtensionKey),
+      createRead(requireNonNullElse(binArrayBitmapExtensionKey, invokedGlamProtocolProgramMeta.publicKey())),
       createWrite(reserveXKey),
       createWrite(reserveYKey),
       createWrite(userTokenInKey),
@@ -3796,7 +3796,7 @@ public final class GlamProtocolProgram {
       createRead(tokenXMintKey),
       createRead(tokenYMintKey),
       createWrite(oracleKey),
-      createWrite(hostFeeInKey),
+      createWrite(requireNonNullElse(hostFeeInKey, invokedGlamProtocolProgramMeta.publicKey())),
       createRead(tokenXProgramKey),
       createRead(tokenYProgramKey),
       createRead(memoProgramKey),
