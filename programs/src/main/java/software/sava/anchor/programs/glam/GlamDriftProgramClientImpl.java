@@ -405,7 +405,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         modifyOrderParams.price(),
         modifyOrderParams.reduceOnly(),
         mapPostOnlyParam(modifyOrderParams.postOnly()),
-        modifyOrderParams.immediateOrCancel().orElse(0) == 1,
+        modifyOrderParams.bitFlags().orElse(0) == 1,
         modifyOrderParams.maxTs(),
         modifyOrderParams.triggerPrice(),
         mapOrderTriggerCondition(modifyOrderParams.triggerCondition()),

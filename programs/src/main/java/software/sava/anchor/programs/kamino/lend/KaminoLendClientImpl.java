@@ -3,27 +3,11 @@ package software.sava.anchor.programs.kamino.lend;
 import software.sava.anchor.programs.kamino.KaminoAccounts;
 import software.sava.anchor.programs.kamino.lend.anchor.KaminoLendingProgram;
 import software.sava.anchor.programs.kamino.lend.anchor.types.InitObligationArgs;
-import software.sava.anchor.programs.kamino.lend.anchor.types.LendingMarket;
-import software.sava.anchor.programs.kamino.lend.anchor.types.Obligation;
 import software.sava.anchor.programs.kamino.lend.anchor.types.Reserve;
 import software.sava.core.accounts.PublicKey;
-import software.sava.core.accounts.Signer;
 import software.sava.core.accounts.SolanaAccounts;
-import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
-import software.sava.rpc.json.PrivateKeyEncoding;
-import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
-import software.sava.solana.programs.clients.NativeProgramClient;
-import systems.comodal.jsoniter.JsonIterator;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.nio.file.Files;
-import java.nio.file.Path;
-
-import static software.sava.rpc.json.http.request.Commitment.FINALIZED;
 
 final class KaminoLendClientImpl implements KaminoLendClient {
 
@@ -248,93 +232,5 @@ final class KaminoLendClientImpl implements KaminoLendClient {
         solanaAccounts.instructionsSysVar(),
         liquidityAmount
     );
-  }
-
-
-  public static void main(final String[] args) throws IOException {
-    var jsonConfig = Files.readAllBytes(Path.of(""));
-    var ji = JsonIterator.parse(jsonConfig).skipUntil("privateKey");
-    var signer = PrivateKeyEncoding.fromJsonPrivateKey(ji);
-    var feePayer = signer.publicKey();
-    final var endpoint = "";
-
-    final var solanaAccounts = SolanaAccounts.MAIN_NET;
-    final var nativeClient = NativeProgramClient.createClient(solanaAccounts);
-    final var nativeAccountClient = nativeClient.createAccountClient(AccountMeta.createFeePayer(feePayer));
-    final var kaminoClient = KaminoLendClient.createClient(nativeAccountClient);
-
-    final var referrer = feePayer; // PublicKey.fromBase58Encoded("");
-    final var referrerUserMetadataKey = KaminoAccounts
-        .userMetadataPda(referrer, kaminoClient.kaminoAccounts().kLendProgram())
-        .publicKey();
-
-    final var solMint = SolanaAccounts.MAIN_NET.wrappedSolTokenMint();
-    try (final var httpClient = HttpClient.newHttpClient()) {
-      final var rpcClient = SolanaRpcClient.createClient(URI.create(endpoint), httpClient);
-
-      final var kaminoAccounts = kaminoClient.kaminoAccounts();
-      final var kLendProgramId = kaminoAccounts.kLendProgram();
-
-
-      final var lendingMarketsFuture = KaminoLendClient.fetchLendingMarkets(rpcClient, kLendProgramId);
-      final var lendingMarkets = lendingMarketsFuture.join();
-      LendingMarket mainLendingMarket = null;
-      for (final var lendingMarketAccountInfo : lendingMarkets) {
-        final var lendingMarket = lendingMarketAccountInfo.data();
-        System.out.format("""
-                address: %s,
-                name: %s,
-                quote: %s,
-                refFeeBps: %d,
-                minDeposit: %d
-                
-                """,
-            lendingMarket._address(),
-            new String(lendingMarket.name()),
-            new String(lendingMarket.quoteCurrency()),
-            lendingMarket.referralFeeBps(),
-            lendingMarket.minInitialDepositAmount()
-        );
-      }
-
-
-      final var reserveAccountsFuture = KaminoLendClient.fetchReserveAccounts(rpcClient, kLendProgramId);
-      final var reserveAccounts = reserveAccountsFuture.join();
-      for (final var accountInfo : reserveAccounts) {
-        final var reserve = accountInfo.data();
-        final var lendingMarket = reserve.lendingMarket();
-        if (mainLendingMarket.equals(lendingMarket)) {
-          final var tokenMint = reserve.liquidity().mintPubkey();
-          if (tokenMint.equals(solMint)) {
-            System.out.println(reserve);
-            final var marketPDAs = MarketPDAs.createPDAs(kLendProgramId, reserve.lendingMarket());
-            final var liquidity = reserve.liquidity();
-            final var reservePDAs = kaminoAccounts.createReservePDAs(
-                marketPDAs,
-                liquidity.mintPubkey(),
-                liquidity.tokenProgram()
-            );
-            System.out.println(marketPDAs);
-            System.out.println(reservePDAs);
-          }
-        }
-      }
-
-      final var recentSlotFuture = rpcClient.getSlot(FINALIZED);
-      final var obligationMinRentFuture = rpcClient.getMinimumBalanceForRentExemption(Obligation.BYTES);
-
-      final var recentSlot = recentSlotFuture.join();
-      final var lookupTablePDA = nativeAccountClient.findLookupTableAddress(recentSlot);
-      final var createTableIx = nativeAccountClient.createLookupTable(lookupTablePDA, recentSlot);
-      final var initUserMetadataIx = kaminoClient.initUserMetadata(referrerUserMetadataKey, lookupTablePDA.publicKey());
-
-      final var obligationKey = PublicKey.readPubKey(Signer.generatePrivateKeyPairBytes());
-      final long obligationMinRent = obligationMinRentFuture.join();
-      final var initObligationIx = kaminoClient.initObligation(
-          null,
-          obligationKey,
-          new InitObligationArgs(0, 0)
-      );
-    }
   }
 }

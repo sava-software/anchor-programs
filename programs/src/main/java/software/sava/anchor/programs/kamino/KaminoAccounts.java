@@ -183,19 +183,18 @@ public interface KaminoAccounts {
     return referrerStatePda(referrer, kLendProgram());
   }
 
-  static ProgramDerivedAddress shortUrlPda(final PublicKey shortUrl,
-                                           final PublicKey programId) {
+  static ProgramDerivedAddress shortUrlPda(final String shortUrl, final PublicKey programId) {
 
     return PublicKey.findProgramAddress(
         List.of(
             "short_url".getBytes(US_ASCII),
-            shortUrl.toByteArray()
+            shortUrl.getBytes(US_ASCII)
         ),
         programId
     );
   }
 
-  default ProgramDerivedAddress shortUrlPda(final PublicKey shortUrl) {
+  default ProgramDerivedAddress shortUrlPda(final String shortUrl) {
     return shortUrlPda(shortUrl, kLendProgram());
   }
 

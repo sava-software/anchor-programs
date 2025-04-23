@@ -10,8 +10,9 @@
     "package": "drift.vaults"
   },
   {
-    "name": "Glam",
-    "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc"
+    "name": "Glam Protocol Program",
+    "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc",
+    "package": "glam"
   },
   {
     "name": "GLAM Policy Program",

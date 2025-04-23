@@ -2,9 +2,7 @@ package software.sava.anchor.programs.kamino.lend;
 
 import software.sava.anchor.programs.kamino.KaminoAccounts;
 import software.sava.anchor.programs.kamino.farms.anchor.types.FarmState;
-import software.sava.anchor.programs.kamino.lend.anchor.types.InitObligationArgs;
-import software.sava.anchor.programs.kamino.lend.anchor.types.LendingMarket;
-import software.sava.anchor.programs.kamino.lend.anchor.types.Reserve;
+import software.sava.anchor.programs.kamino.lend.anchor.types.*;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
@@ -60,6 +58,24 @@ public interface KaminoLendClient {
         kLendProgram,
         List.of(Reserve.SIZE_FILTER, Reserve.createLendingMarketFilter(lendingMarket)),
         Reserve.FACTORY
+    );
+  }
+
+  static CompletableFuture<List<AccountInfo<ReferrerState>>> fetchReferrerStateAccounts(final SolanaRpcClient rpcClient,
+                                                                                        final PublicKey kLendProgram) {
+    return rpcClient.getProgramAccounts(
+        kLendProgram,
+        List.of(ReferrerState.SIZE_FILTER),
+        ReferrerState.FACTORY
+    );
+  }
+
+  static CompletableFuture<List<AccountInfo<ReferrerTokenState>>> fetchReferrerTokenStateAccounts(final SolanaRpcClient rpcClient,
+                                                                                                  final PublicKey kLendProgram) {
+    return rpcClient.getProgramAccounts(
+        kLendProgram,
+        List.of(ReferrerTokenState.SIZE_FILTER),
+        ReferrerTokenState.FACTORY
     );
   }
 

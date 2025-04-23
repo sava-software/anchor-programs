@@ -9803,6 +9803,66 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator UPDATE_PERP_MARKET_PROTECTED_MAKER_PARAMS_DISCRIMINATOR = toDiscriminator(249, 213, 115, 34, 253, 239, 75, 173);
+
+  public static Instruction updatePerpMarketProtectedMakerParams(final AccountMeta invokedDriftProgramMeta,
+                                                                 final PublicKey adminKey,
+                                                                 final PublicKey stateKey,
+                                                                 final PublicKey perpMarketKey,
+                                                                 final OptionalInt protectedMakerLimitPriceDivisor,
+                                                                 final OptionalInt protectedMakerDynamicDivisor) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[
+        8
+        + (protectedMakerLimitPriceDivisor == null || protectedMakerLimitPriceDivisor.isEmpty() ? 1 : 2)
+        + (protectedMakerDynamicDivisor == null || protectedMakerDynamicDivisor.isEmpty() ? 1 : 2)
+    ];
+    int i = writeDiscriminator(UPDATE_PERP_MARKET_PROTECTED_MAKER_PARAMS_DISCRIMINATOR, _data, 0);
+    i += Borsh.writeOptionalbyte(protectedMakerLimitPriceDivisor, _data, i);
+    Borsh.writeOptionalbyte(protectedMakerDynamicDivisor, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketProtectedMakerParamsIxData(Discriminator discriminator, OptionalInt protectedMakerLimitPriceDivisor, OptionalInt protectedMakerDynamicDivisor) implements Borsh {  
+
+    public static UpdatePerpMarketProtectedMakerParamsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static UpdatePerpMarketProtectedMakerParamsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var protectedMakerLimitPriceDivisor = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
+      if (protectedMakerLimitPriceDivisor.isPresent()) {
+        ++i;
+      }
+      final var protectedMakerDynamicDivisor = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
+      return new UpdatePerpMarketProtectedMakerParamsIxData(discriminator, protectedMakerLimitPriceDivisor, protectedMakerDynamicDivisor);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeOptionalbyte(protectedMakerLimitPriceDivisor, _data, i);
+      i += Borsh.writeOptionalbyte(protectedMakerDynamicDivisor, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + (protectedMakerLimitPriceDivisor == null || protectedMakerLimitPriceDivisor.isEmpty() ? 1 : (1 + 1)) + (protectedMakerDynamicDivisor == null || protectedMakerDynamicDivisor.isEmpty() ? 1 : (1 + 1));
+    }
+  }
+
   public static final Discriminator UPDATE_SPOT_MARKET_FUEL_DISCRIMINATOR = toDiscriminator(226, 253, 76, 71, 17, 2, 171, 169);
 
   public static Instruction updateSpotMarketFuel(final AccountMeta invokedDriftProgramMeta,
