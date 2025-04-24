@@ -337,10 +337,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
     }
   }
 
-  record FeeStructure(FeeStructure val) implements BorshEnum, EngineFieldValue {
+  record FeeStructure(software.sava.anchor.programs.glam.anchor.types.FeeStructure val) implements BorshEnum, EngineFieldValue {
 
     public static FeeStructure read(final byte[] _data, final int offset) {
-      return new FeeStructure(FeeStructure.read(_data, offset));
+      return new FeeStructure(software.sava.anchor.programs.glam.anchor.types.FeeStructure.read(_data, offset));
     }
 
     @Override
@@ -349,10 +349,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
     }
   }
 
-  record FeeParams(FeeParams val) implements BorshEnum, EngineFieldValue {
+  record FeeParams(software.sava.anchor.programs.glam.anchor.types.FeeParams val) implements BorshEnum, EngineFieldValue {
 
     public static FeeParams read(final byte[] _data, final int offset) {
-      return new FeeParams(FeeParams.read(_data, offset));
+      return new FeeParams(software.sava.anchor.programs.glam.anchor.types.FeeParams.read(_data, offset));
     }
 
     @Override
@@ -361,10 +361,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
     }
   }
 
-  record AccruedFees(AccruedFees val) implements BorshEnum, EngineFieldValue {
+  record AccruedFees(software.sava.anchor.programs.glam.anchor.types.AccruedFees val) implements BorshEnum, EngineFieldValue {
 
     public static AccruedFees read(final byte[] _data, final int offset) {
-      return new AccruedFees(AccruedFees.read(_data, offset));
+      return new AccruedFees(software.sava.anchor.programs.glam.anchor.types.AccruedFees.read(_data, offset));
     }
 
     @Override
@@ -373,10 +373,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
     }
   }
 
-  record Valuation(Valuation val) implements BorshEnum, EngineFieldValue {
+  record Valuation(software.sava.anchor.programs.glam.anchor.types.Valuation val) implements BorshEnum, EngineFieldValue {
 
     public static Valuation read(final byte[] _data, final int offset) {
-      return new Valuation(Valuation.read(_data, offset));
+      return new Valuation(software.sava.anchor.programs.glam.anchor.types.Valuation.read(_data, offset));
     }
 
     @Override
