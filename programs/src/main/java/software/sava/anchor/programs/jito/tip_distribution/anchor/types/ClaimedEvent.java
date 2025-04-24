@@ -7,9 +7,13 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record ClaimedEvent(PublicKey tipDistributionAccount,
+public record ClaimedEvent(// [TipDistributionAccount] claimed from.
+                           PublicKey tipDistributionAccount,
+                           // User that paid for the claim, may or may not be the same as claimant.
                            PublicKey payer,
+                           // Account that received the funds.
                            PublicKey claimant,
+                           // Amount of funds to distribute.
                            long amount) implements Borsh {
 
   public static final int BYTES = 104;

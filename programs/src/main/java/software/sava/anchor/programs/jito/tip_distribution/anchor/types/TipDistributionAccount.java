@@ -14,6 +14,7 @@ import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 // The account that validators register as **tip_receiver** with the tip-payment program.
 public record TipDistributionAccount(PublicKey _address,
@@ -33,6 +34,9 @@ public record TipDistributionAccount(PublicKey _address,
                                      long expiresAt,
                                      // The bump used to generate this account
                                      int bump) implements Borsh {
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(85, 64, 113, 198, 234, 94, 120, 123);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int VALIDATOR_VOTE_ACCOUNT_OFFSET = 8;
   public static final int MERKLE_ROOT_UPLOAD_AUTHORITY_OFFSET = 40;

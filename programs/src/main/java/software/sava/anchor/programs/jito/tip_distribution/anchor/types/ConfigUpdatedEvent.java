@@ -5,7 +5,8 @@ import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 
-public record ConfigUpdatedEvent(PublicKey authority) implements Borsh {
+public record ConfigUpdatedEvent(// Who updated it.
+                                 PublicKey authority) implements Borsh {
 
   public static final int BYTES = 32;
 

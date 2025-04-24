@@ -5,7 +5,10 @@ import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 
-public record MerkleRootUploadedEvent(PublicKey merkleRootUploadAuthority, PublicKey tipDistributionAccount) implements Borsh {
+public record MerkleRootUploadedEvent(// Who uploaded the root.
+                                      PublicKey merkleRootUploadAuthority,
+                                      // Where the root was uploaded to.
+                                      PublicKey tipDistributionAccount) implements Borsh {
 
   public static final int BYTES = 64;
 

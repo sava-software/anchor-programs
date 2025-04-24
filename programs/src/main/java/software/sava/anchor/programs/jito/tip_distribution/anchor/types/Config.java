@@ -14,6 +14,7 @@ import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record Config(PublicKey _address,
                      Discriminator discriminator,
@@ -31,6 +32,9 @@ public record Config(PublicKey _address,
 
   public static final int BYTES = 83;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(155, 12, 170, 224, 30, 250, 204, 130);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int AUTHORITY_OFFSET = 8;
   public static final int EXPIRED_FUNDS_ACCOUNT_OFFSET = 40;

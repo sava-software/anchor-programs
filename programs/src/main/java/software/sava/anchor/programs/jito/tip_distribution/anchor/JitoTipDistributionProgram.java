@@ -13,6 +13,7 @@ import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
+import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
@@ -22,6 +23,156 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class JitoTipDistributionProgram {
+
+  public static final Discriminator CLAIM_DISCRIMINATOR = toDiscriminator(62, 198, 214, 193, 213, 159, 108, 210);
+
+  public static Instruction claim(final AccountMeta invokedJitoTipDistributionProgramMeta,
+                                  final PublicKey configKey,
+                                  final PublicKey tipDistributionAccountKey,
+                                  final PublicKey merkleRootUploadAuthorityKey,
+                                  // Status of the claim. Used to prevent the same party from claiming multiple times.
+                                  final PublicKey claimStatusKey,
+                                  // Receiver of the funds.
+                                  final PublicKey claimantKey,
+                                  // Who is paying for the claim.
+                                  final PublicKey payerKey,
+                                  final PublicKey systemProgramKey,
+                                  final int bump,
+                                  final long amount,
+                                  final byte[][] proof) {
+    final var keys = List.of(
+      createRead(configKey),
+      createWrite(tipDistributionAccountKey),
+      createReadOnlySigner(merkleRootUploadAuthorityKey),
+      createWrite(claimStatusKey),
+      createWrite(claimantKey),
+      createWritableSigner(payerKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[17 + Borsh.lenVectorArray(proof)];
+    int i = writeDiscriminator(CLAIM_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) bump;
+    ++i;
+    putInt64LE(_data, i, amount);
+    i += 8;
+    Borsh.writeVectorArray(proof, _data, i);
+
+    return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, _data);
+  }
+
+  public record ClaimIxData(Discriminator discriminator,
+                            int bump,
+                            long amount,
+                            byte[][] proof) implements Borsh {  
+
+    public static ClaimIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static ClaimIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var bump = _data[i] & 0xFF;
+      ++i;
+      final var amount = getInt64LE(_data, i);
+      i += 8;
+      final var proof = Borsh.readMultiDimensionbyteVectorArray(32, _data, i);
+      return new ClaimIxData(discriminator, bump, amount, proof);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) bump;
+      ++i;
+      putInt64LE(_data, i, amount);
+      i += 8;
+      i += Borsh.writeVectorArray(proof, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 1 + 8 + Borsh.lenVectorArray(proof);
+    }
+  }
+
+  public static final Discriminator CLOSE_CLAIM_STATUS_DISCRIMINATOR = toDiscriminator(163, 214, 191, 165, 245, 188, 17, 185);
+
+  public static Instruction closeClaimStatus(final AccountMeta invokedJitoTipDistributionProgramMeta,
+                                             final PublicKey configKey,
+                                             final PublicKey claimStatusKey,
+                                             // Receiver of the funds.
+                                             final PublicKey claimStatusPayerKey) {
+    final var keys = List.of(
+      createRead(configKey),
+      createWrite(claimStatusKey),
+      createWrite(claimStatusPayerKey)
+    );
+
+    return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, CLOSE_CLAIM_STATUS_DISCRIMINATOR);
+  }
+
+  public static final Discriminator CLOSE_TIP_DISTRIBUTION_ACCOUNT_DISCRIMINATOR = toDiscriminator(47, 136, 208, 190, 125, 243, 74, 227);
+
+  public static Instruction closeTipDistributionAccount(final AccountMeta invokedJitoTipDistributionProgramMeta,
+                                                        final PublicKey configKey,
+                                                        final PublicKey expiredFundsAccountKey,
+                                                        final PublicKey tipDistributionAccountKey,
+                                                        final PublicKey validatorVoteAccountKey,
+                                                        // Anyone can crank this instruction.
+                                                        final PublicKey signerKey,
+                                                        final long epoch) {
+    final var keys = List.of(
+      createRead(configKey),
+      createWrite(expiredFundsAccountKey),
+      createWrite(tipDistributionAccountKey),
+      createWrite(validatorVoteAccountKey),
+      createWritableSigner(signerKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(CLOSE_TIP_DISTRIBUTION_ACCOUNT_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, epoch);
+
+    return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, _data);
+  }
+
+  public record CloseTipDistributionAccountIxData(Discriminator discriminator, long epoch) implements Borsh {  
+
+    public static CloseTipDistributionAccountIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static CloseTipDistributionAccountIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var epoch = getInt64LE(_data, i);
+      return new CloseTipDistributionAccountIxData(discriminator, epoch);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, epoch);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
 
   public static final Discriminator INITIALIZE_DISCRIMINATOR = toDiscriminator(175, 175, 109, 31, 13, 152, 155, 237);
 
@@ -113,6 +264,69 @@ public final class JitoTipDistributionProgram {
     }
   }
 
+  public static final Discriminator INITIALIZE_MERKLE_ROOT_UPLOAD_CONFIG_DISCRIMINATOR = toDiscriminator(232, 87, 72, 14, 89, 40, 40, 27);
+
+  public static Instruction initializeMerkleRootUploadConfig(final AccountMeta invokedJitoTipDistributionProgramMeta,
+                                                             final PublicKey configKey,
+                                                             final PublicKey merkleRootUploadConfigKey,
+                                                             final PublicKey authorityKey,
+                                                             final PublicKey payerKey,
+                                                             final PublicKey systemProgramKey,
+                                                             final PublicKey authority,
+                                                             final PublicKey originalAuthority) {
+    final var keys = List.of(
+      createWrite(configKey),
+      createWrite(merkleRootUploadConfigKey),
+      createReadOnlySigner(authorityKey),
+      createWritableSigner(payerKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[72];
+    int i = writeDiscriminator(INITIALIZE_MERKLE_ROOT_UPLOAD_CONFIG_DISCRIMINATOR, _data, 0);
+    authority.write(_data, i);
+    i += 32;
+    originalAuthority.write(_data, i);
+
+    return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, _data);
+  }
+
+  public record InitializeMerkleRootUploadConfigIxData(Discriminator discriminator, PublicKey authority, PublicKey originalAuthority) implements Borsh {  
+
+    public static InitializeMerkleRootUploadConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 72;
+
+    public static InitializeMerkleRootUploadConfigIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var authority = readPubKey(_data, i);
+      i += 32;
+      final var originalAuthority = readPubKey(_data, i);
+      return new InitializeMerkleRootUploadConfigIxData(discriminator, authority, originalAuthority);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      authority.write(_data, i);
+      i += 32;
+      originalAuthority.write(_data, i);
+      i += 32;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator INITIALIZE_TIP_DISTRIBUTION_ACCOUNT_DISCRIMINATOR = toDiscriminator(120, 191, 25, 182, 111, 49, 179, 55);
 
   public static Instruction initializeTipDistributionAccount(final AccountMeta invokedJitoTipDistributionProgramMeta,
@@ -188,6 +402,17 @@ public final class JitoTipDistributionProgram {
     }
   }
 
+  public static final Discriminator MIGRATE_TDA_MERKLE_ROOT_UPLOAD_AUTHORITY_DISCRIMINATOR = toDiscriminator(13, 226, 163, 144, 56, 202, 214, 23);
+
+  public static Instruction migrateTdaMerkleRootUploadAuthority(final AccountMeta invokedJitoTipDistributionProgramMeta, final PublicKey tipDistributionAccountKey, final PublicKey merkleRootUploadConfigKey) {
+    final var keys = List.of(
+      createWrite(tipDistributionAccountKey),
+      createRead(merkleRootUploadConfigKey)
+    );
+
+    return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, MIGRATE_TDA_MERKLE_ROOT_UPLOAD_AUTHORITY_DISCRIMINATOR);
+  }
+
   public static final Discriminator UPDATE_CONFIG_DISCRIMINATOR = toDiscriminator(29, 158, 252, 191, 10, 83, 219, 99);
 
   public static Instruction updateConfig(final AccountMeta invokedJitoTipDistributionProgramMeta,
@@ -228,6 +453,67 @@ public final class JitoTipDistributionProgram {
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.write(newConfig, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_MERKLE_ROOT_UPLOAD_CONFIG_DISCRIMINATOR = toDiscriminator(128, 227, 159, 139, 176, 128, 118, 2);
+
+  public static Instruction updateMerkleRootUploadConfig(final AccountMeta invokedJitoTipDistributionProgramMeta,
+                                                         final PublicKey configKey,
+                                                         final PublicKey merkleRootUploadConfigKey,
+                                                         final PublicKey authorityKey,
+                                                         final PublicKey systemProgramKey,
+                                                         final PublicKey authority,
+                                                         final PublicKey originalAuthority) {
+    final var keys = List.of(
+      createRead(configKey),
+      createWrite(merkleRootUploadConfigKey),
+      createReadOnlySigner(authorityKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[72];
+    int i = writeDiscriminator(UPDATE_MERKLE_ROOT_UPLOAD_CONFIG_DISCRIMINATOR, _data, 0);
+    authority.write(_data, i);
+    i += 32;
+    originalAuthority.write(_data, i);
+
+    return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, _data);
+  }
+
+  public record UpdateMerkleRootUploadConfigIxData(Discriminator discriminator, PublicKey authority, PublicKey originalAuthority) implements Borsh {  
+
+    public static UpdateMerkleRootUploadConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 72;
+
+    public static UpdateMerkleRootUploadConfigIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var authority = readPubKey(_data, i);
+      i += 32;
+      final var originalAuthority = readPubKey(_data, i);
+      return new UpdateMerkleRootUploadConfigIxData(discriminator, authority, originalAuthority);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      authority.write(_data, i);
+      i += 32;
+      originalAuthority.write(_data, i);
+      i += 32;
       return i - offset;
     }
 
@@ -301,154 +587,6 @@ public final class JitoTipDistributionProgram {
     @Override
     public int l() {
       return BYTES;
-    }
-  }
-
-  public static final Discriminator CLOSE_CLAIM_STATUS_DISCRIMINATOR = toDiscriminator(163, 214, 191, 165, 245, 188, 17, 185);
-
-  public static Instruction closeClaimStatus(final AccountMeta invokedJitoTipDistributionProgramMeta,
-                                             final PublicKey configKey,
-                                             final PublicKey claimStatusKey,
-                                             // Receiver of the funds.
-                                             final PublicKey claimStatusPayerKey) {
-    final var keys = List.of(
-      createRead(configKey),
-      createWrite(claimStatusKey),
-      createWrite(claimStatusPayerKey)
-    );
-
-    return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, CLOSE_CLAIM_STATUS_DISCRIMINATOR);
-  }
-
-  public static final Discriminator CLOSE_TIP_DISTRIBUTION_ACCOUNT_DISCRIMINATOR = toDiscriminator(47, 136, 208, 190, 125, 243, 74, 227);
-
-  public static Instruction closeTipDistributionAccount(final AccountMeta invokedJitoTipDistributionProgramMeta,
-                                                        final PublicKey configKey,
-                                                        final PublicKey expiredFundsAccountKey,
-                                                        final PublicKey tipDistributionAccountKey,
-                                                        final PublicKey validatorVoteAccountKey,
-                                                        // Anyone can crank this instruction.
-                                                        final PublicKey signerKey,
-                                                        final long epoch) {
-    final var keys = List.of(
-      createRead(configKey),
-      createWrite(expiredFundsAccountKey),
-      createWrite(tipDistributionAccountKey),
-      createWrite(validatorVoteAccountKey),
-      createWritableSigner(signerKey)
-    );
-
-    final byte[] _data = new byte[16];
-    int i = writeDiscriminator(CLOSE_TIP_DISTRIBUTION_ACCOUNT_DISCRIMINATOR, _data, 0);
-    putInt64LE(_data, i, epoch);
-
-    return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, _data);
-  }
-
-  public record CloseTipDistributionAccountIxData(Discriminator discriminator, long epoch) implements Borsh {  
-
-    public static CloseTipDistributionAccountIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 16;
-
-    public static CloseTipDistributionAccountIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = parseDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var epoch = getInt64LE(_data, i);
-      return new CloseTipDistributionAccountIxData(discriminator, epoch);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, epoch);
-      i += 8;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
-  public static final Discriminator CLAIM_DISCRIMINATOR = toDiscriminator(62, 198, 214, 193, 213, 159, 108, 210);
-
-  public static Instruction claim(final AccountMeta invokedJitoTipDistributionProgramMeta,
-                                  final PublicKey configKey,
-                                  final PublicKey tipDistributionAccountKey,
-                                  // Status of the claim. Used to prevent the same party from claiming multiple times.
-                                  final PublicKey claimStatusKey,
-                                  // Receiver of the funds.
-                                  final PublicKey claimantKey,
-                                  // Who is paying for the claim.
-                                  final PublicKey payerKey,
-                                  final PublicKey systemProgramKey,
-                                  final int bump,
-                                  final long amount,
-                                  final byte[][] proof) {
-    final var keys = List.of(
-      createRead(configKey),
-      createWrite(tipDistributionAccountKey),
-      createWrite(claimStatusKey),
-      createWrite(claimantKey),
-      createWritableSigner(payerKey),
-      createRead(systemProgramKey)
-    );
-
-    final byte[] _data = new byte[17 + Borsh.lenVectorArray(proof)];
-    int i = writeDiscriminator(CLAIM_DISCRIMINATOR, _data, 0);
-    _data[i] = (byte) bump;
-    ++i;
-    putInt64LE(_data, i, amount);
-    i += 8;
-    Borsh.writeVectorArray(proof, _data, i);
-
-    return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, _data);
-  }
-
-  public record ClaimIxData(Discriminator discriminator,
-                            int bump,
-                            long amount,
-                            byte[][] proof) implements Borsh {  
-
-    public static ClaimIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static ClaimIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = parseDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var bump = _data[i] & 0xFF;
-      ++i;
-      final var amount = getInt64LE(_data, i);
-      i += 8;
-      final var proof = Borsh.readMultiDimensionbyteVectorArray(32, _data, i);
-      return new ClaimIxData(discriminator, bump, amount, proof);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) bump;
-      ++i;
-      putInt64LE(_data, i, amount);
-      i += 8;
-      i += Borsh.writeVectorArray(proof, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 8 + 1 + 8 + Borsh.lenVectorArray(proof);
     }
   }
 

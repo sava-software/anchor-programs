@@ -17,7 +17,8 @@ public sealed interface JitoTipDistributionError extends ProgramError permits
     JitoTipDistributionError.PrematureCloseClaimStatus,
     JitoTipDistributionError.PrematureMerkleRootUpload,
     JitoTipDistributionError.RootNotUploaded,
-    JitoTipDistributionError.Unauthorized {
+    JitoTipDistributionError.Unauthorized,
+    JitoTipDistributionError.InvalidTdaForMigration {
 
   static JitoTipDistributionError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -36,6 +37,7 @@ public sealed interface JitoTipDistributionError extends ProgramError permits
       case 6012 -> PrematureMerkleRootUpload.INSTANCE;
       case 6013 -> RootNotUploaded.INSTANCE;
       case 6014 -> Unauthorized.INSTANCE;
+      case 6015 -> InvalidTdaForMigration.INSTANCE;
       default -> throw new IllegalStateException("Unexpected JitoTipDistribution error code: " + errorCode);
     };
   }
@@ -142,6 +144,13 @@ public sealed interface JitoTipDistributionError extends ProgramError permits
 
     public static final Unauthorized INSTANCE = new Unauthorized(
         6014, "Unauthorized signer."
+    );
+  }
+
+  record InvalidTdaForMigration(int code, String msg) implements JitoTipDistributionError {
+
+    public static final InvalidTdaForMigration INSTANCE = new InvalidTdaForMigration(
+        6015, "TDA not valid for migration."
     );
   }
 }

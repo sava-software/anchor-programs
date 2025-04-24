@@ -7,8 +7,11 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record TipDistributionAccountClosedEvent(PublicKey expiredFundsAccount,
+public record TipDistributionAccountClosedEvent(// Account where unclaimed funds were transferred to.
+                                                PublicKey expiredFundsAccount,
+                                                // [TipDistributionAccount] closed.
                                                 PublicKey tipDistributionAccount,
+                                                // Unclaimed amount transferred.
                                                 long expiredAmount) implements Borsh {
 
   public static final int BYTES = 72;

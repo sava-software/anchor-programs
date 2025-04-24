@@ -5,7 +5,10 @@ import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 
-public record ClaimStatusClosedEvent(PublicKey claimStatusPayer, PublicKey claimStatusAccount) implements Borsh {
+public record ClaimStatusClosedEvent(// Account where funds were transferred to.
+                                     PublicKey claimStatusPayer,
+                                     // [ClaimStatus] account that was closed.
+                                     PublicKey claimStatusAccount) implements Borsh {
 
   public static final int BYTES = 64;
 
