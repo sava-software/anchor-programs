@@ -147,10 +147,10 @@ public sealed interface UpdateLendingMarketConfigValue extends RustEnum permits
     }
   }
 
-  record ElevationGroup(ElevationGroup val) implements BorshEnum, UpdateLendingMarketConfigValue {
+  record ElevationGroup(software.sava.anchor.programs.kamino.lend.anchor.types.ElevationGroup val) implements BorshEnum, UpdateLendingMarketConfigValue {
 
     public static ElevationGroup read(final byte[] _data, final int offset) {
-      return new ElevationGroup(ElevationGroup.read(_data, offset));
+      return new ElevationGroup(software.sava.anchor.programs.kamino.lend.anchor.types.ElevationGroup.read(_data, offset));
     }
 
     @Override

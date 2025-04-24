@@ -59,10 +59,10 @@ public sealed interface PlatformConfigParam extends RustEnum permits
     }
   }
 
-  record MigrateNftInfo(MigrateNftInfo val) implements BorshEnum, PlatformConfigParam {
+  record MigrateNftInfo(software.sava.anchor.programs.raydium.launchpad.anchor.types.MigrateNftInfo val) implements BorshEnum, PlatformConfigParam {
 
     public static MigrateNftInfo read(final byte[] _data, final int offset) {
-      return new MigrateNftInfo(MigrateNftInfo.read(_data, offset));
+      return new MigrateNftInfo(software.sava.anchor.programs.raydium.launchpad.anchor.types.MigrateNftInfo.read(_data, offset));
     }
 
     @Override
