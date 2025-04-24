@@ -19,7 +19,7 @@ public sealed interface UpdateLendingMarketConfigValue extends RustEnum permits
   UpdateLendingMarketConfigValue.U64,
   UpdateLendingMarketConfigValue.U128,
   UpdateLendingMarketConfigValue.Pubkey,
-  UpdateLendingMarketConfigValue.ElevationGroup,
+  UpdateLendingMarketConfigValue._ElevationGroup,
   UpdateLendingMarketConfigValue.Name {
 
   static UpdateLendingMarketConfigValue read(final byte[] _data, final int offset) {
@@ -33,7 +33,7 @@ public sealed interface UpdateLendingMarketConfigValue extends RustEnum permits
       case 4 -> U64.read(_data, i);
       case 5 -> U128.read(_data, i);
       case 6 -> Pubkey.read(_data, i);
-      case 7 -> ElevationGroup.read(_data, i);
+      case 7 -> _ElevationGroup.read(_data, i);
       case 8 -> Name.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [UpdateLendingMarketConfigValue]", ordinal
@@ -147,10 +147,10 @@ public sealed interface UpdateLendingMarketConfigValue extends RustEnum permits
     }
   }
 
-  record ElevationGroup(software.sava.anchor.programs.kamino.lend.anchor.types.ElevationGroup val) implements BorshEnum, UpdateLendingMarketConfigValue {
+  record _ElevationGroup(software.sava.anchor.programs.kamino.lend.anchor.types.ElevationGroup val) implements BorshEnum, UpdateLendingMarketConfigValue {
 
-    public static ElevationGroup read(final byte[] _data, final int offset) {
-      return new ElevationGroup(software.sava.anchor.programs.kamino.lend.anchor.types.ElevationGroup.read(_data, offset));
+    public static _ElevationGroup read(final byte[] _data, final int offset) {
+      return new _ElevationGroup(software.sava.anchor.programs.kamino.lend.anchor.types.ElevationGroup.read(_data, offset));
     }
 
     @Override

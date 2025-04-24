@@ -12,7 +12,7 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 public sealed interface PlatformConfigParam extends RustEnum permits
   PlatformConfigParam.FeeWallet,
   PlatformConfigParam.NFTWallet,
-  PlatformConfigParam.MigrateNftInfo,
+  PlatformConfigParam._MigrateNftInfo,
   PlatformConfigParam.FeeRate,
   PlatformConfigParam.Name,
   PlatformConfigParam.Web,
@@ -24,7 +24,7 @@ public sealed interface PlatformConfigParam extends RustEnum permits
     return switch (ordinal) {
       case 0 -> FeeWallet.read(_data, i);
       case 1 -> NFTWallet.read(_data, i);
-      case 2 -> MigrateNftInfo.read(_data, i);
+      case 2 -> _MigrateNftInfo.read(_data, i);
       case 3 -> FeeRate.read(_data, i);
       case 4 -> Name.read(_data, i);
       case 5 -> Web.read(_data, i);
@@ -59,10 +59,10 @@ public sealed interface PlatformConfigParam extends RustEnum permits
     }
   }
 
-  record MigrateNftInfo(software.sava.anchor.programs.raydium.launchpad.anchor.types.MigrateNftInfo val) implements BorshEnum, PlatformConfigParam {
+  record _MigrateNftInfo(software.sava.anchor.programs.raydium.launchpad.anchor.types.MigrateNftInfo val) implements BorshEnum, PlatformConfigParam {
 
-    public static MigrateNftInfo read(final byte[] _data, final int offset) {
-      return new MigrateNftInfo(software.sava.anchor.programs.raydium.launchpad.anchor.types.MigrateNftInfo.read(_data, offset));
+    public static _MigrateNftInfo read(final byte[] _data, final int offset) {
+      return new _MigrateNftInfo(software.sava.anchor.programs.raydium.launchpad.anchor.types.MigrateNftInfo.read(_data, offset));
     }
 
     @Override

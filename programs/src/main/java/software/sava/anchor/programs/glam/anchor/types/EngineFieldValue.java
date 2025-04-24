@@ -27,10 +27,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
   EngineFieldValue.VecU32,
   EngineFieldValue.VecPricedAssets,
   EngineFieldValue.Ledger,
-  EngineFieldValue.FeeStructure,
-  EngineFieldValue.FeeParams,
-  EngineFieldValue.AccruedFees,
-  EngineFieldValue.Valuation {
+  EngineFieldValue._FeeStructure,
+  EngineFieldValue._FeeParams,
+  EngineFieldValue._AccruedFees,
+  EngineFieldValue._Valuation {
 
   static EngineFieldValue read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -52,10 +52,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
       case 13 -> VecU32.read(_data, i);
       case 14 -> VecPricedAssets.read(_data, i);
       case 15 -> Ledger.read(_data, i);
-      case 16 -> FeeStructure.read(_data, i);
-      case 17 -> FeeParams.read(_data, i);
-      case 18 -> AccruedFees.read(_data, i);
-      case 19 -> Valuation.read(_data, i);
+      case 16 -> _FeeStructure.read(_data, i);
+      case 17 -> _FeeParams.read(_data, i);
+      case 18 -> _AccruedFees.read(_data, i);
+      case 19 -> _Valuation.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [EngineFieldValue]", ordinal
       ));
@@ -337,10 +337,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
     }
   }
 
-  record FeeStructure(software.sava.anchor.programs.glam.anchor.types.FeeStructure val) implements BorshEnum, EngineFieldValue {
+  record _FeeStructure(software.sava.anchor.programs.glam.anchor.types.FeeStructure val) implements BorshEnum, EngineFieldValue {
 
-    public static FeeStructure read(final byte[] _data, final int offset) {
-      return new FeeStructure(software.sava.anchor.programs.glam.anchor.types.FeeStructure.read(_data, offset));
+    public static _FeeStructure read(final byte[] _data, final int offset) {
+      return new _FeeStructure(software.sava.anchor.programs.glam.anchor.types.FeeStructure.read(_data, offset));
     }
 
     @Override
@@ -349,10 +349,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
     }
   }
 
-  record FeeParams(software.sava.anchor.programs.glam.anchor.types.FeeParams val) implements BorshEnum, EngineFieldValue {
+  record _FeeParams(software.sava.anchor.programs.glam.anchor.types.FeeParams val) implements BorshEnum, EngineFieldValue {
 
-    public static FeeParams read(final byte[] _data, final int offset) {
-      return new FeeParams(software.sava.anchor.programs.glam.anchor.types.FeeParams.read(_data, offset));
+    public static _FeeParams read(final byte[] _data, final int offset) {
+      return new _FeeParams(software.sava.anchor.programs.glam.anchor.types.FeeParams.read(_data, offset));
     }
 
     @Override
@@ -361,10 +361,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
     }
   }
 
-  record AccruedFees(software.sava.anchor.programs.glam.anchor.types.AccruedFees val) implements BorshEnum, EngineFieldValue {
+  record _AccruedFees(software.sava.anchor.programs.glam.anchor.types.AccruedFees val) implements BorshEnum, EngineFieldValue {
 
-    public static AccruedFees read(final byte[] _data, final int offset) {
-      return new AccruedFees(software.sava.anchor.programs.glam.anchor.types.AccruedFees.read(_data, offset));
+    public static _AccruedFees read(final byte[] _data, final int offset) {
+      return new _AccruedFees(software.sava.anchor.programs.glam.anchor.types.AccruedFees.read(_data, offset));
     }
 
     @Override
@@ -373,10 +373,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
     }
   }
 
-  record Valuation(software.sava.anchor.programs.glam.anchor.types.Valuation val) implements BorshEnum, EngineFieldValue {
+  record _Valuation(software.sava.anchor.programs.glam.anchor.types.Valuation val) implements BorshEnum, EngineFieldValue {
 
-    public static Valuation read(final byte[] _data, final int offset) {
-      return new Valuation(software.sava.anchor.programs.glam.anchor.types.Valuation.read(_data, offset));
+    public static _Valuation read(final byte[] _data, final int offset) {
+      return new _Valuation(software.sava.anchor.programs.glam.anchor.types.Valuation.read(_data, offset));
     }
 
     @Override
