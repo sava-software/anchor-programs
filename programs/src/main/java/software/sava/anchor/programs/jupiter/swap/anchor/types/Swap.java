@@ -87,7 +87,11 @@ public sealed interface Swap extends RustEnum permits
   Swap.MeteoraDlmmSwapV2,
   Swap.Woofi,
   Swap.MeteoraDammV2,
-  Swap.MeteoraVirtualCurveSwap {
+  Swap.MeteoraDynamicBondingCurveSwap,
+  Swap.StabbleStableSwapV2,
+  Swap.StabbleWeightedSwapV2,
+  Swap.RaydiumLaunchlabBuy,
+  Swap.RaydiumLaunchlabSell {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -171,7 +175,11 @@ public sealed interface Swap extends RustEnum permits
       case 75 -> MeteoraDlmmSwapV2.read(_data, i);
       case 76 -> Woofi.INSTANCE;
       case 77 -> MeteoraDammV2.INSTANCE;
-      case 78 -> MeteoraVirtualCurveSwap.INSTANCE;
+      case 78 -> MeteoraDynamicBondingCurveSwap.INSTANCE;
+      case 79 -> StabbleStableSwapV2.INSTANCE;
+      case 80 -> StabbleWeightedSwapV2.INSTANCE;
+      case 81 -> RaydiumLaunchlabBuy.read(_data, i);
+      case 82 -> RaydiumLaunchlabSell.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1219,13 +1227,57 @@ public sealed interface Swap extends RustEnum permits
     }
   }
 
-  record MeteoraVirtualCurveSwap() implements EnumNone, Swap {
+  record MeteoraDynamicBondingCurveSwap() implements EnumNone, Swap {
 
-    public static final MeteoraVirtualCurveSwap INSTANCE = new MeteoraVirtualCurveSwap();
+    public static final MeteoraDynamicBondingCurveSwap INSTANCE = new MeteoraDynamicBondingCurveSwap();
 
     @Override
     public int ordinal() {
       return 78;
+    }
+  }
+
+  record StabbleStableSwapV2() implements EnumNone, Swap {
+
+    public static final StabbleStableSwapV2 INSTANCE = new StabbleStableSwapV2();
+
+    @Override
+    public int ordinal() {
+      return 79;
+    }
+  }
+
+  record StabbleWeightedSwapV2() implements EnumNone, Swap {
+
+    public static final StabbleWeightedSwapV2 INSTANCE = new StabbleWeightedSwapV2();
+
+    @Override
+    public int ordinal() {
+      return 80;
+    }
+  }
+
+  record RaydiumLaunchlabBuy(long val) implements EnumInt64, Swap {
+
+    public static RaydiumLaunchlabBuy read(final byte[] _data, int i) {
+      return new RaydiumLaunchlabBuy(getInt64LE(_data, i));
+    }
+
+    @Override
+    public int ordinal() {
+      return 81;
+    }
+  }
+
+  record RaydiumLaunchlabSell(long val) implements EnumInt64, Swap {
+
+    public static RaydiumLaunchlabSell read(final byte[] _data, int i) {
+      return new RaydiumLaunchlabSell(getInt64LE(_data, i));
+    }
+
+    @Override
+    public int ordinal() {
+      return 82;
     }
   }
 }
