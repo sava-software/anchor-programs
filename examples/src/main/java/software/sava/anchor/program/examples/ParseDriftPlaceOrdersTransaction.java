@@ -16,6 +16,7 @@ import software.sava.solana.web2.jupiter.client.http.response.TokenContext;
 
 import java.net.http.HttpClient;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -54,12 +55,13 @@ public final class ParseDriftPlaceOrdersTransaction {
           if (tableAccounts.length == 0) {
             instructions = skeleton.parseInstructionsWithoutTableAccounts();
           } else {
-            final var tableAccountInfos = rpcClient.getMultipleAccounts(
+            final var tableAccountInfos = rpcClient.getAccounts(
                 Arrays.asList(tableAccounts),
                 AddressLookupTable.FACTORY
             ).join();
 
             final var lookupTables = tableAccountInfos.stream()
+                .filter(Objects::nonNull)
                 .map(AccountInfo::data)
                 .collect(Collectors.toUnmodifiableMap(AddressLookupTable::address, Function.identity()));
             final var accounts = skeleton.parseAccounts(lookupTables);

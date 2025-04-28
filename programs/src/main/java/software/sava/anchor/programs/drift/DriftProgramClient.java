@@ -43,7 +43,7 @@ public interface DriftProgramClient {
   }
 
   default CompletableFuture<List<AccountInfo<AddressLookupTable>>> fetchMarketLookupTables(final SolanaRpcClient rpcClient) {
-    return rpcClient.getMultipleAccounts(driftAccounts().marketLookupTables(), AddressLookupTable.FACTORY);
+    return rpcClient.getAccounts(driftAccounts().marketLookupTables(), AddressLookupTable.FACTORY);
   }
 
   PublicKey mainUserAccount();

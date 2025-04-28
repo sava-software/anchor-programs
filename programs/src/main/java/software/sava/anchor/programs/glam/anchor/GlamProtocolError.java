@@ -5,7 +5,7 @@ import software.sava.anchor.ProgramError;
 public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.NotAuthorized,
     GlamProtocolError.IntegrationDisabled,
-    GlamProtocolError.StateAccountDisabled,
+    GlamProtocolError.GlamStateDisabled,
     GlamProtocolError.InvalidSignerAccount,
     GlamProtocolError.InvalidAccountType,
     GlamProtocolError.InvalidName,
@@ -25,6 +25,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.InvalidAssetForSwap,
     GlamProtocolError.UnsupportedSwapIx,
     GlamProtocolError.SlippageLimitExceeded,
+    GlamProtocolError.InvalidPlatformFeeForSwap,
     GlamProtocolError.InvalidTokenAccount,
     GlamProtocolError.InvalidVoteSide,
     GlamProtocolError.MultipleStakeAccountsDisallowed,
@@ -52,7 +53,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     return switch (errorCode) {
       case 48000 -> NotAuthorized.INSTANCE;
       case 48001 -> IntegrationDisabled.INSTANCE;
-      case 48002 -> StateAccountDisabled.INSTANCE;
+      case 48002 -> GlamStateDisabled.INSTANCE;
       case 48003 -> InvalidSignerAccount.INSTANCE;
       case 49000 -> InvalidAccountType.INSTANCE;
       case 49001 -> InvalidName.INSTANCE;
@@ -72,9 +73,10 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 50001 -> InvalidAssetForSwap.INSTANCE;
       case 50002 -> UnsupportedSwapIx.INSTANCE;
       case 50003 -> SlippageLimitExceeded.INSTANCE;
-      case 50004 -> InvalidTokenAccount.INSTANCE;
-      case 50005 -> InvalidVoteSide.INSTANCE;
-      case 50006 -> MultipleStakeAccountsDisallowed.INSTANCE;
+      case 50004 -> InvalidPlatformFeeForSwap.INSTANCE;
+      case 50005 -> InvalidTokenAccount.INSTANCE;
+      case 50006 -> InvalidVoteSide.INSTANCE;
+      case 50007 -> MultipleStakeAccountsDisallowed.INSTANCE;
       case 51000 -> InvalidAssetPrice.INSTANCE;
       case 51001 -> InvalidStableCoinPriceForSubscribe.INSTANCE;
       case 51002 -> ActionPaused.INSTANCE;
@@ -112,10 +114,10 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record StateAccountDisabled(int code, String msg) implements GlamProtocolError {
+  record GlamStateDisabled(int code, String msg) implements GlamProtocolError {
 
-    public static final StateAccountDisabled INSTANCE = new StateAccountDisabled(
-        48002, "State account is disabled"
+    public static final GlamStateDisabled INSTANCE = new GlamStateDisabled(
+        48002, "GLAM state is disabled"
     );
   }
 
@@ -252,24 +254,31 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
+  record InvalidPlatformFeeForSwap(int code, String msg) implements GlamProtocolError {
+
+    public static final InvalidPlatformFeeForSwap INSTANCE = new InvalidPlatformFeeForSwap(
+        50004, "Invalid platform fee"
+    );
+  }
+
   record InvalidTokenAccount(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidTokenAccount INSTANCE = new InvalidTokenAccount(
-        50004, "Invalid token account"
+        50005, "Invalid token account"
     );
   }
 
   record InvalidVoteSide(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidVoteSide INSTANCE = new InvalidVoteSide(
-        50005, "Invalid vote side"
+        50006, "Invalid vote side"
     );
   }
 
   record MultipleStakeAccountsDisallowed(int code, String msg) implements GlamProtocolError {
 
     public static final MultipleStakeAccountsDisallowed INSTANCE = new MultipleStakeAccountsDisallowed(
-        50006, "Multiple stake accounts disallowed"
+        50007, "Multiple stake accounts disallowed"
     );
   }
 

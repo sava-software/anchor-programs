@@ -167,8 +167,7 @@ public interface KaminoAccounts {
     return referrerTokenStatePda(referrer, reserve, kLendProgram());
   }
 
-  static ProgramDerivedAddress referrerStatePda(final PublicKey referrer,
-                                                final PublicKey programId) {
+  static ProgramDerivedAddress referrerStatePda(final PublicKey referrer, final PublicKey programId) {
 
     return PublicKey.findProgramAddress(
         List.of(

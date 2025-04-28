@@ -17,6 +17,7 @@ import software.sava.anchor.programs.glam.anchor.types.OrderParams;
 import software.sava.anchor.programs.glam.anchor.types.PositionDirection;
 import software.sava.anchor.programs.glam.anchor.types.PriceDenom;
 import software.sava.anchor.programs.glam.anchor.types.RemainingAccountsInfo;
+import software.sava.anchor.programs.glam.anchor.types.SettlePnlMode;
 import software.sava.anchor.programs.glam.anchor.types.StateModel;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -823,6 +824,128 @@ public final class GlamProtocolProgram {
     @Override
     public int l() {
       return 8 + Borsh.lenVector(params);
+    }
+  }
+
+  public static final Discriminator DRIFT_SETTLE_MULTIPLE_PNLS_DISCRIMINATOR = toDiscriminator(100, 72, 3, 45, 69, 37, 10, 144);
+
+  public static Instruction driftSettleMultiplePnls(final AccountMeta invokedGlamProtocolProgramMeta,
+                                                    final PublicKey glamStateKey,
+                                                    final PublicKey glamVaultKey,
+                                                    final PublicKey glamSignerKey,
+                                                    final PublicKey cpiProgramKey,
+                                                    final PublicKey stateKey,
+                                                    final PublicKey userKey,
+                                                    final PublicKey spotMarketVaultKey,
+                                                    final short[] marketIndexes,
+                                                    final SettlePnlMode mode) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createRead(stateKey),
+      createWrite(userKey),
+      createRead(spotMarketVaultKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.lenVector(marketIndexes) + Borsh.len(mode)];
+    int i = writeDiscriminator(DRIFT_SETTLE_MULTIPLE_PNLS_DISCRIMINATOR, _data, 0);
+    i += Borsh.writeVector(marketIndexes, _data, i);
+    Borsh.write(mode, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
+  }
+
+  public record DriftSettleMultiplePnlsIxData(Discriminator discriminator, short[] marketIndexes, SettlePnlMode mode) implements Borsh {  
+
+    public static DriftSettleMultiplePnlsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static DriftSettleMultiplePnlsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var marketIndexes = Borsh.readshortVector(_data, i);
+      i += Borsh.lenVector(marketIndexes);
+      final var mode = SettlePnlMode.read(_data, i);
+      return new DriftSettleMultiplePnlsIxData(discriminator, marketIndexes, mode);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeVector(marketIndexes, _data, i);
+      i += Borsh.write(mode, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.lenVector(marketIndexes) + Borsh.len(mode);
+    }
+  }
+
+  public static final Discriminator DRIFT_SETTLE_PNL_DISCRIMINATOR = toDiscriminator(161, 254, 255, 100, 140, 113, 169, 175);
+
+  public static Instruction driftSettlePnl(final AccountMeta invokedGlamProtocolProgramMeta,
+                                           final PublicKey glamStateKey,
+                                           final PublicKey glamVaultKey,
+                                           final PublicKey glamSignerKey,
+                                           final PublicKey cpiProgramKey,
+                                           final PublicKey stateKey,
+                                           final PublicKey userKey,
+                                           final PublicKey spotMarketVaultKey,
+                                           final int marketIndex) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createRead(stateKey),
+      createWrite(userKey),
+      createRead(spotMarketVaultKey)
+    );
+
+    final byte[] _data = new byte[10];
+    int i = writeDiscriminator(DRIFT_SETTLE_PNL_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, marketIndex);
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
+  }
+
+  public record DriftSettlePnlIxData(Discriminator discriminator, int marketIndex) implements Borsh {  
+
+    public static DriftSettlePnlIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 10;
+
+    public static DriftSettlePnlIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var marketIndex = getInt16LE(_data, i);
+      return new DriftSettlePnlIxData(discriminator, marketIndex);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, marketIndex);
+      i += 2;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
     }
   }
 
@@ -1933,7 +2056,7 @@ public final class GlamProtocolProgram {
                                                     final long rewardIndex) {
     final var keys = List.of(
       createRead(glamStateKey),
-      createRead(glamVaultKey),
+      createWrite(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
       createWrite(userStateKey),
@@ -4004,13 +4127,23 @@ public final class GlamProtocolProgram {
                                                    final PublicKey glamStateKey,
                                                    final PublicKey glamVaultKey,
                                                    final PublicKey glamSignerKey,
+                                                   final PublicKey kaminoLendingProgramKey,
                                                    final PublicKey solOracleKey,
+                                                   final PublicKey pythOracleKey,
+                                                   final PublicKey switchboardPriceOracleKey,
+                                                   final PublicKey switchboardTwapOracleKey,
+                                                   final PublicKey scopePricesKey,
                                                    final PriceDenom denom) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(glamSignerKey),
-      createRead(solOracleKey)
+      createRead(kaminoLendingProgramKey),
+      createRead(solOracleKey),
+      createRead(requireNonNullElse(pythOracleKey, invokedGlamProtocolProgramMeta.publicKey())),
+      createRead(requireNonNullElse(switchboardPriceOracleKey, invokedGlamProtocolProgramMeta.publicKey())),
+      createRead(requireNonNullElse(switchboardTwapOracleKey, invokedGlamProtocolProgramMeta.publicKey())),
+      createRead(requireNonNullElse(scopePricesKey, invokedGlamProtocolProgramMeta.publicKey()))
     );
 
     final byte[] _data = new byte[8 + Borsh.len(denom)];
