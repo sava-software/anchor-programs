@@ -9,6 +9,8 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.glam.policy.anchor.types;
   exports software.sava.anchor.programs.glam.policy.anchor;
   exports software.sava.anchor.programs.glam.proxy;
+  exports software.sava.anchor.programs.glam.staging.anchor.types;
+  exports software.sava.anchor.programs.glam.staging.anchor;
   exports software.sava.anchor.programs.glam;
   exports software.sava.anchor.programs.jito.steward.anchor.types;
   exports software.sava.anchor.programs.jito.steward.anchor;

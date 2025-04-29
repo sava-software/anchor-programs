@@ -11009,6 +11009,71 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator ADMIN_DEPOSIT_DISCRIMINATOR = toDiscriminator(210, 66, 65, 182, 102, 214, 176, 30);
+
+  public static Instruction adminDeposit(final AccountMeta invokedDriftProgramMeta,
+                                         final PublicKey stateKey,
+                                         final PublicKey userKey,
+                                         final PublicKey adminKey,
+                                         final PublicKey spotMarketVaultKey,
+                                         final PublicKey adminTokenAccountKey,
+                                         final PublicKey tokenProgramKey,
+                                         final int marketIndex,
+                                         final long amount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWrite(userKey),
+      createWritableSigner(adminKey),
+      createWrite(spotMarketVaultKey),
+      createWrite(adminTokenAccountKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[18];
+    int i = writeDiscriminator(ADMIN_DEPOSIT_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, marketIndex);
+    i += 2;
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record AdminDepositIxData(Discriminator discriminator, int marketIndex, long amount) implements Borsh {  
+
+    public static AdminDepositIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 18;
+
+    public static AdminDepositIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var marketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var amount = getInt64LE(_data, i);
+      return new AdminDepositIxData(discriminator, marketIndex, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, marketIndex);
+      i += 2;
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   private DriftProgram() {
   }
 }
