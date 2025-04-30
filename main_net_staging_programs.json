@@ -1,0 +1,13 @@
+[
+  {
+    "name": "Glam Protocol Program",
+    "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc",
+    "idlURL": "https://raw.githubusercontent.com/glamsystems/glam-sdk/refs/heads/main/idl/glam_protocol.json",
+    "package": "glam.staging"
+  },
+  {
+    "name": "Meteora DLMM Staging",
+    "program": "tLBro6JJuZNnpoad3p8pXKohE9f7f7tBZJpaeh6pXt1",
+    "package": "meteora.staging.dlmm"
+  }
+]

@@ -105,11 +105,6 @@
     "package": "meteora.dlmm"
   },
   {
-    "name": "Meteora DLMM Staging",
-    "program": "tLBro6JJuZNnpoad3p8pXKohE9f7f7tBZJpaeh6pXt1",
-    "package": "meteora.staging.dlmm"
-  },
-  {
     "name": "Moonshot",
     "program": "MoonCVVNZFSYkqNXP6bxHLPL6QQJiMagDL3qcqUQTrG",
     "package": "moonshot"
