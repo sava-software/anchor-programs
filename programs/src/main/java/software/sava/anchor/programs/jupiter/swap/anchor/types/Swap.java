@@ -91,7 +91,9 @@ public sealed interface Swap extends RustEnum permits
   Swap.StabbleStableSwapV2,
   Swap.StabbleWeightedSwapV2,
   Swap.RaydiumLaunchlabBuy,
-  Swap.RaydiumLaunchlabSell {
+  Swap.RaydiumLaunchlabSell,
+  Swap.BoopdotfunWrappedBuy,
+  Swap.BoopdotfunWrappedSell {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -180,6 +182,8 @@ public sealed interface Swap extends RustEnum permits
       case 80 -> StabbleWeightedSwapV2.INSTANCE;
       case 81 -> RaydiumLaunchlabBuy.read(_data, i);
       case 82 -> RaydiumLaunchlabSell.read(_data, i);
+      case 83 -> BoopdotfunWrappedBuy.INSTANCE;
+      case 84 -> BoopdotfunWrappedSell.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1278,6 +1282,26 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 82;
+    }
+  }
+
+  record BoopdotfunWrappedBuy() implements EnumNone, Swap {
+
+    public static final BoopdotfunWrappedBuy INSTANCE = new BoopdotfunWrappedBuy();
+
+    @Override
+    public int ordinal() {
+      return 83;
+    }
+  }
+
+  record BoopdotfunWrappedSell() implements EnumNone, Swap {
+
+    public static final BoopdotfunWrappedSell INSTANCE = new BoopdotfunWrappedSell();
+
+    @Override
+    public int ordinal() {
+      return 84;
     }
   }
 }
