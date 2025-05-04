@@ -20,6 +20,7 @@ import software.sava.solana.programs.stake.StakeAuthorize;
 import software.sava.solana.programs.stake.StakeState;
 
 import java.util.List;
+import java.util.SequencedCollection;
 import java.util.concurrent.CompletableFuture;
 
 import static software.sava.core.accounts.meta.AccountMeta.createFeePayer;
@@ -324,6 +325,12 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   @Override
   public Instruction freezeLookupTable(final PublicKey tableAccount) {
     return nativeProgramAccountClient.freezeLookupTable(tableAccount);
+  }
+
+  @Override
+  public Instruction extendLookupTable(final PublicKey tableAccount,
+                                       final SequencedCollection<PublicKey> newAddresses) {
+    return nativeProgramAccountClient.extendLookupTable(tableAccount, newAddresses);
   }
 
   @Override

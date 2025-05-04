@@ -1,5 +1,11 @@
 [
   {
+    "name": "Drift",
+    "program": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+    "idlURL": "https://raw.githubusercontent.com/drift-labs/protocol-v2/refs/heads/master/sdk/src/idl/drift.json",
+    "package": "drift.staging"
+  },
+  {
     "name": "Glam Protocol Program",
     "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc",
     "idlURL": "https://raw.githubusercontent.com/glamsystems/glam-sdk/refs/heads/main/idl/glam_protocol.json",

@@ -1,8 +1,7 @@
 [
   {
     "name": "Drift",
-    "program": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
-    "idlURL": "https://raw.githubusercontent.com/drift-labs/protocol-v2/refs/heads/master/sdk/src/idl/drift.json"
+    "program": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
   },
   {
     "name": "Drift Vaults",
