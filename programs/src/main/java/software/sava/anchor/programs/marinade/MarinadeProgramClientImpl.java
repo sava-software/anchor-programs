@@ -53,13 +53,13 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
   public Instruction marinadeDeposit(final PublicKey mSolTokenAccount, final long lamports) {
     return MarinadeFinanceProgram.deposit(
         marinadeAccounts.invokedMarinadeProgram(),
-        owner,
         marinadeAccounts.stateProgram(),
         marinadeAccounts.mSolTokenMint(),
         marinadeAccounts.liquidityPoolSolLegAccount(),
         marinadeAccounts.liquidityPoolMSolLegAccount(),
         marinadeAccounts.liquidityPoolMSolLegAuthority(),
         marinadeAccounts.treasuryReserveSolPDA(),
+        owner,
         mSolTokenAccount,
         marinadeAccounts.mSolTokenMintAuthorityPDA(),
         solanaAccounts.systemProgram(),
@@ -76,13 +76,13 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
                                          final int validatorIndex) {
     return MarinadeFinanceProgram.depositStakeAccount(
         marinadeAccounts.invokedMarinadeProgram(),
-        owner,
-        owner,
         marinadeAccounts.stateProgram(),
         marinadeProgramState.validatorSystem().validatorList().account(),
         marinadeProgramState.stakeSystem().stakeList().account(),
         stakeAccount,
+        owner,
         findDuplicationKey(validatorPublicKey).publicKey(),
+        feePayer,
         marinadeAccounts.mSolTokenMint(),
         mSolTokenAccount,
         marinadeAccounts.mSolTokenMintAuthorityPDA(),
@@ -123,6 +123,66 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
         owner,
         solanaAccounts.clockSysVar(),
         solanaAccounts.systemProgram()
+    );
+  }
+
+  public Instruction withdrawStakeAccount(final State marinadeProgramState,
+                                          final PublicKey mSolTokenAccount,
+                                          final PublicKey stakeDepositAuthorityKey,
+                                          final PublicKey stakeAccount,
+                                          final PublicKey splitStakeAccountKey,
+                                          final int stakeIndex,
+                                          final int validatorIndex,
+                                          final long msolAmount) {
+    return withdrawStakeAccount(
+        mSolTokenAccount,
+        marinadeProgramState.validatorSystem().validatorList().account(),
+        marinadeProgramState.stakeSystem().stakeList().account(),
+        stakeDepositAuthorityKey,
+        stakeAccount,
+        splitStakeAccountKey,
+        stakeIndex,
+        validatorIndex,
+        msolAmount
+    );
+  }
+
+  public Instruction withdrawStakeAccount(final PublicKey mSolTokenAccount,
+                                          final PublicKey validatorListKey,
+                                          final PublicKey stakeListKey,
+                                          final PublicKey stakeDepositAuthorityKey,
+                                          final PublicKey stakeAccount,
+                                          final PublicKey splitStakeAccountKey,
+                                          final int stakeIndex,
+                                          final int validatorIndex,
+                                          final long msolAmount) {
+    return MarinadeFinanceProgram.withdrawStakeAccount(
+        marinadeAccounts.invokedMarinadeProgram(),
+        marinadeAccounts.stateProgram(),
+        marinadeAccounts.mSolTokenMint(),
+        mSolTokenAccount,
+        owner,
+        marinadeAccounts.treasuryMSolAccount(),
+        validatorListKey,
+        stakeListKey,
+
+        owner,
+        stakeDepositAuthorityKey,
+
+        stakeAccount,
+
+        splitStakeAccountKey,
+        feePayer,
+
+        solanaAccounts.clockSysVar(),
+        solanaAccounts.systemProgram(),
+        solanaAccounts.tokenProgram(),
+        solanaAccounts.stakeProgram(),
+
+        stakeIndex,
+        validatorIndex,
+        msolAmount,
+        owner
     );
   }
 }

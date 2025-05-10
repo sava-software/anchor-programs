@@ -106,5 +106,5 @@ public interface GlamVaultAccounts {
 
   ProgramDerivedAddress metadataPDA();
 
-  ProgramDerivedAddress shareClassPDA(final int shareId);
+  ProgramDerivedAddress mintPDA(final int id);
 }

@@ -109,4 +109,10 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
   NativeProgramAccountClient delegatedNativeProgramAccountClient();
 
   GlamVaultAccounts vaultAccounts();
+
+  Instruction fulfill(final int mintId, final PublicKey baseAssetMint, final PublicKey baseAssetTokenProgram);
+
+  default Instruction fulfill(final PublicKey baseAssetMint, final PublicKey baseAssetTokenProgram) {
+    return fulfill(baseAssetMint, baseAssetTokenProgram);
+  }
 }

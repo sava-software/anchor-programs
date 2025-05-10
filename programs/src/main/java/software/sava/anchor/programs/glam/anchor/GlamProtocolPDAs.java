@@ -65,6 +65,12 @@ public final class GlamProtocolPDAs {
     ), program);
   }
 
+  public static ProgramDerivedAddress glamConfigPDA(final PublicKey program) {
+    return PublicKey.findProgramAddress(List.of(
+      "global_config".getBytes(US_ASCII)
+    ), program);
+  }
+
   public static ProgramDerivedAddress glamEscrowPDA(final PublicKey program,
                                                     final PublicKey glamStateAccount) {
     return PublicKey.findProgramAddress(List.of(

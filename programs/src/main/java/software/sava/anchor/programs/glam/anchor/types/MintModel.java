@@ -21,14 +21,17 @@ public record MintModel(String symbol, byte[] _symbol,
                         String imageUri, byte[] _imageUri,
                         PublicKey[] allowlist,
                         PublicKey[] blocklist,
-                        OptionalInt lockUpPeriodInSeconds,
+                        OptionalInt lockUpPeriod,
+                        OptionalInt yearInSeconds,
                         PublicKey permanentDelegate,
                         Boolean defaultAccountStateFrozen,
                         FeeStructure feeStructure,
-                        FeeParams feeParams,
-                        Valuation valuation,
+                        NotifyAndSettle notifyAndSettle,
+                        OptionalLong maxCap,
                         OptionalLong minSubscription,
                         OptionalLong minRedemption,
+                        Boolean subscriptionPaused,
+                        Boolean redemptionPaused,
                         Boolean isRawOpenfunds,
                         MintOpenfundsModel rawOpenfunds) implements Borsh {
 
@@ -40,14 +43,17 @@ public record MintModel(String symbol, byte[] _symbol,
                                        final String imageUri,
                                        final PublicKey[] allowlist,
                                        final PublicKey[] blocklist,
-                                       final OptionalInt lockUpPeriodInSeconds,
+                                       final OptionalInt lockUpPeriod,
+                                       final OptionalInt yearInSeconds,
                                        final PublicKey permanentDelegate,
                                        final Boolean defaultAccountStateFrozen,
                                        final FeeStructure feeStructure,
-                                       final FeeParams feeParams,
-                                       final Valuation valuation,
+                                       final NotifyAndSettle notifyAndSettle,
+                                       final OptionalLong maxCap,
                                        final OptionalLong minSubscription,
                                        final OptionalLong minRedemption,
+                                       final Boolean subscriptionPaused,
+                                       final Boolean redemptionPaused,
                                        final Boolean isRawOpenfunds,
                                        final MintOpenfundsModel rawOpenfunds) {
     return new MintModel(symbol, Borsh.getBytes(symbol),
@@ -58,14 +64,17 @@ public record MintModel(String symbol, byte[] _symbol,
                          imageUri, Borsh.getBytes(imageUri),
                          allowlist,
                          blocklist,
-                         lockUpPeriodInSeconds,
+                         lockUpPeriod,
+                         yearInSeconds,
                          permanentDelegate,
                          defaultAccountStateFrozen,
                          feeStructure,
-                         feeParams,
-                         valuation,
+                         notifyAndSettle,
+                         maxCap,
                          minSubscription,
                          minRedemption,
+                         subscriptionPaused,
+                         redemptionPaused,
                          isRawOpenfunds,
                          rawOpenfunds);
   }
@@ -107,8 +116,12 @@ public record MintModel(String symbol, byte[] _symbol,
     if (blocklist != null) {
       i += Borsh.lenVector(blocklist);
     }
-    final var lockUpPeriodInSeconds = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
-    if (lockUpPeriodInSeconds.isPresent()) {
+    final var lockUpPeriod = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+    if (lockUpPeriod.isPresent()) {
+      i += 4;
+    }
+    final var yearInSeconds = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+    if (yearInSeconds.isPresent()) {
       i += 4;
     }
     final var permanentDelegate = _data[i++] == 0 ? null : readPubKey(_data, i);
@@ -123,13 +136,13 @@ public record MintModel(String symbol, byte[] _symbol,
     if (feeStructure != null) {
       i += Borsh.len(feeStructure);
     }
-    final var feeParams = _data[i++] == 0 ? null : FeeParams.read(_data, i);
-    if (feeParams != null) {
-      i += Borsh.len(feeParams);
+    final var notifyAndSettle = _data[i++] == 0 ? null : NotifyAndSettle.read(_data, i);
+    if (notifyAndSettle != null) {
+      i += Borsh.len(notifyAndSettle);
     }
-    final var valuation = _data[i++] == 0 ? null : Valuation.read(_data, i);
-    if (valuation != null) {
-      i += Borsh.len(valuation);
+    final var maxCap = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+    if (maxCap.isPresent()) {
+      i += 8;
     }
     final var minSubscription = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
     if (minSubscription.isPresent()) {
@@ -138,6 +151,14 @@ public record MintModel(String symbol, byte[] _symbol,
     final var minRedemption = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
     if (minRedemption.isPresent()) {
       i += 8;
+    }
+    final var subscriptionPaused = _data[i++] == 0 ? null : _data[i] == 1;
+    if (subscriptionPaused != null) {
+      ++i;
+    }
+    final var redemptionPaused = _data[i++] == 0 ? null : _data[i] == 1;
+    if (redemptionPaused != null) {
+      ++i;
     }
     final var isRawOpenfunds = _data[i++] == 0 ? null : _data[i] == 1;
     if (isRawOpenfunds != null) {
@@ -152,14 +173,17 @@ public record MintModel(String symbol, byte[] _symbol,
                          imageUri, Borsh.getBytes(imageUri),
                          allowlist,
                          blocklist,
-                         lockUpPeriodInSeconds,
+                         lockUpPeriod,
+                         yearInSeconds,
                          permanentDelegate,
                          defaultAccountStateFrozen,
                          feeStructure,
-                         feeParams,
-                         valuation,
+                         notifyAndSettle,
+                         maxCap,
                          minSubscription,
                          minRedemption,
+                         subscriptionPaused,
+                         redemptionPaused,
                          isRawOpenfunds,
                          rawOpenfunds);
   }
@@ -185,14 +209,17 @@ public record MintModel(String symbol, byte[] _symbol,
       _data[i++] = 1;
       i += Borsh.writeVector(blocklist, _data, i);
     }
-    i += Borsh.writeOptional(lockUpPeriodInSeconds, _data, i);
+    i += Borsh.writeOptional(lockUpPeriod, _data, i);
+    i += Borsh.writeOptional(yearInSeconds, _data, i);
     i += Borsh.writeOptional(permanentDelegate, _data, i);
     i += Borsh.writeOptional(defaultAccountStateFrozen, _data, i);
     i += Borsh.writeOptional(feeStructure, _data, i);
-    i += Borsh.writeOptional(feeParams, _data, i);
-    i += Borsh.writeOptional(valuation, _data, i);
+    i += Borsh.writeOptional(notifyAndSettle, _data, i);
+    i += Borsh.writeOptional(maxCap, _data, i);
     i += Borsh.writeOptional(minSubscription, _data, i);
     i += Borsh.writeOptional(minRedemption, _data, i);
+    i += Borsh.writeOptional(subscriptionPaused, _data, i);
+    i += Borsh.writeOptional(redemptionPaused, _data, i);
     i += Borsh.writeOptional(isRawOpenfunds, _data, i);
     i += Borsh.writeOptional(rawOpenfunds, _data, i);
     return i - offset;
@@ -208,14 +235,17 @@ public record MintModel(String symbol, byte[] _symbol,
          + (_imageUri == null || _imageUri.length == 0 ? 1 : (1 + Borsh.lenVector(_imageUri)))
          + (allowlist == null || allowlist.length == 0 ? 1 : (1 + Borsh.lenVector(allowlist)))
          + (blocklist == null || blocklist.length == 0 ? 1 : (1 + Borsh.lenVector(blocklist)))
-         + (lockUpPeriodInSeconds == null || lockUpPeriodInSeconds.isEmpty() ? 1 : (1 + 4))
+         + (lockUpPeriod == null || lockUpPeriod.isEmpty() ? 1 : (1 + 4))
+         + (yearInSeconds == null || yearInSeconds.isEmpty() ? 1 : (1 + 4))
          + (permanentDelegate == null ? 1 : (1 + 32))
          + (defaultAccountStateFrozen == null ? 1 : (1 + 1))
          + (feeStructure == null ? 1 : (1 + Borsh.len(feeStructure)))
-         + (feeParams == null ? 1 : (1 + Borsh.len(feeParams)))
-         + (valuation == null ? 1 : (1 + Borsh.len(valuation)))
+         + (notifyAndSettle == null ? 1 : (1 + Borsh.len(notifyAndSettle)))
+         + (maxCap == null || maxCap.isEmpty() ? 1 : (1 + 8))
          + (minSubscription == null || minSubscription.isEmpty() ? 1 : (1 + 8))
          + (minRedemption == null || minRedemption.isEmpty() ? 1 : (1 + 8))
+         + (subscriptionPaused == null ? 1 : (1 + 1))
+         + (redemptionPaused == null ? 1 : (1 + 1))
          + (isRawOpenfunds == null ? 1 : (1 + 1))
          + (rawOpenfunds == null ? 1 : (1 + Borsh.len(rawOpenfunds)));
   }

@@ -20,7 +20,7 @@ public sealed interface EngineFieldValue extends RustEnum permits
   EngineFieldValue.U8,
   EngineFieldValue.U64,
   EngineFieldValue.Pubkey,
-  EngineFieldValue.Percentage,
+  EngineFieldValue.U32,
   EngineFieldValue.URI,
   EngineFieldValue.Timestamp,
   EngineFieldValue.VecPubkey,
@@ -30,7 +30,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
   EngineFieldValue.FeeStructure,
   EngineFieldValue.FeeParams,
   EngineFieldValue.AccruedFees,
-  EngineFieldValue.Valuation {
+  EngineFieldValue.NotifyAndSettle,
+  EngineFieldValue.VecDelegateAcl,
+  EngineFieldValue.VecIntegration,
+  EngineFieldValue.TimeUnit {
 
   static EngineFieldValue read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -45,7 +48,7 @@ public sealed interface EngineFieldValue extends RustEnum permits
       case 6 -> U8.read(_data, i);
       case 7 -> U64.read(_data, i);
       case 8 -> Pubkey.read(_data, i);
-      case 9 -> Percentage.read(_data, i);
+      case 9 -> U32.read(_data, i);
       case 10 -> URI.read(_data, i);
       case 11 -> Timestamp.read(_data, i);
       case 12 -> VecPubkey.read(_data, i);
@@ -55,7 +58,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
       case 16 -> FeeStructure.read(_data, i);
       case 17 -> FeeParams.read(_data, i);
       case 18 -> AccruedFees.read(_data, i);
-      case 19 -> Valuation.read(_data, i);
+      case 19 -> NotifyAndSettle.read(_data, i);
+      case 20 -> VecDelegateAcl.read(_data, i);
+      case 21 -> VecIntegration.read(_data, i);
+      case 22 -> TimeUnit.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [EngineFieldValue]", ordinal
       ));
@@ -185,10 +191,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
     }
   }
 
-  record Percentage(int val) implements EnumInt32, EngineFieldValue {
+  record U32(int val) implements EnumInt32, EngineFieldValue {
 
-    public static Percentage read(final byte[] _data, int i) {
-      return new Percentage(getInt32LE(_data, i));
+    public static U32 read(final byte[] _data, int i) {
+      return new U32(getInt32LE(_data, i));
     }
 
     @Override
@@ -373,15 +379,83 @@ public sealed interface EngineFieldValue extends RustEnum permits
     }
   }
 
-  record Valuation(software.sava.anchor.programs.glam.anchor.types.Valuation val) implements BorshEnum, EngineFieldValue {
+  record NotifyAndSettle(software.sava.anchor.programs.glam.anchor.types.NotifyAndSettle val) implements BorshEnum, EngineFieldValue {
 
-    public static Valuation read(final byte[] _data, final int offset) {
-      return new Valuation(software.sava.anchor.programs.glam.anchor.types.Valuation.read(_data, offset));
+    public static NotifyAndSettle read(final byte[] _data, final int offset) {
+      return new NotifyAndSettle(software.sava.anchor.programs.glam.anchor.types.NotifyAndSettle.read(_data, offset));
     }
 
     @Override
     public int ordinal() {
       return 19;
+    }
+  }
+
+  record VecDelegateAcl(DelegateAcl[] val) implements EngineFieldValue {
+
+    public static VecDelegateAcl read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var val = Borsh.readVector(DelegateAcl.class, DelegateAcl::read, _data, offset);
+      return new VecDelegateAcl(val);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      i += Borsh.writeVector(val, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 1 + Borsh.lenVector(val);
+    }
+
+    @Override
+    public int ordinal() {
+      return 20;
+    }
+  }
+
+  record VecIntegration(Integration[] val) implements EngineFieldValue {
+
+    public static VecIntegration read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var val = Borsh.readVector(Integration.class, Integration::read, _data, offset);
+      return new VecIntegration(val);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      i += Borsh.writeVector(val, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 1 + Borsh.lenVector(val);
+    }
+
+    @Override
+    public int ordinal() {
+      return 21;
+    }
+  }
+
+  record TimeUnit(software.sava.anchor.programs.glam.anchor.types.TimeUnit val) implements BorshEnum, EngineFieldValue {
+
+    public static TimeUnit read(final byte[] _data, final int offset) {
+      return new TimeUnit(software.sava.anchor.programs.glam.anchor.types.TimeUnit.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 22;
     }
   }
 }

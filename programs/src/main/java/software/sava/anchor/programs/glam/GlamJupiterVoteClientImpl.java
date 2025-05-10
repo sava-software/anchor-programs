@@ -188,19 +188,20 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                           final PublicKey partialUnstakeKey,
                                           final long amount,
                                           final String memo) {
-    return GlamProtocolProgram.jupiterVoteOpenPartialUnstaking(
-        glamAccounts.invokedProgram(),
-        solanaAccounts,
-        glamKey,
-        escrowOwnerKey,
-        feePayer,
-        jupiterAccounts.voteProgram(),
-        lockerKey,
-        escrowKey,
-        partialUnstakeKey,
-        amount,
-        memo
-    );
+    throw new UnsupportedOperationException();
+//    return GlamProtocolProgram.jupiterVoteOpenPartialUnstaking(
+//        glamAccounts.invokedProgram(),
+//        solanaAccounts,
+//        glamKey,
+//        escrowOwnerKey,
+//        feePayer,
+//        jupiterAccounts.voteProgram(),
+//        lockerKey,
+//        escrowKey,
+//        partialUnstakeKey,
+//        amount,
+//        memo
+//    );
   }
 
   @Override
@@ -208,16 +209,17 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                            final PublicKey escrowKey,
                                            final PublicKey escrowOwnerKey,
                                            final PublicKey partialUnstakeKey) {
-    return GlamProtocolProgram.jupiterVoteMergePartialUnstaking(
-        glamAccounts.invokedProgram(),
-        glamKey,
-        escrowOwnerKey,
-        feePayer,
-        jupiterAccounts.voteProgram(),
-        lockerKey,
-        escrowKey,
-        partialUnstakeKey
-    );
+    throw new UnsupportedOperationException();
+//    return GlamProtocolProgram.jupiterVoteMergePartialUnstaking(
+//        glamAccounts.invokedProgram(),
+//        glamKey,
+//        escrowOwnerKey,
+//        feePayer,
+//        jupiterAccounts.voteProgram(),
+//        lockerKey,
+//        escrowKey,
+//        partialUnstakeKey
+//    );
   }
 
   @Override
@@ -228,19 +230,20 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
                                               final PublicKey partialUnstakeKey,
                                               final PublicKey payerKey,
                                               final PublicKey destinationTokensKey) {
-    return GlamProtocolProgram.jupiterVoteWithdrawPartialUnstaking(
-        glamAccounts.invokedProgram(),
-        glamKey,
-        escrowOwnerKey,
-        feePayer,
-        jupiterAccounts.voteProgram(),
-        lockerKey,
-        escrowKey,
-        partialUnstakeKey,
-        escrowTokensKey,
-        destinationTokensKey,
-        solanaAccounts.tokenProgram()
-    );
+    throw new UnsupportedOperationException();
+//    return GlamProtocolProgram.jupiterVoteWithdrawPartialUnstaking(
+//        glamAccounts.invokedProgram(),
+//        glamKey,
+//        escrowOwnerKey,
+//        feePayer,
+//        jupiterAccounts.voteProgram(),
+//        lockerKey,
+//        escrowKey,
+//        partialUnstakeKey,
+//        escrowTokensKey,
+//        destinationTokensKey,
+//        solanaAccounts.tokenProgram()
+//    );
   }
 
   @Override

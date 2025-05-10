@@ -5,17 +5,17 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record Valuation(ValuationModel model,
-                        long noticePeriod,
-                        NoticePeriodType noticePeriodType,
-                        boolean permissionlessFulfillment,
-                        long settlementPeriod,
-                        long cancellationWindow,
-                        TimeUnit timeUnit) implements Borsh {
+public record NotifyAndSettle(ValuationModel model,
+                              long noticePeriod,
+                              NoticePeriodType noticePeriodType,
+                              boolean permissionlessFulfillment,
+                              long settlementPeriod,
+                              long cancellationWindow,
+                              int padding) implements Borsh {
 
   public static final int BYTES = 28;
 
-  public static Valuation read(final byte[] _data, final int offset) {
+  public static NotifyAndSettle read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
@@ -32,14 +32,14 @@ public record Valuation(ValuationModel model,
     i += 8;
     final var cancellationWindow = getInt64LE(_data, i);
     i += 8;
-    final var timeUnit = TimeUnit.read(_data, i);
-    return new Valuation(model,
-                         noticePeriod,
-                         noticePeriodType,
-                         permissionlessFulfillment,
-                         settlementPeriod,
-                         cancellationWindow,
-                         timeUnit);
+    final var padding = _data[i] & 0xFF;
+    return new NotifyAndSettle(model,
+                               noticePeriod,
+                               noticePeriodType,
+                               permissionlessFulfillment,
+                               settlementPeriod,
+                               cancellationWindow,
+                               padding);
   }
 
   @Override
@@ -55,7 +55,8 @@ public record Valuation(ValuationModel model,
     i += 8;
     putInt64LE(_data, i, cancellationWindow);
     i += 8;
-    i += Borsh.write(timeUnit, _data, i);
+    _data[i] = (byte) padding;
+    ++i;
     return i - offset;
   }
 

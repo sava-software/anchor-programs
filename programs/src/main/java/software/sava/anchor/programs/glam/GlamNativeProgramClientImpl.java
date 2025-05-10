@@ -378,14 +378,4 @@ final class GlamNativeProgramClientImpl implements GlamNativeProgramClient {
         lamports
     );
   }
-
-  @Override
-  public Instruction jupiterSetMaxSwapSlippage(final int slippageBps) {
-    return GlamProtocolProgram.jupiterSetMaxSwapSlippage(
-        invokedProgram,
-        glamVaultAccounts.glamPublicKey(),
-        feePayer.publicKey(),
-        slippageBps
-    );
-  }
 }

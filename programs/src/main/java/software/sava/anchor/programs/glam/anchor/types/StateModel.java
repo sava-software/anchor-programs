@@ -3,14 +3,13 @@ package software.sava.anchor.programs.glam.anchor.types;
 import java.lang.Boolean;
 import java.lang.String;
 
-import java.util.OptionalLong;
+import java.util.OptionalInt;
 
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
-import static software.sava.core.encoding.ByteUtil.getInt64LE;
 
 public record StateModel(PublicKey id,
                          AccountType accountType,
@@ -18,18 +17,21 @@ public record StateModel(PublicKey id,
                          String uri, byte[] _uri,
                          Boolean enabled,
                          PublicKey[] assets,
-                         PublicKey[] externalVaultAccounts,
                          MintModel[] mints,
                          CompanyModel company,
                          ManagerModel owner,
                          CreatedModel created,
+                         PublicKey baseAsset,
+                         OptionalInt updateTimelock,
+                         TimeUnit timeUnit,
                          DelegateAcl[] delegateAcls,
                          Integration[] integrations,
                          int[] driftMarketIndexesPerp,
                          int[] driftMarketIndexesSpot,
                          int[] driftOrderTypes,
-                         PublicKey baseAsset,
-                         OptionalLong maxCap,
+                         PublicKey[] kaminoLendingMarkets,
+                         PublicKey[] meteoraDlmmPools,
+                         OptionalInt maxSwapSlippageBps,
                          Metadata metadata,
                          FundOpenfundsModel rawOpenfunds) implements Borsh {
 
@@ -39,18 +41,21 @@ public record StateModel(PublicKey id,
                                         final String uri,
                                         final Boolean enabled,
                                         final PublicKey[] assets,
-                                        final PublicKey[] externalVaultAccounts,
                                         final MintModel[] mints,
                                         final CompanyModel company,
                                         final ManagerModel owner,
                                         final CreatedModel created,
+                                        final PublicKey baseAsset,
+                                        final OptionalInt updateTimelock,
+                                        final TimeUnit timeUnit,
                                         final DelegateAcl[] delegateAcls,
                                         final Integration[] integrations,
                                         final int[] driftMarketIndexesPerp,
                                         final int[] driftMarketIndexesSpot,
                                         final int[] driftOrderTypes,
-                                        final PublicKey baseAsset,
-                                        final OptionalLong maxCap,
+                                        final PublicKey[] kaminoLendingMarkets,
+                                        final PublicKey[] meteoraDlmmPools,
+                                        final OptionalInt maxSwapSlippageBps,
                                         final Metadata metadata,
                                         final FundOpenfundsModel rawOpenfunds) {
     return new StateModel(id,
@@ -59,18 +64,21 @@ public record StateModel(PublicKey id,
                           uri, Borsh.getBytes(uri),
                           enabled,
                           assets,
-                          externalVaultAccounts,
                           mints,
                           company,
                           owner,
                           created,
+                          baseAsset,
+                          updateTimelock,
+                          timeUnit,
                           delegateAcls,
                           integrations,
                           driftMarketIndexesPerp,
                           driftMarketIndexesSpot,
                           driftOrderTypes,
-                          baseAsset,
-                          maxCap,
+                          kaminoLendingMarkets,
+                          meteoraDlmmPools,
+                          maxSwapSlippageBps,
                           metadata,
                           rawOpenfunds);
   }
@@ -104,10 +112,6 @@ public record StateModel(PublicKey id,
     if (assets != null) {
       i += Borsh.lenVector(assets);
     }
-    final var externalVaultAccounts = _data[i++] == 0 ? null : Borsh.readPublicKeyVector(_data, i);
-    if (externalVaultAccounts != null) {
-      i += Borsh.lenVector(externalVaultAccounts);
-    }
     final var mints = _data[i++] == 0 ? null : Borsh.readVector(MintModel.class, MintModel::read, _data, i);
     if (mints != null) {
       i += Borsh.lenVector(mints);
@@ -123,6 +127,18 @@ public record StateModel(PublicKey id,
     final var created = _data[i++] == 0 ? null : CreatedModel.read(_data, i);
     if (created != null) {
       i += Borsh.len(created);
+    }
+    final var baseAsset = _data[i++] == 0 ? null : readPubKey(_data, i);
+    if (baseAsset != null) {
+      i += 32;
+    }
+    final var updateTimelock = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+    if (updateTimelock.isPresent()) {
+      i += 4;
+    }
+    final var timeUnit = _data[i++] == 0 ? null : TimeUnit.read(_data, i);
+    if (timeUnit != null) {
+      i += Borsh.len(timeUnit);
     }
     final var delegateAcls = _data[i++] == 0 ? null : Borsh.readVector(DelegateAcl.class, DelegateAcl::read, _data, i);
     if (delegateAcls != null) {
@@ -144,13 +160,17 @@ public record StateModel(PublicKey id,
     if (driftOrderTypes != null) {
       i += Borsh.lenVector(driftOrderTypes);
     }
-    final var baseAsset = _data[i++] == 0 ? null : readPubKey(_data, i);
-    if (baseAsset != null) {
-      i += 32;
+    final var kaminoLendingMarkets = _data[i++] == 0 ? null : Borsh.readPublicKeyVector(_data, i);
+    if (kaminoLendingMarkets != null) {
+      i += Borsh.lenVector(kaminoLendingMarkets);
     }
-    final var maxCap = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
-    if (maxCap.isPresent()) {
-      i += 8;
+    final var meteoraDlmmPools = _data[i++] == 0 ? null : Borsh.readPublicKeyVector(_data, i);
+    if (meteoraDlmmPools != null) {
+      i += Borsh.lenVector(meteoraDlmmPools);
+    }
+    final var maxSwapSlippageBps = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+    if (maxSwapSlippageBps.isPresent()) {
+      i += 4;
     }
     final var metadata = _data[i++] == 0 ? null : Metadata.read(_data, i);
     if (metadata != null) {
@@ -163,18 +183,21 @@ public record StateModel(PublicKey id,
                           uri, Borsh.getBytes(uri),
                           enabled,
                           assets,
-                          externalVaultAccounts,
                           mints,
                           company,
                           owner,
                           created,
+                          baseAsset,
+                          updateTimelock,
+                          timeUnit,
                           delegateAcls,
                           integrations,
                           driftMarketIndexesPerp,
                           driftMarketIndexesSpot,
                           driftOrderTypes,
-                          baseAsset,
-                          maxCap,
+                          kaminoLendingMarkets,
+                          meteoraDlmmPools,
+                          maxSwapSlippageBps,
                           metadata,
                           rawOpenfunds);
   }
@@ -193,12 +216,6 @@ public record StateModel(PublicKey id,
       _data[i++] = 1;
       i += Borsh.writeVector(assets, _data, i);
     }
-    if (externalVaultAccounts == null || externalVaultAccounts.length == 0) {
-      _data[i++] = 0;
-    } else {
-      _data[i++] = 1;
-      i += Borsh.writeVector(externalVaultAccounts, _data, i);
-    }
     if (mints == null || mints.length == 0) {
       _data[i++] = 0;
     } else {
@@ -208,6 +225,9 @@ public record StateModel(PublicKey id,
     i += Borsh.writeOptional(company, _data, i);
     i += Borsh.writeOptional(owner, _data, i);
     i += Borsh.writeOptional(created, _data, i);
+    i += Borsh.writeOptional(baseAsset, _data, i);
+    i += Borsh.writeOptional(updateTimelock, _data, i);
+    i += Borsh.writeOptional(timeUnit, _data, i);
     if (delegateAcls == null || delegateAcls.length == 0) {
       _data[i++] = 0;
     } else {
@@ -238,8 +258,19 @@ public record StateModel(PublicKey id,
       _data[i++] = 1;
       i += Borsh.writeVector(driftOrderTypes, _data, i);
     }
-    i += Borsh.writeOptional(baseAsset, _data, i);
-    i += Borsh.writeOptional(maxCap, _data, i);
+    if (kaminoLendingMarkets == null || kaminoLendingMarkets.length == 0) {
+      _data[i++] = 0;
+    } else {
+      _data[i++] = 1;
+      i += Borsh.writeVector(kaminoLendingMarkets, _data, i);
+    }
+    if (meteoraDlmmPools == null || meteoraDlmmPools.length == 0) {
+      _data[i++] = 0;
+    } else {
+      _data[i++] = 1;
+      i += Borsh.writeVector(meteoraDlmmPools, _data, i);
+    }
+    i += Borsh.writeOptional(maxSwapSlippageBps, _data, i);
     i += Borsh.writeOptional(metadata, _data, i);
     i += Borsh.writeOptional(rawOpenfunds, _data, i);
     return i - offset;
@@ -253,18 +284,21 @@ public record StateModel(PublicKey id,
          + (_uri == null || _uri.length == 0 ? 1 : (1 + Borsh.lenVector(_uri)))
          + (enabled == null ? 1 : (1 + 1))
          + (assets == null || assets.length == 0 ? 1 : (1 + Borsh.lenVector(assets)))
-         + (externalVaultAccounts == null || externalVaultAccounts.length == 0 ? 1 : (1 + Borsh.lenVector(externalVaultAccounts)))
          + (mints == null || mints.length == 0 ? 1 : (1 + Borsh.lenVector(mints)))
          + (company == null ? 1 : (1 + Borsh.len(company)))
          + (owner == null ? 1 : (1 + Borsh.len(owner)))
          + (created == null ? 1 : (1 + Borsh.len(created)))
+         + (baseAsset == null ? 1 : (1 + 32))
+         + (updateTimelock == null || updateTimelock.isEmpty() ? 1 : (1 + 4))
+         + (timeUnit == null ? 1 : (1 + Borsh.len(timeUnit)))
          + (delegateAcls == null || delegateAcls.length == 0 ? 1 : (1 + Borsh.lenVector(delegateAcls)))
          + (integrations == null || integrations.length == 0 ? 1 : (1 + Borsh.lenVector(integrations)))
          + (driftMarketIndexesPerp == null || driftMarketIndexesPerp.length == 0 ? 1 : (1 + Borsh.lenVector(driftMarketIndexesPerp)))
          + (driftMarketIndexesSpot == null || driftMarketIndexesSpot.length == 0 ? 1 : (1 + Borsh.lenVector(driftMarketIndexesSpot)))
          + (driftOrderTypes == null || driftOrderTypes.length == 0 ? 1 : (1 + Borsh.lenVector(driftOrderTypes)))
-         + (baseAsset == null ? 1 : (1 + 32))
-         + (maxCap == null || maxCap.isEmpty() ? 1 : (1 + 8))
+         + (kaminoLendingMarkets == null || kaminoLendingMarkets.length == 0 ? 1 : (1 + Borsh.lenVector(kaminoLendingMarkets)))
+         + (meteoraDlmmPools == null || meteoraDlmmPools.length == 0 ? 1 : (1 + Borsh.lenVector(meteoraDlmmPools)))
+         + (maxSwapSlippageBps == null || maxSwapSlippageBps.isEmpty() ? 1 : (1 + 4))
          + (metadata == null ? 1 : (1 + Borsh.len(metadata)))
          + (rawOpenfunds == null ? 1 : (1 + Borsh.len(rawOpenfunds)));
   }

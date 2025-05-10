@@ -27,7 +27,7 @@ public record GlamVaultAccountsRecord(GlamAccounts glamAccounts,
   }
 
   @Override
-  public ProgramDerivedAddress shareClassPDA(final int shareClassId) {
-    return glamAccounts.mintPDA(glamPublicKey(), shareClassId);
+  public ProgramDerivedAddress mintPDA(final int id) {
+    return glamAccounts.mintPDA(glamPublicKey(), id);
   }
 }

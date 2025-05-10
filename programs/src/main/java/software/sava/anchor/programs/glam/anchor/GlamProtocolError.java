@@ -7,6 +7,8 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.IntegrationDisabled,
     GlamProtocolError.GlamStateDisabled,
     GlamProtocolError.InvalidSignerAccount,
+    GlamProtocolError.EmergencyUpdateDenied,
+    GlamProtocolError.TimelockStillActive,
     GlamProtocolError.InvalidAccountType,
     GlamProtocolError.InvalidName,
     GlamProtocolError.InvalidSymbol,
@@ -36,6 +38,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.LedgerNotFound,
     GlamProtocolError.InvalidLedgerEntry,
     GlamProtocolError.InvalidAmount,
+    GlamProtocolError.MaxCapExceeded,
     GlamProtocolError.InvalidPricingOracle,
     GlamProtocolError.PricingError,
     GlamProtocolError.PriceTooOld,
@@ -55,6 +58,8 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 48001 -> IntegrationDisabled.INSTANCE;
       case 48002 -> GlamStateDisabled.INSTANCE;
       case 48003 -> InvalidSignerAccount.INSTANCE;
+      case 48004 -> EmergencyUpdateDenied.INSTANCE;
+      case 48005 -> TimelockStillActive.INSTANCE;
       case 49000 -> InvalidAccountType.INSTANCE;
       case 49001 -> InvalidName.INSTANCE;
       case 49002 -> InvalidSymbol.INSTANCE;
@@ -84,6 +89,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 51004 -> LedgerNotFound.INSTANCE;
       case 51005 -> InvalidLedgerEntry.INSTANCE;
       case 51006 -> InvalidAmount.INSTANCE;
+      case 51007 -> MaxCapExceeded.INSTANCE;
       case 51100 -> InvalidPricingOracle.INSTANCE;
       case 51101 -> PricingError.INSTANCE;
       case 51102 -> PriceTooOld.INSTANCE;
@@ -125,6 +131,20 @@ public sealed interface GlamProtocolError extends ProgramError permits
 
     public static final InvalidSignerAccount INSTANCE = new InvalidSignerAccount(
         48003, "Invalid signer token account"
+    );
+  }
+
+  record EmergencyUpdateDenied(int code, String msg) implements GlamProtocolError {
+
+    public static final EmergencyUpdateDenied INSTANCE = new EmergencyUpdateDenied(
+        48004, "Emergency update denied"
+    );
+  }
+
+  record TimelockStillActive(int code, String msg) implements GlamProtocolError {
+
+    public static final TimelockStillActive INSTANCE = new TimelockStillActive(
+        48005, "Timelock still active"
     );
   }
 
@@ -328,6 +348,13 @@ public sealed interface GlamProtocolError extends ProgramError permits
 
     public static final InvalidAmount INSTANCE = new InvalidAmount(
         51006, "Invalid amount for subscription or redemption"
+    );
+  }
+
+  record MaxCapExceeded(int code, String msg) implements GlamProtocolError {
+
+    public static final MaxCapExceeded INSTANCE = new MaxCapExceeded(
+        51007, "Max cap exceeded"
     );
   }
 

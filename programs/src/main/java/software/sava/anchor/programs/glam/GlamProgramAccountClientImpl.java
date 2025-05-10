@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.glam;
 
+import software.sava.anchor.programs.glam.anchor.GlamProtocolPDAs;
 import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.ProgramDerivedAddress;
@@ -18,11 +19,13 @@ import software.sava.solana.programs.clients.NativeProgramClient;
 import software.sava.solana.programs.stake.StakeAccount;
 import software.sava.solana.programs.stake.StakeAuthorize;
 import software.sava.solana.programs.stake.StakeState;
+import software.sava.solana.programs.token.AssociatedTokenProgram;
 
 import java.util.List;
 import java.util.SequencedCollection;
 import java.util.concurrent.CompletableFuture;
 
+import static software.sava.anchor.programs.glam.anchor.GlamProtocolPDAs.escrowMintAtaPDA;
 import static software.sava.core.accounts.meta.AccountMeta.createFeePayer;
 
 final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
@@ -506,5 +509,35 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   @Override
   public Instruction withdrawStakeAccount(final StakeAccount stakeAccount, final long lamports) {
     return nativeProgramClient.withdrawStakeAccount(stakeAccount, ownerPublicKey(), lamports);
+  }
+
+  @Override
+  public Instruction fulfill(final int mintId, final PublicKey baseAssetMint, final PublicKey baseAssetTokenProgram) {
+    final var glamProgram = invokedProgram.publicKey();
+
+    final var escrow = GlamProtocolPDAs.glamEscrowPDA(glamProgram, glamVaultAccounts.glamPublicKey()).publicKey();
+
+    final var mint = glamVaultAccounts.mintPDA(mintId).publicKey();
+    final var escrowMintTokenAccount = escrowMintAtaPDA(glamProgram, escrow, solanaAccounts.token2022Program(), mint);
+
+    final var vault = glamVaultAccounts.vaultPublicKey();
+    final var vaultTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, vault, baseAssetTokenProgram, mint);
+
+    final var escrowTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, escrow, baseAssetTokenProgram, mint);
+
+    return GlamProtocolProgram.fulfill(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        vault,
+        escrow,
+        mint,
+        feePayer.publicKey(),
+        escrowMintTokenAccount.publicKey(),
+        baseAssetMint,
+        vaultTokenAccount.publicKey(),
+        escrowTokenAccount.publicKey(),
+        mintId
+    );
   }
 }
