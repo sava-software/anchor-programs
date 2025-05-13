@@ -94,6 +94,7 @@ public interface MarinadeProgramClient {
     );
   }
 
+  @Deprecated
   default AccountWithSeed createOffCurveAccountWithSeed(final String asciiSeed) {
     return PublicKey.createOffCurveAccountWithAsciiSeed(
         feePayer(),
@@ -102,6 +103,7 @@ public interface MarinadeProgramClient {
     );
   }
 
+  @Deprecated
   default Instruction createTicketAccountIx(final PublicKey ticketAccount, final long minRentLamports) {
     return nativeProgramAccountClient().createAccount(
         ticketAccount,
@@ -111,6 +113,7 @@ public interface MarinadeProgramClient {
     );
   }
 
+  @Deprecated
   default Instruction createTicketAccountWithSeedIx(final AccountWithSeed accountWithSeed, final long minRentLamports) {
     return nativeProgramAccountClient().createAccountWithSeed(
         accountWithSeed,
@@ -120,19 +123,70 @@ public interface MarinadeProgramClient {
     );
   }
 
-  Instruction depositStakeAccount(final State marinadeProgramState,
+  Instruction depositStakeAccount(final PublicKey validatorListKey,
+                                  final PublicKey stakeListKey,
                                   final PublicKey stakeAccount,
+                                  final PublicKey duplicationFlagKey,
                                   final PublicKey mSolTokenAccount,
-                                  final PublicKey validatorPublicKey,
                                   final int validatorIndex);
 
+  default Instruction depositStakeAccount(final State marinadeProgramState,
+                                          final PublicKey stakeAccount,
+                                          final PublicKey mSolTokenAccount,
+                                          final PublicKey validatorPublicKey,
+                                          final int validatorIndex) {
+    return depositStakeAccount(
+        marinadeProgramState.validatorSystem().validatorList().account(),
+        marinadeProgramState.stakeSystem().stakeList().account(),
+        stakeAccount,
+        findDuplicationKey(validatorPublicKey).publicKey(),
+        mSolTokenAccount,
+        validatorIndex
+    );
+  }
+
+  @Deprecated
   Instruction orderUnstake(final PublicKey mSolTokenAccount,
                            final PublicKey ticketAccount,
                            final long lamports);
 
   Instruction claimTicket(final PublicKey ticketAccount);
 
+  @Deprecated
   default List<Instruction> claimTickets(final Collection<PublicKey> ticketAccounts) {
     return ticketAccounts.stream().map(this::claimTicket).toList();
+  }
+
+  Instruction withdrawStakeAccount(final PublicKey mSolTokenAccount,
+                                   final PublicKey validatorListKey,
+                                   final PublicKey stakeListKey,
+                                   final PublicKey stakeWithdrawalAuthorityKey,
+                                   final PublicKey stakeDepositAuthorityKey,
+                                   final PublicKey stakeAccount,
+                                   final PublicKey splitStakeAccountKey,
+                                   final int stakeIndex,
+                                   final int validatorIndex,
+                                   final long msolAmount);
+
+  default Instruction withdrawStakeAccount(final State marinadeProgramState,
+                                           final PublicKey mSolTokenAccount,
+                                           final PublicKey stakeAccount,
+                                           final PublicKey splitStakeAccountKey,
+                                           final int stakeIndex,
+                                           final int validatorIndex,
+                                           final long msolAmount) {
+    final var marinadeAccounts = marinadeAccounts();
+    return withdrawStakeAccount(
+        mSolTokenAccount,
+        marinadeProgramState.validatorSystem().validatorList().account(),
+        marinadeProgramState.stakeSystem().stakeList().account(),
+        marinadeAccounts.deriveStakeWithdrawAuthority().publicKey(),
+        marinadeAccounts.deriveStakeDepositAuthority().publicKey(),
+        stakeAccount,
+        splitStakeAccountKey,
+        stakeIndex,
+        validatorIndex,
+        msolAmount
+    );
   }
 }

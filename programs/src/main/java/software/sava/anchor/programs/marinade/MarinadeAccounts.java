@@ -1,8 +1,12 @@
 package software.sava.anchor.programs.marinade;
 
+import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 
+import java.util.List;
+
+import static java.nio.charset.StandardCharsets.US_ASCII;
 import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 import static software.sava.core.accounts.meta.AccountMeta.createInvoked;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
@@ -120,5 +124,53 @@ public interface MarinadeAccounts {
         fromBase58Encoded(solLegAccount),
         fromBase58Encoded(validatorListAccount)
     );
+  }
+
+  static ProgramDerivedAddress deriveReserveAuthority(final PublicKey program, final PublicKey state) {
+    return PublicKey.findProgramAddress(List.of(
+            state.toByteArray(),
+            "reserve".getBytes(US_ASCII)
+        ), program
+    );
+  }
+
+  default ProgramDerivedAddress deriveReserveAuthority() {
+    return deriveReserveAuthority(marinadeProgram(), stateProgram());
+  }
+
+  static ProgramDerivedAddress deriveStakeMintAuthority(final PublicKey program, final PublicKey state) {
+    return PublicKey.findProgramAddress(List.of(
+            state.toByteArray(),
+            "st_mint".getBytes(US_ASCII)
+        ), program
+    );
+  }
+
+  default ProgramDerivedAddress deriveStakeMintAuthority() {
+    return deriveStakeMintAuthority(marinadeProgram(), stateProgram());
+  }
+
+  static ProgramDerivedAddress deriveStakeWithdrawAuthority(final PublicKey program, final PublicKey state) {
+    return PublicKey.findProgramAddress(List.of(
+            state.toByteArray(),
+            "withdraw".getBytes(US_ASCII)
+        ), program
+    );
+  }
+
+  default ProgramDerivedAddress deriveStakeWithdrawAuthority() {
+    return deriveStakeWithdrawAuthority(marinadeProgram(), stateProgram());
+  }
+
+  static ProgramDerivedAddress deriveStakeDepositAuthority(final PublicKey program, final PublicKey state) {
+    return PublicKey.findProgramAddress(List.of(
+            state.toByteArray(),
+            "deposit".getBytes(US_ASCII)
+        ), program
+    );
+  }
+
+  default ProgramDerivedAddress deriveStakeDepositAuthority() {
+    return deriveStakeDepositAuthority(marinadeProgram(), stateProgram());
   }
 }

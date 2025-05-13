@@ -1,7 +1,6 @@
 package software.sava.anchor.programs.marinade;
 
 import software.sava.anchor.programs.marinade.anchor.MarinadeFinanceProgram;
-import software.sava.anchor.programs.marinade.anchor.types.State;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
@@ -69,19 +68,20 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
   }
 
   @Override
-  public Instruction depositStakeAccount(final State marinadeProgramState,
+  public Instruction depositStakeAccount(final PublicKey validatorListKey,
+                                         final PublicKey stakeListKey,
                                          final PublicKey stakeAccount,
+                                         final PublicKey duplicationFlagKey,
                                          final PublicKey mSolTokenAccount,
-                                         final PublicKey validatorPublicKey,
                                          final int validatorIndex) {
     return MarinadeFinanceProgram.depositStakeAccount(
         marinadeAccounts.invokedMarinadeProgram(),
         marinadeAccounts.stateProgram(),
-        marinadeProgramState.validatorSystem().validatorList().account(),
-        marinadeProgramState.stakeSystem().stakeList().account(),
+        validatorListKey,
+        stakeListKey,
         stakeAccount,
         owner,
-        findDuplicationKey(validatorPublicKey).publicKey(),
+        duplicationFlagKey,
         feePayer,
         marinadeAccounts.mSolTokenMint(),
         mSolTokenAccount,
@@ -126,30 +126,11 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
     );
   }
 
-  public Instruction withdrawStakeAccount(final State marinadeProgramState,
-                                          final PublicKey mSolTokenAccount,
-                                          final PublicKey stakeDepositAuthorityKey,
-                                          final PublicKey stakeAccount,
-                                          final PublicKey splitStakeAccountKey,
-                                          final int stakeIndex,
-                                          final int validatorIndex,
-                                          final long msolAmount) {
-    return withdrawStakeAccount(
-        mSolTokenAccount,
-        marinadeProgramState.validatorSystem().validatorList().account(),
-        marinadeProgramState.stakeSystem().stakeList().account(),
-        stakeDepositAuthorityKey,
-        stakeAccount,
-        splitStakeAccountKey,
-        stakeIndex,
-        validatorIndex,
-        msolAmount
-    );
-  }
-
+  @Override
   public Instruction withdrawStakeAccount(final PublicKey mSolTokenAccount,
                                           final PublicKey validatorListKey,
                                           final PublicKey stakeListKey,
+                                          final PublicKey stakeWithdrawalAuthorityKey,
                                           final PublicKey stakeDepositAuthorityKey,
                                           final PublicKey stakeAccount,
                                           final PublicKey splitStakeAccountKey,
@@ -166,11 +147,10 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
         validatorListKey,
         stakeListKey,
 
-        owner,
+        stakeWithdrawalAuthorityKey,
         stakeDepositAuthorityKey,
 
         stakeAccount,
-
         splitStakeAccountKey,
         feePayer,
 

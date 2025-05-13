@@ -2,7 +2,6 @@ package software.sava.anchor.programs.glam;
 
 import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.anchor.programs.marinade.MarinadeAccounts;
-import software.sava.anchor.programs.marinade.anchor.types.State;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -75,10 +74,11 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   }
 
   @Override
-  public Instruction depositStakeAccount(final State marinadeProgramState,
+  public Instruction depositStakeAccount(final PublicKey validatorListKey,
+                                         final PublicKey stakeListKey,
                                          final PublicKey stakeAccount,
+                                         final PublicKey duplicationFlagKey,
                                          final PublicKey mSolTokenAccount,
-                                         final PublicKey validatorPublicKey,
                                          final int validatorIndex) {
     return GlamProtocolProgram.marinadeDepositStakeAccount(
         invokedProgram,
@@ -88,10 +88,10 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         feePayer.publicKey(),
         marinadeAccounts.marinadeProgram(),
         marinadeAccounts.stateProgram(),
-        marinadeProgramState.validatorSystem().validatorList().account(),
-        marinadeProgramState.stakeSystem().stakeList().account(),
+        validatorListKey,
+        stakeListKey,
         stakeAccount,
-        findDuplicationKey(validatorPublicKey).publicKey(),
+        duplicationFlagKey,
         marinadeAccounts.mSolTokenMint(),
         mSolTokenAccount,
         marinadeAccounts.mSolTokenMintAuthorityPDA(),
@@ -137,5 +137,19 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         ticketAccount,
         solanaAccounts.clockSysVar()
     );
+  }
+
+  @Override
+  public Instruction withdrawStakeAccount(final PublicKey mSolTokenAccount,
+                                          final PublicKey validatorListKey,
+                                          final PublicKey stakeListKey,
+                                          final PublicKey stakeWithdrawalAuthorityKey,
+                                          final PublicKey stakeDepositAuthorityKey,
+                                          final PublicKey stakeAccount,
+                                          final PublicKey splitStakeAccountKey,
+                                          final int stakeIndex,
+                                          final int validatorIndex,
+                                          final long msolAmount) {
+    throw new UnsupportedOperationException("TODO: withdrawStakeAccount");
   }
 }
