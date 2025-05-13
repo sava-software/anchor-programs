@@ -79,6 +79,7 @@ public record FarmState(PublicKey _address,
                         PublicKey strategyId,
                         PublicKey delegatedRpsAdmin,
                         PublicKey vaultId,
+                        PublicKey secondDelegatedAuthority,
                         long[] padding) implements Borsh {
 
   public static final int BYTES = 8336;
@@ -120,7 +121,8 @@ public record FarmState(PublicKey _address,
   public static final int STRATEGY_ID_OFFSET = 7616;
   public static final int DELEGATED_RPS_ADMIN_OFFSET = 7648;
   public static final int VAULT_ID_OFFSET = 7680;
-  public static final int PADDING_OFFSET = 7712;
+  public static final int SECOND_DELEGATED_AUTHORITY_OFFSET = 7712;
+  public static final int PADDING_OFFSET = 7744;
 
   public static Filter createFarmAdminFilter(final PublicKey farmAdmin) {
     return Filter.createMemCompFilter(FARM_ADMIN_OFFSET, farmAdmin);
@@ -294,6 +296,10 @@ public record FarmState(PublicKey _address,
     return Filter.createMemCompFilter(VAULT_ID_OFFSET, vaultId);
   }
 
+  public static Filter createSecondDelegatedAuthorityFilter(final PublicKey secondDelegatedAuthority) {
+    return Filter.createMemCompFilter(SECOND_DELEGATED_AUTHORITY_OFFSET, secondDelegatedAuthority);
+  }
+
   public static FarmState read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -386,7 +392,9 @@ public record FarmState(PublicKey _address,
     i += 32;
     final var vaultId = readPubKey(_data, i);
     i += 32;
-    final var padding = new long[78];
+    final var secondDelegatedAuthority = readPubKey(_data, i);
+    i += 32;
+    final var padding = new long[74];
     Borsh.readArray(padding, _data, i);
     return new FarmState(_address,
                          discriminator,
@@ -426,6 +434,7 @@ public record FarmState(PublicKey _address,
                          strategyId,
                          delegatedRpsAdmin,
                          vaultId,
+                         secondDelegatedAuthority,
                          padding);
   }
 
@@ -500,6 +509,8 @@ public record FarmState(PublicKey _address,
     delegatedRpsAdmin.write(_data, i);
     i += 32;
     vaultId.write(_data, i);
+    i += 32;
+    secondDelegatedAuthority.write(_data, i);
     i += 32;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;

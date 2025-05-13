@@ -24,7 +24,8 @@ public enum FarmConfigOption implements Borsh.Enum {
   UpdatePendingFarmAdmin,
   UpdateStrategyId,
   UpdateDelegatedRpsAdmin,
-  UpdateVaultId;
+  UpdateVaultId,
+  UpdateExtraDelegatedAuthority;
 
   public static FarmConfigOption read(final byte[] _data, final int offset) {
     return Borsh.read(FarmConfigOption.values(), _data, offset);

@@ -1019,6 +1019,23 @@ public final class FarmsProgram {
     }
   }
 
+  public static final Discriminator UPDATE_SECOND_DELEGATED_AUTHORITY_DISCRIMINATOR = toDiscriminator(127, 26, 6, 181, 203, 248, 117, 64);
+
+  public static Instruction updateSecondDelegatedAuthority(final AccountMeta invokedFarmsProgramMeta,
+                                                           final PublicKey globalAdminKey,
+                                                           final PublicKey farmStateKey,
+                                                           final PublicKey globalConfigKey,
+                                                           final PublicKey newSecondDelegatedAuthorityKey) {
+    final var keys = List.of(
+      createWritableSigner(globalAdminKey),
+      createWrite(farmStateKey),
+      createRead(globalConfigKey),
+      createRead(newSecondDelegatedAuthorityKey)
+    );
+
+    return Instruction.createInstruction(invokedFarmsProgramMeta, keys, UPDATE_SECOND_DELEGATED_AUTHORITY_DISCRIMINATOR);
+  }
+
   public static final Discriminator IDL_MISSING_TYPES_DISCRIMINATOR = toDiscriminator(130, 80, 38, 153, 80, 212, 182, 253);
 
   public static Instruction idlMissingTypes(final AccountMeta invokedFarmsProgramMeta,
