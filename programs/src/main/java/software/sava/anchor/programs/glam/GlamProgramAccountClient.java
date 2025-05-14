@@ -113,6 +113,6 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
   Instruction fulfill(final int mintId, final PublicKey baseAssetMint, final PublicKey baseAssetTokenProgram);
 
   default Instruction fulfill(final PublicKey baseAssetMint, final PublicKey baseAssetTokenProgram) {
-    return fulfill(baseAssetMint, baseAssetTokenProgram);
+    return fulfill(0, baseAssetMint, baseAssetTokenProgram);
   }
 }

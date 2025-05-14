@@ -11,8 +11,10 @@ import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
+import software.sava.solana.programs.stake.StakeAccount;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -52,6 +54,44 @@ public interface MarinadeProgramClient {
 
   static double solPrice(final State state) {
     return totalVirtualStakedLamports(state) / (double) state.msolSupply();
+  }
+
+  static int accountIndex(final byte[] key,
+                          final byte[] listData,
+                          final int itemSize) {
+    for (int i = 8, s = 0; i < listData.length; i += itemSize, ++s) {
+      if (Arrays.equals(
+          key, 0, PublicKey.PUBLIC_KEY_LENGTH,
+          listData, i, i + PublicKey.PUBLIC_KEY_LENGTH
+      )) {
+        return s;
+      }
+    }
+    return -1;
+  }
+
+  static int stakeAccountIndex(final byte[] stakeAccountKey,
+                               final byte[] stakeListData,
+                               final State state) {
+    return accountIndex(stakeAccountKey, stakeListData, state.stakeSystem().stakeList().itemSize());
+  }
+
+  static int stakeAccountIndex(final StakeAccount stakeAccount,
+                               final byte[] validatorListData,
+                               final State state) {
+    return stakeAccountIndex(stakeAccount.address().toByteArray(), validatorListData, state);
+  }
+
+  static int validatorIndex(final byte[] validatorKey,
+                            final byte[] validatorListData,
+                            final State state) {
+    return accountIndex(validatorKey, validatorListData, state.validatorSystem().validatorList().itemSize());
+  }
+
+  static int validatorIndex(final StakeAccount stakeAccount,
+                            final byte[] validatorListData,
+                            final State state) {
+    return validatorIndex(stakeAccount.voterPublicKey().toByteArray(), validatorListData, state);
   }
 
   SolanaAccounts solanaAccounts();
@@ -152,7 +192,6 @@ public interface MarinadeProgramClient {
 
   Instruction claimTicket(final PublicKey ticketAccount);
 
-  @Deprecated
   default List<Instruction> claimTickets(final Collection<PublicKey> ticketAccounts) {
     return ticketAccounts.stream().map(this::claimTicket).toList();
   }
