@@ -30,6 +30,7 @@ import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
+import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
@@ -1948,6 +1949,7 @@ public final class GlamProtocolProgram {
                                                 final PublicKey escrowKey,
                                                 final PublicKey escrowTokensKey,
                                                 final PublicKey destinationTokensKey,
+                                                final PublicKey payerKey,
                                                 final PublicKey tokenProgramKey) {
     final var keys = List.of(
       createRead(glamStateKey),
@@ -1958,6 +1960,7 @@ public final class GlamProtocolProgram {
       createWrite(escrowKey),
       createWrite(escrowTokensKey),
       createWrite(destinationTokensKey),
+      createWritableSigner(payerKey),
       createRead(tokenProgramKey)
     );
 
@@ -2688,6 +2691,7 @@ public final class GlamProtocolProgram {
                                                         final PublicKey stakeListKey,
                                                         final PublicKey stakeAccountKey,
                                                         final PublicKey duplicationFlagKey,
+                                                        final PublicKey rentPayerKey,
                                                         final PublicKey msolMintKey,
                                                         final PublicKey mintToKey,
                                                         final PublicKey msolMintAuthorityKey,
@@ -2705,6 +2709,7 @@ public final class GlamProtocolProgram {
       createWrite(stakeListKey),
       createWrite(stakeAccountKey),
       createWrite(duplicationFlagKey),
+      createWritableSigner(rentPayerKey),
       createWrite(msolMintKey),
       createWrite(mintToKey),
       createRead(msolMintAuthorityKey),
@@ -2813,6 +2818,119 @@ public final class GlamProtocolProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, msolAmount);
       i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator MARINADE_WITHDRAW_STAKE_ACCOUNT_DISCRIMINATOR = toDiscriminator(88, 200, 107, 134, 244, 89, 194, 111);
+
+  public static Instruction marinadeWithdrawStakeAccount(final AccountMeta invokedGlamProtocolProgramMeta,
+                                                         final SolanaAccounts solanaAccounts,
+                                                         final PublicKey glamStateKey,
+                                                         final PublicKey glamVaultKey,
+                                                         final PublicKey glamSignerKey,
+                                                         final PublicKey cpiProgramKey,
+                                                         final PublicKey stateKey,
+                                                         final PublicKey msolMintKey,
+                                                         final PublicKey burnMsolFromKey,
+                                                         final PublicKey treasuryMsolAccountKey,
+                                                         final PublicKey validatorListKey,
+                                                         final PublicKey stakeListKey,
+                                                         final PublicKey stakeWithdrawAuthorityKey,
+                                                         final PublicKey stakeDepositAuthorityKey,
+                                                         final PublicKey stakeAccountKey,
+                                                         final PublicKey splitStakeAccountKey,
+                                                         final PublicKey splitStakeRentPayerKey,
+                                                         final PublicKey clockKey,
+                                                         final PublicKey tokenProgramKey,
+                                                         final PublicKey stakeProgramKey,
+                                                         final int stakeIndex,
+                                                         final int validatorIndex,
+                                                         final long msolAmount,
+                                                         final PublicKey beneficiary) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(stateKey),
+      createWrite(msolMintKey),
+      createWrite(burnMsolFromKey),
+      createWrite(treasuryMsolAccountKey),
+      createWrite(validatorListKey),
+      createWrite(stakeListKey),
+      createRead(stakeWithdrawAuthorityKey),
+      createRead(stakeDepositAuthorityKey),
+      createWrite(stakeAccountKey),
+      createWritableSigner(splitStakeAccountKey),
+      createWritableSigner(splitStakeRentPayerKey),
+      createRead(clockKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(tokenProgramKey),
+      createRead(stakeProgramKey)
+    );
+
+    final byte[] _data = new byte[56];
+    int i = writeDiscriminator(MARINADE_WITHDRAW_STAKE_ACCOUNT_DISCRIMINATOR, _data, 0);
+    putInt32LE(_data, i, stakeIndex);
+    i += 4;
+    putInt32LE(_data, i, validatorIndex);
+    i += 4;
+    putInt64LE(_data, i, msolAmount);
+    i += 8;
+    beneficiary.write(_data, i);
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
+  }
+
+  public record MarinadeWithdrawStakeAccountIxData(Discriminator discriminator,
+                                                   int stakeIndex,
+                                                   int validatorIndex,
+                                                   long msolAmount,
+                                                   PublicKey beneficiary) implements Borsh {  
+
+    public static MarinadeWithdrawStakeAccountIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 56;
+
+    public static MarinadeWithdrawStakeAccountIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var stakeIndex = getInt32LE(_data, i);
+      i += 4;
+      final var validatorIndex = getInt32LE(_data, i);
+      i += 4;
+      final var msolAmount = getInt64LE(_data, i);
+      i += 8;
+      final var beneficiary = readPubKey(_data, i);
+      return new MarinadeWithdrawStakeAccountIxData(discriminator,
+                                                    stakeIndex,
+                                                    validatorIndex,
+                                                    msolAmount,
+                                                    beneficiary);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, stakeIndex);
+      i += 4;
+      putInt32LE(_data, i, validatorIndex);
+      i += 4;
+      putInt64LE(_data, i, msolAmount);
+      i += 8;
+      beneficiary.write(_data, i);
+      i += 32;
       return i - offset;
     }
 
@@ -3452,6 +3570,7 @@ public final class GlamProtocolProgram {
                                                              final PublicKey glamSignerKey,
                                                              final PublicKey cpiProgramKey,
                                                              final PublicKey payerKey,
+                                                             final PublicKey baseKey,
                                                              final PublicKey positionKey,
                                                              final PublicKey lbPairKey,
                                                              final PublicKey eventAuthorityKey,
@@ -3464,6 +3583,7 @@ public final class GlamProtocolProgram {
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
       createWritableSigner(payerKey),
+      createReadOnlySigner(baseKey),
       createWrite(positionKey),
       createRead(lbPairKey),
       createRead(solanaAccounts.systemProgram()),
@@ -4463,6 +4583,65 @@ public final class GlamProtocolProgram {
       ++i;
       putInt64LE(_data, i, amountIn);
       i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator SET_PROTOCOL_FEES_DISCRIMINATOR = toDiscriminator(49, 143, 189, 18, 56, 206, 158, 226);
+
+  public static Instruction setProtocolFees(final AccountMeta invokedGlamProtocolProgramMeta,
+                                            final PublicKey glamStateKey,
+                                            final PublicKey signerKey,
+                                            final PublicKey glamConfigKey,
+                                            final int baseFeeBps,
+                                            final int flowFeeBps) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(signerKey),
+      createRead(glamConfigKey)
+    );
+
+    final byte[] _data = new byte[12];
+    int i = writeDiscriminator(SET_PROTOCOL_FEES_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, baseFeeBps);
+    i += 2;
+    putInt16LE(_data, i, flowFeeBps);
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
+  }
+
+  public record SetProtocolFeesIxData(Discriminator discriminator, int baseFeeBps, int flowFeeBps) implements Borsh {  
+
+    public static SetProtocolFeesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 12;
+
+    public static SetProtocolFeesIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var baseFeeBps = getInt16LE(_data, i);
+      i += 2;
+      final var flowFeeBps = getInt16LE(_data, i);
+      return new SetProtocolFeesIxData(discriminator, baseFeeBps, flowFeeBps);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, baseFeeBps);
+      i += 2;
+      putInt16LE(_data, i, flowFeeBps);
+      i += 2;
       return i - offset;
     }
 

@@ -92,6 +92,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         stakeListKey,
         stakeAccount,
         duplicationFlagKey,
+        feePayer.publicKey(),
         marinadeAccounts.mSolTokenMint(),
         mSolTokenAccount,
         marinadeAccounts.mSolTokenMintAuthorityPDA(),
@@ -150,6 +151,31 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
                                           final int stakeIndex,
                                           final int validatorIndex,
                                           final long msolAmount) {
-    throw new UnsupportedOperationException("TODO: withdrawStakeAccount");
+    return GlamProtocolProgram.marinadeWithdrawStakeAccount(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        marinadeAccounts.marinadeProgram(),
+        marinadeAccounts.stateProgram(),
+        marinadeAccounts.mSolTokenMint(),
+        mSolTokenAccount,
+        marinadeAccounts.mSolTokenMintAuthorityPDA(),
+        validatorListKey,
+        stakeListKey,
+        stakeWithdrawalAuthorityKey,
+        stakeDepositAuthorityKey,
+        stakeAccount,
+        splitStakeAccountKey,
+        feePayer.publicKey(),
+        solanaAccounts.clockSysVar(),
+        solanaAccounts.tokenProgram(),
+        solanaAccounts.stakeProgram(),
+        stakeIndex,
+        validatorIndex,
+        msolAmount,
+        glamVaultAccounts.vaultPublicKey()
+    );
   }
 }

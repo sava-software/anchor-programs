@@ -127,14 +127,27 @@ public interface MeteoraDlmmClient {
                                  final int width);
 
   default ProgramDerivedAddress derivePositionAccount(final PublicKey lbPairKey,
+                                                      final PublicKey baseKey,
                                                       final int lowerBinId,
                                                       final int width) {
     return MeteoraPDAs.positionPDA(
         lbPairKey,
-        feePayer().publicKey(),
+        baseKey,
         lowerBinId,
         width,
         meteoraAccounts().dlmmProgram()
+    );
+  }
+
+
+  default ProgramDerivedAddress derivePositionAccount(final PublicKey lbPairKey,
+                                                      final int lowerBinId,
+                                                      final int width) {
+    return derivePositionAccount(
+        lbPairKey,
+        feePayer().publicKey(),
+        lowerBinId,
+        width
     );
   }
 
@@ -657,7 +670,7 @@ public interface MeteoraDlmmClient {
         remainingAccountsInfo
     );
   }
-  
+
   Instruction closePosition(final PublicKey positionKey, final PublicKey rentReceiverKey);
 
   default Instruction closePosition(final PublicKey positionKey) {

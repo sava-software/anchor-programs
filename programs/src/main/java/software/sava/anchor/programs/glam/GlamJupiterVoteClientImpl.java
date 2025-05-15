@@ -177,6 +177,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
         escrowKey,
         escrowTokensKey,
         destinationTokensKey,
+        payerKey,
         solanaAccounts.tokenProgram()
     );
   }

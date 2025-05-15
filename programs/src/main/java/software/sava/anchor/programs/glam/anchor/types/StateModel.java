@@ -26,6 +26,7 @@ public record StateModel(PublicKey id,
                          TimeUnit timeUnit,
                          DelegateAcl[] delegateAcls,
                          Integration[] integrations,
+                         PublicKey[] borrowableAssets,
                          int[] driftMarketIndexesPerp,
                          int[] driftMarketIndexesSpot,
                          int[] driftOrderTypes,
@@ -50,6 +51,7 @@ public record StateModel(PublicKey id,
                                         final TimeUnit timeUnit,
                                         final DelegateAcl[] delegateAcls,
                                         final Integration[] integrations,
+                                        final PublicKey[] borrowableAssets,
                                         final int[] driftMarketIndexesPerp,
                                         final int[] driftMarketIndexesSpot,
                                         final int[] driftOrderTypes,
@@ -73,6 +75,7 @@ public record StateModel(PublicKey id,
                           timeUnit,
                           delegateAcls,
                           integrations,
+                          borrowableAssets,
                           driftMarketIndexesPerp,
                           driftMarketIndexesSpot,
                           driftOrderTypes,
@@ -148,6 +151,10 @@ public record StateModel(PublicKey id,
     if (integrations != null) {
       i += Borsh.lenVector(integrations);
     }
+    final var borrowableAssets = _data[i++] == 0 ? null : Borsh.readPublicKeyVector(_data, i);
+    if (borrowableAssets != null) {
+      i += Borsh.lenVector(borrowableAssets);
+    }
     final var driftMarketIndexesPerp = _data[i++] == 0 ? null : Borsh.readintVector(_data, i);
     if (driftMarketIndexesPerp != null) {
       i += Borsh.lenVector(driftMarketIndexesPerp);
@@ -192,6 +199,7 @@ public record StateModel(PublicKey id,
                           timeUnit,
                           delegateAcls,
                           integrations,
+                          borrowableAssets,
                           driftMarketIndexesPerp,
                           driftMarketIndexesSpot,
                           driftOrderTypes,
@@ -239,6 +247,12 @@ public record StateModel(PublicKey id,
     } else {
       _data[i++] = 1;
       i += Borsh.writeVector(integrations, _data, i);
+    }
+    if (borrowableAssets == null || borrowableAssets.length == 0) {
+      _data[i++] = 0;
+    } else {
+      _data[i++] = 1;
+      i += Borsh.writeVector(borrowableAssets, _data, i);
     }
     if (driftMarketIndexesPerp == null || driftMarketIndexesPerp.length == 0) {
       _data[i++] = 0;
@@ -293,6 +307,7 @@ public record StateModel(PublicKey id,
          + (timeUnit == null ? 1 : (1 + Borsh.len(timeUnit)))
          + (delegateAcls == null || delegateAcls.length == 0 ? 1 : (1 + Borsh.lenVector(delegateAcls)))
          + (integrations == null || integrations.length == 0 ? 1 : (1 + Borsh.lenVector(integrations)))
+         + (borrowableAssets == null || borrowableAssets.length == 0 ? 1 : (1 + Borsh.lenVector(borrowableAssets)))
          + (driftMarketIndexesPerp == null || driftMarketIndexesPerp.length == 0 ? 1 : (1 + Borsh.lenVector(driftMarketIndexesPerp)))
          + (driftMarketIndexesSpot == null || driftMarketIndexesSpot.length == 0 ? 1 : (1 + Borsh.lenVector(driftMarketIndexesSpot)))
          + (driftOrderTypes == null || driftOrderTypes.length == 0 ? 1 : (1 + Borsh.lenVector(driftOrderTypes)))

@@ -9,6 +9,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.InvalidSignerAccount,
     GlamProtocolError.EmergencyUpdateDenied,
     GlamProtocolError.TimelockStillActive,
+    GlamProtocolError.AssetNotBorrowable,
     GlamProtocolError.InvalidAccountType,
     GlamProtocolError.InvalidName,
     GlamProtocolError.InvalidSymbol,
@@ -60,6 +61,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 48003 -> InvalidSignerAccount.INSTANCE;
       case 48004 -> EmergencyUpdateDenied.INSTANCE;
       case 48005 -> TimelockStillActive.INSTANCE;
+      case 48006 -> AssetNotBorrowable.INSTANCE;
       case 49000 -> InvalidAccountType.INSTANCE;
       case 49001 -> InvalidName.INSTANCE;
       case 49002 -> InvalidSymbol.INSTANCE;
@@ -145,6 +147,13 @@ public sealed interface GlamProtocolError extends ProgramError permits
 
     public static final TimelockStillActive INSTANCE = new TimelockStillActive(
         48005, "Timelock still active"
+    );
+  }
+
+  record AssetNotBorrowable(int code, String msg) implements GlamProtocolError {
+
+    public static final AssetNotBorrowable INSTANCE = new AssetNotBorrowable(
+        48006, "Asset is not allowed to borrow"
     );
   }
 
