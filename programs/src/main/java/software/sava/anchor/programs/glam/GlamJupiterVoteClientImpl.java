@@ -48,8 +48,7 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
         payer,
         jupiterAccounts.voteProgram(),
         jupiterAccounts.lockerKey(),
-        escrowKey,
-        payer
+        escrowKey
     );
   }
 
@@ -177,7 +176,6 @@ final class GlamJupiterVoteClientImpl extends BaseJupiterVoteClient implements G
         escrowKey,
         escrowTokensKey,
         destinationTokensKey,
-        payerKey,
         solanaAccounts.tokenProgram()
     );
   }

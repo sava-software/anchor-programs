@@ -30,7 +30,6 @@ import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
-import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
@@ -1864,8 +1863,7 @@ public final class GlamProtocolProgram {
                                                  final PublicKey glamSignerKey,
                                                  final PublicKey cpiProgramKey,
                                                  final PublicKey lockerKey,
-                                                 final PublicKey escrowKey,
-                                                 final PublicKey payerKey) {
+                                                 final PublicKey escrowKey) {
     final var keys = List.of(
       createRead(glamStateKey),
       createRead(glamVaultKey),
@@ -1873,7 +1871,6 @@ public final class GlamProtocolProgram {
       createRead(cpiProgramKey),
       createWrite(lockerKey),
       createWrite(escrowKey),
-      createWritableSigner(payerKey),
       createRead(solanaAccounts.systemProgram())
     );
 
@@ -1949,7 +1946,6 @@ public final class GlamProtocolProgram {
                                                 final PublicKey escrowKey,
                                                 final PublicKey escrowTokensKey,
                                                 final PublicKey destinationTokensKey,
-                                                final PublicKey payerKey,
                                                 final PublicKey tokenProgramKey) {
     final var keys = List.of(
       createRead(glamStateKey),
@@ -1960,7 +1956,6 @@ public final class GlamProtocolProgram {
       createWrite(escrowKey),
       createWrite(escrowTokensKey),
       createWrite(destinationTokensKey),
-      createWritableSigner(payerKey),
       createRead(tokenProgramKey)
     );
 
@@ -2691,7 +2686,6 @@ public final class GlamProtocolProgram {
                                                         final PublicKey stakeListKey,
                                                         final PublicKey stakeAccountKey,
                                                         final PublicKey duplicationFlagKey,
-                                                        final PublicKey rentPayerKey,
                                                         final PublicKey msolMintKey,
                                                         final PublicKey mintToKey,
                                                         final PublicKey msolMintAuthorityKey,
@@ -2709,7 +2703,6 @@ public final class GlamProtocolProgram {
       createWrite(stakeListKey),
       createWrite(stakeAccountKey),
       createWrite(duplicationFlagKey),
-      createWritableSigner(rentPayerKey),
       createWrite(msolMintKey),
       createWrite(mintToKey),
       createRead(msolMintAuthorityKey),
@@ -2845,7 +2838,6 @@ public final class GlamProtocolProgram {
                                                          final PublicKey stakeDepositAuthorityKey,
                                                          final PublicKey stakeAccountKey,
                                                          final PublicKey splitStakeAccountKey,
-                                                         final PublicKey splitStakeRentPayerKey,
                                                          final PublicKey clockKey,
                                                          final PublicKey tokenProgramKey,
                                                          final PublicKey stakeProgramKey,
@@ -2868,7 +2860,6 @@ public final class GlamProtocolProgram {
       createRead(stakeDepositAuthorityKey),
       createWrite(stakeAccountKey),
       createWritableSigner(splitStakeAccountKey),
-      createWritableSigner(splitStakeRentPayerKey),
       createRead(clockKey),
       createRead(solanaAccounts.systemProgram()),
       createRead(tokenProgramKey),
@@ -3456,35 +3447,29 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator METEORA_DLMM_CLOSE_POSITION_DISCRIMINATOR = toDiscriminator(186, 117, 42, 24, 221, 194, 34, 143);
+  public static final Discriminator METEORA_DLMM_CLOSE_POSITION2_DISCRIMINATOR = toDiscriminator(69, 117, 240, 192, 34, 79, 62, 230);
 
-  public static Instruction meteoraDlmmClosePosition(final AccountMeta invokedGlamProtocolProgramMeta,
-                                                     final PublicKey glamStateKey,
-                                                     final PublicKey glamVaultKey,
-                                                     final PublicKey glamSignerKey,
-                                                     final PublicKey cpiProgramKey,
-                                                     final PublicKey positionKey,
-                                                     final PublicKey lbPairKey,
-                                                     final PublicKey binArrayLowerKey,
-                                                     final PublicKey binArrayUpperKey,
-                                                     final PublicKey rentReceiverKey,
-                                                     final PublicKey eventAuthorityKey,
-                                                     final PublicKey programKey) {
+  public static Instruction meteoraDlmmClosePosition2(final AccountMeta invokedGlamProtocolProgramMeta,
+                                                      final PublicKey glamStateKey,
+                                                      final PublicKey glamVaultKey,
+                                                      final PublicKey glamSignerKey,
+                                                      final PublicKey cpiProgramKey,
+                                                      final PublicKey positionKey,
+                                                      final PublicKey rentReceiverKey,
+                                                      final PublicKey eventAuthorityKey,
+                                                      final PublicKey programKey) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
       createWrite(positionKey),
-      createWrite(lbPairKey),
-      createWrite(binArrayLowerKey),
-      createWrite(binArrayUpperKey),
       createWrite(rentReceiverKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
 
-    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, METEORA_DLMM_CLOSE_POSITION_DISCRIMINATOR);
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, METEORA_DLMM_CLOSE_POSITION2_DISCRIMINATOR);
   }
 
   public static final Discriminator METEORA_DLMM_INITIALIZE_POSITION_DISCRIMINATOR = toDiscriminator(223, 94, 215, 96, 175, 181, 195, 204);
@@ -3495,7 +3480,6 @@ public final class GlamProtocolProgram {
                                                           final PublicKey glamVaultKey,
                                                           final PublicKey glamSignerKey,
                                                           final PublicKey cpiProgramKey,
-                                                          final PublicKey payerKey,
                                                           final PublicKey positionKey,
                                                           final PublicKey lbPairKey,
                                                           final PublicKey eventAuthorityKey,
@@ -3507,7 +3491,6 @@ public final class GlamProtocolProgram {
       createRead(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
-      createWritableSigner(payerKey),
       createWritableSigner(positionKey),
       createRead(lbPairKey),
       createRead(solanaAccounts.systemProgram()),
@@ -3569,8 +3552,6 @@ public final class GlamProtocolProgram {
                                                              final PublicKey glamVaultKey,
                                                              final PublicKey glamSignerKey,
                                                              final PublicKey cpiProgramKey,
-                                                             final PublicKey payerKey,
-                                                             final PublicKey baseKey,
                                                              final PublicKey positionKey,
                                                              final PublicKey lbPairKey,
                                                              final PublicKey eventAuthorityKey,
@@ -3582,8 +3563,6 @@ public final class GlamProtocolProgram {
       createRead(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
-      createWritableSigner(payerKey),
-      createReadOnlySigner(baseKey),
       createWrite(positionKey),
       createRead(lbPairKey),
       createRead(solanaAccounts.systemProgram()),
