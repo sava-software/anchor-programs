@@ -50,6 +50,8 @@ public interface DriftProgramClient {
 
   PublicKey authority();
 
+  PublicKey feePayer();
+
   default ProgramDerivedAddress deriveUserAccount() {
     return deriveUserAccount(0);
   }
@@ -398,4 +400,91 @@ public interface DriftProgramClient {
                                     final PublicKey user,
                                     final OrderParams params,
                                     final OptionalInt successCondition);
+
+  Instruction initializeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
+                                            final PublicKey authorityKey,
+                                            final PublicKey payerKey,
+                                            final int numOrders);
+
+  default Instruction initializeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey, final int numOrders) {
+    return initializeSignedMsgUserOrders(signedMsgUserOrdersKey, authority(), feePayer(), numOrders);
+  }
+
+  Instruction resizeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
+                                        final PublicKey authorityKey,
+                                        final PublicKey userKey,
+                                        final PublicKey payerKey,
+                                        final int numOrders);
+
+  default Instruction resizeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey, final int numOrders) {
+    return resizeSignedMsgUserOrders(signedMsgUserOrdersKey, authority(), mainUserAccount(), feePayer(), numOrders);
+  }
+
+  Instruction initializeSignedMsgWsDelegates(final PublicKey signedMsgUserOrdersKey,
+                                             final PublicKey authorityKey,
+                                             final PublicKey[] delegates);
+
+  default Instruction initializeSignedMsgWsDelegates(final PublicKey signedMsgUserOrdersKey,
+                                                     final PublicKey[] delegates) {
+    return initializeSignedMsgWsDelegates(signedMsgUserOrdersKey, authority(), delegates);
+  }
+
+  Instruction changeSignedMsgWsDelegateStatus(final PublicKey signedMsgUserOrdersKey,
+                                              final PublicKey authorityKey,
+                                              final PublicKey delegate,
+                                              final boolean add);
+
+  default Instruction changeSignedMsgWsDelegateStatus(final PublicKey signedMsgUserOrdersKey,
+                                                      final PublicKey delegate,
+                                                      final boolean add) {
+    return changeSignedMsgWsDelegateStatus(signedMsgUserOrdersKey, authority(), delegate, add);
+  }
+
+  Instruction placeAndMakeSignedMsgPerpOrder(final PublicKey userKey,
+                                             final PublicKey takerKey,
+                                             final PublicKey takerStatsKey,
+                                             final PublicKey takerSignedMsgUserOrdersKey,
+                                             final PublicKey authorityKey,
+                                             final OrderParams params,
+                                             final byte[] signedMsgOrderUuid);
+
+  default Instruction placeAndMakeSignedMsgPerpOrder(final PublicKey takerKey,
+                                                     final PublicKey takerStatsKey,
+                                                     final PublicKey takerSignedMsgUserOrdersKey,
+                                                     final OrderParams params,
+                                                     final byte[] signedMsgOrderUuid) {
+    return placeAndMakeSignedMsgPerpOrder(
+        mainUserAccount(),
+        takerKey,
+        takerStatsKey,
+        takerSignedMsgUserOrdersKey,
+        authority(),
+        params,
+        signedMsgOrderUuid
+    );
+  }
+
+  Instruction placeSignedMsgTakerOrder(final PublicKey userKey,
+                                       final PublicKey signedMsgUserOrdersKey,
+                                       final PublicKey authorityKey,
+                                       final byte[] signedMsgOrderParamsMessageBytes,
+                                       final boolean isDelegateSigner);
+
+  default Instruction placeSignedMsgTakerOrder(final PublicKey signedMsgUserOrdersKey,
+                                               final byte[] signedMsgOrderParamsMessageBytes,
+                                               final boolean isDelegateSigner) {
+    return placeSignedMsgTakerOrder(
+        mainUserAccount(),
+        signedMsgUserOrdersKey,
+        authority(),
+        signedMsgOrderParamsMessageBytes,
+        isDelegateSigner
+    );
+  }
+
+  Instruction deleteSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey, final PublicKey authorityKey);
+
+  default Instruction deleteSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey) {
+    return deleteSignedMsgUserOrders(signedMsgUserOrdersKey, authority());
+  }
 }

@@ -23,6 +23,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
 
   private final SolanaAccounts solanaAccounts;
   private final DriftAccounts accounts;
+  private final PublicKey feePayer;
   private final PublicKey authority;
   private final PublicKey user;
   private final PublicKey quoteSpotMarketVaultAccountKey;
@@ -31,6 +32,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
                          final DriftAccounts accounts) {
     this.solanaAccounts = nativeProgramAccountClient.solanaAccounts();
     this.accounts = accounts;
+    this.feePayer = nativeProgramAccountClient.feePayer().publicKey();
     this.authority = nativeProgramAccountClient.ownerPublicKey();
     this.user = DriftPDAs.deriveMainUserAccount(accounts, authority).publicKey();
     this.quoteSpotMarketVaultAccountKey = deriveSpotMarketVaultAccount(accounts, 0).publicKey();
@@ -54,6 +56,11 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   @Override
   public PublicKey authority() {
     return authority;
+  }
+
+  @Override
+  public PublicKey feePayer() {
+    return feePayer;
   }
 
   @Override
@@ -692,6 +699,122 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         authorityKey,
         nShares,
         marketIndex
+    );
+  }
+
+  @Override
+  public Instruction initializeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
+                                                   final PublicKey authorityKey,
+                                                   final PublicKey payerKey,
+                                                   final int numOrders) {
+    return DriftProgram.initializeSignedMsgUserOrders(
+        accounts.invokedDriftProgram(),
+        signedMsgUserOrdersKey,
+        authorityKey,
+        payerKey,
+        solanaAccounts.rentSysVar(),
+        solanaAccounts.systemProgram(),
+        numOrders
+    );
+  }
+
+  @Override
+  public Instruction resizeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
+                                               final PublicKey authorityKey,
+                                               final PublicKey userKey,
+                                               final PublicKey payerKey,
+                                               final int numOrders) {
+    return DriftProgram.resizeSignedMsgUserOrders(
+        accounts.invokedDriftProgram(),
+        signedMsgUserOrdersKey,
+        authorityKey,
+        userKey,
+        payerKey,
+        solanaAccounts.systemProgram(),
+        numOrders
+    );
+  }
+
+  @Override
+  public Instruction initializeSignedMsgWsDelegates(final PublicKey signedMsgUserOrdersKey,
+                                                    final PublicKey authorityKey,
+                                                    final PublicKey[] delegates) {
+    return DriftProgram.initializeSignedMsgWsDelegates(
+        accounts.invokedDriftProgram(),
+        signedMsgUserOrdersKey,
+        authorityKey,
+        solanaAccounts.rentSysVar(),
+        solanaAccounts.systemProgram(),
+        delegates
+    );
+  }
+
+  @Override
+  public Instruction changeSignedMsgWsDelegateStatus(final PublicKey signedMsgUserOrdersKey,
+                                                     final PublicKey authorityKey,
+                                                     final PublicKey delegate,
+                                                     final boolean add) {
+    return DriftProgram.changeSignedMsgWsDelegateStatus(
+        accounts.invokedDriftProgram(),
+        signedMsgUserOrdersKey,
+        authorityKey,
+        solanaAccounts.systemProgram(),
+        delegate,
+        add
+    );
+  }
+
+  @Override
+  public Instruction placeAndMakeSignedMsgPerpOrder(final PublicKey userKey,
+                                                    final PublicKey takerKey,
+                                                    final PublicKey takerStatsKey,
+                                                    final PublicKey takerSignedMsgUserOrdersKey,
+                                                    final PublicKey authorityKey,
+                                                    final OrderParams params,
+                                                    final byte[] signedMsgOrderUuid) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authorityKey).publicKey();
+    return DriftProgram.placeAndMakeSignedMsgPerpOrder(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        userKey,
+        userStatsPDA,
+        takerKey,
+        takerStatsKey,
+        takerSignedMsgUserOrdersKey,
+        authorityKey,
+        params,
+        signedMsgOrderUuid
+    );
+  }
+
+  @Override
+  public Instruction placeSignedMsgTakerOrder(final PublicKey userKey,
+                                              final PublicKey signedMsgUserOrdersKey,
+                                              final PublicKey authorityKey,
+                                              final byte[] signedMsgOrderParamsMessageBytes,
+                                              final boolean isDelegateSigner) {
+    final var userStatsPDA = deriveUserStatsAccount(accounts, authorityKey).publicKey();
+    return DriftProgram.placeSignedMsgTakerOrder(
+        accounts.invokedDriftProgram(),
+        accounts.stateKey(),
+        userKey,
+        userStatsPDA,
+        signedMsgUserOrdersKey,
+        authorityKey,
+        solanaAccounts.systemProgram(),
+        signedMsgOrderParamsMessageBytes,
+        isDelegateSigner
+    );
+  }
+
+  @Override
+  public Instruction deleteSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
+                                               final PublicKey authorityKey) {
+    return DriftProgram.deleteSignedMsgUserOrders(
+        accounts.invokedDriftProgram(),
+        signedMsgUserOrdersKey,
+        accounts.stateKey(),
+        authorityKey
     );
   }
 }

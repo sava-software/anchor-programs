@@ -59,6 +59,11 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
+  public PublicKey feePayer() {
+    return feePayer.publicKey();
+  }
+
+  @Override
   public Instruction initializeUser(final PublicKey user,
                                     final PublicKey authority,
                                     final PublicKey payerKey,
@@ -449,5 +454,62 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                            final OrderParams params,
                                            final OptionalInt successCondition) {
     throw new UnsupportedOperationException("TODO: placeAndTakePerpOrder");
+  }
+
+  @Override
+  public Instruction initializeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
+                                                   final PublicKey authorityKey,
+                                                   final PublicKey payerKey,
+                                                   final int numOrders) {
+    throw new UnsupportedOperationException("TODO: initializeSignedMsgUserOrders");
+  }
+
+  @Override
+  public Instruction resizeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
+                                               final PublicKey authorityKey,
+                                               final PublicKey userKey,
+                                               final PublicKey payerKey,
+                                               final int numOrders) {
+    throw new UnsupportedOperationException("TODO: resizeSignedMsgUserOrders");
+  }
+
+  @Override
+  public Instruction initializeSignedMsgWsDelegates(final PublicKey signedMsgUserOrdersKey,
+                                                    final PublicKey authorityKey,
+                                                    final PublicKey[] delegates) {
+    throw new UnsupportedOperationException("TODO: initializeSignedMsgWsDelegates");
+  }
+
+  @Override
+  public Instruction changeSignedMsgWsDelegateStatus(final PublicKey signedMsgUserOrdersKey,
+                                                     final PublicKey authorityKey,
+                                                     final PublicKey delegate,
+                                                     final boolean add) {
+    throw new UnsupportedOperationException("TODO: changeSignedMsgWsDelegateStatus");
+  }
+
+  @Override
+  public Instruction placeAndMakeSignedMsgPerpOrder(final PublicKey userKey,
+                                                    final PublicKey takerKey,
+                                                    final PublicKey takerStatsKey,
+                                                    final PublicKey takerSignedMsgUserOrdersKey,
+                                                    final PublicKey authorityKey,
+                                                    final OrderParams params,
+                                                    final byte[] signedMsgOrderUuid) {
+    throw new UnsupportedOperationException("TODO: placeAndMakeSignedMsgPerpOrder");
+  }
+
+  @Override
+  public Instruction placeSignedMsgTakerOrder(final PublicKey userKey,
+                                              final PublicKey signedMsgUserOrdersKey,
+                                              final PublicKey authorityKey,
+                                              final byte[] signedMsgOrderParamsMessageBytes,
+                                              final boolean isDelegateSigner) {
+    throw new UnsupportedOperationException("TODO: placeSignedMsgTakerOrder");
+  }
+
+  @Override
+  public Instruction deleteSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey, final PublicKey authorityKey) {
+    throw new UnsupportedOperationException("TODO: deleteSignedMsgUserOrders");
   }
 }

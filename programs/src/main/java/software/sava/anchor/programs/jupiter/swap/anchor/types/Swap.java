@@ -93,7 +93,8 @@ public sealed interface Swap extends RustEnum permits
   Swap.RaydiumLaunchlabBuy,
   Swap.RaydiumLaunchlabSell,
   Swap.BoopdotfunWrappedBuy,
-  Swap.BoopdotfunWrappedSell {
+  Swap.BoopdotfunWrappedSell,
+  Swap.Plasma {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -184,6 +185,7 @@ public sealed interface Swap extends RustEnum permits
       case 82 -> RaydiumLaunchlabSell.read(_data, i);
       case 83 -> BoopdotfunWrappedBuy.INSTANCE;
       case 84 -> BoopdotfunWrappedSell.INSTANCE;
+      case 85 -> Plasma.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1302,6 +1304,18 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 84;
+    }
+  }
+
+  record Plasma(Side val) implements BorshEnum, Swap {
+
+    public static Plasma read(final byte[] _data, final int offset) {
+      return new Plasma(Side.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 85;
     }
   }
 }
