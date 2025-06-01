@@ -10,6 +10,9 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.EmergencyUpdateDenied,
     GlamProtocolError.TimelockStillActive,
     GlamProtocolError.AssetNotBorrowable,
+    GlamProtocolError.InvalidAccountOwner,
+    GlamProtocolError.InvalidAuthority,
+    GlamProtocolError.InvalidPriceDenom,
     GlamProtocolError.InvalidAccountType,
     GlamProtocolError.InvalidName,
     GlamProtocolError.InvalidSymbol,
@@ -48,6 +51,8 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.VaultNotPriced,
     GlamProtocolError.PositiveAumRequired,
     GlamProtocolError.MathError,
+    GlamProtocolError.TypeCastingError,
+    GlamProtocolError.BaseAssetNotSupported,
     GlamProtocolError.TransfersDisabled,
     GlamProtocolError.InvalidPolicyAccount,
     GlamProtocolError.AmountTooBig,
@@ -62,6 +67,9 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 48004 -> EmergencyUpdateDenied.INSTANCE;
       case 48005 -> TimelockStillActive.INSTANCE;
       case 48006 -> AssetNotBorrowable.INSTANCE;
+      case 48007 -> InvalidAccountOwner.INSTANCE;
+      case 48008 -> InvalidAuthority.INSTANCE;
+      case 48009 -> InvalidPriceDenom.INSTANCE;
       case 49000 -> InvalidAccountType.INSTANCE;
       case 49001 -> InvalidName.INSTANCE;
       case 49002 -> InvalidSymbol.INSTANCE;
@@ -100,6 +108,8 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 51105 -> VaultNotPriced.INSTANCE;
       case 51106 -> PositiveAumRequired.INSTANCE;
       case 51107 -> MathError.INSTANCE;
+      case 51108 -> TypeCastingError.INSTANCE;
+      case 51109 -> BaseAssetNotSupported.INSTANCE;
       case 52000 -> TransfersDisabled.INSTANCE;
       case 52001 -> InvalidPolicyAccount.INSTANCE;
       case 52002 -> AmountTooBig.INSTANCE;
@@ -154,6 +164,27 @@ public sealed interface GlamProtocolError extends ProgramError permits
 
     public static final AssetNotBorrowable INSTANCE = new AssetNotBorrowable(
         48006, "Asset is not allowed to borrow"
+    );
+  }
+
+  record InvalidAccountOwner(int code, String msg) implements GlamProtocolError {
+
+    public static final InvalidAccountOwner INSTANCE = new InvalidAccountOwner(
+        48007, "Account owned by an invalid program"
+    );
+  }
+
+  record InvalidAuthority(int code, String msg) implements GlamProtocolError {
+
+    public static final InvalidAuthority INSTANCE = new InvalidAuthority(
+        48008, "Invalid authority"
+    );
+  }
+
+  record InvalidPriceDenom(int code, String msg) implements GlamProtocolError {
+
+    public static final InvalidPriceDenom INSTANCE = new InvalidPriceDenom(
+        48009, "Invalid price denom"
     );
   }
 
@@ -420,6 +451,20 @@ public sealed interface GlamProtocolError extends ProgramError permits
 
     public static final MathError INSTANCE = new MathError(
         51107, "Math error"
+    );
+  }
+
+  record TypeCastingError(int code, String msg) implements GlamProtocolError {
+
+    public static final TypeCastingError INSTANCE = new TypeCastingError(
+        51108, "Type casting error"
+    );
+  }
+
+  record BaseAssetNotSupported(int code, String msg) implements GlamProtocolError {
+
+    public static final BaseAssetNotSupported INSTANCE = new BaseAssetNotSupported(
+        51109, "Base asset must have 6 decimals."
     );
   }
 
