@@ -5,8 +5,12 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record LastUpdate(long slot,
+// Last update state
+public record LastUpdate(// Last slot when updated
+                         long slot,
+                         // True when marked stale, false when slot updated
                          int stale,
+                         // Status of the prices used to calculate the last update
                          int priceStatus,
                          byte[] placeholder) implements Borsh {
 

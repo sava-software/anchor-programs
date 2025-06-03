@@ -87,7 +87,7 @@ public sealed interface KaminoLendingError extends ProgramError permits
     KaminoLendingError.ShortUrlNotAsciiAlphanumeric,
     KaminoLendingError.ReserveObsolete,
     KaminoLendingError.ElevationGroupAlreadyActivated,
-    KaminoLendingError.ObligationInDeprecatedReserve,
+    KaminoLendingError.ObligationInObsoleteReserve,
     KaminoLendingError.ReferrerStateOwnerMismatch,
     KaminoLendingError.UserMetadataOwnerAlreadySet,
     KaminoLendingError.CollateralNonLiquidatable,
@@ -96,14 +96,14 @@ public sealed interface KaminoLendingError extends ProgramError permits
     KaminoLendingError.DepositLimitExceeded,
     KaminoLendingError.BorrowingDisabledOutsideElevationGroup,
     KaminoLendingError.NetValueRemainingTooSmall,
-    KaminoLendingError.WorseLTVBlocked,
+    KaminoLendingError.WorseLtvBlocked,
     KaminoLendingError.LiabilitiesBiggerThanAssets,
     KaminoLendingError.ReserveTokenBalanceMismatch,
     KaminoLendingError.ReserveVaultBalanceMismatch,
     KaminoLendingError.ReserveAccountingMismatch,
     KaminoLendingError.BorrowingAboveUtilizationRateDisabled,
     KaminoLendingError.LiquidationBorrowFactorPriority,
-    KaminoLendingError.LiquidationLowestLTVPriority,
+    KaminoLendingError.LiquidationLowestLiquidationLtvPriority,
     KaminoLendingError.ElevationGroupBorrowLimitExceeded,
     KaminoLendingError.ElevationGroupWithoutDebtReserve,
     KaminoLendingError.ElevationGroupMaxCollateralReserveZero,
@@ -121,11 +121,18 @@ public sealed interface KaminoLendingError extends ProgramError permits
     KaminoLendingError.ObligationCurrentlyMarkedForDeleveraging,
     KaminoLendingError.MaximumWithdrawValueZero,
     KaminoLendingError.ZeroMaxLtvAssetsInDeposits,
-    KaminoLendingError.MinLtvAssetsPriority,
-    KaminoLendingError.WorseLTVThanUnhealthyLTV,
+    KaminoLendingError.LowestLtvAssetsPriority,
+    KaminoLendingError.WorseLtvThanUnhealthyLtv,
     KaminoLendingError.FarmAccountsMissing,
     KaminoLendingError.RepayTooSmallForFullLiquidation,
-    KaminoLendingError.InsufficientRepayAmount {
+    KaminoLendingError.InsufficientRepayAmount,
+    KaminoLendingError.OrderIndexOutOfBounds,
+    KaminoLendingError.InvalidOrderConfiguration,
+    KaminoLendingError.OrderConfigurationNotSupportedByObligation,
+    KaminoLendingError.OperationNotPermittedWithCurrentObligationOrders,
+    KaminoLendingError.OperationNotPermittedMarketImmutable,
+    KaminoLendingError.OrderCreationDisabled,
+    KaminoLendingError.NoUpgradeAuthority {
 
   static KaminoLendingError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -213,7 +220,7 @@ public sealed interface KaminoLendingError extends ProgramError permits
       case 6081 -> ShortUrlNotAsciiAlphanumeric.INSTANCE;
       case 6082 -> ReserveObsolete.INSTANCE;
       case 6083 -> ElevationGroupAlreadyActivated.INSTANCE;
-      case 6084 -> ObligationInDeprecatedReserve.INSTANCE;
+      case 6084 -> ObligationInObsoleteReserve.INSTANCE;
       case 6085 -> ReferrerStateOwnerMismatch.INSTANCE;
       case 6086 -> UserMetadataOwnerAlreadySet.INSTANCE;
       case 6087 -> CollateralNonLiquidatable.INSTANCE;
@@ -222,14 +229,14 @@ public sealed interface KaminoLendingError extends ProgramError permits
       case 6090 -> DepositLimitExceeded.INSTANCE;
       case 6091 -> BorrowingDisabledOutsideElevationGroup.INSTANCE;
       case 6092 -> NetValueRemainingTooSmall.INSTANCE;
-      case 6093 -> WorseLTVBlocked.INSTANCE;
+      case 6093 -> WorseLtvBlocked.INSTANCE;
       case 6094 -> LiabilitiesBiggerThanAssets.INSTANCE;
       case 6095 -> ReserveTokenBalanceMismatch.INSTANCE;
       case 6096 -> ReserveVaultBalanceMismatch.INSTANCE;
       case 6097 -> ReserveAccountingMismatch.INSTANCE;
       case 6098 -> BorrowingAboveUtilizationRateDisabled.INSTANCE;
       case 6099 -> LiquidationBorrowFactorPriority.INSTANCE;
-      case 6100 -> LiquidationLowestLTVPriority.INSTANCE;
+      case 6100 -> LiquidationLowestLiquidationLtvPriority.INSTANCE;
       case 6101 -> ElevationGroupBorrowLimitExceeded.INSTANCE;
       case 6102 -> ElevationGroupWithoutDebtReserve.INSTANCE;
       case 6103 -> ElevationGroupMaxCollateralReserveZero.INSTANCE;
@@ -247,11 +254,18 @@ public sealed interface KaminoLendingError extends ProgramError permits
       case 6115 -> ObligationCurrentlyMarkedForDeleveraging.INSTANCE;
       case 6116 -> MaximumWithdrawValueZero.INSTANCE;
       case 6117 -> ZeroMaxLtvAssetsInDeposits.INSTANCE;
-      case 6118 -> MinLtvAssetsPriority.INSTANCE;
-      case 6119 -> WorseLTVThanUnhealthyLTV.INSTANCE;
+      case 6118 -> LowestLtvAssetsPriority.INSTANCE;
+      case 6119 -> WorseLtvThanUnhealthyLtv.INSTANCE;
       case 6120 -> FarmAccountsMissing.INSTANCE;
       case 6121 -> RepayTooSmallForFullLiquidation.INSTANCE;
       case 6122 -> InsufficientRepayAmount.INSTANCE;
+      case 6123 -> OrderIndexOutOfBounds.INSTANCE;
+      case 6124 -> InvalidOrderConfiguration.INSTANCE;
+      case 6125 -> OrderConfigurationNotSupportedByObligation.INSTANCE;
+      case 6126 -> OperationNotPermittedWithCurrentObligationOrders.INSTANCE;
+      case 6127 -> OperationNotPermittedMarketImmutable.INSTANCE;
+      case 6128 -> OrderCreationDisabled.INSTANCE;
+      case 6129 -> NoUpgradeAuthority.INSTANCE;
       default -> throw new IllegalStateException("Unexpected KaminoLending error code: " + errorCode);
     };
   }
@@ -844,10 +858,10 @@ public sealed interface KaminoLendingError extends ProgramError permits
     );
   }
 
-  record ObligationInDeprecatedReserve(int code, String msg) implements KaminoLendingError {
+  record ObligationInObsoleteReserve(int code, String msg) implements KaminoLendingError {
 
-    public static final ObligationInDeprecatedReserve INSTANCE = new ObligationInDeprecatedReserve(
-        6084, "Obligation has a deposit in a deprecated reserve"
+    public static final ObligationInObsoleteReserve INSTANCE = new ObligationInObsoleteReserve(
+        6084, "Obligation has a deposit or borrow in an obsolete reserve"
     );
   }
 
@@ -907,9 +921,9 @@ public sealed interface KaminoLendingError extends ProgramError permits
     );
   }
 
-  record WorseLTVBlocked(int code, String msg) implements KaminoLendingError {
+  record WorseLtvBlocked(int code, String msg) implements KaminoLendingError {
 
-    public static final WorseLTVBlocked INSTANCE = new WorseLTVBlocked(
+    public static final WorseLtvBlocked INSTANCE = new WorseLtvBlocked(
         6093, "Cannot get the obligation in a worse position"
     );
   }
@@ -956,10 +970,10 @@ public sealed interface KaminoLendingError extends ProgramError permits
     );
   }
 
-  record LiquidationLowestLTVPriority(int code, String msg) implements KaminoLendingError {
+  record LiquidationLowestLiquidationLtvPriority(int code, String msg) implements KaminoLendingError {
 
-    public static final LiquidationLowestLTVPriority INSTANCE = new LiquidationLowestLTVPriority(
-        6100, "Liquidation must prioritize the collateral with the lowest LTV"
+    public static final LiquidationLowestLiquidationLtvPriority INSTANCE = new LiquidationLowestLiquidationLtvPriority(
+        6100, "Liquidation must prioritize the collateral with the lowest liquidation LTV"
     );
   }
 
@@ -1082,16 +1096,16 @@ public sealed interface KaminoLendingError extends ProgramError permits
     );
   }
 
-  record MinLtvAssetsPriority(int code, String msg) implements KaminoLendingError {
+  record LowestLtvAssetsPriority(int code, String msg) implements KaminoLendingError {
 
-    public static final MinLtvAssetsPriority INSTANCE = new MinLtvAssetsPriority(
-        6118, "The operation must prioritize the collateral with the lowest LTV"
+    public static final LowestLtvAssetsPriority INSTANCE = new LowestLtvAssetsPriority(
+        6118, "Withdrawing must prioritize the collateral with the lowest reserve max-LTV"
     );
   }
 
-  record WorseLTVThanUnhealthyLTV(int code, String msg) implements KaminoLendingError {
+  record WorseLtvThanUnhealthyLtv(int code, String msg) implements KaminoLendingError {
 
-    public static final WorseLTVThanUnhealthyLTV INSTANCE = new WorseLTVThanUnhealthyLTV(
+    public static final WorseLtvThanUnhealthyLtv INSTANCE = new WorseLtvThanUnhealthyLtv(
         6119, "Cannot get the obligation liquidatable"
     );
   }
@@ -1114,6 +1128,55 @@ public sealed interface KaminoLendingError extends ProgramError permits
 
     public static final InsufficientRepayAmount INSTANCE = new InsufficientRepayAmount(
         6122, "Liquidator provided repay amount lower than required by liquidation rules"
+    );
+  }
+
+  record OrderIndexOutOfBounds(int code, String msg) implements KaminoLendingError {
+
+    public static final OrderIndexOutOfBounds INSTANCE = new OrderIndexOutOfBounds(
+        6123, "Obligation order of the given index cannot exist"
+    );
+  }
+
+  record InvalidOrderConfiguration(int code, String msg) implements KaminoLendingError {
+
+    public static final InvalidOrderConfiguration INSTANCE = new InvalidOrderConfiguration(
+        6124, "Given order configuration has wrong parameters"
+    );
+  }
+
+  record OrderConfigurationNotSupportedByObligation(int code, String msg) implements KaminoLendingError {
+
+    public static final OrderConfigurationNotSupportedByObligation INSTANCE = new OrderConfigurationNotSupportedByObligation(
+        6125, "Given order configuration cannot be used with the current state of the obligation"
+    );
+  }
+
+  record OperationNotPermittedWithCurrentObligationOrders(int code, String msg) implements KaminoLendingError {
+
+    public static final OperationNotPermittedWithCurrentObligationOrders INSTANCE = new OperationNotPermittedWithCurrentObligationOrders(
+        6126, "Single debt, single collateral obligation orders have to be cancelled before changing the deposit/borrow count"
+    );
+  }
+
+  record OperationNotPermittedMarketImmutable(int code, String msg) implements KaminoLendingError {
+
+    public static final OperationNotPermittedMarketImmutable INSTANCE = new OperationNotPermittedMarketImmutable(
+        6127, "Cannot update lending market because it is set as immutable"
+    );
+  }
+
+  record OrderCreationDisabled(int code, String msg) implements KaminoLendingError {
+
+    public static final OrderCreationDisabled INSTANCE = new OrderCreationDisabled(
+        6128, "Creation of new orders is disabled"
+    );
+  }
+
+  record NoUpgradeAuthority(int code, String msg) implements KaminoLendingError {
+
+    public static final NoUpgradeAuthority INSTANCE = new NoUpgradeAuthority(
+        6129, "Cannot initialize global config because there is no upgrade authority to the program"
     );
   }
 }

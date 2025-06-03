@@ -7,9 +7,11 @@ import java.util.List;
 import software.sava.anchor.programs.kamino.lend.anchor.types.AssetTier;
 import software.sava.anchor.programs.kamino.lend.anchor.types.FeeCalculation;
 import software.sava.anchor.programs.kamino.lend.anchor.types.InitObligationArgs;
+import software.sava.anchor.programs.kamino.lend.anchor.types.ObligationOrder;
 import software.sava.anchor.programs.kamino.lend.anchor.types.ReserveFarmKind;
 import software.sava.anchor.programs.kamino.lend.anchor.types.ReserveStatus;
 import software.sava.anchor.programs.kamino.lend.anchor.types.UpdateConfigMode;
+import software.sava.anchor.programs.kamino.lend.anchor.types.UpdateGlobalConfigMode;
 import software.sava.anchor.programs.kamino.lend.anchor.types.UpdateLendingMarketConfigValue;
 import software.sava.anchor.programs.kamino.lend.anchor.types.UpdateLendingMarketMode;
 import software.sava.core.accounts.PublicKey;
@@ -265,32 +267,33 @@ public final class KaminoLendingProgram {
   public static final Discriminator UPDATE_RESERVE_CONFIG_DISCRIMINATOR = toDiscriminator(61, 148, 100, 70, 143, 107, 17, 13);
 
   public static Instruction updateReserveConfig(final AccountMeta invokedKaminoLendingProgramMeta,
-                                                final PublicKey lendingMarketOwnerKey,
+                                                final PublicKey signerKey,
+                                                final PublicKey globalConfigKey,
                                                 final PublicKey lendingMarketKey,
                                                 final PublicKey reserveKey,
-                                                final long mode,
+                                                final UpdateConfigMode mode,
                                                 final byte[] value,
-                                                final boolean skipValidation) {
+                                                final boolean skipConfigIntegrityValidation) {
     final var keys = List.of(
-      createReadOnlySigner(lendingMarketOwnerKey),
+      createReadOnlySigner(signerKey),
+      createRead(globalConfigKey),
       createRead(lendingMarketKey),
       createWrite(reserveKey)
     );
 
-    final byte[] _data = new byte[21 + Borsh.lenVector(value)];
+    final byte[] _data = new byte[13 + Borsh.len(mode) + Borsh.lenVector(value)];
     int i = writeDiscriminator(UPDATE_RESERVE_CONFIG_DISCRIMINATOR, _data, 0);
-    putInt64LE(_data, i, mode);
-    i += 8;
+    i += Borsh.write(mode, _data, i);
     i += Borsh.writeVector(value, _data, i);
-    _data[i] = (byte) (skipValidation ? 1 : 0);
+    _data[i] = (byte) (skipConfigIntegrityValidation ? 1 : 0);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
 
   public record UpdateReserveConfigIxData(Discriminator discriminator,
-                                          long mode,
+                                          UpdateConfigMode mode,
                                           byte[] value,
-                                          boolean skipValidation) implements Borsh {  
+                                          boolean skipConfigIntegrityValidation) implements Borsh {  
 
     public static UpdateReserveConfigIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -302,28 +305,27 @@ public final class KaminoLendingProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var mode = getInt64LE(_data, i);
-      i += 8;
+      final var mode = UpdateConfigMode.read(_data, i);
+      i += Borsh.len(mode);
       final byte[] value = Borsh.readbyteVector(_data, i);
       i += Borsh.lenVector(value);
-      final var skipValidation = _data[i] == 1;
-      return new UpdateReserveConfigIxData(discriminator, mode, value, skipValidation);
+      final var skipConfigIntegrityValidation = _data[i] == 1;
+      return new UpdateReserveConfigIxData(discriminator, mode, value, skipConfigIntegrityValidation);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, mode);
-      i += 8;
+      i += Borsh.write(mode, _data, i);
       i += Borsh.writeVector(value, _data, i);
-      _data[i] = (byte) (skipValidation ? 1 : 0);
+      _data[i] = (byte) (skipConfigIntegrityValidation ? 1 : 0);
       ++i;
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 8 + Borsh.lenVector(value) + 1;
+      return 8 + Borsh.len(mode) + Borsh.lenVector(value) + 1;
     }
   }
 
@@ -353,23 +355,23 @@ public final class KaminoLendingProgram {
   public static final Discriminator WITHDRAW_PROTOCOL_FEE_DISCRIMINATOR = toDiscriminator(158, 201, 158, 189, 33, 93, 162, 103);
 
   public static Instruction withdrawProtocolFee(final AccountMeta invokedKaminoLendingProgramMeta,
-                                                final PublicKey lendingMarketOwnerKey,
+                                                final PublicKey globalConfigKey,
                                                 final PublicKey lendingMarketKey,
                                                 final PublicKey reserveKey,
                                                 final PublicKey reserveLiquidityMintKey,
                                                 final PublicKey lendingMarketAuthorityKey,
                                                 final PublicKey feeVaultKey,
-                                                final PublicKey lendingMarketOwnerAtaKey,
+                                                final PublicKey feeCollectorAtaKey,
                                                 final PublicKey tokenProgramKey,
                                                 final long amount) {
     final var keys = List.of(
-      createReadOnlySigner(lendingMarketOwnerKey),
+      createRead(globalConfigKey),
       createRead(lendingMarketKey),
       createRead(reserveKey),
       createRead(reserveLiquidityMintKey),
       createRead(lendingMarketAuthorityKey),
       createWrite(feeVaultKey),
-      createWrite(lendingMarketOwnerAtaKey),
+      createWrite(feeCollectorAtaKey),
       createRead(tokenProgramKey)
     );
 
@@ -2683,10 +2685,151 @@ public final class KaminoLendingProgram {
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, DELETE_REFERRER_STATE_AND_SHORT_URL_DISCRIMINATOR);
   }
 
+  public static final Discriminator SET_OBLIGATION_ORDER_DISCRIMINATOR = toDiscriminator(81, 1, 99, 156, 211, 83, 78, 46);
+
+  public static Instruction setObligationOrder(final AccountMeta invokedKaminoLendingProgramMeta,
+                                               final PublicKey ownerKey,
+                                               final PublicKey obligationKey,
+                                               final PublicKey lendingMarketKey,
+                                               final int index,
+                                               final ObligationOrder order) {
+    final var keys = List.of(
+      createReadOnlySigner(ownerKey),
+      createWrite(obligationKey),
+      createRead(lendingMarketKey)
+    );
+
+    final byte[] _data = new byte[9 + Borsh.len(order)];
+    int i = writeDiscriminator(SET_OBLIGATION_ORDER_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) index;
+    ++i;
+    Borsh.write(order, _data, i);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record SetObligationOrderIxData(Discriminator discriminator, int index, ObligationOrder order) implements Borsh {  
+
+    public static SetObligationOrderIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 137;
+
+    public static SetObligationOrderIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var index = _data[i] & 0xFF;
+      ++i;
+      final var order = ObligationOrder.read(_data, i);
+      return new SetObligationOrderIxData(discriminator, index, order);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) index;
+      ++i;
+      i += Borsh.write(order, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INIT_GLOBAL_CONFIG_DISCRIMINATOR = toDiscriminator(140, 136, 214, 48, 87, 0, 120, 255);
+
+  public static Instruction initGlobalConfig(final AccountMeta invokedKaminoLendingProgramMeta,
+                                             final PublicKey payerKey,
+                                             final PublicKey globalConfigKey,
+                                             final PublicKey programDataKey,
+                                             final PublicKey systemProgramKey,
+                                             final PublicKey rentKey) {
+    final var keys = List.of(
+      createWritableSigner(payerKey),
+      createWrite(globalConfigKey),
+      createRead(programDataKey),
+      createRead(systemProgramKey),
+      createRead(rentKey)
+    );
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, INIT_GLOBAL_CONFIG_DISCRIMINATOR);
+  }
+
+  public static final Discriminator UPDATE_GLOBAL_CONFIG_DISCRIMINATOR = toDiscriminator(164, 84, 130, 189, 111, 58, 250, 200);
+
+  public static Instruction updateGlobalConfig(final AccountMeta invokedKaminoLendingProgramMeta,
+                                               final PublicKey globalAdminKey,
+                                               final PublicKey globalConfigKey,
+                                               final UpdateGlobalConfigMode mode,
+                                               final byte[] value) {
+    final var keys = List.of(
+      createReadOnlySigner(globalAdminKey),
+      createWrite(globalConfigKey)
+    );
+
+    final byte[] _data = new byte[12 + Borsh.len(mode) + Borsh.lenVector(value)];
+    int i = writeDiscriminator(UPDATE_GLOBAL_CONFIG_DISCRIMINATOR, _data, 0);
+    i += Borsh.write(mode, _data, i);
+    Borsh.writeVector(value, _data, i);
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
+  }
+
+  public record UpdateGlobalConfigIxData(Discriminator discriminator, UpdateGlobalConfigMode mode, byte[] value) implements Borsh {  
+
+    public static UpdateGlobalConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static UpdateGlobalConfigIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var mode = UpdateGlobalConfigMode.read(_data, i);
+      i += Borsh.len(mode);
+      final byte[] value = Borsh.readbyteVector(_data, i);
+      return new UpdateGlobalConfigIxData(discriminator, mode, value);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(mode, _data, i);
+      i += Borsh.writeVector(value, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(mode) + Borsh.lenVector(value);
+    }
+  }
+
+  public static final Discriminator UPDATE_GLOBAL_CONFIG_ADMIN_DISCRIMINATOR = toDiscriminator(184, 87, 23, 193, 156, 238, 175, 119);
+
+  public static Instruction updateGlobalConfigAdmin(final AccountMeta invokedKaminoLendingProgramMeta, final PublicKey pendingAdminKey, final PublicKey globalConfigKey) {
+    final var keys = List.of(
+      createReadOnlySigner(pendingAdminKey),
+      createWrite(globalConfigKey)
+    );
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, UPDATE_GLOBAL_CONFIG_ADMIN_DISCRIMINATOR);
+  }
+
   public static final Discriminator IDL_MISSING_TYPES_DISCRIMINATOR = toDiscriminator(130, 80, 38, 153, 80, 212, 182, 253);
 
   public static Instruction idlMissingTypes(final AccountMeta invokedKaminoLendingProgramMeta,
-                                            final PublicKey lendingMarketOwnerKey,
+                                            final PublicKey signerKey,
+                                            final PublicKey globalConfigKey,
                                             final PublicKey lendingMarketKey,
                                             final PublicKey reserveKey,
                                             final ReserveFarmKind reserveFarmKind,
@@ -2697,7 +2840,8 @@ public final class KaminoLendingProgram {
                                             final UpdateLendingMarketConfigValue updateLendingMarketConfigValue,
                                             final UpdateLendingMarketMode updateLendingMarketConfigMode) {
     final var keys = List.of(
-      createReadOnlySigner(lendingMarketOwnerKey),
+      createReadOnlySigner(signerKey),
+      createRead(globalConfigKey),
       createRead(lendingMarketKey),
       createWrite(reserveKey)
     );

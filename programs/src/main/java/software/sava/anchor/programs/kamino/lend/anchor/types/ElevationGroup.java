@@ -14,6 +14,7 @@ public record ElevationGroup(int maxLiquidationBonusBps,
                              int allowNewLoans,
                              int maxReservesAsCollateral,
                              int padding0,
+                             // Mandatory debt reserve for this elevation group
                              PublicKey debtReserve,
                              long[] padding1) implements Borsh {
 

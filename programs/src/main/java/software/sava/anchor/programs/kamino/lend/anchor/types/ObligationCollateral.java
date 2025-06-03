@@ -11,9 +11,17 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record ObligationCollateral(PublicKey depositReserve,
+// Obligation collateral state
+public record ObligationCollateral(// Reserve collateral is deposited to
+                                   PublicKey depositReserve,
+                                   // Amount of collateral deposited
                                    long depositedAmount,
+                                   // Collateral market value in quote currency (scaled fraction)
                                    BigInteger marketValueSf,
+                                   // Debt amount (lamport) taken against this collateral.
+                                   // (only meaningful if this obligation is part of an elevation group, otherwise 0)
+                                   // This is only indicative of the debt computed on the last refresh obligation.
+                                   // If the obligation have multiple collateral this value is the same for all of them.
                                    long borrowedAmountAgainstThisCollateralInElevationGroup,
                                    long[] padding) implements Borsh {
 

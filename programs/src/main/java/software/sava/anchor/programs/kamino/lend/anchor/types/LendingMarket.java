@@ -21,32 +21,71 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record LendingMarket(PublicKey _address,
                             Discriminator discriminator,
+                            // Version of lending market
                             long version,
+                            // Bump seed for derived authority address
                             long bumpSeed,
+                            // Owner authority which can add new reserves
                             PublicKey lendingMarketOwner,
+                            // Temporary cache of the lending market owner, used in update_lending_market_owner
                             PublicKey lendingMarketOwnerCached,
+                            // Currency market prices are quoted in
+                            // e.g. "USD" null padded (`*b"USD\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0"`) or a SPL token mint pubkey
                             byte[] quoteCurrency,
+                            // Referral fee for the lending market, as bps out of the total protocol fee
                             int referralFeeBps,
                             int emergencyMode,
+                            // Whether the obligations on this market should be subject to auto-deleveraging after deposit
+                            // or borrow limit is crossed.
+                            // Besides this flag, the particular reserve's flag also needs to be enabled (logical `AND`).
+                            // **NOTE:** this also affects the individual "target LTV" deleveraging.
                             int autodeleverageEnabled,
                             int borrowDisabled,
+                            // Refresh price from oracle only if it's older than this percentage of the price max age.
+                            // e.g. if the max age is set to 100s and this is set to 80%, the price will be refreshed if it's older than 80s.
+                            // Price is always refreshed if this set to 0.
                             int priceRefreshTriggerToMaxAgePct,
+                            // Percentage of the total borrowed value in an obligation available for liquidation
                             int liquidationMaxDebtCloseFactorPct,
+                            // Minimum acceptable unhealthy LTV before max_debt_close_factor_pct becomes 100%
                             int insolvencyRiskUnhealthyLtvPct,
+                            // Minimum liquidation value threshold triggering full liquidation for an obligation
                             long minFullLiquidationValueThreshold,
+                            // Max allowed liquidation value in one ix call
                             long maxLiquidatableDebtMarketValueAtOnce,
+                            // [DEPRECATED] Global maximum unhealthy borrow value allowed for any obligation
                             byte[] reserved0,
+                            // Global maximum allowed borrow value allowed for any obligation
                             long globalAllowedBorrowValue,
+                            // The address of the risk council, in charge of making parameter and risk decisions on behalf of the protocol
                             PublicKey riskCouncil,
+                            // [DEPRECATED] Reward points multiplier per obligation type
                             byte[] reserved1,
+                            // Elevation groups are used to group together reserves that have the same risk parameters and can bump the ltv and liquidation threshold
                             ElevationGroup[] elevationGroups,
                             long[] elevationGroupPadding,
+                            // Min net value accepted to be found in a position after any lending action in an obligation (scaled by quote currency decimals)
                             BigInteger minNetValueInObligationSf,
+                            // Minimum value to enforce smallest ltv priority checks on the collateral reserves on liquidation
                             long minValueSkipLiquidationLtvChecks,
+                            // Market name, zero-padded.
                             byte[] name,
+                            // Minimum value to enforce highest borrow factor priority checks on the debt reserves on liquidation
                             long minValueSkipLiquidationBfChecks,
+                            // Time (in seconds) that must pass before liquidation is allowed on an obligation that has
+                            // been individually marked for auto-deleveraging (by the risk council).
                             long individualAutodeleverageMarginCallPeriodSecs,
+                            // Minimum amount of deposit at creation of a reserve to prevent artificial inflation
+                            // Note: this amount cannot be recovered, the ctoken associated are never minted
                             long minInitialDepositAmount,
+                            // Whether the obligation orders should be evaluated during liquidations.
+                            int obligationOrderExecutionEnabled,
+                            // Whether the lending market is set as immutable.
+                            int immutable,
+                            // Whether new obligation orders can be created.
+                            // Note: updating or cancelling existing orders is *not* affected by this flag.
+                            int obligationOrderCreationEnabled,
+                            byte[] padding2,
                             long[] padding1) implements Borsh {
 
   public static final int BYTES = 4664;
@@ -78,7 +117,11 @@ public record LendingMarket(PublicKey _address,
   public static final int MIN_VALUE_SKIP_LIQUIDATION_BF_CHECKS_OFFSET = 3280;
   public static final int INDIVIDUAL_AUTODELEVERAGE_MARGIN_CALL_PERIOD_SECS_OFFSET = 3288;
   public static final int MIN_INITIAL_DEPOSIT_AMOUNT_OFFSET = 3296;
-  public static final int PADDING1_OFFSET = 3304;
+  public static final int OBLIGATION_ORDER_EXECUTION_ENABLED_OFFSET = 3304;
+  public static final int IMMUTABLE_OFFSET = 3305;
+  public static final int OBLIGATION_ORDER_CREATION_ENABLED_OFFSET = 3306;
+  public static final int PADDING2_OFFSET = 3307;
+  public static final int PADDING1_OFFSET = 3312;
 
   public static Filter createVersionFilter(final long version) {
     final byte[] _data = new byte[8];
@@ -182,6 +225,18 @@ public record LendingMarket(PublicKey _address,
     return Filter.createMemCompFilter(MIN_INITIAL_DEPOSIT_AMOUNT_OFFSET, _data);
   }
 
+  public static Filter createObligationOrderExecutionEnabledFilter(final int obligationOrderExecutionEnabled) {
+    return Filter.createMemCompFilter(OBLIGATION_ORDER_EXECUTION_ENABLED_OFFSET, new byte[]{(byte) obligationOrderExecutionEnabled});
+  }
+
+  public static Filter createImmutableFilter(final int immutable) {
+    return Filter.createMemCompFilter(IMMUTABLE_OFFSET, new byte[]{(byte) immutable});
+  }
+
+  public static Filter createObligationOrderCreationEnabledFilter(final int obligationOrderCreationEnabled) {
+    return Filter.createMemCompFilter(OBLIGATION_ORDER_CREATION_ENABLED_OFFSET, new byte[]{(byte) obligationOrderCreationEnabled});
+  }
+
   public static LendingMarket read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -254,7 +309,15 @@ public record LendingMarket(PublicKey _address,
     i += 8;
     final var minInitialDepositAmount = getInt64LE(_data, i);
     i += 8;
-    final var padding1 = new long[170];
+    final var obligationOrderExecutionEnabled = _data[i] & 0xFF;
+    ++i;
+    final var immutable = _data[i] & 0xFF;
+    ++i;
+    final var obligationOrderCreationEnabled = _data[i] & 0xFF;
+    ++i;
+    final var padding2 = new byte[5];
+    i += Borsh.readArray(padding2, _data, i);
+    final var padding1 = new long[169];
     Borsh.readArray(padding1, _data, i);
     return new LendingMarket(_address,
                              discriminator,
@@ -284,6 +347,10 @@ public record LendingMarket(PublicKey _address,
                              minValueSkipLiquidationBfChecks,
                              individualAutodeleverageMarginCallPeriodSecs,
                              minInitialDepositAmount,
+                             obligationOrderExecutionEnabled,
+                             immutable,
+                             obligationOrderCreationEnabled,
+                             padding2,
                              padding1);
   }
 
@@ -336,6 +403,13 @@ public record LendingMarket(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, minInitialDepositAmount);
     i += 8;
+    _data[i] = (byte) obligationOrderExecutionEnabled;
+    ++i;
+    _data[i] = (byte) immutable;
+    ++i;
+    _data[i] = (byte) obligationOrderCreationEnabled;
+    ++i;
+    i += Borsh.writeArray(padding2, _data, i);
     i += Borsh.writeArray(padding1, _data, i);
     return i - offset;
   }

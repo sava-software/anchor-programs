@@ -5,8 +5,11 @@ import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 
-public record ScopeConfiguration(PublicKey priceFeed,
+public record ScopeConfiguration(// Pubkey of the scope price feed (disabled if `null` or `default`)
+                                 PublicKey priceFeed,
+                                 // This is the scope_id price chain that results in a price for the token
                                  short[] priceChain,
+                                 // This is the scope_id price chain for the twap
                                  short[] twapChain) implements Borsh {
 
   public static final int BYTES = 48;

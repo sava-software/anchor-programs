@@ -17,32 +17,62 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
+// Lending market obligation state
 public record Obligation(PublicKey _address,
                          Discriminator discriminator,
+                         // Version of the struct
                          long tag,
+                         // Last update to collateral, liquidity, or their market values
                          LastUpdate lastUpdate,
+                         // Lending market address
                          PublicKey lendingMarket,
+                         // Owner authority which can borrow liquidity
                          PublicKey owner,
+                         // Deposited collateral for the obligation, unique by deposit reserve address
                          ObligationCollateral[] deposits,
+                         // Worst LTV for the collaterals backing the loan, represented as a percentage
                          long lowestReserveDepositLiquidationLtv,
+                         // Market value of deposits (scaled fraction)
                          BigInteger depositedValueSf,
+                         // Borrowed liquidity for the obligation, unique by borrow reserve address
                          ObligationLiquidity[] borrows,
+                         // Risk adjusted market value of borrows/debt (sum of price * borrowed_amount * borrow_factor) (scaled fraction)
                          BigInteger borrowFactorAdjustedDebtValueSf,
+                         // Market value of borrows - used for max_liquidatable_borrowed_amount (scaled fraction)
                          BigInteger borrowedAssetsMarketValueSf,
+                         // The maximum borrow value at the weighted average loan to value ratio (scaled fraction)
                          BigInteger allowedBorrowValueSf,
+                         // The dangerous borrow value at the weighted average liquidation threshold (scaled fraction)
                          BigInteger unhealthyBorrowValueSf,
+                         // The asset tier of the deposits
                          byte[] depositsAssetTiers,
+                         // The asset tier of the borrows
                          byte[] borrowsAssetTiers,
+                         // The elevation group id the obligation opted into.
                          int elevationGroup,
-                         int numOfObsoleteReserves,
+                         // The number of obsolete reserves the obligation has a deposit in
+                         int numOfObsoleteDepositReserves,
+                         // Marked = 1 if borrows array is not empty, 0 = borrows empty
                          int hasDebt,
+                         // Wallet address of the referrer
                          PublicKey referrer,
+                         // Marked = 1 if borrowing disabled, 0 = borrowing enabled
                          int borrowingDisabled,
+                         // A target LTV set by the risk council when marking this obligation for deleveraging.
+                         // Only effective when `deleveraging_margin_call_started_slot != 0`.
                          int autodeleverageTargetLtvPct,
+                         // The lowest max LTV found amongst the collateral deposits
                          int lowestReserveDepositMaxLtvPct,
+                         // The number of obsolete reserves the obligation has a borrow in
+                         int numOfObsoleteBorrowReserves,
                          byte[] reserved,
                          long highestBorrowFactorPct,
+                         // A timestamp at which the risk council most-recently marked this obligation for deleveraging.
+                         // Zero if not currently subject to deleveraging.
                          long autodeleverageMarginCallStartedTimestamp,
+                         // Owner-defined, liquidator-executed orders applicable to this obligation.
+                         // Typical use-cases would be a stop-loss and a take-profit (possibly co-existing).
+                         ObligationOrder[] orders,
                          long[] padding3) implements Borsh {
 
   public static final int BYTES = 3344;
@@ -63,16 +93,18 @@ public record Obligation(PublicKey _address,
   public static final int DEPOSITS_ASSET_TIERS_OFFSET = 2272;
   public static final int BORROWS_ASSET_TIERS_OFFSET = 2280;
   public static final int ELEVATION_GROUP_OFFSET = 2285;
-  public static final int NUM_OF_OBSOLETE_RESERVES_OFFSET = 2286;
+  public static final int NUM_OF_OBSOLETE_DEPOSIT_RESERVES_OFFSET = 2286;
   public static final int HAS_DEBT_OFFSET = 2287;
   public static final int REFERRER_OFFSET = 2288;
   public static final int BORROWING_DISABLED_OFFSET = 2320;
   public static final int AUTODELEVERAGE_TARGET_LTV_PCT_OFFSET = 2321;
   public static final int LOWEST_RESERVE_DEPOSIT_MAX_LTV_PCT_OFFSET = 2322;
-  public static final int RESERVED_OFFSET = 2323;
+  public static final int NUM_OF_OBSOLETE_BORROW_RESERVES_OFFSET = 2323;
+  public static final int RESERVED_OFFSET = 2324;
   public static final int HIGHEST_BORROW_FACTOR_PCT_OFFSET = 2328;
   public static final int AUTODELEVERAGE_MARGIN_CALL_STARTED_TIMESTAMP_OFFSET = 2336;
-  public static final int PADDING3_OFFSET = 2344;
+  public static final int ORDERS_OFFSET = 2344;
+  public static final int PADDING3_OFFSET = 2600;
 
   public static Filter createTagFilter(final long tag) {
     final byte[] _data = new byte[8];
@@ -132,8 +164,8 @@ public record Obligation(PublicKey _address,
     return Filter.createMemCompFilter(ELEVATION_GROUP_OFFSET, new byte[]{(byte) elevationGroup});
   }
 
-  public static Filter createNumOfObsoleteReservesFilter(final int numOfObsoleteReserves) {
-    return Filter.createMemCompFilter(NUM_OF_OBSOLETE_RESERVES_OFFSET, new byte[]{(byte) numOfObsoleteReserves});
+  public static Filter createNumOfObsoleteDepositReservesFilter(final int numOfObsoleteDepositReserves) {
+    return Filter.createMemCompFilter(NUM_OF_OBSOLETE_DEPOSIT_RESERVES_OFFSET, new byte[]{(byte) numOfObsoleteDepositReserves});
   }
 
   public static Filter createHasDebtFilter(final int hasDebt) {
@@ -154,6 +186,10 @@ public record Obligation(PublicKey _address,
 
   public static Filter createLowestReserveDepositMaxLtvPctFilter(final int lowestReserveDepositMaxLtvPct) {
     return Filter.createMemCompFilter(LOWEST_RESERVE_DEPOSIT_MAX_LTV_PCT_OFFSET, new byte[]{(byte) lowestReserveDepositMaxLtvPct});
+  }
+
+  public static Filter createNumOfObsoleteBorrowReservesFilter(final int numOfObsoleteBorrowReserves) {
+    return Filter.createMemCompFilter(NUM_OF_OBSOLETE_BORROW_RESERVES_OFFSET, new byte[]{(byte) numOfObsoleteBorrowReserves});
   }
 
   public static Filter createHighestBorrowFactorPctFilter(final long highestBorrowFactorPct) {
@@ -218,7 +254,7 @@ public record Obligation(PublicKey _address,
     i += Borsh.readArray(borrowsAssetTiers, _data, i);
     final var elevationGroup = _data[i] & 0xFF;
     ++i;
-    final var numOfObsoleteReserves = _data[i] & 0xFF;
+    final var numOfObsoleteDepositReserves = _data[i] & 0xFF;
     ++i;
     final var hasDebt = _data[i] & 0xFF;
     ++i;
@@ -230,13 +266,17 @@ public record Obligation(PublicKey _address,
     ++i;
     final var lowestReserveDepositMaxLtvPct = _data[i] & 0xFF;
     ++i;
-    final var reserved = new byte[5];
+    final var numOfObsoleteBorrowReserves = _data[i] & 0xFF;
+    ++i;
+    final var reserved = new byte[4];
     i += Borsh.readArray(reserved, _data, i);
     final var highestBorrowFactorPct = getInt64LE(_data, i);
     i += 8;
     final var autodeleverageMarginCallStartedTimestamp = getInt64LE(_data, i);
     i += 8;
-    final var padding3 = new long[125];
+    final var orders = new ObligationOrder[2];
+    i += Borsh.readArray(orders, ObligationOrder::read, _data, i);
+    final var padding3 = new long[93];
     Borsh.readArray(padding3, _data, i);
     return new Obligation(_address,
                           discriminator,
@@ -255,15 +295,17 @@ public record Obligation(PublicKey _address,
                           depositsAssetTiers,
                           borrowsAssetTiers,
                           elevationGroup,
-                          numOfObsoleteReserves,
+                          numOfObsoleteDepositReserves,
                           hasDebt,
                           referrer,
                           borrowingDisabled,
                           autodeleverageTargetLtvPct,
                           lowestReserveDepositMaxLtvPct,
+                          numOfObsoleteBorrowReserves,
                           reserved,
                           highestBorrowFactorPct,
                           autodeleverageMarginCallStartedTimestamp,
+                          orders,
                           padding3);
   }
 
@@ -295,7 +337,7 @@ public record Obligation(PublicKey _address,
     i += Borsh.writeArray(borrowsAssetTiers, _data, i);
     _data[i] = (byte) elevationGroup;
     ++i;
-    _data[i] = (byte) numOfObsoleteReserves;
+    _data[i] = (byte) numOfObsoleteDepositReserves;
     ++i;
     _data[i] = (byte) hasDebt;
     ++i;
@@ -307,11 +349,14 @@ public record Obligation(PublicKey _address,
     ++i;
     _data[i] = (byte) lowestReserveDepositMaxLtvPct;
     ++i;
+    _data[i] = (byte) numOfObsoleteBorrowReserves;
+    ++i;
     i += Borsh.writeArray(reserved, _data, i);
     putInt64LE(_data, i, highestBorrowFactorPct);
     i += 8;
     putInt64LE(_data, i, autodeleverageMarginCallStartedTimestamp);
     i += 8;
+    i += Borsh.writeArray(orders, _data, i);
     i += Borsh.writeArray(padding3, _data, i);
     return i - offset;
   }
