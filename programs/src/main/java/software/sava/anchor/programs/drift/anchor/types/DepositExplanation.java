@@ -7,8 +7,7 @@ public enum DepositExplanation implements Borsh.Enum {
   None,
   Transfer,
   Borrow,
-  RepayBorrow,
-  Reward;
+  RepayBorrow;
 
   public static DepositExplanation read(final byte[] _data, final int offset) {
     return Borsh.read(DepositExplanation.values(), _data, offset);

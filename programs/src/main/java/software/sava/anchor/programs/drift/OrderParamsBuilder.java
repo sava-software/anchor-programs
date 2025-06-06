@@ -2,7 +2,6 @@ package software.sava.anchor.programs.drift;
 
 import software.sava.anchor.programs.drift.anchor.types.*;
 
-import java.util.EnumSet;
 import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
@@ -18,7 +17,7 @@ public final class OrderParamsBuilder {
   private int marketIndex;
   private boolean reduceOnly;
   private PostOnlyParam postOnly = PostOnlyParam.MustPostOnly;
-  private EnumSet<OrderParamsBitFlag> orderParams;
+  private boolean immediateOrCancel;
   private OptionalLong maxTs;
   private OptionalLong triggerPrice;
   private OrderTriggerCondition triggerCondition;
@@ -37,7 +36,6 @@ public final class OrderParamsBuilder {
     this.price = price;
     this.marketIndex = marketIndex;
     this.triggerCondition = triggerCondition;
-    this.orderParams = EnumSet.noneOf(OrderParamsBitFlag.class);
   }
 
   public OrderParams createParams() {
@@ -57,7 +55,7 @@ public final class OrderParamsBuilder {
         marketIndex,
         reduceOnly,
         postOnly,
-        DriftUtil.bitFlags(orderParams),
+        immediateOrCancel,
         maxTs,
         triggerPrice,
         Objects.requireNonNull(triggerCondition),
@@ -149,30 +147,12 @@ public final class OrderParamsBuilder {
     return this;
   }
 
-  public EnumSet<OrderParamsBitFlag> orderParams() {
-    return orderParams;
-  }
-
-  public OrderParamsBuilder orderParam(final OrderParamsBitFlag orderParam) {
-    this.orderParams.add(orderParam);
-    return this;
-  }
-
-  public OrderParamsBuilder orderParams(final EnumSet<OrderParamsBitFlag> orderParams) {
-    this.orderParams = orderParams;
-    return this;
-  }
-
   public boolean immediateOrCancel() {
-    return orderParams.contains(OrderParamsBitFlag.ImmediateOrCancel);
+    return immediateOrCancel;
   }
 
   public OrderParamsBuilder immediateOrCancel(final boolean immediateOrCancel) {
-    if (immediateOrCancel) {
-      this.orderParams.add(OrderParamsBitFlag.ImmediateOrCancel);
-    } else {
-      this.orderParams.remove(OrderParamsBitFlag.ImmediateOrCancel);
-    }
+    this.immediateOrCancel = immediateOrCancel;
     return this;
   }
 

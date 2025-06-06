@@ -17,6 +17,7 @@ import software.sava.anchor.programs.glam.anchor.types.PriceDenom;
 import software.sava.anchor.programs.glam.anchor.types.RemainingAccountsInfo;
 import software.sava.anchor.programs.glam.anchor.types.SettlePnlMode;
 import software.sava.anchor.programs.glam.anchor.types.StateModel;
+import software.sava.anchor.programs.glam.anchor.types.WithdrawUnit;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -1132,6 +1133,240 @@ public final class GlamProtocolProgram {
     public int l() {
       return BYTES;
     }
+  }
+
+  public static final Discriminator DRIFT_VAULTS_CANCEL_REQUEST_WITHDRAW_DISCRIMINATOR = toDiscriminator(241, 196, 156, 180, 21, 155, 228, 125);
+
+  public static Instruction driftVaultsCancelRequestWithdraw(final AccountMeta invokedGlamProtocolProgramMeta,
+                                                             final PublicKey glamStateKey,
+                                                             final PublicKey glamVaultKey,
+                                                             final PublicKey glamSignerKey,
+                                                             final PublicKey cpiProgramKey,
+                                                             final PublicKey vaultKey,
+                                                             final PublicKey vaultDepositorKey,
+                                                             final PublicKey driftUserStatsKey,
+                                                             final PublicKey driftUserKey,
+                                                             final PublicKey driftStateKey) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(vaultKey),
+      createWrite(vaultDepositorKey),
+      createRead(driftUserStatsKey),
+      createRead(driftUserKey),
+      createRead(driftStateKey)
+    );
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, DRIFT_VAULTS_CANCEL_REQUEST_WITHDRAW_DISCRIMINATOR);
+  }
+
+  public static final Discriminator DRIFT_VAULTS_DEPOSIT_DISCRIMINATOR = toDiscriminator(95, 223, 42, 76, 37, 21, 176, 73);
+
+  public static Instruction driftVaultsDeposit(final AccountMeta invokedGlamProtocolProgramMeta,
+                                               final PublicKey glamStateKey,
+                                               final PublicKey glamVaultKey,
+                                               final PublicKey glamSignerKey,
+                                               final PublicKey cpiProgramKey,
+                                               final PublicKey vaultKey,
+                                               final PublicKey vaultDepositorKey,
+                                               final PublicKey vaultTokenAccountKey,
+                                               final PublicKey driftUserStatsKey,
+                                               final PublicKey driftUserKey,
+                                               final PublicKey driftStateKey,
+                                               final PublicKey driftSpotMarketVaultKey,
+                                               final PublicKey userTokenAccountKey,
+                                               final PublicKey driftProgramKey,
+                                               final PublicKey tokenProgramKey,
+                                               final long amount) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(vaultKey),
+      createWrite(vaultDepositorKey),
+      createWrite(vaultTokenAccountKey),
+      createWrite(driftUserStatsKey),
+      createWrite(driftUserKey),
+      createRead(driftStateKey),
+      createWrite(driftSpotMarketVaultKey),
+      createWrite(userTokenAccountKey),
+      createRead(driftProgramKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = writeDiscriminator(DRIFT_VAULTS_DEPOSIT_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
+  }
+
+  public record DriftVaultsDepositIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static DriftVaultsDepositIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static DriftVaultsDepositIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new DriftVaultsDepositIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator DRIFT_VAULTS_INITIALIZE_VAULT_DEPOSITOR_DISCRIMINATOR = toDiscriminator(109, 183, 50, 62, 60, 195, 192, 51);
+
+  public static Instruction driftVaultsInitializeVaultDepositor(final AccountMeta invokedGlamProtocolProgramMeta,
+                                                                final SolanaAccounts solanaAccounts,
+                                                                final PublicKey glamStateKey,
+                                                                final PublicKey glamVaultKey,
+                                                                final PublicKey glamSignerKey,
+                                                                final PublicKey cpiProgramKey,
+                                                                final PublicKey vaultKey,
+                                                                final PublicKey vaultDepositorKey) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createRead(vaultKey),
+      createWrite(vaultDepositorKey),
+      createRead(solanaAccounts.rentSysVar()),
+      createRead(solanaAccounts.systemProgram())
+    );
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, DRIFT_VAULTS_INITIALIZE_VAULT_DEPOSITOR_DISCRIMINATOR);
+  }
+
+  public static final Discriminator DRIFT_VAULTS_REQUEST_WITHDRAW_DISCRIMINATOR = toDiscriminator(19, 53, 222, 51, 44, 215, 35, 82);
+
+  public static Instruction driftVaultsRequestWithdraw(final AccountMeta invokedGlamProtocolProgramMeta,
+                                                       final PublicKey glamStateKey,
+                                                       final PublicKey glamVaultKey,
+                                                       final PublicKey glamSignerKey,
+                                                       final PublicKey cpiProgramKey,
+                                                       final PublicKey vaultKey,
+                                                       final PublicKey vaultDepositorKey,
+                                                       final PublicKey driftUserStatsKey,
+                                                       final PublicKey driftUserKey,
+                                                       final PublicKey driftStateKey,
+                                                       final long withdrawAmount,
+                                                       final WithdrawUnit withdrawUnit) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(vaultKey),
+      createWrite(vaultDepositorKey),
+      createRead(driftUserStatsKey),
+      createRead(driftUserKey),
+      createRead(driftStateKey)
+    );
+
+    final byte[] _data = new byte[16 + Borsh.len(withdrawUnit)];
+    int i = writeDiscriminator(DRIFT_VAULTS_REQUEST_WITHDRAW_DISCRIMINATOR, _data, 0);
+    putInt64LE(_data, i, withdrawAmount);
+    i += 8;
+    Borsh.write(withdrawUnit, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
+  }
+
+  public record DriftVaultsRequestWithdrawIxData(Discriminator discriminator, long withdrawAmount, WithdrawUnit withdrawUnit) implements Borsh {  
+
+    public static DriftVaultsRequestWithdrawIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 17;
+
+    public static DriftVaultsRequestWithdrawIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var withdrawAmount = getInt64LE(_data, i);
+      i += 8;
+      final var withdrawUnit = WithdrawUnit.read(_data, i);
+      return new DriftVaultsRequestWithdrawIxData(discriminator, withdrawAmount, withdrawUnit);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, withdrawAmount);
+      i += 8;
+      i += Borsh.write(withdrawUnit, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator DRIFT_VAULTS_WITHDRAW_DISCRIMINATOR = toDiscriminator(58, 127, 150, 177, 66, 45, 5, 30);
+
+  public static Instruction driftVaultsWithdraw(final AccountMeta invokedGlamProtocolProgramMeta,
+                                                final PublicKey glamStateKey,
+                                                final PublicKey glamVaultKey,
+                                                final PublicKey glamSignerKey,
+                                                final PublicKey cpiProgramKey,
+                                                final PublicKey vaultKey,
+                                                final PublicKey vaultDepositorKey,
+                                                final PublicKey vaultTokenAccountKey,
+                                                final PublicKey driftUserStatsKey,
+                                                final PublicKey driftUserKey,
+                                                final PublicKey driftStateKey,
+                                                final PublicKey driftSpotMarketVaultKey,
+                                                final PublicKey driftSignerKey,
+                                                final PublicKey userTokenAccountKey,
+                                                final PublicKey driftProgramKey,
+                                                final PublicKey tokenProgramKey) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(cpiProgramKey),
+      createWrite(vaultKey),
+      createWrite(vaultDepositorKey),
+      createWrite(vaultTokenAccountKey),
+      createWrite(driftUserStatsKey),
+      createWrite(driftUserKey),
+      createRead(driftStateKey),
+      createWrite(driftSpotMarketVaultKey),
+      createRead(driftSignerKey),
+      createWrite(userTokenAccountKey),
+      createRead(driftProgramKey),
+      createRead(tokenProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, DRIFT_VAULTS_WITHDRAW_DISCRIMINATOR);
   }
 
   public static final Discriminator DRIFT_WITHDRAW_DISCRIMINATOR = toDiscriminator(86, 59, 186, 123, 183, 181, 234, 137);
@@ -2511,7 +2746,7 @@ public final class GlamProtocolProgram {
                                                                                                   final PublicKey farmsProgramKey,
                                                                                                   final long collateralAmount) {
     final var keys = List.of(
-      createRead(glamStateKey),
+      createWrite(glamStateKey),
       createWrite(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),

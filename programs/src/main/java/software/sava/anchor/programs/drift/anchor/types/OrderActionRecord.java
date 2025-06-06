@@ -40,8 +40,7 @@ public record OrderActionRecord(long ts,
                                 OptionalLong makerOrderBaseAssetAmount,
                                 OptionalLong makerOrderCumulativeBaseAssetAmountFilled,
                                 OptionalLong makerOrderCumulativeQuoteAssetAmountFilled,
-                                long oraclePrice,
-                                int bitFlags) implements Borsh {
+                                long oraclePrice) implements Borsh {
 
   public static OrderActionRecord read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -147,8 +146,6 @@ public record OrderActionRecord(long ts,
       i += 8;
     }
     final var oraclePrice = getInt64LE(_data, i);
-    i += 8;
-    final var bitFlags = _data[i] & 0xFF;
     return new OrderActionRecord(ts,
                                  action,
                                  actionExplanation,
@@ -176,8 +173,7 @@ public record OrderActionRecord(long ts,
                                  makerOrderBaseAssetAmount,
                                  makerOrderCumulativeBaseAssetAmountFilled,
                                  makerOrderCumulativeQuoteAssetAmountFilled,
-                                 oraclePrice,
-                                 bitFlags);
+                                 oraclePrice);
   }
 
   @Override
@@ -214,8 +210,6 @@ public record OrderActionRecord(long ts,
     i += Borsh.writeOptional(makerOrderCumulativeQuoteAssetAmountFilled, _data, i);
     putInt64LE(_data, i, oraclePrice);
     i += 8;
-    _data[i] = (byte) bitFlags;
-    ++i;
     return i - offset;
   }
 
@@ -248,7 +242,6 @@ public record OrderActionRecord(long ts,
          + (makerOrderBaseAssetAmount == null || makerOrderBaseAssetAmount.isEmpty() ? 1 : (1 + 8))
          + (makerOrderCumulativeBaseAssetAmountFilled == null || makerOrderCumulativeBaseAssetAmountFilled.isEmpty() ? 1 : (1 + 8))
          + (makerOrderCumulativeQuoteAssetAmountFilled == null || makerOrderCumulativeQuoteAssetAmountFilled.isEmpty() ? 1 : (1 + 8))
-         + 8
-         + 1;
+         + 8;
   }
 }

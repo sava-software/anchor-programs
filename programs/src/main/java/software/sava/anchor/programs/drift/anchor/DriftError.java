@@ -316,8 +316,7 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.UserFuelOverflowThresholdNotMet,
     DriftError.FuelOverflowAccountNotFound,
     DriftError.InvalidTransferPerpPosition,
-    DriftError.InvalidSignedMsgUserOrdersResize,
-    DriftError.CouldNotDeserializeHighLeverageModeConfig {
+    DriftError.InvalidSignedMsgUserOrdersResize {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -635,7 +634,6 @@ public sealed interface DriftError extends ProgramError permits
       case 6311 -> FuelOverflowAccountNotFound.INSTANCE;
       case 6312 -> InvalidTransferPerpPosition.INSTANCE;
       case 6313 -> InvalidSignedMsgUserOrdersResize.INSTANCE;
-      case 6314 -> CouldNotDeserializeHighLeverageModeConfig.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2835,13 +2833,6 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final InvalidSignedMsgUserOrdersResize INSTANCE = new InvalidSignedMsgUserOrdersResize(
         6313, "Invalid SignedMsgUserOrders resize"
-    );
-  }
-
-  record CouldNotDeserializeHighLeverageModeConfig(int code, String msg) implements DriftError {
-
-    public static final CouldNotDeserializeHighLeverageModeConfig INSTANCE = new CouldNotDeserializeHighLeverageModeConfig(
-        6314, "Could not deserialize high leverage mode config"
     );
   }
 }

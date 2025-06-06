@@ -105,8 +105,6 @@ public record PerpMarket(PublicKey _address,
                          int poolId,
                          int highLeverageMarginRatioInitial,
                          int highLeverageMarginRatioMaintenance,
-                         int protectedMakerLimitPriceDivisor,
-                         int protectedMakerDynamicDivisor,
                          byte[] padding) implements Borsh {
 
   public static final int BYTES = 1216;
@@ -146,9 +144,7 @@ public record PerpMarket(PublicKey _address,
   public static final int POOL_ID_OFFSET = 1173;
   public static final int HIGH_LEVERAGE_MARGIN_RATIO_INITIAL_OFFSET = 1174;
   public static final int HIGH_LEVERAGE_MARGIN_RATIO_MAINTENANCE_OFFSET = 1176;
-  public static final int PROTECTED_MAKER_LIMIT_PRICE_DIVISOR_OFFSET = 1178;
-  public static final int PROTECTED_MAKER_DYNAMIC_DIVISOR_OFFSET = 1179;
-  public static final int PADDING_OFFSET = 1180;
+  public static final int PADDING_OFFSET = 1178;
 
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);
@@ -320,14 +316,6 @@ public record PerpMarket(PublicKey _address,
     return Filter.createMemCompFilter(HIGH_LEVERAGE_MARGIN_RATIO_MAINTENANCE_OFFSET, _data);
   }
 
-  public static Filter createProtectedMakerLimitPriceDivisorFilter(final int protectedMakerLimitPriceDivisor) {
-    return Filter.createMemCompFilter(PROTECTED_MAKER_LIMIT_PRICE_DIVISOR_OFFSET, new byte[]{(byte) protectedMakerLimitPriceDivisor});
-  }
-
-  public static Filter createProtectedMakerDynamicDivisorFilter(final int protectedMakerDynamicDivisor) {
-    return Filter.createMemCompFilter(PROTECTED_MAKER_DYNAMIC_DIVISOR_OFFSET, new byte[]{(byte) protectedMakerDynamicDivisor});
-  }
-
   public static PerpMarket read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -416,11 +404,7 @@ public record PerpMarket(PublicKey _address,
     i += 2;
     final var highLeverageMarginRatioMaintenance = getInt16LE(_data, i);
     i += 2;
-    final var protectedMakerLimitPriceDivisor = _data[i] & 0xFF;
-    ++i;
-    final var protectedMakerDynamicDivisor = _data[i] & 0xFF;
-    ++i;
-    final var padding = new byte[36];
+    final var padding = new byte[38];
     Borsh.readArray(padding, _data, i);
     return new PerpMarket(_address,
                           discriminator,
@@ -458,8 +442,6 @@ public record PerpMarket(PublicKey _address,
                           poolId,
                           highLeverageMarginRatioInitial,
                           highLeverageMarginRatioMaintenance,
-                          protectedMakerLimitPriceDivisor,
-                          protectedMakerDynamicDivisor,
                           padding);
   }
 
@@ -527,10 +509,6 @@ public record PerpMarket(PublicKey _address,
     i += 2;
     putInt16LE(_data, i, highLeverageMarginRatioMaintenance);
     i += 2;
-    _data[i] = (byte) protectedMakerLimitPriceDivisor;
-    ++i;
-    _data[i] = (byte) protectedMakerDynamicDivisor;
-    ++i;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
