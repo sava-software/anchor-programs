@@ -1145,8 +1145,7 @@ public final class GlamProtocolProgram {
                                                              final PublicKey vaultKey,
                                                              final PublicKey vaultDepositorKey,
                                                              final PublicKey driftUserStatsKey,
-                                                             final PublicKey driftUserKey,
-                                                             final PublicKey driftStateKey) {
+                                                             final PublicKey driftUserKey) {
     final var keys = List.of(
       createRead(glamStateKey),
       createRead(glamVaultKey),
@@ -1155,8 +1154,7 @@ public final class GlamProtocolProgram {
       createWrite(vaultKey),
       createWrite(vaultDepositorKey),
       createRead(driftUserStatsKey),
-      createRead(driftUserKey),
-      createRead(driftStateKey)
+      createRead(driftUserKey)
     );
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, DRIFT_VAULTS_CANCEL_REQUEST_WITHDRAW_DISCRIMINATOR);
@@ -1271,7 +1269,6 @@ public final class GlamProtocolProgram {
                                                        final PublicKey vaultDepositorKey,
                                                        final PublicKey driftUserStatsKey,
                                                        final PublicKey driftUserKey,
-                                                       final PublicKey driftStateKey,
                                                        final long withdrawAmount,
                                                        final WithdrawUnit withdrawUnit) {
     final var keys = List.of(
@@ -1282,8 +1279,7 @@ public final class GlamProtocolProgram {
       createWrite(vaultKey),
       createWrite(vaultDepositorKey),
       createRead(driftUserStatsKey),
-      createRead(driftUserKey),
-      createRead(driftStateKey)
+      createRead(driftUserKey)
     );
 
     final byte[] _data = new byte[16 + Borsh.len(withdrawUnit)];
@@ -4324,50 +4320,113 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator PRICE_DRIFT_DISCRIMINATOR = toDiscriminator(240, 91, 209, 89, 155, 0, 97, 133);
+  public static final Discriminator PRICE_DRIFT_USER_DISCRIMINATOR = toDiscriminator(113, 43, 127, 102, 161, 68, 20, 69);
 
-  public static Instruction priceDrift(final AccountMeta invokedGlamProtocolProgramMeta,
-                                       final PublicKey glamStateKey,
-                                       final PublicKey glamVaultKey,
-                                       final PublicKey signerKey,
-                                       final PublicKey solOracleKey,
-                                       final PublicKey stateKey,
-                                       final PublicKey userKey,
-                                       final PublicKey userStatsKey,
-                                       final PriceDenom denom) {
+  public static Instruction priceDriftUser(final AccountMeta invokedGlamProtocolProgramMeta,
+                                           final PublicKey glamStateKey,
+                                           final PublicKey glamVaultKey,
+                                           final PublicKey signerKey,
+                                           final PublicKey solOracleKey,
+                                           final PublicKey glamConfigKey,
+                                           final PublicKey userKey,
+                                           final PublicKey userStatsKey,
+                                           final PriceDenom denom) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
       createRead(solOracleKey),
-      createRead(stateKey),
+      createRead(glamConfigKey),
       createRead(userKey),
       createRead(userStatsKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(denom)];
-    int i = writeDiscriminator(PRICE_DRIFT_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(PRICE_DRIFT_USER_DISCRIMINATOR, _data, 0);
     Borsh.write(denom, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
   }
 
-  public record PriceDriftIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
+  public record PriceDriftUserIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
 
-    public static PriceDriftIxData read(final Instruction instruction) {
+    public static PriceDriftUserIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 9;
 
-    public static PriceDriftIxData read(final byte[] _data, final int offset) {
+    public static PriceDriftUserIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
-      return new PriceDriftIxData(discriminator, denom);
+      return new PriceDriftUserIxData(discriminator, denom);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(denom, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator PRICE_DRIFT_VAULT_DEPOSITOR_DISCRIMINATOR = toDiscriminator(48, 112, 54, 88, 2, 64, 224, 53);
+
+  public static Instruction priceDriftVaultDepositor(final AccountMeta invokedGlamProtocolProgramMeta,
+                                                     final PublicKey glamStateKey,
+                                                     final PublicKey glamVaultKey,
+                                                     final PublicKey signerKey,
+                                                     final PublicKey solOracleKey,
+                                                     final PublicKey glamConfigKey,
+                                                     final PublicKey depositorKey,
+                                                     final PublicKey driftVaultKey,
+                                                     final PublicKey driftUserKey,
+                                                     final PublicKey driftUserStatsKey,
+                                                     final PriceDenom denom) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(signerKey),
+      createRead(solOracleKey),
+      createRead(glamConfigKey),
+      createRead(depositorKey),
+      createRead(driftVaultKey),
+      createRead(driftUserKey),
+      createRead(driftUserStatsKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(denom)];
+    int i = writeDiscriminator(PRICE_DRIFT_VAULT_DEPOSITOR_DISCRIMINATOR, _data, 0);
+    Borsh.write(denom, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
+  }
+
+  public record PriceDriftVaultDepositorIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
+
+    public static PriceDriftVaultDepositorIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static PriceDriftVaultDepositorIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var denom = PriceDenom.read(_data, i);
+      return new PriceDriftVaultDepositorIxData(discriminator, denom);
     }
 
     @Override
@@ -4388,7 +4447,7 @@ public final class GlamProtocolProgram {
   public static Instruction priceKaminoObligations(final AccountMeta invokedGlamProtocolProgramMeta,
                                                    final PublicKey glamStateKey,
                                                    final PublicKey glamVaultKey,
-                                                   final PublicKey glamSignerKey,
+                                                   final PublicKey signerKey,
                                                    final PublicKey kaminoLendingProgramKey,
                                                    final PublicKey solOracleKey,
                                                    final PublicKey glamConfigKey,
@@ -4400,7 +4459,7 @@ public final class GlamProtocolProgram {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
-      createWritableSigner(glamSignerKey),
+      createWritableSigner(signerKey),
       createRead(kaminoLendingProgramKey),
       createRead(solOracleKey),
       createRead(glamConfigKey),
@@ -4453,14 +4512,14 @@ public final class GlamProtocolProgram {
   public static Instruction priceMeteoraPositions(final AccountMeta invokedGlamProtocolProgramMeta,
                                                   final PublicKey glamStateKey,
                                                   final PublicKey glamVaultKey,
-                                                  final PublicKey glamSignerKey,
+                                                  final PublicKey signerKey,
                                                   final PublicKey solOracleKey,
                                                   final PublicKey glamConfigKey,
                                                   final PriceDenom denom) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
-      createWritableSigner(glamSignerKey),
+      createWritableSigner(signerKey),
       createRead(solOracleKey),
       createRead(glamConfigKey)
     );
@@ -4508,14 +4567,14 @@ public final class GlamProtocolProgram {
   public static Instruction priceStakes(final AccountMeta invokedGlamProtocolProgramMeta,
                                         final PublicKey glamStateKey,
                                         final PublicKey glamVaultKey,
-                                        final PublicKey glamSignerKey,
+                                        final PublicKey signerKey,
                                         final PublicKey solOracleKey,
                                         final PublicKey glamConfigKey,
                                         final PriceDenom denom) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
-      createWritableSigner(glamSignerKey),
+      createWritableSigner(signerKey),
       createRead(solOracleKey),
       createRead(glamConfigKey)
     );
@@ -4563,14 +4622,14 @@ public final class GlamProtocolProgram {
   public static Instruction priceTickets(final AccountMeta invokedGlamProtocolProgramMeta,
                                          final PublicKey glamStateKey,
                                          final PublicKey glamVaultKey,
-                                         final PublicKey glamSignerKey,
+                                         final PublicKey signerKey,
                                          final PublicKey solOracleKey,
                                          final PublicKey glamConfigKey,
                                          final PriceDenom denom) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
-      createWritableSigner(glamSignerKey),
+      createWritableSigner(signerKey),
       createRead(solOracleKey),
       createRead(glamConfigKey)
     );
@@ -4618,14 +4677,14 @@ public final class GlamProtocolProgram {
   public static Instruction priceVault(final AccountMeta invokedGlamProtocolProgramMeta,
                                        final PublicKey glamStateKey,
                                        final PublicKey glamVaultKey,
-                                       final PublicKey glamSignerKey,
+                                       final PublicKey signerKey,
                                        final PublicKey solOracleKey,
                                        final PublicKey glamConfigKey,
                                        final PriceDenom denom) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
-      createWritableSigner(glamSignerKey),
+      createWritableSigner(signerKey),
       createRead(solOracleKey),
       createRead(glamConfigKey)
     );

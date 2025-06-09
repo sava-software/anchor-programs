@@ -10,6 +10,16 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 public final class GlamProtocolPDAs {
 
+  public static ProgramDerivedAddress depositorPDA(final PublicKey program,
+                                                   final PublicKey driftVaultAccount,
+                                                   final PublicKey glamVaultAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "vault_depositor".getBytes(US_ASCII),
+      driftVaultAccount.toByteArray(),
+      glamVaultAccount.toByteArray()
+    ), program);
+  }
+
   public static ProgramDerivedAddress escrowAssetAtaPDA(final PublicKey program,
                                                         final PublicKey glamEscrowAccount,
                                                         final SolanaAccounts solanaAccounts,

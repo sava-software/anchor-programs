@@ -53,6 +53,8 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.MathError,
     GlamProtocolError.TypeCastingError,
     GlamProtocolError.BaseAssetNotSupported,
+    GlamProtocolError.TooManyDriftSubAccounts,
+    GlamProtocolError.UnknownExternalVaultAsset,
     GlamProtocolError.TransfersDisabled,
     GlamProtocolError.InvalidPolicyAccount,
     GlamProtocolError.AmountTooBig,
@@ -110,6 +112,8 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 51107 -> MathError.INSTANCE;
       case 51108 -> TypeCastingError.INSTANCE;
       case 51109 -> BaseAssetNotSupported.INSTANCE;
+      case 51110 -> TooManyDriftSubAccounts.INSTANCE;
+      case 51111 -> UnknownExternalVaultAsset.INSTANCE;
       case 52000 -> TransfersDisabled.INSTANCE;
       case 52001 -> InvalidPolicyAccount.INSTANCE;
       case 52002 -> AmountTooBig.INSTANCE;
@@ -465,6 +469,20 @@ public sealed interface GlamProtocolError extends ProgramError permits
 
     public static final BaseAssetNotSupported INSTANCE = new BaseAssetNotSupported(
         51109, "Base asset must have 6 decimals."
+    );
+  }
+
+  record TooManyDriftSubAccounts(int code, String msg) implements GlamProtocolError {
+
+    public static final TooManyDriftSubAccounts INSTANCE = new TooManyDriftSubAccounts(
+        51110, "Too many Drift sub accounts"
+    );
+  }
+
+  record UnknownExternalVaultAsset(int code, String msg) implements GlamProtocolError {
+
+    public static final UnknownExternalVaultAsset INSTANCE = new UnknownExternalVaultAsset(
+        51111, "Unknown external vault account"
     );
   }
 
