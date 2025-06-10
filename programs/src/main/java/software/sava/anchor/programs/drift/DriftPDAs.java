@@ -11,7 +11,7 @@ import static software.sava.core.accounts.PublicKey.findProgramAddress;
 // https://github.com/drift-labs/protocol-v2/blob/9d997937ff641e95a08cbf4c20b2ea326a5ba6be/sdk/src/addresses/pda.ts#L7
 public final class DriftPDAs {
 
-  private static byte[] lowerTwoLE(final int id) {
+  public static byte[] lowerTwoLE(final int id) {
     return new byte[]{(byte) (id & 0xFF), (byte) (id & 0xFF00)};
   }
 

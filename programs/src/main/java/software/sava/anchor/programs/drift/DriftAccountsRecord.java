@@ -10,5 +10,6 @@ record DriftAccountsRecord(AccountMeta invokedDriftProgram,
                            PublicKey marketLookupTable,
                            List<PublicKey> marketLookupTables,
                            PublicKey serumLookupTable,
-                           PublicKey stateKey) implements DriftAccounts {
+                           PublicKey stateKey,
+                           AccountMeta invokedDriftVaultsProgram) implements DriftAccounts {
 }

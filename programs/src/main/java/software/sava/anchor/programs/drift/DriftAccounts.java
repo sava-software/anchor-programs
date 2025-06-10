@@ -14,12 +14,14 @@ public interface DriftAccounts {
       "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
       "D9cnvzswDikQDf53k4HpQ3KJ9y1Fv3HGGDFYMXnK5T6c",
       "EiWSskK5HXnBTptiS5DH6gpAJRVNQ3cAhTKBGaiaysAb",
-      "GPZkp76cJtNL2mphCvT6FXkJCVPpouidnacckR6rzKDN"
+      "GPZkp76cJtNL2mphCvT6FXkJCVPpouidnacckR6rzKDN",
+      "vAuLTsyrvSfZRuRB3XgvkPwNGgYSs9YRYymVebLKoxR"
   );
 
   DriftAccounts DEV_NET = createAddressConstants(
       "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
       "FaMS3U4uBojvGn5FSDEPimddcXsCfwkKsFgMVVnDdxGb",
+      null,
       null,
       null
   );
@@ -40,10 +42,17 @@ public interface DriftAccounts {
 
   PublicKey serumLookupTable();
 
+  AccountMeta invokedDriftVaultsProgram();
+
+  default PublicKey driftVaultsProgram() {
+    return invokedDriftVaultsProgram().publicKey();
+  }
+
   static DriftAccounts createAddressConstants(final PublicKey driftProgram,
                                               final PublicKey marketLookupTable,
                                               final PublicKey marketLookupTable2,
-                                              final PublicKey serumLookupTable) {
+                                              final PublicKey serumLookupTable,
+                                              final PublicKey driftVaultsProgram) {
     final var driftSigner = deriveSignerAccount(driftProgram).publicKey();
     return new DriftAccountsRecord(
         AccountMeta.createInvoked(driftProgram),
@@ -51,19 +60,22 @@ public interface DriftAccounts {
         marketLookupTable,
         marketLookupTable2 == null ? List.of(marketLookupTable) : List.of(marketLookupTable, marketLookupTable2),
         serumLookupTable,
-        DriftPDAs.deriveStateAccount(driftProgram).publicKey()
+        DriftPDAs.deriveStateAccount(driftProgram).publicKey(),
+        driftVaultsProgram == null ? null : AccountMeta.createInvoked(driftVaultsProgram)
     );
   }
 
   static DriftAccounts createAddressConstants(final String driftProgram,
                                               final String marketLookupTable,
                                               final String marketLookupTable2,
-                                              final String serumLookupTable) {
+                                              final String serumLookupTable,
+                                              final String driftVaultsProgram) {
     return createAddressConstants(
         fromBase58Encoded(driftProgram),
         fromBase58Encoded(marketLookupTable),
         marketLookupTable2 == null ? null : fromBase58Encoded(marketLookupTable2),
-        serumLookupTable == null ? null : fromBase58Encoded(driftProgram)
+        serumLookupTable == null ? null : fromBase58Encoded(driftProgram),
+        driftVaultsProgram == null ? null : fromBase58Encoded(driftVaultsProgram)
     );
   }
 }
