@@ -48,7 +48,7 @@ public interface DriftVaultsProgramClient {
     final var vaultKey = vault._address();
     final var driftAccounts = driftAccounts();
     final var authority = authority();
-    final var vaultDepositor = DriftVaultPDAs.getVaultDepositorAddress(
+    final var vaultDepositor = DriftVaultPDAs.vaultDepositorAddress(
         driftAccounts.driftVaultsProgram(),
         vaultKey,
         authority
@@ -80,7 +80,7 @@ public interface DriftVaultsProgramClient {
     final var vaultKey = vault._address();
     final var driftAccounts = driftAccounts();
     final var authority = authority();
-    final var vaultDepositor = DriftVaultPDAs.getVaultDepositorAddress(
+    final var vaultDepositor = DriftVaultPDAs.vaultDepositorAddress(
         driftAccounts.driftVaultsProgram(),
         vaultKey,
         authority
@@ -107,7 +107,7 @@ public interface DriftVaultsProgramClient {
     final var vaultKey = vault._address();
     final var driftAccounts = driftAccounts();
     final var authority = authority();
-    final var vaultDepositor = DriftVaultPDAs.getVaultDepositorAddress(
+    final var vaultDepositor = DriftVaultPDAs.vaultDepositorAddress(
         driftAccounts.driftVaultsProgram(),
         vaultKey,
         authority
@@ -139,7 +139,7 @@ public interface DriftVaultsProgramClient {
     final var vaultKey = vault._address();
     final var driftAccounts = driftAccounts();
     final var authority = authority();
-    final var vaultDepositor = DriftVaultPDAs.getVaultDepositorAddress(
+    final var vaultDepositor = DriftVaultPDAs.vaultDepositorAddress(
         driftAccounts.driftVaultsProgram(),
         vaultKey,
         authority
