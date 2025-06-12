@@ -94,7 +94,10 @@ public sealed interface Swap extends RustEnum permits
   Swap.RaydiumLaunchlabSell,
   Swap.BoopdotfunWrappedBuy,
   Swap.BoopdotfunWrappedSell,
-  Swap.Plasma {
+  Swap.Plasma,
+  Swap.GoonFi,
+  Swap.HumidiFi,
+  Swap.MeteoraDynamicBondingCurveSwapWithRemainingAccounts {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -186,6 +189,9 @@ public sealed interface Swap extends RustEnum permits
       case 83 -> BoopdotfunWrappedBuy.INSTANCE;
       case 84 -> BoopdotfunWrappedSell.INSTANCE;
       case 85 -> Plasma.read(_data, i);
+      case 86 -> GoonFi.read(_data, i);
+      case 87 -> HumidiFi.read(_data, i);
+      case 88 -> MeteoraDynamicBondingCurveSwapWithRemainingAccounts.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1316,6 +1322,88 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 85;
+    }
+  }
+
+  record GoonFi(boolean isBid, int blacklistBump) implements Swap {
+
+    public static final int BYTES = 2;
+
+    public static GoonFi read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      int i = offset;
+      final var isBid = _data[i] == 1;
+      ++i;
+      final var blacklistBump = _data[i] & 0xFF;
+      return new GoonFi(isBid, blacklistBump);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      _data[i] = (byte) (isBid ? 1 : 0);
+      ++i;
+      _data[i] = (byte) blacklistBump;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+
+    @Override
+    public int ordinal() {
+      return 86;
+    }
+  }
+
+  record HumidiFi(long swapId, boolean isBaseToQuote) implements Swap {
+
+    public static final int BYTES = 9;
+
+    public static HumidiFi read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      int i = offset;
+      final var swapId = getInt64LE(_data, i);
+      i += 8;
+      final var isBaseToQuote = _data[i] == 1;
+      return new HumidiFi(swapId, isBaseToQuote);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      putInt64LE(_data, i, swapId);
+      i += 8;
+      _data[i] = (byte) (isBaseToQuote ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+
+    @Override
+    public int ordinal() {
+      return 87;
+    }
+  }
+
+  record MeteoraDynamicBondingCurveSwapWithRemainingAccounts() implements EnumNone, Swap {
+
+    public static final MeteoraDynamicBondingCurveSwapWithRemainingAccounts INSTANCE = new MeteoraDynamicBondingCurveSwapWithRemainingAccounts();
+
+    @Override
+    public int ordinal() {
+      return 88;
     }
   }
 }

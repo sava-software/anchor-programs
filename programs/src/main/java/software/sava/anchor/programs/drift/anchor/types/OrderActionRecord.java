@@ -40,7 +40,12 @@ public record OrderActionRecord(long ts,
                                 OptionalLong makerOrderBaseAssetAmount,
                                 OptionalLong makerOrderCumulativeBaseAssetAmountFilled,
                                 OptionalLong makerOrderCumulativeQuoteAssetAmountFilled,
-                                long oraclePrice) implements Borsh {
+                                long oraclePrice,
+                                int bitFlags,
+                                OptionalLong takerExistingQuoteEntryAmount,
+                                OptionalLong takerExistingBaseAssetAmount,
+                                OptionalLong makerExistingQuoteEntryAmount,
+                                OptionalLong makerExistingBaseAssetAmount) implements Borsh {
 
   public static OrderActionRecord read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -146,6 +151,22 @@ public record OrderActionRecord(long ts,
       i += 8;
     }
     final var oraclePrice = getInt64LE(_data, i);
+    i += 8;
+    final var bitFlags = _data[i] & 0xFF;
+    ++i;
+    final var takerExistingQuoteEntryAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+    if (takerExistingQuoteEntryAmount.isPresent()) {
+      i += 8;
+    }
+    final var takerExistingBaseAssetAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+    if (takerExistingBaseAssetAmount.isPresent()) {
+      i += 8;
+    }
+    final var makerExistingQuoteEntryAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+    if (makerExistingQuoteEntryAmount.isPresent()) {
+      i += 8;
+    }
+    final var makerExistingBaseAssetAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
     return new OrderActionRecord(ts,
                                  action,
                                  actionExplanation,
@@ -173,7 +194,12 @@ public record OrderActionRecord(long ts,
                                  makerOrderBaseAssetAmount,
                                  makerOrderCumulativeBaseAssetAmountFilled,
                                  makerOrderCumulativeQuoteAssetAmountFilled,
-                                 oraclePrice);
+                                 oraclePrice,
+                                 bitFlags,
+                                 takerExistingQuoteEntryAmount,
+                                 takerExistingBaseAssetAmount,
+                                 makerExistingQuoteEntryAmount,
+                                 makerExistingBaseAssetAmount);
   }
 
   @Override
@@ -210,6 +236,12 @@ public record OrderActionRecord(long ts,
     i += Borsh.writeOptional(makerOrderCumulativeQuoteAssetAmountFilled, _data, i);
     putInt64LE(_data, i, oraclePrice);
     i += 8;
+    _data[i] = (byte) bitFlags;
+    ++i;
+    i += Borsh.writeOptional(takerExistingQuoteEntryAmount, _data, i);
+    i += Borsh.writeOptional(takerExistingBaseAssetAmount, _data, i);
+    i += Borsh.writeOptional(makerExistingQuoteEntryAmount, _data, i);
+    i += Borsh.writeOptional(makerExistingBaseAssetAmount, _data, i);
     return i - offset;
   }
 
@@ -242,6 +274,11 @@ public record OrderActionRecord(long ts,
          + (makerOrderBaseAssetAmount == null || makerOrderBaseAssetAmount.isEmpty() ? 1 : (1 + 8))
          + (makerOrderCumulativeBaseAssetAmountFilled == null || makerOrderCumulativeBaseAssetAmountFilled.isEmpty() ? 1 : (1 + 8))
          + (makerOrderCumulativeQuoteAssetAmountFilled == null || makerOrderCumulativeQuoteAssetAmountFilled.isEmpty() ? 1 : (1 + 8))
-         + 8;
+         + 8
+         + 1
+         + (takerExistingQuoteEntryAmount == null || takerExistingQuoteEntryAmount.isEmpty() ? 1 : (1 + 8))
+         + (takerExistingBaseAssetAmount == null || takerExistingBaseAssetAmount.isEmpty() ? 1 : (1 + 8))
+         + (makerExistingQuoteEntryAmount == null || makerExistingQuoteEntryAmount.isEmpty() ? 1 : (1 + 8))
+         + (makerExistingBaseAssetAmount == null || makerExistingBaseAssetAmount.isEmpty() ? 1 : (1 + 8));
   }
 }

@@ -258,7 +258,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         orderParams.marketIndex(),
         orderParams.reduceOnly(),
         mapPostOnlyParam(orderParams.postOnly()),
-        orderParams.immediateOrCancel(),
+        orderParams.bitFlags() == 1, // TODO: update GLAM.
         orderParams.maxTs(),
         orderParams.triggerPrice(),
         mapOrderTriggerCondition(orderParams.triggerCondition()),
@@ -410,7 +410,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         modifyOrderParams.price(),
         modifyOrderParams.reduceOnly(),
         mapPostOnlyParam(modifyOrderParams.postOnly()),
-        modifyOrderParams.immediateOrCancel(),
+        modifyOrderParams.bitFlags().orElse(0) == 1,
         modifyOrderParams.maxTs(),
         modifyOrderParams.triggerPrice(),
         mapOrderTriggerCondition(modifyOrderParams.triggerCondition()),

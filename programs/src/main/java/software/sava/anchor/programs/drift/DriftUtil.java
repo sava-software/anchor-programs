@@ -2,7 +2,20 @@ package software.sava.anchor.programs.drift;
 
 import software.sava.anchor.programs.drift.anchor.types.*;
 
+import java.util.Set;
+
 public final class DriftUtil {
+
+  public static int bitFlags(final Set<OrderParamsBitFlag> orderParams) {
+    if (orderParams == null) {
+      return 0;
+    }
+    int bitFlags = 0;
+    for (final var orderParam : orderParams) {
+      bitFlags |= (1 << orderParam.ordinal());
+    }
+    return bitFlags;
+  }
 
   public static OrderParams simpleOrder(final OrderType orderType,
                                         final MarketType marketType,
@@ -13,7 +26,7 @@ public final class DriftUtil {
                                         final int marketIndex,
                                         final boolean reduceOnly,
                                         final PostOnlyParam postOnly,
-                                        final boolean immediateOrCancel) {
+                                        final Set<OrderParamsBitFlag> orderParams) {
     return new OrderParams(
         orderType,
         marketType,
@@ -24,7 +37,7 @@ public final class DriftUtil {
         marketIndex,
         reduceOnly,
         postOnly,
-        immediateOrCancel,
+        bitFlags(orderParams),
         null,
         null,
         OrderTriggerCondition.Above,

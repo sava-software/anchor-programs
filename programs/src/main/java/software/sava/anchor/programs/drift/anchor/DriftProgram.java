@@ -9803,6 +9803,66 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator UPDATE_PERP_MARKET_PROTECTED_MAKER_PARAMS_DISCRIMINATOR = toDiscriminator(249, 213, 115, 34, 253, 239, 75, 173);
+
+  public static Instruction updatePerpMarketProtectedMakerParams(final AccountMeta invokedDriftProgramMeta,
+                                                                 final PublicKey adminKey,
+                                                                 final PublicKey stateKey,
+                                                                 final PublicKey perpMarketKey,
+                                                                 final OptionalInt protectedMakerLimitPriceDivisor,
+                                                                 final OptionalInt protectedMakerDynamicDivisor) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[
+        8
+        + (protectedMakerLimitPriceDivisor == null || protectedMakerLimitPriceDivisor.isEmpty() ? 1 : 2)
+        + (protectedMakerDynamicDivisor == null || protectedMakerDynamicDivisor.isEmpty() ? 1 : 2)
+    ];
+    int i = writeDiscriminator(UPDATE_PERP_MARKET_PROTECTED_MAKER_PARAMS_DISCRIMINATOR, _data, 0);
+    i += Borsh.writeOptionalbyte(protectedMakerLimitPriceDivisor, _data, i);
+    Borsh.writeOptionalbyte(protectedMakerDynamicDivisor, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketProtectedMakerParamsIxData(Discriminator discriminator, OptionalInt protectedMakerLimitPriceDivisor, OptionalInt protectedMakerDynamicDivisor) implements Borsh {  
+
+    public static UpdatePerpMarketProtectedMakerParamsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static UpdatePerpMarketProtectedMakerParamsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var protectedMakerLimitPriceDivisor = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
+      if (protectedMakerLimitPriceDivisor.isPresent()) {
+        ++i;
+      }
+      final var protectedMakerDynamicDivisor = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
+      return new UpdatePerpMarketProtectedMakerParamsIxData(discriminator, protectedMakerLimitPriceDivisor, protectedMakerDynamicDivisor);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeOptionalbyte(protectedMakerLimitPriceDivisor, _data, i);
+      i += Borsh.writeOptionalbyte(protectedMakerDynamicDivisor, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + (protectedMakerLimitPriceDivisor == null || protectedMakerLimitPriceDivisor.isEmpty() ? 1 : (1 + 1)) + (protectedMakerDynamicDivisor == null || protectedMakerDynamicDivisor.isEmpty() ? 1 : (1 + 1));
+    }
+  }
+
   public static final Discriminator UPDATE_SPOT_MARKET_FUEL_DISCRIMINATOR = toDiscriminator(226, 253, 76, 71, 17, 2, 171, 169);
 
   public static Instruction updateSpotMarketFuel(final AccountMeta invokedDriftProgramMeta,
@@ -10946,6 +11006,71 @@ public final class DriftProgram {
     @Override
     public int l() {
       return 8 + 4 + 1 + (currentUsers == null || currentUsers.isEmpty() ? 1 : (1 + 4));
+    }
+  }
+
+  public static final Discriminator ADMIN_DEPOSIT_DISCRIMINATOR = toDiscriminator(210, 66, 65, 182, 102, 214, 176, 30);
+
+  public static Instruction adminDeposit(final AccountMeta invokedDriftProgramMeta,
+                                         final PublicKey stateKey,
+                                         final PublicKey userKey,
+                                         final PublicKey adminKey,
+                                         final PublicKey spotMarketVaultKey,
+                                         final PublicKey adminTokenAccountKey,
+                                         final PublicKey tokenProgramKey,
+                                         final int marketIndex,
+                                         final long amount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWrite(userKey),
+      createWritableSigner(adminKey),
+      createWrite(spotMarketVaultKey),
+      createWrite(adminTokenAccountKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[18];
+    int i = writeDiscriminator(ADMIN_DEPOSIT_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, marketIndex);
+    i += 2;
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record AdminDepositIxData(Discriminator discriminator, int marketIndex, long amount) implements Borsh {  
+
+    public static AdminDepositIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 18;
+
+    public static AdminDepositIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var marketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var amount = getInt64LE(_data, i);
+      return new AdminDepositIxData(discriminator, marketIndex, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, marketIndex);
+      i += 2;
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
     }
   }
 

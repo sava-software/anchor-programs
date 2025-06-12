@@ -53,7 +53,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.MathError,
     GlamProtocolError.TypeCastingError,
     GlamProtocolError.BaseAssetNotSupported,
-    GlamProtocolError.TooManyDriftSubAccounts,
+    GlamProtocolError.InvalidQuoteSpotMarket,
     GlamProtocolError.UnknownExternalVaultAsset,
     GlamProtocolError.TransfersDisabled,
     GlamProtocolError.InvalidPolicyAccount,
@@ -112,7 +112,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 51107 -> MathError.INSTANCE;
       case 51108 -> TypeCastingError.INSTANCE;
       case 51109 -> BaseAssetNotSupported.INSTANCE;
-      case 51110 -> TooManyDriftSubAccounts.INSTANCE;
+      case 51110 -> InvalidQuoteSpotMarket.INSTANCE;
       case 51111 -> UnknownExternalVaultAsset.INSTANCE;
       case 52000 -> TransfersDisabled.INSTANCE;
       case 52001 -> InvalidPolicyAccount.INSTANCE;
@@ -472,10 +472,10 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record TooManyDriftSubAccounts(int code, String msg) implements GlamProtocolError {
+  record InvalidQuoteSpotMarket(int code, String msg) implements GlamProtocolError {
 
-    public static final TooManyDriftSubAccounts INSTANCE = new TooManyDriftSubAccounts(
-        51110, "Too many Drift sub accounts"
+    public static final InvalidQuoteSpotMarket INSTANCE = new InvalidQuoteSpotMarket(
+        51110, "Unsupported spot market for perp quotes"
     );
   }
 

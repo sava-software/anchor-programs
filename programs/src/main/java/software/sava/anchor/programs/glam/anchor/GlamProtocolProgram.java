@@ -4320,50 +4320,46 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator PRICE_DRIFT_USER_DISCRIMINATOR = toDiscriminator(113, 43, 127, 102, 161, 68, 20, 69);
+  public static final Discriminator PRICE_DRIFT_USERS_DISCRIMINATOR = toDiscriminator(12, 5, 143, 51, 101, 81, 200, 150);
 
-  public static Instruction priceDriftUser(final AccountMeta invokedGlamProtocolProgramMeta,
-                                           final PublicKey glamStateKey,
-                                           final PublicKey glamVaultKey,
-                                           final PublicKey signerKey,
-                                           final PublicKey solOracleKey,
-                                           final PublicKey glamConfigKey,
-                                           final PublicKey userKey,
-                                           final PublicKey userStatsKey,
-                                           final PriceDenom denom) {
+  public static Instruction priceDriftUsers(final AccountMeta invokedGlamProtocolProgramMeta,
+                                            final PublicKey glamStateKey,
+                                            final PublicKey glamVaultKey,
+                                            final PublicKey signerKey,
+                                            final PublicKey solOracleKey,
+                                            final PublicKey glamConfigKey,
+                                            final PriceDenom denom) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
       createRead(solOracleKey),
-      createRead(glamConfigKey),
-      createRead(userKey),
-      createRead(userStatsKey)
+      createRead(glamConfigKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(denom)];
-    int i = writeDiscriminator(PRICE_DRIFT_USER_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(PRICE_DRIFT_USERS_DISCRIMINATOR, _data, 0);
     Borsh.write(denom, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
   }
 
-  public record PriceDriftUserIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
+  public record PriceDriftUsersIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
 
-    public static PriceDriftUserIxData read(final Instruction instruction) {
+    public static PriceDriftUsersIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 9;
 
-    public static PriceDriftUserIxData read(final byte[] _data, final int offset) {
+    public static PriceDriftUsersIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
-      return new PriceDriftUserIxData(discriminator, denom);
+      return new PriceDriftUsersIxData(discriminator, denom);
     }
 
     @Override
@@ -4379,54 +4375,46 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator PRICE_DRIFT_VAULT_DEPOSITOR_DISCRIMINATOR = toDiscriminator(48, 112, 54, 88, 2, 64, 224, 53);
+  public static final Discriminator PRICE_DRIFT_VAULT_DEPOSITORS_DISCRIMINATOR = toDiscriminator(234, 16, 238, 70, 189, 23, 98, 160);
 
-  public static Instruction priceDriftVaultDepositor(final AccountMeta invokedGlamProtocolProgramMeta,
-                                                     final PublicKey glamStateKey,
-                                                     final PublicKey glamVaultKey,
-                                                     final PublicKey signerKey,
-                                                     final PublicKey solOracleKey,
-                                                     final PublicKey glamConfigKey,
-                                                     final PublicKey depositorKey,
-                                                     final PublicKey driftVaultKey,
-                                                     final PublicKey driftUserKey,
-                                                     final PublicKey driftUserStatsKey,
-                                                     final PriceDenom denom) {
+  public static Instruction priceDriftVaultDepositors(final AccountMeta invokedGlamProtocolProgramMeta,
+                                                      final PublicKey glamStateKey,
+                                                      final PublicKey glamVaultKey,
+                                                      final PublicKey signerKey,
+                                                      final PublicKey solOracleKey,
+                                                      final PublicKey glamConfigKey,
+                                                      final PriceDenom denom) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
       createRead(solOracleKey),
-      createRead(glamConfigKey),
-      createRead(depositorKey),
-      createRead(driftVaultKey),
-      createRead(driftUserKey),
-      createRead(driftUserStatsKey)
+      createRead(glamConfigKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(denom)];
-    int i = writeDiscriminator(PRICE_DRIFT_VAULT_DEPOSITOR_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(PRICE_DRIFT_VAULT_DEPOSITORS_DISCRIMINATOR, _data, 0);
     Borsh.write(denom, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
   }
 
-  public record PriceDriftVaultDepositorIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
+  public record PriceDriftVaultDepositorsIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
 
-    public static PriceDriftVaultDepositorIxData read(final Instruction instruction) {
+    public static PriceDriftVaultDepositorsIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 9;
 
-    public static PriceDriftVaultDepositorIxData read(final byte[] _data, final int offset) {
+    public static PriceDriftVaultDepositorsIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
-      return new PriceDriftVaultDepositorIxData(discriminator, denom);
+      return new PriceDriftVaultDepositorsIxData(discriminator, denom);
     }
 
     @Override
