@@ -103,40 +103,20 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
   }
 
   @Override
-  public Instruction orderUnstake(final PublicKey mSolTokenAccount,
-                                  final PublicKey ticketAccount,
-                                  final long lamports) {
-    return GlamProtocolProgram.marinadeOrderUnstake(
-        invokedProgram,
-        solanaAccounts,
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        feePayer.publicKey(),
-        marinadeAccounts.marinadeProgram(),
-        marinadeAccounts.stateProgram(),
-        marinadeAccounts.mSolTokenMint(),
-        mSolTokenAccount,
-        ticketAccount,
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.tokenProgram(),
-        lamports
-    );
-  }
-
-  @Override
   public Instruction claimTicket(final PublicKey ticketAccount) {
-    return GlamProtocolProgram.marinadeClaim(
-        invokedProgram,
-        solanaAccounts,
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        feePayer.publicKey(),
-        marinadeAccounts.marinadeProgram(),
-        marinadeAccounts.stateProgram(),
-        marinadeAccounts.treasuryReserveSolPDA(),
-        ticketAccount,
-        solanaAccounts.clockSysVar()
-    );
+    throw new UnsupportedOperationException("claimTicket");
+//    return GlamProtocolProgram.marinadeClaim(
+//        invokedProgram,
+//        solanaAccounts,
+//        glamVaultAccounts.glamPublicKey(),
+//        glamVaultAccounts.vaultPublicKey(),
+//        feePayer.publicKey(),
+//        marinadeAccounts.marinadeProgram(),
+//        marinadeAccounts.stateProgram(),
+//        marinadeAccounts.treasuryReserveSolPDA(),
+//        ticketAccount,
+//        solanaAccounts.clockSysVar()
+//    );
   }
 
   @Override

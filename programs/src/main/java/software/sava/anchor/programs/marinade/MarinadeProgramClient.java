@@ -185,10 +185,12 @@ public interface MarinadeProgramClient {
     );
   }
 
-  @Deprecated
-  Instruction orderUnstake(final PublicKey mSolTokenAccount,
-                           final PublicKey ticketAccount,
-                           final long lamports);
+  @Deprecated(forRemoval = true)
+  default Instruction orderUnstake(final PublicKey mSolTokenAccount,
+                                   final PublicKey ticketAccount,
+                                   final long lamports) {
+    throw new IllegalStateException("Marinade now uses native stake accounts.");
+  }
 
   Instruction claimTicket(final PublicKey ticketAccount);
 

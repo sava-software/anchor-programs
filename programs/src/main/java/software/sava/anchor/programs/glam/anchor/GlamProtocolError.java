@@ -12,7 +12,6 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.AssetNotBorrowable,
     GlamProtocolError.InvalidAccountOwner,
     GlamProtocolError.InvalidAuthority,
-    GlamProtocolError.InvalidPriceDenom,
     GlamProtocolError.InvalidAccountType,
     GlamProtocolError.InvalidName,
     GlamProtocolError.InvalidSymbol,
@@ -55,6 +54,8 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.BaseAssetNotSupported,
     GlamProtocolError.InvalidQuoteSpotMarket,
     GlamProtocolError.UnknownExternalVaultAsset,
+    GlamProtocolError.InvalidPriceDenom,
+    GlamProtocolError.UnexpectedDiscriminator,
     GlamProtocolError.TransfersDisabled,
     GlamProtocolError.InvalidPolicyAccount,
     GlamProtocolError.AmountTooBig,
@@ -71,7 +72,6 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 48006 -> AssetNotBorrowable.INSTANCE;
       case 48007 -> InvalidAccountOwner.INSTANCE;
       case 48008 -> InvalidAuthority.INSTANCE;
-      case 48009 -> InvalidPriceDenom.INSTANCE;
       case 49000 -> InvalidAccountType.INSTANCE;
       case 49001 -> InvalidName.INSTANCE;
       case 49002 -> InvalidSymbol.INSTANCE;
@@ -114,6 +114,8 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 51109 -> BaseAssetNotSupported.INSTANCE;
       case 51110 -> InvalidQuoteSpotMarket.INSTANCE;
       case 51111 -> UnknownExternalVaultAsset.INSTANCE;
+      case 51112 -> InvalidPriceDenom.INSTANCE;
+      case 51113 -> UnexpectedDiscriminator.INSTANCE;
       case 52000 -> TransfersDisabled.INSTANCE;
       case 52001 -> InvalidPolicyAccount.INSTANCE;
       case 52002 -> AmountTooBig.INSTANCE;
@@ -182,13 +184,6 @@ public sealed interface GlamProtocolError extends ProgramError permits
 
     public static final InvalidAuthority INSTANCE = new InvalidAuthority(
         48008, "Invalid authority"
-    );
-  }
-
-  record InvalidPriceDenom(int code, String msg) implements GlamProtocolError {
-
-    public static final InvalidPriceDenom INSTANCE = new InvalidPriceDenom(
-        48009, "Invalid price denom"
     );
   }
 
@@ -483,6 +478,20 @@ public sealed interface GlamProtocolError extends ProgramError permits
 
     public static final UnknownExternalVaultAsset INSTANCE = new UnknownExternalVaultAsset(
         51111, "Unknown external vault account"
+    );
+  }
+
+  record InvalidPriceDenom(int code, String msg) implements GlamProtocolError {
+
+    public static final InvalidPriceDenom INSTANCE = new InvalidPriceDenom(
+        51112, "Invalid price denom"
+    );
+  }
+
+  record UnexpectedDiscriminator(int code, String msg) implements GlamProtocolError {
+
+    public static final UnexpectedDiscriminator INSTANCE = new UnexpectedDiscriminator(
+        51113, "Invalid account: discriminator mismatch"
     );
   }
 
