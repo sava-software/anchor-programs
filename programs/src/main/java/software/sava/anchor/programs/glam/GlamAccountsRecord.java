@@ -8,7 +8,9 @@ import java.util.List;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-public record GlamAccountsRecord(PublicKey program, AccountMeta invokedProgram) implements GlamAccounts {
+public record GlamAccountsRecord(PublicKey program,
+                                 AccountMeta invokedProgram,
+                                 PublicKey glamConfigKey) implements GlamAccounts {
 
   @Override
   public ProgramDerivedAddress mintPDA(final PublicKey glamPublicKey, final int shareClassId) {

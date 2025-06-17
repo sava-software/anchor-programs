@@ -3,6 +3,7 @@ package software.sava.anchor.programs.glam;
 
 import software.sava.anchor.programs.glam.anchor.types.Integration;
 import software.sava.anchor.programs.glam.anchor.types.Permission;
+import software.sava.anchor.programs.glam.anchor.types.PriceDenom;
 import software.sava.anchor.programs.glam.anchor.types.StateAccount;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -115,4 +116,14 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
   default Instruction fulfill(final PublicKey baseAssetMint, final PublicKey baseAssetTokenProgram) {
     return fulfill(0, baseAssetMint, baseAssetTokenProgram);
   }
+
+  Instruction priceDriftVaultDepositors(final PublicKey solOracleKey, final PriceDenom priceDenom);
+
+  Instruction priceKaminoVaultShares(final PublicKey kaminoLendingProgramKey,
+                                     final PublicKey solOracleKey,
+                                     final PublicKey pythOracleKey,
+                                     final PublicKey switchboardPriceOracleKey,
+                                     final PublicKey switchboardTwapOracleKey,
+                                     final PublicKey scopePricesKey,
+                                     final PriceDenom priceDenom);
 }

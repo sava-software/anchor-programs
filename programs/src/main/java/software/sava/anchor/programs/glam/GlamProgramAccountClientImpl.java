@@ -2,6 +2,7 @@ package software.sava.anchor.programs.glam;
 
 import software.sava.anchor.programs.glam.anchor.GlamProtocolPDAs;
 import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
+import software.sava.anchor.programs.glam.anchor.types.PriceDenom;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -538,6 +539,43 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         vaultTokenAccount.publicKey(),
         escrowTokenAccount.publicKey(),
         mintId
+    );
+  }
+
+  @Override
+  public Instruction priceDriftVaultDepositors(final PublicKey solOracleKey, final PriceDenom priceDenom) {
+    return GlamProtocolProgram.priceDriftVaultDepositors(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        solOracleKey,
+        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        priceDenom
+    );
+  }
+
+  @Override
+  public Instruction priceKaminoVaultShares(final PublicKey kaminoLendingProgramKey,
+                                            final PublicKey solOracleKey,
+                                            final PublicKey pythOracleKey,
+                                            final PublicKey switchboardPriceOracleKey,
+                                            final PublicKey switchboardTwapOracleKey,
+                                            final PublicKey scopePricesKey,
+                                            final PriceDenom priceDenom) {
+    return GlamProtocolProgram.priceKaminoVaultShares(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        kaminoLendingProgramKey,
+        solOracleKey,
+        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        pythOracleKey,
+        switchboardPriceOracleKey,
+        switchboardTwapOracleKey,
+        scopePricesKey,
+        priceDenom
     );
   }
 }

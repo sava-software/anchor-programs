@@ -2876,7 +2876,7 @@ public final class GlamProtocolProgram {
                                                 final PublicKey programKey,
                                                 final long amount) {
     final var keys = List.of(
-      createRead(glamStateKey),
+      createWrite(glamStateKey),
       createWrite(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
@@ -2965,7 +2965,7 @@ public final class GlamProtocolProgram {
                                                  final PublicKey programKey,
                                                  final long amount) {
     final var keys = List.of(
-      createRead(glamStateKey),
+      createWrite(glamStateKey),
       createWrite(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
@@ -4615,6 +4615,71 @@ public final class GlamProtocolProgram {
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
       return new PriceKaminoObligationsIxData(discriminator, denom);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(denom, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator PRICE_KAMINO_VAULT_SHARES_DISCRIMINATOR = toDiscriminator(112, 92, 238, 224, 145, 105, 38, 249);
+
+  public static Instruction priceKaminoVaultShares(final AccountMeta invokedGlamProtocolProgramMeta,
+                                                   final PublicKey glamStateKey,
+                                                   final PublicKey glamVaultKey,
+                                                   final PublicKey signerKey,
+                                                   final PublicKey kaminoLendingProgramKey,
+                                                   final PublicKey solOracleKey,
+                                                   final PublicKey glamConfigKey,
+                                                   final PublicKey pythOracleKey,
+                                                   final PublicKey switchboardPriceOracleKey,
+                                                   final PublicKey switchboardTwapOracleKey,
+                                                   final PublicKey scopePricesKey,
+                                                   final PriceDenom denom) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(signerKey),
+      createRead(kaminoLendingProgramKey),
+      createRead(solOracleKey),
+      createRead(glamConfigKey),
+      createRead(requireNonNullElse(pythOracleKey, invokedGlamProtocolProgramMeta.publicKey())),
+      createRead(requireNonNullElse(switchboardPriceOracleKey, invokedGlamProtocolProgramMeta.publicKey())),
+      createRead(requireNonNullElse(switchboardTwapOracleKey, invokedGlamProtocolProgramMeta.publicKey())),
+      createRead(requireNonNullElse(scopePricesKey, invokedGlamProtocolProgramMeta.publicKey()))
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(denom)];
+    int i = writeDiscriminator(PRICE_KAMINO_VAULT_SHARES_DISCRIMINATOR, _data, 0);
+    Borsh.write(denom, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
+  }
+
+  public record PriceKaminoVaultSharesIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
+
+    public static PriceKaminoVaultSharesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static PriceKaminoVaultSharesIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var denom = PriceDenom.read(_data, i);
+      return new PriceKaminoVaultSharesIxData(discriminator, denom);
     }
 
     @Override

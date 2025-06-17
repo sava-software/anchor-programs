@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.glam;
 
+import software.sava.anchor.programs.glam.anchor.GlamProtocolPDAs;
 import software.sava.anchor.programs.glam.proxy.DynamicGlamAccountFactory;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -15,9 +16,11 @@ public interface GlamAccounts {
   );
 
   static GlamAccounts createAccounts(final PublicKey program) {
+    final var glamConfigKey = GlamProtocolPDAs.glamConfigPDA(program).publicKey();
     return new GlamAccountsRecord(
         program,
-        AccountMeta.createInvoked(program)
+        AccountMeta.createInvoked(program),
+        glamConfigKey
     );
   }
 
@@ -30,6 +33,8 @@ public interface GlamAccounts {
   PublicKey program();
 
   AccountMeta invokedProgram();
+
+  PublicKey glamConfigKey();
 
   ProgramDerivedAddress mintPDA(final PublicKey glamPublicKey, final int shareClassId);
 
