@@ -15,7 +15,8 @@ public interface DriftVaultsProgramClient {
     return new DriftVaultsProgramClientImpl(
         nativeProgramAccountClient.solanaAccounts(),
         driftAccounts,
-        nativeProgramAccountClient.ownerPublicKey()
+        nativeProgramAccountClient.ownerPublicKey(),
+        nativeProgramAccountClient.feePayer().publicKey()
     );
   }
 
@@ -28,6 +29,28 @@ public interface DriftVaultsProgramClient {
   DriftAccounts driftAccounts();
 
   PublicKey authority();
+
+  PublicKey feePayer();
+
+  PublicKey vaultDepositor(final PublicKey vaultKey);
+
+  default PublicKey vaultDepositor(final Vault vault) {
+    return vaultDepositor(vault._address());
+  }
+
+  Instruction initializeVaultDepositor(final PublicKey vaultKey,
+                                       final PublicKey vaultDepositorKey,
+                                       final PublicKey authorityKey,
+                                       final PublicKey payerKey);
+
+  default Instruction initializeVaultDepositor(final PublicKey vaultKey) {
+    return initializeVaultDepositor(
+        vaultKey,
+        vaultDepositor(vaultKey),
+        authority(),
+        feePayer()
+    );
+  }
 
   Instruction deposit(final PublicKey vaultKey,
                       final PublicKey vaultDepositorKey,
@@ -46,18 +69,10 @@ public interface DriftVaultsProgramClient {
                               final PublicKey tokenProgramKey,
                               final long amount) {
     final var vaultKey = vault._address();
-    final var driftAccounts = driftAccounts();
-    final var authority = authority();
-    final var vaultDepositor = DriftVaultPDAs.vaultDepositorAddress(
-        driftAccounts.driftVaultsProgram(),
-        vaultKey,
-        authority
-    ).publicKey();
-
     return deposit(
         vaultKey,
-        vaultDepositor,
-        authority,
+        vaultDepositor(vaultKey),
+        authority(),
         vault.tokenAccount(),
         vault.userStats(),
         vault.user(),
@@ -78,18 +93,10 @@ public interface DriftVaultsProgramClient {
 
   default Instruction requestWithdraw(final Vault vault, final long withdrawAmount, final WithdrawUnit withdrawUnit) {
     final var vaultKey = vault._address();
-    final var driftAccounts = driftAccounts();
-    final var authority = authority();
-    final var vaultDepositor = DriftVaultPDAs.vaultDepositorAddress(
-        driftAccounts.driftVaultsProgram(),
-        vaultKey,
-        authority
-    ).publicKey();
-
     return requestWithdraw(
         vaultKey,
-        vaultDepositor,
-        authority,
+        vaultDepositor(vaultKey),
+        authority(),
         vault.userStats(),
         vault.user(),
         withdrawAmount,
@@ -105,18 +112,10 @@ public interface DriftVaultsProgramClient {
 
   default Instruction cancelRequestWithdraw(final Vault vault) {
     final var vaultKey = vault._address();
-    final var driftAccounts = driftAccounts();
-    final var authority = authority();
-    final var vaultDepositor = DriftVaultPDAs.vaultDepositorAddress(
-        driftAccounts.driftVaultsProgram(),
-        vaultKey,
-        authority
-    ).publicKey();
-
     return cancelRequestWithdraw(
         vaultKey,
-        vaultDepositor,
-        authority,
+        vaultDepositor(vaultKey),
+        authority(),
         vault.userStats(),
         vault.user()
     );
@@ -137,18 +136,10 @@ public interface DriftVaultsProgramClient {
                                final PublicKey userTokenAccountKey,
                                final PublicKey tokenProgramKey) {
     final var vaultKey = vault._address();
-    final var driftAccounts = driftAccounts();
-    final var authority = authority();
-    final var vaultDepositor = DriftVaultPDAs.vaultDepositorAddress(
-        driftAccounts.driftVaultsProgram(),
-        vaultKey,
-        authority
-    ).publicKey();
-
     return withdraw(
         vaultKey,
-        vaultDepositor,
-        authority,
+        vaultDepositor(vaultKey),
+        authority(),
         vault.tokenAccount(),
         vault.userStats(),
         vault.user(),

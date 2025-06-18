@@ -12,13 +12,16 @@ final class DriftVaultsProgramClientImpl implements DriftVaultsProgramClient {
   private final SolanaAccounts solanaAccounts;
   private final DriftAccounts driftAccounts;
   private final PublicKey authority;
+  private final PublicKey feePayer;
 
   DriftVaultsProgramClientImpl(final SolanaAccounts solanaAccounts,
                                final DriftAccounts driftAccounts,
-                               final PublicKey authority) {
+                               final PublicKey authority,
+                               final PublicKey feePayer) {
     this.solanaAccounts = solanaAccounts;
     this.driftAccounts = driftAccounts;
     this.authority = authority;
+    this.feePayer = feePayer;
   }
 
   @Override
@@ -34,6 +37,36 @@ final class DriftVaultsProgramClientImpl implements DriftVaultsProgramClient {
   @Override
   public PublicKey authority() {
     return authority;
+  }
+
+  @Override
+  public PublicKey feePayer() {
+    return feePayer;
+  }
+
+  @Override
+  public PublicKey vaultDepositor(final PublicKey vaultKey) {
+    return DriftVaultPDAs.vaultDepositorAddress(
+        driftAccounts.driftVaultsProgram(),
+        vaultKey,
+        authority
+    ).publicKey();
+  }
+
+  @Override
+  public Instruction initializeVaultDepositor(final PublicKey vaultKey,
+                                              final PublicKey vaultDepositorKey,
+                                              final PublicKey authorityKey,
+                                              final PublicKey payerKey) {
+    return DriftVaultsProgram.initializeVaultDepositor(
+        driftAccounts.invokedDriftVaultsProgram(),
+        vaultKey,
+        vaultDepositorKey,
+        authorityKey,
+        payerKey,
+        solanaAccounts.rentSysVar(),
+        solanaAccounts.systemProgram()
+    );
   }
 
   @Override

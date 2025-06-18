@@ -116,9 +116,6 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
   default Instruction fulfill(final PublicKey baseAssetMint, final PublicKey baseAssetTokenProgram) {
     return fulfill(0, baseAssetMint, baseAssetTokenProgram);
   }
-
-  Instruction driftVaultsInitializeVaultDepositor(final PublicKey driftVaultProgram, final PublicKey vaultKey);
-
   Instruction priceDriftVaultDepositors(final PublicKey solOracleKey, final PriceDenom priceDenom);
 
   Instruction priceKaminoVaultShares(final PublicKey kaminoLendingProgramKey,
