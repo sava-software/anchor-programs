@@ -1,5 +1,6 @@
 package software.sava.anchor.programs.glam;
 
+import software.sava.anchor.programs.drift.vaults.DriftVaultPDAs;
 import software.sava.anchor.programs.glam.anchor.GlamProtocolPDAs;
 import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.anchor.programs.glam.anchor.types.PriceDenom;
@@ -539,6 +540,25 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         vaultTokenAccount.publicKey(),
         escrowTokenAccount.publicKey(),
         mintId
+    );
+  }
+
+  @Override
+  public Instruction driftVaultsInitializeVaultDepositor(final PublicKey driftVaultProgram, final PublicKey vaultKey) {
+    final var vaultDepositor = DriftVaultPDAs.vaultDepositorAddress(
+        driftVaultProgram,
+        vaultKey,
+        glamVaultAccounts.vaultPublicKey()
+    ).publicKey();
+    return GlamProtocolProgram.driftVaultsInitializeVaultDepositor(
+        invokedProgram,
+        solanaAccounts,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        driftVaultProgram,
+        vaultKey,
+        vaultDepositor
     );
   }
 
