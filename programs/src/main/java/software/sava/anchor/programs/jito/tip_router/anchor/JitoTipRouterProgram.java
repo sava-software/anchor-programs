@@ -1937,7 +1937,8 @@ public final class JitoTipRouterProgram {
                                                final PublicKey newBaseFeeWallet,
                                                final OptionalInt newBaseFeeBps,
                                                final OptionalInt ncnFeeGroup,
-                                               final OptionalInt newNcnFeeBps) {
+                                               final OptionalInt newNcnFeeBps,
+                                               final OptionalInt newPriorityFeeDistributionFeeBps) {
     final var keys = List.of(
       createWrite(configKey),
       createRead(ncnKey),
@@ -1952,6 +1953,7 @@ public final class JitoTipRouterProgram {
         + (newBaseFeeBps == null || newBaseFeeBps.isEmpty() ? 1 : 3)
         + (ncnFeeGroup == null || ncnFeeGroup.isEmpty() ? 1 : 2)
         + (newNcnFeeBps == null || newNcnFeeBps.isEmpty() ? 1 : 3)
+        + (newPriorityFeeDistributionFeeBps == null || newPriorityFeeDistributionFeeBps.isEmpty() ? 1 : 3)
     ];
     int i = writeDiscriminator(ADMIN_SET_CONFIG_FEES_DISCRIMINATOR, _data, 0);
     i += Borsh.writeOptionalshort(newBlockEngineFeeBps, _data, i);
@@ -1959,7 +1961,8 @@ public final class JitoTipRouterProgram {
     i += Borsh.writeOptional(newBaseFeeWallet, _data, i);
     i += Borsh.writeOptionalshort(newBaseFeeBps, _data, i);
     i += Borsh.writeOptionalbyte(ncnFeeGroup, _data, i);
-    Borsh.writeOptionalshort(newNcnFeeBps, _data, i);
+    i += Borsh.writeOptionalshort(newNcnFeeBps, _data, i);
+    Borsh.writeOptionalshort(newPriorityFeeDistributionFeeBps, _data, i);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
   }
@@ -1970,7 +1973,8 @@ public final class JitoTipRouterProgram {
                                          PublicKey newBaseFeeWallet,
                                          OptionalInt newBaseFeeBps,
                                          OptionalInt ncnFeeGroup,
-                                         OptionalInt newNcnFeeBps) implements Borsh {  
+                                         OptionalInt newNcnFeeBps,
+                                         OptionalInt newPriorityFeeDistributionFeeBps) implements Borsh {  
 
     public static AdminSetConfigFeesIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -2003,13 +2007,18 @@ public final class JitoTipRouterProgram {
         ++i;
       }
       final var newNcnFeeBps = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt16LE(_data, i));
+      if (newNcnFeeBps.isPresent()) {
+        i += 2;
+      }
+      final var newPriorityFeeDistributionFeeBps = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt16LE(_data, i));
       return new AdminSetConfigFeesIxData(discriminator,
                                           newBlockEngineFeeBps,
                                           baseFeeGroup,
                                           newBaseFeeWallet,
                                           newBaseFeeBps,
                                           ncnFeeGroup,
-                                          newNcnFeeBps);
+                                          newNcnFeeBps,
+                                          newPriorityFeeDistributionFeeBps);
     }
 
     @Override
@@ -2021,6 +2030,7 @@ public final class JitoTipRouterProgram {
       i += Borsh.writeOptionalshort(newBaseFeeBps, _data, i);
       i += Borsh.writeOptionalbyte(ncnFeeGroup, _data, i);
       i += Borsh.writeOptionalshort(newNcnFeeBps, _data, i);
+      i += Borsh.writeOptionalshort(newPriorityFeeDistributionFeeBps, _data, i);
       return i - offset;
     }
 
@@ -2031,7 +2041,8 @@ public final class JitoTipRouterProgram {
            + (newBaseFeeWallet == null ? 1 : (1 + 32))
            + (newBaseFeeBps == null || newBaseFeeBps.isEmpty() ? 1 : (1 + 2))
            + (ncnFeeGroup == null || ncnFeeGroup.isEmpty() ? 1 : (1 + 1))
-           + (newNcnFeeBps == null || newNcnFeeBps.isEmpty() ? 1 : (1 + 2));
+           + (newNcnFeeBps == null || newNcnFeeBps.isEmpty() ? 1 : (1 + 2))
+           + (newPriorityFeeDistributionFeeBps == null || newPriorityFeeDistributionFeeBps.isEmpty() ? 1 : (1 + 2));
     }
   }
 
