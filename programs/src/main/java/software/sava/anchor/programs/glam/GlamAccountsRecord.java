@@ -10,6 +10,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public record GlamAccountsRecord(PublicKey program,
                                  AccountMeta invokedProgram,
+                                 PublicKey configProgram,
                                  PublicKey glamConfigKey) implements GlamAccounts {
 
   @Override
