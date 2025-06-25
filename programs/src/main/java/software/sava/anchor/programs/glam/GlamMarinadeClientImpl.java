@@ -140,7 +140,7 @@ final class GlamMarinadeClientImpl implements GlamMarinadeClient {
         marinadeAccounts.stateProgram(),
         marinadeAccounts.mSolTokenMint(),
         mSolTokenAccount,
-        marinadeAccounts.mSolTokenMintAuthorityPDA(),
+        marinadeAccounts.treasuryMSolAccount(),
         validatorListKey,
         stakeListKey,
         stakeWithdrawalAuthorityKey,
