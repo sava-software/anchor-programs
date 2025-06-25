@@ -9,6 +9,11 @@
     "package": "drift.vaults"
   },
   {
+    "name": "Glam Config",
+    "program": "gConFzxKL9USmwTdJoeQJvfKmqhJ2CyUaXTyQ8v9TGX",
+    "package": "glam.config"
+  },
+  {
     "name": "Glam Protocol Program",
     "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc",
     "package": "glam"
