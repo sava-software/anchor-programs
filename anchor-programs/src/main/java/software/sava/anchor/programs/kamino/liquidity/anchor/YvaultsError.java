@@ -40,8 +40,7 @@ public sealed interface YvaultsError extends ProgramError permits
     YvaultsError.CollectFeesBlocked,
     YvaultsError.CollectRewardsBlocked,
     YvaultsError.SwapRewardsBlocked,
-// TODO: Handle duplicate Error names
-    // YvaultsError.WrongRewardCollateralID,
+    YvaultsError.WrongRewardCollateralID,
     YvaultsError.InvalidPositionAccount,
     YvaultsError.CouldNotDeserializeScope,
     YvaultsError.WrongCollateralID,
@@ -139,7 +138,7 @@ public sealed interface YvaultsError extends ProgramError permits
     YvaultsError.DecimalToU128ConversionFailed,
     YvaultsError.DecimalNegativeSqrtRoot,
     YvaultsError.DriftingOppositeDirection,
-    YvaultsError.WrongRewardCollateralId,
+    YvaultsError.WrongRewardCollateralId2,
     YvaultsError.CollateralInfoAlreadyExists,
     YvaultsError.InvestTooEarly,
     YvaultsError.SwapUnevenTooEarly,
@@ -201,7 +200,7 @@ public sealed interface YvaultsError extends ProgramError permits
       case 6034 -> CollectFeesBlocked.INSTANCE;
       case 6035 -> CollectRewardsBlocked.INSTANCE;
       case 6036 -> SwapRewardsBlocked.INSTANCE;
-      // case 6037 -> WrongRewardCollateralID.INSTANCE;
+      case 6037 -> WrongRewardCollateralID.INSTANCE;
       case 6038 -> InvalidPositionAccount.INSTANCE;
       case 6039 -> CouldNotDeserializeScope.INSTANCE;
       case 6040 -> WrongCollateralID.INSTANCE;
@@ -299,7 +298,7 @@ public sealed interface YvaultsError extends ProgramError permits
       case 6132 -> DecimalToU128ConversionFailed.INSTANCE;
       case 6133 -> DecimalNegativeSqrtRoot.INSTANCE;
       case 6134 -> DriftingOppositeDirection.INSTANCE;
-      case 6135, 6037 -> WrongRewardCollateralId.INSTANCE;
+      case 6135 -> WrongRewardCollateralId2.INSTANCE;
       case 6136 -> CollateralInfoAlreadyExists.INSTANCE;
       case 6137 -> InvestTooEarly.INSTANCE;
       case 6138 -> SwapUnevenTooEarly.INSTANCE;
@@ -584,12 +583,12 @@ public sealed interface YvaultsError extends ProgramError permits
     );
   }
 
-//  record WrongRewardCollateralID(int code, String msg) implements YvaultsError {
-//
-//    public static final WrongRewardCollateralID INSTANCE = new WrongRewardCollateralID(
-//        6037, "Reward collateral ID is incorrect for strategy"
-//    );
-//  }
+  record WrongRewardCollateralID(int code, String msg) implements YvaultsError {
+
+    public static final WrongRewardCollateralID INSTANCE = new WrongRewardCollateralID(
+        6037, "Reward collateral ID is incorrect for strategy"
+    );
+  }
 
   record InvalidPositionAccount(int code, String msg) implements YvaultsError {
 
@@ -1270,9 +1269,9 @@ public sealed interface YvaultsError extends ProgramError permits
     );
   }
 
-  record WrongRewardCollateralId(int code, String msg) implements YvaultsError {
+  record WrongRewardCollateralId2(int code, String msg) implements YvaultsError {
 
-    public static final WrongRewardCollateralId INSTANCE = new WrongRewardCollateralId(
+    public static final WrongRewardCollateralId2 INSTANCE = new WrongRewardCollateralId2(
         6135, "Wrong reward collateral_id"
     );
   }
