@@ -9,6 +9,10 @@ jobs:
   check:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      packages: write
+
     steps:
       - id: setup
         uses: sava-software/sava-build@main
