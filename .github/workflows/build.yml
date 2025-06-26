@@ -8,6 +8,34 @@ on:
     types: [ opened, synchronize ]
 
 jobs:
-  build:
-    uses: sava-software/sava-build/.github/workflows/build.yml@main
-    secrets: inherit
+  check:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macOS-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - id: setup
+        uses: sava-software/sava-build@main
+        with:
+          default-java-version: ${{ vars.JAVA_VERSION }}
+          jdk-src: ${{ vars.JDK_SRC }}
+          gradle-java-version: ${{ vars.GRADLE_JAVA_VERSION }}
+
+      - name: Checkout Anchor Source Generator
+        uses: actions/checkout@v4
+        with:
+          repository: sava-software/anchor-src-gen
+          token: ${{ secrets.GH_READ_PROJECTS }}
+          path: anchor-src-gen
+
+      - name: Gradle Check
+        run: |
+          cd ./anchor-src-gen
+          ./genSrc.sh --tjv="${{ steps.setup.outputs.java-version }}" --tl=2 --bdm=200 --nt=5 --sd="../programs/src/main/java" --bp="software.sava.anchor.programs" --mn="software.sava.anchor_programs" --p="../main_net_programs.json" --rpc="${{ secrets.RPC_URL }}"
+          cd ..
+          ./gradlew --stacktrace -PjavaVersion=${{ steps.setup.outputs.java-version }} check
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ORG_GRADLE_PROJECT_savaGithubPackagesUsername: ${{ env.GITHUB_ACTOR }}
+          ORG_GRADLE_PROJECT_savaGithubPackagesPassword: ${{ secrets.GITHUB_TOKEN }}
