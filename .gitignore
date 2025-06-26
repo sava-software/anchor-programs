@@ -1,4 +1,5 @@
 .gradle
+.kotlin
 build/
 gradle-app.setting
 .gradletasknamecache
@@ -20,7 +21,6 @@ hs_err_pid*
 *.secret
 .DS_Store
 out/
-gradle.properties
 ignore
 idl.json
 Integ.java

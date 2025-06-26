@@ -40,7 +40,8 @@ public sealed interface YvaultsError extends ProgramError permits
     YvaultsError.CollectFeesBlocked,
     YvaultsError.CollectRewardsBlocked,
     YvaultsError.SwapRewardsBlocked,
-    YvaultsError.WrongRewardCollateralID,
+// TODO: Handle duplicate Error names
+    // YvaultsError.WrongRewardCollateralID,
     YvaultsError.InvalidPositionAccount,
     YvaultsError.CouldNotDeserializeScope,
     YvaultsError.WrongCollateralID,
@@ -200,7 +201,7 @@ public sealed interface YvaultsError extends ProgramError permits
       case 6034 -> CollectFeesBlocked.INSTANCE;
       case 6035 -> CollectRewardsBlocked.INSTANCE;
       case 6036 -> SwapRewardsBlocked.INSTANCE;
-      case 6037 -> WrongRewardCollateralID.INSTANCE;
+      // case 6037 -> WrongRewardCollateralID.INSTANCE;
       case 6038 -> InvalidPositionAccount.INSTANCE;
       case 6039 -> CouldNotDeserializeScope.INSTANCE;
       case 6040 -> WrongCollateralID.INSTANCE;
@@ -298,7 +299,7 @@ public sealed interface YvaultsError extends ProgramError permits
       case 6132 -> DecimalToU128ConversionFailed.INSTANCE;
       case 6133 -> DecimalNegativeSqrtRoot.INSTANCE;
       case 6134 -> DriftingOppositeDirection.INSTANCE;
-      case 6135 -> WrongRewardCollateralId.INSTANCE;
+      case 6135, 6037 -> WrongRewardCollateralId.INSTANCE;
       case 6136 -> CollateralInfoAlreadyExists.INSTANCE;
       case 6137 -> InvestTooEarly.INSTANCE;
       case 6138 -> SwapUnevenTooEarly.INSTANCE;
@@ -583,12 +584,12 @@ public sealed interface YvaultsError extends ProgramError permits
     );
   }
 
-  record WrongRewardCollateralID(int code, String msg) implements YvaultsError {
-
-    public static final WrongRewardCollateralID INSTANCE = new WrongRewardCollateralID(
-        6037, "Reward collateral ID is incorrect for strategy"
-    );
-  }
+//  record WrongRewardCollateralID(int code, String msg) implements YvaultsError {
+//
+//    public static final WrongRewardCollateralID INSTANCE = new WrongRewardCollateralID(
+//        6037, "Reward collateral ID is incorrect for strategy"
+//    );
+//  }
 
   record InvalidPositionAccount(int code, String msg) implements YvaultsError {
 
