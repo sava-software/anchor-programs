@@ -96,24 +96,6 @@ final class MarinadeProgramClientImpl implements MarinadeProgramClient {
   }
 
   @Override
-  public Instruction orderUnstake(final PublicKey mSolTokenAccount,
-                                  final PublicKey ticketAccount,
-                                  final long lamports) {
-    return MarinadeFinanceProgram.orderUnstake(
-        marinadeAccounts.invokedMarinadeProgram(),
-        marinadeAccounts.stateProgram(),
-        marinadeAccounts.mSolTokenMint(),
-        mSolTokenAccount,
-        owner,
-        ticketAccount,
-        solanaAccounts.clockSysVar(),
-        solanaAccounts.rentSysVar(),
-        solanaAccounts.tokenProgram(),
-        lamports
-    );
-  }
-
-  @Override
   public Instruction claimTicket(final PublicKey ticketAccount) {
     return MarinadeFinanceProgram.claim(
         marinadeAccounts.invokedMarinadeProgram(),
