@@ -14,11 +14,6 @@ User documentation lives at [sava.software](https://sava.software/).
 * [Dependency Configuration](https://sava.software/quickstart)
 * [Anchor Programs](https://sava.software/libraries/anchor-programs)
 
-## Contribution
-
-Unit tests are needed and welcomed. Otherwise, please open a discussion, issue, or send an email before working on a
-pull request.
-
 ## Build
 
 [Generate a classic token](https://github.com/settings/tokens) with the `read:packages` scope needed to access

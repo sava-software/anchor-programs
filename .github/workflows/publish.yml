@@ -39,7 +39,7 @@ jobs:
           ORG_GRADLE_PROJECT_savaGithubPackagesPassword: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Github Packages
-        run: ./gradlew --stacktrace -PjavaVersion=${{ steps.setup.outputs.java-version }} -Pversion=${{ github.ref_name }} :aggregation:publishToGitHubPackages
+        run: ./gradlew --stacktrace -Psign=true -PjavaVersion=${{ steps.setup.outputs.java-version }} -Pversion=${{ github.ref_name }} :aggregation:publishToGitHubPackages
         env:
           GPG_PUBLISH_SECRET: ${{ secrets.GPG_PUBLISH_SECRET }}
           GPG_PUBLISH_PHRASE: ${{ secrets.GPG_PUBLISH_PHRASE }}
