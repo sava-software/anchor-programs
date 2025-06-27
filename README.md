@@ -1,7 +1,7 @@
-# Anchor Programs [![Gradle Check](https://github.com/sava-software/anchor-programs/actions/workflows/build.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/build.yml) [![Release](https://github.com/sava-software/anchor-programs/actions/workflows/publish.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/release.yml)
+# Anchor Programs [![Gradle Check](https://github.com/sava-software/anchor-programs/actions/workflows/build.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/build.yml) [![Publish Release](https://github.com/sava-software/anchor-programs/actions/workflows/publish.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/publish.yml) 
 
 Generated programs can be found in
-the [root source package directory](anchor-programs/src/main/java/software/sava/anchor/programs). For each project generated
+the [root source package directory](anchor-programs/src/main/java/software/sava/anchor-programs/programs). For each project generated
 code is under the `anchor` package, and manually written code is directly under the project package.
 
 Code is generated using [sava-software/anchor-src-gen](https://github.com/sava-software/anchor-src-gen), see that
@@ -24,13 +24,11 @@ pull request.
 [Generate a classic token](https://github.com/settings/tokens) with the `read:packages` scope needed to access
 dependencies hosted on GitHub Package Repository.
 
-Create a `gradle.properties` file in the sava project directory root or under `$HOME/.gradle/`.
+Add the following properties to `$HOME/.gradle/gradle.properties`.
 
-### gradle.properties
-
-```properties
-gpr.user=GITHUB_USERNAME
-gpr.token=GITHUB_TOKEN
+```gradle.properties
+savaGithubPackagesUsername=GITHUB_USERNAME
+savaGithubPackagesPassword=GITHUB_TOKEN
 ```
 
 ```shell
