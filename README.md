@@ -1,7 +1,7 @@
-# Anchor Programs [![Build](https://github.com/sava-software/anchor-programs/actions/workflows/gradle.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/gradle.yml) [![Release](https://github.com/sava-software/anchor-programs/actions/workflows/release.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/release.yml)
+# Anchor Programs [![Build](https://github.com/sava-software/anchor-programs/actions/workflows/gradle.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/build.yml) [![Release](https://github.com/sava-software/anchor-programs/actions/workflows/publish.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/release.yml)
 
 Generated programs can be found in
-the [root source package directory](programs/src/main/java/software/sava/anchor/programs). For each project generated
+the [root source package directory](anchor-programs/src/main/java/software/sava/anchor/programs). For each project generated
 code is under the `anchor` package, and manually written code is directly under the project package.
 
 Code is generated using [sava-software/anchor-src-gen](https://github.com/sava-software/anchor-src-gen), see that
