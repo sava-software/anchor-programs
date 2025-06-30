@@ -20,7 +20,7 @@ public record OrderParams(OrderType orderType,
                           int marketIndex,
                           boolean reduceOnly,
                           PostOnlyParam postOnly,
-                          boolean immediateOrCancel,
+                          int bitFlags,
                           OptionalLong maxTs,
                           OptionalLong triggerPrice,
                           OrderTriggerCondition triggerCondition,
@@ -52,7 +52,7 @@ public record OrderParams(OrderType orderType,
     ++i;
     final var postOnly = PostOnlyParam.read(_data, i);
     i += Borsh.len(postOnly);
-    final var immediateOrCancel = _data[i] == 1;
+    final var bitFlags = _data[i] & 0xFF;
     ++i;
     final var maxTs = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
     if (maxTs.isPresent()) {
@@ -86,7 +86,7 @@ public record OrderParams(OrderType orderType,
                            marketIndex,
                            reduceOnly,
                            postOnly,
-                           immediateOrCancel,
+                           bitFlags,
                            maxTs,
                            triggerPrice,
                            triggerCondition,
@@ -113,7 +113,7 @@ public record OrderParams(OrderType orderType,
     _data[i] = (byte) (reduceOnly ? 1 : 0);
     ++i;
     i += Borsh.write(postOnly, _data, i);
-    _data[i] = (byte) (immediateOrCancel ? 1 : 0);
+    _data[i] = (byte) bitFlags;
     ++i;
     i += Borsh.writeOptional(maxTs, _data, i);
     i += Borsh.writeOptional(triggerPrice, _data, i);
