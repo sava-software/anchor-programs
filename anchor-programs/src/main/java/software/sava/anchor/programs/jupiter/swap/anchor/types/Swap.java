@@ -97,7 +97,9 @@ public sealed interface Swap extends RustEnum permits
   Swap.Plasma,
   Swap.GoonFi,
   Swap.HumidiFi,
-  Swap.MeteoraDynamicBondingCurveSwapWithRemainingAccounts {
+  Swap.MeteoraDynamicBondingCurveSwapWithRemainingAccounts,
+  Swap.TesseraV,
+  Swap.RaydiumStable {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -192,6 +194,8 @@ public sealed interface Swap extends RustEnum permits
       case 86 -> GoonFi.read(_data, i);
       case 87 -> HumidiFi.read(_data, i);
       case 88 -> MeteoraDynamicBondingCurveSwapWithRemainingAccounts.INSTANCE;
+      case 89 -> TesseraV.read(_data, i);
+      case 90 -> RaydiumStable.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1404,6 +1408,28 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 88;
+    }
+  }
+
+  record TesseraV(Side val) implements BorshEnum, Swap {
+
+    public static TesseraV read(final byte[] _data, final int offset) {
+      return new TesseraV(Side.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 89;
+    }
+  }
+
+  record RaydiumStable() implements EnumNone, Swap {
+
+    public static final RaydiumStable INSTANCE = new RaydiumStable();
+
+    @Override
+    public int ordinal() {
+      return 90;
     }
   }
 }
