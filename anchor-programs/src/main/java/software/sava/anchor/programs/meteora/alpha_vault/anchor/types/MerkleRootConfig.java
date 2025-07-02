@@ -1,7 +1,5 @@
 package software.sava.anchor.programs.meteora.alpha_vault.anchor.types;
 
-import java.math.BigInteger;
-
 import java.util.function.BiFunction;
 
 import software.sava.core.accounts.PublicKey;
@@ -14,6 +12,7 @@ import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record MerkleRootConfig(PublicKey _address,
                                Discriminator discriminator,
@@ -24,10 +23,13 @@ public record MerkleRootConfig(PublicKey _address,
                                // version
                                long version,
                                // padding for further use
-                               BigInteger[] padding) implements Borsh {
+                               long[] padding) implements Borsh {
 
   public static final int BYTES = 144;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(103, 2, 222, 217, 73, 50, 187, 39);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int ROOT_OFFSET = 8;
   public static final int VAULT_OFFSET = 40;
@@ -70,7 +72,7 @@ public record MerkleRootConfig(PublicKey _address,
     i += 32;
     final var version = getInt64LE(_data, i);
     i += 8;
-    final var padding = new BigInteger[4];
+    final var padding = new long[8];
     Borsh.readArray(padding, _data, i);
     return new MerkleRootConfig(_address,
                                 discriminator,

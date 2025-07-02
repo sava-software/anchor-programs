@@ -4,6 +4,11 @@
     "program": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
   },
   {
+    "name": "Drift Merkle Distributor",
+    "program": "E7HtfkEMhmn9uwL7EFNydcXBWy5WCYN1vFmKKjipEH1x",
+    "package": "drift.merkle.distributor"
+  },
+  {
     "name": "Drift Vaults",
     "program": "vAuLTsyrvSfZRuRB3XgvkPwNGgYSs9YRYymVebLKoxR",
     "package": "drift.vaults"

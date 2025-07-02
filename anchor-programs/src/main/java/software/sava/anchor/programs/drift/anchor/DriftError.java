@@ -317,7 +317,9 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.FuelOverflowAccountNotFound,
     DriftError.InvalidTransferPerpPosition,
     DriftError.InvalidSignedMsgUserOrdersResize,
-    DriftError.CouldNotDeserializeHighLeverageModeConfig {
+    DriftError.CouldNotDeserializeHighLeverageModeConfig,
+    DriftError.InvalidIfRebalanceConfig,
+    DriftError.InvalidIfRebalanceSwap {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -636,6 +638,8 @@ public sealed interface DriftError extends ProgramError permits
       case 6312 -> InvalidTransferPerpPosition.INSTANCE;
       case 6313 -> InvalidSignedMsgUserOrdersResize.INSTANCE;
       case 6314 -> CouldNotDeserializeHighLeverageModeConfig.INSTANCE;
+      case 6315 -> InvalidIfRebalanceConfig.INSTANCE;
+      case 6316 -> InvalidIfRebalanceSwap.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2842,6 +2846,20 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final CouldNotDeserializeHighLeverageModeConfig INSTANCE = new CouldNotDeserializeHighLeverageModeConfig(
         6314, "Could not deserialize high leverage mode config"
+    );
+  }
+
+  record InvalidIfRebalanceConfig(int code, String msg) implements DriftError {
+
+    public static final InvalidIfRebalanceConfig INSTANCE = new InvalidIfRebalanceConfig(
+        6315, "Invalid If Rebalance Config"
+    );
+  }
+
+  record InvalidIfRebalanceSwap(int code, String msg) implements DriftError {
+
+    public static final InvalidIfRebalanceSwap INSTANCE = new InvalidIfRebalanceSwap(
+        6316, "Invalid If Rebalance Swap"
     );
   }
 }

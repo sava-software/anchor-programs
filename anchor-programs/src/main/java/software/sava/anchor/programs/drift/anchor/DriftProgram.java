@@ -9,6 +9,7 @@ import java.util.OptionalLong;
 import software.sava.anchor.programs.drift.anchor.types.AssetTier;
 import software.sava.anchor.programs.drift.anchor.types.ContractTier;
 import software.sava.anchor.programs.drift.anchor.types.FeeStructure;
+import software.sava.anchor.programs.drift.anchor.types.IfRebalanceConfigParams;
 import software.sava.anchor.programs.drift.anchor.types.MarketStatus;
 import software.sava.anchor.programs.drift.anchor.types.MarketType;
 import software.sava.anchor.programs.drift.anchor.types.ModifyOrderParams;
@@ -4817,6 +4818,231 @@ public final class DriftProgram {
       i += 2;
       putInt128LE(_data, i, shares);
       i += 16;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator BEGIN_INSURANCE_FUND_SWAP_DISCRIMINATOR = toDiscriminator(176, 69, 143, 205, 32, 132, 163, 0);
+
+  public static Instruction beginInsuranceFundSwap(final AccountMeta invokedDriftProgramMeta,
+                                                   final PublicKey stateKey,
+                                                   final PublicKey authorityKey,
+                                                   final PublicKey outInsuranceFundVaultKey,
+                                                   final PublicKey inInsuranceFundVaultKey,
+                                                   final PublicKey outTokenAccountKey,
+                                                   final PublicKey inTokenAccountKey,
+                                                   final PublicKey ifRebalanceConfigKey,
+                                                   final PublicKey tokenProgramKey,
+                                                   final PublicKey driftSignerKey,
+                                                   // Instructions Sysvar for instruction introspection
+                                                   final PublicKey instructionsKey,
+                                                   final int inMarketIndex,
+                                                   final int outMarketIndex,
+                                                   final long amountIn) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWritableSigner(authorityKey),
+      createWrite(outInsuranceFundVaultKey),
+      createWrite(inInsuranceFundVaultKey),
+      createWrite(outTokenAccountKey),
+      createWrite(inTokenAccountKey),
+      createWrite(ifRebalanceConfigKey),
+      createRead(tokenProgramKey),
+      createRead(driftSignerKey),
+      createRead(instructionsKey)
+    );
+
+    final byte[] _data = new byte[20];
+    int i = writeDiscriminator(BEGIN_INSURANCE_FUND_SWAP_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, inMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, outMarketIndex);
+    i += 2;
+    putInt64LE(_data, i, amountIn);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record BeginInsuranceFundSwapIxData(Discriminator discriminator,
+                                             int inMarketIndex,
+                                             int outMarketIndex,
+                                             long amountIn) implements Borsh {  
+
+    public static BeginInsuranceFundSwapIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 20;
+
+    public static BeginInsuranceFundSwapIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var inMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var outMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var amountIn = getInt64LE(_data, i);
+      return new BeginInsuranceFundSwapIxData(discriminator, inMarketIndex, outMarketIndex, amountIn);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, inMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, outMarketIndex);
+      i += 2;
+      putInt64LE(_data, i, amountIn);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator END_INSURANCE_FUND_SWAP_DISCRIMINATOR = toDiscriminator(206, 230, 98, 8, 249, 158, 169, 167);
+
+  public static Instruction endInsuranceFundSwap(final AccountMeta invokedDriftProgramMeta,
+                                                 final PublicKey stateKey,
+                                                 final PublicKey authorityKey,
+                                                 final PublicKey outInsuranceFundVaultKey,
+                                                 final PublicKey inInsuranceFundVaultKey,
+                                                 final PublicKey outTokenAccountKey,
+                                                 final PublicKey inTokenAccountKey,
+                                                 final PublicKey ifRebalanceConfigKey,
+                                                 final PublicKey tokenProgramKey,
+                                                 final PublicKey driftSignerKey,
+                                                 // Instructions Sysvar for instruction introspection
+                                                 final PublicKey instructionsKey,
+                                                 final int inMarketIndex,
+                                                 final int outMarketIndex) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWritableSigner(authorityKey),
+      createWrite(outInsuranceFundVaultKey),
+      createWrite(inInsuranceFundVaultKey),
+      createWrite(outTokenAccountKey),
+      createWrite(inTokenAccountKey),
+      createWrite(ifRebalanceConfigKey),
+      createRead(tokenProgramKey),
+      createRead(driftSignerKey),
+      createRead(instructionsKey)
+    );
+
+    final byte[] _data = new byte[12];
+    int i = writeDiscriminator(END_INSURANCE_FUND_SWAP_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, inMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, outMarketIndex);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record EndInsuranceFundSwapIxData(Discriminator discriminator, int inMarketIndex, int outMarketIndex) implements Borsh {  
+
+    public static EndInsuranceFundSwapIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 12;
+
+    public static EndInsuranceFundSwapIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var inMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var outMarketIndex = getInt16LE(_data, i);
+      return new EndInsuranceFundSwapIxData(discriminator, inMarketIndex, outMarketIndex);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, inMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, outMarketIndex);
+      i += 2;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator TRANSFER_PROTOCOL_IF_SHARES_TO_REVENUE_POOL_DISCRIMINATOR = toDiscriminator(236, 136, 147, 153, 146, 205, 104, 29);
+
+  public static Instruction transferProtocolIfSharesToRevenuePool(final AccountMeta invokedDriftProgramMeta,
+                                                                  final PublicKey stateKey,
+                                                                  final PublicKey authorityKey,
+                                                                  final PublicKey insuranceFundVaultKey,
+                                                                  final PublicKey spotMarketVaultKey,
+                                                                  final PublicKey ifRebalanceConfigKey,
+                                                                  final PublicKey tokenProgramKey,
+                                                                  final PublicKey driftSignerKey,
+                                                                  final int marketIndex,
+                                                                  final long amount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWritableSigner(authorityKey),
+      createWrite(insuranceFundVaultKey),
+      createWrite(spotMarketVaultKey),
+      createWrite(ifRebalanceConfigKey),
+      createRead(tokenProgramKey),
+      createRead(driftSignerKey)
+    );
+
+    final byte[] _data = new byte[18];
+    int i = writeDiscriminator(TRANSFER_PROTOCOL_IF_SHARES_TO_REVENUE_POOL_DISCRIMINATOR, _data, 0);
+    putInt16LE(_data, i, marketIndex);
+    i += 2;
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record TransferProtocolIfSharesToRevenuePoolIxData(Discriminator discriminator, int marketIndex, long amount) implements Borsh {  
+
+    public static TransferProtocolIfSharesToRevenuePoolIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 18;
+
+    public static TransferProtocolIfSharesToRevenuePoolIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var marketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var amount = getInt64LE(_data, i);
+      return new TransferProtocolIfSharesToRevenuePoolIxData(discriminator, marketIndex, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, marketIndex);
+      i += 2;
+      putInt64LE(_data, i, amount);
+      i += 8;
       return i - offset;
     }
 
@@ -9863,6 +10089,169 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator UPDATE_PERP_MARKET_TAKER_SPEED_BUMP_OVERRIDE_DISCRIMINATOR = toDiscriminator(31, 39, 5, 25, 228, 50, 1, 0);
+
+  public static Instruction updatePerpMarketTakerSpeedBumpOverride(final AccountMeta invokedDriftProgramMeta,
+                                                                   final PublicKey adminKey,
+                                                                   final PublicKey stateKey,
+                                                                   final PublicKey perpMarketKey,
+                                                                   final int takerSpeedBumpOverride) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(UPDATE_PERP_MARKET_TAKER_SPEED_BUMP_OVERRIDE_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) takerSpeedBumpOverride;
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketTakerSpeedBumpOverrideIxData(Discriminator discriminator, int takerSpeedBumpOverride) implements Borsh {  
+
+    public static UpdatePerpMarketTakerSpeedBumpOverrideIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdatePerpMarketTakerSpeedBumpOverrideIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var takerSpeedBumpOverride = _data[i];
+      return new UpdatePerpMarketTakerSpeedBumpOverrideIxData(discriminator, takerSpeedBumpOverride);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) takerSpeedBumpOverride;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_PERP_MARKET_AMM_SPREAD_ADJUSTMENT_DISCRIMINATOR = toDiscriminator(155, 195, 149, 43, 220, 82, 173, 205);
+
+  public static Instruction updatePerpMarketAmmSpreadAdjustment(final AccountMeta invokedDriftProgramMeta,
+                                                                final PublicKey adminKey,
+                                                                final PublicKey stateKey,
+                                                                final PublicKey perpMarketKey,
+                                                                final int ammSpreadAdjustment,
+                                                                final int ammInventorySpreadAdjustment) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[10];
+    int i = writeDiscriminator(UPDATE_PERP_MARKET_AMM_SPREAD_ADJUSTMENT_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) ammSpreadAdjustment;
+    ++i;
+    _data[i] = (byte) ammInventorySpreadAdjustment;
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketAmmSpreadAdjustmentIxData(Discriminator discriminator, int ammSpreadAdjustment, int ammInventorySpreadAdjustment) implements Borsh {  
+
+    public static UpdatePerpMarketAmmSpreadAdjustmentIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 10;
+
+    public static UpdatePerpMarketAmmSpreadAdjustmentIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var ammSpreadAdjustment = _data[i];
+      ++i;
+      final var ammInventorySpreadAdjustment = _data[i];
+      return new UpdatePerpMarketAmmSpreadAdjustmentIxData(discriminator, ammSpreadAdjustment, ammInventorySpreadAdjustment);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) ammSpreadAdjustment;
+      ++i;
+      _data[i] = (byte) ammInventorySpreadAdjustment;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_PERP_MARKET_ORACLE_SLOT_DELAY_OVERRIDE_DISCRIMINATOR = toDiscriminator(165, 91, 239, 227, 63, 172, 227, 8);
+
+  public static Instruction updatePerpMarketOracleSlotDelayOverride(final AccountMeta invokedDriftProgramMeta,
+                                                                    final PublicKey adminKey,
+                                                                    final PublicKey stateKey,
+                                                                    final PublicKey perpMarketKey,
+                                                                    final int oracleSlotDelayOverride) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(UPDATE_PERP_MARKET_ORACLE_SLOT_DELAY_OVERRIDE_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) oracleSlotDelayOverride;
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketOracleSlotDelayOverrideIxData(Discriminator discriminator, int oracleSlotDelayOverride) implements Borsh {  
+
+    public static UpdatePerpMarketOracleSlotDelayOverrideIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdatePerpMarketOracleSlotDelayOverrideIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var oracleSlotDelayOverride = _data[i];
+      return new UpdatePerpMarketOracleSlotDelayOverrideIxData(discriminator, oracleSlotDelayOverride);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) oracleSlotDelayOverride;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator UPDATE_SPOT_MARKET_FUEL_DISCRIMINATOR = toDiscriminator(226, 253, 76, 71, 17, 2, 171, 169);
 
   public static Instruction updateSpotMarketFuel(final AccountMeta invokedDriftProgramMeta,
@@ -10832,29 +11221,36 @@ public final class DriftProgram {
                                                          final PublicKey highLeverageModeConfigKey,
                                                          final PublicKey stateKey,
                                                          final int maxUsers,
-                                                         final boolean reduceOnly) {
+                                                         final boolean reduceOnly,
+                                                         final OptionalInt currentUsers) {
     final var keys = List.of(
       createWritableSigner(adminKey),
       createWrite(highLeverageModeConfigKey),
       createRead(stateKey)
     );
 
-    final byte[] _data = new byte[13];
+    final byte[] _data = new byte[
+        13
+        + (currentUsers == null || currentUsers.isEmpty() ? 1 : 5)
+    ];
     int i = writeDiscriminator(UPDATE_HIGH_LEVERAGE_MODE_CONFIG_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, maxUsers);
     i += 4;
     _data[i] = (byte) (reduceOnly ? 1 : 0);
+    ++i;
+    Borsh.writeOptional(currentUsers, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record UpdateHighLeverageModeConfigIxData(Discriminator discriminator, int maxUsers, boolean reduceOnly) implements Borsh {  
+  public record UpdateHighLeverageModeConfigIxData(Discriminator discriminator,
+                                                   int maxUsers,
+                                                   boolean reduceOnly,
+                                                   OptionalInt currentUsers) implements Borsh {  
 
     public static UpdateHighLeverageModeConfigIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
-
-    public static final int BYTES = 13;
 
     public static UpdateHighLeverageModeConfigIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -10865,7 +11261,9 @@ public final class DriftProgram {
       final var maxUsers = getInt32LE(_data, i);
       i += 4;
       final var reduceOnly = _data[i] == 1;
-      return new UpdateHighLeverageModeConfigIxData(discriminator, maxUsers, reduceOnly);
+      ++i;
+      final var currentUsers = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+      return new UpdateHighLeverageModeConfigIxData(discriminator, maxUsers, reduceOnly, currentUsers);
     }
 
     @Override
@@ -10875,12 +11273,13 @@ public final class DriftProgram {
       i += 4;
       _data[i] = (byte) (reduceOnly ? 1 : 0);
       ++i;
+      i += Borsh.writeOptional(currentUsers, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return BYTES;
+      return 8 + 4 + 1 + (currentUsers == null || currentUsers.isEmpty() ? 1 : (1 + 4));
     }
   }
 
@@ -11065,6 +11464,112 @@ public final class DriftProgram {
       i += 2;
       putInt64LE(_data, i, amount);
       i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INITIALIZE_IF_REBALANCE_CONFIG_DISCRIMINATOR = toDiscriminator(8, 85, 184, 167, 176, 61, 173, 226);
+
+  public static Instruction initializeIfRebalanceConfig(final AccountMeta invokedDriftProgramMeta,
+                                                        final PublicKey adminKey,
+                                                        final PublicKey ifRebalanceConfigKey,
+                                                        final PublicKey stateKey,
+                                                        final PublicKey rentKey,
+                                                        final PublicKey systemProgramKey,
+                                                        final IfRebalanceConfigParams params) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(ifRebalanceConfigKey),
+      createRead(stateKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(INITIALIZE_IF_REBALANCE_CONFIG_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record InitializeIfRebalanceConfigIxData(Discriminator discriminator, IfRebalanceConfigParams params) implements Borsh {  
+
+    public static InitializeIfRebalanceConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 40;
+
+    public static InitializeIfRebalanceConfigIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = IfRebalanceConfigParams.read(_data, i);
+      return new InitializeIfRebalanceConfigIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_IF_REBALANCE_CONFIG_DISCRIMINATOR = toDiscriminator(142, 245, 249, 66, 249, 181, 22, 83);
+
+  public static Instruction updateIfRebalanceConfig(final AccountMeta invokedDriftProgramMeta,
+                                                    final PublicKey adminKey,
+                                                    final PublicKey ifRebalanceConfigKey,
+                                                    final PublicKey stateKey,
+                                                    final IfRebalanceConfigParams params) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(ifRebalanceConfigKey),
+      createRead(stateKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = writeDiscriminator(UPDATE_IF_REBALANCE_CONFIG_DISCRIMINATOR, _data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateIfRebalanceConfigIxData(Discriminator discriminator, IfRebalanceConfigParams params) implements Borsh {  
+
+    public static UpdateIfRebalanceConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 40;
+
+    public static UpdateIfRebalanceConfigIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = IfRebalanceConfigParams.read(_data, i);
+      return new UpdateIfRebalanceConfigIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
       return i - offset;
     }
 

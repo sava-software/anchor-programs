@@ -1,6 +1,8 @@
 module software.sava.anchor_programs {
   exports software.sava.anchor.programs.drift.anchor.types;
   exports software.sava.anchor.programs.drift.anchor;
+  exports software.sava.anchor.programs.drift.merkle.distributor.anchor.types;
+  exports software.sava.anchor.programs.drift.merkle.distributor.anchor;
   exports software.sava.anchor.programs.drift.vaults.anchor.types;
   exports software.sava.anchor.programs.drift.vaults.anchor;
   exports software.sava.anchor.programs.drift.vaults;

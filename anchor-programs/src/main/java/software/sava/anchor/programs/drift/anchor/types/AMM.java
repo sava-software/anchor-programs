@@ -220,12 +220,18 @@ public record AMM(// oracle price data public key
                   int targetBaseAssetAmountPerLp,
                   // expo for unit of per_lp, base 10 (if per_lp_base=X, then per_lp unit is 10^X)
                   int perLpBase,
-                  int padding1,
-                  int padding2,
+                  // the override for the state.min_perp_auction_duration
+                  // 0 is no override, -1 is disable speed bump, 1-100 is literal speed bump
+                  int takerSpeedBumpOverride,
+                  // signed scale amm_spread similar to fee_adjustment logic (-100 = 0, 100 = double)
+                  int ammSpreadAdjustment,
+                  int oracleSlotDelayOverride,
                   long totalFeeEarnedPerLp,
                   long netUnsettledFundingPnl,
                   long quoteAssetAmountWithUnsettledLp,
                   int referencePriceOffset,
+                  // signed scale amm_spread similar to fee_adjustment logic (-100 = 0, 100 = double)
+                  int ammInventorySpreadAdjustment,
                   byte[] padding) implements Borsh {
 
   public static final int BYTES = 936;
@@ -389,10 +395,12 @@ public record AMM(// oracle price data public key
     i += 4;
     final var perLpBase = _data[i];
     ++i;
-    final var padding1 = _data[i] & 0xFF;
+    final var takerSpeedBumpOverride = _data[i];
     ++i;
-    final var padding2 = getInt16LE(_data, i);
-    i += 2;
+    final var ammSpreadAdjustment = _data[i];
+    ++i;
+    final var oracleSlotDelayOverride = _data[i];
+    ++i;
     final var totalFeeEarnedPerLp = getInt64LE(_data, i);
     i += 8;
     final var netUnsettledFundingPnl = getInt64LE(_data, i);
@@ -401,7 +409,9 @@ public record AMM(// oracle price data public key
     i += 8;
     final var referencePriceOffset = getInt32LE(_data, i);
     i += 4;
-    final var padding = new byte[12];
+    final var ammInventorySpreadAdjustment = _data[i];
+    ++i;
+    final var padding = new byte[11];
     Borsh.readArray(padding, _data, i);
     return new AMM(oracle,
                    historicalOracleData,
@@ -480,12 +490,14 @@ public record AMM(// oracle price data public key
                    lastOracleValid,
                    targetBaseAssetAmountPerLp,
                    perLpBase,
-                   padding1,
-                   padding2,
+                   takerSpeedBumpOverride,
+                   ammSpreadAdjustment,
+                   oracleSlotDelayOverride,
                    totalFeeEarnedPerLp,
                    netUnsettledFundingPnl,
                    quoteAssetAmountWithUnsettledLp,
                    referencePriceOffset,
+                   ammInventorySpreadAdjustment,
                    padding);
   }
 
@@ -643,10 +655,12 @@ public record AMM(// oracle price data public key
     i += 4;
     _data[i] = (byte) perLpBase;
     ++i;
-    _data[i] = (byte) padding1;
+    _data[i] = (byte) takerSpeedBumpOverride;
     ++i;
-    putInt16LE(_data, i, padding2);
-    i += 2;
+    _data[i] = (byte) ammSpreadAdjustment;
+    ++i;
+    _data[i] = (byte) oracleSlotDelayOverride;
+    ++i;
     putInt64LE(_data, i, totalFeeEarnedPerLp);
     i += 8;
     putInt64LE(_data, i, netUnsettledFundingPnl);
@@ -655,6 +669,8 @@ public record AMM(// oracle price data public key
     i += 8;
     putInt32LE(_data, i, referencePriceOffset);
     i += 4;
+    _data[i] = (byte) ammInventorySpreadAdjustment;
+    ++i;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

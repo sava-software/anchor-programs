@@ -14,6 +14,7 @@ import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record Escrow(PublicKey _address,
                      Discriminator discriminator,
@@ -33,12 +34,15 @@ public record Escrow(PublicKey _address,
                      byte[] padding1,
                      // Only has meaning in permissioned vault
                      long maxCap,
-                     // padding 2
-                     byte[] padding2,
+                     // Only has meaning in pro-rata vault
+                     long withdrawnDepositOverflow,
                      BigInteger[] padding) implements Borsh {
 
   public static final int BYTES = 136;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(31, 213, 123, 187, 186, 22, 218, 155);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int VAULT_OFFSET = 8;
   public static final int OWNER_OFFSET = 40;
@@ -48,7 +52,7 @@ public record Escrow(PublicKey _address,
   public static final int REFUNDED_OFFSET = 96;
   public static final int PADDING1_OFFSET = 97;
   public static final int MAX_CAP_OFFSET = 104;
-  public static final int PADDING2_OFFSET = 112;
+  public static final int WITHDRAWN_DEPOSIT_OVERFLOW_OFFSET = 112;
   public static final int PADDING_OFFSET = 120;
 
   public static Filter createVaultFilter(final PublicKey vault) {
@@ -87,6 +91,12 @@ public record Escrow(PublicKey _address,
     return Filter.createMemCompFilter(MAX_CAP_OFFSET, _data);
   }
 
+  public static Filter createWithdrawnDepositOverflowFilter(final long withdrawnDepositOverflow) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, withdrawnDepositOverflow);
+    return Filter.createMemCompFilter(WITHDRAWN_DEPOSIT_OVERFLOW_OFFSET, _data);
+  }
+
   public static Escrow read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -123,8 +133,8 @@ public record Escrow(PublicKey _address,
     i += Borsh.readArray(padding1, _data, i);
     final var maxCap = getInt64LE(_data, i);
     i += 8;
-    final var padding2 = new byte[8];
-    i += Borsh.readArray(padding2, _data, i);
+    final var withdrawnDepositOverflow = getInt64LE(_data, i);
+    i += 8;
     final var padding = new BigInteger[1];
     Borsh.readArray(padding, _data, i);
     return new Escrow(_address,
@@ -137,7 +147,7 @@ public record Escrow(PublicKey _address,
                       refunded,
                       padding1,
                       maxCap,
-                      padding2,
+                      withdrawnDepositOverflow,
                       padding);
   }
 
@@ -159,7 +169,8 @@ public record Escrow(PublicKey _address,
     i += Borsh.writeArray(padding1, _data, i);
     putInt64LE(_data, i, maxCap);
     i += 8;
-    i += Borsh.writeArray(padding2, _data, i);
+    putInt64LE(_data, i, withdrawnDepositOverflow);
+    i += 8;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

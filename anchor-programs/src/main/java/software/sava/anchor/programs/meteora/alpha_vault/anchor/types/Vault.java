@@ -14,6 +14,7 @@ import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record Vault(PublicKey _address,
                     Discriminator discriminator,
@@ -79,6 +80,9 @@ public record Vault(PublicKey _address,
 
   public static final int BYTES = 472;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(211, 8, 232, 43, 2, 152, 117, 119);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int POOL_OFFSET = 8;
   public static final int TOKEN_VAULT_OFFSET = 40;

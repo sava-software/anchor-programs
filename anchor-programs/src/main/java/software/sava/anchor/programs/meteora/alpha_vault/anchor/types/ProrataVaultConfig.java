@@ -11,6 +11,7 @@ import software.sava.rpc.json.http.response.AccountInfo;
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record ProrataVaultConfig(PublicKey _address,
                                  Discriminator discriminator,
@@ -23,6 +24,9 @@ public record ProrataVaultConfig(PublicKey _address,
 
   public static final int BYTES = 232;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(93, 214, 205, 104, 119, 9, 51, 152);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int MAX_BUYING_CAP_OFFSET = 8;
   public static final int START_VESTING_DURATION_OFFSET = 16;

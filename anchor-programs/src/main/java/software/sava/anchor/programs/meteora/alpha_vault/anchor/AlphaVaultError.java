@@ -11,7 +11,7 @@ public sealed interface AlphaVaultError extends ProgramError permits
     AlphaVaultError.TheSaleIsOngoing,
     AlphaVaultError.EscrowIsNotClosable,
     AlphaVaultError.TimePointOrdersAreIncorrect,
-    AlphaVaultError.EscrowHasRefuned,
+    AlphaVaultError.EscrowHasRefunded,
     AlphaVaultError.MathOverflow,
     AlphaVaultError.MaxBuyingCapIsZero,
     AlphaVaultError.MaxAmountIsTooSmall,
@@ -22,7 +22,7 @@ public sealed interface AlphaVaultError extends ProgramError permits
     AlphaVaultError.VestingDurationIsInValid,
     AlphaVaultError.DepositAmountIsZero,
     AlphaVaultError.PoolOwnerIsMismatched,
-    AlphaVaultError.RefundAmountIsZero,
+    AlphaVaultError.WithdrawAmountIsZero,
     AlphaVaultError.DepositingDurationIsInvalid,
     AlphaVaultError.DepositingTimePointIsInvalid,
     AlphaVaultError.IndividualDepositingCapIsZero,
@@ -39,7 +39,10 @@ public sealed interface AlphaVaultError extends ProgramError permits
     AlphaVaultError.LockDurationInvalid,
     AlphaVaultError.MaxBuyingCapIsTooSmall,
     AlphaVaultError.MaxDepositingCapIsTooSmall,
-    AlphaVaultError.InvalidWhitelistWalletMode {
+    AlphaVaultError.InvalidWhitelistWalletMode,
+    AlphaVaultError.InvalidCrankFeeWhitelist,
+    AlphaVaultError.MissingFeeReceiver,
+    AlphaVaultError.DiscriminatorIsMismatched {
 
   static AlphaVaultError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -51,7 +54,7 @@ public sealed interface AlphaVaultError extends ProgramError permits
       case 6005 -> TheSaleIsOngoing.INSTANCE;
       case 6006 -> EscrowIsNotClosable.INSTANCE;
       case 6007 -> TimePointOrdersAreIncorrect.INSTANCE;
-      case 6008 -> EscrowHasRefuned.INSTANCE;
+      case 6008 -> EscrowHasRefunded.INSTANCE;
       case 6009 -> MathOverflow.INSTANCE;
       case 6010 -> MaxBuyingCapIsZero.INSTANCE;
       case 6011 -> MaxAmountIsTooSmall.INSTANCE;
@@ -62,7 +65,7 @@ public sealed interface AlphaVaultError extends ProgramError permits
       case 6016 -> VestingDurationIsInValid.INSTANCE;
       case 6017 -> DepositAmountIsZero.INSTANCE;
       case 6018 -> PoolOwnerIsMismatched.INSTANCE;
-      case 6019 -> RefundAmountIsZero.INSTANCE;
+      case 6019 -> WithdrawAmountIsZero.INSTANCE;
       case 6020 -> DepositingDurationIsInvalid.INSTANCE;
       case 6021 -> DepositingTimePointIsInvalid.INSTANCE;
       case 6022 -> IndividualDepositingCapIsZero.INSTANCE;
@@ -80,6 +83,9 @@ public sealed interface AlphaVaultError extends ProgramError permits
       case 6034 -> MaxBuyingCapIsTooSmall.INSTANCE;
       case 6035 -> MaxDepositingCapIsTooSmall.INSTANCE;
       case 6036 -> InvalidWhitelistWalletMode.INSTANCE;
+      case 6037 -> InvalidCrankFeeWhitelist.INSTANCE;
+      case 6038 -> MissingFeeReceiver.INSTANCE;
+      case 6039 -> DiscriminatorIsMismatched.INSTANCE;
       default -> throw new IllegalStateException("Unexpected AlphaVault error code: " + errorCode);
     };
   }
@@ -140,9 +146,9 @@ public sealed interface AlphaVaultError extends ProgramError permits
     );
   }
 
-  record EscrowHasRefuned(int code, String msg) implements AlphaVaultError {
+  record EscrowHasRefunded(int code, String msg) implements AlphaVaultError {
 
-    public static final EscrowHasRefuned INSTANCE = new EscrowHasRefuned(
+    public static final EscrowHasRefunded INSTANCE = new EscrowHasRefunded(
         6008, "Escrow has refunded"
     );
   }
@@ -217,10 +223,10 @@ public sealed interface AlphaVaultError extends ProgramError permits
     );
   }
 
-  record RefundAmountIsZero(int code, String msg) implements AlphaVaultError {
+  record WithdrawAmountIsZero(int code, String msg) implements AlphaVaultError {
 
-    public static final RefundAmountIsZero INSTANCE = new RefundAmountIsZero(
-        6019, "Refund amount is zero"
+    public static final WithdrawAmountIsZero INSTANCE = new WithdrawAmountIsZero(
+        6019, "Withdraw amount is zero"
     );
   }
 
@@ -340,6 +346,27 @@ public sealed interface AlphaVaultError extends ProgramError permits
 
     public static final InvalidWhitelistWalletMode INSTANCE = new InvalidWhitelistWalletMode(
         6036, "Invalid whitelist wallet mode"
+    );
+  }
+
+  record InvalidCrankFeeWhitelist(int code, String msg) implements AlphaVaultError {
+
+    public static final InvalidCrankFeeWhitelist INSTANCE = new InvalidCrankFeeWhitelist(
+        6037, "Invalid crank fee whitelist"
+    );
+  }
+
+  record MissingFeeReceiver(int code, String msg) implements AlphaVaultError {
+
+    public static final MissingFeeReceiver INSTANCE = new MissingFeeReceiver(
+        6038, "Missing fee receiver"
+    );
+  }
+
+  record DiscriminatorIsMismatched(int code, String msg) implements AlphaVaultError {
+
+    public static final DiscriminatorIsMismatched INSTANCE = new DiscriminatorIsMismatched(
+        6039, "Discriminator is mismatched"
     );
   }
 }
