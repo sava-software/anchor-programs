@@ -6,6 +6,7 @@ import software.sava.core.accounts.meta.AccountMeta;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface DriftExtraAccounts {
 
@@ -30,6 +31,12 @@ public interface DriftExtraAccounts {
   SpotMarkets spotMarkets();
 
   PerpMarkets perpMarkets();
+
+  Map<PublicKey, AccountMeta> oracleMetas();
+
+  Map<PublicKey, AccountMeta> spotMarketMetas();
+
+  Map<PublicKey, AccountMeta> perpMarketMetas();
 
   List<AccountMeta> toList();
 
