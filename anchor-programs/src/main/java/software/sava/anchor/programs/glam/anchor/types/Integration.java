@@ -14,7 +14,8 @@ public enum Integration implements Borsh.Enum {
   KaminoLending,
   MeteoraDlmm,
   DriftVaults,
-  KaminoVaults;
+  KaminoVaults,
+  Validator;
 
   public static Integration read(final byte[] _data, final int offset) {
     return Borsh.read(Integration.values(), _data, offset);

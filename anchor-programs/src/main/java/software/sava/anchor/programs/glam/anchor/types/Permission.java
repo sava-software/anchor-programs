@@ -16,11 +16,11 @@ public enum Permission implements Borsh.Enum {
   DriftSpotMarket,
   Stake,
   Unstake,
-  DeprecatedLiquidUnstake,
+  DriftCancelOrders,
   JupiterSwapAllowlisted,
   JupiterSwapAny,
   WSol,
-  DeprecatedWSolUnwrap,
+  DriftClaim,
   MintMintTokens,
   MintBurnTokens,
   MintForceTransferTokens,
@@ -46,7 +46,11 @@ public enum Permission implements Borsh.Enum {
   DriftVaultsDeposit,
   DriftVaultsWithdraw,
   KaminoVaultsDeposit,
-  KaminoVaultsWithdraw;
+  KaminoVaultsWithdraw,
+  ValidatorAdmin,
+  ValidatorWithdraw,
+  ValidatorWithdrawToAny,
+  ValidatorWithdrawToIdentity;
 
   public static Permission read(final byte[] _data, final int offset) {
     return Borsh.read(Permission.values(), _data, offset);

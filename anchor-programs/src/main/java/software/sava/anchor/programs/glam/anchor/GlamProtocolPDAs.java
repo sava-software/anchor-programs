@@ -4,7 +4,6 @@ import java.util.List;
 
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
-import software.sava.core.accounts.SolanaAccounts;
 
 import static java.nio.charset.StandardCharsets.US_ASCII;
 
@@ -12,33 +11,33 @@ public final class GlamProtocolPDAs {
 
   public static ProgramDerivedAddress escrowAssetAtaPDA(final PublicKey program,
                                                         final PublicKey glamEscrowAccount,
-                                                        final SolanaAccounts solanaAccounts,
+                                                        final PublicKey depositTokenProgramAccount,
                                                         final PublicKey assetAccount) {
     return PublicKey.findProgramAddress(List.of(
       glamEscrowAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
+      depositTokenProgramAccount.toByteArray(),
       assetAccount.toByteArray()
     ), program);
   }
 
   public static ProgramDerivedAddress escrowAtaPDA(final PublicKey program,
                                                    final PublicKey glamEscrowAccount,
-                                                   final PublicKey tokenProgramAccount,
+                                                   final PublicKey claimTokenProgramAccount,
                                                    final PublicKey tokenMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       glamEscrowAccount.toByteArray(),
-      tokenProgramAccount.toByteArray(),
+      claimTokenProgramAccount.toByteArray(),
       tokenMintAccount.toByteArray()
     ), program);
   }
 
   public static ProgramDerivedAddress escrowDepositAtaPDA(final PublicKey program,
                                                           final PublicKey glamEscrowAccount,
-                                                          final SolanaAccounts solanaAccounts,
+                                                          final PublicKey depositTokenProgramAccount,
                                                           final PublicKey depositAssetAccount) {
     return PublicKey.findProgramAddress(List.of(
       glamEscrowAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
+      depositTokenProgramAccount.toByteArray(),
       depositAssetAccount.toByteArray()
     ), program);
   }
@@ -148,11 +147,11 @@ public final class GlamProtocolPDAs {
 
   public static ProgramDerivedAddress signerAtaPDA(final PublicKey program,
                                                    final PublicKey signerAccount,
-                                                   final PublicKey tokenProgramAccount,
+                                                   final PublicKey claimTokenProgramAccount,
                                                    final PublicKey tokenMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       signerAccount.toByteArray(),
-      tokenProgramAccount.toByteArray(),
+      claimTokenProgramAccount.toByteArray(),
       tokenMintAccount.toByteArray()
     ), program);
   }
@@ -170,11 +169,11 @@ public final class GlamProtocolPDAs {
 
   public static ProgramDerivedAddress signerDepositAtaPDA(final PublicKey program,
                                                           final PublicKey signerAccount,
-                                                          final SolanaAccounts solanaAccounts,
+                                                          final PublicKey depositTokenProgramAccount,
                                                           final PublicKey depositAssetAccount) {
     return PublicKey.findProgramAddress(List.of(
       signerAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
+      depositTokenProgramAccount.toByteArray(),
       depositAssetAccount.toByteArray()
     ), program);
   }
@@ -203,11 +202,11 @@ public final class GlamProtocolPDAs {
 
   public static ProgramDerivedAddress vaultAssetAtaPDA(final PublicKey program,
                                                        final PublicKey glamVaultAccount,
-                                                       final SolanaAccounts solanaAccounts,
+                                                       final PublicKey depositTokenProgramAccount,
                                                        final PublicKey assetAccount) {
     return PublicKey.findProgramAddress(List.of(
       glamVaultAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
+      depositTokenProgramAccount.toByteArray(),
       assetAccount.toByteArray()
     ), program);
   }
@@ -225,11 +224,11 @@ public final class GlamProtocolPDAs {
 
   public static ProgramDerivedAddress vaultDepositAtaPDA(final PublicKey program,
                                                          final PublicKey glamVaultAccount,
-                                                         final SolanaAccounts solanaAccounts,
+                                                         final PublicKey depositTokenProgramAccount,
                                                          final PublicKey depositAssetAccount) {
     return PublicKey.findProgramAddress(List.of(
       glamVaultAccount.toByteArray(),
-      solanaAccounts.tokenProgram().toByteArray(),
+      depositTokenProgramAccount.toByteArray(),
       depositAssetAccount.toByteArray()
     ), program);
   }

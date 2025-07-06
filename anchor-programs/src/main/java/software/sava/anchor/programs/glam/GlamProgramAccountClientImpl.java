@@ -538,6 +538,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         baseAssetMint,
         vaultTokenAccount.publicKey(),
         escrowTokenAccount.publicKey(),
+        baseAssetTokenProgram,
         mintId
     );
   }
