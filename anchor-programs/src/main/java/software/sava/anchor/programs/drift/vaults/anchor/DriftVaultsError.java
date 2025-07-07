@@ -24,7 +24,15 @@ public sealed interface DriftVaultsError extends ProgramError permits
     DriftVaultsError.WithdrawInProgress,
     DriftVaultsError.SharesPercentTooLarge,
     DriftVaultsError.InvalidVaultDeposit,
-    DriftVaultsError.OngoingLiquidation {
+    DriftVaultsError.OngoingLiquidation,
+    DriftVaultsError.VaultProtocolMissing,
+    DriftVaultsError.InvalidTokenization,
+    DriftVaultsError.InvalidFuelDistributionMode,
+    DriftVaultsError.FeeUpdateMissing,
+    DriftVaultsError.InvalidFeeUpdateStatus,
+    DriftVaultsError.InvalidVaultClass,
+    DriftVaultsError.InvalidBorrowAmount,
+    DriftVaultsError.InvalidRepayAmount {
 
   static DriftVaultsError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -50,6 +58,14 @@ public sealed interface DriftVaultsError extends ProgramError permits
       case 6019 -> SharesPercentTooLarge.INSTANCE;
       case 6020 -> InvalidVaultDeposit.INSTANCE;
       case 6021 -> OngoingLiquidation.INSTANCE;
+      case 6022 -> VaultProtocolMissing.INSTANCE;
+      case 6023 -> InvalidTokenization.INSTANCE;
+      case 6024 -> InvalidFuelDistributionMode.INSTANCE;
+      case 6025 -> FeeUpdateMissing.INSTANCE;
+      case 6026 -> InvalidFeeUpdateStatus.INSTANCE;
+      case 6027 -> InvalidVaultClass.INSTANCE;
+      case 6028 -> InvalidBorrowAmount.INSTANCE;
+      case 6029 -> InvalidRepayAmount.INSTANCE;
       default -> throw new IllegalStateException("Unexpected DriftVaults error code: " + errorCode);
     };
   }
@@ -205,6 +221,62 @@ public sealed interface DriftVaultsError extends ProgramError permits
 
     public static final OngoingLiquidation INSTANCE = new OngoingLiquidation(
         6021, "OngoingLiquidation"
+    );
+  }
+
+  record VaultProtocolMissing(int code, String msg) implements DriftVaultsError {
+
+    public static final VaultProtocolMissing INSTANCE = new VaultProtocolMissing(
+        6022, "VaultProtocolMissing"
+    );
+  }
+
+  record InvalidTokenization(int code, String msg) implements DriftVaultsError {
+
+    public static final InvalidTokenization INSTANCE = new InvalidTokenization(
+        6023, "InvalidTokenization"
+    );
+  }
+
+  record InvalidFuelDistributionMode(int code, String msg) implements DriftVaultsError {
+
+    public static final InvalidFuelDistributionMode INSTANCE = new InvalidFuelDistributionMode(
+        6024, "InvalidFuelDistributionMode"
+    );
+  }
+
+  record FeeUpdateMissing(int code, String msg) implements DriftVaultsError {
+
+    public static final FeeUpdateMissing INSTANCE = new FeeUpdateMissing(
+        6025, "FeeUpdateMissing"
+    );
+  }
+
+  record InvalidFeeUpdateStatus(int code, String msg) implements DriftVaultsError {
+
+    public static final InvalidFeeUpdateStatus INSTANCE = new InvalidFeeUpdateStatus(
+        6026, "InvalidFeeUpdateStatus"
+    );
+  }
+
+  record InvalidVaultClass(int code, String msg) implements DriftVaultsError {
+
+    public static final InvalidVaultClass INSTANCE = new InvalidVaultClass(
+        6027, "InvalidVaultClass"
+    );
+  }
+
+  record InvalidBorrowAmount(int code, String msg) implements DriftVaultsError {
+
+    public static final InvalidBorrowAmount INSTANCE = new InvalidBorrowAmount(
+        6028, "InvalidBorrowAmount"
+    );
+  }
+
+  record InvalidRepayAmount(int code, String msg) implements DriftVaultsError {
+
+    public static final InvalidRepayAmount INSTANCE = new InvalidRepayAmount(
+        6029, "InvalidRepayAmount"
     );
   }
 }

@@ -8,7 +8,9 @@ public enum VaultDepositorAction implements Borsh.Enum {
   WithdrawRequest,
   CancelWithdrawRequest,
   Withdraw,
-  FeePayment;
+  FeePayment,
+  TokenizeShares,
+  RedeemTokens;
 
   public static VaultDepositorAction read(final byte[] _data, final int offset) {
     return Borsh.read(VaultDepositorAction.values(), _data, offset);

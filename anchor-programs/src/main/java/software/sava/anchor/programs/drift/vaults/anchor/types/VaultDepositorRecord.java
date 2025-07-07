@@ -28,9 +28,10 @@ public record VaultDepositorRecord(long ts,
                                    BigInteger totalVaultSharesAfter,
                                    long profitShare,
                                    long managementFee,
-                                   long managementFeeShares) implements Borsh {
+                                   long managementFeeShares,
+                                   long depositOraclePrice) implements Borsh {
 
-  public static final int BYTES = 211;
+  public static final int BYTES = 219;
 
   public static VaultDepositorRecord read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -68,6 +69,8 @@ public record VaultDepositorRecord(long ts,
     final var managementFee = getInt64LE(_data, i);
     i += 8;
     final var managementFeeShares = getInt64LE(_data, i);
+    i += 8;
+    final var depositOraclePrice = getInt64LE(_data, i);
     return new VaultDepositorRecord(ts,
                                     vault,
                                     depositorAuthority,
@@ -83,7 +86,8 @@ public record VaultDepositorRecord(long ts,
                                     totalVaultSharesAfter,
                                     profitShare,
                                     managementFee,
-                                    managementFeeShares);
+                                    managementFeeShares,
+                                    depositOraclePrice);
   }
 
   @Override
@@ -119,6 +123,8 @@ public record VaultDepositorRecord(long ts,
     putInt64LE(_data, i, managementFee);
     i += 8;
     putInt64LE(_data, i, managementFeeShares);
+    i += 8;
+    putInt64LE(_data, i, depositOraclePrice);
     i += 8;
     return i - offset;
   }

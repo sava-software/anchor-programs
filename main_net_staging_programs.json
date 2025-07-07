@@ -6,6 +6,12 @@
     "package": "drift.staging"
   },
   {
+    "name": "Drift Vaults",
+    "program": "vAuLTsyrvSfZRuRB3XgvkPwNGgYSs9YRYymVebLKoxR",
+    "idlURL": "https://raw.githubusercontent.com/drift-labs/drift-vaults/refs/heads/master/ts/sdk/src/idl/drift_vaults.json",
+    "package": "drift.vaults"
+  },
+  {
     "name": "Glam Protocol Program",
     "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc",
     "idlURL": "https://raw.githubusercontent.com/glamsystems/glam-sdk/refs/heads/main/idl/glam_protocol.json",

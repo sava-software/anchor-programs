@@ -36,59 +36,82 @@ public record Vault(PublicKey _address,
                     // The drift user account for the vault
                     PublicKey user,
                     // The vaults designated delegate for drift user account
-                    // Can differ from actual user delegate if vault is in liquidation
+                    // can differ from actual user delegate if vault is in liquidation
                     PublicKey delegate,
                     // The delegate handling liquidation for depositor
                     PublicKey liquidationDelegate,
-                    // the sum of all shares held by the users (vault depositors)
+                    // The sum of all shares held by the users (vault depositors)
                     BigInteger userShares,
-                    // the sum of all shares (including vault manager)
+                    // The sum of all shares: deposits from users, manager deposits, manager profit/fee, and protocol profit/fee.
+                    // The manager deposits are total_shares - user_shares - protocol_profit_and_fee_shares.
                     BigInteger totalShares,
-                    // last fee update unix timestamp
+                    // Last fee update unix timestamp
                     long lastFeeUpdateTs,
-                    // When the liquidation start
+                    // When the liquidation starts
                     long liquidationStartTs,
-                    // the period (in seconds) that a vault depositor must wait after requesting a withdraw to complete withdraw
+                    // The period (in seconds) that a vault depositor must wait after requesting a withdrawal to finalize withdrawal.
+                    // Currently, the maximum is 90 days.
                     long redeemPeriod,
-                    // the sum of all outstanding withdraw requests
+                    // The sum of all outstanding withdraw requests
                     long totalWithdrawRequested,
-                    // max token capacity, once hit/passed vault will reject new deposits (updateable)
+                    // Max token capacity, once hit/passed vault will reject new deposits (updatable)
                     long maxTokens,
-                    // manager fee
+                    // The annual fee charged on deposits by the manager.
+                    // Traditional funds typically charge 2% per year on assets under management.
                     long managementFee,
-                    // timestamp vault initialized
+                    // Timestamp vault initialized
                     long initTs,
-                    // the net deposits for the vault
+                    // The net deposits for the vault
                     long netDeposits,
-                    // the net deposits for the vault manager
+                    // The net deposits for the manager
                     long managerNetDeposits,
-                    // total deposits
+                    // Total deposits
                     long totalDeposits,
-                    // total withdraws
+                    // Total withdraws
                     long totalWithdraws,
-                    // total deposits for the vault manager
+                    // Total deposits for the manager
                     long managerTotalDeposits,
-                    // total withdraws for the vault manager
+                    // Total withdraws for the manager
                     long managerTotalWithdraws,
-                    // total mgmt fee charged by vault manager
+                    // Total management fee accrued by the manager
                     long managerTotalFee,
-                    // total profit share charged by vault manager
+                    // Total profit share accrued by the manager
                     long managerTotalProfitShare,
-                    // the minimum deposit amount
+                    // The minimum deposit amount
                     long minDepositAmount,
                     WithdrawRequest lastManagerWithdrawRequest,
-                    // the base 10 exponent of the shares (given massive share inflation can occur at near zero vault equity)
+                    // The base 10 exponent of the shares (given massive share inflation can occur at near zero vault equity)
                     int sharesBase,
-                    // percentage of gains for vault admin upon depositor's realize/withdraw: PERCENTAGE_PRECISION
+                    // Percentage the manager charges on all profits realized by depositors: PERCENTAGE_PRECISION
                     int profitShare,
-                    // vault admin only collect incentive fees during periods when returns are higher than this amount: PERCENTAGE_PRECISION
+                    // Vault manager only collect incentive fees during periods when returns are higher than this amount: PERCENTAGE_PRECISION
                     int hurdleRate,
                     // The spot market index the vault deposits into/withdraws from
                     int spotMarketIndex,
                     // The bump for the vault pda
                     int bump,
-                    // Whether or not anybody can be a depositor
+                    // Whether anybody can be a depositor
                     boolean permissioned,
+                    // The optional [`VaultProtocol`] account.
+                    boolean vaultProtocol,
+                    // How fuel distribution should be treated [`FuelDistributionMode`]. Default is `UsersOnly`
+                    int fuelDistributionMode,
+                    // Whether the vault has a FeeUpdate account [`FeeUpdateStatus`]. Default is `FeeUpdateStatus::None`
+                    // After a `FeeUpdate` account is created and the manager has staged a fee update, the status is set to `PendingFeeUpdate`.
+                    // And instructsions that may finalize the fee update must include the `FeeUpdate` account with `remaining_accounts`.
+                    int feeUpdateStatus,
+                    // The class of the vault [`VaultClass`]. Default is `VaultClass::Normal`
+                    int vaultClass,
+                    // The timestamp cumulative_fuel_per_share was last updated
+                    int lastCumulativeFuelPerShareTs,
+                    // The cumulative fuel per share (scaled up by 1e6 to avoid losing precision)
+                    BigInteger cumulativeFuelPerShare,
+                    // The total fuel accumulated
+                    BigInteger cumulativeFuel,
+                    // The total value (in deposit asset) of borrows the manager has outstanding.
+                    // Purely for informational purposes for assets that have left the vault that the manager
+                    // is expected to return.
+                    long managerBorrowedValue,
                     long[] padding) implements Borsh {
 
   public static final int BYTES = 536;
@@ -127,7 +150,15 @@ public record Vault(PublicKey _address,
   public static final int SPOT_MARKET_INDEX_OFFSET = 468;
   public static final int BUMP_OFFSET = 470;
   public static final int PERMISSIONED_OFFSET = 471;
-  public static final int PADDING_OFFSET = 472;
+  public static final int VAULT_PROTOCOL_OFFSET = 472;
+  public static final int FUEL_DISTRIBUTION_MODE_OFFSET = 473;
+  public static final int FEE_UPDATE_STATUS_OFFSET = 474;
+  public static final int VAULT_CLASS_OFFSET = 475;
+  public static final int LAST_CUMULATIVE_FUEL_PER_SHARE_TS_OFFSET = 476;
+  public static final int CUMULATIVE_FUEL_PER_SHARE_OFFSET = 480;
+  public static final int CUMULATIVE_FUEL_OFFSET = 496;
+  public static final int MANAGER_BORROWED_VALUE_OFFSET = 512;
+  public static final int PADDING_OFFSET = 520;
 
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);
@@ -301,6 +332,46 @@ public record Vault(PublicKey _address,
     return Filter.createMemCompFilter(PERMISSIONED_OFFSET, new byte[]{(byte) (permissioned ? 1 : 0)});
   }
 
+  public static Filter createVaultProtocolFilter(final boolean vaultProtocol) {
+    return Filter.createMemCompFilter(VAULT_PROTOCOL_OFFSET, new byte[]{(byte) (vaultProtocol ? 1 : 0)});
+  }
+
+  public static Filter createFuelDistributionModeFilter(final int fuelDistributionMode) {
+    return Filter.createMemCompFilter(FUEL_DISTRIBUTION_MODE_OFFSET, new byte[]{(byte) fuelDistributionMode});
+  }
+
+  public static Filter createFeeUpdateStatusFilter(final int feeUpdateStatus) {
+    return Filter.createMemCompFilter(FEE_UPDATE_STATUS_OFFSET, new byte[]{(byte) feeUpdateStatus});
+  }
+
+  public static Filter createVaultClassFilter(final int vaultClass) {
+    return Filter.createMemCompFilter(VAULT_CLASS_OFFSET, new byte[]{(byte) vaultClass});
+  }
+
+  public static Filter createLastCumulativeFuelPerShareTsFilter(final int lastCumulativeFuelPerShareTs) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, lastCumulativeFuelPerShareTs);
+    return Filter.createMemCompFilter(LAST_CUMULATIVE_FUEL_PER_SHARE_TS_OFFSET, _data);
+  }
+
+  public static Filter createCumulativeFuelPerShareFilter(final BigInteger cumulativeFuelPerShare) {
+    final byte[] _data = new byte[16];
+    putInt128LE(_data, 0, cumulativeFuelPerShare);
+    return Filter.createMemCompFilter(CUMULATIVE_FUEL_PER_SHARE_OFFSET, _data);
+  }
+
+  public static Filter createCumulativeFuelFilter(final BigInteger cumulativeFuel) {
+    final byte[] _data = new byte[16];
+    putInt128LE(_data, 0, cumulativeFuel);
+    return Filter.createMemCompFilter(CUMULATIVE_FUEL_OFFSET, _data);
+  }
+
+  public static Filter createManagerBorrowedValueFilter(final long managerBorrowedValue) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, managerBorrowedValue);
+    return Filter.createMemCompFilter(MANAGER_BORROWED_VALUE_OFFSET, _data);
+  }
+
   public static Vault read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -387,7 +458,23 @@ public record Vault(PublicKey _address,
     ++i;
     final var permissioned = _data[i] == 1;
     ++i;
-    final var padding = new long[8];
+    final var vaultProtocol = _data[i] == 1;
+    ++i;
+    final var fuelDistributionMode = _data[i] & 0xFF;
+    ++i;
+    final var feeUpdateStatus = _data[i] & 0xFF;
+    ++i;
+    final var vaultClass = _data[i] & 0xFF;
+    ++i;
+    final var lastCumulativeFuelPerShareTs = getInt32LE(_data, i);
+    i += 4;
+    final var cumulativeFuelPerShare = getInt128LE(_data, i);
+    i += 16;
+    final var cumulativeFuel = getInt128LE(_data, i);
+    i += 16;
+    final var managerBorrowedValue = getInt64LE(_data, i);
+    i += 8;
+    final var padding = new long[2];
     Borsh.readArray(padding, _data, i);
     return new Vault(_address,
                      discriminator,
@@ -424,6 +511,14 @@ public record Vault(PublicKey _address,
                      spotMarketIndex,
                      bump,
                      permissioned,
+                     vaultProtocol,
+                     fuelDistributionMode,
+                     feeUpdateStatus,
+                     vaultClass,
+                     lastCumulativeFuelPerShareTs,
+                     cumulativeFuelPerShare,
+                     cumulativeFuel,
+                     managerBorrowedValue,
                      padding);
   }
 
@@ -494,6 +589,22 @@ public record Vault(PublicKey _address,
     ++i;
     _data[i] = (byte) (permissioned ? 1 : 0);
     ++i;
+    _data[i] = (byte) (vaultProtocol ? 1 : 0);
+    ++i;
+    _data[i] = (byte) fuelDistributionMode;
+    ++i;
+    _data[i] = (byte) feeUpdateStatus;
+    ++i;
+    _data[i] = (byte) vaultClass;
+    ++i;
+    putInt32LE(_data, i, lastCumulativeFuelPerShareTs);
+    i += 4;
+    putInt128LE(_data, i, cumulativeFuelPerShare);
+    i += 16;
+    putInt128LE(_data, i, cumulativeFuel);
+    i += 16;
+    putInt64LE(_data, i, managerBorrowedValue);
+    i += 8;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

@@ -112,7 +112,6 @@ final class DriftVaultsProgramClientImpl implements DriftVaultsProgramClient {
         authorityKey,
         driftUserStatsKey,
         driftUserKey,
-        driftAccounts.stateKey(),
         withdrawAmount,
         withdrawUnit
     );
@@ -130,8 +129,7 @@ final class DriftVaultsProgramClientImpl implements DriftVaultsProgramClient {
         vaultDepositorKey,
         authorityKey,
         driftUserStatsKey,
-        driftUserKey,
-        driftAccounts.stateKey()
+        driftUserKey
     );
   }
 

@@ -11,6 +11,7 @@
   {
     "name": "Drift Vaults",
     "program": "vAuLTsyrvSfZRuRB3XgvkPwNGgYSs9YRYymVebLKoxR",
+    "idlURL": "https://raw.githubusercontent.com/drift-labs/drift-vaults/refs/heads/master/ts/sdk/src/idl/drift_vaults.json",
     "package": "drift.vaults"
   },
   {

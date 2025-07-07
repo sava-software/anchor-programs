@@ -44,7 +44,11 @@ public record VaultDepositor(PublicKey _address,
                              long profitShareFeePaid,
                              // the exponent for vault_shares decimal places
                              int vaultSharesBase,
-                             int padding1,
+                             int lastFuelUpdateTs,
+                             // precision: FUEL_SHARE_PRECISION
+                             BigInteger cumulativeFuelPerShareAmount,
+                             // precision: none
+                             BigInteger fuelAmount,
                              long[] padding) implements Borsh {
 
   public static final int BYTES = 272;
@@ -62,8 +66,10 @@ public record VaultDepositor(PublicKey _address,
   public static final int CUMULATIVE_PROFIT_SHARE_AMOUNT_OFFSET = 184;
   public static final int PROFIT_SHARE_FEE_PAID_OFFSET = 192;
   public static final int VAULT_SHARES_BASE_OFFSET = 200;
-  public static final int PADDING1_OFFSET = 204;
-  public static final int PADDING_OFFSET = 208;
+  public static final int LAST_FUEL_UPDATE_TS_OFFSET = 204;
+  public static final int CUMULATIVE_FUEL_PER_SHARE_AMOUNT_OFFSET = 208;
+  public static final int FUEL_AMOUNT_OFFSET = 224;
+  public static final int PADDING_OFFSET = 240;
 
   public static Filter createVaultFilter(final PublicKey vault) {
     return Filter.createMemCompFilter(VAULT_OFFSET, vault);
@@ -129,10 +135,22 @@ public record VaultDepositor(PublicKey _address,
     return Filter.createMemCompFilter(VAULT_SHARES_BASE_OFFSET, _data);
   }
 
-  public static Filter createPadding1Filter(final int padding1) {
+  public static Filter createLastFuelUpdateTsFilter(final int lastFuelUpdateTs) {
     final byte[] _data = new byte[4];
-    putInt32LE(_data, 0, padding1);
-    return Filter.createMemCompFilter(PADDING1_OFFSET, _data);
+    putInt32LE(_data, 0, lastFuelUpdateTs);
+    return Filter.createMemCompFilter(LAST_FUEL_UPDATE_TS_OFFSET, _data);
+  }
+
+  public static Filter createCumulativeFuelPerShareAmountFilter(final BigInteger cumulativeFuelPerShareAmount) {
+    final byte[] _data = new byte[16];
+    putInt128LE(_data, 0, cumulativeFuelPerShareAmount);
+    return Filter.createMemCompFilter(CUMULATIVE_FUEL_PER_SHARE_AMOUNT_OFFSET, _data);
+  }
+
+  public static Filter createFuelAmountFilter(final BigInteger fuelAmount) {
+    final byte[] _data = new byte[16];
+    putInt128LE(_data, 0, fuelAmount);
+    return Filter.createMemCompFilter(FUEL_AMOUNT_OFFSET, _data);
   }
 
   public static VaultDepositor read(final byte[] _data, final int offset) {
@@ -179,9 +197,13 @@ public record VaultDepositor(PublicKey _address,
     i += 8;
     final var vaultSharesBase = getInt32LE(_data, i);
     i += 4;
-    final var padding1 = getInt32LE(_data, i);
+    final var lastFuelUpdateTs = getInt32LE(_data, i);
     i += 4;
-    final var padding = new long[8];
+    final var cumulativeFuelPerShareAmount = getInt128LE(_data, i);
+    i += 16;
+    final var fuelAmount = getInt128LE(_data, i);
+    i += 16;
+    final var padding = new long[4];
     Borsh.readArray(padding, _data, i);
     return new VaultDepositor(_address,
                               discriminator,
@@ -197,7 +219,9 @@ public record VaultDepositor(PublicKey _address,
                               cumulativeProfitShareAmount,
                               profitShareFeePaid,
                               vaultSharesBase,
-                              padding1,
+                              lastFuelUpdateTs,
+                              cumulativeFuelPerShareAmount,
+                              fuelAmount,
                               padding);
   }
 
@@ -227,8 +251,12 @@ public record VaultDepositor(PublicKey _address,
     i += 8;
     putInt32LE(_data, i, vaultSharesBase);
     i += 4;
-    putInt32LE(_data, i, padding1);
+    putInt32LE(_data, i, lastFuelUpdateTs);
     i += 4;
+    putInt128LE(_data, i, cumulativeFuelPerShareAmount);
+    i += 16;
+    putInt128LE(_data, i, fuelAmount);
+    i += 16;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }
