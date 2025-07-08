@@ -10,7 +10,7 @@ pluginManagement {
 }
 
 plugins {
-  id("software.sava.build")  version "0.1.24"
+  id("software.sava.build")  version "0.1.26"
 }
 
 rootProject.name = "anchor-programs"

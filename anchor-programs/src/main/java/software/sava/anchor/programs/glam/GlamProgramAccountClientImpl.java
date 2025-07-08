@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.SequencedCollection;
 import java.util.concurrent.CompletableFuture;
 
-import static software.sava.anchor.programs.glam.anchor.GlamProtocolPDAs.escrowMintAtaPDA;
 import static software.sava.core.accounts.meta.AccountMeta.createFeePayer;
 
 final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
@@ -519,12 +518,12 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     final var escrow = GlamProtocolPDAs.glamEscrowPDA(glamProgram, glamVaultAccounts.glamPublicKey()).publicKey();
 
     final var mint = glamVaultAccounts.mintPDA(mintId).publicKey();
-    final var escrowMintTokenAccount = escrowMintAtaPDA(glamProgram, escrow, solanaAccounts.token2022Program(), mint);
+    final var escrowMintTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, escrow, solanaAccounts.token2022Program(), mint);
 
     final var vault = glamVaultAccounts.vaultPublicKey();
-    final var vaultTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, vault, baseAssetTokenProgram, mint);
+    final var vaultTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, vault, baseAssetTokenProgram, baseAssetMint);
 
-    final var escrowTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, escrow, baseAssetTokenProgram, mint);
+    final var escrowTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, escrow, baseAssetTokenProgram, baseAssetMint);
 
     return GlamProtocolProgram.fulfill(
         invokedProgram,
