@@ -1,10 +1,7 @@
 package software.sava.anchor.programs.glam;
 
 
-import software.sava.anchor.programs.glam.anchor.types.Integration;
-import software.sava.anchor.programs.glam.anchor.types.Permission;
-import software.sava.anchor.programs.glam.anchor.types.PriceDenom;
-import software.sava.anchor.programs.glam.anchor.types.StateAccount;
+import software.sava.anchor.programs.glam.anchor.types.*;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
@@ -142,4 +139,6 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
                                      final PriceDenom priceDenom);
 
   Instruction priceMeteoraPositions(final PublicKey solOracleKey, final PriceDenom priceDenom);
+
+  Instruction updateState(final StateModel state);
 }

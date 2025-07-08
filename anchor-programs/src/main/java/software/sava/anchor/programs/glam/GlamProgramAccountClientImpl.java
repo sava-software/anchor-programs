@@ -3,6 +3,7 @@ package software.sava.anchor.programs.glam;
 import software.sava.anchor.programs.glam.anchor.GlamProtocolPDAs;
 import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.anchor.programs.glam.anchor.types.PriceDenom;
+import software.sava.anchor.programs.glam.anchor.types.StateModel;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -652,6 +653,16 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         solOracleKey,
         glamVaultAccounts.glamAccounts().glamConfigKey(),
         priceDenom
+    );
+  }
+
+  @Override
+  public Instruction updateState(final StateModel state) {
+    return GlamProtocolProgram.updateState(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        feePayer.publicKey(),
+        state
     );
   }
 }
