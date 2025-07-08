@@ -1,5 +1,6 @@
-package software.sava.anchor.programs.glam.anchor.types;
+package software.sava.anchor.programs.glam;
 
+import software.sava.anchor.programs.glam.anchor.types.*;
 import software.sava.core.accounts.PublicKey;
 
 import java.util.OptionalInt;
