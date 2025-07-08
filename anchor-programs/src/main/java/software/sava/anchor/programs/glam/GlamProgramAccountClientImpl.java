@@ -544,6 +544,45 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
+  public Instruction priceVault(final PublicKey solOracleKey, final PriceDenom priceDenom) {
+    return GlamProtocolProgram.priceVault(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        solOracleKey,
+        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        priceDenom
+    );
+  }
+
+  @Override
+  public Instruction priceStakes(final PublicKey solOracleKey, final PriceDenom priceDenom) {
+    return GlamProtocolProgram.priceStakes(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        solOracleKey,
+        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        priceDenom
+    );
+  }
+
+  @Override
+  public Instruction priceDriftUsers(final PublicKey solOracleKey, final PriceDenom priceDenom) {
+    return GlamProtocolProgram.priceDriftUsers(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        solOracleKey,
+        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        priceDenom
+    );
+  }
+
+  @Override
   public Instruction priceDriftVaultDepositors(final PublicKey solOracleKey, final PriceDenom priceDenom) {
     return GlamProtocolProgram.priceDriftVaultDepositors(
         invokedProgram,
@@ -552,6 +591,30 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         feePayer.publicKey(),
         solOracleKey,
         glamVaultAccounts.glamAccounts().glamConfigKey(),
+        priceDenom
+    );
+  }
+
+  @Override
+  public Instruction priceKaminoObligations(final PublicKey kaminoLendingProgramKey,
+                                            final PublicKey solOracleKey,
+                                            final PublicKey pythOracleKey,
+                                            final PublicKey switchboardPriceOracleKey,
+                                            final PublicKey switchboardTwapOracleKey,
+                                            final PublicKey scopePricesKey,
+                                            final PriceDenom priceDenom) {
+    return GlamProtocolProgram.priceKaminoObligations(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        kaminoLendingProgramKey,
+        solOracleKey,
+        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        pythOracleKey,
+        switchboardPriceOracleKey,
+        switchboardTwapOracleKey,
+        scopePricesKey,
         priceDenom
     );
   }
@@ -576,6 +639,19 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         switchboardPriceOracleKey,
         switchboardTwapOracleKey,
         scopePricesKey,
+        priceDenom
+    );
+  }
+
+  @Override
+  public Instruction priceMeteoraPositions(final PublicKey solOracleKey, final PriceDenom priceDenom) {
+    return GlamProtocolProgram.priceMeteoraPositions(
+        invokedProgram,
+        glamVaultAccounts.glamPublicKey(),
+        glamVaultAccounts.vaultPublicKey(),
+        feePayer.publicKey(),
+        solOracleKey,
+        glamVaultAccounts.glamAccounts().glamConfigKey(),
         priceDenom
     );
   }

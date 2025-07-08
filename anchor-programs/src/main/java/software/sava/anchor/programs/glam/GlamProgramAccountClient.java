@@ -117,7 +117,21 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
     return fulfill(0, baseAssetMint, baseAssetTokenProgram);
   }
 
+  Instruction priceVault(final PublicKey solOracleKey, final PriceDenom priceDenom);
+
+  Instruction priceStakes(final PublicKey solOracleKey, final PriceDenom priceDenom);
+
+  Instruction priceDriftUsers(final PublicKey solOracleKey, final PriceDenom priceDenom);
+
   Instruction priceDriftVaultDepositors(final PublicKey solOracleKey, final PriceDenom priceDenom);
+
+  Instruction priceKaminoObligations(final PublicKey kaminoLendingProgramKey,
+                                     final PublicKey solOracleKey,
+                                     final PublicKey pythOracleKey,
+                                     final PublicKey switchboardPriceOracleKey,
+                                     final PublicKey switchboardTwapOracleKey,
+                                     final PublicKey scopePricesKey,
+                                     final PriceDenom priceDenom);
 
   Instruction priceKaminoVaultShares(final PublicKey kaminoLendingProgramKey,
                                      final PublicKey solOracleKey,
@@ -126,4 +140,6 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
                                      final PublicKey switchboardTwapOracleKey,
                                      final PublicKey scopePricesKey,
                                      final PriceDenom priceDenom);
+
+  Instruction priceMeteoraPositions(final PublicKey solOracleKey, final PriceDenom priceDenom);
 }
