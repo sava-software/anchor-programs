@@ -457,6 +457,134 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
+  public Instruction initializeInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                                  final PublicKey insuranceFundStakeKey,
+                                                  final PublicKey payerKey,
+                                                  final PublicKey systemProgramKey,
+                                                  final PublicKey rentSysvar) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction addInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                           final PublicKey insuranceFundStakeKey,
+                                           final PublicKey insuranceFundVaultKey,
+                                           final PublicKey userTokenAccountKey,
+                                           final PublicKey tokenProgramKey,
+                                           final long amount) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction requestRemoveInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                                     final PublicKey insuranceFundStakeKey,
+                                                     final PublicKey insuranceFundVaultKey,
+                                                     final long amount) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction cancelRequestRemoveInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                                           final PublicKey insuranceFundStakeKey,
+                                                           final PublicKey insuranceFundVaultKey) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction removeInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                              final PublicKey insuranceFundStakeKey,
+                                              final PublicKey insuranceFundVaultKey,
+                                              final PublicKey userTokenAccountKey,
+                                              final PublicKey tokenProgramKey) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction enableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey, final int subAccountId) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction disableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction reclaimRent(final PublicKey rentKey) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction deleteUser(final PublicKey userKey, final PublicKey userStatsKey, final PublicKey stateKey) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction updateUserPoolId(final int subAccountId, final int poolId) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction updateUserName(final int subAccountId, final byte[] name) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction updateUserCustomMarginRatio(final int subAccountId, final int marginRatio) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction updateUserMarginTradingEnabled(final int subAccountId, final boolean marginTradingEnabled) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction updateUserDelegate(final int subAccountId, final PublicKey delegate) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction updateUserReduceOnly(final int subAccountId, final boolean reduceOnly) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction updateUserAdvancedLp(final int subAccountId, final boolean advancedLp) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction updateUserProtectedMakerOrders(final PublicKey protectedMakerModeConfigKey,
+                                                    final int subAccountId,
+                                                    final boolean protectedMakerOrders) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction removePerpLpShares(final PublicKey userKey,
+                                        final PublicKey authorityKey,
+                                        final long sharesToBurn,
+                                        final int marketIndex) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction removePerpLpSharesInExpiringMarket(final PublicKey userKey,
+                                                        final long sharesToBurn,
+                                                        final int marketIndex) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
+  public Instruction addPerpLpShares(final PublicKey userKey,
+                                     final PublicKey authorityKey,
+                                     final long nShares,
+                                     final int marketIndex) {
+    throw new UnsupportedOperationException("Use Ix-proxy instead.");
+  }
+
+  @Override
   public Instruction initializeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
                                                    final PublicKey authorityKey,
                                                    final PublicKey payerKey,

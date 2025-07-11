@@ -423,6 +423,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction initializeInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
                                                   final PublicKey insuranceFundStakeKey,
                                                   final PublicKey payerKey,
@@ -443,6 +444,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction addInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
                                            final PublicKey insuranceFundStakeKey,
                                            final PublicKey insuranceFundVaultKey,
@@ -467,6 +469,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction requestRemoveInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
                                                      final PublicKey insuranceFundStakeKey,
                                                      final PublicKey insuranceFundVaultKey,
@@ -484,6 +487,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction cancelRequestRemoveInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
                                                            final PublicKey insuranceFundStakeKey,
                                                            final PublicKey insuranceFundVaultKey) {
@@ -499,6 +503,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction removeInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
                                               final PublicKey insuranceFundStakeKey,
                                               final PublicKey insuranceFundVaultKey,
@@ -520,6 +525,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction enableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey, final int subAccountId) {
     return DriftProgram.enableUserHighLeverageMode(
         accounts.invokedDriftProgram(),
@@ -531,6 +537,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction disableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey) {
     return DriftProgram.disableUserHighLeverageMode(
         accounts.invokedDriftProgram(),
@@ -541,6 +548,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction reclaimRent(final PublicKey rentKey) {
     final var userStatsPDA = deriveUserStatsAccount(accounts, authority);
     return DriftProgram.reclaimRent(
@@ -553,6 +561,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction deleteUser(final PublicKey userKey, final PublicKey userStatsKey, final PublicKey stateKey) {
     return DriftProgram.deleteUser(
         accounts.invokedDriftProgram(),
@@ -578,6 +587,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction updateUserPoolId(final int subAccountId, final int poolId) {
     return DriftProgram.updateUserPoolId(
         accounts.invokedDriftProgram(),
@@ -588,6 +598,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction updateUserName(final int subAccountId, final byte[] name) {
     return DriftProgram.updateUserName(
         accounts.invokedDriftProgram(),
@@ -598,6 +609,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction updateUserCustomMarginRatio(final int subAccountId, final int marginRatio) {
     return DriftProgram.updateUserCustomMarginRatio(
         accounts.invokedDriftProgram(),
@@ -608,6 +620,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction updateUserMarginTradingEnabled(final int subAccountId, final boolean marginTradingEnabled) {
     return DriftProgram.updateUserMarginTradingEnabled(
         accounts.invokedDriftProgram(),
@@ -618,6 +631,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction updateUserDelegate(final int subAccountId, final PublicKey delegate) {
     return DriftProgram.updateUserDelegate(
         accounts.invokedDriftProgram(),
@@ -628,6 +642,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction updateUserReduceOnly(final int subAccountId, final boolean reduceOnly) {
     return DriftProgram.updateUserReduceOnly(
         accounts.invokedDriftProgram(),
@@ -638,6 +653,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction updateUserAdvancedLp(final int subAccountId, final boolean advancedLp) {
     return DriftProgram.updateUserAdvancedLp(
         accounts.invokedDriftProgram(),
@@ -648,6 +664,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction updateUserProtectedMakerOrders(final PublicKey protectedMakerModeConfigKey,
                                                     final int subAccountId,
                                                     final boolean protectedMakerOrders) {
@@ -662,6 +679,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction removePerpLpShares(final PublicKey userKey,
                                         final PublicKey authorityKey,
                                         final long sharesToBurn,
@@ -676,6 +694,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction removePerpLpSharesInExpiringMarket(final PublicKey userKey,
                                                         final long sharesToBurn,
                                                         final int marketIndex) {
@@ -688,6 +707,7 @@ final class DriftProgramClientImpl implements DriftProgramClient {
     );
   }
 
+  @Override
   public Instruction addPerpLpShares(final PublicKey userKey,
                                      final PublicKey authorityKey,
                                      final long nShares,

@@ -401,6 +401,74 @@ public interface DriftProgramClient {
                                     final OrderParams params,
                                     final OptionalInt successCondition);
 
+  Instruction initializeInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                           final PublicKey insuranceFundStakeKey,
+                                           final PublicKey payerKey,
+                                           final PublicKey systemProgramKey,
+                                           final PublicKey rentSysvar);
+
+  Instruction addInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                    final PublicKey insuranceFundStakeKey,
+                                    final PublicKey insuranceFundVaultKey,
+                                    final PublicKey userTokenAccountKey,
+                                    final PublicKey tokenProgramKey,
+                                    final long amount);
+
+  Instruction requestRemoveInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                              final PublicKey insuranceFundStakeKey,
+                                              final PublicKey insuranceFundVaultKey,
+                                              final long amount);
+
+  Instruction cancelRequestRemoveInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                                    final PublicKey insuranceFundStakeKey,
+                                                    final PublicKey insuranceFundVaultKey);
+
+  Instruction removeInsuranceFundStake(final SpotMarketConfig spotMarketConfig,
+                                       final PublicKey insuranceFundStakeKey,
+                                       final PublicKey insuranceFundVaultKey,
+                                       final PublicKey userTokenAccountKey,
+                                       final PublicKey tokenProgramKey);
+
+  Instruction enableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey, final int subAccountId);
+
+  Instruction disableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey);
+
+  Instruction reclaimRent(final PublicKey rentKey);
+
+  Instruction deleteUser(final PublicKey userKey, final PublicKey userStatsKey, final PublicKey stateKey);
+
+  Instruction updateUserPoolId(final int subAccountId, final int poolId);
+
+  Instruction updateUserName(final int subAccountId, final byte[] name);
+
+  Instruction updateUserCustomMarginRatio(final int subAccountId, final int marginRatio);
+
+  Instruction updateUserMarginTradingEnabled(final int subAccountId, final boolean marginTradingEnabled);
+
+  Instruction updateUserDelegate(final int subAccountId, final PublicKey delegate);
+
+  Instruction updateUserReduceOnly(final int subAccountId, final boolean reduceOnly);
+
+  Instruction updateUserAdvancedLp(final int subAccountId, final boolean advancedLp);
+
+  Instruction updateUserProtectedMakerOrders(final PublicKey protectedMakerModeConfigKey,
+                                             final int subAccountId,
+                                             final boolean protectedMakerOrders);
+
+  Instruction removePerpLpShares(final PublicKey userKey,
+                                 final PublicKey authorityKey,
+                                 final long sharesToBurn,
+                                 final int marketIndex);
+
+  Instruction removePerpLpSharesInExpiringMarket(final PublicKey userKey,
+                                                 final long sharesToBurn,
+                                                 final int marketIndex);
+
+  Instruction addPerpLpShares(final PublicKey userKey,
+                              final PublicKey authorityKey,
+                              final long nShares,
+                              final int marketIndex);
+
   Instruction initializeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
                                             final PublicKey authorityKey,
                                             final PublicKey payerKey,
