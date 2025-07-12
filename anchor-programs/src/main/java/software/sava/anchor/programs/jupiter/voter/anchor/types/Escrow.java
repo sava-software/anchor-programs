@@ -157,7 +157,7 @@ public record Escrow(PublicKey _address,
     final var padding = getInt64LE(_data, i);
     i += 8;
     final var buffers = new BigInteger[9];
-    Borsh.readArray(buffers, _data, i);
+    Borsh.read128Array(buffers, _data, i);
     return new Escrow(_address,
                       discriminator,
                       locker,
@@ -199,7 +199,7 @@ public record Escrow(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, padding);
     i += 8;
-    i += Borsh.writeArray(buffers, _data, i);
+    i += Borsh.write128Array(buffers, _data, i);
     return i - offset;
   }
 

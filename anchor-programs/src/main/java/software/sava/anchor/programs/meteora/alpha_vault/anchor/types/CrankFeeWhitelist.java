@@ -52,7 +52,7 @@ public record CrankFeeWhitelist(PublicKey _address, Discriminator discriminator,
     final var owner = readPubKey(_data, i);
     i += 32;
     final var padding = new BigInteger[5];
-    Borsh.readArray(padding, _data, i);
+    Borsh.read128Array(padding, _data, i);
     return new CrankFeeWhitelist(_address, discriminator, owner, padding);
   }
 
@@ -61,7 +61,7 @@ public record CrankFeeWhitelist(PublicKey _address, Discriminator discriminator,
     int i = offset + discriminator.write(_data, offset);
     owner.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.write128Array(padding, _data, i);
     return i - offset;
   }
 

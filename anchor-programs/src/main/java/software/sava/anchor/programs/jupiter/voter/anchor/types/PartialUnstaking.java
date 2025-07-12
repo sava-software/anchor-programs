@@ -98,7 +98,7 @@ public record PartialUnstaking(PublicKey _address,
     final var expiration = getInt64LE(_data, i);
     i += 8;
     final var buffers = new BigInteger[6];
-    i += Borsh.readArray(buffers, _data, i);
+    i += Borsh.read128Array(buffers, _data, i);
     final var memo = Borsh.string(_data, i);
     return new PartialUnstaking(_address,
                                 discriminator,
@@ -118,7 +118,7 @@ public record PartialUnstaking(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, expiration);
     i += 8;
-    i += Borsh.writeArray(buffers, _data, i);
+    i += Borsh.write128Array(buffers, _data, i);
     i += Borsh.writeVector(_memo, _data, i);
     return i - offset;
   }
@@ -128,7 +128,7 @@ public record PartialUnstaking(PublicKey _address,
     return 8 + 32
          + 8
          + 8
-         + Borsh.lenArray(buffers)
+         + Borsh.len128Array(buffers)
          + Borsh.lenVector(_memo);
   }
 }

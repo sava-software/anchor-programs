@@ -57,8 +57,8 @@ public record UpdateDaoParams(OptionalInt passThresholdBps,
     int i = offset;
     i += Borsh.writeOptionalshort(passThresholdBps, _data, i);
     i += Borsh.writeOptional(slotsPerProposal, _data, i);
-    i += Borsh.writeOptional(twapInitialObservation, _data, i);
-    i += Borsh.writeOptional(twapMaxObservationChangePerUpdate, _data, i);
+    i += Borsh.write128Optional(twapInitialObservation, _data, i);
+    i += Borsh.write128Optional(twapMaxObservationChangePerUpdate, _data, i);
     i += Borsh.writeOptional(minQuoteFutarchicLiquidity, _data, i);
     i += Borsh.writeOptional(minBaseFutarchicLiquidity, _data, i);
     return i - offset;

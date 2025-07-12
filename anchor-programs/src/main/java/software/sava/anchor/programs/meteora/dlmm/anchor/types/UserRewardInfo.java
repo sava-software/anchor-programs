@@ -14,7 +14,7 @@ public record UserRewardInfo(BigInteger[] rewardPerTokenCompletes, long[] reward
     }
     int i = offset;
     final var rewardPerTokenCompletes = new BigInteger[2];
-    i += Borsh.readArray(rewardPerTokenCompletes, _data, i);
+    i += Borsh.read128Array(rewardPerTokenCompletes, _data, i);
     final var rewardPendings = new long[2];
     Borsh.readArray(rewardPendings, _data, i);
     return new UserRewardInfo(rewardPerTokenCompletes, rewardPendings);
@@ -23,7 +23,7 @@ public record UserRewardInfo(BigInteger[] rewardPerTokenCompletes, long[] reward
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(rewardPerTokenCompletes, _data, i);
+    i += Borsh.write128Array(rewardPerTokenCompletes, _data, i);
     i += Borsh.writeArray(rewardPendings, _data, i);
     return i - offset;
   }

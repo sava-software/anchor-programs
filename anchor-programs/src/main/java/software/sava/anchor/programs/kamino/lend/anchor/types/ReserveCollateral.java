@@ -33,9 +33,9 @@ public record ReserveCollateral(// Reserve collateral mint address
     final var supplyVault = readPubKey(_data, i);
     i += 32;
     final var padding1 = new BigInteger[32];
-    i += Borsh.readArray(padding1, _data, i);
+    i += Borsh.read128Array(padding1, _data, i);
     final var padding2 = new BigInteger[32];
-    Borsh.readArray(padding2, _data, i);
+    Borsh.read128Array(padding2, _data, i);
     return new ReserveCollateral(mintPubkey,
                                  mintTotalSupply,
                                  supplyVault,
@@ -52,8 +52,8 @@ public record ReserveCollateral(// Reserve collateral mint address
     i += 8;
     supplyVault.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding1, _data, i);
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.write128Array(padding1, _data, i);
+    i += Borsh.write128Array(padding2, _data, i);
     return i - offset;
   }
 

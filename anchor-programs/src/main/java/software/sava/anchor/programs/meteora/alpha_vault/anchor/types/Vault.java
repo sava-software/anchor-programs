@@ -330,7 +330,7 @@ public record Vault(PublicKey _address,
     final var vaultAuthority = readPubKey(_data, i);
     i += 32;
     final var padding = new BigInteger[5];
-    Borsh.readArray(padding, _data, i);
+    Borsh.read128Array(padding, _data, i);
     return new Vault(_address,
                      discriminator,
                      pool,
@@ -424,7 +424,7 @@ public record Vault(PublicKey _address,
     i += Borsh.writeArray(padding1, _data, i);
     vaultAuthority.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.write128Array(padding, _data, i);
     return i - offset;
   }
 

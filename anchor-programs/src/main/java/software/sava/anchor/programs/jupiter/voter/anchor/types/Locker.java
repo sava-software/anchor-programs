@@ -114,7 +114,7 @@ public record Locker(PublicKey _address,
     final var params = LockerParams.read(_data, i);
     i += Borsh.len(params);
     final var buffers = new BigInteger[32];
-    Borsh.readArray(buffers, _data, i);
+    Borsh.read128Array(buffers, _data, i);
     return new Locker(_address,
                       discriminator,
                       base,
@@ -143,7 +143,7 @@ public record Locker(PublicKey _address,
     governor.write(_data, i);
     i += 32;
     i += Borsh.write(params, _data, i);
-    i += Borsh.writeArray(buffers, _data, i);
+    i += Borsh.write128Array(buffers, _data, i);
     return i - offset;
   }
 

@@ -13,8 +13,8 @@ public record MultiSubmission(BigInteger[] values,
       return null;
     }
     int i = offset;
-    final var values = Borsh.readBigIntegerVector(_data, i);
-    i += Borsh.lenVector(values);
+    final var values = Borsh.read128Vector(_data, i);
+    i += Borsh.len128Vector(values);
     final var signature = new byte[64];
     i += Borsh.readArray(signature, _data, i);
     final var recoveryId = _data[i] & 0xFF;
@@ -24,7 +24,7 @@ public record MultiSubmission(BigInteger[] values,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeVector(values, _data, i);
+    i += Borsh.write128Vector(values, _data, i);
     i += Borsh.writeArray(signature, _data, i);
     _data[i] = (byte) recoveryId;
     ++i;
@@ -33,6 +33,6 @@ public record MultiSubmission(BigInteger[] values,
 
   @Override
   public int l() {
-    return Borsh.lenVector(values) + Borsh.lenArray(signature) + 1;
+    return Borsh.len128Vector(values) + Borsh.lenArray(signature) + 1;
   }
 }

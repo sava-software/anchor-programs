@@ -327,7 +327,7 @@ public record VaultState(PublicKey _address,
     final var vaultAllocationStrategy = new VaultAllocation[25];
     i += Borsh.readArray(vaultAllocationStrategy, VaultAllocation::read, _data, i);
     final var padding1 = new BigInteger[256];
-    i += Borsh.readArray(padding1, _data, i);
+    i += Borsh.read128Array(padding1, _data, i);
     final var minDepositAmount = getInt64LE(_data, i);
     i += 8;
     final var minWithdrawAmount = getInt64LE(_data, i);
@@ -359,7 +359,7 @@ public record VaultState(PublicKey _address,
     final var allocationAdmin = readPubKey(_data, i);
     i += 32;
     final var padding3 = new BigInteger[242];
-    Borsh.readArray(padding3, _data, i);
+    Borsh.read128Array(padding3, _data, i);
     return new VaultState(_address,
                           discriminator,
                           vaultAdminAuthority,
@@ -440,7 +440,7 @@ public record VaultState(PublicKey _address,
     putInt128LE(_data, i, pendingFeesSf);
     i += 16;
     i += Borsh.writeArray(vaultAllocationStrategy, _data, i);
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.write128Array(padding1, _data, i);
     putInt64LE(_data, i, minDepositAmount);
     i += 8;
     putInt64LE(_data, i, minWithdrawAmount);
@@ -470,7 +470,7 @@ public record VaultState(PublicKey _address,
     i += 8;
     allocationAdmin.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding3, _data, i);
+    i += Borsh.write128Array(padding3, _data, i);
     return i - offset;
   }
 

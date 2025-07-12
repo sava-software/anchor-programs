@@ -89,7 +89,7 @@ public record GlobalConfig(PublicKey _address,
     final var pendingGlobalAdmin = readPubKey(_data, i);
     i += 32;
     final var padding1 = new BigInteger[126];
-    Borsh.readArray(padding1, _data, i);
+    Borsh.read128Array(padding1, _data, i);
     return new GlobalConfig(_address,
                             discriminator,
                             globalAdmin,
@@ -113,7 +113,7 @@ public record GlobalConfig(PublicKey _address,
     i += 8;
     pendingGlobalAdmin.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.write128Array(padding1, _data, i);
     return i - offset;
   }
 

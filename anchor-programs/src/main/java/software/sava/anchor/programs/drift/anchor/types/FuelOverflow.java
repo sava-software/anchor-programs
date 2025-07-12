@@ -136,7 +136,7 @@ public record FuelOverflow(PublicKey _address,
     final var lastResetTs = getInt32LE(_data, i);
     i += 4;
     final var padding = new BigInteger[6];
-    Borsh.readArray(padding, _data, i);
+    Borsh.read128Array(padding, _data, i);
     return new FuelOverflow(_address,
                             discriminator,
                             authority,
@@ -172,7 +172,7 @@ public record FuelOverflow(PublicKey _address,
     i += 4;
     putInt32LE(_data, i, lastResetTs);
     i += 4;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.write128Array(padding, _data, i);
     return i - offset;
   }
 

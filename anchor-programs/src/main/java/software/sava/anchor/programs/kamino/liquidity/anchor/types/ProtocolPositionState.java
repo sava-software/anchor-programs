@@ -147,7 +147,7 @@ public record ProtocolPositionState(PublicKey _address,
     final var tokenFeesOwed1 = getInt64LE(_data, i);
     i += 8;
     final var rewardGrowthInside = new BigInteger[3];
-    i += Borsh.readArray(rewardGrowthInside, _data, i);
+    i += Borsh.read128Array(rewardGrowthInside, _data, i);
     final var padding = new long[8];
     Borsh.readArray(padding, _data, i);
     return new ProtocolPositionState(_address,
@@ -186,7 +186,7 @@ public record ProtocolPositionState(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, tokenFeesOwed1);
     i += 8;
-    i += Borsh.writeArray(rewardGrowthInside, _data, i);
+    i += Borsh.write128Array(rewardGrowthInside, _data, i);
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

@@ -91,7 +91,7 @@ public record ReserveLiquidity(// Reserve liquidity mint address
     final var padding2 = new long[51];
     i += Borsh.readArray(padding2, _data, i);
     final var padding3 = new BigInteger[32];
-    Borsh.readArray(padding3, _data, i);
+    Borsh.read128Array(padding3, _data, i);
     return new ReserveLiquidity(mintPubkey,
                                 supplyVault,
                                 feeVault,
@@ -147,7 +147,7 @@ public record ReserveLiquidity(// Reserve liquidity mint address
     tokenProgram.write(_data, i);
     i += 32;
     i += Borsh.writeArray(padding2, _data, i);
-    i += Borsh.writeArray(padding3, _data, i);
+    i += Borsh.write128Array(padding3, _data, i);
     return i - offset;
   }
 

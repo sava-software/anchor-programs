@@ -16,7 +16,7 @@ public record PullFeedSubmitResponseConsensusParams(long slot, BigInteger[] valu
     int i = offset;
     final var slot = getInt64LE(_data, i);
     i += 8;
-    final var values = Borsh.readBigIntegerVector(_data, i);
+    final var values = Borsh.read128Vector(_data, i);
     return new PullFeedSubmitResponseConsensusParams(slot, values);
   }
 
@@ -25,12 +25,12 @@ public record PullFeedSubmitResponseConsensusParams(long slot, BigInteger[] valu
     int i = offset;
     putInt64LE(_data, i, slot);
     i += 8;
-    i += Borsh.writeVector(values, _data, i);
+    i += Borsh.write128Vector(values, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return 8 + Borsh.lenVector(values);
+    return 8 + Borsh.len128Vector(values);
   }
 }

@@ -2262,7 +2262,7 @@ public final class JitoTipRouterProgram {
     putInt64LE(_data, i, rewardMultiplierBps);
     i += 8;
     i += Borsh.writeOptional(switchboardFeed, _data, i);
-    Borsh.writeOptional(noFeedWeight, _data, i);
+    Borsh.write128Optional(noFeedWeight, _data, i);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
   }
@@ -2307,7 +2307,7 @@ public final class JitoTipRouterProgram {
       putInt64LE(_data, i, rewardMultiplierBps);
       i += 8;
       i += Borsh.writeOptional(switchboardFeed, _data, i);
-      i += Borsh.writeOptional(noFeedWeight, _data, i);
+      i += Borsh.write128Optional(noFeedWeight, _data, i);
       return i - offset;
     }
 
@@ -2349,7 +2349,7 @@ public final class JitoTipRouterProgram {
     i += Borsh.writeOptionalbyte(ncnFeeGroup, _data, i);
     i += Borsh.writeOptional(rewardMultiplierBps, _data, i);
     i += Borsh.writeOptional(switchboardFeed, _data, i);
-    Borsh.writeOptional(noFeedWeight, _data, i);
+    Borsh.write128Optional(noFeedWeight, _data, i);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
   }
@@ -2402,7 +2402,7 @@ public final class JitoTipRouterProgram {
       i += Borsh.writeOptionalbyte(ncnFeeGroup, _data, i);
       i += Borsh.writeOptional(rewardMultiplierBps, _data, i);
       i += Borsh.writeOptional(switchboardFeed, _data, i);
-      i += Borsh.writeOptional(noFeedWeight, _data, i);
+      i += Borsh.write128Optional(noFeedWeight, _data, i);
       return i - offset;
     }
 

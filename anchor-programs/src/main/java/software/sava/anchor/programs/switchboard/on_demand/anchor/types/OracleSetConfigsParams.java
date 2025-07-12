@@ -17,7 +17,9 @@ public record OracleSetConfigsParams(PublicKey newAuthority, byte[] newSecpAutho
       i += 32;
     }
     final var newSecpAuthority = _data[i++] == 0 ? null : new byte[64];
-    Borsh.readArray(newSecpAuthority, _data, i);
+    if (newSecpAuthority != null) {
+      Borsh.readArray(newSecpAuthority, _data, i);
+    }
     return new OracleSetConfigsParams(newAuthority, newSecpAuthority);
   }
 

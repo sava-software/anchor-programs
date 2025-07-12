@@ -153,7 +153,7 @@ public record PositionV2(PublicKey _address,
     final var owner = readPubKey(_data, i);
     i += 32;
     final var liquidityShares = new BigInteger[70];
-    i += Borsh.readArray(liquidityShares, _data, i);
+    i += Borsh.read128Array(liquidityShares, _data, i);
     final var rewardInfos = new UserRewardInfo[70];
     i += Borsh.readArray(rewardInfos, UserRewardInfo::read, _data, i);
     final var feeInfos = new FeeInfo[70];
@@ -207,7 +207,7 @@ public record PositionV2(PublicKey _address,
     i += 32;
     owner.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(liquidityShares, _data, i);
+    i += Borsh.write128Array(liquidityShares, _data, i);
     i += Borsh.writeArray(rewardInfos, _data, i);
     i += Borsh.writeArray(feeInfos, _data, i);
     putInt32LE(_data, i, lowerBinId);

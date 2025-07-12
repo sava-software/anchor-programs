@@ -22,8 +22,8 @@ public record CostWhitelistEvent(PublicKey[] feeds,
     i += Borsh.lenVector(feeds);
     final var oracles = Borsh.readPublicKeyVector(_data, i);
     i += Borsh.lenVector(oracles);
-    final var values = Borsh.readMultiDimensionBigIntegerVector(_data, i);
-    i += Borsh.lenVector(values);
+    final var values = Borsh.readMultiDimension128Vector(_data, i);
+    i += Borsh.len128Vector(values);
     final var reward = getInt32LE(_data, i);
     return new CostWhitelistEvent(feeds,
                                   oracles,
@@ -36,7 +36,7 @@ public record CostWhitelistEvent(PublicKey[] feeds,
     int i = offset;
     i += Borsh.writeVector(feeds, _data, i);
     i += Borsh.writeVector(oracles, _data, i);
-    i += Borsh.writeVector(values, _data, i);
+    i += Borsh.write128Vector(values, _data, i);
     putInt32LE(_data, i, reward);
     i += 4;
     return i - offset;
@@ -44,6 +44,6 @@ public record CostWhitelistEvent(PublicKey[] feeds,
 
   @Override
   public int l() {
-    return Borsh.lenVector(feeds) + Borsh.lenVector(oracles) + Borsh.lenVector(values) + 4;
+    return Borsh.lenVector(feeds) + Borsh.lenVector(oracles) + Borsh.len128Vector(values) + 4;
   }
 }

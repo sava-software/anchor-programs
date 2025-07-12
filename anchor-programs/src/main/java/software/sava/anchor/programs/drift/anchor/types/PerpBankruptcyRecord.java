@@ -56,7 +56,7 @@ public record PerpBankruptcyRecord(int marketIndex,
     putInt128LE(_data, i, ifPayment);
     i += 16;
     i += Borsh.writeOptional(clawbackUser, _data, i);
-    i += Borsh.writeOptional(clawbackUserPayment, _data, i);
+    i += Borsh.write128Optional(clawbackUserPayment, _data, i);
     putInt128LE(_data, i, cumulativeFundingRateDelta);
     i += 16;
     return i - offset;

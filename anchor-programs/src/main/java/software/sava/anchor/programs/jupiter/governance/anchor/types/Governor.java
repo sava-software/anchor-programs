@@ -117,7 +117,7 @@ public record Governor(PublicKey _address,
     final var votingReward = VotingReward.read(_data, i);
     i += Borsh.len(votingReward);
     final var buffers = new BigInteger[32];
-    Borsh.readArray(buffers, _data, i);
+    Borsh.read128Array(buffers, _data, i);
     return new Governor(_address,
                         discriminator,
                         base,
@@ -145,7 +145,7 @@ public record Governor(PublicKey _address,
     i += 32;
     i += Borsh.write(params, _data, i);
     i += Borsh.write(votingReward, _data, i);
-    i += Borsh.writeArray(buffers, _data, i);
+    i += Borsh.write128Array(buffers, _data, i);
     return i - offset;
   }
 

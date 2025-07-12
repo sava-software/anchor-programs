@@ -136,7 +136,7 @@ public record Escrow(PublicKey _address,
     final var withdrawnDepositOverflow = getInt64LE(_data, i);
     i += 8;
     final var padding = new BigInteger[1];
-    Borsh.readArray(padding, _data, i);
+    Borsh.read128Array(padding, _data, i);
     return new Escrow(_address,
                       discriminator,
                       vault,
@@ -171,7 +171,7 @@ public record Escrow(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, withdrawnDepositOverflow);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.write128Array(padding, _data, i);
     return i - offset;
   }
 

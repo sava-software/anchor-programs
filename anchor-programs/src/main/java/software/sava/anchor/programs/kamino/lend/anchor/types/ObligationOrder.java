@@ -100,7 +100,7 @@ public record ObligationOrder(// A threshold value used by the condition (scaled
     final var padding1 = new byte[10];
     i += Borsh.readArray(padding1, _data, i);
     final var padding2 = new BigInteger[5];
-    Borsh.readArray(padding2, _data, i);
+    Borsh.read128Array(padding2, _data, i);
     return new ObligationOrder(conditionThresholdSf,
                                opportunityParameterSf,
                                minExecutionBonusBps,
@@ -127,7 +127,7 @@ public record ObligationOrder(// A threshold value used by the condition (scaled
     _data[i] = (byte) opportunityType;
     ++i;
     i += Borsh.writeArray(padding1, _data, i);
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.write128Array(padding2, _data, i);
     return i - offset;
   }
 

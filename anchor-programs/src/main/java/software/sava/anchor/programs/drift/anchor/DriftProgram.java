@@ -10795,7 +10795,7 @@ public final class DriftProgram {
       _data[i++] = 1;
       i += Borsh.writeArray(whitelistedSigners, _data, i);
     }
-    Borsh.writeOptional(maxTransferPerEpoch, _data, i);
+    Borsh.write128Optional(maxTransferPerEpoch, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -10829,7 +10829,7 @@ public final class DriftProgram {
         _data[i++] = 1;
         i += Borsh.writeArray(whitelistedSigners, _data, i);
       }
-      i += Borsh.writeOptional(maxTransferPerEpoch, _data, i);
+      i += Borsh.write128Optional(maxTransferPerEpoch, _data, i);
       return i - offset;
     }
 

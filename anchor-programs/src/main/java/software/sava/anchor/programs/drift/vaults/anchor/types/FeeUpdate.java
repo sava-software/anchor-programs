@@ -88,7 +88,7 @@ public record FeeUpdate(PublicKey _address,
     final var incomingHurdleRate = getInt32LE(_data, i);
     i += 4;
     final var padding = new BigInteger[10];
-    i += Borsh.readArray(padding, _data, i);
+    i += Borsh.read128Array(padding, _data, i);
     final var padding2 = new byte[8];
     Borsh.readArray(padding2, _data, i);
     return new FeeUpdate(_address,
@@ -112,7 +112,7 @@ public record FeeUpdate(PublicKey _address,
     i += 4;
     putInt32LE(_data, i, incomingHurdleRate);
     i += 4;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.write128Array(padding, _data, i);
     i += Borsh.writeArray(padding2, _data, i);
     return i - offset;
   }

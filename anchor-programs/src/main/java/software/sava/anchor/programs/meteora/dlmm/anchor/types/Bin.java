@@ -44,7 +44,7 @@ public record Bin(// Amount of token X in the bin. This already excluded protoco
     final var liquiditySupply = getInt128LE(_data, i);
     i += 16;
     final var rewardPerTokenStored = new BigInteger[2];
-    i += Borsh.readArray(rewardPerTokenStored, _data, i);
+    i += Borsh.read128Array(rewardPerTokenStored, _data, i);
     final var feeAmountXPerTokenStored = getInt128LE(_data, i);
     i += 16;
     final var feeAmountYPerTokenStored = getInt128LE(_data, i);
@@ -74,7 +74,7 @@ public record Bin(// Amount of token X in the bin. This already excluded protoco
     i += 16;
     putInt128LE(_data, i, liquiditySupply);
     i += 16;
-    i += Borsh.writeArray(rewardPerTokenStored, _data, i);
+    i += Borsh.write128Array(rewardPerTokenStored, _data, i);
     putInt128LE(_data, i, feeAmountXPerTokenStored);
     i += 16;
     putInt128LE(_data, i, feeAmountYPerTokenStored);

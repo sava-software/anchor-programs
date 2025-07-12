@@ -9,7 +9,9 @@ public record OracleHeartbeatParams(byte[] gatewayUri) implements Borsh {
       return null;
     }
     final var gatewayUri = _data[offset] == 0 ? null : new byte[64];
-    Borsh.readArray(gatewayUri, _data, offset + 1);
+    if (gatewayUri != null) {
+      Borsh.readArray(gatewayUri, _data, offset + 1);
+    }
     return new OracleHeartbeatParams(gatewayUri);
   }
 

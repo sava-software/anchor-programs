@@ -886,13 +886,13 @@ public record WhirlpoolStrategy(PublicKey _address,
     final var padding3 = getInt64LE(_data, i);
     i += 8;
     final var padding4 = new BigInteger[13];
-    i += Borsh.readArray(padding4, _data, i);
+    i += Borsh.read128Array(padding4, _data, i);
     final var padding5 = new BigInteger[32];
-    i += Borsh.readArray(padding5, _data, i);
+    i += Borsh.read128Array(padding5, _data, i);
     final var padding6 = new BigInteger[32];
-    i += Borsh.readArray(padding6, _data, i);
+    i += Borsh.read128Array(padding6, _data, i);
     final var padding7 = new BigInteger[32];
-    Borsh.readArray(padding7, _data, i);
+    Borsh.read128Array(padding7, _data, i);
     return new WhirlpoolStrategy(_address,
                                  discriminator,
                                  adminAuthority,
@@ -1181,10 +1181,10 @@ public record WhirlpoolStrategy(PublicKey _address,
     i += 32;
     putInt64LE(_data, i, padding3);
     i += 8;
-    i += Borsh.writeArray(padding4, _data, i);
-    i += Borsh.writeArray(padding5, _data, i);
-    i += Borsh.writeArray(padding6, _data, i);
-    i += Borsh.writeArray(padding7, _data, i);
+    i += Borsh.write128Array(padding4, _data, i);
+    i += Borsh.write128Array(padding5, _data, i);
+    i += Borsh.write128Array(padding6, _data, i);
+    i += Borsh.write128Array(padding7, _data, i);
     return i - offset;
   }
 

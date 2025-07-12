@@ -80,7 +80,7 @@ public record ProtocolIfSharesTransferConfig(PublicKey _address,
     final var nextEpochTs = getInt64LE(_data, i);
     i += 8;
     final var padding = new BigInteger[8];
-    Borsh.readArray(padding, _data, i);
+    Borsh.read128Array(padding, _data, i);
     return new ProtocolIfSharesTransferConfig(_address,
                                               discriminator,
                                               whitelistedSigners,
@@ -100,7 +100,7 @@ public record ProtocolIfSharesTransferConfig(PublicKey _address,
     i += 16;
     putInt64LE(_data, i, nextEpochTs);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.write128Array(padding, _data, i);
     return i - offset;
   }
 

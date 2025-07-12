@@ -146,7 +146,7 @@ public record Proposal(PublicKey _address,
     final var proposalType = _data[i] & 0xFF;
     ++i;
     final var buffers = new BigInteger[10];
-    i += Borsh.readArray(buffers, _data, i);
+    i += Borsh.read128Array(buffers, _data, i);
     final var instructions = Borsh.readVector(ProposalInstruction.class, ProposalInstruction::read, _data, i);
     return new Proposal(_address,
                         discriminator,
@@ -203,7 +203,7 @@ public record Proposal(PublicKey _address,
     i += 8;
     _data[i] = (byte) proposalType;
     ++i;
-    i += Borsh.writeArray(buffers, _data, i);
+    i += Borsh.write128Array(buffers, _data, i);
     i += Borsh.writeVector(instructions, _data, i);
     return i - offset;
   }
@@ -226,7 +226,7 @@ public record Proposal(PublicKey _address,
          + Borsh.len(votingReward)
          + 8
          + 1
-         + Borsh.lenArray(buffers)
+         + Borsh.len128Array(buffers)
          + Borsh.lenVector(instructions);
   }
 }

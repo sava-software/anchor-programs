@@ -168,7 +168,7 @@ public record UserState(PublicKey _address,
     final var padding0 = new byte[7];
     i += Borsh.readArray(padding0, _data, i);
     final var rewardsTallyScaled = new BigInteger[10];
-    i += Borsh.readArray(rewardsTallyScaled, _data, i);
+    i += Borsh.read128Array(rewardsTallyScaled, _data, i);
     final var rewardsIssuedUnclaimed = new long[10];
     i += Borsh.readArray(rewardsIssuedUnclaimed, _data, i);
     final var lastClaimTs = new long[10];
@@ -224,7 +224,7 @@ public record UserState(PublicKey _address,
     _data[i] = (byte) isFarmDelegated;
     ++i;
     i += Borsh.writeArray(padding0, _data, i);
-    i += Borsh.writeArray(rewardsTallyScaled, _data, i);
+    i += Borsh.write128Array(rewardsTallyScaled, _data, i);
     i += Borsh.writeArray(rewardsIssuedUnclaimed, _data, i);
     i += Borsh.writeArray(lastClaimTs, _data, i);
     putInt128LE(_data, i, activeStakeScaled);

@@ -24,7 +24,9 @@ public record OracleInitParams(long recentSlot,
     final var queue = readPubKey(_data, i);
     i += 32;
     final var secpAuthority = _data[i++] == 0 ? null : new byte[64];
-    Borsh.readArray(secpAuthority, _data, i);
+    if (secpAuthority != null) {
+      Borsh.readArray(secpAuthority, _data, i);
+    }
     return new OracleInitParams(recentSlot,
                                 authority,
                                 queue,

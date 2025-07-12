@@ -81,6 +81,11 @@
     "package": "kamino.liquidity"
   },
   {
+    "name": "Kamino Vaults",
+    "program": "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd",
+    "package": "kamino.vaults"
+  },
+  {
     "name": "Marinade",
     "program": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD"
   },

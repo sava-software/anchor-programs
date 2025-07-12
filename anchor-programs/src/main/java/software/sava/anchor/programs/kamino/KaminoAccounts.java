@@ -15,7 +15,7 @@ public interface KaminoAccounts {
   // https://github.com/Kamino-Finance/klend-sdk/blob/master/src/utils/seeds.ts
   // https://github.com/Kamino-Finance/klend/blob/master/programs/klend/src/utils/seeds.rs
 
-  static final KaminoAccounts MAIN_NET = createAccounts(
+  KaminoAccounts MAIN_NET = createAccounts(
       "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
       "3NJYftD5sjVfxSnUdZ1wVML8f3aC6mp1CXCL6L7TnU8C",
       "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr"
