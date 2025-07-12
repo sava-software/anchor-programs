@@ -731,6 +731,7 @@ public final class GlamProtocolProgram {
     }
 
     public static final int BYTES = 42;
+    public static final int NAME_LEN = 32;
 
     public static DriftInitializeUserIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -2465,7 +2466,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator KAMINO_LENDING_BORROW_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR = toDiscriminator(175, 198, 39, 162, 103, 76, 51, 121);
+  public static final Discriminator KAMINO_LENDING_BORROW_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR = toDiscriminator(175, 198, 39, 162, 103, 76, 51, 121);
 
   public static Instruction kaminoLendingBorrowObligationLiquidityV2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                                      final PublicKey glamStateKey,
@@ -2509,7 +2510,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_LENDING_BORROW_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(KAMINO_LENDING_BORROW_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2547,7 +2548,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(93, 120, 106, 112, 40, 45, 84, 32);
+  public static final Discriminator KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR = toDiscriminator(93, 120, 106, 112, 40, 45, 84, 32);
 
   public static Instruction kaminoLendingDepositReserveLiquidityAndObligationCollateralV2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                                                           final PublicKey glamStateKey,
@@ -2595,7 +2596,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2837,7 +2838,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator KAMINO_LENDING_REPAY_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR = toDiscriminator(135, 57, 236, 69, 153, 77, 15, 88);
+  public static final Discriminator KAMINO_LENDING_REPAY_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR = toDiscriminator(135, 57, 236, 69, 153, 77, 15, 88);
 
   public static Instruction kaminoLendingRepayObligationLiquidityV2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                                     final PublicKey glamStateKey,
@@ -2877,7 +2878,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_LENDING_REPAY_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(KAMINO_LENDING_REPAY_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2915,7 +2916,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator KAMINO_LENDING_WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(249, 60, 252, 239, 136, 53, 181, 3);
+  public static final Discriminator KAMINO_LENDING_WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR = toDiscriminator(249, 60, 252, 239, 136, 53, 181, 3);
 
   public static Instruction kaminoLendingWithdrawObligationCollateralAndRedeemReserveCollateralV2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                                                                   final PublicKey glamStateKey,
@@ -2963,7 +2964,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_LENDING_WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(KAMINO_LENDING_WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -3529,7 +3530,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator METEORA_DLMM_ADD_LIQUIDITY2_DISCRIMINATOR = toDiscriminator(248, 123, 81, 94, 137, 10, 79, 81);
+  public static final Discriminator METEORA_DLMM_ADD_LIQUIDITY_2_DISCRIMINATOR = toDiscriminator(248, 123, 81, 94, 137, 10, 79, 81);
 
   public static Instruction meteoraDlmmAddLiquidity2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                      final PublicKey glamStateKey,
@@ -3572,7 +3573,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_ADD_LIQUIDITY2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(METEORA_DLMM_ADD_LIQUIDITY_2_DISCRIMINATOR, _data, 0);
     i += Borsh.write(liquidityParameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -3611,7 +3612,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator METEORA_DLMM_ADD_LIQUIDITY_BY_STRATEGY2_DISCRIMINATOR = toDiscriminator(219, 171, 159, 202, 167, 192, 209, 25);
+  public static final Discriminator METEORA_DLMM_ADD_LIQUIDITY_BY_STRATEGY_2_DISCRIMINATOR = toDiscriminator(219, 171, 159, 202, 167, 192, 209, 25);
 
   public static Instruction meteoraDlmmAddLiquidityByStrategy2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                                final PublicKey glamStateKey,
@@ -3654,7 +3655,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_ADD_LIQUIDITY_BY_STRATEGY2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(METEORA_DLMM_ADD_LIQUIDITY_BY_STRATEGY_2_DISCRIMINATOR, _data, 0);
     i += Borsh.write(liquidityParameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -3693,7 +3694,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator METEORA_DLMM_ADD_LIQUIDITY_ONE_SIDE_PRECISE2_DISCRIMINATOR = toDiscriminator(60, 137, 107, 235, 107, 209, 19, 106);
+  public static final Discriminator METEORA_DLMM_ADD_LIQUIDITY_ONE_SIDE_PRECISE_2_DISCRIMINATOR = toDiscriminator(60, 137, 107, 235, 107, 209, 19, 106);
 
   public static Instruction meteoraDlmmAddLiquidityOneSidePrecise2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                                    final PublicKey glamStateKey,
@@ -3728,7 +3729,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(parameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_ADD_LIQUIDITY_ONE_SIDE_PRECISE2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(METEORA_DLMM_ADD_LIQUIDITY_ONE_SIDE_PRECISE_2_DISCRIMINATOR, _data, 0);
     i += Borsh.write(parameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -3767,7 +3768,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator METEORA_DLMM_CLAIM_FEE2_DISCRIMINATOR = toDiscriminator(152, 214, 221, 166, 191, 34, 17, 189);
+  public static final Discriminator METEORA_DLMM_CLAIM_FEE_2_DISCRIMINATOR = toDiscriminator(152, 214, 221, 166, 191, 34, 17, 189);
 
   public static Instruction meteoraDlmmClaimFee2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                  final PublicKey glamStateKey,
@@ -3811,7 +3812,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_CLAIM_FEE2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(METEORA_DLMM_CLAIM_FEE_2_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, minBinId);
     i += 4;
     putInt32LE(_data, i, maxBinId);
@@ -3861,7 +3862,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator METEORA_DLMM_CLAIM_REWARD2_DISCRIMINATOR = toDiscriminator(73, 232, 244, 62, 123, 103, 114, 39);
+  public static final Discriminator METEORA_DLMM_CLAIM_REWARD_2_DISCRIMINATOR = toDiscriminator(73, 232, 244, 62, 123, 103, 114, 39);
 
   public static Instruction meteoraDlmmClaimReward2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                     final PublicKey glamStateKey,
@@ -3898,7 +3899,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_CLAIM_REWARD2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(METEORA_DLMM_CLAIM_REWARD_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     putInt32LE(_data, i, minBinId);
@@ -3959,7 +3960,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator METEORA_DLMM_CLOSE_POSITION2_DISCRIMINATOR = toDiscriminator(69, 117, 240, 192, 34, 79, 62, 230);
+  public static final Discriminator METEORA_DLMM_CLOSE_POSITION_2_DISCRIMINATOR = toDiscriminator(69, 117, 240, 192, 34, 79, 62, 230);
 
   public static Instruction meteoraDlmmClosePosition2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                       final PublicKey glamStateKey,
@@ -3981,7 +3982,7 @@ public final class GlamProtocolProgram {
       createRead(programKey)
     );
 
-    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, METEORA_DLMM_CLOSE_POSITION2_DISCRIMINATOR);
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, METEORA_DLMM_CLOSE_POSITION_2_DISCRIMINATOR);
   }
 
   public static final Discriminator METEORA_DLMM_INITIALIZE_POSITION_DISCRIMINATOR = toDiscriminator(223, 94, 215, 96, 175, 181, 195, 204);
@@ -4128,7 +4129,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator METEORA_DLMM_REMOVE_LIQUIDITY2_DISCRIMINATOR = toDiscriminator(118, 111, 170, 14, 224, 187, 21, 119);
+  public static final Discriminator METEORA_DLMM_REMOVE_LIQUIDITY_2_DISCRIMINATOR = toDiscriminator(118, 111, 170, 14, 224, 187, 21, 119);
 
   public static Instruction meteoraDlmmRemoveLiquidity2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                         final PublicKey glamStateKey,
@@ -4173,7 +4174,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(binLiquidityRemoval) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_REMOVE_LIQUIDITY2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(METEORA_DLMM_REMOVE_LIQUIDITY_2_DISCRIMINATOR, _data, 0);
     i += Borsh.writeVector(binLiquidityRemoval, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -4212,7 +4213,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator METEORA_DLMM_REMOVE_LIQUIDITY_BY_RANGE2_DISCRIMINATOR = toDiscriminator(157, 54, 138, 77, 16, 239, 100, 16);
+  public static final Discriminator METEORA_DLMM_REMOVE_LIQUIDITY_BY_RANGE_2_DISCRIMINATOR = toDiscriminator(157, 54, 138, 77, 16, 239, 100, 16);
 
   public static Instruction meteoraDlmmRemoveLiquidityByRange2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                                final PublicKey glamStateKey,
@@ -4259,7 +4260,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[18 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_REMOVE_LIQUIDITY_BY_RANGE2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(METEORA_DLMM_REMOVE_LIQUIDITY_BY_RANGE_2_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, fromBinId);
     i += 4;
     putInt32LE(_data, i, toBinId);
@@ -4320,7 +4321,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator METEORA_DLMM_SWAP2_DISCRIMINATOR = toDiscriminator(95, 183, 135, 4, 4, 165, 65, 133);
+  public static final Discriminator METEORA_DLMM_SWAP_2_DISCRIMINATOR = toDiscriminator(95, 183, 135, 4, 4, 165, 65, 133);
 
   public static Instruction meteoraDlmmSwap2(final AccountMeta invokedGlamProtocolProgramMeta,
                                              final PublicKey glamStateKey,
@@ -4368,7 +4369,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_SWAP2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(METEORA_DLMM_SWAP_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     putInt64LE(_data, i, minAmountOut);
@@ -4418,7 +4419,7 @@ public final class GlamProtocolProgram {
     }
   }
 
-  public static final Discriminator METEORA_DLMM_SWAP_WITH_PRICE_IMPACT2_DISCRIMINATOR = toDiscriminator(219, 33, 50, 237, 37, 101, 146, 101);
+  public static final Discriminator METEORA_DLMM_SWAP_WITH_PRICE_IMPACT_2_DISCRIMINATOR = toDiscriminator(219, 33, 50, 237, 37, 101, 146, 101);
 
   public static Instruction meteoraDlmmSwapWithPriceImpact2(final AccountMeta invokedGlamProtocolProgramMeta,
                                                             final PublicKey glamStateKey,
@@ -4470,7 +4471,7 @@ public final class GlamProtocolProgram {
         18
         + (activeId == null || activeId.isEmpty() ? 1 : 5) + Borsh.len(remainingAccountsInfo)
     ];
-    int i = writeDiscriminator(METEORA_DLMM_SWAP_WITH_PRICE_IMPACT2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(METEORA_DLMM_SWAP_WITH_PRICE_IMPACT_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     i += Borsh.writeOptional(activeId, _data, i);

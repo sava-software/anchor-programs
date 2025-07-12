@@ -29,6 +29,7 @@ public record Bin(// Amount of token X in the bin. This already excluded protoco
                   BigInteger amountYIn) implements Borsh {
 
   public static final int BYTES = 144;
+  public static final int REWARD_PER_TOKEN_STORED_LEN = 2;
 
   public static Bin read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

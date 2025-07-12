@@ -40,6 +40,10 @@ public record PlatformConfig(PublicKey _address,
                              byte[] padding) implements Borsh {
 
   public static final int BYTES = 944;
+  public static final int NAME_LEN = 64;
+  public static final int WEB_LEN = 256;
+  public static final int IMG_LEN = 256;
+  public static final int PADDING_LEN = 256;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(160, 78, 128, 0, 248, 83, 230, 160);

@@ -33,6 +33,10 @@ public record BaseRewardRouter(PublicKey _address,
                                NcnRewardRoute[] ncnFeeGroupRewardRoutes) implements Borsh {
 
   public static final int BYTES = 24924;
+  public static final int RESERVED_LEN = 128;
+  public static final int BASE_FEE_GROUP_REWARDS_LEN = 8;
+  public static final int NCN_FEE_GROUP_REWARDS_LEN = 8;
+  public static final int NCN_FEE_GROUP_REWARD_ROUTES_LEN = 256;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int NCN_OFFSET = 8;

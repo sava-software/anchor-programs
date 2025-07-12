@@ -46,6 +46,7 @@ public record IfRebalanceConfig(PublicKey _address,
                                 byte[] padding2) implements Borsh {
 
   public static final int BYTES = 152;
+  public static final int PADDING_2_LEN = 32;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int PUBKEY_OFFSET = 8;
@@ -63,7 +64,7 @@ public record IfRebalanceConfig(PublicKey _address,
   public static final int MAX_SLIPPAGE_BPS_OFFSET = 116;
   public static final int SWAP_MODE_OFFSET = 118;
   public static final int STATUS_OFFSET = 119;
-  public static final int PADDING2_OFFSET = 120;
+  public static final int PADDING_2_OFFSET = 120;
 
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);

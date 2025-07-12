@@ -13,6 +13,8 @@ public record ScopeConfiguration(// Pubkey of the scope price feed (disabled if 
                                  short[] twapChain) implements Borsh {
 
   public static final int BYTES = 48;
+  public static final int PRICE_CHAIN_LEN = 4;
+  public static final int TWAP_CHAIN_LEN = 4;
 
   public static ScopeConfiguration read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

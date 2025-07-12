@@ -34,6 +34,8 @@ public record NcnRewardRouter(PublicKey _address,
                               VaultRewardRoute[] vaultRewardRoutes) implements Borsh {
 
   public static final int BYTES = 2828;
+  public static final int RESERVED_LEN = 128;
+  public static final int VAULT_REWARD_ROUTES_LEN = 64;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int NCN_FEE_GROUP_OFFSET = 8;

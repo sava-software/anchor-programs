@@ -28,6 +28,9 @@ public record BallotBox(PublicKey _address,
                         BallotTally[] ballotTallies) implements Borsh {
 
   public static final int BYTES = 128305;
+  public static final int RESERVED_LEN = 128;
+  public static final int OPERATOR_VOTES_LEN = 256;
+  public static final int BALLOT_TALLIES_LEN = 256;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int NCN_OFFSET = 8;

@@ -52,6 +52,7 @@ public record VaultDepositor(PublicKey _address,
                              long[] padding) implements Borsh {
 
   public static final int BYTES = 272;
+  public static final int PADDING_LEN = 4;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int VAULT_OFFSET = 8;

@@ -50,6 +50,8 @@ public record ReserveLiquidity(// Reserve liquidity mint address
                                BigInteger[] padding3) implements Borsh {
 
   public static final int BYTES = 1232;
+  public static final int PADDING_2_LEN = 51;
+  public static final int PADDING_3_LEN = 32;
 
   public static ReserveLiquidity read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

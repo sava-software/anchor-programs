@@ -22,6 +22,10 @@ public record CollateralInfoParams(PublicKey mint,
                                    short[] scopeStakingRateChain) implements Borsh {
 
   public static final int BYTES = 145;
+  public static final int SCOPE_TWAP_PRICE_CHAIN_LEN = 4;
+  public static final int SCOPE_PRICE_CHAIN_LEN = 4;
+  public static final int NAME_LEN = 32;
+  public static final int SCOPE_STAKING_RATE_CHAIN_LEN = 4;
 
   public static CollateralInfoParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

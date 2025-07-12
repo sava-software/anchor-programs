@@ -11,6 +11,7 @@ public record InitializeLbPair2Params(// Pool price
                                       byte[] padding) implements Borsh {
 
   public static final int BYTES = 100;
+  public static final int PADDING_LEN = 96;
 
   public static InitializeLbPair2Params read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

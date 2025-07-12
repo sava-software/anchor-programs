@@ -20,6 +20,7 @@ public record VaultParams(byte[] name,
                           boolean permissioned) implements Borsh {
 
   public static final int BYTES = 75;
+  public static final int NAME_LEN = 32;
 
   public static VaultParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

@@ -558,6 +558,7 @@ public final class JitoTipDistributionProgram {
     }
 
     public static final int BYTES = 56;
+    public static final int ROOT_LEN = 32;
 
     public static UploadMerkleRootIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

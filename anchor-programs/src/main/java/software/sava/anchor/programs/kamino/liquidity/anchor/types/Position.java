@@ -33,6 +33,7 @@ public record Position(PublicKey _address,
                        PositionRewardInfo[] rewardInfos) implements Borsh {
 
   public static final int BYTES = 216;
+  public static final int REWARD_INFOS_LEN = 3;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int WHIRLPOOL_OFFSET = 8;

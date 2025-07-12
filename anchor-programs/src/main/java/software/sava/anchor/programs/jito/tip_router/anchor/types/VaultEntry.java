@@ -14,6 +14,7 @@ public record VaultEntry(PublicKey vault,
                          byte[] reserved) implements Borsh {
 
   public static final int BYTES = 208;
+  public static final int RESERVED_LEN = 128;
 
   public static VaultEntry read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

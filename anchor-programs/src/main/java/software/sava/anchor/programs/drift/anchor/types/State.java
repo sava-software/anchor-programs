@@ -46,6 +46,7 @@ public record State(PublicKey _address,
                     byte[] padding) implements Borsh {
 
   public static final int BYTES = 992;
+  public static final int PADDING_LEN = 10;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int ADMIN_OFFSET = 8;

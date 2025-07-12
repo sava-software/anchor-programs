@@ -24,6 +24,9 @@ public record TokenInfo(// UTF-8 encoded name of the token (null-terminated)
                         long[] padding) implements Borsh {
 
   public static final int BYTES = 384;
+  public static final int NAME_LEN = 32;
+  public static final int RESERVED_LEN = 7;
+  public static final int PADDING_LEN = 19;
 
   public static TokenInfo read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

@@ -17,6 +17,7 @@ import static software.sava.core.programs.Discriminator.toDiscriminator;
 public record CrankFeeWhitelist(PublicKey _address, Discriminator discriminator, PublicKey owner, BigInteger[] padding) implements Borsh {
 
   public static final int BYTES = 120;
+  public static final int PADDING_LEN = 5;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(39, 105, 184, 30, 248, 231, 176, 133);

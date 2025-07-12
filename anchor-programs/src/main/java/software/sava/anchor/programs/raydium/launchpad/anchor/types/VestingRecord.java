@@ -30,6 +30,7 @@ public record VestingRecord(PublicKey _address,
                             long[] padding) implements Borsh {
 
   public static final int BYTES = 160;
+  public static final int PADDING_LEN = 8;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(106, 243, 221, 205, 230, 126, 85, 83);

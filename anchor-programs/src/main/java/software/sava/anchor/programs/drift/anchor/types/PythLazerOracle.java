@@ -24,6 +24,7 @@ public record PythLazerOracle(PublicKey _address,
                               long conf) implements Borsh {
 
   public static final int BYTES = 48;
+  public static final int PADDING_LEN = 4;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int PRICE_OFFSET = 8;

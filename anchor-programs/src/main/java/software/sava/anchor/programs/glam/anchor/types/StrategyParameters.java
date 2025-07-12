@@ -11,6 +11,7 @@ public record StrategyParameters(int minBinId,
                                  byte[] parameteres) implements Borsh {
 
   public static final int BYTES = 73;
+  public static final int PARAMETERES_LEN = 64;
 
   public static StrategyParameters read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

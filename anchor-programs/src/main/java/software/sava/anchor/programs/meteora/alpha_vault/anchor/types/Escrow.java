@@ -39,6 +39,8 @@ public record Escrow(PublicKey _address,
                      BigInteger[] padding) implements Borsh {
 
   public static final int BYTES = 136;
+  public static final int PADDING_1_LEN = 7;
+  public static final int PADDING_LEN = 1;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(31, 213, 123, 187, 186, 22, 218, 155);
@@ -50,7 +52,7 @@ public record Escrow(PublicKey _address,
   public static final int CLAIMED_TOKEN_OFFSET = 80;
   public static final int LAST_CLAIMED_POINT_OFFSET = 88;
   public static final int REFUNDED_OFFSET = 96;
-  public static final int PADDING1_OFFSET = 97;
+  public static final int PADDING_1_OFFSET = 97;
   public static final int MAX_CAP_OFFSET = 104;
   public static final int WITHDRAWN_DEPOSIT_OVERFLOW_OFFSET = 112;
   public static final int PADDING_OFFSET = 120;

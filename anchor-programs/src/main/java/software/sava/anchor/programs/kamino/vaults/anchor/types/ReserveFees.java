@@ -24,6 +24,7 @@ public record ReserveFees(// Fee assessed on `BorrowObligationLiquidity`, as sca
                           byte[] padding) implements Borsh {
 
   public static final int BYTES = 24;
+  public static final int PADDING_LEN = 8;
 
   public static ReserveFees read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

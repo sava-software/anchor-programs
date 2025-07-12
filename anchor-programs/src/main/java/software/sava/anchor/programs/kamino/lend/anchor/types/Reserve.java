@@ -39,6 +39,11 @@ public record Reserve(PublicKey _address,
                       long[] padding) implements Borsh {
 
   public static final int BYTES = 8624;
+  public static final int RESERVE_LIQUIDITY_PADDING_LEN = 150;
+  public static final int RESERVE_COLLATERAL_PADDING_LEN = 150;
+  public static final int CONFIG_PADDING_LEN = 116;
+  public static final int BORROWED_AMOUNTS_AGAINST_THIS_RESERVE_IN_ELEVATION_GROUPS_LEN = 32;
+  public static final int PADDING_LEN = 207;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int VERSION_OFFSET = 8;

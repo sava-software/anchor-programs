@@ -16,6 +16,7 @@ public record WeightEntry(StMintEntry stMintEntry,
                           byte[] reserved) implements Borsh {
 
   public static final int BYTES = 377;
+  public static final int RESERVED_LEN = 128;
 
   public static WeightEntry read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

@@ -14,6 +14,7 @@ public record SignedMsgOrderParamsMessage(OrderParams signedMsgOrderParams,
                                           SignedMsgTriggerOrderParams takeProfitOrderParams,
                                           SignedMsgTriggerOrderParams stopLossOrderParams) implements Borsh {
 
+  public static final int UUID_LEN = 8;
   public static SignedMsgOrderParamsMessage read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;

@@ -40,6 +40,20 @@ public record Quote(// The address of the signer generated within an enclave.
                     byte[] ebuf1) implements Borsh {
 
   public static final int BYTES = 3432;
+  public static final int MR_ENCLAVE_LEN = 32;
+  public static final int PADDING_1_LEN = 7;
+  public static final int QUOTE_REGISTRY_LEN = 32;
+  public static final int REGISTRY_KEY_LEN = 64;
+  public static final int SECP_222K_1_SIGNER_LEN = 64;
+  public static final int LAST_SECP_222K_1_SIGNER_LEN = 64;
+  public static final int GUARDIAN_APPROVERS_LEN = 64;
+  public static final int PADDING_2_LEN = 7;
+  public static final int STAGING_SECP_222K_1_SIGNER_LEN = 64;
+  public static final int ETH_SIGNER_LEN = 20;
+  public static final int EBUF_4_LEN = 12;
+  public static final int EBUF_3_LEN = 128;
+  public static final int EBUF_2_LEN = 256;
+  public static final int EBUF_1_LEN = 512;
 
   public static Quote read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

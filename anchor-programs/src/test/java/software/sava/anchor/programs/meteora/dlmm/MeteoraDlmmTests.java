@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.Base64;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram.CLAIM_FEE2_DISCRIMINATOR;
-import static software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram.REMOVE_LIQUIDITY_BY_RANGE2_DISCRIMINATOR;
+import static software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram.CLAIM_FEE_2_DISCRIMINATOR;
+import static software.sava.anchor.programs.meteora.dlmm.anchor.LbClmmProgram.REMOVE_LIQUIDITY_BY_RANGE_2_DISCRIMINATOR;
 import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
 
 final class MeteoraDlmmTests {
@@ -127,7 +127,7 @@ final class MeteoraDlmmTests {
     assertEquals(AccountMeta.createWrite(binArrayLower), accounts.getLast());
 
     var removeLiquidityData = LbClmmProgram.RemoveLiquidityByRange2IxData.read(withdrawIx);
-    assertEquals(REMOVE_LIQUIDITY_BY_RANGE2_DISCRIMINATOR, removeLiquidityData.discriminator());
+    assertEquals(REMOVE_LIQUIDITY_BY_RANGE_2_DISCRIMINATOR, removeLiquidityData.discriminator());
     assertEquals(lowerBinId, removeLiquidityData.fromBinId());
     assertEquals(upperBinId, removeLiquidityData.toBinId());
     assertEquals(DlmmUtils.BASIS_POINT_MAX, removeLiquidityData.bpsToRemove());
@@ -178,7 +178,7 @@ final class MeteoraDlmmTests {
     assertEquals(15, accounts.size());
 
     var claimFeeData = LbClmmProgram.ClaimFee2IxData.read(claimFeeIx);
-    assertEquals(CLAIM_FEE2_DISCRIMINATOR, claimFeeData.discriminator());
+    assertEquals(CLAIM_FEE_2_DISCRIMINATOR, claimFeeData.discriminator());
     assertEquals(lowerBinId, claimFeeData.minBinId());
     assertEquals(upperBinId, claimFeeData.maxBinId());
     assertEquals(0, claimFeeData.remainingAccountsInfo().slices().length);

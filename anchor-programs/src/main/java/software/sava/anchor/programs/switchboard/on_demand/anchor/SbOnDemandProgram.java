@@ -287,7 +287,7 @@ public final class SbOnDemandProgram {
     }
   }
 
-  public static final Discriminator ORACLE_HEARTBEAT_V2_DISCRIMINATOR = toDiscriminator(122, 231, 66, 32, 226, 62, 144, 103);
+  public static final Discriminator ORACLE_HEARTBEAT_V_2_DISCRIMINATOR = toDiscriminator(122, 231, 66, 32, 226, 62, 144, 103);
 
   public static Instruction oracleHeartbeatV2(final AccountMeta invokedSbOnDemandProgramMeta,
                                               final PublicKey oracleKey,
@@ -307,7 +307,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ORACLE_HEARTBEAT_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(ORACLE_HEARTBEAT_V_2_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);

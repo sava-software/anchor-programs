@@ -24,6 +24,8 @@ public record Storage(PublicKey _address,
                       byte[] extraSpace) implements Borsh {
 
   public static final int BYTES = 381;
+  public static final int TRUSTED_SIGNERS_LEN = 5;
+  public static final int EXTRA_SPACE_LEN = 100;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(209, 117, 255, 185, 196, 175, 68, 9);

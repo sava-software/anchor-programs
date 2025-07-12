@@ -19,6 +19,7 @@ public record StMintEntry(PublicKey stMint,
                           byte[] reserved) implements Borsh {
 
   public static final int BYTES = 217;
+  public static final int RESERVED_LEN = 128;
 
   public static StMintEntry read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

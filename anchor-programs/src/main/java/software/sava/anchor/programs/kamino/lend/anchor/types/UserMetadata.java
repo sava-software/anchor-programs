@@ -28,14 +28,16 @@ public record UserMetadata(PublicKey _address,
                            long[] padding2) implements Borsh {
 
   public static final int BYTES = 1032;
+  public static final int PADDING_1_LEN = 51;
+  public static final int PADDING_2_LEN = 64;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int REFERRER_OFFSET = 8;
   public static final int BUMP_OFFSET = 40;
   public static final int USER_LOOKUP_TABLE_OFFSET = 48;
   public static final int OWNER_OFFSET = 80;
-  public static final int PADDING1_OFFSET = 112;
-  public static final int PADDING2_OFFSET = 520;
+  public static final int PADDING_1_OFFSET = 112;
+  public static final int PADDING_2_OFFSET = 520;
 
   public static Filter createReferrerFilter(final PublicKey referrer) {
     return Filter.createMemCompFilter(REFERRER_OFFSET, referrer);

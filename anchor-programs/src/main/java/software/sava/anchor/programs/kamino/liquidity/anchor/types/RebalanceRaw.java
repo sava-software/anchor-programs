@@ -7,6 +7,8 @@ public record RebalanceRaw(byte[] params,
                            int referencePriceType) implements Borsh {
 
   public static final int BYTES = 385;
+  public static final int PARAMS_LEN = 128;
+  public static final int STATE_LEN = 256;
 
   public static RebalanceRaw read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

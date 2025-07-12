@@ -14,6 +14,7 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 public record OraclePrices(PublicKey _address, Discriminator discriminator, PublicKey oracleMappings, DatedPrice[] prices) implements Borsh {
 
   public static final int BYTES = 28712;
+  public static final int PRICES_LEN = 512;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int ORACLE_MAPPINGS_OFFSET = 8;

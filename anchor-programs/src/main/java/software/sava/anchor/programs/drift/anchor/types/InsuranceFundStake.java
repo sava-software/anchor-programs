@@ -33,6 +33,7 @@ public record InsuranceFundStake(PublicKey _address,
                                  byte[] padding) implements Borsh {
 
   public static final int BYTES = 136;
+  public static final int PADDING_LEN = 14;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int AUTHORITY_OFFSET = 8;

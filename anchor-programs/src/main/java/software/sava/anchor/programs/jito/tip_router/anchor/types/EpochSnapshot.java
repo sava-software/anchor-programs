@@ -29,6 +29,7 @@ public record EpochSnapshot(PublicKey _address,
                             byte[] reserved) implements Borsh {
 
   public static final int BYTES = 537;
+  public static final int RESERVED_LEN = 128;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int NCN_OFFSET = 8;

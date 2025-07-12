@@ -83,6 +83,7 @@ public record PoolState(PublicKey _address,
                         long[] padding) implements Borsh {
 
   public static final int BYTES = 429;
+  public static final int PADDING_LEN = 8;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(247, 237, 227, 245, 215, 195, 222, 70);

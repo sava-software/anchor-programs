@@ -79,6 +79,8 @@ public record ObligationOrder(// A threshold value used by the condition (scaled
                               BigInteger[] padding2) implements Borsh {
 
   public static final int BYTES = 128;
+  public static final int PADDING_1_LEN = 10;
+  public static final int PADDING_2_LEN = 5;
 
   public static ObligationOrder read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

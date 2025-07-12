@@ -76,6 +76,13 @@ public record Obligation(PublicKey _address,
                          long[] padding3) implements Borsh {
 
   public static final int BYTES = 3344;
+  public static final int DEPOSITS_LEN = 8;
+  public static final int BORROWS_LEN = 5;
+  public static final int DEPOSITS_ASSET_TIERS_LEN = 8;
+  public static final int BORROWS_ASSET_TIERS_LEN = 5;
+  public static final int RESERVED_LEN = 4;
+  public static final int ORDERS_LEN = 2;
+  public static final int PADDING_3_LEN = 93;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int TAG_OFFSET = 8;
@@ -104,7 +111,7 @@ public record Obligation(PublicKey _address,
   public static final int HIGHEST_BORROW_FACTOR_PCT_OFFSET = 2328;
   public static final int AUTODELEVERAGE_MARGIN_CALL_STARTED_TIMESTAMP_OFFSET = 2336;
   public static final int ORDERS_OFFSET = 2344;
-  public static final int PADDING3_OFFSET = 2600;
+  public static final int PADDING_3_OFFSET = 2600;
 
   public static Filter createTagFilter(final long tag) {
     final byte[] _data = new byte[8];

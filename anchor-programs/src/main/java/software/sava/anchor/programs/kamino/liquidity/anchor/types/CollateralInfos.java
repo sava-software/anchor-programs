@@ -13,6 +13,7 @@ import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 public record CollateralInfos(PublicKey _address, Discriminator discriminator, CollateralInfo[] infos) implements Borsh {
 
   public static final int BYTES = 55304;
+  public static final int INFOS_LEN = 256;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int INFOS_OFFSET = 8;

@@ -68,6 +68,7 @@ public final class KaminoLendingProgram {
     }
 
     public static final int BYTES = 40;
+    public static final int QUOTE_CURRENCY_LEN = 32;
 
     public static InitLendingMarketIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -121,6 +122,7 @@ public final class KaminoLendingProgram {
     }
 
     public static final int BYTES = 88;
+    public static final int VALUE_LEN = 72;
 
     public static UpdateLendingMarketIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -470,7 +472,7 @@ public final class KaminoLendingProgram {
     }
   }
 
-  public static final Discriminator SOCIALIZE_LOSS_V2_DISCRIMINATOR = toDiscriminator(238, 95, 98, 220, 187, 40, 204, 154);
+  public static final Discriminator SOCIALIZE_LOSS_V_2_DISCRIMINATOR = toDiscriminator(238, 95, 98, 220, 187, 40, 204, 154);
 
   public static Instruction socializeLossV2(final AccountMeta invokedKaminoLendingProgramMeta,
                                             final PublicKey socializeLossAccountsRiskCouncilKey,
@@ -496,7 +498,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SOCIALIZE_LOSS_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(SOCIALIZE_LOSS_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1061,7 +1063,7 @@ public final class KaminoLendingProgram {
     }
   }
 
-  public static final Discriminator DEPOSIT_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(137, 145, 151, 94, 167, 113, 4, 145);
+  public static final Discriminator DEPOSIT_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR = toDiscriminator(137, 145, 151, 94, 167, 113, 4, 145);
 
   public static Instruction depositObligationCollateralV2(final AccountMeta invokedKaminoLendingProgramMeta,
                                                           final PublicKey depositAccountsOwnerKey,
@@ -1093,7 +1095,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(DEPOSIT_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1195,7 +1197,7 @@ public final class KaminoLendingProgram {
     }
   }
 
-  public static final Discriminator WITHDRAW_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(202, 249, 117, 114, 231, 192, 47, 138);
+  public static final Discriminator WITHDRAW_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR = toDiscriminator(202, 249, 117, 114, 231, 192, 47, 138);
 
   public static Instruction withdrawObligationCollateralV2(final AccountMeta invokedKaminoLendingProgramMeta,
                                                            final PublicKey withdrawAccountsOwnerKey,
@@ -1227,7 +1229,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(WITHDRAW_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1335,7 +1337,7 @@ public final class KaminoLendingProgram {
     }
   }
 
-  public static final Discriminator BORROW_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR = toDiscriminator(161, 128, 143, 245, 171, 199, 194, 6);
+  public static final Discriminator BORROW_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR = toDiscriminator(161, 128, 143, 245, 171, 199, 194, 6);
 
   public static Instruction borrowObligationLiquidityV2(final AccountMeta invokedKaminoLendingProgramMeta,
                                                         final PublicKey borrowAccountsOwnerKey,
@@ -1373,7 +1375,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(BORROW_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(BORROW_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1475,7 +1477,7 @@ public final class KaminoLendingProgram {
     }
   }
 
-  public static final Discriminator REPAY_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR = toDiscriminator(116, 174, 213, 76, 180, 53, 210, 144);
+  public static final Discriminator REPAY_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR = toDiscriminator(116, 174, 213, 76, 180, 53, 210, 144);
 
   public static Instruction repayObligationLiquidityV2(final AccountMeta invokedKaminoLendingProgramMeta,
                                                        final PublicKey repayAccountsOwnerKey,
@@ -1509,7 +1511,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(REPAY_OBLIGATION_LIQUIDITY_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(REPAY_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1849,7 +1851,7 @@ public final class KaminoLendingProgram {
     }
   }
 
-  public static final Discriminator DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(216, 224, 191, 27, 204, 151, 102, 175);
+  public static final Discriminator DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR = toDiscriminator(216, 224, 191, 27, 204, 151, 102, 175);
 
   public static Instruction depositReserveLiquidityAndObligationCollateralV2(final AccountMeta invokedKaminoLendingProgramMeta,
                                                                              final PublicKey depositAccountsOwnerKey,
@@ -1891,7 +1893,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -2003,7 +2005,7 @@ public final class KaminoLendingProgram {
     }
   }
 
-  public static final Discriminator WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(235, 52, 119, 152, 149, 197, 20, 7);
+  public static final Discriminator WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR = toDiscriminator(235, 52, 119, 152, 149, 197, 20, 7);
 
   public static Instruction withdrawObligationCollateralAndRedeemReserveCollateralV2(final AccountMeta invokedKaminoLendingProgramMeta,
                                                                                      final PublicKey withdrawAccountsOwnerKey,
@@ -2045,7 +2047,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -2186,7 +2188,7 @@ public final class KaminoLendingProgram {
     }
   }
 
-  public static final Discriminator LIQUIDATE_OBLIGATION_AND_REDEEM_RESERVE_COLLATERAL_V2_DISCRIMINATOR = toDiscriminator(162, 161, 35, 143, 30, 187, 185, 103);
+  public static final Discriminator LIQUIDATE_OBLIGATION_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR = toDiscriminator(162, 161, 35, 143, 30, 187, 185, 103);
 
   public static Instruction liquidateObligationAndRedeemReserveCollateralV2(final AccountMeta invokedKaminoLendingProgramMeta,
                                                                             final PublicKey liquidationAccountsLiquidatorKey,
@@ -2246,7 +2248,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[32];
-    int i = writeDiscriminator(LIQUIDATE_OBLIGATION_AND_REDEEM_RESERVE_COLLATERAL_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(LIQUIDATE_OBLIGATION_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, liquidityAmount);
     i += 8;
     putInt64LE(_data, i, minAcceptableReceivedLiquidityAmount);

@@ -68,6 +68,9 @@ public record MerkleDistributor(PublicKey _address,
                                 BigInteger[] padding2) implements Borsh {
 
   public static final int BYTES = 448;
+  public static final int ROOT_LEN = 32;
+  public static final int PADDING_0_LEN = 3;
+  public static final int PADDING_2_LEN = 5;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int ROOT_OFFSET = 8;
@@ -92,9 +95,9 @@ public record MerkleDistributor(PublicKey _address,
   public static final int BUMP_OFFSET = 338;
   public static final int CLAWED_BACK_OFFSET = 339;
   public static final int CLOSABLE_OFFSET = 340;
-  public static final int PADDING0_OFFSET = 341;
+  public static final int PADDING_0_OFFSET = 341;
   public static final int AIRDROP_BONUS_OFFSET = 344;
-  public static final int PADDING2_OFFSET = 368;
+  public static final int PADDING_2_OFFSET = 368;
 
   public static Filter createMintFilter(final PublicKey mint) {
     return Filter.createMemCompFilter(MINT_OFFSET, mint);

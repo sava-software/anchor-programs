@@ -45,6 +45,9 @@ public record Whirlpool(PublicKey _address,
                         WhirlpoolRewardInfo[] rewardInfos) implements Borsh {
 
   public static final int BYTES = 653;
+  public static final int WHIRLPOOL_BUMP_LEN = 1;
+  public static final int TICK_SPACING_SEED_LEN = 2;
+  public static final int REWARD_INFOS_LEN = 3;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int WHIRLPOOLS_CONFIG_OFFSET = 8;

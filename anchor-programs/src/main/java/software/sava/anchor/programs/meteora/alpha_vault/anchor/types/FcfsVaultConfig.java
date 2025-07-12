@@ -25,6 +25,7 @@ public record FcfsVaultConfig(PublicKey _address,
                               byte[] padding) implements Borsh {
 
   public static final int BYTES = 232;
+  public static final int PADDING_LEN = 175;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(99, 243, 252, 122, 160, 175, 130, 52);

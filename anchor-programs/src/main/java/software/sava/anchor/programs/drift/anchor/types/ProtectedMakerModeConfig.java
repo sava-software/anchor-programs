@@ -20,6 +20,7 @@ public record ProtectedMakerModeConfig(PublicKey _address,
                                        byte[] padding) implements Borsh {
 
   public static final int BYTES = 48;
+  public static final int PADDING_LEN = 31;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int MAX_USERS_OFFSET = 8;

@@ -86,45 +86,50 @@ public record PoolState(PublicKey _address,
                         long[] padding2) implements Borsh {
 
   public static final int BYTES = 1544;
+  public static final int PADDING_LEN = 7;
+  public static final int REWARD_INFOS_LEN = 3;
+  public static final int TICK_ARRAY_BITMAP_LEN = 16;
+  public static final int PADDING_1_LEN = 25;
+  public static final int PADDING_2_LEN = 32;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int BUMP_OFFSET = 8;
   public static final int AMM_CONFIG_OFFSET = 9;
   public static final int OWNER_OFFSET = 41;
-  public static final int TOKEN_MINT0_OFFSET = 73;
-  public static final int TOKEN_MINT1_OFFSET = 105;
-  public static final int TOKEN_VAULT0_OFFSET = 137;
-  public static final int TOKEN_VAULT1_OFFSET = 169;
+  public static final int TOKEN_MINT_0_OFFSET = 73;
+  public static final int TOKEN_MINT_1_OFFSET = 105;
+  public static final int TOKEN_VAULT_0_OFFSET = 137;
+  public static final int TOKEN_VAULT_1_OFFSET = 169;
   public static final int OBSERVATION_KEY_OFFSET = 201;
-  public static final int MINT_DECIMALS0_OFFSET = 233;
-  public static final int MINT_DECIMALS1_OFFSET = 234;
+  public static final int MINT_DECIMALS_0_OFFSET = 233;
+  public static final int MINT_DECIMALS_1_OFFSET = 234;
   public static final int TICK_SPACING_OFFSET = 235;
   public static final int LIQUIDITY_OFFSET = 237;
-  public static final int SQRT_PRICE_X64_OFFSET = 253;
+  public static final int SQRT_PRICE_X_66_OFFSET = 253;
   public static final int TICK_CURRENT_OFFSET = 269;
   public static final int OBSERVATION_INDEX_OFFSET = 273;
   public static final int OBSERVATION_UPDATE_DURATION_OFFSET = 275;
-  public static final int FEE_GROWTH_GLOBAL0_X64_OFFSET = 277;
-  public static final int FEE_GROWTH_GLOBAL1_X64_OFFSET = 293;
-  public static final int PROTOCOL_FEES_TOKEN0_OFFSET = 309;
-  public static final int PROTOCOL_FEES_TOKEN1_OFFSET = 317;
-  public static final int SWAP_IN_AMOUNT_TOKEN0_OFFSET = 325;
-  public static final int SWAP_OUT_AMOUNT_TOKEN1_OFFSET = 341;
-  public static final int SWAP_IN_AMOUNT_TOKEN1_OFFSET = 357;
-  public static final int SWAP_OUT_AMOUNT_TOKEN0_OFFSET = 373;
+  public static final int FEE_GROWTH_GLOBAL_0_X_66_OFFSET = 277;
+  public static final int FEE_GROWTH_GLOBAL_1_X_66_OFFSET = 293;
+  public static final int PROTOCOL_FEES_TOKEN_0_OFFSET = 309;
+  public static final int PROTOCOL_FEES_TOKEN_1_OFFSET = 317;
+  public static final int SWAP_IN_AMOUNT_TOKEN_0_OFFSET = 325;
+  public static final int SWAP_OUT_AMOUNT_TOKEN_1_OFFSET = 341;
+  public static final int SWAP_IN_AMOUNT_TOKEN_1_OFFSET = 357;
+  public static final int SWAP_OUT_AMOUNT_TOKEN_0_OFFSET = 373;
   public static final int STATUS_OFFSET = 389;
   public static final int PADDING_OFFSET = 390;
   public static final int REWARD_INFOS_OFFSET = 397;
   public static final int TICK_ARRAY_BITMAP_OFFSET = 904;
-  public static final int TOTAL_FEES_TOKEN0_OFFSET = 1032;
-  public static final int TOTAL_FEES_CLAIMED_TOKEN0_OFFSET = 1040;
-  public static final int TOTAL_FEES_TOKEN1_OFFSET = 1048;
-  public static final int TOTAL_FEES_CLAIMED_TOKEN1_OFFSET = 1056;
-  public static final int FUND_FEES_TOKEN0_OFFSET = 1064;
-  public static final int FUND_FEES_TOKEN1_OFFSET = 1072;
+  public static final int TOTAL_FEES_TOKEN_0_OFFSET = 1032;
+  public static final int TOTAL_FEES_CLAIMED_TOKEN_0_OFFSET = 1040;
+  public static final int TOTAL_FEES_TOKEN_1_OFFSET = 1048;
+  public static final int TOTAL_FEES_CLAIMED_TOKEN_1_OFFSET = 1056;
+  public static final int FUND_FEES_TOKEN_0_OFFSET = 1064;
+  public static final int FUND_FEES_TOKEN_1_OFFSET = 1072;
   public static final int OPEN_TIME_OFFSET = 1080;
-  public static final int PADDING1_OFFSET = 1088;
-  public static final int PADDING2_OFFSET = 1288;
+  public static final int PADDING_1_OFFSET = 1088;
+  public static final int PADDING_2_OFFSET = 1288;
 
   public static Filter createBumpFilter(final int bump) {
     return Filter.createMemCompFilter(BUMP_OFFSET, new byte[]{(byte) bump});
@@ -139,19 +144,19 @@ public record PoolState(PublicKey _address,
   }
 
   public static Filter createTokenMint0Filter(final PublicKey tokenMint0) {
-    return Filter.createMemCompFilter(TOKEN_MINT0_OFFSET, tokenMint0);
+    return Filter.createMemCompFilter(TOKEN_MINT_0_OFFSET, tokenMint0);
   }
 
   public static Filter createTokenMint1Filter(final PublicKey tokenMint1) {
-    return Filter.createMemCompFilter(TOKEN_MINT1_OFFSET, tokenMint1);
+    return Filter.createMemCompFilter(TOKEN_MINT_1_OFFSET, tokenMint1);
   }
 
   public static Filter createTokenVault0Filter(final PublicKey tokenVault0) {
-    return Filter.createMemCompFilter(TOKEN_VAULT0_OFFSET, tokenVault0);
+    return Filter.createMemCompFilter(TOKEN_VAULT_0_OFFSET, tokenVault0);
   }
 
   public static Filter createTokenVault1Filter(final PublicKey tokenVault1) {
-    return Filter.createMemCompFilter(TOKEN_VAULT1_OFFSET, tokenVault1);
+    return Filter.createMemCompFilter(TOKEN_VAULT_1_OFFSET, tokenVault1);
   }
 
   public static Filter createObservationKeyFilter(final PublicKey observationKey) {
@@ -159,11 +164,11 @@ public record PoolState(PublicKey _address,
   }
 
   public static Filter createMintDecimals0Filter(final int mintDecimals0) {
-    return Filter.createMemCompFilter(MINT_DECIMALS0_OFFSET, new byte[]{(byte) mintDecimals0});
+    return Filter.createMemCompFilter(MINT_DECIMALS_0_OFFSET, new byte[]{(byte) mintDecimals0});
   }
 
   public static Filter createMintDecimals1Filter(final int mintDecimals1) {
-    return Filter.createMemCompFilter(MINT_DECIMALS1_OFFSET, new byte[]{(byte) mintDecimals1});
+    return Filter.createMemCompFilter(MINT_DECIMALS_1_OFFSET, new byte[]{(byte) mintDecimals1});
   }
 
   public static Filter createTickSpacingFilter(final int tickSpacing) {
@@ -181,7 +186,7 @@ public record PoolState(PublicKey _address,
   public static Filter createSqrtPriceX64Filter(final BigInteger sqrtPriceX64) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, sqrtPriceX64);
-    return Filter.createMemCompFilter(SQRT_PRICE_X64_OFFSET, _data);
+    return Filter.createMemCompFilter(SQRT_PRICE_X_66_OFFSET, _data);
   }
 
   public static Filter createTickCurrentFilter(final int tickCurrent) {
@@ -205,49 +210,49 @@ public record PoolState(PublicKey _address,
   public static Filter createFeeGrowthGlobal0X64Filter(final BigInteger feeGrowthGlobal0X64) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, feeGrowthGlobal0X64);
-    return Filter.createMemCompFilter(FEE_GROWTH_GLOBAL0_X64_OFFSET, _data);
+    return Filter.createMemCompFilter(FEE_GROWTH_GLOBAL_0_X_66_OFFSET, _data);
   }
 
   public static Filter createFeeGrowthGlobal1X64Filter(final BigInteger feeGrowthGlobal1X64) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, feeGrowthGlobal1X64);
-    return Filter.createMemCompFilter(FEE_GROWTH_GLOBAL1_X64_OFFSET, _data);
+    return Filter.createMemCompFilter(FEE_GROWTH_GLOBAL_1_X_66_OFFSET, _data);
   }
 
   public static Filter createProtocolFeesToken0Filter(final long protocolFeesToken0) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, protocolFeesToken0);
-    return Filter.createMemCompFilter(PROTOCOL_FEES_TOKEN0_OFFSET, _data);
+    return Filter.createMemCompFilter(PROTOCOL_FEES_TOKEN_0_OFFSET, _data);
   }
 
   public static Filter createProtocolFeesToken1Filter(final long protocolFeesToken1) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, protocolFeesToken1);
-    return Filter.createMemCompFilter(PROTOCOL_FEES_TOKEN1_OFFSET, _data);
+    return Filter.createMemCompFilter(PROTOCOL_FEES_TOKEN_1_OFFSET, _data);
   }
 
   public static Filter createSwapInAmountToken0Filter(final BigInteger swapInAmountToken0) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, swapInAmountToken0);
-    return Filter.createMemCompFilter(SWAP_IN_AMOUNT_TOKEN0_OFFSET, _data);
+    return Filter.createMemCompFilter(SWAP_IN_AMOUNT_TOKEN_0_OFFSET, _data);
   }
 
   public static Filter createSwapOutAmountToken1Filter(final BigInteger swapOutAmountToken1) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, swapOutAmountToken1);
-    return Filter.createMemCompFilter(SWAP_OUT_AMOUNT_TOKEN1_OFFSET, _data);
+    return Filter.createMemCompFilter(SWAP_OUT_AMOUNT_TOKEN_1_OFFSET, _data);
   }
 
   public static Filter createSwapInAmountToken1Filter(final BigInteger swapInAmountToken1) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, swapInAmountToken1);
-    return Filter.createMemCompFilter(SWAP_IN_AMOUNT_TOKEN1_OFFSET, _data);
+    return Filter.createMemCompFilter(SWAP_IN_AMOUNT_TOKEN_1_OFFSET, _data);
   }
 
   public static Filter createSwapOutAmountToken0Filter(final BigInteger swapOutAmountToken0) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, swapOutAmountToken0);
-    return Filter.createMemCompFilter(SWAP_OUT_AMOUNT_TOKEN0_OFFSET, _data);
+    return Filter.createMemCompFilter(SWAP_OUT_AMOUNT_TOKEN_0_OFFSET, _data);
   }
 
   public static Filter createStatusFilter(final int status) {
@@ -257,37 +262,37 @@ public record PoolState(PublicKey _address,
   public static Filter createTotalFeesToken0Filter(final long totalFeesToken0) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, totalFeesToken0);
-    return Filter.createMemCompFilter(TOTAL_FEES_TOKEN0_OFFSET, _data);
+    return Filter.createMemCompFilter(TOTAL_FEES_TOKEN_0_OFFSET, _data);
   }
 
   public static Filter createTotalFeesClaimedToken0Filter(final long totalFeesClaimedToken0) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, totalFeesClaimedToken0);
-    return Filter.createMemCompFilter(TOTAL_FEES_CLAIMED_TOKEN0_OFFSET, _data);
+    return Filter.createMemCompFilter(TOTAL_FEES_CLAIMED_TOKEN_0_OFFSET, _data);
   }
 
   public static Filter createTotalFeesToken1Filter(final long totalFeesToken1) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, totalFeesToken1);
-    return Filter.createMemCompFilter(TOTAL_FEES_TOKEN1_OFFSET, _data);
+    return Filter.createMemCompFilter(TOTAL_FEES_TOKEN_1_OFFSET, _data);
   }
 
   public static Filter createTotalFeesClaimedToken1Filter(final long totalFeesClaimedToken1) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, totalFeesClaimedToken1);
-    return Filter.createMemCompFilter(TOTAL_FEES_CLAIMED_TOKEN1_OFFSET, _data);
+    return Filter.createMemCompFilter(TOTAL_FEES_CLAIMED_TOKEN_1_OFFSET, _data);
   }
 
   public static Filter createFundFeesToken0Filter(final long fundFeesToken0) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, fundFeesToken0);
-    return Filter.createMemCompFilter(FUND_FEES_TOKEN0_OFFSET, _data);
+    return Filter.createMemCompFilter(FUND_FEES_TOKEN_0_OFFSET, _data);
   }
 
   public static Filter createFundFeesToken1Filter(final long fundFeesToken1) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, fundFeesToken1);
-    return Filter.createMemCompFilter(FUND_FEES_TOKEN1_OFFSET, _data);
+    return Filter.createMemCompFilter(FUND_FEES_TOKEN_1_OFFSET, _data);
   }
 
   public static Filter createOpenTimeFilter(final long openTime) {

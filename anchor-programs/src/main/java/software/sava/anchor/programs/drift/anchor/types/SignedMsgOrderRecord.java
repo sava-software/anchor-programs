@@ -21,6 +21,7 @@ public record SignedMsgOrderRecord(PublicKey user,
                                    byte[] signedMsgOrderUuid,
                                    long ts) implements Borsh {
 
+  public static final int SIGNED_MSG_ORDER_UUID_LEN = 8;
   public static SignedMsgOrderRecord createRecord(final PublicKey user,
                                                   final String hash,
                                                   final OrderParams matchingOrderParams,

@@ -32,6 +32,7 @@ public record Vote(PublicKey _address,
                    byte[] buffers) implements Borsh {
 
   public static final int BYTES = 115;
+  public static final int BUFFERS_LEN = 32;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int PROPOSAL_OFFSET = 8;

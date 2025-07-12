@@ -23,6 +23,8 @@ public record VariableParameters(// Volatility accumulator measure the number of
                                  byte[] padding1) implements Borsh {
 
   public static final int BYTES = 32;
+  public static final int PADDING_LEN = 4;
+  public static final int PADDING_1_LEN = 8;
 
   public static VariableParameters read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

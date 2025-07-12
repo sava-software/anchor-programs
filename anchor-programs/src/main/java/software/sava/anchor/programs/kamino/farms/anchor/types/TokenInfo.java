@@ -13,6 +13,7 @@ public record TokenInfo(PublicKey mint,
                         long[] padding) implements Borsh {
 
   public static final int BYTES = 120;
+  public static final int PADDING_LEN = 6;
 
   public static TokenInfo read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

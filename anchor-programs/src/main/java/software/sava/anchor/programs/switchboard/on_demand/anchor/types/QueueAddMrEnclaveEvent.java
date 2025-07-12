@@ -8,6 +8,7 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 public record QueueAddMrEnclaveEvent(PublicKey queue, byte[] mrEnclave) implements Borsh {
 
   public static final int BYTES = 64;
+  public static final int MR_ENCLAVE_LEN = 32;
 
   public static QueueAddMrEnclaveEvent read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

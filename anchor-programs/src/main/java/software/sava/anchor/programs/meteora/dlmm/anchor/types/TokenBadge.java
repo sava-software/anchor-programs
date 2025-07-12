@@ -20,6 +20,7 @@ public record TokenBadge(PublicKey _address,
                          byte[] padding) implements Borsh {
 
   public static final int BYTES = 168;
+  public static final int PADDING_LEN = 128;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int TOKEN_MINT_OFFSET = 8;

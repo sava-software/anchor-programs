@@ -14,6 +14,7 @@ public record MerkleRootConfigCreated(PublicKey admin,
                                       byte[] root) implements Borsh {
 
   public static final int BYTES = 136;
+  public static final int ROOT_LEN = 32;
 
   public static MerkleRootConfigCreated read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

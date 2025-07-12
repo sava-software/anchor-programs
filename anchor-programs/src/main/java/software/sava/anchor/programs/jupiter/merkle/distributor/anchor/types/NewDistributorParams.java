@@ -24,6 +24,7 @@ public record NewDistributorParams(long version,
                                    PublicKey locker) implements Borsh {
 
   public static final int BYTES = 171;
+  public static final int ROOT_LEN = 32;
 
   public static NewDistributorParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

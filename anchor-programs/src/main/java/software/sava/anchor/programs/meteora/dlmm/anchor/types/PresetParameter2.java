@@ -42,6 +42,7 @@ public record PresetParameter2(PublicKey _address,
                                long[] padding1) implements Borsh {
 
   public static final int BYTES = 192;
+  public static final int PADDING_1_LEN = 20;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int BIN_STEP_OFFSET = 8;
@@ -54,8 +55,8 @@ public record PresetParameter2(PublicKey _address,
   public static final int PROTOCOL_SHARE_OFFSET = 26;
   public static final int INDEX_OFFSET = 28;
   public static final int BASE_FEE_POWER_FACTOR_OFFSET = 30;
-  public static final int PADDING0_OFFSET = 31;
-  public static final int PADDING1_OFFSET = 32;
+  public static final int PADDING_0_OFFSET = 31;
+  public static final int PADDING_1_OFFSET = 32;
 
   public static Filter createBinStepFilter(final int binStep) {
     final byte[] _data = new byte[2];
@@ -116,7 +117,7 @@ public record PresetParameter2(PublicKey _address,
   }
 
   public static Filter createPadding0Filter(final int padding0) {
-    return Filter.createMemCompFilter(PADDING0_OFFSET, new byte[]{(byte) padding0});
+    return Filter.createMemCompFilter(PADDING_0_OFFSET, new byte[]{(byte) padding0});
   }
 
   public static PresetParameter2 read(final byte[] _data, final int offset) {

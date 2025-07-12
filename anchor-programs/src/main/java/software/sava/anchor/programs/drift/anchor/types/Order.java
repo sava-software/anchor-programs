@@ -74,6 +74,7 @@ public record Order(// The slot the order was placed
                     byte[] padding) implements Borsh {
 
   public static final int BYTES = 96;
+  public static final int PADDING_LEN = 1;
 
   public static Order read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

@@ -11,6 +11,8 @@ public record QueueOverrideSVMParams(byte[] secp256k1Signer,
                                      long slot) implements Borsh {
 
   public static final int BYTES = 112;
+  public static final int SECP_222K_1_SIGNER_LEN = 64;
+  public static final int MR_ENCLAVE_LEN = 32;
 
   public static QueueOverrideSVMParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

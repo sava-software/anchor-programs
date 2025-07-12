@@ -15,6 +15,8 @@ public record DatedPrice(Price price,
                          int index) implements Borsh {
 
   public static final int BYTES = 56;
+  public static final int RESERVED_LEN = 2;
+  public static final int RESERVED_2_LEN = 3;
 
   public static DatedPrice read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

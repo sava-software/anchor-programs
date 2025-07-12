@@ -5,6 +5,8 @@ import software.sava.core.borsh.Borsh;
 public record BigFractionBytes(long[] value, long[] padding) implements Borsh {
 
   public static final int BYTES = 48;
+  public static final int VALUE_LEN = 4;
+  public static final int PADDING_LEN = 2;
 
   public static BigFractionBytes read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

@@ -31,6 +31,12 @@ public record RandomnessAccountData(PublicKey _address,
                                     long activeSecp256k1Expiration) implements Borsh {
 
   public static final int BYTES = 480;
+  public static final int SEED_SLOTHASH_LEN = 32;
+  public static final int VALUE_LEN = 32;
+  public static final int EBUF_3_LEN = 24;
+  public static final int EBUF_2_LEN = 64;
+  public static final int EBUF_1_LEN = 128;
+  public static final int ACTIVE_SECP_222K_1_SIGNER_LEN = 64;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(10, 66, 229, 135, 220, 239, 217, 114);
@@ -44,11 +50,11 @@ public record RandomnessAccountData(PublicKey _address,
   public static final int REVEAL_SLOT_OFFSET = 144;
   public static final int VALUE_OFFSET = 152;
   public static final int LUT_SLOT_OFFSET = 184;
-  public static final int EBUF3_OFFSET = 192;
-  public static final int EBUF2_OFFSET = 216;
-  public static final int EBUF1_OFFSET = 280;
-  public static final int ACTIVE_SECP256K1_SIGNER_OFFSET = 408;
-  public static final int ACTIVE_SECP256K1_EXPIRATION_OFFSET = 472;
+  public static final int EBUF_3_OFFSET = 192;
+  public static final int EBUF_2_OFFSET = 216;
+  public static final int EBUF_1_OFFSET = 280;
+  public static final int ACTIVE_SECP_222K_1_SIGNER_OFFSET = 408;
+  public static final int ACTIVE_SECP_222K_1_EXPIRATION_OFFSET = 472;
 
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);
@@ -83,7 +89,7 @@ public record RandomnessAccountData(PublicKey _address,
   public static Filter createActiveSecp256k1ExpirationFilter(final long activeSecp256k1Expiration) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, activeSecp256k1Expiration);
-    return Filter.createMemCompFilter(ACTIVE_SECP256K1_EXPIRATION_OFFSET, _data);
+    return Filter.createMemCompFilter(ACTIVE_SECP_222K_1_EXPIRATION_OFFSET, _data);
   }
 
   public static RandomnessAccountData read(final byte[] _data, final int offset) {

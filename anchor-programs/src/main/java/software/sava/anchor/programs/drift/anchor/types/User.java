@@ -87,6 +87,12 @@ public record User(PublicKey _address,
                    byte[] padding) implements Borsh {
 
   public static final int BYTES = 4376;
+  public static final int NAME_LEN = 32;
+  public static final int SPOT_POSITIONS_LEN = 8;
+  public static final int PERP_POSITIONS_LEN = 8;
+  public static final int ORDERS_LEN = 32;
+  public static final int PADDING_1_LEN = 3;
+  public static final int PADDING_LEN = 12;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int AUTHORITY_OFFSET = 8;
@@ -117,7 +123,7 @@ public record User(PublicKey _address,
   public static final int HAS_OPEN_AUCTION_OFFSET = 4354;
   public static final int MARGIN_MODE_OFFSET = 4355;
   public static final int POOL_ID_OFFSET = 4356;
-  public static final int PADDING1_OFFSET = 4357;
+  public static final int PADDING_1_OFFSET = 4357;
   public static final int LAST_FUEL_BONUS_UPDATE_TS_OFFSET = 4360;
   public static final int PADDING_OFFSET = 4364;
 

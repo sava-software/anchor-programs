@@ -621,7 +621,7 @@ public final class AlphaVaultProgram {
     }
   }
 
-  public static final Discriminator FILL_DAMM_V2_DISCRIMINATOR = toDiscriminator(221, 175, 108, 48, 19, 204, 125, 23);
+  public static final Discriminator FILL_DAMM_V_2_DISCRIMINATOR = toDiscriminator(221, 175, 108, 48, 19, 204, 125, 23);
 
   public static Instruction fillDammV2(final AccountMeta invokedAlphaVaultProgramMeta,
                                        final SolanaAccounts solanaAccounts,
@@ -667,7 +667,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(FILL_DAMM_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(FILL_DAMM_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, maxAmount);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);

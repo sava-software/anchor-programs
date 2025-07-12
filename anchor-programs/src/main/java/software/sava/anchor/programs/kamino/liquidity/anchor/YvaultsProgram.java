@@ -340,6 +340,7 @@ public final class YvaultsProgram {
     }
 
     public static final int BYTES = 56;
+    public static final int VALUE_LEN = 32;
 
     public static UpdateCollateralInfoIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -631,6 +632,7 @@ public final class YvaultsProgram {
     }
 
     public static final int BYTES = 44;
+    public static final int VALUE_LEN = 32;
 
     public static UpdateGlobalConfigIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -762,6 +764,7 @@ public final class YvaultsProgram {
     }
 
     public static final int BYTES = 138;
+    public static final int VALUE_LEN = 128;
 
     public static UpdateStrategyConfigIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -2675,6 +2678,7 @@ public final class YvaultsProgram {
     }
 
     public static final int BYTES = 72;
+    public static final int SIGNATURE_LEN = 64;
 
     public static SignTermsIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

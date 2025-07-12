@@ -14,6 +14,7 @@ public record VaultOperatorStakeWeight(PublicKey vault,
                                        byte[] reserved) implements Borsh {
 
   public static final int BYTES = 217;
+  public static final int RESERVED_LEN = 32;
 
   public static VaultOperatorStakeWeight read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

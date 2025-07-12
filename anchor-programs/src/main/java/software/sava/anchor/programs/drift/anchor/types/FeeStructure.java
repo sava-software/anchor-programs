@@ -11,6 +11,7 @@ public record FeeStructure(FeeTier[] feeTiers,
                            long flatFillerFee) implements Borsh {
 
   public static final int BYTES = 360;
+  public static final int FEE_TIERS_LEN = 10;
 
   public static FeeStructure read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

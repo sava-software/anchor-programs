@@ -110,6 +110,8 @@ public record PerpMarket(PublicKey _address,
                          byte[] padding) implements Borsh {
 
   public static final int BYTES = 1216;
+  public static final int NAME_LEN = 32;
+  public static final int PADDING_LEN = 36;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int PUBKEY_OFFSET = 8;

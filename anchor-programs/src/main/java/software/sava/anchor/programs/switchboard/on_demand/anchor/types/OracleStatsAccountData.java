@@ -32,6 +32,8 @@ public record OracleStatsAccountData(PublicKey _address,
                                      byte[] ebuf) implements Borsh {
 
   public static final int BYTES = 1240;
+  public static final int PADDING_1_LEN = 7;
+  public static final int EBUF_LEN = 1024;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(180, 157, 178, 234, 240, 27, 152, 179);
@@ -44,7 +46,7 @@ public record OracleStatsAccountData(PublicKey _address,
   public static final int MEGA_SLOT_INFO_OFFSET = 168;
   public static final int LAST_TRANSFER_SLOT_OFFSET = 200;
   public static final int BUMP_OFFSET = 208;
-  public static final int PADDING1_OFFSET = 209;
+  public static final int PADDING_1_OFFSET = 209;
   public static final int EBUF_OFFSET = 216;
 
   public static Filter createOwnerFilter(final PublicKey owner) {

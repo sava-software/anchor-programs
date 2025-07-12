@@ -37,6 +37,9 @@ public record EpochState(PublicKey _address,
                          byte[] reserved) implements Borsh {
 
   public static final int BYTES = 58879;
+  public static final int OPERATOR_SNAPSHOT_PROGRESS_LEN = 256;
+  public static final int NCN_DISTRIBUTION_PROGRESS_LEN = 2048;
+  public static final int RESERVED_LEN = 1023;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int NCN_OFFSET = 8;

@@ -19,6 +19,7 @@ public record ReferrerName(PublicKey _address,
                            byte[] name) implements Borsh {
 
   public static final int BYTES = 136;
+  public static final int NAME_LEN = 32;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int AUTHORITY_OFFSET = 8;

@@ -122,6 +122,15 @@ public record WhirlpoolStrategy(PublicKey _address,
                                 BigInteger[] padding7) implements Borsh {
 
   public static final int BYTES = 4064;
+  public static final int DEPRECATED_0_LEN = 2;
+  public static final int DEPRECATED_1_LEN = 2;
+  public static final int KAMINO_REWARDS_LEN = 3;
+  public static final int PADDING_1_LEN = 6;
+  public static final int PADDING_2_LEN = 7;
+  public static final int PADDING_4_LEN = 13;
+  public static final int PADDING_5_LEN = 32;
+  public static final int PADDING_6_LEN = 32;
+  public static final int PADDING_7_LEN = 32;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int ADMIN_AUTHORITY_OFFSET = 8;
@@ -139,8 +148,8 @@ public record WhirlpoolStrategy(PublicKey _address,
   public static final int POSITION_TOKEN_ACCOUNT_OFFSET = 368;
   public static final int TOKEN_A_VAULT_OFFSET = 400;
   public static final int TOKEN_B_VAULT_OFFSET = 432;
-  public static final int DEPRECATED0_OFFSET = 464;
-  public static final int DEPRECATED1_OFFSET = 528;
+  public static final int DEPRECATED_0_OFFSET = 464;
+  public static final int DEPRECATED_1_OFFSET = 528;
   public static final int TOKEN_A_MINT_OFFSET = 544;
   public static final int TOKEN_B_MINT_OFFSET = 576;
   public static final int TOKEN_A_MINT_DECIMALS_OFFSET = 608;
@@ -150,31 +159,31 @@ public record WhirlpoolStrategy(PublicKey _address,
   public static final int TOKEN_A_COLLATERAL_ID_OFFSET = 640;
   public static final int TOKEN_B_COLLATERAL_ID_OFFSET = 648;
   public static final int SCOPE_PRICES_OFFSET = 656;
-  public static final int DEPRECATED2_OFFSET = 688;
+  public static final int DEPRECATED_2_OFFSET = 688;
   public static final int SHARES_MINT_OFFSET = 720;
   public static final int SHARES_MINT_DECIMALS_OFFSET = 752;
   public static final int SHARES_MINT_AUTHORITY_OFFSET = 760;
   public static final int SHARES_MINT_AUTHORITY_BUMP_OFFSET = 792;
   public static final int SHARES_ISSUED_OFFSET = 800;
   public static final int STATUS_OFFSET = 808;
-  public static final int REWARD0_AMOUNT_OFFSET = 816;
-  public static final int REWARD0_VAULT_OFFSET = 824;
-  public static final int REWARD0_COLLATERAL_ID_OFFSET = 856;
-  public static final int REWARD0_DECIMALS_OFFSET = 864;
-  public static final int REWARD1_AMOUNT_OFFSET = 872;
-  public static final int REWARD1_VAULT_OFFSET = 880;
-  public static final int REWARD1_COLLATERAL_ID_OFFSET = 912;
-  public static final int REWARD1_DECIMALS_OFFSET = 920;
-  public static final int REWARD2_AMOUNT_OFFSET = 928;
-  public static final int REWARD2_VAULT_OFFSET = 936;
-  public static final int REWARD2_COLLATERAL_ID_OFFSET = 968;
-  public static final int REWARD2_DECIMALS_OFFSET = 976;
+  public static final int REWARD_0_AMOUNT_OFFSET = 816;
+  public static final int REWARD_0_VAULT_OFFSET = 824;
+  public static final int REWARD_0_COLLATERAL_ID_OFFSET = 856;
+  public static final int REWARD_0_DECIMALS_OFFSET = 864;
+  public static final int REWARD_1_AMOUNT_OFFSET = 872;
+  public static final int REWARD_1_VAULT_OFFSET = 880;
+  public static final int REWARD_1_COLLATERAL_ID_OFFSET = 912;
+  public static final int REWARD_1_DECIMALS_OFFSET = 920;
+  public static final int REWARD_2_AMOUNT_OFFSET = 928;
+  public static final int REWARD_2_VAULT_OFFSET = 936;
+  public static final int REWARD_2_COLLATERAL_ID_OFFSET = 968;
+  public static final int REWARD_2_DECIMALS_OFFSET = 976;
   public static final int DEPOSIT_CAP_USD_OFFSET = 984;
   public static final int FEES_A_CUMULATIVE_OFFSET = 992;
   public static final int FEES_B_CUMULATIVE_OFFSET = 1000;
-  public static final int REWARD0_AMOUNT_CUMULATIVE_OFFSET = 1008;
-  public static final int REWARD1_AMOUNT_CUMULATIVE_OFFSET = 1016;
-  public static final int REWARD2_AMOUNT_CUMULATIVE_OFFSET = 1024;
+  public static final int REWARD_0_AMOUNT_CUMULATIVE_OFFSET = 1008;
+  public static final int REWARD_1_AMOUNT_CUMULATIVE_OFFSET = 1016;
+  public static final int REWARD_2_AMOUNT_CUMULATIVE_OFFSET = 1024;
   public static final int DEPOSIT_CAP_USD_PER_IXN_OFFSET = 1032;
   public static final int WITHDRAWAL_CAP_A_OFFSET = 1040;
   public static final int WITHDRAWAL_CAP_B_OFFSET = 1072;
@@ -182,12 +191,12 @@ public record WhirlpoolStrategy(PublicKey _address,
   public static final int SWAP_VAULT_MAX_SLIPPAGE_BPS_OFFSET = 1112;
   public static final int SWAP_VAULT_MAX_SLIPPAGE_FROM_REFERENCE_BPS_OFFSET = 1116;
   public static final int STRATEGY_TYPE_OFFSET = 1120;
-  public static final int PADDING0_OFFSET = 1128;
+  public static final int PADDING_0_OFFSET = 1128;
   public static final int WITHDRAW_FEE_OFFSET = 1136;
   public static final int FEES_FEE_OFFSET = 1144;
-  public static final int REWARD0_FEE_OFFSET = 1152;
-  public static final int REWARD1_FEE_OFFSET = 1160;
-  public static final int REWARD2_FEE_OFFSET = 1168;
+  public static final int REWARD_0_FEE_OFFSET = 1152;
+  public static final int REWARD_1_FEE_OFFSET = 1160;
+  public static final int REWARD_2_FEE_OFFSET = 1168;
   public static final int POSITION_TIMESTAMP_OFFSET = 1176;
   public static final int KAMINO_REWARDS_OFFSET = 1184;
   public static final int STRATEGY_DEX_OFFSET = 1544;
@@ -199,16 +208,16 @@ public record WhirlpoolStrategy(PublicKey _address,
   public static final int INVEST_BLOCKED_OFFSET = 1626;
   public static final int SHARE_CALCULATION_METHOD_OFFSET = 1627;
   public static final int WITHDRAW_BLOCKED_OFFSET = 1628;
-  public static final int RESERVED_FLAG2_OFFSET = 1629;
+  public static final int RESERVED_FLAG_2_OFFSET = 1629;
   public static final int LOCAL_ADMIN_BLOCKED_OFFSET = 1630;
   public static final int FLASH_VAULT_SWAP_ALLOWED_OFFSET = 1631;
   public static final int REFERENCE_SWAP_PRICE_A_OFFSET = 1632;
   public static final int REFERENCE_SWAP_PRICE_B_OFFSET = 1648;
   public static final int IS_COMMUNITY_OFFSET = 1664;
   public static final int REBALANCE_TYPE_OFFSET = 1665;
-  public static final int PADDING1_OFFSET = 1666;
+  public static final int PADDING_1_OFFSET = 1666;
   public static final int REBALANCE_RAW_OFFSET = 1672;
-  public static final int PADDING2_OFFSET = 2057;
+  public static final int PADDING_2_OFFSET = 2057;
   public static final int TOKEN_A_FEES_FROM_REWARDS_CUMULATIVE_OFFSET = 2064;
   public static final int TOKEN_B_FEES_FROM_REWARDS_CUMULATIVE_OFFSET = 2072;
   public static final int STRATEGY_LOOKUP_TABLE_OFFSET = 2080;
@@ -219,11 +228,11 @@ public record WhirlpoolStrategy(PublicKey _address,
   public static final int TOKEN_A_TOKEN_PROGRAM_OFFSET = 2216;
   public static final int TOKEN_B_TOKEN_PROGRAM_OFFSET = 2248;
   public static final int PENDING_ADMIN_OFFSET = 2280;
-  public static final int PADDING3_OFFSET = 2312;
-  public static final int PADDING4_OFFSET = 2320;
-  public static final int PADDING5_OFFSET = 2528;
-  public static final int PADDING6_OFFSET = 3040;
-  public static final int PADDING7_OFFSET = 3552;
+  public static final int PADDING_3_OFFSET = 2312;
+  public static final int PADDING_4_OFFSET = 2320;
+  public static final int PADDING_5_OFFSET = 2528;
+  public static final int PADDING_6_OFFSET = 3040;
+  public static final int PADDING_7_OFFSET = 3552;
 
   public static Filter createAdminAuthorityFilter(final PublicKey adminAuthority) {
     return Filter.createMemCompFilter(ADMIN_AUTHORITY_OFFSET, adminAuthority);
@@ -336,7 +345,7 @@ public record WhirlpoolStrategy(PublicKey _address,
   }
 
   public static Filter createDeprecated2Filter(final PublicKey deprecated2) {
-    return Filter.createMemCompFilter(DEPRECATED2_OFFSET, deprecated2);
+    return Filter.createMemCompFilter(DEPRECATED_2_OFFSET, deprecated2);
   }
 
   public static Filter createSharesMintFilter(final PublicKey sharesMint) {
@@ -374,67 +383,67 @@ public record WhirlpoolStrategy(PublicKey _address,
   public static Filter createReward0AmountFilter(final long reward0Amount) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward0Amount);
-    return Filter.createMemCompFilter(REWARD0_AMOUNT_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_0_AMOUNT_OFFSET, _data);
   }
 
   public static Filter createReward0VaultFilter(final PublicKey reward0Vault) {
-    return Filter.createMemCompFilter(REWARD0_VAULT_OFFSET, reward0Vault);
+    return Filter.createMemCompFilter(REWARD_0_VAULT_OFFSET, reward0Vault);
   }
 
   public static Filter createReward0CollateralIdFilter(final long reward0CollateralId) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward0CollateralId);
-    return Filter.createMemCompFilter(REWARD0_COLLATERAL_ID_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_0_COLLATERAL_ID_OFFSET, _data);
   }
 
   public static Filter createReward0DecimalsFilter(final long reward0Decimals) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward0Decimals);
-    return Filter.createMemCompFilter(REWARD0_DECIMALS_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_0_DECIMALS_OFFSET, _data);
   }
 
   public static Filter createReward1AmountFilter(final long reward1Amount) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward1Amount);
-    return Filter.createMemCompFilter(REWARD1_AMOUNT_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_1_AMOUNT_OFFSET, _data);
   }
 
   public static Filter createReward1VaultFilter(final PublicKey reward1Vault) {
-    return Filter.createMemCompFilter(REWARD1_VAULT_OFFSET, reward1Vault);
+    return Filter.createMemCompFilter(REWARD_1_VAULT_OFFSET, reward1Vault);
   }
 
   public static Filter createReward1CollateralIdFilter(final long reward1CollateralId) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward1CollateralId);
-    return Filter.createMemCompFilter(REWARD1_COLLATERAL_ID_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_1_COLLATERAL_ID_OFFSET, _data);
   }
 
   public static Filter createReward1DecimalsFilter(final long reward1Decimals) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward1Decimals);
-    return Filter.createMemCompFilter(REWARD1_DECIMALS_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_1_DECIMALS_OFFSET, _data);
   }
 
   public static Filter createReward2AmountFilter(final long reward2Amount) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward2Amount);
-    return Filter.createMemCompFilter(REWARD2_AMOUNT_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_2_AMOUNT_OFFSET, _data);
   }
 
   public static Filter createReward2VaultFilter(final PublicKey reward2Vault) {
-    return Filter.createMemCompFilter(REWARD2_VAULT_OFFSET, reward2Vault);
+    return Filter.createMemCompFilter(REWARD_2_VAULT_OFFSET, reward2Vault);
   }
 
   public static Filter createReward2CollateralIdFilter(final long reward2CollateralId) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward2CollateralId);
-    return Filter.createMemCompFilter(REWARD2_COLLATERAL_ID_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_2_COLLATERAL_ID_OFFSET, _data);
   }
 
   public static Filter createReward2DecimalsFilter(final long reward2Decimals) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward2Decimals);
-    return Filter.createMemCompFilter(REWARD2_DECIMALS_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_2_DECIMALS_OFFSET, _data);
   }
 
   public static Filter createDepositCapUsdFilter(final long depositCapUsd) {
@@ -458,19 +467,19 @@ public record WhirlpoolStrategy(PublicKey _address,
   public static Filter createReward0AmountCumulativeFilter(final long reward0AmountCumulative) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward0AmountCumulative);
-    return Filter.createMemCompFilter(REWARD0_AMOUNT_CUMULATIVE_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_0_AMOUNT_CUMULATIVE_OFFSET, _data);
   }
 
   public static Filter createReward1AmountCumulativeFilter(final long reward1AmountCumulative) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward1AmountCumulative);
-    return Filter.createMemCompFilter(REWARD1_AMOUNT_CUMULATIVE_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_1_AMOUNT_CUMULATIVE_OFFSET, _data);
   }
 
   public static Filter createReward2AmountCumulativeFilter(final long reward2AmountCumulative) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward2AmountCumulative);
-    return Filter.createMemCompFilter(REWARD2_AMOUNT_CUMULATIVE_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_2_AMOUNT_CUMULATIVE_OFFSET, _data);
   }
 
   public static Filter createDepositCapUsdPerIxnFilter(final long depositCapUsdPerIxn) {
@@ -514,7 +523,7 @@ public record WhirlpoolStrategy(PublicKey _address,
   public static Filter createPadding0Filter(final long padding0) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, padding0);
-    return Filter.createMemCompFilter(PADDING0_OFFSET, _data);
+    return Filter.createMemCompFilter(PADDING_0_OFFSET, _data);
   }
 
   public static Filter createWithdrawFeeFilter(final long withdrawFee) {
@@ -532,19 +541,19 @@ public record WhirlpoolStrategy(PublicKey _address,
   public static Filter createReward0FeeFilter(final long reward0Fee) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward0Fee);
-    return Filter.createMemCompFilter(REWARD0_FEE_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_0_FEE_OFFSET, _data);
   }
 
   public static Filter createReward1FeeFilter(final long reward1Fee) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward1Fee);
-    return Filter.createMemCompFilter(REWARD1_FEE_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_1_FEE_OFFSET, _data);
   }
 
   public static Filter createReward2FeeFilter(final long reward2Fee) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reward2Fee);
-    return Filter.createMemCompFilter(REWARD2_FEE_OFFSET, _data);
+    return Filter.createMemCompFilter(REWARD_2_FEE_OFFSET, _data);
   }
 
   public static Filter createPositionTimestampFilter(final long positionTimestamp) {
@@ -594,7 +603,7 @@ public record WhirlpoolStrategy(PublicKey _address,
   }
 
   public static Filter createReservedFlag2Filter(final int reservedFlag2) {
-    return Filter.createMemCompFilter(RESERVED_FLAG2_OFFSET, new byte[]{(byte) reservedFlag2});
+    return Filter.createMemCompFilter(RESERVED_FLAG_2_OFFSET, new byte[]{(byte) reservedFlag2});
   }
 
   public static Filter createLocalAdminBlockedFilter(final int localAdminBlocked) {
@@ -670,7 +679,7 @@ public record WhirlpoolStrategy(PublicKey _address,
   public static Filter createPadding3Filter(final long padding3) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, padding3);
-    return Filter.createMemCompFilter(PADDING3_OFFSET, _data);
+    return Filter.createMemCompFilter(PADDING_3_OFFSET, _data);
   }
 
   public static WhirlpoolStrategy read(final byte[] _data, final int offset) {

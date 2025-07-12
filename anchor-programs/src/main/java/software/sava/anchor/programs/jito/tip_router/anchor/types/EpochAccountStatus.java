@@ -11,6 +11,8 @@ public record EpochAccountStatus(int epochState,
                                  byte[] ncnRewardRouter) implements Borsh {
 
   public static final int BYTES = 2309;
+  public static final int OPERATOR_SNAPSHOT_LEN = 256;
+  public static final int NCN_REWARD_ROUTER_LEN = 2048;
 
   public static EpochAccountStatus read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

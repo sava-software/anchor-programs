@@ -43,6 +43,9 @@ public record GlobalConfig(PublicKey _address,
                            long[] padding) implements Borsh {
 
   public static final int BYTES = 26832;
+  public static final int SWAP_REWARDS_DISCOUNT_BPS_LEN = 256;
+  public static final int TREASURY_FEE_VAULTS_LEN = 256;
+  public static final int PADDING_LEN = 2035;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int EMERGENCY_MODE_OFFSET = 8;

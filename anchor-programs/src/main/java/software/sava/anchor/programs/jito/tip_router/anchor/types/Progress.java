@@ -10,6 +10,7 @@ public record Progress(long tally,
                        byte[] reserved) implements Borsh {
 
   public static final int BYTES = 24;
+  public static final int RESERVED_LEN = 8;
 
   public static Progress read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

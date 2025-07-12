@@ -12,6 +12,9 @@ public record Fees(long activationEpoch,
                    Fee[] ncnFeeGroupsBps) implements Borsh {
 
   public static final int BYTES = 168;
+  public static final int RESERVED_LEN = 126;
+  public static final int BASE_FEE_GROUPS_BPS_LEN = 8;
+  public static final int NCN_FEE_GROUPS_BPS_LEN = 8;
 
   public static Fees read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

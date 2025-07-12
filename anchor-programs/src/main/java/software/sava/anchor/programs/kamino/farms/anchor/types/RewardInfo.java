@@ -27,6 +27,8 @@ public record RewardInfo(TokenInfo token,
                          long[] padding1) implements Borsh {
 
   public static final int BYTES = 704;
+  public static final int PADDING_0_LEN = 6;
+  public static final int PADDING_1_LEN = 20;
 
   public static RewardInfo read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

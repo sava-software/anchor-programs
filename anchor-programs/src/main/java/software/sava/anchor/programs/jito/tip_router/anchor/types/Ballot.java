@@ -7,6 +7,8 @@ public record Ballot(byte[] metaMerkleRoot,
                      byte[] reserved) implements Borsh {
 
   public static final int BYTES = 96;
+  public static final int META_MERKLE_ROOT_LEN = 32;
+  public static final int RESERVED_LEN = 63;
 
   public static Ballot read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

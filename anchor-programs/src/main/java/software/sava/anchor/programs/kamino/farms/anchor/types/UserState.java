@@ -53,13 +53,18 @@ public record UserState(PublicKey _address,
                         long[] padding1) implements Borsh {
 
   public static final int BYTES = 920;
+  public static final int PADDING_0_LEN = 7;
+  public static final int REWARDS_TALLY_SCALED_LEN = 10;
+  public static final int REWARDS_ISSUED_UNCLAIMED_LEN = 10;
+  public static final int LAST_CLAIM_TS_LEN = 10;
+  public static final int PADDING_1_LEN = 50;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int USER_ID_OFFSET = 8;
   public static final int FARM_STATE_OFFSET = 16;
   public static final int OWNER_OFFSET = 48;
   public static final int IS_FARM_DELEGATED_OFFSET = 80;
-  public static final int PADDING0_OFFSET = 81;
+  public static final int PADDING_0_OFFSET = 81;
   public static final int REWARDS_TALLY_SCALED_OFFSET = 88;
   public static final int REWARDS_ISSUED_UNCLAIMED_OFFSET = 248;
   public static final int LAST_CLAIM_TS_OFFSET = 328;
@@ -71,7 +76,7 @@ public record UserState(PublicKey _address,
   public static final int BUMP_OFFSET = 472;
   public static final int DELEGATEE_OFFSET = 480;
   public static final int LAST_STAKE_TS_OFFSET = 512;
-  public static final int PADDING1_OFFSET = 520;
+  public static final int PADDING_1_OFFSET = 520;
 
   public static Filter createUserIdFilter(final long userId) {
     final byte[] _data = new byte[8];

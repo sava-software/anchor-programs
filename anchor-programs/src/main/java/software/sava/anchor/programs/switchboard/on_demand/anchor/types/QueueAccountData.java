@@ -67,6 +67,13 @@ public record QueueAccountData(PublicKey _address,
                                byte[] ebuf1) implements Borsh {
 
   public static final int BYTES = 6280;
+  public static final int MR_ENCLAVES_LEN = 32;
+  public static final int ORACLE_KEYS_LEN = 128;
+  public static final int EBUF_6_LEN = 15;
+  public static final int VAULTS_LEN = 4;
+  public static final int EBUF_4_LEN = 32;
+  public static final int EBUF_2_LEN = 256;
+  public static final int EBUF_1_LEN = 512;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(217, 194, 55, 127, 184, 83, 138, 1);
@@ -92,13 +99,13 @@ public record QueueAccountData(PublicKey _address,
   public static final int MINT_OFFSET = 5224;
   public static final int LUT_SLOT_OFFSET = 5256;
   public static final int ALLOW_SUBSIDIES_OFFSET = 5264;
-  public static final int EBUF6_OFFSET = 5265;
+  public static final int EBUF_6_OFFSET = 5265;
   public static final int NCN_OFFSET = 5280;
   public static final int RESRVED_OFFSET = 5312;
   public static final int VAULTS_OFFSET = 5320;
-  public static final int EBUF4_OFFSET = 5480;
-  public static final int EBUF2_OFFSET = 5512;
-  public static final int EBUF1_OFFSET = 5768;
+  public static final int EBUF_4_OFFSET = 5480;
+  public static final int EBUF_2_OFFSET = 5512;
+  public static final int EBUF_1_OFFSET = 5768;
 
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);

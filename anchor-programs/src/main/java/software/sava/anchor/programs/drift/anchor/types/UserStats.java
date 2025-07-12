@@ -77,24 +77,26 @@ public record UserStats(PublicKey _address,
                         byte[] padding) implements Borsh {
 
   public static final int BYTES = 240;
+  public static final int PADDING_1_LEN = 1;
+  public static final int PADDING_LEN = 12;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int AUTHORITY_OFFSET = 8;
   public static final int REFERRER_OFFSET = 40;
   public static final int FEES_OFFSET = 72;
   public static final int NEXT_EPOCH_TS_OFFSET = 120;
-  public static final int MAKER_VOLUME30D_OFFSET = 128;
-  public static final int TAKER_VOLUME30D_OFFSET = 136;
-  public static final int FILLER_VOLUME30D_OFFSET = 144;
-  public static final int LAST_MAKER_VOLUME30D_TS_OFFSET = 152;
-  public static final int LAST_TAKER_VOLUME30D_TS_OFFSET = 160;
-  public static final int LAST_FILLER_VOLUME30D_TS_OFFSET = 168;
+  public static final int MAKER_VOLUME_33D_OFFSET = 128;
+  public static final int TAKER_VOLUME_33D_OFFSET = 136;
+  public static final int FILLER_VOLUME_33D_OFFSET = 144;
+  public static final int LAST_MAKER_VOLUME_33D_TS_OFFSET = 152;
+  public static final int LAST_TAKER_VOLUME_33D_TS_OFFSET = 160;
+  public static final int LAST_FILLER_VOLUME_33D_TS_OFFSET = 168;
   public static final int IF_STAKED_QUOTE_ASSET_AMOUNT_OFFSET = 176;
   public static final int NUMBER_OF_SUB_ACCOUNTS_OFFSET = 184;
   public static final int NUMBER_OF_SUB_ACCOUNTS_CREATED_OFFSET = 186;
   public static final int REFERRER_STATUS_OFFSET = 188;
   public static final int DISABLE_UPDATE_PERP_BID_ASK_TWAP_OFFSET = 189;
-  public static final int PADDING1_OFFSET = 190;
+  public static final int PADDING_1_OFFSET = 190;
   public static final int FUEL_OVERFLOW_STATUS_OFFSET = 191;
   public static final int FUEL_INSURANCE_OFFSET = 192;
   public static final int FUEL_DEPOSITS_OFFSET = 196;
@@ -127,37 +129,37 @@ public record UserStats(PublicKey _address,
   public static Filter createMakerVolume30dFilter(final long makerVolume30d) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, makerVolume30d);
-    return Filter.createMemCompFilter(MAKER_VOLUME30D_OFFSET, _data);
+    return Filter.createMemCompFilter(MAKER_VOLUME_33D_OFFSET, _data);
   }
 
   public static Filter createTakerVolume30dFilter(final long takerVolume30d) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, takerVolume30d);
-    return Filter.createMemCompFilter(TAKER_VOLUME30D_OFFSET, _data);
+    return Filter.createMemCompFilter(TAKER_VOLUME_33D_OFFSET, _data);
   }
 
   public static Filter createFillerVolume30dFilter(final long fillerVolume30d) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, fillerVolume30d);
-    return Filter.createMemCompFilter(FILLER_VOLUME30D_OFFSET, _data);
+    return Filter.createMemCompFilter(FILLER_VOLUME_33D_OFFSET, _data);
   }
 
   public static Filter createLastMakerVolume30dTsFilter(final long lastMakerVolume30dTs) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, lastMakerVolume30dTs);
-    return Filter.createMemCompFilter(LAST_MAKER_VOLUME30D_TS_OFFSET, _data);
+    return Filter.createMemCompFilter(LAST_MAKER_VOLUME_33D_TS_OFFSET, _data);
   }
 
   public static Filter createLastTakerVolume30dTsFilter(final long lastTakerVolume30dTs) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, lastTakerVolume30dTs);
-    return Filter.createMemCompFilter(LAST_TAKER_VOLUME30D_TS_OFFSET, _data);
+    return Filter.createMemCompFilter(LAST_TAKER_VOLUME_33D_TS_OFFSET, _data);
   }
 
   public static Filter createLastFillerVolume30dTsFilter(final long lastFillerVolume30dTs) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, lastFillerVolume30dTs);
-    return Filter.createMemCompFilter(LAST_FILLER_VOLUME30D_TS_OFFSET, _data);
+    return Filter.createMemCompFilter(LAST_FILLER_VOLUME_33D_TS_OFFSET, _data);
   }
 
   public static Filter createIfStakedQuoteAssetAmountFilter(final long ifStakedQuoteAssetAmount) {

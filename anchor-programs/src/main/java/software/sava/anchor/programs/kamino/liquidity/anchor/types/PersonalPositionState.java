@@ -45,6 +45,8 @@ public record PersonalPositionState(PublicKey _address,
                                     long[] padding) implements Borsh {
 
   public static final int BYTES = 281;
+  public static final int REWARD_INFOS_LEN = 3;
+  public static final int PADDING_LEN = 8;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int BUMP_OFFSET = 8;
@@ -53,10 +55,10 @@ public record PersonalPositionState(PublicKey _address,
   public static final int TICK_LOWER_INDEX_OFFSET = 73;
   public static final int TICK_UPPER_INDEX_OFFSET = 77;
   public static final int LIQUIDITY_OFFSET = 81;
-  public static final int FEE_GROWTH_INSIDE0_LAST_X64_OFFSET = 97;
-  public static final int FEE_GROWTH_INSIDE1_LAST_X64_OFFSET = 113;
-  public static final int TOKEN_FEES_OWED0_OFFSET = 129;
-  public static final int TOKEN_FEES_OWED1_OFFSET = 137;
+  public static final int FEE_GROWTH_INSIDE_0_LAST_X_66_OFFSET = 97;
+  public static final int FEE_GROWTH_INSIDE_1_LAST_X_66_OFFSET = 113;
+  public static final int TOKEN_FEES_OWED_0_OFFSET = 129;
+  public static final int TOKEN_FEES_OWED_1_OFFSET = 137;
   public static final int REWARD_INFOS_OFFSET = 145;
   public static final int PADDING_OFFSET = 217;
 
@@ -93,25 +95,25 @@ public record PersonalPositionState(PublicKey _address,
   public static Filter createFeeGrowthInside0LastX64Filter(final BigInteger feeGrowthInside0LastX64) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, feeGrowthInside0LastX64);
-    return Filter.createMemCompFilter(FEE_GROWTH_INSIDE0_LAST_X64_OFFSET, _data);
+    return Filter.createMemCompFilter(FEE_GROWTH_INSIDE_0_LAST_X_66_OFFSET, _data);
   }
 
   public static Filter createFeeGrowthInside1LastX64Filter(final BigInteger feeGrowthInside1LastX64) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, feeGrowthInside1LastX64);
-    return Filter.createMemCompFilter(FEE_GROWTH_INSIDE1_LAST_X64_OFFSET, _data);
+    return Filter.createMemCompFilter(FEE_GROWTH_INSIDE_1_LAST_X_66_OFFSET, _data);
   }
 
   public static Filter createTokenFeesOwed0Filter(final long tokenFeesOwed0) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, tokenFeesOwed0);
-    return Filter.createMemCompFilter(TOKEN_FEES_OWED0_OFFSET, _data);
+    return Filter.createMemCompFilter(TOKEN_FEES_OWED_0_OFFSET, _data);
   }
 
   public static Filter createTokenFeesOwed1Filter(final long tokenFeesOwed1) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, tokenFeesOwed1);
-    return Filter.createMemCompFilter(TOKEN_FEES_OWED1_OFFSET, _data);
+    return Filter.createMemCompFilter(TOKEN_FEES_OWED_1_OFFSET, _data);
   }
 
   public static PersonalPositionState read(final byte[] _data, final int offset) {

@@ -83,6 +83,9 @@ public record FarmState(PublicKey _address,
                         long[] padding) implements Borsh {
 
   public static final int BYTES = 8336;
+  public static final int REWARD_INFOS_LEN = 10;
+  public static final int PADDING_0_LEN = 5;
+  public static final int PADDING_LEN = 74;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int FARM_ADMIN_OFFSET = 8;
@@ -99,7 +102,7 @@ public record FarmState(PublicKey _address,
   public static final int TIME_UNIT_OFFSET = 7360;
   public static final int IS_FARM_FROZEN_OFFSET = 7361;
   public static final int IS_FARM_DELEGATED_OFFSET = 7362;
-  public static final int PADDING0_OFFSET = 7363;
+  public static final int PADDING_0_OFFSET = 7363;
   public static final int WITHDRAW_AUTHORITY_OFFSET = 7368;
   public static final int DEPOSIT_WARMUP_PERIOD_OFFSET = 7400;
   public static final int WITHDRAWAL_COOLDOWN_PERIOD_OFFSET = 7404;

@@ -25,6 +25,9 @@ public record WeightTable(PublicKey _address,
                           WeightEntry[] table) implements Borsh {
 
   public static final int BYTES = 37633;
+  public static final int RESERVED_LEN = 128;
+  public static final int VAULT_REGISTRY_LEN = 64;
+  public static final int TABLE_LEN = 64;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int NCN_OFFSET = 8;

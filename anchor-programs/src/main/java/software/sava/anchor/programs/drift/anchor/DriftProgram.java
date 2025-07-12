@@ -86,6 +86,7 @@ public final class DriftProgram {
     }
 
     public static final int BYTES = 42;
+    public static final int NAME_LEN = 32;
 
     public static InitializeUserIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -448,6 +449,7 @@ public final class DriftProgram {
     }
 
     public static final int BYTES = 40;
+    public static final int NAME_LEN = 32;
 
     public static InitializeReferrerNameIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -1420,6 +1422,7 @@ public final class DriftProgram {
       return read(instruction.data(), instruction.offset());
     }
 
+    public static final int SIGNED_MSG_ORDER_UUID_LEN = 8;
     public static PlaceAndMakeSignedMsgPerpOrderIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
@@ -2140,6 +2143,7 @@ public final class DriftProgram {
     }
 
     public static final int BYTES = 42;
+    public static final int NAME_LEN = 32;
 
     public static UpdateUserNameIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -4271,6 +4275,7 @@ public final class DriftProgram {
     }
 
     public static final int BYTES = 18;
+    public static final int MARKET_INDEXES_LEN = 5;
 
     public static UpdateAmmsIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -5082,6 +5087,7 @@ public final class DriftProgram {
       return read(instruction.data(), instruction.offset());
     }
 
+    public static final int FEED_ID_LEN = 32;
     public static UpdatePythPullOracleIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
@@ -5138,6 +5144,7 @@ public final class DriftProgram {
       return read(instruction.data(), instruction.offset());
     }
 
+    public static final int FEED_ID_LEN = 32;
     public static PostPythPullOracleUpdateAtomicIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
@@ -5367,6 +5374,7 @@ public final class DriftProgram {
     }
 
     public static final int BYTES = 119;
+    public static final int NAME_LEN = 32;
 
     public static InitializeSpotMarketIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -5660,7 +5668,7 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator INITIALIZE_OPENBOOK_V2_FULFILLMENT_CONFIG_DISCRIMINATOR = toDiscriminator(7, 221, 103, 153, 107, 57, 27, 197);
+  public static final Discriminator INITIALIZE_OPENBOOK_V_2_FULFILLMENT_CONFIG_DISCRIMINATOR = toDiscriminator(7, 221, 103, 153, 107, 57, 27, 197);
 
   public static Instruction initializeOpenbookV2FulfillmentConfig(final AccountMeta invokedDriftProgramMeta,
                                                                   final PublicKey baseSpotMarketKey,
@@ -5688,7 +5696,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(INITIALIZE_OPENBOOK_V2_FULFILLMENT_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(INITIALIZE_OPENBOOK_V_2_FULFILLMENT_CONFIG_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -5726,7 +5734,7 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator OPENBOOK_V2_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR = toDiscriminator(25, 173, 19, 189, 4, 211, 64, 238);
+  public static final Discriminator OPENBOOK_V_2_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR = toDiscriminator(25, 173, 19, 189, 4, 211, 64, 238);
 
   public static Instruction openbookV2FulfillmentConfigStatus(final AccountMeta invokedDriftProgramMeta,
                                                               final PublicKey stateKey,
@@ -5740,7 +5748,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(status)];
-    int i = writeDiscriminator(OPENBOOK_V2_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(OPENBOOK_V_2_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR, _data, 0);
     Borsh.write(status, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -6037,6 +6045,7 @@ public final class DriftProgram {
     }
 
     public static final int BYTES = 203;
+    public static final int NAME_LEN = 32;
 
     public static InitializePerpMarketIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -8246,6 +8255,7 @@ public final class DriftProgram {
     }
 
     public static final int BYTES = 40;
+    public static final int NAME_LEN = 32;
 
     public static UpdateSpotMarketNameIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -9561,6 +9571,7 @@ public final class DriftProgram {
     }
 
     public static final int BYTES = 40;
+    public static final int NAME_LEN = 32;
 
     public static UpdatePerpMarketNameIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -11028,6 +11039,7 @@ public final class DriftProgram {
     }
 
     public static final int BYTES = 40;
+    public static final int FEED_ID_LEN = 32;
 
     public static InitializePythPullOracleIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

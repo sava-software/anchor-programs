@@ -7,6 +7,7 @@ import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.lookup.AddressLookupTable;
 import software.sava.core.accounts.meta.AccountMeta;
+import software.sava.core.encoding.ByteUtil;
 import software.sava.core.tx.Instruction;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
@@ -14,8 +15,6 @@ import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
@@ -103,13 +102,7 @@ public interface DriftProgramClient {
   }
 
   static byte[] fixedUserName(final String name) {
-    final var bytes = name.getBytes(StandardCharsets.UTF_8);
-    if (bytes.length > 32) {
-      throw new IllegalArgumentException("Name must be <= 32 bytes");
-    }
-    return bytes.length < 32
-        ? Arrays.copyOfRange(bytes, 0, 32)
-        : bytes;
+    return ByteUtil.fixedLength(name, DriftProgram.InitializeUserIxData.NAME_LEN);
   }
 
   Instruction initializeUser(final PublicKey user,

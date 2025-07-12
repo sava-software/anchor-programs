@@ -44,6 +44,7 @@ public record VaultProtocol(PublicKey _address,
                             byte[] padding) implements Borsh {
 
   public static final int BYTES = 128;
+  public static final int PADDING_LEN = 2;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int PROTOCOL_OFFSET = 8;

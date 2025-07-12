@@ -12,6 +12,7 @@ public record CreatedModel(byte[] key,
                            long createdAt) implements Borsh {
 
   public static final int BYTES = 48;
+  public static final int KEY_LEN = 8;
 
   public static CreatedModel read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

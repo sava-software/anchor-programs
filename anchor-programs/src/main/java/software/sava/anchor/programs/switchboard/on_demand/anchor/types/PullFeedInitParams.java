@@ -19,6 +19,9 @@ public record PullFeedInitParams(byte[] feedHash,
                                  int maxStaleness,
                                  Boolean permitWriteByAuthority) implements Borsh {
 
+  public static final int FEED_HASH_LEN = 32;
+  public static final int NAME_LEN = 32;
+  public static final int IPFS_HASH_LEN = 32;
   public static PullFeedInitParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;

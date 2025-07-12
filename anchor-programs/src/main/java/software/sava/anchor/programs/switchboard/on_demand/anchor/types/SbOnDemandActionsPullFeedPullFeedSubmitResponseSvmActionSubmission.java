@@ -12,6 +12,7 @@ public record SbOnDemandActionsPullFeedPullFeedSubmitResponseSvmActionSubmission
                                                                                  int recoveryId) implements Borsh {
 
   public static final int BYTES = 81;
+  public static final int SIGNATURE_LEN = 64;
 
   public static SbOnDemandActionsPullFeedPullFeedSubmitResponseSvmActionSubmission read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

@@ -57,6 +57,7 @@ public record Proposal(PublicKey _address,
                        // The instructions associated with the proposal.
                        ProposalInstruction[] instructions) implements Borsh {
 
+  public static final int BUFFERS_LEN = 10;
   public static final int GOVERNOR_OFFSET = 8;
   public static final int INDEX_OFFSET = 40;
   public static final int BUMP_OFFSET = 48;

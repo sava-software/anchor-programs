@@ -32,6 +32,7 @@ public record FuelOverflow(PublicKey _address,
                            BigInteger[] padding) implements Borsh {
 
   public static final int BYTES = 240;
+  public static final int PADDING_LEN = 6;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int AUTHORITY_OFFSET = 8;

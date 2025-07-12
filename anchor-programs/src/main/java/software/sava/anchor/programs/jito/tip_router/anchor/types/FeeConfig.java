@@ -13,6 +13,8 @@ public record FeeConfig(int blockEngineFeeBps,
                         Fees fee2) implements Borsh {
 
   public static final int BYTES = 722;
+  public static final int BASE_FEE_WALLETS_LEN = 8;
+  public static final int RESERVED_LEN = 128;
 
   public static FeeConfig read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

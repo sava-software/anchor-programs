@@ -23,6 +23,7 @@ public record GlobalConfig(PublicKey _address,
                            byte[] padding) implements Borsh {
 
   public static final int BYTES = 1032;
+  public static final int PADDING_LEN = 928;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int GLOBAL_ADMIN_OFFSET = 8;

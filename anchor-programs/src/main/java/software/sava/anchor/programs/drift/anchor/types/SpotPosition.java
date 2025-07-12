@@ -29,6 +29,7 @@ public record SpotPosition(// The scaled balance of the position. To get the tok
                            byte[] padding) implements Borsh {
 
   public static final int BYTES = 40;
+  public static final int PADDING_LEN = 4;
 
   public static SpotPosition read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

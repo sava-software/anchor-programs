@@ -13,6 +13,7 @@ public record SignedMsgOrderId(byte[] uuid,
                                int padding) implements Borsh {
 
   public static final int BYTES = 24;
+  public static final int UUID_LEN = 8;
 
   public static SignedMsgOrderId read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

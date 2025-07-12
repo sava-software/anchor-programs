@@ -32,6 +32,7 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
                                byte[] padding) implements Borsh {
 
   public static final int BYTES = 32;
+  public static final int PADDING_LEN = 5;
 
   public static StaticParameters read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

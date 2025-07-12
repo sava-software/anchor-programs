@@ -13,6 +13,7 @@ public record RandomnessCommitEvent(PublicKey randomnessAccount,
                                     byte[] slothash) implements Borsh {
 
   public static final int BYTES = 104;
+  public static final int SLOTHASH_LEN = 32;
 
   public static RandomnessCommitEvent read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

@@ -13,6 +13,7 @@ public record SbOnDemandActionsPullFeedPullFeedSubmitResponseActionSubmission(Bi
                                                                               int _offset) implements Borsh {
 
   public static final int BYTES = 82;
+  public static final int SIGNATURE_LEN = 64;
 
   public static SbOnDemandActionsPullFeedPullFeedSubmitResponseActionSubmission read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

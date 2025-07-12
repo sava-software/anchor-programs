@@ -12,6 +12,7 @@ public record InitializeQuestionEvent(CommonFields common,
                                       PublicKey question) implements Borsh {
 
   public static final int BYTES = 113;
+  public static final int QUESTION_ID_LEN = 32;
 
   public static InitializeQuestionEvent read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

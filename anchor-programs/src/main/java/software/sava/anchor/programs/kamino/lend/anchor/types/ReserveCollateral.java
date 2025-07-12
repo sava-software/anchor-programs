@@ -20,6 +20,8 @@ public record ReserveCollateral(// Reserve collateral mint address
                                 BigInteger[] padding2) implements Borsh {
 
   public static final int BYTES = 1096;
+  public static final int PADDING_1_LEN = 32;
+  public static final int PADDING_2_LEN = 32;
 
   public static ReserveCollateral read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

@@ -41,6 +41,12 @@ public record OracleAccountData(PublicKey _address,
                                 byte[] ebuf1) implements Borsh {
 
   public static final int BYTES = 4816;
+  public static final int SECP_AUTHORITY_LEN = 64;
+  public static final int GATEWAY_URI_LEN = 64;
+  public static final int PADDING_1_LEN = 7;
+  public static final int EBUF_3_LEN = 16;
+  public static final int EBUF_2_LEN = 64;
+  public static final int EBUF_1_LEN = 1024;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(128, 30, 16, 241, 170, 73, 55, 54);
@@ -55,13 +61,13 @@ public record OracleAccountData(PublicKey _address,
   public static final int GATEWAY_URI_OFFSET = 3584;
   public static final int PERMISSIONS_OFFSET = 3648;
   public static final int IS_ON_QUEUE_OFFSET = 3656;
-  public static final int PADDING1_OFFSET = 3657;
+  public static final int PADDING_1_OFFSET = 3657;
   public static final int LUT_SLOT_OFFSET = 3664;
   public static final int LAST_REWARD_EPOCH_OFFSET = 3672;
   public static final int OPERATOR_OFFSET = 3680;
-  public static final int EBUF3_OFFSET = 3712;
-  public static final int EBUF2_OFFSET = 3728;
-  public static final int EBUF1_OFFSET = 3792;
+  public static final int EBUF_3_OFFSET = 3712;
+  public static final int EBUF_2_OFFSET = 3728;
+  public static final int EBUF_1_OFFSET = 3792;
 
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);

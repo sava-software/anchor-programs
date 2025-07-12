@@ -14,6 +14,7 @@ public record RewardScheduleCurve(// This is a stepwise function, meaning that e
                                   RewardPerTimeUnitPoint[] points) implements Borsh {
 
   public static final int BYTES = 320;
+  public static final int POINTS_LEN = 20;
 
   public static RewardScheduleCurve read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

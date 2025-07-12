@@ -84,6 +84,15 @@ public record LbPair(PublicKey _address,
                      byte[] reserved) implements Borsh {
 
   public static final int BYTES = 904;
+  public static final int BUMP_SEED_LEN = 1;
+  public static final int BIN_STEP_SEED_LEN = 2;
+  public static final int BASE_FACTOR_SEED_LEN = 2;
+  public static final int PADDING_1_LEN = 32;
+  public static final int REWARD_INFOS_LEN = 2;
+  public static final int BIN_ARRAY_BITMAP_LEN = 16;
+  public static final int PADDING_2_LEN = 32;
+  public static final int PADDING_3_LEN = 8;
+  public static final int RESERVED_LEN = 22;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int PARAMETERS_OFFSET = 8;
@@ -103,18 +112,18 @@ public record LbPair(PublicKey _address,
   public static final int RESERVE_X_OFFSET = 152;
   public static final int RESERVE_Y_OFFSET = 184;
   public static final int PROTOCOL_FEE_OFFSET = 216;
-  public static final int PADDING1_OFFSET = 232;
+  public static final int PADDING_1_OFFSET = 232;
   public static final int REWARD_INFOS_OFFSET = 264;
   public static final int ORACLE_OFFSET = 552;
   public static final int BIN_ARRAY_BITMAP_OFFSET = 584;
   public static final int LAST_UPDATED_AT_OFFSET = 712;
-  public static final int PADDING2_OFFSET = 720;
+  public static final int PADDING_2_OFFSET = 720;
   public static final int PRE_ACTIVATION_SWAP_ADDRESS_OFFSET = 752;
   public static final int BASE_KEY_OFFSET = 784;
   public static final int ACTIVATION_POINT_OFFSET = 816;
   public static final int PRE_ACTIVATION_DURATION_OFFSET = 824;
-  public static final int PADDING3_OFFSET = 832;
-  public static final int PADDING4_OFFSET = 840;
+  public static final int PADDING_3_OFFSET = 832;
+  public static final int PADDING_4_OFFSET = 840;
   public static final int CREATOR_OFFSET = 848;
   public static final int TOKEN_MINT_X_PROGRAM_FLAG_OFFSET = 880;
   public static final int TOKEN_MINT_Y_PROGRAM_FLAG_OFFSET = 881;
@@ -213,7 +222,7 @@ public record LbPair(PublicKey _address,
   public static Filter createPadding4Filter(final long padding4) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, padding4);
-    return Filter.createMemCompFilter(PADDING4_OFFSET, _data);
+    return Filter.createMemCompFilter(PADDING_4_OFFSET, _data);
   }
 
   public static Filter createCreatorFilter(final PublicKey creator) {

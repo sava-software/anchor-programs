@@ -235,6 +235,7 @@ public record AMM(// oracle price data public key
                   byte[] padding) implements Borsh {
 
   public static final int BYTES = 936;
+  public static final int PADDING_LEN = 11;
 
   public static AMM read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

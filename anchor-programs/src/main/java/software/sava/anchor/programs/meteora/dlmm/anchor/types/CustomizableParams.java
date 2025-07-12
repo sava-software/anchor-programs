@@ -29,6 +29,7 @@ public record CustomizableParams(// Pool price
                                  // Padding, for future use
                                  byte[] padding) implements Borsh {
 
+  public static final int PADDING_LEN = 62;
   public static CustomizableParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;

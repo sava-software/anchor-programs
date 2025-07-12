@@ -79,6 +79,9 @@ public record Vault(PublicKey _address,
                     BigInteger[] padding) implements Borsh {
 
   public static final int BYTES = 472;
+  public static final int PADDING_0_LEN = 5;
+  public static final int PADDING_1_LEN = 6;
+  public static final int PADDING_LEN = 5;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(211, 8, 232, 43, 2, 152, 117, 119);
@@ -103,7 +106,7 @@ public record Vault(PublicKey _address,
   public static final int BUMP_OFFSET = 304;
   public static final int POOL_TYPE_OFFSET = 305;
   public static final int VAULT_MODE_OFFSET = 306;
-  public static final int PADDING0_OFFSET = 307;
+  public static final int PADDING_0_OFFSET = 307;
   public static final int MAX_DEPOSITING_CAP_OFFSET = 312;
   public static final int INDIVIDUAL_DEPOSITING_CAP_OFFSET = 320;
   public static final int DEPOSITING_POINT_OFFSET = 328;
@@ -111,7 +114,7 @@ public record Vault(PublicKey _address,
   public static final int TOTAL_ESCROW_FEE_OFFSET = 344;
   public static final int WHITELIST_MODE_OFFSET = 352;
   public static final int ACTIVATION_TYPE_OFFSET = 353;
-  public static final int PADDING1_OFFSET = 354;
+  public static final int PADDING_1_OFFSET = 354;
   public static final int VAULT_AUTHORITY_OFFSET = 360;
   public static final int PADDING_OFFSET = 392;
 

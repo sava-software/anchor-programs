@@ -60,6 +60,10 @@ public record MerkleDistributor(PublicKey _address,
                                 byte[] buffer2) implements Borsh {
 
   public static final int BYTES = 347;
+  public static final int ROOT_LEN = 32;
+  public static final int BUFFER_0_LEN = 32;
+  public static final int BUFFER_1_LEN = 32;
+  public static final int BUFFER_2_LEN = 32;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int BUMP_OFFSET = 8;
@@ -80,9 +84,9 @@ public record MerkleDistributor(PublicKey _address,
   public static final int CLAWED_BACK_OFFSET = 241;
   public static final int ENABLE_SLOT_OFFSET = 242;
   public static final int CLOSABLE_OFFSET = 250;
-  public static final int BUFFER0_OFFSET = 251;
-  public static final int BUFFER1_OFFSET = 283;
-  public static final int BUFFER2_OFFSET = 315;
+  public static final int BUFFER_0_OFFSET = 251;
+  public static final int BUFFER_1_OFFSET = 283;
+  public static final int BUFFER_2_OFFSET = 315;
 
   public static Filter createBumpFilter(final int bump) {
     return Filter.createMemCompFilter(BUMP_OFFSET, new byte[]{(byte) bump});

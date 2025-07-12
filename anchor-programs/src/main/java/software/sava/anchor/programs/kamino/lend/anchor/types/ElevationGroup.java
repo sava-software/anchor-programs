@@ -19,6 +19,7 @@ public record ElevationGroup(int maxLiquidationBonusBps,
                              long[] padding1) implements Borsh {
 
   public static final int BYTES = 72;
+  public static final int PADDING_1_LEN = 4;
 
   public static ElevationGroup read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

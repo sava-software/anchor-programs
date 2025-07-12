@@ -79,6 +79,7 @@ public final class FarmsProgram {
     }
 
     public static final int BYTES = 41;
+    public static final int VALUE_LEN = 32;
 
     public static UpdateGlobalConfigIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

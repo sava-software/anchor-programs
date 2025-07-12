@@ -24,6 +24,7 @@ public record MerkleProofMetadata(PublicKey _address,
                                   // proof url
                                   String proofUrl, byte[] _proofUrl) implements Borsh {
 
+  public static final int PADDING_LEN = 16;
   public static final Discriminator DISCRIMINATOR = toDiscriminator(133, 24, 30, 217, 240, 20, 222, 100);
   public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 

@@ -7,6 +7,8 @@ import software.sava.core.borsh.Borsh;
 public record UserRewardInfo(BigInteger[] rewardPerTokenCompletes, long[] rewardPendings) implements Borsh {
 
   public static final int BYTES = 48;
+  public static final int REWARD_PER_TOKEN_COMPLETES_LEN = 2;
+  public static final int REWARD_PENDINGS_LEN = 2;
 
   public static UserRewardInfo read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

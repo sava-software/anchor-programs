@@ -34,6 +34,7 @@ public record SerumV3FulfillmentConfig(PublicKey _address,
                                        byte[] padding) implements Borsh {
 
   public static final int BYTES = 344;
+  public static final int PADDING_LEN = 4;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int PUBKEY_OFFSET = 8;

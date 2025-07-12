@@ -57,6 +57,10 @@ public record VaultState(PublicKey _address,
                          BigInteger[] padding3) implements Borsh {
 
   public static final int BYTES = 62552;
+  public static final int VAULT_ALLOCATION_STRATEGY_LEN = 25;
+  public static final int PADDING_1_LEN = 256;
+  public static final int NAME_LEN = 40;
+  public static final int PADDING_3_LEN = 242;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int VAULT_ADMIN_AUTHORITY_OFFSET = 8;
@@ -71,14 +75,14 @@ public record VaultState(PublicKey _address,
   public static final int TOKEN_AVAILABLE_OFFSET = 224;
   public static final int SHARES_ISSUED_OFFSET = 232;
   public static final int AVAILABLE_CRANK_FUNDS_OFFSET = 240;
-  public static final int PADDING0_OFFSET = 248;
+  public static final int PADDING_0_OFFSET = 248;
   public static final int PERFORMANCE_FEE_BPS_OFFSET = 256;
   public static final int MANAGEMENT_FEE_BPS_OFFSET = 264;
   public static final int LAST_FEE_CHARGE_TIMESTAMP_OFFSET = 272;
   public static final int PREV_AUM_SF_OFFSET = 280;
   public static final int PENDING_FEES_SF_OFFSET = 296;
   public static final int VAULT_ALLOCATION_STRATEGY_OFFSET = 312;
-  public static final int PADDING1_OFFSET = 54312;
+  public static final int PADDING_1_OFFSET = 54312;
   public static final int MIN_DEPOSIT_AMOUNT_OFFSET = 58408;
   public static final int MIN_WITHDRAW_AMOUNT_OFFSET = 58416;
   public static final int MIN_INVEST_AMOUNT_OFFSET = 58424;
@@ -92,9 +96,9 @@ public record VaultState(PublicKey _address,
   public static final int VAULT_LOOKUP_TABLE_OFFSET = 58568;
   public static final int VAULT_FARM_OFFSET = 58600;
   public static final int CREATION_TIMESTAMP_OFFSET = 58632;
-  public static final int PADDING2_OFFSET = 58640;
+  public static final int PADDING_2_OFFSET = 58640;
   public static final int ALLOCATION_ADMIN_OFFSET = 58648;
-  public static final int PADDING3_OFFSET = 58680;
+  public static final int PADDING_3_OFFSET = 58680;
 
   public static Filter createVaultAdminAuthorityFilter(final PublicKey vaultAdminAuthority) {
     return Filter.createMemCompFilter(VAULT_ADMIN_AUTHORITY_OFFSET, vaultAdminAuthority);
@@ -159,7 +163,7 @@ public record VaultState(PublicKey _address,
   public static Filter createPadding0Filter(final long padding0) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, padding0);
-    return Filter.createMemCompFilter(PADDING0_OFFSET, _data);
+    return Filter.createMemCompFilter(PADDING_0_OFFSET, _data);
   }
 
   public static Filter createPerformanceFeeBpsFilter(final long performanceFeeBps) {
@@ -261,7 +265,7 @@ public record VaultState(PublicKey _address,
   public static Filter createPadding2Filter(final long padding2) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, padding2);
-    return Filter.createMemCompFilter(PADDING2_OFFSET, _data);
+    return Filter.createMemCompFilter(PADDING_2_OFFSET, _data);
   }
 
   public static Filter createAllocationAdminFilter(final PublicKey allocationAdmin) {

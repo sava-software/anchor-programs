@@ -26,6 +26,8 @@ public record FeeUpdate(PublicKey _address,
                         byte[] padding2) implements Borsh {
 
   public static final int BYTES = 200;
+  public static final int PADDING_LEN = 10;
+  public static final int PADDING_2_LEN = 8;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int INCOMING_UPDATE_TS_OFFSET = 8;
@@ -33,7 +35,7 @@ public record FeeUpdate(PublicKey _address,
   public static final int INCOMING_PROFIT_SHARE_OFFSET = 24;
   public static final int INCOMING_HURDLE_RATE_OFFSET = 28;
   public static final int PADDING_OFFSET = 32;
-  public static final int PADDING2_OFFSET = 192;
+  public static final int PADDING_2_OFFSET = 192;
 
   public static Filter createIncomingUpdateTsFilter(final long incomingUpdateTs) {
     final byte[] _data = new byte[8];

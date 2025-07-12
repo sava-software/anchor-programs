@@ -42,6 +42,7 @@ public record ClaimStatus(PublicKey _address,
                           BigInteger padding1) implements Borsh {
 
   public static final int BYTES = 160;
+  public static final int PADDING_0_LEN = 7;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int ADMIN_OFFSET = 8;
@@ -52,8 +53,8 @@ public record ClaimStatus(PublicKey _address,
   public static final int UNLOCKED_AMOUNT_OFFSET = 120;
   public static final int BONUS_AMOUNT_OFFSET = 128;
   public static final int CLOSABLE_OFFSET = 136;
-  public static final int PADDING0_OFFSET = 137;
-  public static final int PADDING1_OFFSET = 144;
+  public static final int PADDING_0_OFFSET = 137;
+  public static final int PADDING_1_OFFSET = 144;
 
   public static Filter createAdminFilter(final PublicKey admin) {
     return Filter.createMemCompFilter(ADMIN_OFFSET, admin);
@@ -98,7 +99,7 @@ public record ClaimStatus(PublicKey _address,
   public static Filter createPadding1Filter(final BigInteger padding1) {
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, padding1);
-    return Filter.createMemCompFilter(PADDING1_OFFSET, _data);
+    return Filter.createMemCompFilter(PADDING_1_OFFSET, _data);
   }
 
   public static ClaimStatus read(final byte[] _data, final int offset) {

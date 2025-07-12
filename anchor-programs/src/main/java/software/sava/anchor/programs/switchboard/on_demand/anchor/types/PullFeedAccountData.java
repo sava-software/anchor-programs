@@ -52,6 +52,16 @@ public record PullFeedAccountData(PublicKey _address,
                                   long[] submissionTimestamps) implements Borsh {
 
   public static final int BYTES = 3208;
+  public static final int SUBMISSIONS_LEN = 32;
+  public static final int FEED_HASH_LEN = 32;
+  public static final int NAME_LEN = 32;
+  public static final int PADDING_1_LEN = 1;
+  public static final int RESERVED_1_LEN = 32;
+  public static final int PADDING_2_LEN = 12;
+  public static final int HISTORICAL_RESULTS_LEN = 32;
+  public static final int EBUF_4_LEN = 8;
+  public static final int EBUF_3_LEN = 24;
+  public static final int SUBMISSION_TIMESTAMPS_LEN = 32;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(196, 27, 108, 196, 10, 215, 219, 40);
@@ -66,19 +76,19 @@ public record PullFeedAccountData(PublicKey _address,
   public static final int MAX_VARIANCE_OFFSET = 2168;
   public static final int MIN_RESPONSES_OFFSET = 2176;
   public static final int NAME_OFFSET = 2180;
-  public static final int PADDING1_OFFSET = 2212;
+  public static final int PADDING_1_OFFSET = 2212;
   public static final int PERMIT_WRITE_BY_AUTHORITY_OFFSET = 2213;
   public static final int HISTORICAL_RESULT_IDX_OFFSET = 2214;
   public static final int MIN_SAMPLE_SIZE_OFFSET = 2215;
   public static final int LAST_UPDATE_TIMESTAMP_OFFSET = 2216;
   public static final int LUT_SLOT_OFFSET = 2224;
-  public static final int RESERVED1_OFFSET = 2232;
+  public static final int RESERVED_1_OFFSET = 2232;
   public static final int RESULT_OFFSET = 2264;
   public static final int MAX_STALENESS_OFFSET = 2392;
-  public static final int PADDING2_OFFSET = 2396;
+  public static final int PADDING_2_OFFSET = 2396;
   public static final int HISTORICAL_RESULTS_OFFSET = 2408;
-  public static final int EBUF4_OFFSET = 2920;
-  public static final int EBUF3_OFFSET = 2928;
+  public static final int EBUF_4_OFFSET = 2920;
+  public static final int EBUF_3_OFFSET = 2928;
   public static final int SUBMISSION_TIMESTAMPS_OFFSET = 2952;
 
   public static Filter createAuthorityFilter(final PublicKey authority) {

@@ -19,6 +19,9 @@ public record GuardianQuoteVerifyParams(long timestamp,
                                         int recoveryId,
                                         int[] advisories) implements Borsh {
 
+  public static final int MR_ENCLAVE_LEN = 32;
+  public static final int SECP_222K_1_KEY_LEN = 64;
+  public static final int SIGNATURE_LEN = 64;
   public static GuardianQuoteVerifyParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;

@@ -7,6 +7,8 @@ public record RandomnessRevealParams(byte[] signature,
                                      byte[] value) implements Borsh {
 
   public static final int BYTES = 97;
+  public static final int SIGNATURE_LEN = 64;
+  public static final int VALUE_LEN = 32;
 
   public static RandomnessRevealParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

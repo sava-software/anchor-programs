@@ -53,6 +53,8 @@ public record TokenizedVaultDepositor(PublicKey _address,
                                       long[] padding) implements Borsh {
 
   public static final int BYTES = 272;
+  public static final int PADDING_1_LEN = 3;
+  public static final int PADDING_LEN = 10;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int VAULT_OFFSET = 8;
@@ -68,7 +70,7 @@ public record TokenizedVaultDepositor(PublicKey _address,
   public static final int PROFIT_SHARE_FEE_PAID_OFFSET = 176;
   public static final int VAULT_SHARES_BASE_OFFSET = 184;
   public static final int BUMP_OFFSET = 188;
-  public static final int PADDING1_OFFSET = 189;
+  public static final int PADDING_1_OFFSET = 189;
   public static final int PADDING_OFFSET = 192;
 
   public static Filter createVaultFilter(final PublicKey vault) {

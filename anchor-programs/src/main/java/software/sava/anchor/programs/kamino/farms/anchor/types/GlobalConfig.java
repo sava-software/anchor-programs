@@ -25,6 +25,7 @@ public record GlobalConfig(PublicKey _address,
                            BigInteger[] padding1) implements Borsh {
 
   public static final int BYTES = 2136;
+  public static final int PADDING_1_LEN = 126;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int GLOBAL_ADMIN_OFFSET = 8;
@@ -32,7 +33,7 @@ public record GlobalConfig(PublicKey _address,
   public static final int TREASURY_VAULTS_AUTHORITY_OFFSET = 48;
   public static final int TREASURY_VAULTS_AUTHORITY_BUMP_OFFSET = 80;
   public static final int PENDING_GLOBAL_ADMIN_OFFSET = 88;
-  public static final int PADDING1_OFFSET = 120;
+  public static final int PADDING_1_OFFSET = 120;
 
   public static Filter createGlobalAdminFilter(final PublicKey globalAdmin) {
     return Filter.createMemCompFilter(GLOBAL_ADMIN_OFFSET, globalAdmin);

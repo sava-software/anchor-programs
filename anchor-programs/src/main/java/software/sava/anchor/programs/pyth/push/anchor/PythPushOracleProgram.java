@@ -62,6 +62,7 @@ public final class PythPushOracleProgram {
       return read(instruction.data(), instruction.offset());
     }
 
+    public static final int FEED_ID_LEN = 32;
     public static UpdatePriceFeedIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;

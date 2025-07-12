@@ -89,6 +89,14 @@ public record LendingMarket(PublicKey _address,
                             long[] padding1) implements Borsh {
 
   public static final int BYTES = 4664;
+  public static final int QUOTE_CURRENCY_LEN = 32;
+  public static final int RESERVED_0_LEN = 8;
+  public static final int RESERVED_1_LEN = 8;
+  public static final int ELEVATION_GROUPS_LEN = 32;
+  public static final int ELEVATION_GROUP_PADDING_LEN = 90;
+  public static final int NAME_LEN = 32;
+  public static final int PADDING_2_LEN = 5;
+  public static final int PADDING_1_LEN = 169;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int VERSION_OFFSET = 8;
@@ -105,10 +113,10 @@ public record LendingMarket(PublicKey _address,
   public static final int INSOLVENCY_RISK_UNHEALTHY_LTV_PCT_OFFSET = 127;
   public static final int MIN_FULL_LIQUIDATION_VALUE_THRESHOLD_OFFSET = 128;
   public static final int MAX_LIQUIDATABLE_DEBT_MARKET_VALUE_AT_ONCE_OFFSET = 136;
-  public static final int RESERVED0_OFFSET = 144;
+  public static final int RESERVED_0_OFFSET = 144;
   public static final int GLOBAL_ALLOWED_BORROW_VALUE_OFFSET = 152;
   public static final int RISK_COUNCIL_OFFSET = 160;
-  public static final int RESERVED1_OFFSET = 192;
+  public static final int RESERVED_1_OFFSET = 192;
   public static final int ELEVATION_GROUPS_OFFSET = 200;
   public static final int ELEVATION_GROUP_PADDING_OFFSET = 2504;
   public static final int MIN_NET_VALUE_IN_OBLIGATION_SF_OFFSET = 3224;
@@ -120,8 +128,8 @@ public record LendingMarket(PublicKey _address,
   public static final int OBLIGATION_ORDER_EXECUTION_ENABLED_OFFSET = 3304;
   public static final int IMMUTABLE_OFFSET = 3305;
   public static final int OBLIGATION_ORDER_CREATION_ENABLED_OFFSET = 3306;
-  public static final int PADDING2_OFFSET = 3307;
-  public static final int PADDING1_OFFSET = 3312;
+  public static final int PADDING_2_OFFSET = 3307;
+  public static final int PADDING_1_OFFSET = 3312;
 
   public static Filter createVersionFilter(final long version) {
     final byte[] _data = new byte[8];

@@ -47,6 +47,16 @@ public record State(PublicKey _address,
                     PublicKey[] costWhitelist) implements Borsh {
 
   public static final int BYTES = 2136;
+  public static final int PADDING_1_LEN = 5;
+  public static final int RESERVED_2_LEN = 136;
+  public static final int SGX_ADVISORIES_LEN = 32;
+  public static final int PADDING_4_LEN = 4;
+  public static final int EBUF_6_LEN = 16;
+  public static final int EBUF_5_LEN = 32;
+  public static final int EBUF_4_LEN = 64;
+  public static final int EBUF_3_LEN = 128;
+  public static final int EBUF_2_LEN = 512;
+  public static final int COST_WHITELIST_LEN = 32;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(216, 146, 107, 94, 104, 75, 182, 177);
@@ -55,28 +65,28 @@ public record State(PublicKey _address,
   public static final int BUMP_OFFSET = 8;
   public static final int TEST_ONLY_DISABLE_MR_ENCLAVE_CHECK_OFFSET = 9;
   public static final int ENABLE_STAKING_OFFSET = 10;
-  public static final int PADDING1_OFFSET = 11;
+  public static final int PADDING_1_OFFSET = 11;
   public static final int AUTHORITY_OFFSET = 16;
   public static final int GUARDIAN_QUEUE_OFFSET = 48;
-  public static final int RESERVED1_OFFSET = 80;
+  public static final int RESERVED_1_OFFSET = 80;
   public static final int EPOCH_LENGTH_OFFSET = 88;
-  public static final int RESERVED2_OFFSET = 96;
+  public static final int RESERVED_2_OFFSET = 96;
   public static final int SWITCH_MINT_OFFSET = 232;
   public static final int SGX_ADVISORIES_OFFSET = 264;
   public static final int ADVISORIES_LEN_OFFSET = 328;
-  public static final int PADDING2_OFFSET = 329;
+  public static final int PADDING_2_OFFSET = 329;
   public static final int FLAT_REWARD_CUT_PERCENTAGE_OFFSET = 330;
   public static final int ENABLE_SLASHING_OFFSET = 331;
-  public static final int PADDING3_OFFSET = 332;
+  public static final int PADDING_3_OFFSET = 332;
   public static final int LUT_SLOT_OFFSET = 336;
   public static final int BASE_REWARD_OFFSET = 344;
-  public static final int PADDING4_OFFSET = 348;
+  public static final int PADDING_4_OFFSET = 348;
   public static final int SUBSIDY_AMOUNT_OFFSET = 352;
-  public static final int EBUF6_OFFSET = 360;
-  public static final int EBUF5_OFFSET = 376;
-  public static final int EBUF4_OFFSET = 408;
-  public static final int EBUF3_OFFSET = 472;
-  public static final int EBUF2_OFFSET = 600;
+  public static final int EBUF_6_OFFSET = 360;
+  public static final int EBUF_5_OFFSET = 376;
+  public static final int EBUF_4_OFFSET = 408;
+  public static final int EBUF_3_OFFSET = 472;
+  public static final int EBUF_2_OFFSET = 600;
   public static final int COST_WHITELIST_OFFSET = 1112;
 
   public static Filter createBumpFilter(final int bump) {
@@ -102,7 +112,7 @@ public record State(PublicKey _address,
   public static Filter createReserved1Filter(final long reserved1) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, reserved1);
-    return Filter.createMemCompFilter(RESERVED1_OFFSET, _data);
+    return Filter.createMemCompFilter(RESERVED_1_OFFSET, _data);
   }
 
   public static Filter createEpochLengthFilter(final long epochLength) {
@@ -120,7 +130,7 @@ public record State(PublicKey _address,
   }
 
   public static Filter createPadding2Filter(final int padding2) {
-    return Filter.createMemCompFilter(PADDING2_OFFSET, new byte[]{(byte) padding2});
+    return Filter.createMemCompFilter(PADDING_2_OFFSET, new byte[]{(byte) padding2});
   }
 
   public static Filter createFlatRewardCutPercentageFilter(final int flatRewardCutPercentage) {
@@ -134,7 +144,7 @@ public record State(PublicKey _address,
   public static Filter createPadding3Filter(final int padding3) {
     final byte[] _data = new byte[4];
     putInt32LE(_data, 0, padding3);
-    return Filter.createMemCompFilter(PADDING3_OFFSET, _data);
+    return Filter.createMemCompFilter(PADDING_3_OFFSET, _data);
   }
 
   public static Filter createLutSlotFilter(final long lutSlot) {

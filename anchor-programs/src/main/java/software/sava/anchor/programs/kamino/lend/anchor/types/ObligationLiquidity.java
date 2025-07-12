@@ -28,6 +28,7 @@ public record ObligationLiquidity(// Reserve liquidity is borrowed from
                                   long[] padding2) implements Borsh {
 
   public static final int BYTES = 200;
+  public static final int PADDING_2_LEN = 7;
 
   public static ObligationLiquidity read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

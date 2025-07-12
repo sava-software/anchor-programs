@@ -24,6 +24,12 @@ public record CollateralInfo(PublicKey mint,
                              long[] padding) implements Borsh {
 
   public static final int BYTES = 216;
+  public static final int SCOPE_TWAP_PRICE_CHAIN_LEN = 4;
+  public static final int SCOPE_PRICE_CHAIN_LEN = 4;
+  public static final int NAME_LEN = 32;
+  public static final int PADDING_0_LEN = 7;
+  public static final int SCOPE_STAKING_RATE_CHAIN_LEN = 4;
+  public static final int PADDING_LEN = 8;
 
   public static CollateralInfo read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

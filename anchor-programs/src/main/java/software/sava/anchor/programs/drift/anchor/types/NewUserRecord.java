@@ -17,6 +17,7 @@ public record NewUserRecord(long ts,
                             PublicKey referrer) implements Borsh {
 
   public static final int BYTES = 138;
+  public static final int NAME_LEN = 32;
 
   public static NewUserRecord read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

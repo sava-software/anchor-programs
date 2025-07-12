@@ -84,6 +84,10 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
                             long deleveragingBonusIncreaseBpsPerDay) implements Borsh {
 
   public static final int BYTES = 920;
+  public static final int RESERVED_2_LEN = 9;
+  public static final int ELEVATION_GROUPS_LEN = 20;
+  public static final int RESERVED_1_LEN = 1;
+  public static final int BORROW_LIMIT_AGAINST_THIS_COLLATERAL_IN_ELEVATION_GROUP_LEN = 32;
 
   public static ReserveConfig read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

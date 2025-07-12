@@ -16,6 +16,7 @@ public record OperatorVote(PublicKey operator,
                            byte[] reserved) implements Borsh {
 
   public static final int BYTES = 250;
+  public static final int RESERVED_LEN = 64;
 
   public static OperatorVote read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

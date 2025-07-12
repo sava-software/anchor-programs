@@ -8,6 +8,7 @@ public record MultiSubmission(BigInteger[] values,
                               byte[] signature,
                               int recoveryId) implements Borsh {
 
+  public static final int SIGNATURE_LEN = 64;
   public static MultiSubmission read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;

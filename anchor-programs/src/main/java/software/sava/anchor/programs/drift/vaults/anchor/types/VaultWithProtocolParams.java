@@ -21,6 +21,7 @@ public record VaultWithProtocolParams(byte[] name,
                                       VaultProtocolParams vaultProtocol) implements Borsh {
 
   public static final int BYTES = 119;
+  public static final int NAME_LEN = 32;
 
   public static VaultWithProtocolParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

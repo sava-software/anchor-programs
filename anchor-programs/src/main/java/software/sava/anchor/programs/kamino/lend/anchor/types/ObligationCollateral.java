@@ -26,6 +26,7 @@ public record ObligationCollateral(// Reserve collateral is deposited to
                                    long[] padding) implements Borsh {
 
   public static final int BYTES = 136;
+  public static final int PADDING_LEN = 9;
 
   public static ObligationCollateral read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

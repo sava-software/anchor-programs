@@ -23,6 +23,7 @@ public record ProrataVaultConfig(PublicKey _address,
                                  byte[] padding) implements Borsh {
 
   public static final int BYTES = 232;
+  public static final int PADDING_LEN = 191;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(93, 214, 205, 104, 119, 9, 51, 152);

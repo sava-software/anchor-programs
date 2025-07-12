@@ -10,6 +10,7 @@ import static software.sava.core.encoding.ByteUtil.putInt128LE;
 public record StakeWeights(BigInteger stakeWeight, NcnFeeGroupWeight[] ncnFeeGroupStakeWeights) implements Borsh {
 
   public static final int BYTES = 144;
+  public static final int NCN_FEE_GROUP_STAKE_WEIGHTS_LEN = 8;
 
   public static StakeWeights read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

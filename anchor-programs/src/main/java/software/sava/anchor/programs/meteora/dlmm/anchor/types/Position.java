@@ -43,6 +43,11 @@ public record Position(PublicKey _address,
                        byte[] reserved) implements Borsh {
 
   public static final int BYTES = 7560;
+  public static final int LIQUIDITY_SHARES_LEN = 70;
+  public static final int REWARD_INFOS_LEN = 70;
+  public static final int FEE_INFOS_LEN = 70;
+  public static final int TOTAL_CLAIMED_REWARDS_LEN = 2;
+  public static final int RESERVED_LEN = 160;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int LB_PAIR_OFFSET = 8;

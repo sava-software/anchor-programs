@@ -13,6 +13,7 @@ import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 public record ScopeChainAccount(PublicKey _address, Discriminator discriminator, short[][] chainArray) implements Borsh {
 
   public static final int BYTES = 4104;
+  public static final int CHAIN_ARRAY_LEN = 512;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int CHAIN_ARRAY_OFFSET = 8;

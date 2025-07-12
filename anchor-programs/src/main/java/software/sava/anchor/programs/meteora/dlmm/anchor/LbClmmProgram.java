@@ -2082,7 +2082,7 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_PRESET_PARAMETER_DISCRIMINATOR);
   }
 
-  public static final Discriminator CLOSE_PRESET_PARAMETER2_DISCRIMINATOR = toDiscriminator(39, 25, 95, 107, 116, 17, 115, 28);
+  public static final Discriminator CLOSE_PRESET_PARAMETER_2_DISCRIMINATOR = toDiscriminator(39, 25, 95, 107, 116, 17, 115, 28);
 
   public static Instruction closePresetParameter2(final AccountMeta invokedLbClmmProgramMeta,
                                                   final PublicKey presetParameterKey,
@@ -2094,7 +2094,7 @@ public final class LbClmmProgram {
       createWrite(rentReceiverKey)
     );
 
-    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_PRESET_PARAMETER2_DISCRIMINATOR);
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_PRESET_PARAMETER_2_DISCRIMINATOR);
   }
 
   public static final Discriminator REMOVE_ALL_LIQUIDITY_DISCRIMINATOR = toDiscriminator(10, 51, 61, 35, 112, 105, 24, 85);
@@ -2785,7 +2785,7 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_CLAIM_PROTOCOL_FEE_OPERATOR_DISCRIMINATOR);
   }
 
-  public static final Discriminator INITIALIZE_PRESET_PARAMETER2_DISCRIMINATOR = toDiscriminator(184, 7, 240, 171, 103, 47, 183, 121);
+  public static final Discriminator INITIALIZE_PRESET_PARAMETER_2_DISCRIMINATOR = toDiscriminator(184, 7, 240, 171, 103, 47, 183, 121);
 
   public static Instruction initializePresetParameter2(final AccountMeta invokedLbClmmProgramMeta,
                                                        final PublicKey presetParameterKey,
@@ -2799,7 +2799,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(ix)];
-    int i = writeDiscriminator(INITIALIZE_PRESET_PARAMETER2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(INITIALIZE_PRESET_PARAMETER_2_DISCRIMINATOR, _data, 0);
     Borsh.write(ix, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -2836,7 +2836,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator INITIALIZE_LB_PAIR2_DISCRIMINATOR = toDiscriminator(73, 59, 36, 120, 237, 83, 108, 198);
+  public static final Discriminator INITIALIZE_LB_PAIR_2_DISCRIMINATOR = toDiscriminator(73, 59, 36, 120, 237, 83, 108, 198);
 
   public static Instruction initializeLbPair2(final AccountMeta invokedLbClmmProgramMeta,
                                               final PublicKey lbPairKey,
@@ -2876,7 +2876,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_LB_PAIR2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(INITIALIZE_LB_PAIR_2_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -2913,7 +2913,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator INITIALIZE_CUSTOMIZABLE_PERMISSIONLESS_LB_PAIR2_DISCRIMINATOR = toDiscriminator(243, 73, 129, 126, 51, 19, 241, 107);
+  public static final Discriminator INITIALIZE_CUSTOMIZABLE_PERMISSIONLESS_LB_PAIR_2_DISCRIMINATOR = toDiscriminator(243, 73, 129, 126, 51, 19, 241, 107);
 
   public static Instruction initializeCustomizablePermissionlessLbPair2(final AccountMeta invokedLbClmmProgramMeta,
                                                                         final PublicKey lbPairKey,
@@ -2955,7 +2955,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_CUSTOMIZABLE_PERMISSIONLESS_LB_PAIR2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(INITIALIZE_CUSTOMIZABLE_PERMISSIONLESS_LB_PAIR_2_DISCRIMINATOR, _data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -2990,7 +2990,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator CLAIM_FEE2_DISCRIMINATOR = toDiscriminator(112, 191, 101, 171, 28, 144, 127, 187);
+  public static final Discriminator CLAIM_FEE_2_DISCRIMINATOR = toDiscriminator(112, 191, 101, 171, 28, 144, 127, 187);
 
   public static Instruction claimFee2(final AccountMeta invokedLbClmmProgramMeta,
                                       final PublicKey lbPairKey,
@@ -3028,7 +3028,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(CLAIM_FEE2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(CLAIM_FEE_2_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, minBinId);
     i += 4;
     putInt32LE(_data, i, maxBinId);
@@ -3078,7 +3078,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator CLAIM_REWARD2_DISCRIMINATOR = toDiscriminator(190, 3, 127, 119, 178, 87, 157, 183);
+  public static final Discriminator CLAIM_REWARD_2_DISCRIMINATOR = toDiscriminator(190, 3, 127, 119, 178, 87, 157, 183);
 
   public static Instruction claimReward2(final AccountMeta invokedLbClmmProgramMeta,
                                          final PublicKey lbPairKey,
@@ -3109,7 +3109,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(CLAIM_REWARD2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(CLAIM_REWARD_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     putInt32LE(_data, i, minBinId);
@@ -3170,7 +3170,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator ADD_LIQUIDITY2_DISCRIMINATOR = toDiscriminator(228, 162, 78, 28, 70, 219, 116, 115);
+  public static final Discriminator ADD_LIQUIDITY_2_DISCRIMINATOR = toDiscriminator(228, 162, 78, 28, 70, 219, 116, 115);
 
   public static Instruction addLiquidity2(final AccountMeta invokedLbClmmProgramMeta,
                                           final PublicKey positionKey,
@@ -3207,7 +3207,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(ADD_LIQUIDITY2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(ADD_LIQUIDITY_2_DISCRIMINATOR, _data, 0);
     i += Borsh.write(liquidityParameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -3246,7 +3246,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator ADD_LIQUIDITY_BY_STRATEGY2_DISCRIMINATOR = toDiscriminator(3, 221, 149, 218, 111, 141, 118, 213);
+  public static final Discriminator ADD_LIQUIDITY_BY_STRATEGY_2_DISCRIMINATOR = toDiscriminator(3, 221, 149, 218, 111, 141, 118, 213);
 
   public static Instruction addLiquidityByStrategy2(final AccountMeta invokedLbClmmProgramMeta,
                                                     final PublicKey positionKey,
@@ -3283,7 +3283,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_BY_STRATEGY2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(ADD_LIQUIDITY_BY_STRATEGY_2_DISCRIMINATOR, _data, 0);
     i += Borsh.write(liquidityParameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -3322,7 +3322,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator ADD_LIQUIDITY_ONE_SIDE_PRECISE2_DISCRIMINATOR = toDiscriminator(33, 51, 163, 201, 117, 98, 125, 231);
+  public static final Discriminator ADD_LIQUIDITY_ONE_SIDE_PRECISE_2_DISCRIMINATOR = toDiscriminator(33, 51, 163, 201, 117, 98, 125, 231);
 
   public static Instruction addLiquidityOneSidePrecise2(final AccountMeta invokedLbClmmProgramMeta,
                                                         final PublicKey positionKey,
@@ -3351,7 +3351,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_ONE_SIDE_PRECISE2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(ADD_LIQUIDITY_ONE_SIDE_PRECISE_2_DISCRIMINATOR, _data, 0);
     i += Borsh.write(liquidityParameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -3390,7 +3390,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator REMOVE_LIQUIDITY2_DISCRIMINATOR = toDiscriminator(230, 215, 82, 127, 241, 101, 227, 146);
+  public static final Discriminator REMOVE_LIQUIDITY_2_DISCRIMINATOR = toDiscriminator(230, 215, 82, 127, 241, 101, 227, 146);
 
   public static Instruction removeLiquidity2(final AccountMeta invokedLbClmmProgramMeta,
                                              final PublicKey positionKey,
@@ -3429,7 +3429,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(binLiquidityRemoval) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(REMOVE_LIQUIDITY2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(REMOVE_LIQUIDITY_2_DISCRIMINATOR, _data, 0);
     i += Borsh.writeVector(binLiquidityRemoval, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -3468,7 +3468,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator REMOVE_LIQUIDITY_BY_RANGE2_DISCRIMINATOR = toDiscriminator(204, 2, 195, 145, 53, 145, 145, 205);
+  public static final Discriminator REMOVE_LIQUIDITY_BY_RANGE_2_DISCRIMINATOR = toDiscriminator(204, 2, 195, 145, 53, 145, 145, 205);
 
   public static Instruction removeLiquidityByRange2(final AccountMeta invokedLbClmmProgramMeta,
                                                     final PublicKey positionKey,
@@ -3509,7 +3509,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[18 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(REMOVE_LIQUIDITY_BY_RANGE2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(REMOVE_LIQUIDITY_BY_RANGE_2_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, fromBinId);
     i += 4;
     putInt32LE(_data, i, toBinId);
@@ -3570,7 +3570,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator SWAP2_DISCRIMINATOR = toDiscriminator(65, 75, 63, 76, 235, 91, 91, 136);
+  public static final Discriminator SWAP_2_DISCRIMINATOR = toDiscriminator(65, 75, 63, 76, 235, 91, 91, 136);
 
   public static Instruction swap2(final AccountMeta invokedLbClmmProgramMeta,
                                   final PublicKey lbPairKey,
@@ -3612,7 +3612,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(SWAP2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(SWAP_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     putInt64LE(_data, i, minAmountOut);
@@ -3662,7 +3662,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator SWAP_EXACT_OUT2_DISCRIMINATOR = toDiscriminator(43, 215, 247, 132, 137, 60, 243, 81);
+  public static final Discriminator SWAP_EXACT_OUT_2_DISCRIMINATOR = toDiscriminator(43, 215, 247, 132, 137, 60, 243, 81);
 
   public static Instruction swapExactOut2(final AccountMeta invokedLbClmmProgramMeta,
                                           final PublicKey lbPairKey,
@@ -3704,7 +3704,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(SWAP_EXACT_OUT2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(SWAP_EXACT_OUT_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, maxInAmount);
     i += 8;
     putInt64LE(_data, i, outAmount);
@@ -3754,7 +3754,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator SWAP_WITH_PRICE_IMPACT2_DISCRIMINATOR = toDiscriminator(74, 98, 192, 214, 177, 51, 75, 51);
+  public static final Discriminator SWAP_WITH_PRICE_IMPACT_2_DISCRIMINATOR = toDiscriminator(74, 98, 192, 214, 177, 51, 75, 51);
 
   public static Instruction swapWithPriceImpact2(final AccountMeta invokedLbClmmProgramMeta,
                                                  final PublicKey lbPairKey,
@@ -3800,7 +3800,7 @@ public final class LbClmmProgram {
         18
         + (activeId == null || activeId.isEmpty() ? 1 : 5) + Borsh.len(remainingAccountsInfo)
     ];
-    int i = writeDiscriminator(SWAP_WITH_PRICE_IMPACT2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(SWAP_WITH_PRICE_IMPACT_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     i += Borsh.writeOptional(activeId, _data, i);
@@ -3861,7 +3861,7 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator CLOSE_POSITION2_DISCRIMINATOR = toDiscriminator(174, 90, 35, 115, 186, 40, 147, 226);
+  public static final Discriminator CLOSE_POSITION_2_DISCRIMINATOR = toDiscriminator(174, 90, 35, 115, 186, 40, 147, 226);
 
   public static Instruction closePosition2(final AccountMeta invokedLbClmmProgramMeta,
                                            final PublicKey positionKey,
@@ -3877,10 +3877,10 @@ public final class LbClmmProgram {
       createRead(programKey)
     );
 
-    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_POSITION2_DISCRIMINATOR);
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_POSITION_2_DISCRIMINATOR);
   }
 
-  public static final Discriminator UPDATE_FEES_AND_REWARD2_DISCRIMINATOR = toDiscriminator(32, 142, 184, 154, 103, 65, 184, 88);
+  public static final Discriminator UPDATE_FEES_AND_REWARD_2_DISCRIMINATOR = toDiscriminator(32, 142, 184, 154, 103, 65, 184, 88);
 
   public static Instruction updateFeesAndReward2(final AccountMeta invokedLbClmmProgramMeta,
                                                  final PublicKey positionKey,
@@ -3895,7 +3895,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_FEES_AND_REWARD2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(UPDATE_FEES_AND_REWARD_2_DISCRIMINATOR, _data, 0);
     putInt32LE(_data, i, minBinId);
     i += 4;
     putInt32LE(_data, i, maxBinId);

@@ -5,6 +5,7 @@ import software.sava.core.borsh.Borsh;
 public record QueueAddMrEnclaveParams(byte[] mrEnclave) implements Borsh {
 
   public static final int BYTES = 32;
+  public static final int MR_ENCLAVE_LEN = 32;
 
   public static QueueAddMrEnclaveParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

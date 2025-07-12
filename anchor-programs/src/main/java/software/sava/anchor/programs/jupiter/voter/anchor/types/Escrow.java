@@ -45,6 +45,7 @@ public record Escrow(PublicKey _address,
                      BigInteger[] buffers) implements Borsh {
 
   public static final int BYTES = 322;
+  public static final int BUFFERS_LEN = 9;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int LOCKER_OFFSET = 8;

@@ -99,6 +99,7 @@ public final class MerkleDistributorProgram {
     }
 
     public static final int BYTES = 97;
+    public static final int ROOT_LEN = 32;
 
     public static NewDistributorIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

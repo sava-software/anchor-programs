@@ -5,6 +5,7 @@ import software.sava.core.borsh.Borsh;
 public record BorrowRateCurve(CurvePoint[] points) implements Borsh {
 
   public static final int BYTES = 88;
+  public static final int POINTS_LEN = 11;
 
   public static BorrowRateCurve read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

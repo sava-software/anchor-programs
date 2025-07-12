@@ -8,6 +8,7 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 public record NcnRewardRoute(PublicKey operator, BaseRewardRouterRewards[] ncnFeeGroupRewards) implements Borsh {
 
   public static final int BYTES = 96;
+  public static final int NCN_FEE_GROUP_REWARDS_LEN = 8;
 
   public static NcnRewardRoute read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

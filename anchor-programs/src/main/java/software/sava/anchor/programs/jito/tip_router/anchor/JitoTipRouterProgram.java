@@ -912,6 +912,7 @@ public final class JitoTipRouterProgram {
     }
 
     public static final int BYTES = 48;
+    public static final int META_MERKLE_ROOT_LEN = 32;
 
     public static CastVoteIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -991,6 +992,7 @@ public final class JitoTipRouterProgram {
       return read(instruction.data(), instruction.offset());
     }
 
+    public static final int MERKLE_ROOT_LEN = 32;
     public static SetMerkleRootIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
@@ -2132,6 +2134,7 @@ public final class JitoTipRouterProgram {
     }
 
     public static final int BYTES = 48;
+    public static final int META_MERKLE_ROOT_LEN = 32;
 
     public static AdminSetTieBreakerIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

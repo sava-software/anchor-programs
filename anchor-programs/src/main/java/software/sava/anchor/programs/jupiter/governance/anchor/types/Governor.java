@@ -41,6 +41,7 @@ public record Governor(PublicKey _address,
                        BigInteger[] buffers) implements Borsh {
 
   public static final int BYTES = 729;
+  public static final int BUFFERS_LEN = 32;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int BASE_OFFSET = 8;

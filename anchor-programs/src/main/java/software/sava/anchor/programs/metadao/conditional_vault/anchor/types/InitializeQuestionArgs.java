@@ -10,6 +10,7 @@ public record InitializeQuestionArgs(byte[] questionId,
                                      int numOutcomes) implements Borsh {
 
   public static final int BYTES = 65;
+  public static final int QUESTION_ID_LEN = 32;
 
   public static InitializeQuestionArgs read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

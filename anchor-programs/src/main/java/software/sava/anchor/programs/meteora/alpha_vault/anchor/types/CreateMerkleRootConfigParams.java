@@ -11,6 +11,7 @@ public record CreateMerkleRootConfigParams(// The 256-bit merkle root.
                                            long version) implements Borsh {
 
   public static final int BYTES = 40;
+  public static final int ROOT_LEN = 32;
 
   public static CreateMerkleRootConfigParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

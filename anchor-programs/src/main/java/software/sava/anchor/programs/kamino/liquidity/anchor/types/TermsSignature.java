@@ -13,6 +13,7 @@ import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 public record TermsSignature(PublicKey _address, Discriminator discriminator, byte[] signature) implements Borsh {
 
   public static final int BYTES = 72;
+  public static final int SIGNATURE_LEN = 64;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int SIGNATURE_OFFSET = 8;

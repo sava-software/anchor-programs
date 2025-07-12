@@ -40,6 +40,7 @@ public record Question(PublicKey _address,
                        int[] payoutNumerators,
                        int payoutDenominator) implements Borsh {
 
+  public static final int QUESTION_ID_LEN = 32;
   public static final int QUESTION_ID_OFFSET = 8;
   public static final int ORACLE_OFFSET = 40;
   public static final int PAYOUT_NUMERATORS_OFFSET = 72;

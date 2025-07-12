@@ -171,7 +171,7 @@ public final class DcaProgram {
     }
   }
 
-  public static final Discriminator OPEN_DCA_V2_DISCRIMINATOR = toDiscriminator(142, 119, 43, 109, 162, 52, 11, 177);
+  public static final Discriminator OPEN_DCA_V_2_DISCRIMINATOR = toDiscriminator(142, 119, 43, 109, 162, 52, 11, 177);
 
   public static Instruction openDcaV2(final AccountMeta invokedDcaProgramMeta,
                                       final PublicKey dcaKey,
@@ -216,7 +216,7 @@ public final class DcaProgram {
         + (maxOutAmount == null || maxOutAmount.isEmpty() ? 1 : 9)
         + (startAt == null || startAt.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(OPEN_DCA_V2_DISCRIMINATOR, _data, 0);
+    int i = writeDiscriminator(OPEN_DCA_V_2_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, applicationIdx);
     i += 8;
     putInt64LE(_data, i, inAmount);

@@ -14,6 +14,7 @@ public record RemoveLiquidity(PublicKey lbPair,
                               int activeBinId) implements Borsh {
 
   public static final int BYTES = 116;
+  public static final int AMOUNTS_LEN = 2;
 
   public static RemoveLiquidity read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

@@ -53,6 +53,11 @@ public record PositionV2(PublicKey _address,
                          byte[] reserved) implements Borsh {
 
   public static final int BYTES = 8120;
+  public static final int LIQUIDITY_SHARES_LEN = 70;
+  public static final int REWARD_INFOS_LEN = 70;
+  public static final int FEE_INFOS_LEN = 70;
+  public static final int TOTAL_CLAIMED_REWARDS_LEN = 2;
+  public static final int RESERVED_LEN = 87;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int LB_PAIR_OFFSET = 8;
@@ -68,7 +73,7 @@ public record PositionV2(PublicKey _address,
   public static final int TOTAL_CLAIMED_REWARDS_OFFSET = 7944;
   public static final int OPERATOR_OFFSET = 7960;
   public static final int LOCK_RELEASE_POINT_OFFSET = 7992;
-  public static final int PADDING0_OFFSET = 8000;
+  public static final int PADDING_0_OFFSET = 8000;
   public static final int FEE_OWNER_OFFSET = 8001;
   public static final int RESERVED_OFFSET = 8033;
 
@@ -121,7 +126,7 @@ public record PositionV2(PublicKey _address,
   }
 
   public static Filter createPadding0Filter(final int padding0) {
-    return Filter.createMemCompFilter(PADDING0_OFFSET, new byte[]{(byte) padding0});
+    return Filter.createMemCompFilter(PADDING_0_OFFSET, new byte[]{(byte) padding0});
   }
 
   public static Filter createFeeOwnerFilter(final PublicKey feeOwner) {

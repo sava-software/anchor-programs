@@ -57,6 +57,7 @@ public record GlobalConfig(PublicKey _address,
                            long[] padding) implements Borsh {
 
   public static final int BYTES = 371;
+  public static final int PADDING_LEN = 16;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(149, 8, 156, 202, 160, 252, 176, 217);

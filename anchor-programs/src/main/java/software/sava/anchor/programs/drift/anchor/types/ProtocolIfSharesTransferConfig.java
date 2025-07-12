@@ -25,6 +25,8 @@ public record ProtocolIfSharesTransferConfig(PublicKey _address,
                                              BigInteger[] padding) implements Borsh {
 
   public static final int BYTES = 304;
+  public static final int WHITELISTED_SIGNERS_LEN = 4;
+  public static final int PADDING_LEN = 8;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int WHITELISTED_SIGNERS_OFFSET = 8;

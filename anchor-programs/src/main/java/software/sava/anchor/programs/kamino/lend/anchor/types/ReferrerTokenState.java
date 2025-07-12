@@ -33,6 +33,7 @@ public record ReferrerTokenState(PublicKey _address,
                                  long[] padding) implements Borsh {
 
   public static final int BYTES = 360;
+  public static final int PADDING_LEN = 31;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int REFERRER_OFFSET = 8;

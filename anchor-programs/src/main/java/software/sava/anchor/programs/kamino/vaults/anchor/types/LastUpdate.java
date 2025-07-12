@@ -15,6 +15,7 @@ public record LastUpdate(// Last slot when updated
                          byte[] placeholder) implements Borsh {
 
   public static final int BYTES = 16;
+  public static final int PLACEHOLDER_LEN = 6;
 
   public static LastUpdate read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

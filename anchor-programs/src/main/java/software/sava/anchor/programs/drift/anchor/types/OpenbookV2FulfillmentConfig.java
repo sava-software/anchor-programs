@@ -30,17 +30,18 @@ public record OpenbookV2FulfillmentConfig(PublicKey _address,
                                           byte[] padding) implements Borsh {
 
   public static final int BYTES = 304;
+  public static final int PADDING_LEN = 4;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int PUBKEY_OFFSET = 8;
-  public static final int OPENBOOK_V2_PROGRAM_ID_OFFSET = 40;
-  public static final int OPENBOOK_V2_MARKET_OFFSET = 72;
-  public static final int OPENBOOK_V2_MARKET_AUTHORITY_OFFSET = 104;
-  public static final int OPENBOOK_V2_EVENT_HEAP_OFFSET = 136;
-  public static final int OPENBOOK_V2_BIDS_OFFSET = 168;
-  public static final int OPENBOOK_V2_ASKS_OFFSET = 200;
-  public static final int OPENBOOK_V2_BASE_VAULT_OFFSET = 232;
-  public static final int OPENBOOK_V2_QUOTE_VAULT_OFFSET = 264;
+  public static final int OPENBOOK_V_2_PROGRAM_ID_OFFSET = 40;
+  public static final int OPENBOOK_V_2_MARKET_OFFSET = 72;
+  public static final int OPENBOOK_V_2_MARKET_AUTHORITY_OFFSET = 104;
+  public static final int OPENBOOK_V_2_EVENT_HEAP_OFFSET = 136;
+  public static final int OPENBOOK_V_2_BIDS_OFFSET = 168;
+  public static final int OPENBOOK_V_2_ASKS_OFFSET = 200;
+  public static final int OPENBOOK_V_2_BASE_VAULT_OFFSET = 232;
+  public static final int OPENBOOK_V_2_QUOTE_VAULT_OFFSET = 264;
   public static final int MARKET_INDEX_OFFSET = 296;
   public static final int FULFILLMENT_TYPE_OFFSET = 298;
   public static final int STATUS_OFFSET = 299;
@@ -51,35 +52,35 @@ public record OpenbookV2FulfillmentConfig(PublicKey _address,
   }
 
   public static Filter createOpenbookV2ProgramIdFilter(final PublicKey openbookV2ProgramId) {
-    return Filter.createMemCompFilter(OPENBOOK_V2_PROGRAM_ID_OFFSET, openbookV2ProgramId);
+    return Filter.createMemCompFilter(OPENBOOK_V_2_PROGRAM_ID_OFFSET, openbookV2ProgramId);
   }
 
   public static Filter createOpenbookV2MarketFilter(final PublicKey openbookV2Market) {
-    return Filter.createMemCompFilter(OPENBOOK_V2_MARKET_OFFSET, openbookV2Market);
+    return Filter.createMemCompFilter(OPENBOOK_V_2_MARKET_OFFSET, openbookV2Market);
   }
 
   public static Filter createOpenbookV2MarketAuthorityFilter(final PublicKey openbookV2MarketAuthority) {
-    return Filter.createMemCompFilter(OPENBOOK_V2_MARKET_AUTHORITY_OFFSET, openbookV2MarketAuthority);
+    return Filter.createMemCompFilter(OPENBOOK_V_2_MARKET_AUTHORITY_OFFSET, openbookV2MarketAuthority);
   }
 
   public static Filter createOpenbookV2EventHeapFilter(final PublicKey openbookV2EventHeap) {
-    return Filter.createMemCompFilter(OPENBOOK_V2_EVENT_HEAP_OFFSET, openbookV2EventHeap);
+    return Filter.createMemCompFilter(OPENBOOK_V_2_EVENT_HEAP_OFFSET, openbookV2EventHeap);
   }
 
   public static Filter createOpenbookV2BidsFilter(final PublicKey openbookV2Bids) {
-    return Filter.createMemCompFilter(OPENBOOK_V2_BIDS_OFFSET, openbookV2Bids);
+    return Filter.createMemCompFilter(OPENBOOK_V_2_BIDS_OFFSET, openbookV2Bids);
   }
 
   public static Filter createOpenbookV2AsksFilter(final PublicKey openbookV2Asks) {
-    return Filter.createMemCompFilter(OPENBOOK_V2_ASKS_OFFSET, openbookV2Asks);
+    return Filter.createMemCompFilter(OPENBOOK_V_2_ASKS_OFFSET, openbookV2Asks);
   }
 
   public static Filter createOpenbookV2BaseVaultFilter(final PublicKey openbookV2BaseVault) {
-    return Filter.createMemCompFilter(OPENBOOK_V2_BASE_VAULT_OFFSET, openbookV2BaseVault);
+    return Filter.createMemCompFilter(OPENBOOK_V_2_BASE_VAULT_OFFSET, openbookV2BaseVault);
   }
 
   public static Filter createOpenbookV2QuoteVaultFilter(final PublicKey openbookV2QuoteVault) {
-    return Filter.createMemCompFilter(OPENBOOK_V2_QUOTE_VAULT_OFFSET, openbookV2QuoteVault);
+    return Filter.createMemCompFilter(OPENBOOK_V_2_QUOTE_VAULT_OFFSET, openbookV2QuoteVault);
   }
 
   public static Filter createMarketIndexFilter(final int marketIndex) {

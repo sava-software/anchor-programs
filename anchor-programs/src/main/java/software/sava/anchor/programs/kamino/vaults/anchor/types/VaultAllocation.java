@@ -24,6 +24,8 @@ public record VaultAllocation(PublicKey reserve,
                               long[] statePadding) implements Borsh {
 
   public static final int BYTES = 2160;
+  public static final int CONFIG_PADDING_LEN = 127;
+  public static final int STATE_PADDING_LEN = 128;
 
   public static VaultAllocation read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {

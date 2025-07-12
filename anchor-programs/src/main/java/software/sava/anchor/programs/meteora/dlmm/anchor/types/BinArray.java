@@ -27,6 +27,8 @@ public record BinArray(PublicKey _address,
                        Bin[] bins) implements Borsh {
 
   public static final int BYTES = 10136;
+  public static final int PADDING_LEN = 7;
+  public static final int BINS_LEN = 70;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int INDEX_OFFSET = 8;

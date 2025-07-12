@@ -33,6 +33,7 @@ public record PartialUnstaking(PublicKey _address,
                                // Memo
                                String memo, byte[] _memo) implements Borsh {
 
+  public static final int BUFFERS_LEN = 6;
   public static final int ESCROW_OFFSET = 8;
   public static final int AMOUNT_OFFSET = 40;
   public static final int EXPIRATION_OFFSET = 48;

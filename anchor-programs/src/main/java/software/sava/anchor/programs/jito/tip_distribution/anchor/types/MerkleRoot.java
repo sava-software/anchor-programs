@@ -17,6 +17,7 @@ public record MerkleRoot(// The 256-bit merkle root.
                          long numNodesClaimed) implements Borsh {
 
   public static final int BYTES = 64;
+  public static final int ROOT_LEN = 32;
 
   public static MerkleRoot read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
