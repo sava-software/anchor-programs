@@ -14,6 +14,8 @@ import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.List;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
@@ -100,15 +102,25 @@ public interface DriftProgramClient {
     );
   }
 
+  static byte[] fixedUserName(final String name) {
+    final var bytes = name.getBytes(StandardCharsets.UTF_8);
+    if (bytes.length > 32) {
+      throw new IllegalArgumentException("Name must be <= 32 bytes");
+    }
+    return bytes.length < 32
+        ? Arrays.copyOfRange(bytes, 0, 32)
+        : bytes;
+  }
+
   Instruction initializeUser(final PublicKey user,
                              final PublicKey authority,
                              final PublicKey payerKey,
                              final int subAccountId,
-                             final String name);
+                             final byte[] name);
 
   default Instruction initializeUser(final PublicKey payerKey,
                                      final int subAccountId,
-                                     final String name) {
+                                     final byte[] name) {
     return initializeUser(mainUserAccount(), authority(), payerKey, subAccountId, name);
   }
 
@@ -116,7 +128,7 @@ public interface DriftProgramClient {
                                      final PublicKey authority,
                                      final PublicKey payerKey,
                                      final int subAccountId,
-                                     final String name,
+                                     final byte[] name,
                                      final PublicKey referrer,
                                      final PublicKey referrerStats) {
     final var initUserIx = initializeUser(user, authority, payerKey, subAccountId, name);
@@ -128,7 +140,7 @@ public interface DriftProgramClient {
 
   default Instruction initializeUser(final PublicKey payerKey,
                                      final int subAccountId,
-                                     final String name,
+                                     final byte[] name,
                                      final PublicKey referrer,
                                      final PublicKey referrerStats) {
     return initializeUser(mainUserAccount(), authority(), payerKey, subAccountId, name, referrer, referrerStats);

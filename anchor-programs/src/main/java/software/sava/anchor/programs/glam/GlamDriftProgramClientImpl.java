@@ -11,7 +11,6 @@ import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
 
-import java.nio.charset.StandardCharsets;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
@@ -68,7 +67,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                     final PublicKey authority,
                                     final PublicKey payerKey,
                                     final int subAccountId,
-                                    final String name) {
+                                    final byte[] name) {
     final var userStatsKey = deriveUserStatsAccount(driftAccounts, authority).publicKey();
     return GlamProtocolProgram.driftInitializeUser(
         invokedProgram,
@@ -82,7 +81,7 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
         driftAccounts.stateKey(),
         payerKey,
         subAccountId,
-        name.getBytes(StandardCharsets.UTF_8)
+        name
     );
   }
 
