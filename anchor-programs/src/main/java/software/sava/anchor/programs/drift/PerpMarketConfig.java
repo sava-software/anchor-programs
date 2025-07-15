@@ -34,7 +34,7 @@ public record PerpMarketConfig(String fullName,
   public static List<PerpMarketConfig> parseConfigs(final JsonIterator ji, final DriftAccounts driftAccounts) {
     final var configs = new ArrayList<PerpMarketConfig>();
     while (ji.readArray()) {
-      final var parser = new PerpMarketConfig.Builder();
+      final var parser = new Parser();
       ji.testObject(parser);
       final var config = parser.create(driftAccounts);
       configs.add(config);
@@ -49,7 +49,7 @@ public record PerpMarketConfig(String fullName,
         : readOracle;
   }
 
-  private static final class Builder implements FieldBufferPredicate {
+  private static final class Parser implements FieldBufferPredicate {
 
     private String fullName;
     private Set<String> categories;

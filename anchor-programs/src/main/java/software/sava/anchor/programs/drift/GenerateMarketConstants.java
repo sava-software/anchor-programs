@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.BiFunction;
 
-final class GenerateMarketConstants {
+public final class GenerateMarketConstants {
 
   public static final CharBufferFunction<PublicKey> DECODE_HEX = (buf, offset, len) -> PublicKey
       .createPubKey(Hex.decode(new String(buf, offset + 2, len - 2)));
@@ -97,7 +97,7 @@ final class GenerateMarketConstants {
       );
     });
   }
-
+  
   static CompletableFuture<DynamicPerpMarkets> createPerpMarkets(final HttpClient httpClient) {
     final var responseFuture = fetchPerpMarkets(httpClient);
 

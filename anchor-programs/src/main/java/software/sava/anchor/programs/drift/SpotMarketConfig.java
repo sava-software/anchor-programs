@@ -17,6 +17,7 @@ import static java.lang.System.Logger.Level.WARNING;
 import static systems.comodal.jsoniter.JsonIterator.fieldEquals;
 
 public record SpotMarketConfig(String symbol,
+                               int poolId,
                                int marketIndex,
                                Instant launchTs,
                                AccountMeta readOracle,
@@ -38,7 +39,7 @@ public record SpotMarketConfig(String symbol,
   public static List<SpotMarketConfig> parseConfigs(final JsonIterator ji, final DriftAccounts driftAccounts) {
     final var configs = new ArrayList<SpotMarketConfig>();
     while (ji.readArray()) {
-      final var parser = new SpotMarketConfig.Builder();
+      final var parser = new Parser();
       ji.testObject(parser);
       final var config = parser.create(driftAccounts);
       configs.add(config);
@@ -86,9 +87,10 @@ public record SpotMarketConfig(String symbol,
     return readOracle;
   }
 
-  private static final class Builder implements FieldBufferPredicate {
+  private static final class Parser implements FieldBufferPredicate {
 
     private String symbol;
+    private int poolId;
     private int marketIndex;
     private Instant launchTs;
     private PublicKey oracle;
@@ -116,6 +118,7 @@ public record SpotMarketConfig(String symbol,
 
       return new SpotMarketConfig(
           symbol,
+          poolId,
           marketIndex,
           launchTs,
           readOracle, writeOracle,
@@ -137,8 +140,8 @@ public record SpotMarketConfig(String symbol,
     public boolean test(final char[] buf, final int offset, final int len, final JsonIterator ji) {
       if (fieldEquals("symbol", buf, offset, len)) {
         symbol = ji.readString();
-      } else if (fieldEquals("symbol", buf, offset, len)) {
-        symbol = ji.readString();
+      } else if (fieldEquals("poolId", buf, offset, len)) {
+        poolId = ji.readInt();
       } else if (fieldEquals("marketIndex", buf, offset, len)) {
         marketIndex = ji.readInt();
       } else if (fieldEquals("launchTs", buf, offset, len)) {
