@@ -50,7 +50,8 @@ public sealed interface KaminoVaultError extends ProgramError permits
     KaminoVaultError.MinWithdrawAmountTooBig,
     KaminoVaultError.InvestTooSoon,
     KaminoVaultError.WrongAdminOrAllocationAdmin,
-    KaminoVaultError.ReserveHasNonZeroAllocationOrCTokens {
+    KaminoVaultError.ReserveHasNonZeroAllocationOrCTokens,
+    KaminoVaultError.DepositAmountGreaterThanRequestedAmount {
 
   static KaminoVaultError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -102,6 +103,7 @@ public sealed interface KaminoVaultError extends ProgramError permits
       case 7045 -> InvestTooSoon.INSTANCE;
       case 7046 -> WrongAdminOrAllocationAdmin.INSTANCE;
       case 7047 -> ReserveHasNonZeroAllocationOrCTokens.INSTANCE;
+      case 7048 -> DepositAmountGreaterThanRequestedAmount.INSTANCE;
       default -> throw new IllegalStateException("Unexpected KaminoVault error code: " + errorCode);
     };
   }
@@ -439,6 +441,13 @@ public sealed interface KaminoVaultError extends ProgramError permits
 
     public static final ReserveHasNonZeroAllocationOrCTokens INSTANCE = new ReserveHasNonZeroAllocationOrCTokens(
         7047, "Reserve has non-zero allocation or ctokens so cannot be removed"
+    );
+  }
+
+  record DepositAmountGreaterThanRequestedAmount(int code, String msg) implements KaminoVaultError {
+
+    public static final DepositAmountGreaterThanRequestedAmount INSTANCE = new DepositAmountGreaterThanRequestedAmount(
+        7048, "Deposit amount is greater than requested amount"
     );
   }
 }

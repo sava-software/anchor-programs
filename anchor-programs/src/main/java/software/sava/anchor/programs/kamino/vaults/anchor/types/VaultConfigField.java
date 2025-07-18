@@ -15,7 +15,9 @@ public enum VaultConfigField implements Borsh.Enum {
   Name,
   LookupTable,
   Farm,
-  AllocationAdmin;
+  AllocationAdmin,
+  UnallocatedWeight,
+  UnallocatedTokensCap;
 
   public static VaultConfigField read(final byte[] _data, final int offset) {
     return Borsh.read(VaultConfigField.values(), _data, offset);

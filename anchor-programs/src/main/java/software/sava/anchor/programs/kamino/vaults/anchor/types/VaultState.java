@@ -31,7 +31,7 @@ public record VaultState(PublicKey _address,
                          long tokenAvailable,
                          long sharesIssued,
                          long availableCrankFunds,
-                         long padding0,
+                         long unallocatedWeight,
                          long performanceFeeBps,
                          long managementFeeBps,
                          long lastFeeChargeTimestamp,
@@ -52,7 +52,7 @@ public record VaultState(PublicKey _address,
                          PublicKey vaultLookupTable,
                          PublicKey vaultFarm,
                          long creationTimestamp,
-                         long padding2,
+                         long unallocatedTokensCap,
                          PublicKey allocationAdmin,
                          BigInteger[] padding3) implements Borsh {
 
@@ -75,7 +75,7 @@ public record VaultState(PublicKey _address,
   public static final int TOKEN_AVAILABLE_OFFSET = 224;
   public static final int SHARES_ISSUED_OFFSET = 232;
   public static final int AVAILABLE_CRANK_FUNDS_OFFSET = 240;
-  public static final int PADDING_0_OFFSET = 248;
+  public static final int UNALLOCATED_WEIGHT_OFFSET = 248;
   public static final int PERFORMANCE_FEE_BPS_OFFSET = 256;
   public static final int MANAGEMENT_FEE_BPS_OFFSET = 264;
   public static final int LAST_FEE_CHARGE_TIMESTAMP_OFFSET = 272;
@@ -96,7 +96,7 @@ public record VaultState(PublicKey _address,
   public static final int VAULT_LOOKUP_TABLE_OFFSET = 58568;
   public static final int VAULT_FARM_OFFSET = 58600;
   public static final int CREATION_TIMESTAMP_OFFSET = 58632;
-  public static final int PADDING_2_OFFSET = 58640;
+  public static final int UNALLOCATED_TOKENS_CAP_OFFSET = 58640;
   public static final int ALLOCATION_ADMIN_OFFSET = 58648;
   public static final int PADDING_3_OFFSET = 58680;
 
@@ -160,10 +160,10 @@ public record VaultState(PublicKey _address,
     return Filter.createMemCompFilter(AVAILABLE_CRANK_FUNDS_OFFSET, _data);
   }
 
-  public static Filter createPadding0Filter(final long padding0) {
+  public static Filter createUnallocatedWeightFilter(final long unallocatedWeight) {
     final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, padding0);
-    return Filter.createMemCompFilter(PADDING_0_OFFSET, _data);
+    putInt64LE(_data, 0, unallocatedWeight);
+    return Filter.createMemCompFilter(UNALLOCATED_WEIGHT_OFFSET, _data);
   }
 
   public static Filter createPerformanceFeeBpsFilter(final long performanceFeeBps) {
@@ -262,10 +262,10 @@ public record VaultState(PublicKey _address,
     return Filter.createMemCompFilter(CREATION_TIMESTAMP_OFFSET, _data);
   }
 
-  public static Filter createPadding2Filter(final long padding2) {
+  public static Filter createUnallocatedTokensCapFilter(final long unallocatedTokensCap) {
     final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, padding2);
-    return Filter.createMemCompFilter(PADDING_2_OFFSET, _data);
+    putInt64LE(_data, 0, unallocatedTokensCap);
+    return Filter.createMemCompFilter(UNALLOCATED_TOKENS_CAP_OFFSET, _data);
   }
 
   public static Filter createAllocationAdminFilter(final PublicKey allocationAdmin) {
@@ -316,7 +316,7 @@ public record VaultState(PublicKey _address,
     i += 8;
     final var availableCrankFunds = getInt64LE(_data, i);
     i += 8;
-    final var padding0 = getInt64LE(_data, i);
+    final var unallocatedWeight = getInt64LE(_data, i);
     i += 8;
     final var performanceFeeBps = getInt64LE(_data, i);
     i += 8;
@@ -358,7 +358,7 @@ public record VaultState(PublicKey _address,
     i += 32;
     final var creationTimestamp = getInt64LE(_data, i);
     i += 8;
-    final var padding2 = getInt64LE(_data, i);
+    final var unallocatedTokensCap = getInt64LE(_data, i);
     i += 8;
     final var allocationAdmin = readPubKey(_data, i);
     i += 32;
@@ -378,7 +378,7 @@ public record VaultState(PublicKey _address,
                           tokenAvailable,
                           sharesIssued,
                           availableCrankFunds,
-                          padding0,
+                          unallocatedWeight,
                           performanceFeeBps,
                           managementFeeBps,
                           lastFeeChargeTimestamp,
@@ -399,7 +399,7 @@ public record VaultState(PublicKey _address,
                           vaultLookupTable,
                           vaultFarm,
                           creationTimestamp,
-                          padding2,
+                          unallocatedTokensCap,
                           allocationAdmin,
                           padding3);
   }
@@ -431,7 +431,7 @@ public record VaultState(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, availableCrankFunds);
     i += 8;
-    putInt64LE(_data, i, padding0);
+    putInt64LE(_data, i, unallocatedWeight);
     i += 8;
     putInt64LE(_data, i, performanceFeeBps);
     i += 8;
@@ -470,7 +470,7 @@ public record VaultState(PublicKey _address,
     i += 32;
     putInt64LE(_data, i, creationTimestamp);
     i += 8;
-    putInt64LE(_data, i, padding2);
+    putInt64LE(_data, i, unallocatedTokensCap);
     i += 8;
     allocationAdmin.write(_data, i);
     i += 32;
