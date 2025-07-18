@@ -26,6 +26,7 @@ public final class JitoTipDistributionProgram {
 
   public static final Discriminator CLAIM_DISCRIMINATOR = toDiscriminator(62, 198, 214, 193, 213, 159, 108, 210);
 
+  // Claims tokens from the [TipDistributionAccount].
   public static Instruction claim(final AccountMeta invokedJitoTipDistributionProgramMeta,
                                   final PublicKey configKey,
                                   final PublicKey tipDistributionAccountKey,
@@ -103,6 +104,8 @@ public final class JitoTipDistributionProgram {
 
   public static final Discriminator CLOSE_CLAIM_STATUS_DISCRIMINATOR = toDiscriminator(163, 214, 191, 165, 245, 188, 17, 185);
 
+  // Anyone can invoke this only after the [TipDistributionAccount] has expired.
+  // This instruction will return any rent back to `claimant` and close the account
   public static Instruction closeClaimStatus(final AccountMeta invokedJitoTipDistributionProgramMeta,
                                              final PublicKey configKey,
                                              final PublicKey claimStatusKey,
@@ -119,6 +122,9 @@ public final class JitoTipDistributionProgram {
 
   public static final Discriminator CLOSE_TIP_DISTRIBUTION_ACCOUNT_DISCRIMINATOR = toDiscriminator(47, 136, 208, 190, 125, 243, 74, 227);
 
+  // Anyone can invoke this only after the [TipDistributionAccount] has expired.
+  // This instruction will send any unclaimed funds to the designated `expired_funds_account`
+  // before closing and returning the rent exempt funds to the validator.
   public static Instruction closeTipDistributionAccount(final AccountMeta invokedJitoTipDistributionProgramMeta,
                                                         final PublicKey configKey,
                                                         final PublicKey expiredFundsAccountKey,
@@ -176,6 +182,7 @@ public final class JitoTipDistributionProgram {
 
   public static final Discriminator INITIALIZE_DISCRIMINATOR = toDiscriminator(175, 175, 109, 31, 13, 152, 155, 237);
 
+  // Initialize a singleton instance of the [Config] account.
   public static Instruction initialize(final AccountMeta invokedJitoTipDistributionProgramMeta,
                                        final PublicKey configKey,
                                        final PublicKey systemProgramKey,
@@ -329,6 +336,8 @@ public final class JitoTipDistributionProgram {
 
   public static final Discriminator INITIALIZE_TIP_DISTRIBUTION_ACCOUNT_DISCRIMINATOR = toDiscriminator(120, 191, 25, 182, 111, 49, 179, 55);
 
+  // Initialize a new [TipDistributionAccount] associated with the given validator vote key
+  // and current epoch.
   public static Instruction initializeTipDistributionAccount(final AccountMeta invokedJitoTipDistributionProgramMeta,
                                                              final PublicKey configKey,
                                                              final PublicKey tipDistributionAccountKey,
@@ -415,6 +424,7 @@ public final class JitoTipDistributionProgram {
 
   public static final Discriminator UPDATE_CONFIG_DISCRIMINATOR = toDiscriminator(29, 158, 252, 191, 10, 83, 219, 99);
 
+  // Update config fields. Only the [Config] authority can invoke this.
   public static Instruction updateConfig(final AccountMeta invokedJitoTipDistributionProgramMeta,
                                          final PublicKey configKey,
                                          final PublicKey authorityKey,
@@ -525,6 +535,10 @@ public final class JitoTipDistributionProgram {
 
   public static final Discriminator UPLOAD_MERKLE_ROOT_DISCRIMINATOR = toDiscriminator(70, 3, 110, 29, 199, 190, 205, 176);
 
+  // Uploads a merkle root to the provided [TipDistributionAccount]. This instruction may be
+  // invoked many times as long as the account is at least one epoch old and not expired; and
+  // no funds have already been claimed. Only the `merkle_root_upload_authority` has the
+  // authority to invoke.
   public static Instruction uploadMerkleRoot(final AccountMeta invokedJitoTipDistributionProgramMeta,
                                              final PublicKey configKey,
                                              final PublicKey tipDistributionAccountKey,

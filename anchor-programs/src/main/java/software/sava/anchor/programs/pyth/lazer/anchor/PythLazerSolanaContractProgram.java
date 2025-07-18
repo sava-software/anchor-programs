@@ -142,6 +142,15 @@ public final class PythLazerSolanaContractProgram {
 
   public static final Discriminator VERIFY_MESSAGE_DISCRIMINATOR = toDiscriminator(180, 193, 120, 55, 189, 135, 203, 83);
 
+  // Verifies a ed25519 signature on Solana by checking that the transaction contains
+  // a correct call to the built-in `ed25519_program`.
+  // 
+  // - `message_data` is the signed message that is being verified.
+  // - `ed25519_instruction_index` is the index of the `ed25519_program` instruction
+  // within the transaction. This instruction must precede the current instruction.
+  // - `signature_index` is the index of the signature within the inputs to the `ed25519_program`.
+  // - `message_offset` is the offset of the signed message within the
+  // input data for the current instruction.
   public static Instruction verifyMessage(final AccountMeta invokedPythLazerSolanaContractProgramMeta,
                                           final SolanaAccounts solanaAccounts,
                                           final PublicKey payerKey,

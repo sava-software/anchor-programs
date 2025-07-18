@@ -26,6 +26,7 @@ public final class MerkleDistributorProgram {
 
   public static final Discriminator NEW_DISTRIBUTOR_DISCRIMINATOR = toDiscriminator(32, 139, 112, 171, 0, 2, 225, 155);
 
+  // ADMIN FUNCTIONS ////
   public static Instruction newDistributor(final AccountMeta invokedMerkleDistributorProgramMeta,
                                            // [MerkleDistributor].
                                            final PublicKey distributorKey,
@@ -97,6 +98,7 @@ public final class MerkleDistributorProgram {
 
   public static final Discriminator CLOSE_DISTRIBUTOR_DISCRIMINATOR = toDiscriminator(202, 56, 180, 143, 46, 104, 106, 112);
 
+  // only available in test phase
   public static Instruction closeDistributor(final AccountMeta invokedMerkleDistributorProgramMeta,
                                              // [MerkleDistributor].
                                              final PublicKey distributorKey,
@@ -122,6 +124,7 @@ public final class MerkleDistributorProgram {
 
   public static final Discriminator CLOSE_CLAIM_STATUS_DISCRIMINATOR = toDiscriminator(163, 214, 191, 165, 245, 188, 17, 185);
 
+  // only available in test phase
   public static Instruction closeClaimStatus(final AccountMeta invokedMerkleDistributorProgramMeta,
                                              final PublicKey claimStatusKey,
                                              final PublicKey claimantKey,
@@ -298,6 +301,7 @@ public final class MerkleDistributorProgram {
 
   public static final Discriminator NEW_CLAIM_DISCRIMINATOR = toDiscriminator(78, 177, 98, 123, 210, 21, 187, 83);
 
+  // USER FUNCTIONS /////
   public static Instruction newClaim(final AccountMeta invokedMerkleDistributorProgramMeta,
                                      // The [MerkleDistributor].
                                      final PublicKey distributorKey,

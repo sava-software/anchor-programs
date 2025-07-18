@@ -30,6 +30,14 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator BUY_EXACT_IN_DISCRIMINATOR = toDiscriminator(250, 234, 13, 123, 213, 156, 19, 236);
 
+  // Use the given amount of quote tokens to purchase base tokens.
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // * `amount_in` - Amount of quote token to purchase
+  // * `minimum_amount_out` - Minimum amount of base token to receive (slippage protection)
+  // * `share_fee_rate` - Fee rate for the share
+  // 
   public static Instruction buyExactIn(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                        final SolanaAccounts solanaAccounts,
                                        // The user performing the swap operation
@@ -145,6 +153,13 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator BUY_EXACT_OUT_DISCRIMINATOR = toDiscriminator(24, 211, 116, 40, 105, 3, 153, 56);
 
+  // Use quote tokens to purchase the given amount of base tokens.
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // * `amount_out` - Amount of base token to receive
+  // * `maximum_amount_in` - Maximum amount of quote token to purchase (slippage protection)
+  // * `share_fee_rate` - Fee rate for the share
   public static Instruction buyExactOut(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                         final SolanaAccounts solanaAccounts,
                                         // The user performing the swap operation
@@ -260,6 +275,11 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator CLAIM_PLATFORM_FEE_DISCRIMINATOR = toDiscriminator(156, 39, 208, 135, 76, 237, 61, 72);
 
+  // Claim platform fee
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // 
   public static Instruction claimPlatformFee(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                              final SolanaAccounts solanaAccounts,
                                              // Only the wallet stored in platform_config can collect platform fees
@@ -295,6 +315,8 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator CLAIM_VESTED_TOKEN_DISCRIMINATOR = toDiscriminator(49, 33, 104, 30, 189, 157, 79, 35);
 
+  // Claim vested token
+  // # Arguments
   public static Instruction claimVestedToken(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                              final SolanaAccounts solanaAccounts,
                                              // The beneficiary of the vesting account
@@ -332,6 +354,11 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator COLLECT_FEE_DISCRIMINATOR = toDiscriminator(60, 173, 247, 103, 4, 93, 130, 48);
 
+  // Collects accumulated fees from the pool
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // 
   public static Instruction collectFee(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                        final SolanaAccounts solanaAccounts,
                                        // Only protocol_fee_owner saved in global_config can collect protocol fee now
@@ -363,6 +390,11 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator COLLECT_MIGRATE_FEE_DISCRIMINATOR = toDiscriminator(255, 186, 150, 223, 235, 118, 201, 186);
 
+  // Collects  migrate fees from the pool
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // 
   public static Instruction collectMigrateFee(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                               final SolanaAccounts solanaAccounts,
                                               // Only migrate_fee_owner saved in global_config can collect migrate fee now
@@ -394,6 +426,14 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator CREATE_CONFIG_DISCRIMINATOR = toDiscriminator(201, 207, 243, 114, 75, 111, 47, 189);
 
+  // Creates a new configuration
+  // # Arguments
+  // 
+  // * `ctx` - The accounts needed by instruction
+  // * `curve_type` - The type of bonding curve (0: ConstantProduct)
+  // * `index` - The index of config, there may be multiple config with the same curve type.
+  // * `trade_fee_rate` - Trade fee rate, must be less than RATE_DENOMINATOR_VALUE
+  // 
   public static Instruction createConfig(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                          final SolanaAccounts solanaAccounts,
                                          // The protocol owner/admin account
@@ -497,6 +537,16 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator CREATE_PLATFORM_CONFIG_DISCRIMINATOR = toDiscriminator(176, 90, 196, 175, 253, 113, 220, 20);
 
+  // Create platform config account
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // # Fields
+  // * `fee_rate` - Fee rate of the platform
+  // * `name` - Name of the platform
+  // * `web` - Website of the platform
+  // * `img` - Image link of the platform
+  // 
   public static Instruction createPlatformConfig(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                                  final SolanaAccounts solanaAccounts,
                                                  // The account paying for the initialization costs
@@ -552,6 +602,12 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator CREATE_VESTING_ACCOUNT_DISCRIMINATOR = toDiscriminator(129, 178, 2, 13, 217, 172, 230, 218);
 
+  // Create vesting account
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // * `share` - The share amount of base token to be vested
+  // 
   public static Instruction createVestingAccount(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                                  final SolanaAccounts solanaAccounts,
                                                  // The account paying for the initialization costs
@@ -612,6 +668,11 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator INITIALIZE_DISCRIMINATOR = toDiscriminator(175, 175, 109, 31, 13, 152, 155, 237);
 
+  // Initializes a new trading pool
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts containing pool and token information
+  // 
   public static Instruction initialize(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                        final SolanaAccounts solanaAccounts,
                                        // The account paying for the initialization costs
@@ -723,6 +784,10 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator MIGRATE_TO_AMM_DISCRIMINATOR = toDiscriminator(207, 82, 192, 145, 254, 207, 145, 223);
 
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // 
   public static Instruction migrateToAmm(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                          final SolanaAccounts solanaAccounts,
                                          // Only migrate_to_amm_wallet can migrate to cpswap pool
@@ -867,6 +932,10 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator MIGRATE_TO_CPSWAP_DISCRIMINATOR = toDiscriminator(136, 92, 200, 103, 28, 218, 144, 140);
 
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // 
   public static Instruction migrateToCpswap(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                             final SolanaAccounts solanaAccounts,
                                             // Only migrate_to_cpswap_wallet can migrate to cpswap pool
@@ -954,6 +1023,14 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator SELL_EXACT_IN_DISCRIMINATOR = toDiscriminator(149, 39, 222, 155, 211, 124, 152, 26);
 
+  // Use the given amount of base tokens to sell for quote tokens.
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // * `amount_in` - Amount of base token to sell
+  // * `minimum_amount_out` - Minimum amount of quote token to receive (slippage protection)
+  // * `share_fee_rate` - Fee rate for the share
+  // 
   public static Instruction sellExactIn(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                         final SolanaAccounts solanaAccounts,
                                         // The user performing the swap operation
@@ -1069,6 +1146,14 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator SELL_EXACT_OUT_DISCRIMINATOR = toDiscriminator(95, 200, 71, 34, 8, 9, 11, 166);
 
+  // Sell base tokens for the given amount of quote tokens.
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // * `amount_out` - Amount of quote token to receive
+  // * `maximum_amount_in` - Maximum amount of base token to purchase (slippage protection)
+  // * `share_fee_rate` - Fee rate for the share
+  // 
   public static Instruction sellExactOut(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                          final SolanaAccounts solanaAccounts,
                                          // The user performing the swap operation
@@ -1184,6 +1269,15 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator UPDATE_CONFIG_DISCRIMINATOR = toDiscriminator(29, 158, 252, 191, 10, 83, 219, 99);
 
+  // Updates configuration parameters
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // * `param` - Parameter to update:
+  // - 0: Update trade_fee_rate
+  // - 1: Update fee owner
+  // * `value` - New value for the selected parameter
+  // 
   public static Instruction updateConfig(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                          // The global config owner or admin
                                          final PublicKey ownerKey,
@@ -1243,6 +1337,12 @@ public final class RaydiumLaunchpadProgram {
 
   public static final Discriminator UPDATE_PLATFORM_CONFIG_DISCRIMINATOR = toDiscriminator(195, 60, 76, 129, 146, 45, 67, 143);
 
+  // Update platform config
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // * `param` - Parameter to update
+  // 
   public static Instruction updatePlatformConfig(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
                                                  // The account paying for the initialization costs
                                                  final PublicKey platformAdminKey,

@@ -28,6 +28,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator NEW_LOCKER_DISCRIMINATOR = toDiscriminator(177, 133, 32, 90, 229, 216, 131, 47);
 
+  // Creates a new [Locker].
   public static Instruction newLocker(final AccountMeta invokedLockedVoterProgramMeta,
                                       // Base.
                                       final PublicKey baseKey,
@@ -91,6 +92,11 @@ public final class LockedVoterProgram {
 
   public static final Discriminator NEW_ESCROW_DISCRIMINATOR = toDiscriminator(216, 182, 143, 11, 220, 38, 86, 185);
 
+  // Creates a new [Escrow] for an account.
+  // 
+  // A Vote Escrow, or [Escrow] for short, is an agreement between an account (known as the `authority`) and the DAO to
+  // lock up tokens for a specific period of time, in exchange for voting rights
+  // linearly proportional to the amount of votes given.
   public static Instruction newEscrow(final AccountMeta invokedLockedVoterProgramMeta,
                                       // [Locker].
                                       final PublicKey lockerKey,
@@ -114,6 +120,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator INCREASE_LOCKED_AMOUNT_DISCRIMINATOR = toDiscriminator(5, 168, 118, 53, 72, 46, 203, 146);
 
+  // increase locked amount [Escrow].
   public static Instruction increaseLockedAmount(final AccountMeta invokedLockedVoterProgramMeta,
                                                  // [Locker].
                                                  final PublicKey lockerKey,
@@ -178,6 +185,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator EXTEND_LOCK_DURATION_DISCRIMINATOR = toDiscriminator(177, 105, 196, 129, 153, 137, 136, 230);
 
+  // extend locked duration [Escrow].
   public static Instruction extendLockDuration(final AccountMeta invokedLockedVoterProgramMeta,
                                                // [Locker].
                                                final PublicKey lockerKey,
@@ -233,6 +241,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator TOGGLE_MAX_LOCK_DISCRIMINATOR = toDiscriminator(163, 157, 161, 132, 179, 107, 127, 143);
 
+  // toogle max lock [Escrow].
   public static Instruction toggleMaxLock(final AccountMeta invokedLockedVoterProgramMeta,
                                           // [Locker].
                                           final PublicKey lockerKey,
@@ -288,6 +297,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator WITHDRAW_DISCRIMINATOR = toDiscriminator(183, 18, 70, 156, 148, 109, 161, 34);
 
+  // Exits the DAO; i.e., withdraws all staked tokens in an [Escrow] if the [Escrow] is unlocked.
   public static Instruction withdraw(final AccountMeta invokedLockedVoterProgramMeta,
                                      // The [Locker] being exited from.
                                      final PublicKey lockerKey,
@@ -318,6 +328,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator ACTIVATE_PROPOSAL_DISCRIMINATOR = toDiscriminator(90, 186, 203, 234, 70, 185, 191, 21);
 
+  // Activates a proposal in token launch phase
   public static Instruction activateProposal(final AccountMeta invokedLockedVoterProgramMeta,
                                              // The [Locker].
                                              final PublicKey lockerKey,
@@ -342,6 +353,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator CAST_VOTE_DISCRIMINATOR = toDiscriminator(20, 212, 15, 189, 69, 180, 69, 151);
 
+  // Casts a vote.
   public static Instruction castVote(final AccountMeta invokedLockedVoterProgramMeta,
                                      // The [Locker].
                                      final PublicKey lockerKey,
@@ -409,6 +421,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator SET_VOTE_DELEGATE_DISCRIMINATOR = toDiscriminator(46, 236, 241, 243, 251, 108, 156, 12);
 
+  // Delegate escrow vote.
   public static Instruction setVoteDelegate(final AccountMeta invokedLockedVoterProgramMeta,
                                             // The [Escrow].
                                             final PublicKey escrowKey,
@@ -461,6 +474,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator SET_LOCKER_PARAMS_DISCRIMINATOR = toDiscriminator(106, 39, 132, 84, 254, 77, 161, 169);
 
+  // Set locker params.
   public static Instruction setLockerParams(final AccountMeta invokedLockedVoterProgramMeta,
                                             // The [Locker].
                                             final PublicKey lockerKey,
@@ -515,6 +529,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator OPEN_PARTIAL_UNSTAKING_DISCRIMINATOR = toDiscriminator(201, 137, 207, 175, 79, 95, 220, 27);
 
+  // Open partial unstaking
   public static Instruction openPartialUnstaking(final AccountMeta invokedLockedVoterProgramMeta,
                                                  // [Locker].
                                                  final PublicKey lockerKey,
@@ -584,6 +599,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator MERGE_PARTIAL_UNSTAKING_DISCRIMINATOR = toDiscriminator(190, 154, 163, 153, 168, 115, 40, 173);
 
+  // Merge partial unstaking
   public static Instruction mergePartialUnstaking(final AccountMeta invokedLockedVoterProgramMeta,
                                                   // [Locker].
                                                   final PublicKey lockerKey,
@@ -604,6 +620,7 @@ public final class LockedVoterProgram {
 
   public static final Discriminator WITHDRAW_PARTIAL_UNSTAKING_DISCRIMINATOR = toDiscriminator(201, 202, 137, 124, 2, 3, 245, 87);
 
+  // Withdraw partial unstaking
   public static Instruction withdrawPartialUnstaking(final AccountMeta invokedLockedVoterProgramMeta,
                                                      // The [Locker] being exited from.
                                                      final PublicKey lockerKey,

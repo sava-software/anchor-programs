@@ -464,6 +464,7 @@ public final class JupiterProgram {
 
   public static final Discriminator ROUTE_DISCRIMINATOR = toDiscriminator(229, 23, 203, 151, 122, 227, 173, 42);
 
+  // route_plan Topologically sorted trade DAG
   public static Instruction route(final AccountMeta invokedJupiterProgramMeta,
                                   final PublicKey tokenProgramKey,
                                   final PublicKey userTransferAuthorityKey,
@@ -668,6 +669,7 @@ public final class JupiterProgram {
 
   public static final Discriminator SHARED_ACCOUNTS_EXACT_OUT_ROUTE_DISCRIMINATOR = toDiscriminator(176, 209, 105, 168, 154, 125, 69, 62);
 
+  // Route by using program owned token accounts and open orders accounts.
   public static Instruction sharedAccountsExactOutRoute(final AccountMeta invokedJupiterProgramMeta,
                                                         final PublicKey tokenProgramKey,
                                                         final PublicKey programAuthorityKey,
@@ -788,6 +790,7 @@ public final class JupiterProgram {
 
   public static final Discriminator SHARED_ACCOUNTS_ROUTE_DISCRIMINATOR = toDiscriminator(193, 32, 155, 51, 65, 214, 156, 129);
 
+  // Route by using program owned token accounts and open orders accounts.
   public static Instruction sharedAccountsRoute(final AccountMeta invokedJupiterProgramMeta,
                                                 final PublicKey tokenProgramKey,
                                                 final PublicKey programAuthorityKey,

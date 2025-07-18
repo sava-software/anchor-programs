@@ -30,6 +30,7 @@ public final class GovernProgram {
 
   public static final Discriminator CREATE_GOVERNOR_DISCRIMINATOR = toDiscriminator(103, 30, 78, 252, 28, 128, 40, 3);
 
+  // Creates a [Governor].
   public static Instruction createGovernor(final AccountMeta invokedGovernProgramMeta,
                                            // Base of the [Governor] key.
                                            final PublicKey baseKey,
@@ -97,6 +98,9 @@ public final class GovernProgram {
 
   public static final Discriminator CREATE_PROPOSAL_DISCRIMINATOR = toDiscriminator(132, 116, 68, 174, 216, 160, 198, 22);
 
+  // Creates a [Proposal].
+  // This may be called by anyone, since the [Proposal] does not do anything until
+  // it is activated in [activate_proposal].
   public static Instruction createProposal(final AccountMeta invokedGovernProgramMeta,
                                            // The [Governor].
                                            final PublicKey governorKey,
@@ -180,6 +184,9 @@ public final class GovernProgram {
 
   public static final Discriminator ACTIVATE_PROPOSAL_DISCRIMINATOR = toDiscriminator(90, 186, 203, 234, 70, 185, 191, 21);
 
+  // Activates a proposal.
+  // Only the [Governor::voter] may call this; that program
+  // may ensure that only certain types of users can activate proposals.
   public static Instruction activateProposal(final AccountMeta invokedGovernProgramMeta,
                                              // The [Governor].
                                              final PublicKey governorKey,
@@ -198,6 +205,8 @@ public final class GovernProgram {
 
   public static final Discriminator CANCEL_PROPOSAL_DISCRIMINATOR = toDiscriminator(106, 74, 128, 146, 19, 65, 39, 23);
 
+  // Cancels a proposal.
+  // This is only callable by the creator of the proposal.
   public static Instruction cancelProposal(final AccountMeta invokedGovernProgramMeta,
                                            // The [Governor].
                                            final PublicKey governorKey,
@@ -220,6 +229,7 @@ public final class GovernProgram {
 
   public static final Discriminator QUEUE_PROPOSAL_DISCRIMINATOR = toDiscriminator(168, 219, 139, 211, 205, 152, 125, 110);
 
+  // Queues a proposal for execution by the [SmartWallet].
   public static Instruction queueProposal(final AccountMeta invokedGovernProgramMeta,
                                           // The Governor.
                                           final PublicKey governorKey,
@@ -255,6 +265,7 @@ public final class GovernProgram {
 
   public static final Discriminator NEW_VOTE_DISCRIMINATOR = toDiscriminator(163, 108, 157, 189, 140, 80, 13, 143);
 
+  // Creates a new [Vote]. Anyone can call this.
   public static Instruction newVote(final AccountMeta invokedGovernProgramMeta,
                                     // Proposal being voted on.
                                     final PublicKey proposalKey,
@@ -313,6 +324,8 @@ public final class GovernProgram {
 
   public static final Discriminator SET_VOTE_DISCRIMINATOR = toDiscriminator(171, 33, 83, 172, 148, 215, 239, 97);
 
+  // Sets a [Vote] weight and side.
+  // This may only be called by the [Governor::voter].
   public static Instruction setVote(final AccountMeta invokedGovernProgramMeta,
                                     // The [Governor].
                                     final PublicKey governorKey,
@@ -378,6 +391,8 @@ public final class GovernProgram {
 
   public static final Discriminator SET_GOVERNANCE_PARAMS_DISCRIMINATOR = toDiscriminator(175, 187, 3, 73, 8, 251, 67, 178);
 
+  // Sets the [GovernanceParameters].
+  // This may only be called by the [Governor::smart_wallet].
   public static Instruction setGovernanceParams(final AccountMeta invokedGovernProgramMeta,
                                                 // The [Governor]
                                                 final PublicKey governorKey,
@@ -429,6 +444,8 @@ public final class GovernProgram {
 
   public static final Discriminator SET_VOTING_REWARD_DISCRIMINATOR = toDiscriminator(227, 241, 48, 137, 30, 26, 104, 70);
 
+  // Sets Voting Reward.
+  // This may only be called by the [Governor::smart_wallet].
   public static Instruction setVotingReward(final AccountMeta invokedGovernProgramMeta,
                                             // The [Governor]
                                             final PublicKey governorKey,
@@ -484,6 +501,7 @@ public final class GovernProgram {
 
   public static final Discriminator CLAIM_REWARD_DISCRIMINATOR = toDiscriminator(149, 95, 181, 242, 94, 90, 158, 162);
 
+  // Claim rewards, for voter
   public static Instruction claimReward(final AccountMeta invokedGovernProgramMeta,
                                         // The [Governor]
                                         final PublicKey governorKey,
@@ -519,6 +537,7 @@ public final class GovernProgram {
 
   public static final Discriminator SET_LOCKER_DISCRIMINATOR = toDiscriminator(17, 6, 101, 72, 250, 23, 152, 96);
 
+  // Sets the locker of the [Governor].
   public static Instruction setLocker(final AccountMeta invokedGovernProgramMeta,
                                       // The [Governor]
                                       final PublicKey governorKey,
@@ -571,6 +590,7 @@ public final class GovernProgram {
 
   public static final Discriminator CREATE_PROPOSAL_META_DISCRIMINATOR = toDiscriminator(238, 138, 212, 160, 46, 53, 51, 88);
 
+  // Creates a [ProposalMeta].
   public static Instruction createProposalMeta(final AccountMeta invokedGovernProgramMeta,
                                                // The [Proposal].
                                                final PublicKey proposalKey,
@@ -657,6 +677,7 @@ public final class GovernProgram {
 
   public static final Discriminator CREATE_OPTION_PROPOSAL_META_DISCRIMINATOR = toDiscriminator(152, 144, 104, 228, 245, 234, 164, 224);
 
+  // Creates an [OptionProposalMeta].
   public static Instruction createOptionProposalMeta(final AccountMeta invokedGovernProgramMeta,
                                                      // The [Proposal].
                                                      final PublicKey proposalKey,

@@ -2054,6 +2054,15 @@ public final class YvaultsProgram {
 
   public static final Discriminator FLASH_SWAP_UNEVEN_VAULTS_START_DISCRIMINATOR = toDiscriminator(129, 111, 174, 12, 10, 60, 149, 193);
 
+  // Start of a Flash swap uneven vaults.
+  // 
+  // This needs to be the first instruction of the transaction or preceded only by a
+  // ComputeBudget.
+  // 
+  // This ix has to be paired with a `flash_swap_uneven_vaults_end` (`FlashSwapUnevenVaultsEnd`)
+  // as the last instruction of the transaction. No other instruction targeted the program is
+  // allowed.
+  // The instructions between the start and end instructions are expected to perform the swap.
   public static Instruction flashSwapUnevenVaultsStart(final AccountMeta invokedYvaultsProgramMeta,
                                                        final PublicKey swapperKey,
                                                        final PublicKey strategyKey,
@@ -2147,6 +2156,13 @@ public final class YvaultsProgram {
 
   public static final Discriminator FLASH_SWAP_UNEVEN_VAULTS_END_DISCRIMINATOR = toDiscriminator(226, 2, 190, 101, 202, 132, 156, 20);
 
+  // End of Flash swap uneven vaults.
+  // 
+  // See [`flash_swap_uneven_vaults_start`] for details.
+  // 
+  // Warning: This instruction is allowed to be used independently from
+  // `FlashSwapUnevenVaultsStart` and shall not perform any operation
+  // that can be exploited when used alone.
   public static Instruction flashSwapUnevenVaultsEnd(final AccountMeta invokedYvaultsProgramMeta,
                                                      final PublicKey swapperKey,
                                                      final PublicKey strategyKey,

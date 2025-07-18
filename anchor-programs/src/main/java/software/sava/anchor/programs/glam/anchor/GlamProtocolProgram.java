@@ -4678,6 +4678,10 @@ public final class GlamProtocolProgram {
 
   public static final Discriminator PRICE_DRIFT_USERS_DISCRIMINATOR = toDiscriminator(12, 5, 143, 51, 101, 81, 200, 150);
 
+  // Extra accounts for pricing N drift users under the same user stats:
+  // - user_stats x 1
+  // - drift_user x N
+  // - markets and oracles used by all drift users (no specific order)
   public static Instruction priceDriftUsers(final AccountMeta invokedGlamProtocolProgramMeta,
                                             final PublicKey glamStateKey,
                                             final PublicKey glamVaultKey,
@@ -4739,6 +4743,9 @@ public final class GlamProtocolProgram {
 
   public static final Discriminator PRICE_DRIFT_VAULT_DEPOSITORS_DISCRIMINATOR = toDiscriminator(234, 16, 238, 70, 189, 23, 98, 160);
 
+  // Extra accounts for pricing N vault depositors:
+  // - (vault_depositor, drift_vault, drift_user) x N
+  // - markets and oracles used by all drift users (no specific order)
   public static Instruction priceDriftVaultDepositors(final AccountMeta invokedGlamProtocolProgramMeta,
                                                       final PublicKey glamStateKey,
                                                       final PublicKey glamVaultKey,

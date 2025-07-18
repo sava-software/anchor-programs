@@ -22,6 +22,24 @@ public final class MerkleDistributorProgram {
 
   public static final Discriminator NEW_DISTRIBUTOR_DISCRIMINATOR = toDiscriminator(32, 139, 112, 171, 0, 2, 225, 155);
 
+  // READ THE FOLLOWING:
+  // 
+  // This instruction is susceptible to frontrunning that could result in loss of funds if not handled properly.
+  // 
+  // An attack could look like:
+  // - A legitimate user opens a new distributor.
+  // - Someone observes the call to this instruction.
+  // - They replace the clawback_receiver, admin, or time parameters with their own.
+  // 
+  // One situation that could happen here is the attacker replaces the admin and clawback_receiver with their own
+  // and sets the clawback_start_ts with the minimal time allowed. After clawback_start_ts has elapsed,
+  // the attacker can steal all funds from the distributor to their own clawback_receiver account.
+  // 
+  // HOW TO AVOID:
+  // - When you call into this instruction, ensure your transaction succeeds.
+  // - To be extra safe, after your transaction succeeds, read back the state of the created MerkleDistributor account and
+  // assert the parameters are what you expect, most importantly the clawback_receiver and admin.
+  // - If your transaction fails, double check the value on-chain matches what you expect.
   public static Instruction newDistributor(final AccountMeta invokedMerkleDistributorProgramMeta,
                                            // [MerkleDistributor].
                                            final PublicKey distributorKey,
@@ -167,6 +185,7 @@ public final class MerkleDistributorProgram {
 
   public static final Discriminator CLOSE_DISTRIBUTOR_DISCRIMINATOR = toDiscriminator(202, 56, 180, 143, 46, 104, 106, 112);
 
+  // only available in test phase
   public static Instruction closeDistributor(final AccountMeta invokedMerkleDistributorProgramMeta,
                                              // [MerkleDistributor].
                                              final PublicKey distributorKey,
@@ -192,6 +211,7 @@ public final class MerkleDistributorProgram {
 
   public static final Discriminator CLOSE_CLAIM_STATUS_DISCRIMINATOR = toDiscriminator(163, 214, 191, 165, 245, 188, 17, 185);
 
+  // only available in test phase
   public static Instruction closeClaimStatus(final AccountMeta invokedMerkleDistributorProgramMeta,
                                              final PublicKey claimStatusKey,
                                              final PublicKey claimantKey,
