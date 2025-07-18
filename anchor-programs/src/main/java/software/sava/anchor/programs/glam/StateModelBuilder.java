@@ -29,6 +29,8 @@ public final class StateModelBuilder {
   private PublicKey[] kaminoLendingMarkets;
   private PublicKey[] meteoraDlmmPools;
   private OptionalInt maxSwapSlippageBps = OptionalInt.empty();
+  private PublicKey[] driftVaultsAllowlist;
+  private PublicKey[] kaminoVaultsAllowlist;
   private Metadata metadata;
   private FundOpenfundsModel rawOpenfunds;
 
@@ -155,6 +157,16 @@ public final class StateModelBuilder {
     return this;
   }
 
+  public StateModelBuilder driftVaultsAllowlist(final PublicKey[] driftVaultsAllowlist) {
+    this.driftVaultsAllowlist = driftVaultsAllowlist;
+    return this;
+  }
+
+  public StateModelBuilder kaminoVaultsAllowlist(final PublicKey[] kaminoVaultsAllowlist) {
+    this.kaminoVaultsAllowlist = kaminoVaultsAllowlist;
+    return this;
+  }
+
   public StateModelBuilder metadata(final Metadata metadata) {
     this.metadata = metadata;
     return this;
@@ -189,6 +201,8 @@ public final class StateModelBuilder {
         kaminoLendingMarkets,
         meteoraDlmmPools,
         maxSwapSlippageBps,
+        driftVaultsAllowlist,
+        kaminoVaultsAllowlist,
         metadata,
         rawOpenfunds
     );

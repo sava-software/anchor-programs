@@ -570,7 +570,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public Instruction priceDriftUsers(final PublicKey solOracleKey, final PriceDenom priceDenom) {
+  public Instruction priceDriftUsers(final PublicKey solOracleKey, final PriceDenom priceDenom, final int numUsers) {
     return GlamProtocolProgram.priceDriftUsers(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
@@ -578,12 +578,15 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         feePayer.publicKey(),
         solOracleKey,
         glamVaultAccounts.glamAccounts().glamConfigKey(),
-        priceDenom
+        priceDenom,
+        numUsers
     );
   }
 
   @Override
-  public Instruction priceDriftVaultDepositors(final PublicKey solOracleKey, final PriceDenom priceDenom) {
+  public Instruction priceDriftVaultDepositors(final PublicKey solOracleKey,
+                                               final PriceDenom priceDenom,
+                                               final int numVaultDepositors) {
     return GlamProtocolProgram.priceDriftVaultDepositors(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
@@ -591,7 +594,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         feePayer.publicKey(),
         solOracleKey,
         glamVaultAccounts.glamAccounts().glamConfigKey(),
-        priceDenom
+        priceDenom,
+        numVaultDepositors
     );
   }
 

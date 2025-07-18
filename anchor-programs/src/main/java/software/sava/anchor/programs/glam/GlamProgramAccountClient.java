@@ -118,9 +118,10 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
   Instruction priceStakes(final PublicKey solOracleKey, final PriceDenom priceDenom);
 
-  Instruction priceDriftUsers(final PublicKey solOracleKey, final PriceDenom priceDenom);
+  Instruction priceDriftUsers(final PublicKey solOracleKey, final PriceDenom priceDenom, final int numUsers);
 
-  Instruction priceDriftVaultDepositors(final PublicKey solOracleKey, final PriceDenom priceDenom);
+  Instruction priceDriftVaultDepositors(final PublicKey solOracleKey, final PriceDenom priceDenom,
+                                        final int numVaultDepositors);
 
   Instruction priceKaminoObligations(final PublicKey kaminoLendingProgramKey,
                                      final PublicKey solOracleKey,

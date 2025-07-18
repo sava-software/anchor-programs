@@ -33,6 +33,8 @@ public record StateModel(PublicKey id,
                          PublicKey[] kaminoLendingMarkets,
                          PublicKey[] meteoraDlmmPools,
                          OptionalInt maxSwapSlippageBps,
+                         PublicKey[] driftVaultsAllowlist,
+                         PublicKey[] kaminoVaultsAllowlist,
                          Metadata metadata,
                          FundOpenfundsModel rawOpenfunds) implements Borsh {
 
@@ -58,6 +60,8 @@ public record StateModel(PublicKey id,
                                         final PublicKey[] kaminoLendingMarkets,
                                         final PublicKey[] meteoraDlmmPools,
                                         final OptionalInt maxSwapSlippageBps,
+                                        final PublicKey[] driftVaultsAllowlist,
+                                        final PublicKey[] kaminoVaultsAllowlist,
                                         final Metadata metadata,
                                         final FundOpenfundsModel rawOpenfunds) {
     return new StateModel(id,
@@ -82,6 +86,8 @@ public record StateModel(PublicKey id,
                           kaminoLendingMarkets,
                           meteoraDlmmPools,
                           maxSwapSlippageBps,
+                          driftVaultsAllowlist,
+                          kaminoVaultsAllowlist,
                           metadata,
                           rawOpenfunds);
   }
@@ -179,6 +185,14 @@ public record StateModel(PublicKey id,
     if (maxSwapSlippageBps.isPresent()) {
       i += 4;
     }
+    final var driftVaultsAllowlist = _data[i++] == 0 ? null : Borsh.readPublicKeyVector(_data, i);
+    if (driftVaultsAllowlist != null) {
+      i += Borsh.lenVector(driftVaultsAllowlist);
+    }
+    final var kaminoVaultsAllowlist = _data[i++] == 0 ? null : Borsh.readPublicKeyVector(_data, i);
+    if (kaminoVaultsAllowlist != null) {
+      i += Borsh.lenVector(kaminoVaultsAllowlist);
+    }
     final var metadata = _data[i++] == 0 ? null : Metadata.read(_data, i);
     if (metadata != null) {
       i += Borsh.len(metadata);
@@ -206,6 +220,8 @@ public record StateModel(PublicKey id,
                           kaminoLendingMarkets,
                           meteoraDlmmPools,
                           maxSwapSlippageBps,
+                          driftVaultsAllowlist,
+                          kaminoVaultsAllowlist,
                           metadata,
                           rawOpenfunds);
   }
@@ -285,6 +301,18 @@ public record StateModel(PublicKey id,
       i += Borsh.writeVector(meteoraDlmmPools, _data, i);
     }
     i += Borsh.writeOptional(maxSwapSlippageBps, _data, i);
+    if (driftVaultsAllowlist == null || driftVaultsAllowlist.length == 0) {
+      _data[i++] = 0;
+    } else {
+      _data[i++] = 1;
+      i += Borsh.writeVector(driftVaultsAllowlist, _data, i);
+    }
+    if (kaminoVaultsAllowlist == null || kaminoVaultsAllowlist.length == 0) {
+      _data[i++] = 0;
+    } else {
+      _data[i++] = 1;
+      i += Borsh.writeVector(kaminoVaultsAllowlist, _data, i);
+    }
     i += Borsh.writeOptional(metadata, _data, i);
     i += Borsh.writeOptional(rawOpenfunds, _data, i);
     return i - offset;
@@ -314,6 +342,8 @@ public record StateModel(PublicKey id,
          + (kaminoLendingMarkets == null || kaminoLendingMarkets.length == 0 ? 1 : (1 + Borsh.lenVector(kaminoLendingMarkets)))
          + (meteoraDlmmPools == null || meteoraDlmmPools.length == 0 ? 1 : (1 + Borsh.lenVector(meteoraDlmmPools)))
          + (maxSwapSlippageBps == null || maxSwapSlippageBps.isEmpty() ? 1 : (1 + 4))
+         + (driftVaultsAllowlist == null || driftVaultsAllowlist.length == 0 ? 1 : (1 + Borsh.lenVector(driftVaultsAllowlist)))
+         + (kaminoVaultsAllowlist == null || kaminoVaultsAllowlist.length == 0 ? 1 : (1 + Borsh.lenVector(kaminoVaultsAllowlist)))
          + (metadata == null ? 1 : (1 + Borsh.len(metadata)))
          + (rawOpenfunds == null ? 1 : (1 + Borsh.len(rawOpenfunds)));
   }

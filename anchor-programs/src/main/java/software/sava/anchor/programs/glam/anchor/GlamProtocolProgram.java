@@ -370,6 +370,80 @@ public final class GlamProtocolProgram {
     }
   }
 
+  public static final Discriminator DISBURSE_FEES_DISCRIMINATOR = toDiscriminator(205, 56, 198, 40, 225, 103, 141, 219);
+
+  public static Instruction disburseFees(final AccountMeta invokedGlamProtocolProgramMeta,
+                                         final SolanaAccounts solanaAccounts,
+                                         final PublicKey glamStateKey,
+                                         final PublicKey glamVaultKey,
+                                         final PublicKey glamEscrowKey,
+                                         final PublicKey glamMintKey,
+                                         final PublicKey escrowMintAtaKey,
+                                         final PublicKey signerKey,
+                                         final PublicKey depositAssetKey,
+                                         final PublicKey vaultDepositAtaKey,
+                                         final PublicKey protocolFeeAuthorityAtaKey,
+                                         final PublicKey managerFeeAuthorityAtaKey,
+                                         final PublicKey glamConfigKey,
+                                         final PublicKey depositTokenProgramKey,
+                                         final int mintId) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createRead(glamVaultKey),
+      createRead(glamEscrowKey),
+      createWrite(glamMintKey),
+      createWrite(escrowMintAtaKey),
+      createWritableSigner(signerKey),
+      createRead(depositAssetKey),
+      createWrite(vaultDepositAtaKey),
+      createWrite(protocolFeeAuthorityAtaKey),
+      createWrite(managerFeeAuthorityAtaKey),
+      createRead(glamConfigKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.associatedTokenAccountProgram()),
+      createRead(depositTokenProgramKey),
+      createRead(solanaAccounts.token2022Program())
+    );
+
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(DISBURSE_FEES_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) mintId;
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
+  }
+
+  public record DisburseFeesIxData(Discriminator discriminator, int mintId) implements Borsh {  
+
+    public static DisburseFeesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static DisburseFeesIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var mintId = _data[i] & 0xFF;
+      return new DisburseFeesIxData(discriminator, mintId);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) mintId;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator DRIFT_CANCEL_ORDERS_DISCRIMINATOR = toDiscriminator(98, 107, 48, 79, 97, 60, 99, 58);
 
   public static Instruction driftCancelOrders(final AccountMeta invokedGlamProtocolProgramMeta,
@@ -4610,7 +4684,8 @@ public final class GlamProtocolProgram {
                                             final PublicKey signerKey,
                                             final PublicKey solOracleKey,
                                             final PublicKey glamConfigKey,
-                                            final PriceDenom denom) {
+                                            final PriceDenom denom,
+                                            final int numUsers) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
@@ -4619,20 +4694,21 @@ public final class GlamProtocolProgram {
       createRead(glamConfigKey)
     );
 
-    final byte[] _data = new byte[8 + Borsh.len(denom)];
+    final byte[] _data = new byte[9 + Borsh.len(denom)];
     int i = writeDiscriminator(PRICE_DRIFT_USERS_DISCRIMINATOR, _data, 0);
-    Borsh.write(denom, _data, i);
+    i += Borsh.write(denom, _data, i);
+    _data[i] = (byte) numUsers;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
   }
 
-  public record PriceDriftUsersIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
+  public record PriceDriftUsersIxData(Discriminator discriminator, PriceDenom denom, int numUsers) implements Borsh {  
 
     public static PriceDriftUsersIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 9;
+    public static final int BYTES = 10;
 
     public static PriceDriftUsersIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -4641,13 +4717,17 @@ public final class GlamProtocolProgram {
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
-      return new PriceDriftUsersIxData(discriminator, denom);
+      i += Borsh.len(denom);
+      final var numUsers = _data[i] & 0xFF;
+      return new PriceDriftUsersIxData(discriminator, denom, numUsers);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.write(denom, _data, i);
+      _data[i] = (byte) numUsers;
+      ++i;
       return i - offset;
     }
 
@@ -4665,7 +4745,8 @@ public final class GlamProtocolProgram {
                                                       final PublicKey signerKey,
                                                       final PublicKey solOracleKey,
                                                       final PublicKey glamConfigKey,
-                                                      final PriceDenom denom) {
+                                                      final PriceDenom denom,
+                                                      final int numVaultDepositors) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
@@ -4674,20 +4755,21 @@ public final class GlamProtocolProgram {
       createRead(glamConfigKey)
     );
 
-    final byte[] _data = new byte[8 + Borsh.len(denom)];
+    final byte[] _data = new byte[9 + Borsh.len(denom)];
     int i = writeDiscriminator(PRICE_DRIFT_VAULT_DEPOSITORS_DISCRIMINATOR, _data, 0);
-    Borsh.write(denom, _data, i);
+    i += Borsh.write(denom, _data, i);
+    _data[i] = (byte) numVaultDepositors;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
   }
 
-  public record PriceDriftVaultDepositorsIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
+  public record PriceDriftVaultDepositorsIxData(Discriminator discriminator, PriceDenom denom, int numVaultDepositors) implements Borsh {  
 
     public static PriceDriftVaultDepositorsIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 9;
+    public static final int BYTES = 10;
 
     public static PriceDriftVaultDepositorsIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -4696,13 +4778,17 @@ public final class GlamProtocolProgram {
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
-      return new PriceDriftVaultDepositorsIxData(discriminator, denom);
+      i += Borsh.len(denom);
+      final var numVaultDepositors = _data[i] & 0xFF;
+      return new PriceDriftVaultDepositorsIxData(discriminator, denom, numVaultDepositors);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.write(denom, _data, i);
+      _data[i] = (byte) numVaultDepositors;
+      ++i;
       return i - offset;
     }
 

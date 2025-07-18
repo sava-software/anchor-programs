@@ -18,7 +18,7 @@ public enum EngineFieldName implements Borsh.Enum {
   MaxCap,
   MinSubscription,
   MinRedemption,
-  NotifyAndSettle,
+  RedemptionNotifyAndSettle,
   Ledger,
   FeeStructure,
   FeeParams,
@@ -40,7 +40,9 @@ public enum EngineFieldName implements Borsh.Enum {
   TimeUnit,
   KaminoLendingMarkets,
   MeteoraDlmmPools,
-  BorrowableAssets;
+  BorrowableAssets,
+  DriftVaultsAllowlist,
+  KaminoVaultsAllowlist;
 
   public static EngineFieldName read(final byte[] _data, final int offset) {
     return Borsh.read(EngineFieldName.values(), _data, offset);

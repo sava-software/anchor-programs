@@ -9,6 +9,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.InvalidSignerAccount,
     GlamProtocolError.EmergencyUpdateDenied,
     GlamProtocolError.TimelockStillActive,
+    GlamProtocolError.CannotApplyChanges,
     GlamProtocolError.AssetNotBorrowable,
     GlamProtocolError.InvalidAccountOwner,
     GlamProtocolError.InvalidAuthority,
@@ -69,9 +70,10 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 48003 -> InvalidSignerAccount.INSTANCE;
       case 48004 -> EmergencyUpdateDenied.INSTANCE;
       case 48005 -> TimelockStillActive.INSTANCE;
-      case 48006 -> AssetNotBorrowable.INSTANCE;
-      case 48007 -> InvalidAccountOwner.INSTANCE;
-      case 48008 -> InvalidAuthority.INSTANCE;
+      case 48006 -> CannotApplyChanges.INSTANCE;
+      case 48007 -> AssetNotBorrowable.INSTANCE;
+      case 48008 -> InvalidAccountOwner.INSTANCE;
+      case 48009 -> InvalidAuthority.INSTANCE;
       case 49000 -> InvalidAccountType.INSTANCE;
       case 49001 -> InvalidName.INSTANCE;
       case 49002 -> InvalidSymbol.INSTANCE;
@@ -166,24 +168,31 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
+  record CannotApplyChanges(int code, String msg) implements GlamProtocolError {
+
+    public static final CannotApplyChanges INSTANCE = new CannotApplyChanges(
+        48006, "Pending changes cannot be applied due to unfulfilled subscriptions or redemptions"
+    );
+  }
+
   record AssetNotBorrowable(int code, String msg) implements GlamProtocolError {
 
     public static final AssetNotBorrowable INSTANCE = new AssetNotBorrowable(
-        48006, "Asset is not allowed to borrow"
+        48007, "Asset is not allowed to borrow"
     );
   }
 
   record InvalidAccountOwner(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidAccountOwner INSTANCE = new InvalidAccountOwner(
-        48007, "Account owned by an invalid program"
+        48008, "Account owned by an invalid program"
     );
   }
 
   record InvalidAuthority(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidAuthority INSTANCE = new InvalidAuthority(
-        48008, "Invalid authority"
+        48009, "Invalid authority"
     );
   }
 

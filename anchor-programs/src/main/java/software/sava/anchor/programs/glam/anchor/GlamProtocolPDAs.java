@@ -107,6 +107,17 @@ public final class GlamProtocolPDAs {
     ), program);
   }
 
+  public static ProgramDerivedAddress managerFeeAuthorityAtaPDA(final PublicKey program,
+                                                                final PublicKey glamStateOwnerAccount,
+                                                                final PublicKey depositTokenProgramAccount,
+                                                                final PublicKey depositAssetAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      glamStateOwnerAccount.toByteArray(),
+      depositTokenProgramAccount.toByteArray(),
+      depositAssetAccount.toByteArray()
+    ), program);
+  }
+
   public static ProgramDerivedAddress metadataPDA(final PublicKey program,
                                                   final PublicKey glamStateAccount) {
     return PublicKey.findProgramAddress(List.of(
@@ -142,6 +153,17 @@ public final class GlamProtocolPDAs {
       glamVaultAccount.toByteArray(),
       outputTokenProgramAccount.toByteArray(),
       outputMintAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress protocolFeeAuthorityAtaPDA(final PublicKey program,
+                                                                 final PublicKey glamConfigFeeAuthorityAccount,
+                                                                 final PublicKey depositTokenProgramAccount,
+                                                                 final PublicKey depositAssetAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      glamConfigFeeAuthorityAccount.toByteArray(),
+      depositTokenProgramAccount.toByteArray(),
+      depositAssetAccount.toByteArray()
     ), program);
   }
 
