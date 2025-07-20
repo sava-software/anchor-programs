@@ -5,7 +5,9 @@ import software.sava.core.accounts.meta.AccountMeta;
 
 public record KaminoAccountsRecord(AccountMeta invokedKLendProgram,
                                    PublicKey scopePrices,
-                                   PublicKey farmProgram) implements KaminoAccounts {
+                                   PublicKey farmProgram,
+                                   AccountMeta invokedKVaultsProgram,
+                                   PublicKey kVaultsEventAuthority) implements KaminoAccounts {
 
 
 }

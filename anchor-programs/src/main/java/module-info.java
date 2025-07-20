@@ -44,6 +44,7 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.kamino.liquidity.anchor;
   exports software.sava.anchor.programs.kamino.vaults.anchor.types;
   exports software.sava.anchor.programs.kamino.vaults.anchor;
+  exports software.sava.anchor.programs.kamino.vaults;
   exports software.sava.anchor.programs.kamino;
   exports software.sava.anchor.programs.marinade.anchor.types;
   exports software.sava.anchor.programs.marinade.anchor;
@@ -84,4 +85,5 @@ module software.sava.anchor_programs {
   requires transitive software.sava.solana_web2;
   requires transitive systems.comodal.json_iterator;
   requires transitive systems.glam.ix_proxy;
+  requires java.sql;
 }

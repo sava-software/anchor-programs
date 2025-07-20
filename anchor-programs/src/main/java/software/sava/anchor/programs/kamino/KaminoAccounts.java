@@ -18,26 +18,36 @@ public interface KaminoAccounts {
   KaminoAccounts MAIN_NET = createAccounts(
       "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
       "3NJYftD5sjVfxSnUdZ1wVML8f3aC6mp1CXCL6L7TnU8C",
-      "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr"
+      "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
+      "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd"
   );
 
   static KaminoAccounts createAccounts(final PublicKey kLendProgram,
                                        final PublicKey scopePrices,
-                                       final PublicKey farmProgram) {
+                                       final PublicKey farmProgram,
+                                       final PublicKey kVaultsProgram) {
+    final var kVaultsEventAuthority = PublicKey.findProgramAddress(
+        List.of("__event_authority".getBytes(US_ASCII)),
+        kVaultsProgram
+    ).publicKey();
     return new KaminoAccountsRecord(
         AccountMeta.createInvoked(kLendProgram),
         scopePrices,
-        farmProgram
+        farmProgram,
+        AccountMeta.createInvoked(kVaultsProgram),
+        kVaultsEventAuthority
     );
   }
 
   static KaminoAccounts createAccounts(final String kLendProgram,
                                        final String scopePrices,
-                                       final String farmProgram) {
+                                       final String farmProgram,
+                                       final String kVaultsProgram) {
     return createAccounts(
         PublicKey.fromBase58Encoded(kLendProgram),
         PublicKey.fromBase58Encoded(scopePrices),
-        PublicKey.fromBase58Encoded(farmProgram)
+        PublicKey.fromBase58Encoded(farmProgram),
+        PublicKey.fromBase58Encoded(kVaultsProgram)
     );
   }
 
@@ -217,4 +227,12 @@ public interface KaminoAccounts {
   PublicKey scopePrices();
 
   PublicKey farmProgram();
+
+  AccountMeta invokedKVaultsProgram();
+
+  default PublicKey kVaultsProgram() {
+    return invokedKLendProgram().publicKey();
+  }
+
+  PublicKey kVaultsEventAuthority();
 }
