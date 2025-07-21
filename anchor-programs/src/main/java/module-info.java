@@ -86,5 +86,4 @@ module software.sava.anchor_programs {
   requires transitive software.sava.solana_web2;
   requires transitive systems.comodal.json_iterator;
   requires transitive systems.glam.ix_proxy;
-  requires java.sql;
 }
