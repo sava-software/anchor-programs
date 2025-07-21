@@ -59,7 +59,6 @@ public class KaminoVaultsClientImpl implements KaminoVaultsClient {
                              final PublicKey userSharesAtaKey,
                              final PublicKey tokenProgramKey,
                              final PublicKey sharesTokenProgramKey,
-                             final PublicKey programKey,
                              final long maxAmount) {
     return KaminoVaultProgram.deposit(
         kaminoAccounts.invokedKVaultsProgram(),
@@ -75,7 +74,7 @@ public class KaminoVaultsClientImpl implements KaminoVaultsClient {
         tokenProgramKey,
         sharesTokenProgramKey,
         kaminoAccounts.kVaultsEventAuthority(),
-        programKey,
+        kaminoAccounts.kVaultsProgram(),
         maxAmount
     );
   }
@@ -90,10 +89,6 @@ public class KaminoVaultsClientImpl implements KaminoVaultsClient {
                               final PublicKey withdrawFromAvailableSharesMintKey,
                               final PublicKey withdrawFromAvailableTokenProgramKey,
                               final PublicKey withdrawFromAvailableSharesTokenProgramKey,
-                              final PublicKey withdrawFromAvailableKlendProgramKey,
-                              final PublicKey withdrawFromAvailableEventAuthorityKey,
-                              final PublicKey withdrawFromAvailableProgramKey,
-                              final PublicKey withdrawFromReserveAccountsVaultStateKey,
                               final PublicKey withdrawFromReserveAccountsReserveKey,
                               final PublicKey withdrawFromReserveAccountsCtokenVaultKey,
                               final PublicKey withdrawFromReserveAccountsLendingMarketKey,
@@ -101,8 +96,6 @@ public class KaminoVaultsClientImpl implements KaminoVaultsClient {
                               final PublicKey withdrawFromReserveAccountsReserveLiquiditySupplyKey,
                               final PublicKey withdrawFromReserveAccountsReserveCollateralMintKey,
                               final PublicKey withdrawFromReserveAccountsReserveCollateralTokenProgramKey,
-                              final PublicKey withdrawFromReserveAccountsInstructionSysvarAccountKey,
-                              final PublicKey programKey,
                               final long sharesAmount) {
     return KaminoVaultProgram.withdraw(
         kaminoAccounts.invokedKVaultsProgram(),
@@ -116,10 +109,10 @@ public class KaminoVaultsClientImpl implements KaminoVaultsClient {
         withdrawFromAvailableSharesMintKey,
         withdrawFromAvailableTokenProgramKey,
         withdrawFromAvailableSharesTokenProgramKey,
-        withdrawFromAvailableKlendProgramKey,
-        withdrawFromAvailableEventAuthorityKey,
-        withdrawFromAvailableProgramKey,
-        withdrawFromReserveAccountsVaultStateKey,
+        kaminoAccounts.kLendProgram(),
+        kaminoAccounts.kVaultsEventAuthority(),
+        kaminoAccounts.kVaultsProgram(),
+        withdrawFromAvailableVaultStateKey,
         withdrawFromReserveAccountsReserveKey,
         withdrawFromReserveAccountsCtokenVaultKey,
         withdrawFromReserveAccountsLendingMarketKey,
@@ -127,9 +120,9 @@ public class KaminoVaultsClientImpl implements KaminoVaultsClient {
         withdrawFromReserveAccountsReserveLiquiditySupplyKey,
         withdrawFromReserveAccountsReserveCollateralMintKey,
         withdrawFromReserveAccountsReserveCollateralTokenProgramKey,
-        withdrawFromReserveAccountsInstructionSysvarAccountKey,
+        solanaAccounts.instructionsSysVar(),
         kaminoAccounts.kVaultsEventAuthority(),
-        programKey,
+        kaminoAccounts.kVaultsProgram(),
         sharesAmount
     );
   }

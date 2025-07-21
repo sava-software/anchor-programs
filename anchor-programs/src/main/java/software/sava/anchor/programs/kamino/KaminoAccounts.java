@@ -218,6 +218,20 @@ public interface KaminoAccounts {
     );
   }
 
+  static ProgramDerivedAddress cTokenVault(final PublicKey vaultKey,
+                                           final PublicKey reserveKey,
+                                           final PublicKey programId) {
+
+    return PublicKey.findProgramAddress(
+        List.of(
+            "ctoken_vault".getBytes(US_ASCII),
+            vaultKey.toByteArray(),
+            reserveKey.toByteArray()
+        ),
+        programId
+    );
+  }
+
   AccountMeta invokedKLendProgram();
 
   default PublicKey kLendProgram() {
@@ -231,8 +245,12 @@ public interface KaminoAccounts {
   AccountMeta invokedKVaultsProgram();
 
   default PublicKey kVaultsProgram() {
-    return invokedKLendProgram().publicKey();
+    return invokedKVaultsProgram().publicKey();
   }
 
   PublicKey kVaultsEventAuthority();
+
+  default ProgramDerivedAddress cTokenVault(final PublicKey vaultKey, final PublicKey reserveKey) {
+    return cTokenVault(vaultKey, reserveKey, kVaultsProgram());
+  }
 }

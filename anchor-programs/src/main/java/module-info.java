@@ -40,6 +40,7 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.kamino.farms;
   exports software.sava.anchor.programs.kamino.lend.anchor.types;
   exports software.sava.anchor.programs.kamino.lend.anchor;
+  exports software.sava.anchor.programs.kamino.lend;
   exports software.sava.anchor.programs.kamino.liquidity.anchor.types;
   exports software.sava.anchor.programs.kamino.liquidity.anchor;
   exports software.sava.anchor.programs.kamino.vaults.anchor.types;

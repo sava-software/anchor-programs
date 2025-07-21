@@ -1,6 +1,7 @@
 package software.sava.anchor.programs.kamino.vaults;
 
 import software.sava.anchor.programs.kamino.KaminoAccounts;
+import software.sava.anchor.programs.kamino.lend.anchor.types.Reserve;
 import software.sava.anchor.programs.kamino.vaults.anchor.types.VaultState;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -37,7 +38,6 @@ public interface KaminoVaultsClient {
                       final PublicKey userSharesAtaKey,
                       final PublicKey tokenProgramKey,
                       final PublicKey sharesTokenProgramKey,
-                      final PublicKey programKey,
                       final long maxAmount);
 
   default Instruction deposit(final VaultState vaultState,
@@ -56,7 +56,6 @@ public interface KaminoVaultsClient {
         userSharesAtaKey,
         vaultState.tokenProgram(),
         sharesTokenProgramKey,
-        kaminoAccounts().kVaultsProgram(),
         maxAmount
     );
   }
@@ -80,7 +79,6 @@ public interface KaminoVaultsClient {
         userSharesAtaKey,
         tokenProgram,
         sharesTokenProgramKey,
-        kaminoAccounts().kVaultsProgram(),
         maxAmount
     );
   }
@@ -94,10 +92,6 @@ public interface KaminoVaultsClient {
                        final PublicKey withdrawFromAvailableSharesMintKey,
                        final PublicKey withdrawFromAvailableTokenProgramKey,
                        final PublicKey withdrawFromAvailableSharesTokenProgramKey,
-                       final PublicKey withdrawFromAvailableKlendProgramKey,
-                       final PublicKey withdrawFromAvailableEventAuthorityKey,
-                       final PublicKey withdrawFromAvailableProgramKey,
-                       final PublicKey withdrawFromReserveAccountsVaultStateKey,
                        final PublicKey withdrawFromReserveAccountsReserveKey,
                        final PublicKey withdrawFromReserveAccountsCtokenVaultKey,
                        final PublicKey withdrawFromReserveAccountsLendingMarketKey,
@@ -105,7 +99,94 @@ public interface KaminoVaultsClient {
                        final PublicKey withdrawFromReserveAccountsReserveLiquiditySupplyKey,
                        final PublicKey withdrawFromReserveAccountsReserveCollateralMintKey,
                        final PublicKey withdrawFromReserveAccountsReserveCollateralTokenProgramKey,
-                       final PublicKey withdrawFromReserveAccountsInstructionSysvarAccountKey,
-                       final PublicKey programKey,
                        final long sharesAmount);
+
+  default Instruction withdraw(final VaultState vaultState,
+                               final PublicKey withdrawFromAvailableUserTokenAtaKey,
+                               final PublicKey withdrawFromAvailableUserSharesAtaKey,
+                               final PublicKey withdrawFromAvailableSharesTokenProgramKey,
+                               final PublicKey withdrawFromReserveAccountsReserveKey,
+                               final PublicKey withdrawFromReserveAccountsCtokenVaultKey,
+                               final PublicKey withdrawFromReserveAccountsLendingMarketKey,
+                               final PublicKey withdrawFromReserveAccountsLendingMarketAuthorityKey,
+                               final PublicKey withdrawFromReserveAccountsReserveLiquiditySupplyKey,
+                               final PublicKey withdrawFromReserveAccountsReserveCollateralMintKey,
+                               final PublicKey withdrawFromReserveAccountsReserveCollateralTokenProgramKey,
+                               final long maxAmount) {
+
+    return withdraw(
+        vaultState._address(),
+        vaultState.tokenVault(),
+        vaultState.baseVaultAuthority(),
+        withdrawFromAvailableUserTokenAtaKey,
+        vaultState.tokenMint(),
+        withdrawFromAvailableUserSharesAtaKey,
+        vaultState.sharesMint(),
+        vaultState.tokenProgram(),
+        withdrawFromAvailableSharesTokenProgramKey,
+        withdrawFromReserveAccountsReserveKey,
+        withdrawFromReserveAccountsCtokenVaultKey,
+        withdrawFromReserveAccountsLendingMarketKey,
+        withdrawFromReserveAccountsLendingMarketAuthorityKey,
+        withdrawFromReserveAccountsReserveLiquiditySupplyKey,
+        withdrawFromReserveAccountsReserveCollateralMintKey,
+        withdrawFromReserveAccountsReserveCollateralTokenProgramKey,
+        maxAmount
+    );
+  }
+
+  default Instruction withdraw(final VaultState vaultState,
+                               final PublicKey withdrawFromAvailableUserTokenAtaKey,
+                               final PublicKey withdrawFromAvailableUserSharesAtaKey,
+                               final PublicKey withdrawFromAvailableSharesTokenProgramKey,
+                               final PublicKey withdrawFromReserveAccountsReserveCollateralTokenProgramKey,
+                               final Reserve reserve,
+                               final long maxAmount) {
+    final var kaminoAccounts = kaminoAccounts();
+    final var lendingMarket = reserve.lendingMarket();
+    final var reserveCollateral = reserve.collateral();
+    final var vaultStateKey = vaultState._address();
+    final var cTokenVault = kaminoAccounts.cTokenVault(vaultStateKey, reserve._address()).publicKey();
+    return withdraw(
+        vaultStateKey,
+        vaultState.tokenVault(),
+        vaultState.baseVaultAuthority(),
+        withdrawFromAvailableUserTokenAtaKey,
+        vaultState.tokenMint(),
+        withdrawFromAvailableUserSharesAtaKey,
+        vaultState.sharesMint(),
+        vaultState.tokenProgram(),
+        withdrawFromAvailableSharesTokenProgramKey,
+        reserve._address(),
+        cTokenVault,
+        lendingMarket,
+        kaminoAccounts.lendingMarketAuthPda(lendingMarket).publicKey(),
+        reserve.liquidity().supplyVault(),
+        reserveCollateral.mintPubkey(),
+        withdrawFromReserveAccountsReserveCollateralTokenProgramKey,
+        maxAmount
+    );
+  }
+
+  default Instruction withdraw(final VaultState vaultState,
+                               final PublicKey withdrawFromAvailableSharesTokenProgramKey,
+                               final PublicKey withdrawFromReserveAccountsReserveCollateralTokenProgramKey,
+                               final Reserve reserve,
+                               final long maxAmount) {
+    final var tokenMint = vaultState.tokenMint();
+    final var tokenProgram = vaultState.tokenProgram();
+    final var nativeClient = nativeProgramAccountClient();
+    final var userTokenAtaKey = nativeClient.findATA(tokenProgram, tokenMint).publicKey();
+    final var sharesMint = vaultState.sharesMint();
+    final var userSharesAtaKey = nativeClient.findATA(withdrawFromAvailableSharesTokenProgramKey, sharesMint).publicKey();
+    return withdraw(
+        vaultState,
+        userTokenAtaKey,
+        userSharesAtaKey,
+        withdrawFromAvailableSharesTokenProgramKey,
+        withdrawFromReserveAccountsReserveCollateralTokenProgramKey,
+        reserve,
+        maxAmount
+    );
+  }
 }
