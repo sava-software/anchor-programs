@@ -630,7 +630,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                             final PublicKey switchboardPriceOracleKey,
                                             final PublicKey switchboardTwapOracleKey,
                                             final PublicKey scopePricesKey,
-                                            final PriceDenom priceDenom) {
+                                            final PriceDenom priceDenom,
+                                            final int numVaults) {
     return GlamProtocolProgram.priceKaminoVaultShares(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
@@ -643,7 +644,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         switchboardPriceOracleKey,
         switchboardTwapOracleKey,
         scopePricesKey,
-        priceDenom
+        priceDenom,
+        numVaults
     );
   }
 

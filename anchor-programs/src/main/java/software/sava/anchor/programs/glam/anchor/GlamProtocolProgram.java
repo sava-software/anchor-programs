@@ -4872,6 +4872,10 @@ public final class GlamProtocolProgram {
 
   public static final Discriminator PRICE_KAMINO_VAULT_SHARES_DISCRIMINATOR = toDiscriminator(112, 92, 238, 224, 145, 105, 38, 249);
 
+  // Extra accounts for pricing N kamino vault shares:
+  // - (kvault_share_ata, kvault_share_mint, kvault_state) x N
+  // - lending markets used by kvaults (no specific order)
+  // - reserves of lending markets (no specific order)
   public static Instruction priceKaminoVaultShares(final AccountMeta invokedGlamProtocolProgramMeta,
                                                    final PublicKey glamStateKey,
                                                    final PublicKey glamVaultKey,
@@ -4883,7 +4887,8 @@ public final class GlamProtocolProgram {
                                                    final PublicKey switchboardPriceOracleKey,
                                                    final PublicKey switchboardTwapOracleKey,
                                                    final PublicKey scopePricesKey,
-                                                   final PriceDenom denom) {
+                                                   final PriceDenom denom,
+                                                   final int numVaults) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
@@ -4897,20 +4902,21 @@ public final class GlamProtocolProgram {
       createRead(requireNonNullElse(scopePricesKey, invokedGlamProtocolProgramMeta.publicKey()))
     );
 
-    final byte[] _data = new byte[8 + Borsh.len(denom)];
+    final byte[] _data = new byte[9 + Borsh.len(denom)];
     int i = writeDiscriminator(PRICE_KAMINO_VAULT_SHARES_DISCRIMINATOR, _data, 0);
-    Borsh.write(denom, _data, i);
+    i += Borsh.write(denom, _data, i);
+    _data[i] = (byte) numVaults;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
   }
 
-  public record PriceKaminoVaultSharesIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
+  public record PriceKaminoVaultSharesIxData(Discriminator discriminator, PriceDenom denom, int numVaults) implements Borsh {  
 
     public static PriceKaminoVaultSharesIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 9;
+    public static final int BYTES = 10;
 
     public static PriceKaminoVaultSharesIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -4919,13 +4925,17 @@ public final class GlamProtocolProgram {
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
-      return new PriceKaminoVaultSharesIxData(discriminator, denom);
+      i += Borsh.len(denom);
+      final var numVaults = _data[i] & 0xFF;
+      return new PriceKaminoVaultSharesIxData(discriminator, denom, numVaults);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.write(denom, _data, i);
+      _data[i] = (byte) numVaults;
+      ++i;
       return i - offset;
     }
 
@@ -5047,6 +5057,10 @@ public final class GlamProtocolProgram {
 
   public static final Discriminator PRICE_VAULT_DISCRIMINATOR = toDiscriminator(47, 213, 36, 17, 183, 5, 141, 45);
 
+  // Price vault SOL balance and tokens it holds.
+  // 
+  // Extra accounts for pricing N tokens:
+  // - (ata, mint, oracle) x N
   public static Instruction priceVault(final AccountMeta invokedGlamProtocolProgramMeta,
                                        final PublicKey glamStateKey,
                                        final PublicKey glamVaultKey,

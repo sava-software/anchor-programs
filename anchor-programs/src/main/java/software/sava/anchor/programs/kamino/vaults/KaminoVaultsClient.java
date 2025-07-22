@@ -144,7 +144,6 @@ public interface KaminoVaultsClient {
                                final long maxAmount) {
     final var kaminoAccounts = kaminoAccounts();
     final var lendingMarket = reserve.lendingMarket();
-    final var reserveCollateral = reserve.collateral();
     final var vaultStateKey = vaultState._address();
     final var cTokenVault = kaminoAccounts.cTokenVault(vaultStateKey, reserve._address()).publicKey();
     return withdraw(
@@ -162,7 +161,7 @@ public interface KaminoVaultsClient {
         lendingMarket,
         kaminoAccounts.lendingMarketAuthPda(lendingMarket).publicKey(),
         reserve.liquidity().supplyVault(),
-        reserveCollateral.mintPubkey(),
+        reserve.collateral().mintPubkey(),
         withdrawFromReserveAccountsReserveCollateralTokenProgramKey,
         maxAmount
     );

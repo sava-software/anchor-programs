@@ -137,7 +137,8 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
                                      final PublicKey switchboardPriceOracleKey,
                                      final PublicKey switchboardTwapOracleKey,
                                      final PublicKey scopePricesKey,
-                                     final PriceDenom priceDenom);
+                                     final PriceDenom priceDenom,
+                                     final int numVaults);
 
   Instruction priceMeteoraPositions(final PublicKey solOracleKey, final PriceDenom priceDenom);
 
