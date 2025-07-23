@@ -19,7 +19,6 @@ import static java.util.Objects.requireNonNullElse;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.anchor.AnchorUtil.writeDiscriminator;
-import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
@@ -343,51 +342,26 @@ public final class FarmsProgram {
   public static final Discriminator TRANSFER_OWNERSHIP_DISCRIMINATOR = toDiscriminator(65, 177, 215, 73, 53, 45, 99, 47);
 
   public static Instruction transferOwnership(final AccountMeta invokedFarmsProgramMeta,
-                                              final PublicKey ownerKey,
-                                              final PublicKey userStateKey,
-                                              final PublicKey newOwner) {
+                                              final PublicKey oldOwnerKey,
+                                              final PublicKey newOwnerKey,
+                                              final PublicKey oldUserStateKey,
+                                              final PublicKey newUserStateKey,
+                                              final PublicKey farmStateKey,
+                                              final PublicKey scopePricesKey,
+                                              final PublicKey systemProgramKey,
+                                              final PublicKey rentKey) {
     final var keys = List.of(
-      createReadOnlySigner(ownerKey),
-      createWrite(userStateKey)
+      createWritableSigner(oldOwnerKey),
+      createRead(newOwnerKey),
+      createWrite(oldUserStateKey),
+      createWrite(newUserStateKey),
+      createWrite(farmStateKey),
+      createRead(requireNonNullElse(scopePricesKey, invokedFarmsProgramMeta.publicKey())),
+      createRead(systemProgramKey),
+      createRead(rentKey)
     );
 
-    final byte[] _data = new byte[40];
-    int i = writeDiscriminator(TRANSFER_OWNERSHIP_DISCRIMINATOR, _data, 0);
-    newOwner.write(_data, i);
-
-    return Instruction.createInstruction(invokedFarmsProgramMeta, keys, _data);
-  }
-
-  public record TransferOwnershipIxData(Discriminator discriminator, PublicKey newOwner) implements Borsh {  
-
-    public static TransferOwnershipIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 40;
-
-    public static TransferOwnershipIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = parseDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var newOwner = readPubKey(_data, i);
-      return new TransferOwnershipIxData(discriminator, newOwner);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      newOwner.write(_data, i);
-      i += 32;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
+    return Instruction.createInstruction(invokedFarmsProgramMeta, keys, TRANSFER_OWNERSHIP_DISCRIMINATOR);
   }
 
   public static final Discriminator REWARD_USER_ONCE_DISCRIMINATOR = toDiscriminator(219, 137, 57, 22, 94, 186, 96, 114);

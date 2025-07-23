@@ -57,7 +57,13 @@ public sealed interface FarmsError extends ProgramError permits
     FarmsError.WithdrawRewardZeroAvailable,
     FarmsError.RewardScheduleCurveSet,
     FarmsError.UnsupportedTokenExtension,
-    FarmsError.InvalidFarmConfigUpdateAuthority {
+    FarmsError.InvalidFarmConfigUpdateAuthority,
+    FarmsError.InvalidTransferOwnershipOldOwner,
+    FarmsError.InvalidTransferOwnershipFarmState,
+    FarmsError.InvalidTransferOwnershipUserStateOwnerDelegatee,
+    FarmsError.InvalidTransferOwnershipFarmStateLockingMode,
+    FarmsError.InvalidTransferOwnershipFarmStateWithdrawCooldownPeriod,
+    FarmsError.InvalidTransferOwnershipStakeAmount {
 
   static FarmsError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -116,6 +122,12 @@ public sealed interface FarmsError extends ProgramError permits
       case 6052 -> RewardScheduleCurveSet.INSTANCE;
       case 6053 -> UnsupportedTokenExtension.INSTANCE;
       case 6054 -> InvalidFarmConfigUpdateAuthority.INSTANCE;
+      case 6055 -> InvalidTransferOwnershipOldOwner.INSTANCE;
+      case 6056 -> InvalidTransferOwnershipFarmState.INSTANCE;
+      case 6057 -> InvalidTransferOwnershipUserStateOwnerDelegatee.INSTANCE;
+      case 6058 -> InvalidTransferOwnershipFarmStateLockingMode.INSTANCE;
+      case 6059 -> InvalidTransferOwnershipFarmStateWithdrawCooldownPeriod.INSTANCE;
+      case 6060 -> InvalidTransferOwnershipStakeAmount.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Farms error code: " + errorCode);
     };
   }
@@ -502,6 +514,48 @@ public sealed interface FarmsError extends ProgramError permits
 
     public static final InvalidFarmConfigUpdateAuthority INSTANCE = new InvalidFarmConfigUpdateAuthority(
         6054, "Invalid authority for updating farm config"
+    );
+  }
+
+  record InvalidTransferOwnershipOldOwner(int code, String msg) implements FarmsError {
+
+    public static final InvalidTransferOwnershipOldOwner INSTANCE = new InvalidTransferOwnershipOldOwner(
+        6055, "Invalid authority for transfer ownersip new user state initialization"
+    );
+  }
+
+  record InvalidTransferOwnershipFarmState(int code, String msg) implements FarmsError {
+
+    public static final InvalidTransferOwnershipFarmState INSTANCE = new InvalidTransferOwnershipFarmState(
+        6056, "Invalid farm state for transfer ownership new user state initialization"
+    );
+  }
+
+  record InvalidTransferOwnershipUserStateOwnerDelegatee(int code, String msg) implements FarmsError {
+
+    public static final InvalidTransferOwnershipUserStateOwnerDelegatee INSTANCE = new InvalidTransferOwnershipUserStateOwnerDelegatee(
+        6057, "Invalid user state for transfer ownership, owner must match delegatee"
+    );
+  }
+
+  record InvalidTransferOwnershipFarmStateLockingMode(int code, String msg) implements FarmsError {
+
+    public static final InvalidTransferOwnershipFarmStateLockingMode INSTANCE = new InvalidTransferOwnershipFarmStateLockingMode(
+        6058, "Invalid farm state locking mode for transfer ownership, must be 0"
+    );
+  }
+
+  record InvalidTransferOwnershipFarmStateWithdrawCooldownPeriod(int code, String msg) implements FarmsError {
+
+    public static final InvalidTransferOwnershipFarmStateWithdrawCooldownPeriod INSTANCE = new InvalidTransferOwnershipFarmStateWithdrawCooldownPeriod(
+        6059, "Invalid farm state withdrawal cooldown period for transfer ownership, must be 0"
+    );
+  }
+
+  record InvalidTransferOwnershipStakeAmount(int code, String msg) implements FarmsError {
+
+    public static final InvalidTransferOwnershipStakeAmount INSTANCE = new InvalidTransferOwnershipStakeAmount(
+        6060, "Invalid transfer ownership stake amount, must be equal to unstaked deposits"
     );
   }
 }
