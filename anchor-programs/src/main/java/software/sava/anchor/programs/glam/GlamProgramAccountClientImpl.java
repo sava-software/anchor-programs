@@ -545,7 +545,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction priceVault(final PublicKey solOracleKey, final PriceDenom priceDenom) {
-    return GlamProtocolProgram.priceVault(
+    return GlamProtocolProgram.priceVaultTokens(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),

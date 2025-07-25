@@ -63,7 +63,8 @@ public sealed interface FarmsError extends ProgramError permits
     FarmsError.InvalidTransferOwnershipUserStateOwnerDelegatee,
     FarmsError.InvalidTransferOwnershipFarmStateLockingMode,
     FarmsError.InvalidTransferOwnershipFarmStateWithdrawCooldownPeriod,
-    FarmsError.InvalidTransferOwnershipStakeAmount {
+    FarmsError.InvalidTransferOwnershipStakeAmount,
+    FarmsError.InvalidTransferOwnershipNewOwner {
 
   static FarmsError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -128,6 +129,7 @@ public sealed interface FarmsError extends ProgramError permits
       case 6058 -> InvalidTransferOwnershipFarmStateLockingMode.INSTANCE;
       case 6059 -> InvalidTransferOwnershipFarmStateWithdrawCooldownPeriod.INSTANCE;
       case 6060 -> InvalidTransferOwnershipStakeAmount.INSTANCE;
+      case 6061 -> InvalidTransferOwnershipNewOwner.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Farms error code: " + errorCode);
     };
   }
@@ -556,6 +558,13 @@ public sealed interface FarmsError extends ProgramError permits
 
     public static final InvalidTransferOwnershipStakeAmount INSTANCE = new InvalidTransferOwnershipStakeAmount(
         6060, "Invalid transfer ownership stake amount, must be equal to unstaked deposits"
+    );
+  }
+
+  record InvalidTransferOwnershipNewOwner(int code, String msg) implements FarmsError {
+
+    public static final InvalidTransferOwnershipNewOwner INSTANCE = new InvalidTransferOwnershipNewOwner(
+        6061, "Invalid authority for transfer ownersip new user state initialization"
     );
   }
 }
