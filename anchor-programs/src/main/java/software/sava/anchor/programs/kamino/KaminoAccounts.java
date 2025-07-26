@@ -18,12 +18,15 @@ public interface KaminoAccounts {
   KaminoAccounts MAIN_NET = createAccounts(
       "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
       "3NJYftD5sjVfxSnUdZ1wVML8f3aC6mp1CXCL6L7TnU8C",
+      // https://github.com/Kamino-Finance/scope/blob/master/configs/mainnet/3NJYftD5sjVfxSnUdZ1wVML8f3aC6mp1CXCL6L7TnU8C.json
+      "3NJYftD5sjVfxSnUdZ1wVML8f3aC6mp1CXCL6L7TnU8C",
       "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
       "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd"
   );
 
   static KaminoAccounts createAccounts(final PublicKey kLendProgram,
                                        final PublicKey scopePrices,
+                                       final PublicKey scopeOraclePrices,
                                        final PublicKey farmProgram,
                                        final PublicKey kVaultsProgram) {
     final var kVaultsEventAuthority = PublicKey.findProgramAddress(
@@ -33,6 +36,7 @@ public interface KaminoAccounts {
     return new KaminoAccountsRecord(
         AccountMeta.createInvoked(kLendProgram),
         scopePrices,
+        scopeOraclePrices,
         farmProgram,
         AccountMeta.createInvoked(kVaultsProgram),
         kVaultsEventAuthority
@@ -41,11 +45,13 @@ public interface KaminoAccounts {
 
   static KaminoAccounts createAccounts(final String kLendProgram,
                                        final String scopePrices,
+                                       final String scopeOraclePrices,
                                        final String farmProgram,
                                        final String kVaultsProgram) {
     return createAccounts(
         PublicKey.fromBase58Encoded(kLendProgram),
         PublicKey.fromBase58Encoded(scopePrices),
+        PublicKey.fromBase58Encoded(scopeOraclePrices),
         PublicKey.fromBase58Encoded(farmProgram),
         PublicKey.fromBase58Encoded(kVaultsProgram)
     );
@@ -253,4 +259,6 @@ public interface KaminoAccounts {
   default ProgramDerivedAddress cTokenVault(final PublicKey vaultKey, final PublicKey reserveKey) {
     return cTokenVault(vaultKey, reserveKey, kVaultsProgram());
   }
+
+  PublicKey scopeOraclePrices();
 }

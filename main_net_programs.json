@@ -81,6 +81,11 @@
     "package": "kamino.liquidity"
   },
   {
+    "name": "Kamino Scope",
+    "program": "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
+    "package": "kamino.scope"
+  },
+  {
     "name": "Kamino Vaults",
     "program": "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd",
     "package": "kamino.vaults"
