@@ -17,7 +17,7 @@ public interface KaminoAccounts {
 
   KaminoAccounts MAIN_NET = createAccounts(
       "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
-      "3NJYftD5sjVfxSnUdZ1wVML8f3aC6mp1CXCL6L7TnU8C",
+      "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
       // https://github.com/Kamino-Finance/scope/blob/master/configs/mainnet/3NJYftD5sjVfxSnUdZ1wVML8f3aC6mp1CXCL6L7TnU8C.json
       "3NJYftD5sjVfxSnUdZ1wVML8f3aC6mp1CXCL6L7TnU8C",
       "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
@@ -25,7 +25,7 @@ public interface KaminoAccounts {
   );
 
   static KaminoAccounts createAccounts(final PublicKey kLendProgram,
-                                       final PublicKey scopePrices,
+                                       final PublicKey scopePricesProgram,
                                        final PublicKey scopeOraclePrices,
                                        final PublicKey farmProgram,
                                        final PublicKey kVaultsProgram) {
@@ -35,7 +35,7 @@ public interface KaminoAccounts {
     ).publicKey();
     return new KaminoAccountsRecord(
         AccountMeta.createInvoked(kLendProgram),
-        scopePrices,
+        scopePricesProgram,
         scopeOraclePrices,
         farmProgram,
         AccountMeta.createInvoked(kVaultsProgram),
@@ -44,13 +44,13 @@ public interface KaminoAccounts {
   }
 
   static KaminoAccounts createAccounts(final String kLendProgram,
-                                       final String scopePrices,
+                                       final String scopePricesProgram,
                                        final String scopeOraclePrices,
                                        final String farmProgram,
                                        final String kVaultsProgram) {
     return createAccounts(
         PublicKey.fromBase58Encoded(kLendProgram),
-        PublicKey.fromBase58Encoded(scopePrices),
+        PublicKey.fromBase58Encoded(scopePricesProgram),
         PublicKey.fromBase58Encoded(scopeOraclePrices),
         PublicKey.fromBase58Encoded(farmProgram),
         PublicKey.fromBase58Encoded(kVaultsProgram)
@@ -244,8 +244,6 @@ public interface KaminoAccounts {
     return invokedKLendProgram().publicKey();
   }
 
-  PublicKey scopePrices();
-
   PublicKey farmProgram();
 
   AccountMeta invokedKVaultsProgram();
@@ -260,5 +258,11 @@ public interface KaminoAccounts {
     return cTokenVault(vaultKey, reserveKey, kVaultsProgram());
   }
 
+  PublicKey scopePricesProgram();
+
   PublicKey scopeOraclePrices();
+
+  default PublicKey scopePrices() {
+    return scopeOraclePrices();
+  }
 }
