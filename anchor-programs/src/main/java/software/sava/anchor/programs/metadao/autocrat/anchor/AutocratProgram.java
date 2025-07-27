@@ -25,19 +25,33 @@ public final class AutocratProgram {
 
   public static Instruction initializeDao(final AccountMeta invokedAutocratProgramMeta,
                                           final PublicKey daoKey,
+                                          final PublicKey daoCreatorKey,
                                           final PublicKey payerKey,
                                           final PublicKey systemProgramKey,
-                                          final PublicKey tokenMintKey,
-                                          final PublicKey usdcMintKey,
+                                          final PublicKey baseMintKey,
+                                          final PublicKey quoteMintKey,
+                                          final PublicKey squadsMultisigKey,
+                                          final PublicKey squadsMultisigVaultKey,
+                                          final PublicKey squadsProgramKey,
+                                          final PublicKey squadsProgramConfigKey,
+                                          final PublicKey squadsProgramConfigTreasuryKey,
+                                          final PublicKey spendingLimitKey,
                                           final PublicKey eventAuthorityKey,
                                           final PublicKey programKey,
                                           final InitializeDaoParams params) {
     final var keys = List.of(
-      createWritableSigner(daoKey),
+      createWrite(daoKey),
+      createReadOnlySigner(daoCreatorKey),
       createWritableSigner(payerKey),
       createRead(systemProgramKey),
-      createRead(tokenMintKey),
-      createRead(usdcMintKey),
+      createRead(baseMintKey),
+      createRead(quoteMintKey),
+      createWrite(squadsMultisigKey),
+      createRead(squadsMultisigVaultKey),
+      createRead(squadsProgramKey),
+      createRead(squadsProgramConfigKey),
+      createWrite(squadsProgramConfigTreasuryKey),
+      createWrite(spendingLimitKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -82,6 +96,7 @@ public final class AutocratProgram {
 
   public static Instruction initializeProposal(final AccountMeta invokedAutocratProgramMeta,
                                                final PublicKey proposalKey,
+                                               final PublicKey squadsProposalKey,
                                                final PublicKey daoKey,
                                                final PublicKey questionKey,
                                                final PublicKey quoteVaultKey,
@@ -95,13 +110,16 @@ public final class AutocratProgram {
                                                final PublicKey passLpVaultAccountKey,
                                                final PublicKey failLpVaultAccountKey,
                                                final PublicKey proposerKey,
+                                               final PublicKey payerKey,
                                                final PublicKey tokenProgramKey,
                                                final PublicKey systemProgramKey,
+                                               final PublicKey associatedTokenProgramKey,
                                                final PublicKey eventAuthorityKey,
                                                final PublicKey programKey,
                                                final InitializeProposalParams params) {
     final var keys = List.of(
       createWrite(proposalKey),
+      createRead(squadsProposalKey),
       createWrite(daoKey),
       createRead(questionKey),
       createRead(quoteVaultKey),
@@ -114,9 +132,11 @@ public final class AutocratProgram {
       createWrite(failLpUserAccountKey),
       createWrite(passLpVaultAccountKey),
       createWrite(failLpVaultAccountKey),
-      createWritableSigner(proposerKey),
+      createReadOnlySigner(proposerKey),
+      createWritableSigner(payerKey),
       createRead(tokenProgramKey),
       createRead(systemProgramKey),
+      createRead(associatedTokenProgramKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -161,11 +181,13 @@ public final class AutocratProgram {
 
   public static Instruction finalizeProposal(final AccountMeta invokedAutocratProgramMeta,
                                              final PublicKey proposalKey,
+                                             final PublicKey squadsProposalKey,
+                                             final PublicKey squadsMultisigProgramKey,
+                                             final PublicKey squadsMultisigKey,
                                              final PublicKey passAmmKey,
                                              final PublicKey failAmmKey,
                                              final PublicKey daoKey,
                                              final PublicKey questionKey,
-                                             final PublicKey treasuryKey,
                                              final PublicKey passLpUserAccountKey,
                                              final PublicKey failLpUserAccountKey,
                                              final PublicKey passLpVaultAccountKey,
@@ -177,11 +199,13 @@ public final class AutocratProgram {
                                              final PublicKey programKey) {
     final var keys = List.of(
       createWrite(proposalKey),
+      createWrite(squadsProposalKey),
+      createRead(squadsMultisigProgramKey),
+      createRead(squadsMultisigKey),
       createRead(passAmmKey),
       createRead(failAmmKey),
-      createRead(daoKey),
+      createWrite(daoKey),
       createWrite(questionKey),
-      createRead(treasuryKey),
       createWrite(passLpUserAccountKey),
       createWrite(failLpUserAccountKey),
       createWrite(passLpVaultAccountKey),
@@ -196,34 +220,17 @@ public final class AutocratProgram {
     return Instruction.createInstruction(invokedAutocratProgramMeta, keys, FINALIZE_PROPOSAL_DISCRIMINATOR);
   }
 
-  public static final Discriminator EXECUTE_PROPOSAL_DISCRIMINATOR = toDiscriminator(186, 60, 116, 133, 108, 128, 111, 28);
-
-  public static Instruction executeProposal(final AccountMeta invokedAutocratProgramMeta,
-                                            final PublicKey proposalKey,
-                                            final PublicKey daoKey,
-                                            final PublicKey eventAuthorityKey,
-                                            final PublicKey programKey) {
-    final var keys = List.of(
-      createWrite(proposalKey),
-      createRead(daoKey),
-      createRead(eventAuthorityKey),
-      createRead(programKey)
-    );
-
-    return Instruction.createInstruction(invokedAutocratProgramMeta, keys, EXECUTE_PROPOSAL_DISCRIMINATOR);
-  }
-
   public static final Discriminator UPDATE_DAO_DISCRIMINATOR = toDiscriminator(131, 72, 75, 25, 112, 210, 109, 2);
 
   public static Instruction updateDao(final AccountMeta invokedAutocratProgramMeta,
                                       final PublicKey daoKey,
-                                      final PublicKey treasuryKey,
+                                      final PublicKey squadsMultisigVaultKey,
                                       final PublicKey eventAuthorityKey,
                                       final PublicKey programKey,
                                       final UpdateDaoParams daoParams) {
     final var keys = List.of(
       createWrite(daoKey),
-      createReadOnlySigner(treasuryKey),
+      createReadOnlySigner(squadsMultisigVaultKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );

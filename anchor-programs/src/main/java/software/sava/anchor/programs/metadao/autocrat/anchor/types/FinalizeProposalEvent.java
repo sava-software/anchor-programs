@@ -15,9 +15,11 @@ public record FinalizeProposalEvent(CommonFields common,
                                     BigInteger passMarketTwap,
                                     BigInteger failMarketTwap,
                                     BigInteger threshold,
-                                    ProposalState state) implements Borsh {
+                                    ProposalState state,
+                                    PublicKey squadsProposal,
+                                    PublicKey squadsMultisig) implements Borsh {
 
-  public static final int BYTES = 129;
+  public static final int BYTES = 193;
 
   public static FinalizeProposalEvent read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -37,13 +39,19 @@ public record FinalizeProposalEvent(CommonFields common,
     final var threshold = getInt128LE(_data, i);
     i += 16;
     final var state = ProposalState.read(_data, i);
+    i += Borsh.len(state);
+    final var squadsProposal = readPubKey(_data, i);
+    i += 32;
+    final var squadsMultisig = readPubKey(_data, i);
     return new FinalizeProposalEvent(common,
                                      proposal,
                                      dao,
                                      passMarketTwap,
                                      failMarketTwap,
                                      threshold,
-                                     state);
+                                     state,
+                                     squadsProposal,
+                                     squadsMultisig);
   }
 
   @Override
@@ -61,6 +69,10 @@ public record FinalizeProposalEvent(CommonFields common,
     putInt128LE(_data, i, threshold);
     i += 16;
     i += Borsh.write(state, _data, i);
+    squadsProposal.write(_data, i);
+    i += 32;
+    squadsMultisig.write(_data, i);
+    i += 32;
     return i - offset;
   }
 

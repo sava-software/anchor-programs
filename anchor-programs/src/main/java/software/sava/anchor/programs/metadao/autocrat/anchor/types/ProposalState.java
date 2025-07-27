@@ -6,8 +6,7 @@ public enum ProposalState implements Borsh.Enum {
 
   Pending,
   Passed,
-  Failed,
-  Executed;
+  Failed;
 
   public static ProposalState read(final byte[] _data, final int offset) {
     return Borsh.read(ProposalState.values(), _data, offset);

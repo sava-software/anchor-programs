@@ -2,23 +2,24 @@ package software.sava.anchor.programs.metadao.autocrat.anchor.types;
 
 import java.math.BigInteger;
 
-import java.util.OptionalInt;
-import java.util.OptionalLong;
-
 import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.encoding.ByteUtil.getInt128LE;
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
+import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record InitializeDaoParams(BigInteger twapInitialObservation,
                                   BigInteger twapMaxObservationChangePerUpdate,
+                                  long twapStartDelaySlots,
                                   long minQuoteFutarchicLiquidity,
                                   long minBaseFutarchicLiquidity,
-                                  OptionalInt passThresholdBps,
-                                  OptionalLong slotsPerProposal) implements Borsh {
+                                  int passThresholdBps,
+                                  long slotsPerProposal,
+                                  long nonce,
+                                  InitialSpendingLimit initialSpendingLimit) implements Borsh {
 
   public static InitializeDaoParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -29,21 +30,28 @@ public record InitializeDaoParams(BigInteger twapInitialObservation,
     i += 16;
     final var twapMaxObservationChangePerUpdate = getInt128LE(_data, i);
     i += 16;
+    final var twapStartDelaySlots = getInt64LE(_data, i);
+    i += 8;
     final var minQuoteFutarchicLiquidity = getInt64LE(_data, i);
     i += 8;
     final var minBaseFutarchicLiquidity = getInt64LE(_data, i);
     i += 8;
-    final var passThresholdBps = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt16LE(_data, i));
-    if (passThresholdBps.isPresent()) {
-      i += 2;
-    }
-    final var slotsPerProposal = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+    final var passThresholdBps = getInt16LE(_data, i);
+    i += 2;
+    final var slotsPerProposal = getInt64LE(_data, i);
+    i += 8;
+    final var nonce = getInt64LE(_data, i);
+    i += 8;
+    final var initialSpendingLimit = _data[i++] == 0 ? null : InitialSpendingLimit.read(_data, i);
     return new InitializeDaoParams(twapInitialObservation,
                                    twapMaxObservationChangePerUpdate,
+                                   twapStartDelaySlots,
                                    minQuoteFutarchicLiquidity,
                                    minBaseFutarchicLiquidity,
                                    passThresholdBps,
-                                   slotsPerProposal);
+                                   slotsPerProposal,
+                                   nonce,
+                                   initialSpendingLimit);
   }
 
   @Override
@@ -53,12 +61,19 @@ public record InitializeDaoParams(BigInteger twapInitialObservation,
     i += 16;
     putInt128LE(_data, i, twapMaxObservationChangePerUpdate);
     i += 16;
+    putInt64LE(_data, i, twapStartDelaySlots);
+    i += 8;
     putInt64LE(_data, i, minQuoteFutarchicLiquidity);
     i += 8;
     putInt64LE(_data, i, minBaseFutarchicLiquidity);
     i += 8;
-    i += Borsh.writeOptionalshort(passThresholdBps, _data, i);
-    i += Borsh.writeOptional(slotsPerProposal, _data, i);
+    putInt16LE(_data, i, passThresholdBps);
+    i += 2;
+    putInt64LE(_data, i, slotsPerProposal);
+    i += 8;
+    putInt64LE(_data, i, nonce);
+    i += 8;
+    i += Borsh.writeOptional(initialSpendingLimit, _data, i);
     return i - offset;
   }
 
@@ -68,7 +83,10 @@ public record InitializeDaoParams(BigInteger twapInitialObservation,
          + 16
          + 8
          + 8
-         + (passThresholdBps == null || passThresholdBps.isEmpty() ? 1 : (1 + 2))
-         + (slotsPerProposal == null || slotsPerProposal.isEmpty() ? 1 : (1 + 8));
+         + 8
+         + 2
+         + 8
+         + 8
+         + (initialSpendingLimit == null ? 1 : (1 + Borsh.len(initialSpendingLimit)));
   }
 }

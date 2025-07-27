@@ -20,12 +20,16 @@ public record InitializeProposalEvent(CommonFields common,
                                       PublicKey passLpMint,
                                       PublicKey failLpMint,
                                       PublicKey proposer,
-                                      long nonce,
                                       int number,
                                       long passLpTokensLocked,
                                       long failLpTokensLocked,
                                       int pdaBump,
-                                      ProposalInstruction instruction) implements Borsh {
+                                      long durationInSlots,
+                                      PublicKey squadsProposal,
+                                      PublicKey squadsMultisig,
+                                      PublicKey squadsMultisigVault) implements Borsh {
+
+  public static final int BYTES = 461;
 
   public static InitializeProposalEvent read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -54,8 +58,6 @@ public record InitializeProposalEvent(CommonFields common,
     i += 32;
     final var proposer = readPubKey(_data, i);
     i += 32;
-    final var nonce = getInt64LE(_data, i);
-    i += 8;
     final var number = getInt32LE(_data, i);
     i += 4;
     final var passLpTokensLocked = getInt64LE(_data, i);
@@ -64,7 +66,13 @@ public record InitializeProposalEvent(CommonFields common,
     i += 8;
     final var pdaBump = _data[i] & 0xFF;
     ++i;
-    final var instruction = ProposalInstruction.read(_data, i);
+    final var durationInSlots = getInt64LE(_data, i);
+    i += 8;
+    final var squadsProposal = readPubKey(_data, i);
+    i += 32;
+    final var squadsMultisig = readPubKey(_data, i);
+    i += 32;
+    final var squadsMultisigVault = readPubKey(_data, i);
     return new InitializeProposalEvent(common,
                                        proposal,
                                        dao,
@@ -76,12 +84,14 @@ public record InitializeProposalEvent(CommonFields common,
                                        passLpMint,
                                        failLpMint,
                                        proposer,
-                                       nonce,
                                        number,
                                        passLpTokensLocked,
                                        failLpTokensLocked,
                                        pdaBump,
-                                       instruction);
+                                       durationInSlots,
+                                       squadsProposal,
+                                       squadsMultisig,
+                                       squadsMultisigVault);
   }
 
   @Override
@@ -108,8 +118,6 @@ public record InitializeProposalEvent(CommonFields common,
     i += 32;
     proposer.write(_data, i);
     i += 32;
-    putInt64LE(_data, i, nonce);
-    i += 8;
     putInt32LE(_data, i, number);
     i += 4;
     putInt64LE(_data, i, passLpTokensLocked);
@@ -118,28 +126,19 @@ public record InitializeProposalEvent(CommonFields common,
     i += 8;
     _data[i] = (byte) pdaBump;
     ++i;
-    i += Borsh.write(instruction, _data, i);
+    putInt64LE(_data, i, durationInSlots);
+    i += 8;
+    squadsProposal.write(_data, i);
+    i += 32;
+    squadsMultisig.write(_data, i);
+    i += 32;
+    squadsMultisigVault.write(_data, i);
+    i += 32;
     return i - offset;
   }
 
   @Override
   public int l() {
-    return Borsh.len(common)
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 32
-         + 8
-         + 4
-         + 8
-         + 8
-         + 1
-         + Borsh.len(instruction);
+    return BYTES;
   }
 }

@@ -95,24 +95,29 @@
     "program": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD"
   },
   {
-    "name": "metaDAO Autocrat",
-    "program": "autowMzCbM29YXMgVG3T62Hkgo7RcyrvgQQkd54fDQL",
-    "package": "metadao.autocrat"
-  },
-  {
-    "name": "metaDAO amm",
-    "program": "AMMyu265tkBpRW21iGQxKGLaves3gKm2JcMUqfXNSpqD",
+    "name": "metaDAO AMM",
+    "program": "AMMJdEiCCa8mdugg6JPF7gFirmmxisTfDJoSNSUi5zDJ",
     "package": "metadao.amm"
   },
   {
-    "name": "merkle distributor",
-    "program": "DiS3nNjFVMieMgmiQFm6wgJL7nevk4NrhXKLbtEH1Z2R",
-    "package": "jupiter.merkle.distributor"
+    "name": "metaDAO Autocrat",
+    "program": "auToUr3CQza3D4qreT6Std2MTomfzvrEeCC5qh7ivW5",
+    "package": "metadao.autocrat"
   },
   {
     "name": "metaDAO Conditional Vault",
     "program": "VLTX1ishMBbcX3rdBWGssxawAo1Q2X2qxYFYqiGodVg",
     "package": "metadao.conditional_vault"
+  },
+  {
+    "name": "metaDAO Launchpad",
+    "program": "mooNhciQJi1LqHDmse2JPic2NqG2PXCanbE3ZYzP3qA",
+    "package": "metadao.launchpad"
+  },
+  {
+    "name": "merkle distributor",
+    "program": "DiS3nNjFVMieMgmiQFm6wgJL7nevk4NrhXKLbtEH1Z2R",
+    "package": "jupiter.merkle.distributor"
   },
   {
     "name": "Meteora Alpha Vault",

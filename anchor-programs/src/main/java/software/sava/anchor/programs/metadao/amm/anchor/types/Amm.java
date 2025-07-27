@@ -25,9 +25,11 @@ public record Amm(PublicKey _address,
                   long baseAmount,
                   long quoteAmount,
                   TwapOracle oracle,
-                  long seqNum) implements Borsh {
+                  long seqNum,
+                  PublicKey vaultAtaBase,
+                  PublicKey vaultAtaQuote) implements Borsh {
 
-  public static final int BYTES = 227;
+  public static final int BYTES = 299;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int BUMP_OFFSET = 8;
@@ -40,7 +42,9 @@ public record Amm(PublicKey _address,
   public static final int BASE_AMOUNT_OFFSET = 115;
   public static final int QUOTE_AMOUNT_OFFSET = 123;
   public static final int ORACLE_OFFSET = 131;
-  public static final int SEQ_NUM_OFFSET = 219;
+  public static final int SEQ_NUM_OFFSET = 227;
+  public static final int VAULT_ATA_BASE_OFFSET = 235;
+  public static final int VAULT_ATA_QUOTE_OFFSET = 267;
 
   public static Filter createBumpFilter(final int bump) {
     return Filter.createMemCompFilter(BUMP_OFFSET, new byte[]{(byte) bump});
@@ -94,6 +98,14 @@ public record Amm(PublicKey _address,
     return Filter.createMemCompFilter(SEQ_NUM_OFFSET, _data);
   }
 
+  public static Filter createVaultAtaBaseFilter(final PublicKey vaultAtaBase) {
+    return Filter.createMemCompFilter(VAULT_ATA_BASE_OFFSET, vaultAtaBase);
+  }
+
+  public static Filter createVaultAtaQuoteFilter(final PublicKey vaultAtaQuote) {
+    return Filter.createMemCompFilter(VAULT_ATA_QUOTE_OFFSET, vaultAtaQuote);
+  }
+
   public static Amm read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -135,6 +147,10 @@ public record Amm(PublicKey _address,
     final var oracle = TwapOracle.read(_data, i);
     i += Borsh.len(oracle);
     final var seqNum = getInt64LE(_data, i);
+    i += 8;
+    final var vaultAtaBase = readPubKey(_data, i);
+    i += 32;
+    final var vaultAtaQuote = readPubKey(_data, i);
     return new Amm(_address,
                    discriminator,
                    bump,
@@ -147,7 +163,9 @@ public record Amm(PublicKey _address,
                    baseAmount,
                    quoteAmount,
                    oracle,
-                   seqNum);
+                   seqNum,
+                   vaultAtaBase,
+                   vaultAtaQuote);
   }
 
   @Override
@@ -174,6 +192,10 @@ public record Amm(PublicKey _address,
     i += Borsh.write(oracle, _data, i);
     putInt64LE(_data, i, seqNum);
     i += 8;
+    vaultAtaBase.write(_data, i);
+    i += 32;
+    vaultAtaQuote.write(_data, i);
+    i += 32;
     return i - offset;
   }
 

@@ -15,17 +15,17 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record InitializeDaoEvent(CommonFields common,
                                  PublicKey dao,
-                                 PublicKey tokenMint,
-                                 PublicKey usdcMint,
-                                 PublicKey treasury,
+                                 PublicKey baseMint,
+                                 PublicKey quoteMint,
                                  int passThresholdBps,
                                  long slotsPerProposal,
                                  BigInteger twapInitialObservation,
                                  BigInteger twapMaxObservationChangePerUpdate,
                                  long minQuoteFutarchicLiquidity,
-                                 long minBaseFutarchicLiquidity) implements Borsh {
-
-  public static final int BYTES = 202;
+                                 long minBaseFutarchicLiquidity,
+                                 InitialSpendingLimit initialSpendingLimit,
+                                 PublicKey squadsMultisig,
+                                 PublicKey squadsMultisigVault) implements Borsh {
 
   public static InitializeDaoEvent read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -36,11 +36,9 @@ public record InitializeDaoEvent(CommonFields common,
     i += Borsh.len(common);
     final var dao = readPubKey(_data, i);
     i += 32;
-    final var tokenMint = readPubKey(_data, i);
+    final var baseMint = readPubKey(_data, i);
     i += 32;
-    final var usdcMint = readPubKey(_data, i);
-    i += 32;
-    final var treasury = readPubKey(_data, i);
+    final var quoteMint = readPubKey(_data, i);
     i += 32;
     final var passThresholdBps = getInt16LE(_data, i);
     i += 2;
@@ -53,17 +51,27 @@ public record InitializeDaoEvent(CommonFields common,
     final var minQuoteFutarchicLiquidity = getInt64LE(_data, i);
     i += 8;
     final var minBaseFutarchicLiquidity = getInt64LE(_data, i);
+    i += 8;
+    final var initialSpendingLimit = _data[i++] == 0 ? null : InitialSpendingLimit.read(_data, i);
+    if (initialSpendingLimit != null) {
+      i += Borsh.len(initialSpendingLimit);
+    }
+    final var squadsMultisig = readPubKey(_data, i);
+    i += 32;
+    final var squadsMultisigVault = readPubKey(_data, i);
     return new InitializeDaoEvent(common,
                                   dao,
-                                  tokenMint,
-                                  usdcMint,
-                                  treasury,
+                                  baseMint,
+                                  quoteMint,
                                   passThresholdBps,
                                   slotsPerProposal,
                                   twapInitialObservation,
                                   twapMaxObservationChangePerUpdate,
                                   minQuoteFutarchicLiquidity,
-                                  minBaseFutarchicLiquidity);
+                                  minBaseFutarchicLiquidity,
+                                  initialSpendingLimit,
+                                  squadsMultisig,
+                                  squadsMultisigVault);
   }
 
   @Override
@@ -72,11 +80,9 @@ public record InitializeDaoEvent(CommonFields common,
     i += Borsh.write(common, _data, i);
     dao.write(_data, i);
     i += 32;
-    tokenMint.write(_data, i);
+    baseMint.write(_data, i);
     i += 32;
-    usdcMint.write(_data, i);
-    i += 32;
-    treasury.write(_data, i);
+    quoteMint.write(_data, i);
     i += 32;
     putInt16LE(_data, i, passThresholdBps);
     i += 2;
@@ -90,11 +96,28 @@ public record InitializeDaoEvent(CommonFields common,
     i += 8;
     putInt64LE(_data, i, minBaseFutarchicLiquidity);
     i += 8;
+    i += Borsh.writeOptional(initialSpendingLimit, _data, i);
+    squadsMultisig.write(_data, i);
+    i += 32;
+    squadsMultisigVault.write(_data, i);
+    i += 32;
     return i - offset;
   }
 
   @Override
   public int l() {
-    return BYTES;
+    return Borsh.len(common)
+         + 32
+         + 32
+         + 32
+         + 2
+         + 8
+         + 16
+         + 16
+         + 8
+         + 8
+         + (initialSpendingLimit == null ? 1 : (1 + Borsh.len(initialSpendingLimit)))
+         + 32
+         + 32;
   }
 }

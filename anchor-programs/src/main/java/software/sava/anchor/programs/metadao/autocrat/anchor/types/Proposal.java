@@ -26,7 +26,6 @@ public record Proposal(PublicKey _address,
                        String descriptionUrl, byte[] _descriptionUrl,
                        long slotEnqueued,
                        ProposalState state,
-                       ProposalInstruction instruction,
                        PublicKey passAmm,
                        PublicKey failAmm,
                        PublicKey baseVault,
@@ -34,13 +33,10 @@ public record Proposal(PublicKey _address,
                        PublicKey dao,
                        long passLpTokensLocked,
                        long failLpTokensLocked,
-                       // We need to include a per-proposer nonce to prevent some weird proposal
-                       // front-running edge cases. Using a `u64` means that proposers are unlikely
-                       // to run into collisions, even if they generate nonces randomly - I've run
-                       // the math :D
-                       long nonce,
                        int pdaBump,
-                       PublicKey question) implements Borsh {
+                       PublicKey question,
+                       long durationInSlots,
+                       PublicKey squadsProposal) implements Borsh {
 
   public static final int NUMBER_OFFSET = 8;
   public static final int PROPOSER_OFFSET = 12;
@@ -63,7 +59,6 @@ public record Proposal(PublicKey _address,
                                       final String descriptionUrl,
                                       final long slotEnqueued,
                                       final ProposalState state,
-                                      final ProposalInstruction instruction,
                                       final PublicKey passAmm,
                                       final PublicKey failAmm,
                                       final PublicKey baseVault,
@@ -71,9 +66,10 @@ public record Proposal(PublicKey _address,
                                       final PublicKey dao,
                                       final long passLpTokensLocked,
                                       final long failLpTokensLocked,
-                                      final long nonce,
                                       final int pdaBump,
-                                      final PublicKey question) {
+                                      final PublicKey question,
+                                      final long durationInSlots,
+                                      final PublicKey squadsProposal) {
     return new Proposal(_address,
                         discriminator,
                         number,
@@ -81,7 +77,6 @@ public record Proposal(PublicKey _address,
                         descriptionUrl, descriptionUrl.getBytes(UTF_8),
                         slotEnqueued,
                         state,
-                        instruction,
                         passAmm,
                         failAmm,
                         baseVault,
@@ -89,9 +84,10 @@ public record Proposal(PublicKey _address,
                         dao,
                         passLpTokensLocked,
                         failLpTokensLocked,
-                        nonce,
                         pdaBump,
-                        question);
+                        question,
+                        durationInSlots,
+                        squadsProposal);
   }
 
   public static Proposal read(final byte[] _data, final int offset) {
@@ -124,8 +120,6 @@ public record Proposal(PublicKey _address,
     i += 8;
     final var state = ProposalState.read(_data, i);
     i += Borsh.len(state);
-    final var instruction = ProposalInstruction.read(_data, i);
-    i += Borsh.len(instruction);
     final var passAmm = readPubKey(_data, i);
     i += 32;
     final var failAmm = readPubKey(_data, i);
@@ -140,11 +134,13 @@ public record Proposal(PublicKey _address,
     i += 8;
     final var failLpTokensLocked = getInt64LE(_data, i);
     i += 8;
-    final var nonce = getInt64LE(_data, i);
-    i += 8;
     final var pdaBump = _data[i] & 0xFF;
     ++i;
     final var question = readPubKey(_data, i);
+    i += 32;
+    final var durationInSlots = getInt64LE(_data, i);
+    i += 8;
+    final var squadsProposal = readPubKey(_data, i);
     return new Proposal(_address,
                         discriminator,
                         number,
@@ -152,7 +148,6 @@ public record Proposal(PublicKey _address,
                         descriptionUrl, descriptionUrl.getBytes(UTF_8),
                         slotEnqueued,
                         state,
-                        instruction,
                         passAmm,
                         failAmm,
                         baseVault,
@@ -160,9 +155,10 @@ public record Proposal(PublicKey _address,
                         dao,
                         passLpTokensLocked,
                         failLpTokensLocked,
-                        nonce,
                         pdaBump,
-                        question);
+                        question,
+                        durationInSlots,
+                        squadsProposal);
   }
 
   @Override
@@ -176,7 +172,6 @@ public record Proposal(PublicKey _address,
     putInt64LE(_data, i, slotEnqueued);
     i += 8;
     i += Borsh.write(state, _data, i);
-    i += Borsh.write(instruction, _data, i);
     passAmm.write(_data, i);
     i += 32;
     failAmm.write(_data, i);
@@ -191,11 +186,13 @@ public record Proposal(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, failLpTokensLocked);
     i += 8;
-    putInt64LE(_data, i, nonce);
-    i += 8;
     _data[i] = (byte) pdaBump;
     ++i;
     question.write(_data, i);
+    i += 32;
+    putInt64LE(_data, i, durationInSlots);
+    i += 8;
+    squadsProposal.write(_data, i);
     i += 32;
     return i - offset;
   }
@@ -207,16 +204,16 @@ public record Proposal(PublicKey _address,
          + Borsh.lenVector(_descriptionUrl)
          + 8
          + Borsh.len(state)
-         + Borsh.len(instruction)
          + 32
          + 32
          + 32
          + 32
          + 32
-         + 8
          + 8
          + 8
          + 1
+         + 32
+         + 8
          + 32;
   }
 }

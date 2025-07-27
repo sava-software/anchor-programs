@@ -23,10 +23,14 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record Dao(PublicKey _address,
                   Discriminator discriminator,
-                  int treasuryPdaBump,
-                  PublicKey treasury,
-                  PublicKey tokenMint,
-                  PublicKey usdcMint,
+                  // `nonce` + `dao_creator` are PDA seeds
+                  long nonce,
+                  PublicKey daoCreator,
+                  int pdaBump,
+                  PublicKey squadsMultisig,
+                  PublicKey squadsMultisigVault,
+                  PublicKey baseMint,
+                  PublicKey quoteMint,
                   int proposalCount,
                   int passThresholdBps,
                   long slotsPerProposal,
@@ -46,6 +50,8 @@ public record Dao(PublicKey _address,
                   // in 50 minutes.
                   BigInteger twapInitialObservation,
                   BigInteger twapMaxObservationChangePerUpdate,
+                  // Forces TWAP calculation to start after amm.created_at_slot + twap_start_delay_slots
+                  long twapStartDelaySlots,
                   // As an anti-spam measure and to help liquidity, you need to lock up some liquidity
                   // in both futarchic markets in order to create a proposal.
                   // 
@@ -54,38 +60,55 @@ public record Dao(PublicKey _address,
                   // 10 * 1_000_000_000 (10 META).
                   long minQuoteFutarchicLiquidity,
                   long minBaseFutarchicLiquidity,
-                  long seqNum) implements Borsh {
+                  long seqNum,
+                  InitialSpendingLimit initialSpendingLimit) implements Borsh {
 
-  public static final int BYTES = 175;
-  public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+  public static final int NONCE_OFFSET = 8;
+  public static final int DAO_CREATOR_OFFSET = 16;
+  public static final int PDA_BUMP_OFFSET = 48;
+  public static final int SQUADS_MULTISIG_OFFSET = 49;
+  public static final int SQUADS_MULTISIG_VAULT_OFFSET = 81;
+  public static final int BASE_MINT_OFFSET = 113;
+  public static final int QUOTE_MINT_OFFSET = 145;
+  public static final int PROPOSAL_COUNT_OFFSET = 177;
+  public static final int PASS_THRESHOLD_BPS_OFFSET = 181;
+  public static final int SLOTS_PER_PROPOSAL_OFFSET = 183;
+  public static final int TWAP_INITIAL_OBSERVATION_OFFSET = 191;
+  public static final int TWAP_MAX_OBSERVATION_CHANGE_PER_UPDATE_OFFSET = 207;
+  public static final int TWAP_START_DELAY_SLOTS_OFFSET = 223;
+  public static final int MIN_QUOTE_FUTARCHIC_LIQUIDITY_OFFSET = 231;
+  public static final int MIN_BASE_FUTARCHIC_LIQUIDITY_OFFSET = 239;
+  public static final int SEQ_NUM_OFFSET = 247;
+  public static final int INITIAL_SPENDING_LIMIT_OFFSET = 255;
 
-  public static final int TREASURY_PDA_BUMP_OFFSET = 8;
-  public static final int TREASURY_OFFSET = 9;
-  public static final int TOKEN_MINT_OFFSET = 41;
-  public static final int USDC_MINT_OFFSET = 73;
-  public static final int PROPOSAL_COUNT_OFFSET = 105;
-  public static final int PASS_THRESHOLD_BPS_OFFSET = 109;
-  public static final int SLOTS_PER_PROPOSAL_OFFSET = 111;
-  public static final int TWAP_INITIAL_OBSERVATION_OFFSET = 119;
-  public static final int TWAP_MAX_OBSERVATION_CHANGE_PER_UPDATE_OFFSET = 135;
-  public static final int MIN_QUOTE_FUTARCHIC_LIQUIDITY_OFFSET = 151;
-  public static final int MIN_BASE_FUTARCHIC_LIQUIDITY_OFFSET = 159;
-  public static final int SEQ_NUM_OFFSET = 167;
-
-  public static Filter createTreasuryPdaBumpFilter(final int treasuryPdaBump) {
-    return Filter.createMemCompFilter(TREASURY_PDA_BUMP_OFFSET, new byte[]{(byte) treasuryPdaBump});
+  public static Filter createNonceFilter(final long nonce) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, nonce);
+    return Filter.createMemCompFilter(NONCE_OFFSET, _data);
   }
 
-  public static Filter createTreasuryFilter(final PublicKey treasury) {
-    return Filter.createMemCompFilter(TREASURY_OFFSET, treasury);
+  public static Filter createDaoCreatorFilter(final PublicKey daoCreator) {
+    return Filter.createMemCompFilter(DAO_CREATOR_OFFSET, daoCreator);
   }
 
-  public static Filter createTokenMintFilter(final PublicKey tokenMint) {
-    return Filter.createMemCompFilter(TOKEN_MINT_OFFSET, tokenMint);
+  public static Filter createPdaBumpFilter(final int pdaBump) {
+    return Filter.createMemCompFilter(PDA_BUMP_OFFSET, new byte[]{(byte) pdaBump});
   }
 
-  public static Filter createUsdcMintFilter(final PublicKey usdcMint) {
-    return Filter.createMemCompFilter(USDC_MINT_OFFSET, usdcMint);
+  public static Filter createSquadsMultisigFilter(final PublicKey squadsMultisig) {
+    return Filter.createMemCompFilter(SQUADS_MULTISIG_OFFSET, squadsMultisig);
+  }
+
+  public static Filter createSquadsMultisigVaultFilter(final PublicKey squadsMultisigVault) {
+    return Filter.createMemCompFilter(SQUADS_MULTISIG_VAULT_OFFSET, squadsMultisigVault);
+  }
+
+  public static Filter createBaseMintFilter(final PublicKey baseMint) {
+    return Filter.createMemCompFilter(BASE_MINT_OFFSET, baseMint);
+  }
+
+  public static Filter createQuoteMintFilter(final PublicKey quoteMint) {
+    return Filter.createMemCompFilter(QUOTE_MINT_OFFSET, quoteMint);
   }
 
   public static Filter createProposalCountFilter(final int proposalCount) {
@@ -116,6 +139,12 @@ public record Dao(PublicKey _address,
     final byte[] _data = new byte[16];
     putInt128LE(_data, 0, twapMaxObservationChangePerUpdate);
     return Filter.createMemCompFilter(TWAP_MAX_OBSERVATION_CHANGE_PER_UPDATE_OFFSET, _data);
+  }
+
+  public static Filter createTwapStartDelaySlotsFilter(final long twapStartDelaySlots) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, twapStartDelaySlots);
+    return Filter.createMemCompFilter(TWAP_START_DELAY_SLOTS_OFFSET, _data);
   }
 
   public static Filter createMinQuoteFutarchicLiquidityFilter(final long minQuoteFutarchicLiquidity) {
@@ -156,13 +185,19 @@ public record Dao(PublicKey _address,
     }
     final var discriminator = parseDiscriminator(_data, offset);
     int i = offset + discriminator.length();
-    final var treasuryPdaBump = _data[i] & 0xFF;
+    final var nonce = getInt64LE(_data, i);
+    i += 8;
+    final var daoCreator = readPubKey(_data, i);
+    i += 32;
+    final var pdaBump = _data[i] & 0xFF;
     ++i;
-    final var treasury = readPubKey(_data, i);
+    final var squadsMultisig = readPubKey(_data, i);
     i += 32;
-    final var tokenMint = readPubKey(_data, i);
+    final var squadsMultisigVault = readPubKey(_data, i);
     i += 32;
-    final var usdcMint = readPubKey(_data, i);
+    final var baseMint = readPubKey(_data, i);
+    i += 32;
+    final var quoteMint = readPubKey(_data, i);
     i += 32;
     final var proposalCount = getInt32LE(_data, i);
     i += 4;
@@ -174,37 +209,52 @@ public record Dao(PublicKey _address,
     i += 16;
     final var twapMaxObservationChangePerUpdate = getInt128LE(_data, i);
     i += 16;
+    final var twapStartDelaySlots = getInt64LE(_data, i);
+    i += 8;
     final var minQuoteFutarchicLiquidity = getInt64LE(_data, i);
     i += 8;
     final var minBaseFutarchicLiquidity = getInt64LE(_data, i);
     i += 8;
     final var seqNum = getInt64LE(_data, i);
+    i += 8;
+    final var initialSpendingLimit = _data[i++] == 0 ? null : InitialSpendingLimit.read(_data, i);
     return new Dao(_address,
                    discriminator,
-                   treasuryPdaBump,
-                   treasury,
-                   tokenMint,
-                   usdcMint,
+                   nonce,
+                   daoCreator,
+                   pdaBump,
+                   squadsMultisig,
+                   squadsMultisigVault,
+                   baseMint,
+                   quoteMint,
                    proposalCount,
                    passThresholdBps,
                    slotsPerProposal,
                    twapInitialObservation,
                    twapMaxObservationChangePerUpdate,
+                   twapStartDelaySlots,
                    minQuoteFutarchicLiquidity,
                    minBaseFutarchicLiquidity,
-                   seqNum);
+                   seqNum,
+                   initialSpendingLimit);
   }
 
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    _data[i] = (byte) treasuryPdaBump;
+    putInt64LE(_data, i, nonce);
+    i += 8;
+    daoCreator.write(_data, i);
+    i += 32;
+    _data[i] = (byte) pdaBump;
     ++i;
-    treasury.write(_data, i);
+    squadsMultisig.write(_data, i);
     i += 32;
-    tokenMint.write(_data, i);
+    squadsMultisigVault.write(_data, i);
     i += 32;
-    usdcMint.write(_data, i);
+    baseMint.write(_data, i);
+    i += 32;
+    quoteMint.write(_data, i);
     i += 32;
     putInt32LE(_data, i, proposalCount);
     i += 4;
@@ -216,17 +266,36 @@ public record Dao(PublicKey _address,
     i += 16;
     putInt128LE(_data, i, twapMaxObservationChangePerUpdate);
     i += 16;
+    putInt64LE(_data, i, twapStartDelaySlots);
+    i += 8;
     putInt64LE(_data, i, minQuoteFutarchicLiquidity);
     i += 8;
     putInt64LE(_data, i, minBaseFutarchicLiquidity);
     i += 8;
     putInt64LE(_data, i, seqNum);
     i += 8;
+    i += Borsh.writeOptional(initialSpendingLimit, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return BYTES;
+    return 8 + 8
+         + 32
+         + 1
+         + 32
+         + 32
+         + 32
+         + 32
+         + 4
+         + 2
+         + 8
+         + 16
+         + 16
+         + 8
+         + 8
+         + 8
+         + 8
+         + (initialSpendingLimit == null ? 1 : (1 + Borsh.len(initialSpendingLimit)));
   }
 }

@@ -65,7 +65,7 @@ public final class AmmProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 40;
+    public static final int BYTES = 48;
 
     public static CreateAmmIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

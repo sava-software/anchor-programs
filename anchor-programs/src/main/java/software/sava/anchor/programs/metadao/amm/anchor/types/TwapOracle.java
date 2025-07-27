@@ -37,9 +37,11 @@ public record TwapOracle(long lastUpdatedSlot,
                          // The most that an observation can change per update.
                          BigInteger maxObservationChangePerUpdate,
                          // What the initial `latest_observation` is set to.
-                         BigInteger initialObservation) implements Borsh {
+                         BigInteger initialObservation,
+                         // Number of slots after amm.created_at_slot to start recording TWAP
+                         long startDelaySlots) implements Borsh {
 
-  public static final int BYTES = 88;
+  public static final int BYTES = 96;
 
   public static TwapOracle read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -57,12 +59,15 @@ public record TwapOracle(long lastUpdatedSlot,
     final var maxObservationChangePerUpdate = getInt128LE(_data, i);
     i += 16;
     final var initialObservation = getInt128LE(_data, i);
+    i += 16;
+    final var startDelaySlots = getInt64LE(_data, i);
     return new TwapOracle(lastUpdatedSlot,
                           lastPrice,
                           lastObservation,
                           aggregator,
                           maxObservationChangePerUpdate,
-                          initialObservation);
+                          initialObservation,
+                          startDelaySlots);
   }
 
   @Override
@@ -80,6 +85,8 @@ public record TwapOracle(long lastUpdatedSlot,
     i += 16;
     putInt128LE(_data, i, initialObservation);
     i += 16;
+    putInt64LE(_data, i, startDelaySlots);
+    i += 8;
     return i - offset;
   }
 
