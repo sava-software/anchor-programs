@@ -10,6 +10,7 @@ import software.sava.rpc.json.http.response.AccountInfo;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 // Parameter that set by the protocol
 public record TokenBadge(PublicKey _address,
@@ -22,6 +23,9 @@ public record TokenBadge(PublicKey _address,
   public static final int BYTES = 168;
   public static final int PADDING_LEN = 128;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(116, 219, 204, 229, 249, 116, 255, 150);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int TOKEN_MINT_OFFSET = 8;
   public static final int PADDING_OFFSET = 40;

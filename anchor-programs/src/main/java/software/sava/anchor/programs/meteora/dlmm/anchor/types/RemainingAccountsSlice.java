@@ -4,8 +4,6 @@ import software.sava.core.borsh.Borsh;
 
 public record RemainingAccountsSlice(AccountsType accountsType, int length) implements Borsh {
 
-  public static final int BYTES = 2;
-
   public static RemainingAccountsSlice read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
@@ -28,6 +26,6 @@ public record RemainingAccountsSlice(AccountsType accountsType, int length) impl
 
   @Override
   public int l() {
-    return BYTES;
+    return Borsh.len(accountsType) + 1;
   }
 }

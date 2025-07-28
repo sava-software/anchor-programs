@@ -85,7 +85,10 @@ public sealed interface LbClmmError extends ProgramError permits
     LbClmmError.ZeroFundedAmount,
     LbClmmError.InvalidSide,
     LbClmmError.InvalidResizeLength,
-    LbClmmError.NotSupportAtTheMoment {
+    LbClmmError.NotSupportAtTheMoment,
+    LbClmmError.InvalidRebalanceParameters,
+    LbClmmError.InvalidRewardAccounts,
+    LbClmmError.UndeterminedError {
 
   static LbClmmError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -172,6 +175,9 @@ public sealed interface LbClmmError extends ProgramError permits
       case 6080 -> InvalidSide.INSTANCE;
       case 6081 -> InvalidResizeLength.INSTANCE;
       case 6082 -> NotSupportAtTheMoment.INSTANCE;
+      case 6083 -> InvalidRebalanceParameters.INSTANCE;
+      case 6084 -> InvalidRewardAccounts.INSTANCE;
+      case 6085 -> UndeterminedError.INSTANCE;
       default -> throw new IllegalStateException("Unexpected LbClmm error code: " + errorCode);
     };
   }
@@ -754,6 +760,27 @@ public sealed interface LbClmmError extends ProgramError permits
 
     public static final NotSupportAtTheMoment INSTANCE = new NotSupportAtTheMoment(
         6082, "Not support at the moment"
+    );
+  }
+
+  record InvalidRebalanceParameters(int code, String msg) implements LbClmmError {
+
+    public static final InvalidRebalanceParameters INSTANCE = new InvalidRebalanceParameters(
+        6083, "Invalid rebalance parameters"
+    );
+  }
+
+  record InvalidRewardAccounts(int code, String msg) implements LbClmmError {
+
+    public static final InvalidRewardAccounts INSTANCE = new InvalidRewardAccounts(
+        6084, "Invalid reward accounts"
+    );
+  }
+
+  record UndeterminedError(int code, String msg) implements LbClmmError {
+
+    public static final UndeterminedError INSTANCE = new UndeterminedError(
+        6085, "Undetermined error"
     );
   }
 }

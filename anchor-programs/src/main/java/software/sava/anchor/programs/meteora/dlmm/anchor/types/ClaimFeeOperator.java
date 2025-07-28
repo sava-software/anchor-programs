@@ -10,6 +10,7 @@ import software.sava.rpc.json.http.response.AccountInfo;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 // Parameter that set by the protocol
 public record ClaimFeeOperator(PublicKey _address,
@@ -22,6 +23,9 @@ public record ClaimFeeOperator(PublicKey _address,
   public static final int BYTES = 168;
   public static final int PADDING_LEN = 128;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(166, 48, 134, 86, 34, 200, 188, 150);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int OPERATOR_OFFSET = 8;
   public static final int PADDING_OFFSET = 40;

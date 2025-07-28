@@ -14,6 +14,7 @@ import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record Position(PublicKey _address,
                        Discriminator discriminator,
@@ -49,6 +50,9 @@ public record Position(PublicKey _address,
   public static final int TOTAL_CLAIMED_REWARDS_LEN = 2;
   public static final int RESERVED_LEN = 160;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(170, 188, 143, 228, 122, 64, 247, 208);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int LB_PAIR_OFFSET = 8;
   public static final int OWNER_OFFSET = 40;

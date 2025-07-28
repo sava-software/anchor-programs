@@ -10,10 +10,15 @@ import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 
 public record DynamicFeeParameterUpdate(PublicKey lbPair,
+                                        // Filter period determine high frequency trading time window.
                                         int filterPeriod,
+                                        // Decay period determine when the volatile fee start decay / decrease.
                                         int decayPeriod,
+                                        // Reduction factor controls the volatile fee rate decrement rate.
                                         int reductionFactor,
+                                        // Used to scale the variable fee component depending on the dynamic of the market
                                         int variableFeeControl,
+                                        // Maximum number of bin crossed can be accumulated. Used to cap volatile fee rate.
                                         int maxVolatilityAccumulator) implements Borsh {
 
   public static final int BYTES = 46;

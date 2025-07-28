@@ -12,6 +12,7 @@ import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 // An account to contain a range of bin. For example: Bin 100 <-> 200.
 // For example:
@@ -30,6 +31,9 @@ public record BinArray(PublicKey _address,
   public static final int PADDING_LEN = 7;
   public static final int BINS_LEN = 70;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(92, 142, 92, 220, 5, 148, 70, 181);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int INDEX_OFFSET = 8;
   public static final int VERSION_OFFSET = 16;

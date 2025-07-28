@@ -13,6 +13,7 @@ import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record PresetParameter2(PublicKey _address,
                                Discriminator discriminator,
@@ -44,6 +45,9 @@ public record PresetParameter2(PublicKey _address,
   public static final int BYTES = 192;
   public static final int PADDING_1_LEN = 20;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(171, 236, 148, 115, 162, 113, 222, 174);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int BIN_STEP_OFFSET = 8;
   public static final int BASE_FACTOR_OFFSET = 10;

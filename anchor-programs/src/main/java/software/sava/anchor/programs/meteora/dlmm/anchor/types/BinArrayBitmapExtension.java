@@ -10,6 +10,7 @@ import software.sava.rpc.json.http.response.AccountInfo;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
+import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record BinArrayBitmapExtension(PublicKey _address,
                                       Discriminator discriminator,
@@ -23,6 +24,9 @@ public record BinArrayBitmapExtension(PublicKey _address,
   public static final int POSITIVE_BIN_ARRAY_BITMAP_LEN = 12;
   public static final int NEGATIVE_BIN_ARRAY_BITMAP_LEN = 12;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
+
+  public static final Discriminator DISCRIMINATOR = toDiscriminator(80, 111, 124, 113, 55, 237, 18, 5);
+  public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int LB_PAIR_OFFSET = 8;
   public static final int POSITIVE_BIN_ARRAY_BITMAP_OFFSET = 40;
