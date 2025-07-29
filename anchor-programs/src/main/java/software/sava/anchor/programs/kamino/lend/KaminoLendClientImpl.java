@@ -185,15 +185,20 @@ final class KaminoLendClientImpl implements KaminoLendClient {
   }
 
   @Override
-  public Instruction refreshReserve(final PublicKey lendingMarket, final PublicKey reserveKey) {
+  public Instruction refreshReserve(final PublicKey lendingMarket,
+                                    final PublicKey reserveKey,
+                                    final PublicKey pythOracleKey,
+                                    final PublicKey switchboardPriceOracleKey,
+                                    final PublicKey switchboardTwapOracleKey,
+                                    final PublicKey scopePricesKey) {
     return KaminoLendingProgram.refreshReserve(
         kaminoAccounts.invokedKLendProgram(),
         reserveKey,
         lendingMarket,
-        kaminoAccounts.kLendProgram(),
-        kaminoAccounts.kLendProgram(),
-        kaminoAccounts.kLendProgram(),
-        kaminoAccounts.scopePrices()
+        pythOracleKey,
+        switchboardPriceOracleKey,
+        switchboardTwapOracleKey,
+        scopePricesKey
     );
   }
 

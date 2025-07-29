@@ -118,7 +118,37 @@ public interface KaminoLendClient {
                                             final PublicKey obligationFarmKey,
                                             final int mode);
 
-  Instruction refreshReserve(final PublicKey lendingMarket, final PublicKey reserveKey);
+  default Instruction refreshReserve(final PublicKey lendingMarket, final PublicKey reserveKey) {
+    final var kaminoAccounts = kaminoAccounts();
+    return refreshReserve(
+        lendingMarket,
+        reserveKey,
+        kaminoAccounts.kLendProgram(),
+        kaminoAccounts.kLendProgram(),
+        kaminoAccounts.kLendProgram(),
+        kaminoAccounts.scopeOraclePrices()
+    );
+  }
+
+  Instruction refreshReserve(final PublicKey lendingMarket,
+                             final PublicKey reserveKey,
+                             final PublicKey pythOracleKey,
+                             final PublicKey switchboardPriceOracleKey,
+                             final PublicKey switchboardTwapOracleKey,
+                             final PublicKey scopePricesKey);
+
+  default Instruction refreshReserve(final Reserve reserve) {
+    final var oracleInfo = reserve.config().tokenInfo();
+    final var switchboardInfo = oracleInfo.switchboardConfiguration();
+    return refreshReserve(
+        reserve.lendingMarket(),
+        reserve._address(),
+        oracleInfo.pythConfiguration().price(),
+        switchboardInfo.priceAggregator(),
+        switchboardInfo.twapAggregator(),
+        oracleInfo.scopeConfiguration().priceFeed()
+    );
+  }
 
   Instruction refreshObligation(final PublicKey lendingMarket, final PublicKey obligationKey);
 
