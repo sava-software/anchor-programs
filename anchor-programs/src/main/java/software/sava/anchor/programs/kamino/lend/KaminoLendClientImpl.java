@@ -191,14 +191,15 @@ final class KaminoLendClientImpl implements KaminoLendClient {
                                     final PublicKey switchboardPriceOracleKey,
                                     final PublicKey switchboardTwapOracleKey,
                                     final PublicKey scopePricesKey) {
+    final var kLendProgram = kaminoAccounts.kLendProgram();
     return KaminoLendingProgram.refreshReserve(
         kaminoAccounts.invokedKLendProgram(),
         reserveKey,
         lendingMarket,
-        pythOracleKey,
-        switchboardPriceOracleKey,
-        switchboardTwapOracleKey,
-        scopePricesKey
+        pythOracleKey == null || pythOracleKey.equals(PublicKey.NONE) ? kLendProgram : pythOracleKey,
+        switchboardPriceOracleKey == null || switchboardPriceOracleKey.equals(PublicKey.NONE) ? kLendProgram : switchboardPriceOracleKey,
+        switchboardTwapOracleKey == null || switchboardTwapOracleKey.equals(PublicKey.NONE) ? kLendProgram : switchboardTwapOracleKey,
+        scopePricesKey == null || scopePricesKey.equals(PublicKey.NONE) ? kLendProgram : scopePricesKey
     );
   }
 
