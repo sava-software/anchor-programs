@@ -4745,7 +4745,9 @@ public final class GlamProtocolProgram {
 
   // Extra accounts for pricing N vault depositors:
   // - (vault_depositor, drift_vault, drift_user) x N
-  // - markets and oracles used by all drift users (no specific order)
+  // - spot_market used by drift users of vaults (no specific order)
+  // - perp markets used by drift users of vaults (no specific order)
+  // - oracles of spot markets and perp markets (no specific order)
   public static Instruction priceDriftVaultDepositors(final AccountMeta invokedGlamProtocolProgramMeta,
                                                       final PublicKey glamStateKey,
                                                       final PublicKey glamVaultKey,
@@ -4753,7 +4755,9 @@ public final class GlamProtocolProgram {
                                                       final PublicKey solOracleKey,
                                                       final PublicKey glamConfigKey,
                                                       final PriceDenom denom,
-                                                      final int numVaultDepositors) {
+                                                      final int numVaultDepositors,
+                                                      final int numSpotMarkets,
+                                                      final int numPerpMarkets) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
@@ -4762,21 +4766,29 @@ public final class GlamProtocolProgram {
       createRead(glamConfigKey)
     );
 
-    final byte[] _data = new byte[9 + Borsh.len(denom)];
+    final byte[] _data = new byte[11 + Borsh.len(denom)];
     int i = writeDiscriminator(PRICE_DRIFT_VAULT_DEPOSITORS_DISCRIMINATOR, _data, 0);
     i += Borsh.write(denom, _data, i);
     _data[i] = (byte) numVaultDepositors;
+    ++i;
+    _data[i] = (byte) numSpotMarkets;
+    ++i;
+    _data[i] = (byte) numPerpMarkets;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
   }
 
-  public record PriceDriftVaultDepositorsIxData(Discriminator discriminator, PriceDenom denom, int numVaultDepositors) implements Borsh {  
+  public record PriceDriftVaultDepositorsIxData(Discriminator discriminator,
+                                                PriceDenom denom,
+                                                int numVaultDepositors,
+                                                int numSpotMarkets,
+                                                int numPerpMarkets) implements Borsh {  
 
     public static PriceDriftVaultDepositorsIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 10;
+    public static final int BYTES = 12;
 
     public static PriceDriftVaultDepositorsIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -4787,7 +4799,15 @@ public final class GlamProtocolProgram {
       final var denom = PriceDenom.read(_data, i);
       i += Borsh.len(denom);
       final var numVaultDepositors = _data[i] & 0xFF;
-      return new PriceDriftVaultDepositorsIxData(discriminator, denom, numVaultDepositors);
+      ++i;
+      final var numSpotMarkets = _data[i] & 0xFF;
+      ++i;
+      final var numPerpMarkets = _data[i] & 0xFF;
+      return new PriceDriftVaultDepositorsIxData(discriminator,
+                                                 denom,
+                                                 numVaultDepositors,
+                                                 numSpotMarkets,
+                                                 numPerpMarkets);
     }
 
     @Override
@@ -4795,6 +4815,10 @@ public final class GlamProtocolProgram {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.write(denom, _data, i);
       _data[i] = (byte) numVaultDepositors;
+      ++i;
+      _data[i] = (byte) numSpotMarkets;
+      ++i;
+      _data[i] = (byte) numPerpMarkets;
       ++i;
       return i - offset;
     }
@@ -4877,33 +4901,23 @@ public final class GlamProtocolProgram {
   // 
   // Extra accounts for pricing N kamino vault shares:
   // - (kvault_share_ata, kvault_share_mint, kvault_state, kvault_deposit_token_oracle) x N
-  // - (lending_market, reserve) x M
-  // - M = number of markets used by all kvaults' allocations
-  // - Tuples must follow the same order of kvaults' allocations
+  // - reserve x M
+  // - M = number of reserves used by all kvaults' allocations
+  // - reserve pubkeys must follow the same order of reserves used by each allocation
   public static Instruction priceKaminoVaultShares(final AccountMeta invokedGlamProtocolProgramMeta,
                                                    final PublicKey glamStateKey,
                                                    final PublicKey glamVaultKey,
                                                    final PublicKey signerKey,
-                                                   final PublicKey kaminoLendingProgramKey,
                                                    final PublicKey solOracleKey,
                                                    final PublicKey glamConfigKey,
-                                                   final PublicKey pythOracleKey,
-                                                   final PublicKey switchboardPriceOracleKey,
-                                                   final PublicKey switchboardTwapOracleKey,
-                                                   final PublicKey scopePricesKey,
                                                    final PriceDenom denom,
                                                    final int numVaults) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
-      createRead(kaminoLendingProgramKey),
       createRead(solOracleKey),
-      createRead(glamConfigKey),
-      createRead(requireNonNullElse(pythOracleKey, invokedGlamProtocolProgramMeta.publicKey())),
-      createRead(requireNonNullElse(switchboardPriceOracleKey, invokedGlamProtocolProgramMeta.publicKey())),
-      createRead(requireNonNullElse(switchboardTwapOracleKey, invokedGlamProtocolProgramMeta.publicKey())),
-      createRead(requireNonNullElse(scopePricesKey, invokedGlamProtocolProgramMeta.publicKey()))
+      createRead(glamConfigKey)
     );
 
     final byte[] _data = new byte[9 + Borsh.len(denom)];

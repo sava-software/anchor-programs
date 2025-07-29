@@ -586,7 +586,9 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   @Override
   public Instruction priceDriftVaultDepositors(final PublicKey solOracleKey,
                                                final PriceDenom priceDenom,
-                                               final int numVaultDepositors) {
+                                               final int numVaultDepositors,
+                                               final int numSpotMarkets,
+                                               final int numPerpMarkets) {
     return GlamProtocolProgram.priceDriftVaultDepositors(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
@@ -595,7 +597,9 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         solOracleKey,
         glamVaultAccounts.glamAccounts().glamConfigKey(),
         priceDenom,
-        numVaultDepositors
+        numVaultDepositors,
+        numSpotMarkets,
+        numPerpMarkets
     );
   }
 
@@ -624,12 +628,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public Instruction priceKaminoVaultShares(final PublicKey kaminoLendingProgramKey,
-                                            final PublicKey solOracleKey,
-                                            final PublicKey pythOracleKey,
-                                            final PublicKey switchboardPriceOracleKey,
-                                            final PublicKey switchboardTwapOracleKey,
-                                            final PublicKey scopePricesKey,
+  public Instruction priceKaminoVaultShares(final PublicKey solOracleKey,
                                             final PriceDenom priceDenom,
                                             final int numVaults) {
     return GlamProtocolProgram.priceKaminoVaultShares(
@@ -637,13 +636,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
-        kaminoLendingProgramKey,
         solOracleKey,
         glamVaultAccounts.glamAccounts().glamConfigKey(),
-        pythOracleKey,
-        switchboardPriceOracleKey,
-        switchboardTwapOracleKey,
-        scopePricesKey,
         priceDenom,
         numVaults
     );

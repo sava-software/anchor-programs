@@ -127,12 +127,13 @@ public interface KaminoLendClient {
 
   default Instruction refreshReserve(final PublicKey lendingMarket, final PublicKey reserveKey) {
     final var kaminoAccounts = kaminoAccounts();
+    final var kLendProgram = kaminoAccounts.kLendProgram();
     return refreshReserve(
         lendingMarket,
         reserveKey,
-        kaminoAccounts.kLendProgram(),
-        kaminoAccounts.kLendProgram(),
-        kaminoAccounts.kLendProgram(),
+        kLendProgram,
+        kLendProgram,
+        kLendProgram,
         kaminoAccounts.scopeOraclePrices()
     );
   }
