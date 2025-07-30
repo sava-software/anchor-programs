@@ -6341,7 +6341,8 @@ public final class GlamProtocolProgram {
       createRead(solanaAccounts.stakeProgram()),
       createWrite(stakeKey),
       createRead(solanaAccounts.clockSysVar()),
-      createRead(solanaAccounts.stakeHistorySysVar())
+      createRead(solanaAccounts.stakeHistorySysVar()),
+      createRead(solanaAccounts.systemProgram())
     );
 
     final byte[] _data = new byte[16];
