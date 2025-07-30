@@ -142,12 +142,30 @@ public interface KaminoLendClient {
     return refreshReserve(reserve.lendingMarket(), reserve._address());
   }
 
+  Instruction refreshReservesBatch(final boolean skipPriceUpdates);
+
   Instruction refreshObligation(final PublicKey lendingMarket, final PublicKey obligationKey);
 
   Instruction depositReserveLiquidityAndObligationCollateral(final PublicKey obligationKey,
                                                              final PublicKey reserveKey,
-                                                             final PublicKey reserveDestinationDepositCollateralKey,
                                                              final ReservePDAs reservePDAs,
                                                              final PublicKey sourceTokenAccount,
                                                              final long liquidityAmount);
+
+  Instruction depositReserveLiquidityAndObligationCollateralV2(final PublicKey obligationKey,
+                                                               final PublicKey reserveKey,
+                                                               final ReservePDAs reservePDAs,
+                                                               final PublicKey sourceTokenAccount,
+                                                               final PublicKey farmsAccountsObligationFarmUserStateKey,
+                                                               final PublicKey farmsAccountsReserveFarmStateKey,
+                                                               final long liquidityAmount);
+
+  Instruction withdrawObligationCollateralAndRedeemReserveCollateralV2(final PublicKey obligationKey,
+                                                                       final PublicKey reserveKey,
+                                                                       final PublicKey withdrawAccountsReserveSourceCollateralKey,
+                                                                       final ReservePDAs reservePDAs,
+                                                                       final PublicKey destinationTokenAccount,
+                                                                       final PublicKey farmsAccountsObligationFarmUserStateKey,
+                                                                       final PublicKey farmsAccountsReserveFarmStateKey,
+                                                                       final long collateralAmount);
 }
