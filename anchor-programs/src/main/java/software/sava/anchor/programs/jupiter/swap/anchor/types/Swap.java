@@ -58,8 +58,8 @@ public sealed interface Swap extends RustEnum permits
   Swap.RaydiumCP,
   Swap.WhirlpoolSwapV2,
   Swap.OneIntro,
-  Swap.PumpdotfunWrappedBuy,
-  Swap.PumpdotfunWrappedSell,
+  Swap.PumpWrappedBuy,
+  Swap.PumpWrappedSell,
   Swap.PerpsV2,
   Swap.PerpsV2AddLiquidity,
   Swap.PerpsV2RemoveLiquidity,
@@ -81,8 +81,8 @@ public sealed interface Swap extends RustEnum permits
   Swap.VirtualsBuy,
   Swap.VirtualsSell,
   Swap.Perena,
-  Swap.PumpdotfunAmmBuy,
-  Swap.PumpdotfunAmmSell,
+  Swap.PumpSwapBuy,
+  Swap.PumpSwapSell,
   Swap.Gamma,
   Swap.MeteoraDlmmSwapV2,
   Swap.Woofi,
@@ -99,7 +99,10 @@ public sealed interface Swap extends RustEnum permits
   Swap.HumidiFi,
   Swap.MeteoraDynamicBondingCurveSwapWithRemainingAccounts,
   Swap.TesseraV,
-  Swap.RaydiumStable {
+  Swap.PumpWrappedBuyV2,
+  Swap.PumpWrappedSellV2,
+  Swap.PumpSwapBuyV2,
+  Swap.PumpSwapSellV2 {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -154,8 +157,8 @@ public sealed interface Swap extends RustEnum permits
       case 46 -> RaydiumCP.INSTANCE;
       case 47 -> WhirlpoolSwapV2.read(_data, i);
       case 48 -> OneIntro.INSTANCE;
-      case 49 -> PumpdotfunWrappedBuy.INSTANCE;
-      case 50 -> PumpdotfunWrappedSell.INSTANCE;
+      case 49 -> PumpWrappedBuy.INSTANCE;
+      case 50 -> PumpWrappedSell.INSTANCE;
       case 51 -> PerpsV2.INSTANCE;
       case 52 -> PerpsV2AddLiquidity.INSTANCE;
       case 53 -> PerpsV2RemoveLiquidity.INSTANCE;
@@ -177,8 +180,8 @@ public sealed interface Swap extends RustEnum permits
       case 69 -> VirtualsBuy.INSTANCE;
       case 70 -> VirtualsSell.INSTANCE;
       case 71 -> Perena.read(_data, i);
-      case 72 -> PumpdotfunAmmBuy.INSTANCE;
-      case 73 -> PumpdotfunAmmSell.INSTANCE;
+      case 72 -> PumpSwapBuy.INSTANCE;
+      case 73 -> PumpSwapSell.INSTANCE;
       case 74 -> Gamma.INSTANCE;
       case 75 -> MeteoraDlmmSwapV2.read(_data, i);
       case 76 -> Woofi.INSTANCE;
@@ -195,7 +198,10 @@ public sealed interface Swap extends RustEnum permits
       case 87 -> HumidiFi.read(_data, i);
       case 88 -> MeteoraDynamicBondingCurveSwapWithRemainingAccounts.INSTANCE;
       case 89 -> TesseraV.read(_data, i);
-      case 90 -> RaydiumStable.INSTANCE;
+      case 90 -> PumpWrappedBuyV2.INSTANCE;
+      case 91 -> PumpWrappedSellV2.INSTANCE;
+      case 92 -> PumpSwapBuyV2.INSTANCE;
+      case 93 -> PumpSwapSellV2.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -908,9 +914,9 @@ public sealed interface Swap extends RustEnum permits
     }
   }
 
-  record PumpdotfunWrappedBuy() implements EnumNone, Swap {
+  record PumpWrappedBuy() implements EnumNone, Swap {
 
-    public static final PumpdotfunWrappedBuy INSTANCE = new PumpdotfunWrappedBuy();
+    public static final PumpWrappedBuy INSTANCE = new PumpWrappedBuy();
 
     @Override
     public int ordinal() {
@@ -918,9 +924,9 @@ public sealed interface Swap extends RustEnum permits
     }
   }
 
-  record PumpdotfunWrappedSell() implements EnumNone, Swap {
+  record PumpWrappedSell() implements EnumNone, Swap {
 
-    public static final PumpdotfunWrappedSell INSTANCE = new PumpdotfunWrappedSell();
+    public static final PumpWrappedSell INSTANCE = new PumpWrappedSell();
 
     @Override
     public int ordinal() {
@@ -1181,9 +1187,9 @@ public sealed interface Swap extends RustEnum permits
     }
   }
 
-  record PumpdotfunAmmBuy() implements EnumNone, Swap {
+  record PumpSwapBuy() implements EnumNone, Swap {
 
-    public static final PumpdotfunAmmBuy INSTANCE = new PumpdotfunAmmBuy();
+    public static final PumpSwapBuy INSTANCE = new PumpSwapBuy();
 
     @Override
     public int ordinal() {
@@ -1191,9 +1197,9 @@ public sealed interface Swap extends RustEnum permits
     }
   }
 
-  record PumpdotfunAmmSell() implements EnumNone, Swap {
+  record PumpSwapSell() implements EnumNone, Swap {
 
-    public static final PumpdotfunAmmSell INSTANCE = new PumpdotfunAmmSell();
+    public static final PumpSwapSell INSTANCE = new PumpSwapSell();
 
     @Override
     public int ordinal() {
@@ -1423,13 +1429,43 @@ public sealed interface Swap extends RustEnum permits
     }
   }
 
-  record RaydiumStable() implements EnumNone, Swap {
+  record PumpWrappedBuyV2() implements EnumNone, Swap {
 
-    public static final RaydiumStable INSTANCE = new RaydiumStable();
+    public static final PumpWrappedBuyV2 INSTANCE = new PumpWrappedBuyV2();
 
     @Override
     public int ordinal() {
       return 90;
+    }
+  }
+
+  record PumpWrappedSellV2() implements EnumNone, Swap {
+
+    public static final PumpWrappedSellV2 INSTANCE = new PumpWrappedSellV2();
+
+    @Override
+    public int ordinal() {
+      return 91;
+    }
+  }
+
+  record PumpSwapBuyV2() implements EnumNone, Swap {
+
+    public static final PumpSwapBuyV2 INSTANCE = new PumpSwapBuyV2();
+
+    @Override
+    public int ordinal() {
+      return 92;
+    }
+  }
+
+  record PumpSwapSellV2() implements EnumNone, Swap {
+
+    public static final PumpSwapSellV2 INSTANCE = new PumpSwapSellV2();
+
+    @Override
+    public int ordinal() {
+      return 93;
     }
   }
 }

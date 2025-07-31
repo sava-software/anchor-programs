@@ -21,7 +21,14 @@ public sealed interface JupiterError extends ProgramError permits
     JupiterError.TokenProgramNotProvided,
     JupiterError.SwapNotSupported,
     JupiterError.ExactOutAmountNotMatched,
-    JupiterError.SourceAndDestinationMintCannotBeTheSame {
+    JupiterError.SourceAndDestinationMintCannotBeTheSame,
+    JupiterError.InvalidMint,
+    JupiterError.InvalidProgramAuthority,
+    JupiterError.InvalidOutputTokenAccount,
+    JupiterError.InvalidFeeWallet,
+    JupiterError.InvalidAuthority,
+    JupiterError.InsufficientFunds,
+    JupiterError.InvalidTokenAccount {
 
   static JupiterError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -44,6 +51,13 @@ public sealed interface JupiterError extends ProgramError permits
       case 6016 -> SwapNotSupported.INSTANCE;
       case 6017 -> ExactOutAmountNotMatched.INSTANCE;
       case 6018 -> SourceAndDestinationMintCannotBeTheSame.INSTANCE;
+      case 6019 -> InvalidMint.INSTANCE;
+      case 6020 -> InvalidProgramAuthority.INSTANCE;
+      case 6021 -> InvalidOutputTokenAccount.INSTANCE;
+      case 6022 -> InvalidFeeWallet.INSTANCE;
+      case 6023 -> InvalidAuthority.INSTANCE;
+      case 6024 -> InsufficientFunds.INSTANCE;
+      case 6025 -> InvalidTokenAccount.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Jupiter error code: " + errorCode);
     };
   }
@@ -178,6 +192,55 @@ public sealed interface JupiterError extends ProgramError permits
 
     public static final SourceAndDestinationMintCannotBeTheSame INSTANCE = new SourceAndDestinationMintCannotBeTheSame(
         6018, "Source mint and destination mint cannot the same"
+    );
+  }
+
+  record InvalidMint(int code, String msg) implements JupiterError {
+
+    public static final InvalidMint INSTANCE = new InvalidMint(
+        6019, "Invalid mint"
+    );
+  }
+
+  record InvalidProgramAuthority(int code, String msg) implements JupiterError {
+
+    public static final InvalidProgramAuthority INSTANCE = new InvalidProgramAuthority(
+        6020, "Invalid program authority"
+    );
+  }
+
+  record InvalidOutputTokenAccount(int code, String msg) implements JupiterError {
+
+    public static final InvalidOutputTokenAccount INSTANCE = new InvalidOutputTokenAccount(
+        6021, "Invalid output token account"
+    );
+  }
+
+  record InvalidFeeWallet(int code, String msg) implements JupiterError {
+
+    public static final InvalidFeeWallet INSTANCE = new InvalidFeeWallet(
+        6022, "Invalid fee wallet"
+    );
+  }
+
+  record InvalidAuthority(int code, String msg) implements JupiterError {
+
+    public static final InvalidAuthority INSTANCE = new InvalidAuthority(
+        6023, "Invalid authority"
+    );
+  }
+
+  record InsufficientFunds(int code, String msg) implements JupiterError {
+
+    public static final InsufficientFunds INSTANCE = new InsufficientFunds(
+        6024, "Insufficient funds"
+    );
+  }
+
+  record InvalidTokenAccount(int code, String msg) implements JupiterError {
+
+    public static final InvalidTokenAccount INSTANCE = new InvalidTokenAccount(
+        6025, "Invalid token account"
     );
   }
 }
