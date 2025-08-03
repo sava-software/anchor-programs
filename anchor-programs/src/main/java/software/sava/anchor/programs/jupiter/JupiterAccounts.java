@@ -9,6 +9,7 @@ import software.sava.core.rpc.Filter;
 
 import java.util.List;
 
+import static java.nio.charset.StandardCharsets.US_ASCII;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static software.sava.core.accounts.PublicKey.findProgramAddress;
 import static software.sava.core.accounts.PublicKey.fromBase58Encoded;
@@ -40,6 +41,7 @@ public interface JupiterAccounts {
                                         final PublicKey merkleDistributorProgram) {
     return new JupiterccountsRecord(
         swapProgram, createInvoked(swapProgram),
+        deriveEventAuthority(swapProgram).publicKey(),
         limitOrderProgram, createInvoked(limitOrderProgram),
         dcaProgram, createInvoked(dcaProgram),
         voteProgram, createInvoked(voteProgram),
@@ -69,6 +71,13 @@ public interface JupiterAccounts {
         fromBase58Encoded(jupTokenMint),
         fromBase58Encoded(jupBaseKey),
         fromBase58Encoded(merkleDistributorProgram)
+    );
+  }
+
+  static ProgramDerivedAddress deriveEventAuthority(final PublicKey swapProgram) {
+    return findProgramAddress(
+        List.of("__event_authority".getBytes(US_ASCII)),
+        swapProgram
     );
   }
 
@@ -216,6 +225,8 @@ public interface JupiterAccounts {
   PublicKey swapProgram();
 
   AccountMeta invokedSwapProgram();
+
+  PublicKey aggregatorEventAuthority();
 
   PublicKey limitOrderProgram();
 
