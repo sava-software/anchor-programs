@@ -537,13 +537,15 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction disableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey) {
+  public Instruction disableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey,
+                                                 final boolean disableMaintenance) {
     return DriftProgram.disableUserHighLeverageMode(
         accounts.invokedDriftProgram(),
         accounts.stateKey(),
         authority,
         user,
-        highLeverageModeConfigKey
+        highLeverageModeConfigKey,
+        disableMaintenance
     );
   }
 
@@ -688,19 +690,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
         accounts.stateKey(),
         userKey,
         authorityKey,
-        sharesToBurn,
-        marketIndex
-    );
-  }
-
-  @Override
-  public Instruction removePerpLpSharesInExpiringMarket(final PublicKey userKey,
-                                                        final long sharesToBurn,
-                                                        final int marketIndex) {
-    return DriftProgram.removePerpLpSharesInExpiringMarket(
-        accounts.invokedDriftProgram(),
-        accounts.stateKey(),
-        userKey,
         sharesToBurn,
         marketIndex
     );

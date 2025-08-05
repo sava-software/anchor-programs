@@ -436,7 +436,11 @@ public interface DriftProgramClient {
 
   Instruction enableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey, final int subAccountId);
 
-  Instruction disableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey);
+  Instruction disableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey, final boolean disableMaintenance);
+
+  default Instruction disableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey) {
+    return disableUserHighLeverageMode(highLeverageModeConfigKey, false);
+  }
 
   Instruction reclaimRent(final PublicKey rentKey);
 
@@ -464,10 +468,6 @@ public interface DriftProgramClient {
                                  final PublicKey authorityKey,
                                  final long sharesToBurn,
                                  final int marketIndex);
-
-  Instruction removePerpLpSharesInExpiringMarket(final PublicKey userKey,
-                                                 final long sharesToBurn,
-                                                 final int marketIndex);
 
   Instruction addPerpLpShares(final PublicKey userKey,
                               final PublicKey authorityKey,

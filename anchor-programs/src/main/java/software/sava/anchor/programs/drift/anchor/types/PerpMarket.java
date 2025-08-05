@@ -107,11 +107,13 @@ public record PerpMarket(PublicKey _address,
                          int highLeverageMarginRatioMaintenance,
                          int protectedMakerLimitPriceDivisor,
                          int protectedMakerDynamicDivisor,
+                         int padding1,
+                         long lastFillPrice,
                          byte[] padding) implements Borsh {
 
   public static final int BYTES = 1216;
   public static final int NAME_LEN = 32;
-  public static final int PADDING_LEN = 36;
+  public static final int PADDING_LEN = 24;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int PUBKEY_OFFSET = 8;
@@ -150,7 +152,9 @@ public record PerpMarket(PublicKey _address,
   public static final int HIGH_LEVERAGE_MARGIN_RATIO_MAINTENANCE_OFFSET = 1176;
   public static final int PROTECTED_MAKER_LIMIT_PRICE_DIVISOR_OFFSET = 1178;
   public static final int PROTECTED_MAKER_DYNAMIC_DIVISOR_OFFSET = 1179;
-  public static final int PADDING_OFFSET = 1180;
+  public static final int PADDING_1_OFFSET = 1180;
+  public static final int LAST_FILL_PRICE_OFFSET = 1184;
+  public static final int PADDING_OFFSET = 1192;
 
   public static Filter createPubkeyFilter(final PublicKey pubkey) {
     return Filter.createMemCompFilter(PUBKEY_OFFSET, pubkey);
@@ -330,6 +334,18 @@ public record PerpMarket(PublicKey _address,
     return Filter.createMemCompFilter(PROTECTED_MAKER_DYNAMIC_DIVISOR_OFFSET, new byte[]{(byte) protectedMakerDynamicDivisor});
   }
 
+  public static Filter createPadding1Filter(final int padding1) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, padding1);
+    return Filter.createMemCompFilter(PADDING_1_OFFSET, _data);
+  }
+
+  public static Filter createLastFillPriceFilter(final long lastFillPrice) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, lastFillPrice);
+    return Filter.createMemCompFilter(LAST_FILL_PRICE_OFFSET, _data);
+  }
+
   public static PerpMarket read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -422,7 +438,11 @@ public record PerpMarket(PublicKey _address,
     ++i;
     final var protectedMakerDynamicDivisor = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[36];
+    final var padding1 = getInt32LE(_data, i);
+    i += 4;
+    final var lastFillPrice = getInt64LE(_data, i);
+    i += 8;
+    final var padding = new byte[24];
     Borsh.readArray(padding, _data, i);
     return new PerpMarket(_address,
                           discriminator,
@@ -462,6 +482,8 @@ public record PerpMarket(PublicKey _address,
                           highLeverageMarginRatioMaintenance,
                           protectedMakerLimitPriceDivisor,
                           protectedMakerDynamicDivisor,
+                          padding1,
+                          lastFillPrice,
                           padding);
   }
 
@@ -533,6 +555,10 @@ public record PerpMarket(PublicKey _address,
     ++i;
     _data[i] = (byte) protectedMakerDynamicDivisor;
     ++i;
+    putInt32LE(_data, i, padding1);
+    i += 4;
+    putInt64LE(_data, i, lastFillPrice);
+    i += 8;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

@@ -6,7 +6,8 @@ public enum OrderBitFlag implements Borsh.Enum {
 
   SignedMessage,
   OracleTriggerMarket,
-  SafeTriggerOrder;
+  SafeTriggerOrder,
+  NewTriggerReduceOnly;
 
   public static OrderBitFlag read(final byte[] _data, final int offset) {
     return Borsh.read(OrderBitFlag.values(), _data, offset);

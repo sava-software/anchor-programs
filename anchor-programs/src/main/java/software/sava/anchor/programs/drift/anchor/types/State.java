@@ -43,10 +43,11 @@ public record State(PublicKey _address,
                     int initialPctToLiquidate,
                     int maxNumberOfSubAccounts,
                     int maxInitializeUserFee,
+                    int featureBitFlags,
                     byte[] padding) implements Borsh {
 
   public static final int BYTES = 992;
-  public static final int PADDING_LEN = 10;
+  public static final int PADDING_LEN = 9;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int ADMIN_OFFSET = 8;
@@ -73,7 +74,8 @@ public record State(PublicKey _address,
   public static final int INITIAL_PCT_TO_LIQUIDATE_OFFSET = 976;
   public static final int MAX_NUMBER_OF_SUB_ACCOUNTS_OFFSET = 978;
   public static final int MAX_INITIALIZE_USER_FEE_OFFSET = 980;
-  public static final int PADDING_OFFSET = 982;
+  public static final int FEATURE_BIT_FLAGS_OFFSET = 982;
+  public static final int PADDING_OFFSET = 983;
 
   public static Filter createAdminFilter(final PublicKey admin) {
     return Filter.createMemCompFilter(ADMIN_OFFSET, admin);
@@ -183,6 +185,10 @@ public record State(PublicKey _address,
     return Filter.createMemCompFilter(MAX_INITIALIZE_USER_FEE_OFFSET, _data);
   }
 
+  public static Filter createFeatureBitFlagsFilter(final int featureBitFlags) {
+    return Filter.createMemCompFilter(FEATURE_BIT_FLAGS_OFFSET, new byte[]{(byte) featureBitFlags});
+  }
+
   public static State read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -251,7 +257,9 @@ public record State(PublicKey _address,
     i += 2;
     final var maxInitializeUserFee = getInt16LE(_data, i);
     i += 2;
-    final var padding = new byte[10];
+    final var featureBitFlags = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[9];
     Borsh.readArray(padding, _data, i);
     return new State(_address,
                      discriminator,
@@ -279,6 +287,7 @@ public record State(PublicKey _address,
                      initialPctToLiquidate,
                      maxNumberOfSubAccounts,
                      maxInitializeUserFee,
+                     featureBitFlags,
                      padding);
   }
 
@@ -330,6 +339,8 @@ public record State(PublicKey _address,
     i += 2;
     putInt16LE(_data, i, maxInitializeUserFee);
     i += 2;
+    _data[i] = (byte) featureBitFlags;
+    ++i;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

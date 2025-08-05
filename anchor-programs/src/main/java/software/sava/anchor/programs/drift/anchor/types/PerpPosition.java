@@ -27,10 +27,10 @@ public record PerpPosition(// The perp market's last cumulative funding rate. Us
                            // Updated when the user open/closes position. Excludes fees/funding
                            // precision: QUOTE_PRECISION
                            long quoteEntryAmount,
-                           // The amount of open bids the user has in this perp market
+                           // The amount of non reduce only trigger orders the user has open
                            // precision: BASE_PRECISION
                            long openBids,
-                           // The amount of open asks the user has in this perp market
+                           // The amount of non reduce only trigger orders the user has open
                            // precision: BASE_PRECISION
                            long openAsks,
                            // The amount of pnl settled in this market since opening the position

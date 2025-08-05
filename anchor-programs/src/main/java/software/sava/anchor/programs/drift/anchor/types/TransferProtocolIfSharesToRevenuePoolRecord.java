@@ -17,7 +17,7 @@ public record TransferProtocolIfSharesToRevenuePoolRecord(long ts,
                                                           BigInteger shares,
                                                           long ifVaultAmountBefore,
                                                           BigInteger protocolSharesBefore,
-                                                          long currentInAmountSinceLastTransfer) implements Borsh {
+                                                          long transferAmount) implements Borsh {
 
   public static final int BYTES = 66;
 
@@ -38,14 +38,14 @@ public record TransferProtocolIfSharesToRevenuePoolRecord(long ts,
     i += 8;
     final var protocolSharesBefore = getInt128LE(_data, i);
     i += 16;
-    final var currentInAmountSinceLastTransfer = getInt64LE(_data, i);
+    final var transferAmount = getInt64LE(_data, i);
     return new TransferProtocolIfSharesToRevenuePoolRecord(ts,
                                                            marketIndex,
                                                            amount,
                                                            shares,
                                                            ifVaultAmountBefore,
                                                            protocolSharesBefore,
-                                                           currentInAmountSinceLastTransfer);
+                                                           transferAmount);
   }
 
   @Override
@@ -63,7 +63,7 @@ public record TransferProtocolIfSharesToRevenuePoolRecord(long ts,
     i += 8;
     putInt128LE(_data, i, protocolSharesBefore);
     i += 16;
-    putInt64LE(_data, i, currentInAmountSinceLastTransfer);
+    putInt64LE(_data, i, transferAmount);
     i += 8;
     return i - offset;
   }

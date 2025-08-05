@@ -194,7 +194,7 @@ public record SpotMarket(PublicKey _address,
                          // fuel multiplier for spot insurance stake
                          // precision: 10
                          int fuelBoostInsurance,
-                         int tokenProgram,
+                         int tokenProgramFlag,
                          int poolId,
                          byte[] padding) implements Borsh {
 
@@ -264,7 +264,7 @@ public record SpotMarket(PublicKey _address,
   public static final int FUEL_BOOST_TAKER_OFFSET = 731;
   public static final int FUEL_BOOST_MAKER_OFFSET = 732;
   public static final int FUEL_BOOST_INSURANCE_OFFSET = 733;
-  public static final int TOKEN_PROGRAM_OFFSET = 734;
+  public static final int TOKEN_PROGRAM_FLAG_OFFSET = 734;
   public static final int POOL_ID_OFFSET = 735;
   public static final int PADDING_OFFSET = 736;
 
@@ -586,8 +586,8 @@ public record SpotMarket(PublicKey _address,
     return Filter.createMemCompFilter(FUEL_BOOST_INSURANCE_OFFSET, new byte[]{(byte) fuelBoostInsurance});
   }
 
-  public static Filter createTokenProgramFilter(final int tokenProgram) {
-    return Filter.createMemCompFilter(TOKEN_PROGRAM_OFFSET, new byte[]{(byte) tokenProgram});
+  public static Filter createTokenProgramFlagFilter(final int tokenProgramFlag) {
+    return Filter.createMemCompFilter(TOKEN_PROGRAM_FLAG_OFFSET, new byte[]{(byte) tokenProgramFlag});
   }
 
   public static Filter createPoolIdFilter(final int poolId) {
@@ -736,7 +736,7 @@ public record SpotMarket(PublicKey _address,
     ++i;
     final var fuelBoostInsurance = _data[i] & 0xFF;
     ++i;
-    final var tokenProgram = _data[i] & 0xFF;
+    final var tokenProgramFlag = _data[i] & 0xFF;
     ++i;
     final var poolId = _data[i] & 0xFF;
     ++i;
@@ -805,7 +805,7 @@ public record SpotMarket(PublicKey _address,
                           fuelBoostTaker,
                           fuelBoostMaker,
                           fuelBoostInsurance,
-                          tokenProgram,
+                          tokenProgramFlag,
                           poolId,
                           padding);
   }
@@ -926,7 +926,7 @@ public record SpotMarket(PublicKey _address,
     ++i;
     _data[i] = (byte) fuelBoostInsurance;
     ++i;
-    _data[i] = (byte) tokenProgram;
+    _data[i] = (byte) tokenProgramFlag;
     ++i;
     _data[i] = (byte) poolId;
     ++i;

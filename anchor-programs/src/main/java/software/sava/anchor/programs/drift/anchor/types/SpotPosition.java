@@ -11,10 +11,10 @@ public record SpotPosition(// The scaled balance of the position. To get the tok
                            // interest of corresponding market.
                            // precision: SPOT_BALANCE_PRECISION
                            long scaledBalance,
-                           // How many spot bids the user has open
+                           // How many spot non reduce only trigger orders the user has open
                            // precision: token mint precision
                            long openBids,
-                           // How many spot asks the user has open
+                           // How many spot non reduce only trigger orders the user has open
                            // precision: token mint precision
                            long openAsks,
                            // The cumulative deposits/borrows a user has made into a market

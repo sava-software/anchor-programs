@@ -13,7 +13,8 @@ public enum DriftAction implements Borsh.Enum {
   MarginCalc,
   UpdateTwap,
   UpdateAMMCurve,
-  OracleOrderPrice;
+  OracleOrderPrice,
+  UseMMOraclePrice;
 
   public static DriftAction read(final byte[] _data, final int offset) {
     return Borsh.read(DriftAction.values(), _data, offset);

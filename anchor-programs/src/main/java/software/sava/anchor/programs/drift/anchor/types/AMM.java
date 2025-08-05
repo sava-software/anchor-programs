@@ -86,10 +86,10 @@ public record AMM(// oracle price data public key
                   // precision: AMM_RESERVE_PRECISION
                   BigInteger userLpShares,
                   // last funding rate in this perp market (unit is quote per base)
-                  // precision: QUOTE_PRECISION
+                  // precision: FUNDING_RATE_PRECISION
                   long lastFundingRate,
                   // last funding rate for longs in this perp market (unit is quote per base)
-                  // precision: QUOTE_PRECISION
+                  // precision: FUNDING_RATE_PRECISION
                   long lastFundingRateLong,
                   // last funding rate for shorts in this perp market (unit is quote per base)
                   // precision: QUOTE_PRECISION
@@ -172,7 +172,7 @@ public record AMM(// oracle price data public key
                   long minOrderSize,
                   // the max base size a single user can have
                   // precision: BASE_PRECISION
-                  long maxPositionSize,
+                  long mmOracleSlot,
                   // estimated total of volume in market
                   // QUOTE_PRECISION
                   long volume24h,
@@ -198,10 +198,8 @@ public record AMM(// oracle price data public key
                   int longSpread,
                   // the spread for bids vs the reserve price
                   int shortSpread,
-                  // the count intensity of long fills against AMM
-                  int longIntensityCount,
-                  // the count intensity of short fills against AMM
-                  int shortIntensityCount,
+                  // MM oracle price
+                  long mmOraclePrice,
                   // the fraction of total available liquidity a single fill on the AMM can consume
                   int maxFillReserveFraction,
                   // the maximum slippage a single fill on the AMM can push
@@ -226,16 +224,17 @@ public record AMM(// oracle price data public key
                   // signed scale amm_spread similar to fee_adjustment logic (-100 = 0, 100 = double)
                   int ammSpreadAdjustment,
                   int oracleSlotDelayOverride,
-                  long totalFeeEarnedPerLp,
+                  long mmOracleSequenceId,
                   long netUnsettledFundingPnl,
                   long quoteAssetAmountWithUnsettledLp,
                   int referencePriceOffset,
                   // signed scale amm_spread similar to fee_adjustment logic (-100 = 0, 100 = double)
                   int ammInventorySpreadAdjustment,
-                  byte[] padding) implements Borsh {
+                  byte[] padding,
+                  long lastFundingOracleTwap) implements Borsh {
 
   public static final int BYTES = 936;
-  public static final int PADDING_LEN = 11;
+  public static final int PADDING_LEN = 3;
 
   public static AMM read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -352,7 +351,7 @@ public record AMM(// oracle price data public key
     i += 8;
     final var minOrderSize = getInt64LE(_data, i);
     i += 8;
-    final var maxPositionSize = getInt64LE(_data, i);
+    final var mmOracleSlot = getInt64LE(_data, i);
     i += 8;
     final var volume24h = getInt64LE(_data, i);
     i += 8;
@@ -376,10 +375,8 @@ public record AMM(// oracle price data public key
     i += 4;
     final var shortSpread = getInt32LE(_data, i);
     i += 4;
-    final var longIntensityCount = getInt32LE(_data, i);
-    i += 4;
-    final var shortIntensityCount = getInt32LE(_data, i);
-    i += 4;
+    final var mmOraclePrice = getInt64LE(_data, i);
+    i += 8;
     final var maxFillReserveFraction = getInt16LE(_data, i);
     i += 2;
     final var maxSlippageRatio = getInt16LE(_data, i);
@@ -402,7 +399,7 @@ public record AMM(// oracle price data public key
     ++i;
     final var oracleSlotDelayOverride = _data[i];
     ++i;
-    final var totalFeeEarnedPerLp = getInt64LE(_data, i);
+    final var mmOracleSequenceId = getInt64LE(_data, i);
     i += 8;
     final var netUnsettledFundingPnl = getInt64LE(_data, i);
     i += 8;
@@ -412,8 +409,9 @@ public record AMM(// oracle price data public key
     i += 4;
     final var ammInventorySpreadAdjustment = _data[i];
     ++i;
-    final var padding = new byte[11];
-    Borsh.readArray(padding, _data, i);
+    final var padding = new byte[3];
+    i += Borsh.readArray(padding, _data, i);
+    final var lastFundingOracleTwap = getInt64LE(_data, i);
     return new AMM(oracle,
                    historicalOracleData,
                    baseAssetAmountPerLp,
@@ -469,7 +467,7 @@ public record AMM(// oracle price data public key
                    orderStepSize,
                    orderTickSize,
                    minOrderSize,
-                   maxPositionSize,
+                   mmOracleSlot,
                    volume24h,
                    longIntensityVolume,
                    shortIntensityVolume,
@@ -481,8 +479,7 @@ public record AMM(// oracle price data public key
                    maxSpread,
                    longSpread,
                    shortSpread,
-                   longIntensityCount,
-                   shortIntensityCount,
+                   mmOraclePrice,
                    maxFillReserveFraction,
                    maxSlippageRatio,
                    curveUpdateIntensity,
@@ -494,12 +491,13 @@ public record AMM(// oracle price data public key
                    takerSpeedBumpOverride,
                    ammSpreadAdjustment,
                    oracleSlotDelayOverride,
-                   totalFeeEarnedPerLp,
+                   mmOracleSequenceId,
                    netUnsettledFundingPnl,
                    quoteAssetAmountWithUnsettledLp,
                    referencePriceOffset,
                    ammInventorySpreadAdjustment,
-                   padding);
+                   padding,
+                   lastFundingOracleTwap);
   }
 
   @Override
@@ -613,7 +611,7 @@ public record AMM(// oracle price data public key
     i += 8;
     putInt64LE(_data, i, minOrderSize);
     i += 8;
-    putInt64LE(_data, i, maxPositionSize);
+    putInt64LE(_data, i, mmOracleSlot);
     i += 8;
     putInt64LE(_data, i, volume24h);
     i += 8;
@@ -637,10 +635,8 @@ public record AMM(// oracle price data public key
     i += 4;
     putInt32LE(_data, i, shortSpread);
     i += 4;
-    putInt32LE(_data, i, longIntensityCount);
-    i += 4;
-    putInt32LE(_data, i, shortIntensityCount);
-    i += 4;
+    putInt64LE(_data, i, mmOraclePrice);
+    i += 8;
     putInt16LE(_data, i, maxFillReserveFraction);
     i += 2;
     putInt16LE(_data, i, maxSlippageRatio);
@@ -662,7 +658,7 @@ public record AMM(// oracle price data public key
     ++i;
     _data[i] = (byte) oracleSlotDelayOverride;
     ++i;
-    putInt64LE(_data, i, totalFeeEarnedPerLp);
+    putInt64LE(_data, i, mmOracleSequenceId);
     i += 8;
     putInt64LE(_data, i, netUnsettledFundingPnl);
     i += 8;
@@ -673,6 +669,8 @@ public record AMM(// oracle price data public key
     _data[i] = (byte) ammInventorySpreadAdjustment;
     ++i;
     i += Borsh.writeArray(padding, _data, i);
+    putInt64LE(_data, i, lastFundingOracleTwap);
+    i += 8;
     return i - offset;
   }
 

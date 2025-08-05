@@ -45,7 +45,8 @@ public record OrderActionRecord(long ts,
                                 OptionalLong takerExistingQuoteEntryAmount,
                                 OptionalLong takerExistingBaseAssetAmount,
                                 OptionalLong makerExistingQuoteEntryAmount,
-                                OptionalLong makerExistingBaseAssetAmount) implements Borsh {
+                                OptionalLong makerExistingBaseAssetAmount,
+                                OptionalLong triggerPrice) implements Borsh {
 
   public static OrderActionRecord read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -167,6 +168,10 @@ public record OrderActionRecord(long ts,
       i += 8;
     }
     final var makerExistingBaseAssetAmount = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+    if (makerExistingBaseAssetAmount.isPresent()) {
+      i += 8;
+    }
+    final var triggerPrice = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
     return new OrderActionRecord(ts,
                                  action,
                                  actionExplanation,
@@ -199,7 +204,8 @@ public record OrderActionRecord(long ts,
                                  takerExistingQuoteEntryAmount,
                                  takerExistingBaseAssetAmount,
                                  makerExistingQuoteEntryAmount,
-                                 makerExistingBaseAssetAmount);
+                                 makerExistingBaseAssetAmount,
+                                 triggerPrice);
   }
 
   @Override
@@ -242,6 +248,7 @@ public record OrderActionRecord(long ts,
     i += Borsh.writeOptional(takerExistingBaseAssetAmount, _data, i);
     i += Borsh.writeOptional(makerExistingQuoteEntryAmount, _data, i);
     i += Borsh.writeOptional(makerExistingBaseAssetAmount, _data, i);
+    i += Borsh.writeOptional(triggerPrice, _data, i);
     return i - offset;
   }
 
@@ -279,6 +286,7 @@ public record OrderActionRecord(long ts,
          + (takerExistingQuoteEntryAmount == null || takerExistingQuoteEntryAmount.isEmpty() ? 1 : (1 + 8))
          + (takerExistingBaseAssetAmount == null || takerExistingBaseAssetAmount.isEmpty() ? 1 : (1 + 8))
          + (makerExistingQuoteEntryAmount == null || makerExistingQuoteEntryAmount.isEmpty() ? 1 : (1 + 8))
-         + (makerExistingBaseAssetAmount == null || makerExistingBaseAssetAmount.isEmpty() ? 1 : (1 + 8));
+         + (makerExistingBaseAssetAmount == null || makerExistingBaseAssetAmount.isEmpty() ? 1 : (1 + 8))
+         + (triggerPrice == null || triggerPrice.isEmpty() ? 1 : (1 + 8));
   }
 }

@@ -17,16 +17,21 @@ public record HighLeverageModeConfig(PublicKey _address,
                                      int maxUsers,
                                      int currentUsers,
                                      int reduceOnly,
-                                     byte[] padding) implements Borsh {
+                                     byte[] padding1,
+                                     int currentMaintenanceUsers,
+                                     byte[] padding2) implements Borsh {
 
   public static final int BYTES = 48;
-  public static final int PADDING_LEN = 31;
+  public static final int PADDING_1_LEN = 3;
+  public static final int PADDING_2_LEN = 24;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int MAX_USERS_OFFSET = 8;
   public static final int CURRENT_USERS_OFFSET = 12;
   public static final int REDUCE_ONLY_OFFSET = 16;
-  public static final int PADDING_OFFSET = 17;
+  public static final int PADDING_1_OFFSET = 17;
+  public static final int CURRENT_MAINTENANCE_USERS_OFFSET = 20;
+  public static final int PADDING_2_OFFSET = 24;
 
   public static Filter createMaxUsersFilter(final int maxUsers) {
     final byte[] _data = new byte[4];
@@ -42,6 +47,12 @@ public record HighLeverageModeConfig(PublicKey _address,
 
   public static Filter createReduceOnlyFilter(final int reduceOnly) {
     return Filter.createMemCompFilter(REDUCE_ONLY_OFFSET, new byte[]{(byte) reduceOnly});
+  }
+
+  public static Filter createCurrentMaintenanceUsersFilter(final int currentMaintenanceUsers) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, currentMaintenanceUsers);
+    return Filter.createMemCompFilter(CURRENT_MAINTENANCE_USERS_OFFSET, _data);
   }
 
   public static HighLeverageModeConfig read(final byte[] _data, final int offset) {
@@ -70,14 +81,20 @@ public record HighLeverageModeConfig(PublicKey _address,
     i += 4;
     final var reduceOnly = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[31];
-    Borsh.readArray(padding, _data, i);
+    final var padding1 = new byte[3];
+    i += Borsh.readArray(padding1, _data, i);
+    final var currentMaintenanceUsers = getInt32LE(_data, i);
+    i += 4;
+    final var padding2 = new byte[24];
+    Borsh.readArray(padding2, _data, i);
     return new HighLeverageModeConfig(_address,
                                       discriminator,
                                       maxUsers,
                                       currentUsers,
                                       reduceOnly,
-                                      padding);
+                                      padding1,
+                                      currentMaintenanceUsers,
+                                      padding2);
   }
 
   @Override
@@ -89,7 +106,10 @@ public record HighLeverageModeConfig(PublicKey _address,
     i += 4;
     _data[i] = (byte) reduceOnly;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArray(padding1, _data, i);
+    putInt32LE(_data, i, currentMaintenanceUsers);
+    i += 4;
+    i += Borsh.writeArray(padding2, _data, i);
     return i - offset;
   }
 

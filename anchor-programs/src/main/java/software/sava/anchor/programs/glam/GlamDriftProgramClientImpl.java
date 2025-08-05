@@ -504,7 +504,8 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
-  public Instruction disableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey) {
+  public Instruction disableUserHighLeverageMode(final PublicKey highLeverageModeConfigKey,
+                                                 final boolean disableMaintenance) {
     throw new UnsupportedOperationException("Use Ix-proxy instead.");
   }
 
@@ -565,13 +566,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
                                         final PublicKey authorityKey,
                                         final long sharesToBurn,
                                         final int marketIndex) {
-    throw new UnsupportedOperationException("Use Ix-proxy instead.");
-  }
-
-  @Override
-  public Instruction removePerpLpSharesInExpiringMarket(final PublicKey userKey,
-                                                        final long sharesToBurn,
-                                                        final int marketIndex) {
     throw new UnsupportedOperationException("Use Ix-proxy instead.");
   }
 
