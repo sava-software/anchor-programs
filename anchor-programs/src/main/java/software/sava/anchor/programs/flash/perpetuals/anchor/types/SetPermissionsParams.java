@@ -1,0 +1,28 @@
+package software.sava.anchor.programs.flash.perpetuals.anchor.types;
+
+import software.sava.core.borsh.Borsh;
+
+public record SetPermissionsParams(Permissions permissions) implements Borsh {
+
+  public static final int BYTES = 13;
+
+  public static SetPermissionsParams read(final byte[] _data, final int offset) {
+    if (_data == null || _data.length == 0) {
+      return null;
+    }
+    final var permissions = Permissions.read(_data, offset);
+    return new SetPermissionsParams(permissions);
+  }
+
+  @Override
+  public int write(final byte[] _data, final int offset) {
+    int i = offset;
+    i += Borsh.write(permissions, _data, i);
+    return i - offset;
+  }
+
+  @Override
+  public int l() {
+    return BYTES;
+  }
+}

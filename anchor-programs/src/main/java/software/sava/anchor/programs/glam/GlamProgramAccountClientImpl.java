@@ -35,6 +35,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   private final GlamNativeProgramClient nativeProgramClient;
   private final NativeProgramAccountClient nativeProgramAccountClient;
   private final GlamVaultAccounts glamVaultAccounts;
+  private final GlamAccounts glamAccounts;
   private final AccountMeta invokedProgram;
   private final AccountMeta feePayer;
 
@@ -42,7 +43,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     this.solanaAccounts = solanaAccounts;
     this.nativeProgramClient = GlamNativeProgramClient.createClient(solanaAccounts, glamVaultAccounts);
     this.glamVaultAccounts = glamVaultAccounts;
-    this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProgram();
+    this.glamAccounts = glamVaultAccounts.glamAccounts();
+    this.invokedProgram = glamAccounts.invokedProgram();
     this.feePayer = createFeePayer(glamVaultAccounts.feePayer());
     this.nativeProgramAccountClient = NativeProgramAccountClient.createClient(solanaAccounts, glamVaultAccounts.vaultPublicKey(), feePayer);
   }
@@ -542,6 +544,39 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         mintId
     );
   }
+
+//  public Instruction disburseFees(final int mintId,
+//                                  final PublicKey baseAssetMint,
+//                                  final PublicKey baseAssetTokenProgram) {
+//    final var glamProgram = invokedProgram.publicKey();
+//
+//    final var escrow = GlamProtocolPDAs.glamEscrowPDA(glamProgram, glamVaultAccounts.glamPublicKey()).publicKey();
+//
+//    final var mint = glamVaultAccounts.mintPDA(mintId).publicKey();
+//    final var escrowMintTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, escrow, solanaAccounts.token2022Program(), mint);
+//
+//    final var vault = glamVaultAccounts.vaultPublicKey();
+//    final var vaultTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, vault, baseAssetTokenProgram, baseAssetMint);
+//
+//    final var escrowTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, escrow, baseAssetTokenProgram, baseAssetMint);
+//
+//    return GlamProtocolProgram.disburseFees(
+//        invokedProgram,
+//        solanaAccounts,
+//        glamVaultAccounts.glamPublicKey(),
+//        vault,
+//        escrow,
+//        mint,
+//        feePayer.publicKey(),
+//        escrowMintTokenAccount.publicKey(),
+//        baseAssetMint,
+//        vaultTokenAccount.publicKey(),
+//        escrowTokenAccount.publicKey(),
+//        glamAccounts.glamConfigKey(),
+//        baseAssetTokenProgram,
+//        mintId
+//    );
+//  }
 
   @Override
   public Instruction priceVault(final PublicKey solOracleKey, final PriceDenom priceDenom) {

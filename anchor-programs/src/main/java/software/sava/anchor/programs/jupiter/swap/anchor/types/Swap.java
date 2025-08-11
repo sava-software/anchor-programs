@@ -102,7 +102,8 @@ public sealed interface Swap extends RustEnum permits
   Swap.PumpWrappedBuyV2,
   Swap.PumpWrappedSellV2,
   Swap.PumpSwapBuyV2,
-  Swap.PumpSwapSellV2 {
+  Swap.PumpSwapSellV2,
+  Swap.Heaven {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -202,6 +203,7 @@ public sealed interface Swap extends RustEnum permits
       case 91 -> PumpWrappedSellV2.INSTANCE;
       case 92 -> PumpSwapBuyV2.INSTANCE;
       case 93 -> PumpSwapSellV2.INSTANCE;
+      case 94 -> Heaven.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1466,6 +1468,21 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 93;
+    }
+  }
+
+  record Heaven(boolean val) implements EnumBool, Swap {
+
+    public static final Heaven TRUE = new Heaven(true);
+    public static final Heaven FALSE = new Heaven(false);
+
+    public static Heaven read(final byte[] _data, int i) {
+      return _data[i] == 1 ? Heaven.TRUE : Heaven.FALSE;
+    }
+
+    @Override
+    public int ordinal() {
+      return 94;
     }
   }
 }
