@@ -53,6 +53,10 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.kamino.vaults.anchor;
   exports software.sava.anchor.programs.kamino.vaults;
   exports software.sava.anchor.programs.kamino;
+  exports software.sava.anchor.programs.loopscale.anchor.types;
+  exports software.sava.anchor.programs.loopscale.anchor;
+  exports software.sava.anchor.programs.marginfi.v2.anchor.types;
+  exports software.sava.anchor.programs.marginfi.v2.anchor;
   exports software.sava.anchor.programs.marinade.anchor.types;
   exports software.sava.anchor.programs.marinade.anchor;
   exports software.sava.anchor.programs.marinade;

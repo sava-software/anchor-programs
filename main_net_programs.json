@@ -101,6 +101,11 @@
     "package": "kamino.vaults"
   },
   {
+    "name": "Loopscale",
+    "program": "1oopBoJG58DgkUVKkEzKgyG9dvRmpgeEm1AVjoHkF78",
+    "package": "loopscale"
+  },
+  {
     "name": "Marinade",
     "program": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD"
   },
