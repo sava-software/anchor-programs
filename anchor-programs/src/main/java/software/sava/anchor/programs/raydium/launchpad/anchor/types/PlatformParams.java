@@ -17,22 +17,26 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 // * `name` - Name of the platform
 // * `web` - Website of the platform
 // * `img` - Image link of the platform
+// /// * `creator_fee_rate` - The fee rate charged by the creator for each transaction.
 public record PlatformParams(MigrateNftInfo migrateNftInfo,
                              long feeRate,
                              String name, byte[] _name,
                              String web, byte[] _web,
-                             String img, byte[] _img) implements Borsh {
+                             String img, byte[] _img,
+                             long creatorFeeRate) implements Borsh {
 
   public static PlatformParams createRecord(final MigrateNftInfo migrateNftInfo,
                                             final long feeRate,
                                             final String name,
                                             final String web,
-                                            final String img) {
+                                            final String img,
+                                            final long creatorFeeRate) {
     return new PlatformParams(migrateNftInfo,
                               feeRate,
                               name, name.getBytes(UTF_8),
                               web, web.getBytes(UTF_8),
-                              img, img.getBytes(UTF_8));
+                              img, img.getBytes(UTF_8),
+                              creatorFeeRate);
   }
 
   public static PlatformParams read(final byte[] _data, final int offset) {
@@ -49,11 +53,14 @@ public record PlatformParams(MigrateNftInfo migrateNftInfo,
     final var web = Borsh.string(_data, i);
     i += (Integer.BYTES + getInt32LE(_data, i));
     final var img = Borsh.string(_data, i);
+    i += (Integer.BYTES + getInt32LE(_data, i));
+    final var creatorFeeRate = getInt64LE(_data, i);
     return new PlatformParams(migrateNftInfo,
                               feeRate,
                               name, name.getBytes(UTF_8),
                               web, web.getBytes(UTF_8),
-                              img, img.getBytes(UTF_8));
+                              img, img.getBytes(UTF_8),
+                              creatorFeeRate);
   }
 
   @Override
@@ -65,6 +72,8 @@ public record PlatformParams(MigrateNftInfo migrateNftInfo,
     i += Borsh.writeVector(_name, _data, i);
     i += Borsh.writeVector(_web, _data, i);
     i += Borsh.writeVector(_img, _data, i);
+    putInt64LE(_data, i, creatorFeeRate);
+    i += 8;
     return i - offset;
   }
 
@@ -74,6 +83,7 @@ public record PlatformParams(MigrateNftInfo migrateNftInfo,
          + 8
          + Borsh.lenVector(_name)
          + Borsh.lenVector(_web)
-         + Borsh.lenVector(_img);
+         + Borsh.lenVector(_img)
+         + 8;
   }
 }

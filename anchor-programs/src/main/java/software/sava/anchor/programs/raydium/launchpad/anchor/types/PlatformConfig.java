@@ -36,16 +36,23 @@ public record PlatformConfig(PublicKey _address,
                              byte[] web,
                              // The platform img link
                              byte[] img,
+                             // The platform specifies the trade fee rate after migration to cp swap
+                             PublicKey cpswapConfig,
+                             // Creator fee rate
+                             long creatorFeeRate,
+                             // If the base token belongs to token2022, then you can choose to support the transferfeeConfig extension, which includes permissions such as `transfer_fee_config_authority`` and `withdraw_withheld_authority`.
+                             // When initializing mint, `withdraw_withheld_authority` and `transfer_fee_config_authority` both belongs to the contract.
+                             // Once the token is migrated to AMM, the authorities will be reset to this value
+                             PublicKey transferFeeExtensionAuth,
                              // padding for future updates
-                             byte[] padding) implements Borsh {
+                             byte[] padding,
+                             // The parameters for launching the pool
+                             PlatformCurveParam[] curveParams) implements Borsh {
 
-  public static final int BYTES = 944;
   public static final int NAME_LEN = 64;
   public static final int WEB_LEN = 256;
   public static final int IMG_LEN = 256;
-  public static final int PADDING_LEN = 256;
-  public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
-
+  public static final int PADDING_LEN = 180;
   public static final Discriminator DISCRIMINATOR = toDiscriminator(160, 78, 128, 0, 248, 83, 230, 160);
   public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
@@ -59,7 +66,11 @@ public record PlatformConfig(PublicKey _address,
   public static final int NAME_OFFSET = 112;
   public static final int WEB_OFFSET = 176;
   public static final int IMG_OFFSET = 432;
-  public static final int PADDING_OFFSET = 688;
+  public static final int CPSWAP_CONFIG_OFFSET = 688;
+  public static final int CREATOR_FEE_RATE_OFFSET = 720;
+  public static final int TRANSFER_FEE_EXTENSION_AUTH_OFFSET = 728;
+  public static final int PADDING_OFFSET = 760;
+  public static final int CURVE_PARAMS_OFFSET = 940;
 
   public static Filter createEpochFilter(final long epoch) {
     final byte[] _data = new byte[8];
@@ -97,6 +108,20 @@ public record PlatformConfig(PublicKey _address,
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, feeRate);
     return Filter.createMemCompFilter(FEE_RATE_OFFSET, _data);
+  }
+
+  public static Filter createCpswapConfigFilter(final PublicKey cpswapConfig) {
+    return Filter.createMemCompFilter(CPSWAP_CONFIG_OFFSET, cpswapConfig);
+  }
+
+  public static Filter createCreatorFeeRateFilter(final long creatorFeeRate) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, creatorFeeRate);
+    return Filter.createMemCompFilter(CREATOR_FEE_RATE_OFFSET, _data);
+  }
+
+  public static Filter createTransferFeeExtensionAuthFilter(final PublicKey transferFeeExtensionAuth) {
+    return Filter.createMemCompFilter(TRANSFER_FEE_EXTENSION_AUTH_OFFSET, transferFeeExtensionAuth);
   }
 
   public static PlatformConfig read(final byte[] _data, final int offset) {
@@ -139,8 +164,15 @@ public record PlatformConfig(PublicKey _address,
     i += Borsh.readArray(web, _data, i);
     final var img = new byte[256];
     i += Borsh.readArray(img, _data, i);
-    final var padding = new byte[256];
-    Borsh.readArray(padding, _data, i);
+    final var cpswapConfig = readPubKey(_data, i);
+    i += 32;
+    final var creatorFeeRate = getInt64LE(_data, i);
+    i += 8;
+    final var transferFeeExtensionAuth = readPubKey(_data, i);
+    i += 32;
+    final var padding = new byte[180];
+    i += Borsh.readArray(padding, _data, i);
+    final var curveParams = Borsh.readVector(PlatformCurveParam.class, PlatformCurveParam::read, _data, i);
     return new PlatformConfig(_address,
                               discriminator,
                               epoch,
@@ -153,7 +185,11 @@ public record PlatformConfig(PublicKey _address,
                               name,
                               web,
                               img,
-                              padding);
+                              cpswapConfig,
+                              creatorFeeRate,
+                              transferFeeExtensionAuth,
+                              padding,
+                              curveParams);
   }
 
   @Override
@@ -176,12 +212,33 @@ public record PlatformConfig(PublicKey _address,
     i += Borsh.writeArray(name, _data, i);
     i += Borsh.writeArray(web, _data, i);
     i += Borsh.writeArray(img, _data, i);
+    cpswapConfig.write(_data, i);
+    i += 32;
+    putInt64LE(_data, i, creatorFeeRate);
+    i += 8;
+    transferFeeExtensionAuth.write(_data, i);
+    i += 32;
     i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeVector(curveParams, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return BYTES;
+    return 8 + 8
+         + 32
+         + 32
+         + 8
+         + 8
+         + 8
+         + 8
+         + Borsh.lenArray(name)
+         + Borsh.lenArray(web)
+         + Borsh.lenArray(img)
+         + 32
+         + 8
+         + 32
+         + Borsh.lenArray(padding)
+         + Borsh.lenVector(curveParams);
   }
 }

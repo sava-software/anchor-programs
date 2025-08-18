@@ -6533,7 +6533,7 @@ public final class GlamProtocolProgram {
                                               final PublicKey cpiProgramKey,
                                               final PublicKey tokenAccountKey) {
     final var keys = List.of(
-      createRead(glamStateKey),
+      createWrite(glamStateKey),
       createWrite(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),

@@ -11,7 +11,8 @@ public record PoolCreateEvent(PublicKey poolState,
                               PublicKey config,
                               MintParams baseMintParam,
                               CurveParams curveParam,
-                              VestingParams vestingParam) implements Borsh {
+                              VestingParams vestingParam,
+                              AmmCreatorFeeOn ammFeeOn) implements Borsh {
 
   public static PoolCreateEvent read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -29,12 +30,15 @@ public record PoolCreateEvent(PublicKey poolState,
     final var curveParam = CurveParams.read(_data, i);
     i += Borsh.len(curveParam);
     final var vestingParam = VestingParams.read(_data, i);
+    i += Borsh.len(vestingParam);
+    final var ammFeeOn = AmmCreatorFeeOn.read(_data, i);
     return new PoolCreateEvent(poolState,
                                creator,
                                config,
                                baseMintParam,
                                curveParam,
-                               vestingParam);
+                               vestingParam,
+                               ammFeeOn);
   }
 
   @Override
@@ -49,6 +53,7 @@ public record PoolCreateEvent(PublicKey poolState,
     i += Borsh.write(baseMintParam, _data, i);
     i += Borsh.write(curveParam, _data, i);
     i += Borsh.write(vestingParam, _data, i);
+    i += Borsh.write(ammFeeOn, _data, i);
     return i - offset;
   }
 
@@ -59,6 +64,7 @@ public record PoolCreateEvent(PublicKey poolState,
          + 32
          + Borsh.len(baseMintParam)
          + Borsh.len(curveParam)
-         + Borsh.len(vestingParam);
+         + Borsh.len(vestingParam)
+         + Borsh.len(ammFeeOn);
   }
 }

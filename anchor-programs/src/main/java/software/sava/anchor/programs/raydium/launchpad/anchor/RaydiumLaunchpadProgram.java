@@ -2,10 +2,13 @@ package software.sava.anchor.programs.raydium.launchpad.anchor;
 
 import java.util.List;
 
+import software.sava.anchor.programs.raydium.launchpad.anchor.types.AmmCreatorFeeOn;
+import software.sava.anchor.programs.raydium.launchpad.anchor.types.BondingCurveParam;
 import software.sava.anchor.programs.raydium.launchpad.anchor.types.CurveParams;
 import software.sava.anchor.programs.raydium.launchpad.anchor.types.MintParams;
 import software.sava.anchor.programs.raydium.launchpad.anchor.types.PlatformConfigParam;
 import software.sava.anchor.programs.raydium.launchpad.anchor.types.PlatformParams;
+import software.sava.anchor.programs.raydium.launchpad.anchor.types.TransferFeeExtensionParams;
 import software.sava.anchor.programs.raydium.launchpad.anchor.types.VestingParams;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -273,6 +276,37 @@ public final class RaydiumLaunchpadProgram {
     }
   }
 
+  public static final Discriminator CLAIM_CREATOR_FEE_DISCRIMINATOR = toDiscriminator(26, 97, 138, 203, 132, 171, 141, 252);
+
+  // Claim the fee from the exclusive creator fee vault.
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // 
+  public static Instruction claimCreatorFee(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
+                                            final SolanaAccounts solanaAccounts,
+                                            // The pool creator
+                                            final PublicKey creatorKey,
+                                            final PublicKey feeVaultAuthorityKey,
+                                            // The creator fee vault
+                                            final PublicKey creatorFeeVaultKey,
+                                            final PublicKey recipientTokenAccountKey,
+                                            // The mint for the quote token
+                                            final PublicKey quoteMintKey) {
+    final var keys = List.of(
+      createWritableSigner(creatorKey),
+      createRead(feeVaultAuthorityKey),
+      createWrite(creatorFeeVaultKey),
+      createWrite(recipientTokenAccountKey),
+      createRead(quoteMintKey),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.associatedTokenAccountProgram())
+    );
+
+    return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, CLAIM_CREATOR_FEE_DISCRIMINATOR);
+  }
+
   public static final Discriminator CLAIM_PLATFORM_FEE_DISCRIMINATOR = toDiscriminator(156, 39, 208, 135, 76, 237, 61, 72);
 
   // Claim platform fee
@@ -313,6 +347,41 @@ public final class RaydiumLaunchpadProgram {
     return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, CLAIM_PLATFORM_FEE_DISCRIMINATOR);
   }
 
+  public static final Discriminator CLAIM_PLATFORM_FEE_FROM_VAULT_DISCRIMINATOR = toDiscriminator(117, 241, 198, 168, 248, 218, 80, 29);
+
+  // Claim the fee from the exclusive platform fee vault.
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // 
+  public static Instruction claimPlatformFeeFromVault(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
+                                                      final SolanaAccounts solanaAccounts,
+                                                      // Only the wallet stored in platform_config can collect platform fees
+                                                      final PublicKey platformFeeWalletKey,
+                                                      final PublicKey feeVaultAuthorityKey,
+                                                      // The platform config account
+                                                      final PublicKey platformConfigKey,
+                                                      // The platform fee vault
+                                                      final PublicKey platformFeeVaultKey,
+                                                      // The address that receives the collected quote token fees
+                                                      final PublicKey recipientTokenAccountKey,
+                                                      // The mint of quote token vault
+                                                      final PublicKey quoteMintKey) {
+    final var keys = List.of(
+      createWritableSigner(platformFeeWalletKey),
+      createRead(feeVaultAuthorityKey),
+      createRead(platformConfigKey),
+      createWrite(platformFeeVaultKey),
+      createWrite(recipientTokenAccountKey),
+      createRead(quoteMintKey),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.associatedTokenAccountProgram())
+    );
+
+    return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, CLAIM_PLATFORM_FEE_FROM_VAULT_DISCRIMINATOR);
+  }
+
   public static final Discriminator CLAIM_VESTED_TOKEN_DISCRIMINATOR = toDiscriminator(49, 33, 104, 30, 189, 157, 79, 35);
 
   // Claim vested token
@@ -342,7 +411,7 @@ public final class RaydiumLaunchpadProgram {
       createWrite(poolStateKey),
       createWrite(vestingRecordKey),
       createWrite(baseVaultKey),
-      createWritableSigner(userBaseTokenKey),
+      createWrite(userBaseTokenKey),
       createRead(baseTokenMintKey),
       createRead(solanaAccounts.tokenProgram()),
       createRead(solanaAccounts.systemProgram()),
@@ -555,13 +624,17 @@ public final class RaydiumLaunchpadProgram {
                                                  final PublicKey platformNftWalletKey,
                                                  // The platform config account
                                                  final PublicKey platformConfigKey,
+                                                 final PublicKey cpswapConfigKey,
+                                                 final PublicKey transferFeeExtensionAuthorityKey,
                                                  final PlatformParams platformParams) {
     final var keys = List.of(
       createWritableSigner(platformAdminKey),
       createRead(platformFeeWalletKey),
       createRead(platformNftWalletKey),
       createWrite(platformConfigKey),
-      createRead(solanaAccounts.systemProgram())
+      createRead(cpswapConfigKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(transferFeeExtensionAuthorityKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(platformParams)];
@@ -613,6 +686,9 @@ public final class RaydiumLaunchpadProgram {
                                                  // The account paying for the initialization costs
                                                  // This can be any account with sufficient SOL to cover the transaction
                                                  final PublicKey creatorKey,
+                                                 // The beneficiary is used to receive the allocated linear release of tokens.
+                                                 // Once this account is set, it cannot be modified, so please ensure the validity of this account,
+                                                 // otherwise, the unlocked tokens will not be claimable.
                                                  final PublicKey beneficiaryKey,
                                                  // The pool state account
                                                  final PublicKey poolStateKey,
@@ -779,6 +855,264 @@ public final class RaydiumLaunchpadProgram {
     @Override
     public int l() {
       return 8 + Borsh.len(baseMintParam) + Borsh.len(curveParam) + Borsh.len(vestingParam);
+    }
+  }
+
+  public static final Discriminator INITIALIZE_V_2_DISCRIMINATOR = toDiscriminator(67, 153, 175, 39, 218, 16, 38, 32);
+
+  // Initializes a new trading pool
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts containing pool and token information
+  // 
+  public static Instruction initializeV2(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
+                                         final SolanaAccounts solanaAccounts,
+                                         // The account paying for the initialization costs
+                                         // This can be any account with sufficient SOL to cover the transaction
+                                         final PublicKey payerKey,
+                                         final PublicKey creatorKey,
+                                         // Global configuration account containing protocol-wide settings
+                                         // Includes settings like quote token mint and fee parameters
+                                         final PublicKey globalConfigKey,
+                                         // Platform configuration account containing platform info
+                                         // Includes settings like the fee_rate, name, web, img of the platform
+                                         final PublicKey platformConfigKey,
+                                         // PDA that acts as the authority for pool vault and mint operations
+                                         // Generated using AUTH_SEED
+                                         final PublicKey authorityKey,
+                                         // Account that stores the pool's state and parameters
+                                         // PDA generated using POOL_SEED and both token mints
+                                         final PublicKey poolStateKey,
+                                         // The mint for the base token (token being sold)
+                                         // Created in this instruction with specified decimals
+                                         final PublicKey baseMintKey,
+                                         // The mint for the quote token (token used to buy)
+                                         // Must match the quote_mint specified in global config
+                                         final PublicKey quoteMintKey,
+                                         // Token account that holds the pool's base tokens
+                                         // PDA generated using POOL_VAULT_SEED
+                                         final PublicKey baseVaultKey,
+                                         // Token account that holds the pool's quote tokens
+                                         // PDA generated using POOL_VAULT_SEED
+                                         final PublicKey quoteVaultKey,
+                                         // Account to store the base token's metadata
+                                         // Created using Metaplex metadata program
+                                         final PublicKey metadataAccountKey,
+                                         // Metaplex Token Metadata program
+                                         // Used to create metadata for the base token
+                                         final PublicKey metadataProgramKey,
+                                         final PublicKey eventAuthorityKey,
+                                         final PublicKey programKey,
+                                         final MintParams baseMintParam,
+                                         final CurveParams curveParam,
+                                         final VestingParams vestingParam,
+                                         final AmmCreatorFeeOn ammFeeOn) {
+    final var keys = List.of(
+      createWritableSigner(payerKey),
+      createRead(creatorKey),
+      createRead(globalConfigKey),
+      createRead(platformConfigKey),
+      createRead(authorityKey),
+      createWrite(poolStateKey),
+      createWritableSigner(baseMintKey),
+      createRead(quoteMintKey),
+      createWrite(baseVaultKey),
+      createWrite(quoteVaultKey),
+      createWrite(metadataAccountKey),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(metadataProgramKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.rentSysVar()),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(baseMintParam) + Borsh.len(curveParam) + Borsh.len(vestingParam) + Borsh.len(ammFeeOn)];
+    int i = writeDiscriminator(INITIALIZE_V_2_DISCRIMINATOR, _data, 0);
+    i += Borsh.write(baseMintParam, _data, i);
+    i += Borsh.write(curveParam, _data, i);
+    i += Borsh.write(vestingParam, _data, i);
+    Borsh.write(ammFeeOn, _data, i);
+
+    return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, _data);
+  }
+
+  public record InitializeV2IxData(Discriminator discriminator,
+                                   MintParams baseMintParam,
+                                   CurveParams curveParam,
+                                   VestingParams vestingParam,
+                                   AmmCreatorFeeOn ammFeeOn) implements Borsh {  
+
+    public static InitializeV2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static InitializeV2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var baseMintParam = MintParams.read(_data, i);
+      i += Borsh.len(baseMintParam);
+      final var curveParam = CurveParams.read(_data, i);
+      i += Borsh.len(curveParam);
+      final var vestingParam = VestingParams.read(_data, i);
+      i += Borsh.len(vestingParam);
+      final var ammFeeOn = AmmCreatorFeeOn.read(_data, i);
+      return new InitializeV2IxData(discriminator,
+                                    baseMintParam,
+                                    curveParam,
+                                    vestingParam,
+                                    ammFeeOn);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(baseMintParam, _data, i);
+      i += Borsh.write(curveParam, _data, i);
+      i += Borsh.write(vestingParam, _data, i);
+      i += Borsh.write(ammFeeOn, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(baseMintParam) + Borsh.len(curveParam) + Borsh.len(vestingParam) + Borsh.len(ammFeeOn);
+    }
+  }
+
+  public static final Discriminator INITIALIZE_WITH_TOKEN_2222_DISCRIMINATOR = toDiscriminator(37, 190, 126, 222, 44, 154, 171, 17);
+
+  // Initializes a new trading pool with base token belongs to spl-token-2022,
+  // pool created by this instruction must be migrated to cpswap after fundraising ends, i.e., curve_param.migrate_type = 1
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts containing pool and token information
+  // 
+  public static Instruction initializeWithToken2022(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
+                                                    final SolanaAccounts solanaAccounts,
+                                                    // The account paying for the initialization costs
+                                                    // This can be any account with sufficient SOL to cover the transaction
+                                                    final PublicKey payerKey,
+                                                    final PublicKey creatorKey,
+                                                    // Global configuration account containing protocol-wide settings
+                                                    // Includes settings like quote token mint and fee parameters
+                                                    final PublicKey globalConfigKey,
+                                                    // Platform configuration account containing platform info
+                                                    // Includes settings like the fee_rate, name, web, img of the platform
+                                                    final PublicKey platformConfigKey,
+                                                    // PDA that acts as the authority for pool vault and mint operations
+                                                    // Generated using AUTH_SEED
+                                                    final PublicKey authorityKey,
+                                                    // Account that stores the pool's state and parameters
+                                                    // PDA generated using POOL_SEED and both token mints
+                                                    final PublicKey poolStateKey,
+                                                    // The mint for the base token (token being sold)
+                                                    // Created in this instruction with specified decimals
+                                                    final PublicKey baseMintKey,
+                                                    // The mint for the quote token (token used to buy)
+                                                    // Must match the quote_mint specified in global config
+                                                    final PublicKey quoteMintKey,
+                                                    // Token account that holds the pool's base tokens
+                                                    // PDA generated using POOL_VAULT_SEED
+                                                    final PublicKey baseVaultKey,
+                                                    // Token account that holds the pool's quote tokens
+                                                    // PDA generated using POOL_VAULT_SEED
+                                                    final PublicKey quoteVaultKey,
+                                                    final PublicKey eventAuthorityKey,
+                                                    final PublicKey programKey,
+                                                    final MintParams baseMintParam,
+                                                    final CurveParams curveParam,
+                                                    final VestingParams vestingParam,
+                                                    final AmmCreatorFeeOn ammFeeOn,
+                                                    final TransferFeeExtensionParams transferFeeExtensionParam) {
+    final var keys = List.of(
+      createWritableSigner(payerKey),
+      createRead(creatorKey),
+      createRead(globalConfigKey),
+      createRead(platformConfigKey),
+      createRead(authorityKey),
+      createWrite(poolStateKey),
+      createWritableSigner(baseMintKey),
+      createRead(quoteMintKey),
+      createWrite(baseVaultKey),
+      createWrite(quoteVaultKey),
+      createRead(solanaAccounts.token2022Program()),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[
+        8 + Borsh.len(baseMintParam) + Borsh.len(curveParam) + Borsh.len(vestingParam) + Borsh.len(ammFeeOn)
+        + (transferFeeExtensionParam == null ? 1 : (1 + Borsh.len(transferFeeExtensionParam)))
+    ];
+    int i = writeDiscriminator(INITIALIZE_WITH_TOKEN_2222_DISCRIMINATOR, _data, 0);
+    i += Borsh.write(baseMintParam, _data, i);
+    i += Borsh.write(curveParam, _data, i);
+    i += Borsh.write(vestingParam, _data, i);
+    i += Borsh.write(ammFeeOn, _data, i);
+    Borsh.writeOptional(transferFeeExtensionParam, _data, i);
+
+    return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, _data);
+  }
+
+  public record InitializeWithToken2022IxData(Discriminator discriminator,
+                                              MintParams baseMintParam,
+                                              CurveParams curveParam,
+                                              VestingParams vestingParam,
+                                              AmmCreatorFeeOn ammFeeOn,
+                                              TransferFeeExtensionParams transferFeeExtensionParam) implements Borsh {  
+
+    public static InitializeWithToken2022IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static InitializeWithToken2022IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var baseMintParam = MintParams.read(_data, i);
+      i += Borsh.len(baseMintParam);
+      final var curveParam = CurveParams.read(_data, i);
+      i += Borsh.len(curveParam);
+      final var vestingParam = VestingParams.read(_data, i);
+      i += Borsh.len(vestingParam);
+      final var ammFeeOn = AmmCreatorFeeOn.read(_data, i);
+      i += Borsh.len(ammFeeOn);
+      final var transferFeeExtensionParam = _data[i++] == 0 ? null : TransferFeeExtensionParams.read(_data, i);
+      return new InitializeWithToken2022IxData(discriminator,
+                                               baseMintParam,
+                                               curveParam,
+                                               vestingParam,
+                                               ammFeeOn,
+                                               transferFeeExtensionParam);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(baseMintParam, _data, i);
+      i += Borsh.write(curveParam, _data, i);
+      i += Borsh.write(vestingParam, _data, i);
+      i += Borsh.write(ammFeeOn, _data, i);
+      i += Borsh.writeOptional(transferFeeExtensionParam, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(baseMintParam)
+           + Borsh.len(curveParam)
+           + Borsh.len(vestingParam)
+           + Borsh.len(ammFeeOn)
+           + (transferFeeExtensionParam == null ? 1 : (1 + Borsh.len(transferFeeExtensionParam)));
     }
   }
 
@@ -985,11 +1319,14 @@ public final class RaydiumLaunchpadProgram {
                                             // Will be fully drained during migration
                                             final PublicKey quoteVaultKey,
                                             final PublicKey poolLpTokenKey,
+                                            // SPL Token program for the base token
+                                            // Must be the standard Token program
+                                            final PublicKey baseTokenProgramKey,
                                             // Program to create NFT metadata accunt
                                             final PublicKey metadataProgramKey) {
     final var keys = List.of(
       createWritableSigner(payerKey),
-      createRead(baseMintKey),
+      createWrite(baseMintKey),
       createRead(quoteMintKey),
       createRead(platformConfigKey),
       createRead(cpswapProgramKey),
@@ -1010,7 +1347,7 @@ public final class RaydiumLaunchpadProgram {
       createWrite(baseVaultKey),
       createWrite(quoteVaultKey),
       createWrite(poolLpTokenKey),
-      createRead(solanaAccounts.tokenProgram()),
+      createRead(baseTokenProgramKey),
       createRead(solanaAccounts.tokenProgram()),
       createRead(solanaAccounts.associatedTokenAccountProgram()),
       createRead(solanaAccounts.systemProgram()),
@@ -1019,6 +1356,64 @@ public final class RaydiumLaunchpadProgram {
     );
 
     return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, MIGRATE_TO_CPSWAP_DISCRIMINATOR);
+  }
+
+  public static final Discriminator REMOVE_PLATFORM_CURVE_PARAM_DISCRIMINATOR = toDiscriminator(27, 30, 62, 169, 93, 224, 24, 145);
+
+  // Remove platform launch param
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // * `index` - The index of the curve param to remove
+  // 
+  public static Instruction removePlatformCurveParam(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
+                                                     // The account paying for the initialization costs
+                                                     final PublicKey platformAdminKey,
+                                                     // Platform config account to be changed
+                                                     final PublicKey platformConfigKey,
+                                                     final int index) {
+    final var keys = List.of(
+      createReadOnlySigner(platformAdminKey),
+      createWrite(platformConfigKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = writeDiscriminator(REMOVE_PLATFORM_CURVE_PARAM_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) index;
+
+    return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, _data);
+  }
+
+  public record RemovePlatformCurveParamIxData(Discriminator discriminator, int index) implements Borsh {  
+
+    public static RemovePlatformCurveParamIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static RemovePlatformCurveParamIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var index = _data[i] & 0xFF;
+      return new RemovePlatformCurveParamIxData(discriminator, index);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) index;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
   }
 
   public static final Discriminator SELL_EXACT_IN_DISCRIMINATOR = toDiscriminator(149, 39, 222, 155, 211, 124, 152, 26);
@@ -1387,6 +1782,76 @@ public final class RaydiumLaunchpadProgram {
     @Override
     public int l() {
       return 8 + Borsh.len(param);
+    }
+  }
+
+  public static final Discriminator UPDATE_PLATFORM_CURVE_PARAM_DISCRIMINATOR = toDiscriminator(138, 144, 138, 250, 220, 128, 4, 57);
+
+  // Update platform launch param
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // * `bonding_curve_param` - Parameter to update
+  // 
+  public static Instruction updatePlatformCurveParam(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
+                                                     final SolanaAccounts solanaAccounts,
+                                                     // The account paying for the initialization costs
+                                                     final PublicKey platformAdminKey,
+                                                     // Platform config account to be changed
+                                                     final PublicKey platformConfigKey,
+                                                     // Global configuration account containing protocol-wide settings
+                                                     // Includes settings like quote token mint and fee parameters
+                                                     final PublicKey globalConfigKey,
+                                                     final int index,
+                                                     final BondingCurveParam bondingCurveParam) {
+    final var keys = List.of(
+      createWritableSigner(platformAdminKey),
+      createWrite(platformConfigKey),
+      createRead(globalConfigKey),
+      createRead(solanaAccounts.systemProgram())
+    );
+
+    final byte[] _data = new byte[9 + Borsh.len(bondingCurveParam)];
+    int i = writeDiscriminator(UPDATE_PLATFORM_CURVE_PARAM_DISCRIMINATOR, _data, 0);
+    _data[i] = (byte) index;
+    ++i;
+    Borsh.write(bondingCurveParam, _data, i);
+
+    return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, _data);
+  }
+
+  public record UpdatePlatformCurveParamIxData(Discriminator discriminator, int index, BondingCurveParam bondingCurveParam) implements Borsh {  
+
+    public static UpdatePlatformCurveParamIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 59;
+
+    public static UpdatePlatformCurveParamIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = parseDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var index = _data[i] & 0xFF;
+      ++i;
+      final var bondingCurveParam = BondingCurveParam.read(_data, i);
+      return new UpdatePlatformCurveParamIxData(discriminator, index, bondingCurveParam);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) index;
+      ++i;
+      i += Borsh.write(bondingCurveParam, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
     }
   }
 

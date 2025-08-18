@@ -16,7 +16,9 @@ public sealed interface PlatformConfigParam extends RustEnum permits
   PlatformConfigParam.FeeRate,
   PlatformConfigParam.Name,
   PlatformConfigParam.Web,
-  PlatformConfigParam.Img {
+  PlatformConfigParam.Img,
+  PlatformConfigParam.CpSwapConfig,
+  PlatformConfigParam.AllInfo {
 
   static PlatformConfigParam read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -29,6 +31,8 @@ public sealed interface PlatformConfigParam extends RustEnum permits
       case 4 -> Name.read(_data, i);
       case 5 -> Web.read(_data, i);
       case 6 -> Img.read(_data, i);
+      case 7 -> CpSwapConfig.INSTANCE;
+      case 8 -> AllInfo.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [PlatformConfigParam]", ordinal
       ));
@@ -128,6 +132,28 @@ public sealed interface PlatformConfigParam extends RustEnum permits
     @Override
     public int ordinal() {
       return 6;
+    }
+  }
+
+  record CpSwapConfig() implements EnumNone, PlatformConfigParam {
+
+    public static final CpSwapConfig INSTANCE = new CpSwapConfig();
+
+    @Override
+    public int ordinal() {
+      return 7;
+    }
+  }
+
+  record AllInfo(PlatformConfigInfo val) implements BorshEnum, PlatformConfigParam {
+
+    public static AllInfo read(final byte[] _data, final int offset) {
+      return new AllInfo(PlatformConfigInfo.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 8;
     }
   }
 }

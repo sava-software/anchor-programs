@@ -20,11 +20,13 @@ public record TradeEvent(PublicKey poolState,
                          long amountOut,
                          long protocolFee,
                          long platformFee,
+                         long creatorFee,
                          long shareFee,
                          TradeDirection tradeDirection,
-                         PoolStatus poolStatus) implements Borsh {
+                         PoolStatus poolStatus,
+                         boolean exactIn) implements Borsh {
 
-  public static final int BYTES = 130;
+  public static final int BYTES = 139;
 
   public static TradeEvent read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -55,11 +57,15 @@ public record TradeEvent(PublicKey poolState,
     i += 8;
     final var platformFee = getInt64LE(_data, i);
     i += 8;
+    final var creatorFee = getInt64LE(_data, i);
+    i += 8;
     final var shareFee = getInt64LE(_data, i);
     i += 8;
     final var tradeDirection = TradeDirection.read(_data, i);
     i += Borsh.len(tradeDirection);
     final var poolStatus = PoolStatus.read(_data, i);
+    i += Borsh.len(poolStatus);
+    final var exactIn = _data[i] == 1;
     return new TradeEvent(poolState,
                           totalBaseSell,
                           virtualBase,
@@ -72,9 +78,11 @@ public record TradeEvent(PublicKey poolState,
                           amountOut,
                           protocolFee,
                           platformFee,
+                          creatorFee,
                           shareFee,
                           tradeDirection,
-                          poolStatus);
+                          poolStatus,
+                          exactIn);
   }
 
   @Override
@@ -104,10 +112,14 @@ public record TradeEvent(PublicKey poolState,
     i += 8;
     putInt64LE(_data, i, platformFee);
     i += 8;
+    putInt64LE(_data, i, creatorFee);
+    i += 8;
     putInt64LE(_data, i, shareFee);
     i += 8;
     i += Borsh.write(tradeDirection, _data, i);
     i += Borsh.write(poolStatus, _data, i);
+    _data[i] = (byte) (exactIn ? 1 : 0);
+    ++i;
     return i - offset;
   }
 

@@ -18,7 +18,12 @@ public sealed interface RaydiumLaunchpadError extends ProgramError permits
     RaydiumLaunchpadError.VestingNotStarted,
     RaydiumLaunchpadError.NoVestingSchedule,
     RaydiumLaunchpadError.InvalidPlatformInfo,
-    RaydiumLaunchpadError.PoolNotMigrated {
+    RaydiumLaunchpadError.PoolNotMigrated,
+    RaydiumLaunchpadError.InvalidCpSwapConfig,
+    RaydiumLaunchpadError.NoSupportExtension,
+    RaydiumLaunchpadError.NotEnoughRemainingAccounts,
+    RaydiumLaunchpadError.TransferFeeCalculateNotMatch,
+    RaydiumLaunchpadError.CurveParamIsNotExist {
 
   static RaydiumLaunchpadError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -38,6 +43,11 @@ public sealed interface RaydiumLaunchpadError extends ProgramError permits
       case 6013 -> NoVestingSchedule.INSTANCE;
       case 6014 -> InvalidPlatformInfo.INSTANCE;
       case 6015 -> PoolNotMigrated.INSTANCE;
+      case 6016 -> InvalidCpSwapConfig.INSTANCE;
+      case 6017 -> NoSupportExtension.INSTANCE;
+      case 6018 -> NotEnoughRemainingAccounts.INSTANCE;
+      case 6019 -> TransferFeeCalculateNotMatch.INSTANCE;
+      case 6020 -> CurveParamIsNotExist.INSTANCE;
       default -> throw new IllegalStateException("Unexpected RaydiumLaunchpad error code: " + errorCode);
     };
   }
@@ -151,6 +161,41 @@ public sealed interface RaydiumLaunchpadError extends ProgramError permits
 
     public static final PoolNotMigrated INSTANCE = new PoolNotMigrated(
         6015, "Pool not migrated"
+    );
+  }
+
+  record InvalidCpSwapConfig(int code, String msg) implements RaydiumLaunchpadError {
+
+    public static final InvalidCpSwapConfig INSTANCE = new InvalidCpSwapConfig(
+        6016, "The input cp swap config account is invalid"
+    );
+  }
+
+  record NoSupportExtension(int code, String msg) implements RaydiumLaunchpadError {
+
+    public static final NoSupportExtension INSTANCE = new NoSupportExtension(
+        6017, "No support extension"
+    );
+  }
+
+  record NotEnoughRemainingAccounts(int code, String msg) implements RaydiumLaunchpadError {
+
+    public static final NotEnoughRemainingAccounts INSTANCE = new NotEnoughRemainingAccounts(
+        6018, "Not enough remaining accounts"
+    );
+  }
+
+  record TransferFeeCalculateNotMatch(int code, String msg) implements RaydiumLaunchpadError {
+
+    public static final TransferFeeCalculateNotMatch INSTANCE = new TransferFeeCalculateNotMatch(
+        6019, "TransferFee calculate not match"
+    );
+  }
+
+  record CurveParamIsNotExist(int code, String msg) implements RaydiumLaunchpadError {
+
+    public static final CurveParamIsNotExist INSTANCE = new CurveParamIsNotExist(
+        6020, "Curve param is not exist"
     );
   }
 }

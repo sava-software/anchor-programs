@@ -31,7 +31,7 @@ public record PoolState(PublicKey _address,
                         int baseDecimals,
                         // Decimals of the pool quote token
                         int quoteDecimals,
-                        // Migrate to AMM or CpSwap
+                        // Migrate to AMM or CpSwap, 0: amm��� 1: cpswap
                         int migrateType,
                         // Supply of the pool base token
                         long supply,
@@ -79,11 +79,22 @@ public record PoolState(PublicKey _address,
                         PublicKey quoteVault,
                         // The creator of base token
                         PublicKey creator,
+                        // token program bits
+                        // bit0: base token program flag
+                        // 0: spl_token_program
+                        // 1: token_program_2022
+                        // 
+                        // bit1: quote token program flag
+                        // 0: spl_token_program
+                        // 1: token_program_2022
+                        int tokenProgramFlag,
+                        // migrate to cpmm, creator fee on quote token or both token
+                        AmmCreatorFeeOn ammCreatorFeeOn,
                         // padding for future updates
-                        long[] padding) implements Borsh {
+                        byte[] padding) implements Borsh {
 
   public static final int BYTES = 429;
-  public static final int PADDING_LEN = 8;
+  public static final int PADDING_LEN = 62;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(247, 237, 227, 245, 215, 195, 222, 70);
@@ -113,7 +124,9 @@ public record PoolState(PublicKey _address,
   public static final int BASE_VAULT_OFFSET = 269;
   public static final int QUOTE_VAULT_OFFSET = 301;
   public static final int CREATOR_OFFSET = 333;
-  public static final int PADDING_OFFSET = 365;
+  public static final int TOKEN_PROGRAM_FLAG_OFFSET = 365;
+  public static final int AMM_CREATOR_FEE_ON_OFFSET = 366;
+  public static final int PADDING_OFFSET = 367;
 
   public static Filter createEpochFilter(final long epoch) {
     final byte[] _data = new byte[8];
@@ -233,6 +246,14 @@ public record PoolState(PublicKey _address,
     return Filter.createMemCompFilter(CREATOR_OFFSET, creator);
   }
 
+  public static Filter createTokenProgramFlagFilter(final int tokenProgramFlag) {
+    return Filter.createMemCompFilter(TOKEN_PROGRAM_FLAG_OFFSET, new byte[]{(byte) tokenProgramFlag});
+  }
+
+  public static Filter createAmmCreatorFeeOnFilter(final AmmCreatorFeeOn ammCreatorFeeOn) {
+    return Filter.createMemCompFilter(AMM_CREATOR_FEE_ON_OFFSET, ammCreatorFeeOn.write());
+  }
+
   public static PoolState read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -301,7 +322,11 @@ public record PoolState(PublicKey _address,
     i += 32;
     final var creator = readPubKey(_data, i);
     i += 32;
-    final var padding = new long[8];
+    final var tokenProgramFlag = _data[i] & 0xFF;
+    ++i;
+    final var ammCreatorFeeOn = AmmCreatorFeeOn.read(_data, i);
+    i += Borsh.len(ammCreatorFeeOn);
+    final var padding = new byte[62];
     Borsh.readArray(padding, _data, i);
     return new PoolState(_address,
                          discriminator,
@@ -329,6 +354,8 @@ public record PoolState(PublicKey _address,
                          baseVault,
                          quoteVault,
                          creator,
+                         tokenProgramFlag,
+                         ammCreatorFeeOn,
                          padding);
   }
 
@@ -382,6 +409,9 @@ public record PoolState(PublicKey _address,
     i += 32;
     creator.write(_data, i);
     i += 32;
+    _data[i] = (byte) tokenProgramFlag;
+    ++i;
+    i += Borsh.write(ammCreatorFeeOn, _data, i);
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

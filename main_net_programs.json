@@ -1,5 +1,10 @@
 [
   {
+    "name": "Chainlink Store",
+    "program": "cjg3oHmg9uuPsP8D6g29NWvhySJkdYdAo9D25PRbKXJ",
+    "package": "chainlink.store"
+  },
+  {
     "name": "Drift",
     "program": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
   },
@@ -13,6 +18,11 @@
     "program": "vAuLTsyrvSfZRuRB3XgvkPwNGgYSs9YRYymVebLKoxR",
     "idlURL": "https://raw.githubusercontent.com/drift-labs/drift-vaults/refs/heads/master/ts/sdk/src/idl/drift_vaults.json",
     "package": "drift.vaults"
+  },
+  {
+    "name": "Flash Trade Perpetuals",
+    "program": "FLASH6Lo6h3iasJKWDs2F8TkW2UKf3s15C8PMGuVfgBn",
+    "package": "flash.perpetuals"
   },
   {
     "name": "Glam Config",
