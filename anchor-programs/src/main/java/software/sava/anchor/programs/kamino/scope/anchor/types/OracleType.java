@@ -39,7 +39,10 @@ public enum OracleType implements Borsh.Enum {
   Securitize,
   CappedFloored,
   ChainlinkRWA,
-  ChainlinkNAV;
+  ChainlinkNAV,
+  FlashtradeLp,
+  ChainlinkX,
+  ChainlinkExchangeRate;
 
   public static OracleType read(final byte[] _data, final int offset) {
     return Borsh.read(OracleType.values(), _data, offset);

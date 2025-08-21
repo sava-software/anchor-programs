@@ -5,6 +5,7 @@ import software.sava.anchor.programs.kamino.lend.ReservePDAs;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
+import software.sava.core.encoding.ByteUtil;
 
 import java.util.List;
 
@@ -259,10 +260,56 @@ public interface KaminoAccounts {
   }
 
   PublicKey scopePricesProgram();
-
+  
+  default AccountMeta invokedScopePricesProgram() {
+    return AccountMeta.createInvoked(scopePricesProgram());
+  }
+  
   PublicKey scopeOraclePrices();
-
+  
   default PublicKey scopePrices() {
     return scopeOraclePrices();
+  }
+  
+  default PublicKey scopeEventAuthority() {
+    return PublicKey.findProgramAddress(
+        List.of("__event_authority".getBytes(US_ASCII)),
+        scopePricesProgram()
+    ).publicKey();
+  }
+  
+  static ProgramDerivedAddress mintsToScopeChain(final PublicKey scopeOraclePrices,
+                                                 final PublicKey seedKey,
+                                                 final long seedId,
+                                                 final PublicKey programId) {
+    final byte[] seed = new byte[Long.BYTES];
+    ByteUtil.putInt64LE(seed, 0, seedId);
+    return PublicKey.findProgramAddress(
+        List.of(
+            "mints_to_scope_chains".getBytes(US_ASCII),
+            scopeOraclePrices.toByteArray(),
+            seedKey.toByteArray(),
+            seed
+        ),
+        programId
+    );
+  }
+
+  default ProgramDerivedAddress mintsToScopeChain(final PublicKey seedKey, final long seedId) {
+    return mintsToScopeChain(scopeOraclePrices(), seedKey, seedId, scopePricesProgram());
+  }
+
+  static ProgramDerivedAddress scopeFeedConfiguration(final String feedName, final PublicKey programId) {
+    return PublicKey.findProgramAddress(
+        List.of(
+            "conf".getBytes(US_ASCII),
+            feedName.getBytes(US_ASCII)
+        ),
+        programId
+    );
+  }
+
+  default ProgramDerivedAddress scopeFeedConfiguration(final String feedName) {
+    return scopeFeedConfiguration(feedName, scopePricesProgram());
   }
 }
