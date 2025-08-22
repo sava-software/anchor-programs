@@ -1,10 +1,10 @@
-package software.sava.anchor.programs.chainlink.store.anchor;
+package software.sava.anchor.programs.chainlink.ocr2.anchor;
 
 import java.math.BigInteger;
 
 import java.util.List;
 
-import software.sava.anchor.programs.chainlink.store.anchor.types.NewOracle;
+import software.sava.anchor.programs.chainlink.ocr2.anchor.types.NewOracle;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.borsh.Borsh;

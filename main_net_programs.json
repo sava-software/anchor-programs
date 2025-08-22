@@ -1,7 +1,12 @@
 [
   {
-    "name": "Chainlink Store",
+    "name": "Chainlink OCR 2",
     "program": "cjg3oHmg9uuPsP8D6g29NWvhySJkdYdAo9D25PRbKXJ",
+    "package": "chainlink.ocr2"
+  },
+  {
+    "name": "Chainlink Store",
+    "program": "HEvSKofvBgfaexv23kMabbYqxasxU3mQ4ibBMEmJWHny",
     "package": "chainlink.store"
   },
   {

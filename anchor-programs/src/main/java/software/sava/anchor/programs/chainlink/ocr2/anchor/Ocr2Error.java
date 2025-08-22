@@ -1,4 +1,4 @@
-package software.sava.anchor.programs.chainlink.store.anchor;
+package software.sava.anchor.programs.chainlink.ocr2.anchor;
 
 import software.sava.anchor.ProgramError;
 

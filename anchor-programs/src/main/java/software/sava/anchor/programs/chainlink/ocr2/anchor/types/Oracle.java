@@ -1,4 +1,4 @@
-package software.sava.anchor.programs.chainlink.store.anchor.types;
+package software.sava.anchor.programs.chainlink.ocr2.anchor.types;
 
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
