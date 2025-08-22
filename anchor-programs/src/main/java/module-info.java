@@ -3,6 +3,7 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.chainlink.ocr2.anchor;
   exports software.sava.anchor.programs.chainlink.store.anchor.types;
   exports software.sava.anchor.programs.chainlink.store.anchor;
+  exports software.sava.anchor.programs.chainlink.store;
   exports software.sava.anchor.programs.drift.anchor.types;
   exports software.sava.anchor.programs.drift.anchor;
   exports software.sava.anchor.programs.drift.merkle.distributor.anchor.types;
