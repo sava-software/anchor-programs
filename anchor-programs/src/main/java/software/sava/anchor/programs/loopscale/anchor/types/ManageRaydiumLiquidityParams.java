@@ -23,7 +23,7 @@ public record ManageRaydiumLiquidityParams(int collateralIndex,
     i += 16;
     final var manageParams = TokenAmountsParams.read(_data, i);
     i += Borsh.len(manageParams);
-    final byte[] assetIndexGuidance = Borsh.readbyteVector(_data, i);
+    final var assetIndexGuidance = Borsh.readbyteVector(_data, i);
     return new ManageRaydiumLiquidityParams(collateralIndex,
                                             liquidityAmount,
                                             manageParams,

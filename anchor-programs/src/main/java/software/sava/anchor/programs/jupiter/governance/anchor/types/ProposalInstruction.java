@@ -22,7 +22,7 @@ public record ProposalInstruction(// Pubkey of the instruction processor that ex
     i += 32;
     final var keys = Borsh.readVector(ProposalAccountMeta.class, ProposalAccountMeta::read, _data, i);
     i += Borsh.lenVector(keys);
-    final byte[] data = Borsh.readbyteVector(_data, i);
+    final var data = Borsh.readbyteVector(_data, i);
     return new ProposalInstruction(programId, keys, data);
   }
 

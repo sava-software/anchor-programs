@@ -8,7 +8,7 @@ public record LoanUnlockParams(byte[] assetIndexGuidance) implements Borsh {
     if (_data == null || _data.length == 0) {
       return null;
     }
-    final byte[] assetIndexGuidance = Borsh.readbyteVector(_data, offset);
+    final var assetIndexGuidance = Borsh.readbyteVector(_data, offset);
     return new LoanUnlockParams(assetIndexGuidance);
   }
 

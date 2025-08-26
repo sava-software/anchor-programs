@@ -2119,7 +2119,7 @@ public final class GlamProtocolProgram {
       createRead(outputTokenProgramKey)
     );
 
-    final byte[] _data = new byte[12 + Borsh.lenVector(data)];
+    final byte[] _data = new byte[8 + Borsh.lenVector(data)];
     int i = writeDiscriminator(JUPITER_SWAP_DISCRIMINATOR, _data, 0);
     Borsh.writeVector(data, _data, i);
 
@@ -2138,7 +2138,7 @@ public final class GlamProtocolProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final byte[] data = Borsh.readbyteVector(_data, i);
+      final var data = Borsh.readbyteVector(_data, i);
       return new JupiterSwapIxData(discriminator, data);
     }
 

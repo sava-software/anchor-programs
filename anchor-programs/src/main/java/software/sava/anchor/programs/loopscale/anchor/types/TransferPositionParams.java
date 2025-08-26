@@ -31,7 +31,7 @@ public record TransferPositionParams(BigInteger liquidityAmount,
     i += 4;
     final var tickUpperIndex = getInt32LE(_data, i);
     i += 4;
-    final byte[] assetIndexGuidance = Borsh.readbyteVector(_data, i);
+    final var assetIndexGuidance = Borsh.readbyteVector(_data, i);
     return new TransferPositionParams(liquidityAmount,
                                       collateralIndex,
                                       transferParams,

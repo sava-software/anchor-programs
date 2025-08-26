@@ -15,7 +15,7 @@ public record LiquidateLedgerParams(int ledgerIndex,
     ++i;
     final var unwrapSol = _data[i] == 1;
     ++i;
-    final byte[] assetIndexGuidance = Borsh.readbyteVector(_data, i);
+    final var assetIndexGuidance = Borsh.readbyteVector(_data, i);
     return new LiquidateLedgerParams(ledgerIndex, unwrapSol, assetIndexGuidance);
   }
 

@@ -1,26 +1,22 @@
 package software.sava.anchor.programs.flash.perpetuals.anchor.types;
 
-import java.math.BigInteger;
-
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
-import static software.sava.core.encoding.ByteUtil.getInt128LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
-import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record SetPoolConfigParams(Permissions permissions,
                                   PublicKey oracleAuthority,
-                                  BigInteger maxAumUsd,
+                                  long maxAumUsd,
                                   long stakingFeeShareBps,
                                   int vpVolumeFactor,
                                   long[] stakingFeeBoostBps,
                                   long minLpPriceUsd,
                                   long maxLpPriceUsd) implements Borsh {
 
-  public static final int BYTES = 134;
+  public static final int BYTES = 126;
   public static final int STAKING_FEE_BOOST_BPS_LEN = 6;
 
   public static SetPoolConfigParams read(final byte[] _data, final int offset) {
@@ -32,8 +28,8 @@ public record SetPoolConfigParams(Permissions permissions,
     i += Borsh.len(permissions);
     final var oracleAuthority = readPubKey(_data, i);
     i += 32;
-    final var maxAumUsd = getInt128LE(_data, i);
-    i += 16;
+    final var maxAumUsd = getInt64LE(_data, i);
+    i += 8;
     final var stakingFeeShareBps = getInt64LE(_data, i);
     i += 8;
     final var vpVolumeFactor = _data[i] & 0xFF;
@@ -59,8 +55,8 @@ public record SetPoolConfigParams(Permissions permissions,
     i += Borsh.write(permissions, _data, i);
     oracleAuthority.write(_data, i);
     i += 32;
-    putInt128LE(_data, i, maxAumUsd);
-    i += 16;
+    putInt64LE(_data, i, maxAumUsd);
+    i += 8;
     putInt64LE(_data, i, stakingFeeShareBps);
     i += 8;
     _data[i] = (byte) vpVolumeFactor;

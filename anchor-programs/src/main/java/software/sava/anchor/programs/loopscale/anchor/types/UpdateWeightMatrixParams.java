@@ -19,7 +19,7 @@ public record UpdateWeightMatrixParams(int collateralIndex,
     i += Borsh.readArray(weightMatrix, _data, i);
     final var expectedLoanValues = ExpectedLoanValues.read(_data, i);
     i += Borsh.len(expectedLoanValues);
-    final byte[] assetIndexGuidance = Borsh.readbyteVector(_data, i);
+    final var assetIndexGuidance = Borsh.readbyteVector(_data, i);
     return new UpdateWeightMatrixParams(collateralIndex,
                                         weightMatrix,
                                         expectedLoanValues,

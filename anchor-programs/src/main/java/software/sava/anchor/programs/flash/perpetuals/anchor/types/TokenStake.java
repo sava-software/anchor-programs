@@ -27,9 +27,11 @@ public record TokenStake(PublicKey _address,
                          int level,
                          int withdrawRequestCount,
                          WithdrawRequest[] withdrawRequest,
+                         long rebateWatermark,
+                         long rebateAmount,
                          long activeStakeAmount,
                          long updateTimestamp,
-                         long tradeTimestamp,
+                         long referenceTimestamp,
                          int tradeCounter,
                          int lastRewardEpochCount,
                          long rewardTokens,
@@ -38,7 +40,7 @@ public record TokenStake(PublicKey _address,
                          long[] padding) implements Borsh {
 
   public static final int BYTES = 196;
-  public static final int WITHDRAW_REQUEST_LEN = 5;
+  public static final int WITHDRAW_REQUEST_LEN = 4;
   public static final int PADDING_LEN = 1;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
@@ -48,9 +50,11 @@ public record TokenStake(PublicKey _address,
   public static final int LEVEL_OFFSET = 42;
   public static final int WITHDRAW_REQUEST_COUNT_OFFSET = 43;
   public static final int WITHDRAW_REQUEST_OFFSET = 44;
+  public static final int REBATE_WATERMARK_OFFSET = 108;
+  public static final int REBATE_AMOUNT_OFFSET = 116;
   public static final int ACTIVE_STAKE_AMOUNT_OFFSET = 124;
   public static final int UPDATE_TIMESTAMP_OFFSET = 132;
-  public static final int TRADE_TIMESTAMP_OFFSET = 140;
+  public static final int REFERENCE_TIMESTAMP_OFFSET = 140;
   public static final int TRADE_COUNTER_OFFSET = 148;
   public static final int LAST_REWARD_EPOCH_COUNT_OFFSET = 152;
   public static final int REWARD_TOKENS_OFFSET = 156;
@@ -78,6 +82,18 @@ public record TokenStake(PublicKey _address,
     return Filter.createMemCompFilter(WITHDRAW_REQUEST_COUNT_OFFSET, new byte[]{(byte) withdrawRequestCount});
   }
 
+  public static Filter createRebateWatermarkFilter(final long rebateWatermark) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, rebateWatermark);
+    return Filter.createMemCompFilter(REBATE_WATERMARK_OFFSET, _data);
+  }
+
+  public static Filter createRebateAmountFilter(final long rebateAmount) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, rebateAmount);
+    return Filter.createMemCompFilter(REBATE_AMOUNT_OFFSET, _data);
+  }
+
   public static Filter createActiveStakeAmountFilter(final long activeStakeAmount) {
     final byte[] _data = new byte[8];
     putInt64LE(_data, 0, activeStakeAmount);
@@ -90,10 +106,10 @@ public record TokenStake(PublicKey _address,
     return Filter.createMemCompFilter(UPDATE_TIMESTAMP_OFFSET, _data);
   }
 
-  public static Filter createTradeTimestampFilter(final long tradeTimestamp) {
+  public static Filter createReferenceTimestampFilter(final long referenceTimestamp) {
     final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, tradeTimestamp);
-    return Filter.createMemCompFilter(TRADE_TIMESTAMP_OFFSET, _data);
+    putInt64LE(_data, 0, referenceTimestamp);
+    return Filter.createMemCompFilter(REFERENCE_TIMESTAMP_OFFSET, _data);
   }
 
   public static Filter createTradeCounterFilter(final int tradeCounter) {
@@ -156,13 +172,17 @@ public record TokenStake(PublicKey _address,
     ++i;
     final var withdrawRequestCount = _data[i] & 0xFF;
     ++i;
-    final var withdrawRequest = new WithdrawRequest[5];
+    final var withdrawRequest = new WithdrawRequest[4];
     i += Borsh.readArray(withdrawRequest, WithdrawRequest::read, _data, i);
+    final var rebateWatermark = getInt64LE(_data, i);
+    i += 8;
+    final var rebateAmount = getInt64LE(_data, i);
+    i += 8;
     final var activeStakeAmount = getInt64LE(_data, i);
     i += 8;
     final var updateTimestamp = getInt64LE(_data, i);
     i += 8;
-    final var tradeTimestamp = getInt64LE(_data, i);
+    final var referenceTimestamp = getInt64LE(_data, i);
     i += 8;
     final var tradeCounter = getInt32LE(_data, i);
     i += 4;
@@ -184,9 +204,11 @@ public record TokenStake(PublicKey _address,
                           level,
                           withdrawRequestCount,
                           withdrawRequest,
+                          rebateWatermark,
+                          rebateAmount,
                           activeStakeAmount,
                           updateTimestamp,
-                          tradeTimestamp,
+                          referenceTimestamp,
                           tradeCounter,
                           lastRewardEpochCount,
                           rewardTokens,
@@ -209,11 +231,15 @@ public record TokenStake(PublicKey _address,
     _data[i] = (byte) withdrawRequestCount;
     ++i;
     i += Borsh.writeArray(withdrawRequest, _data, i);
+    putInt64LE(_data, i, rebateWatermark);
+    i += 8;
+    putInt64LE(_data, i, rebateAmount);
+    i += 8;
     putInt64LE(_data, i, activeStakeAmount);
     i += 8;
     putInt64LE(_data, i, updateTimestamp);
     i += 8;
-    putInt64LE(_data, i, tradeTimestamp);
+    putInt64LE(_data, i, referenceTimestamp);
     i += 8;
     putInt32LE(_data, i, tradeCounter);
     i += 4;

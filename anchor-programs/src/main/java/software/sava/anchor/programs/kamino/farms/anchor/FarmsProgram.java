@@ -272,7 +272,7 @@ public final class FarmsProgram {
       createRead(requireNonNullElse(scopePricesKey, invokedFarmsProgramMeta.publicKey()))
     );
 
-    final byte[] _data = new byte[14 + Borsh.lenVector(data)];
+    final byte[] _data = new byte[10 + Borsh.lenVector(data)];
     int i = writeDiscriminator(UPDATE_FARM_CONFIG_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, mode);
     i += 2;
@@ -295,7 +295,7 @@ public final class FarmsProgram {
       int i = offset + discriminator.length();
       final var mode = getInt16LE(_data, i);
       i += 2;
-      final byte[] data = Borsh.readbyteVector(_data, i);
+      final var data = Borsh.readbyteVector(_data, i);
       return new UpdateFarmConfigIxData(discriminator, mode, data);
     }
 

@@ -250,7 +250,7 @@ public final class Ocr2Program {
       createReadOnlySigner(authorityKey)
     );
 
-    final byte[] _data = new byte[12 + Borsh.lenVector(offchainConfig)];
+    final byte[] _data = new byte[8 + Borsh.lenVector(offchainConfig)];
     int i = writeDiscriminator(WRITE_OFFCHAIN_CONFIG_DISCRIMINATOR, _data, 0);
     Borsh.writeVector(offchainConfig, _data, i);
 
@@ -269,7 +269,7 @@ public final class Ocr2Program {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final byte[] offchainConfig = Borsh.readbyteVector(_data, i);
+      final var offchainConfig = Borsh.readbyteVector(_data, i);
       return new WriteOffchainConfigIxData(discriminator, offchainConfig);
     }
 
@@ -333,7 +333,7 @@ public final class Ocr2Program {
       createRead(tokenProgramKey)
     );
 
-    final byte[] _data = new byte[12 + Borsh.lenVector(digest)];
+    final byte[] _data = new byte[8 + Borsh.lenVector(digest)];
     int i = writeDiscriminator(ACCEPT_PROPOSAL_DISCRIMINATOR, _data, 0);
     Borsh.writeVector(digest, _data, i);
 
@@ -352,7 +352,7 @@ public final class Ocr2Program {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final byte[] digest = Borsh.readbyteVector(_data, i);
+      final var digest = Borsh.readbyteVector(_data, i);
       return new AcceptProposalIxData(discriminator, digest);
     }
 

@@ -15,7 +15,7 @@ public record RefinanceLedgerParams(int ledgerIndex,
     ++i;
     final var durationIndex = _data[i] & 0xFF;
     ++i;
-    final byte[] assetIndexGuidance = Borsh.readbyteVector(_data, i);
+    final var assetIndexGuidance = Borsh.readbyteVector(_data, i);
     return new RefinanceLedgerParams(ledgerIndex, durationIndex, assetIndexGuidance);
   }
 

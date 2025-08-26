@@ -33,7 +33,7 @@ public record DepositCollateralParams(long amount,
     ++i;
     final var assetIdentifier = readPubKey(_data, i);
     i += 32;
-    final byte[] assetIndexGuidance = Borsh.readbyteVector(_data, i);
+    final var assetIndexGuidance = Borsh.readbyteVector(_data, i);
     return new DepositCollateralParams(amount,
                                        assetType,
                                        assetIdentifier,

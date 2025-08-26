@@ -170,7 +170,7 @@ public final class PythLazerSolanaContractProgram {
       createRead(instructionsSysvarKey)
     );
 
-    final byte[] _data = new byte[15 + Borsh.lenVector(messageData)];
+    final byte[] _data = new byte[11 + Borsh.lenVector(messageData)];
     int i = writeDiscriminator(VERIFY_MESSAGE_DISCRIMINATOR, _data, 0);
     i += Borsh.writeVector(messageData, _data, i);
     putInt16LE(_data, i, ed25519InstructionIndex);
@@ -195,7 +195,7 @@ public final class PythLazerSolanaContractProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final byte[] messageData = Borsh.readbyteVector(_data, i);
+      final var messageData = Borsh.readbyteVector(_data, i);
       i += Borsh.lenVector(messageData);
       final var ed25519InstructionIndex = getInt16LE(_data, i);
       i += 2;

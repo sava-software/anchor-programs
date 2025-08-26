@@ -1473,7 +1473,7 @@ public final class DriftProgram {
       createRead(ixSysvarKey)
     );
 
-    final byte[] _data = new byte[13 + Borsh.lenVector(signedMsgOrderParamsMessageBytes)];
+    final byte[] _data = new byte[9 + Borsh.lenVector(signedMsgOrderParamsMessageBytes)];
     int i = writeDiscriminator(PLACE_SIGNED_MSG_TAKER_ORDER_DISCRIMINATOR, _data, 0);
     i += Borsh.writeVector(signedMsgOrderParamsMessageBytes, _data, i);
     _data[i] = (byte) (isDelegateSigner ? 1 : 0);
@@ -1493,7 +1493,7 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final byte[] signedMsgOrderParamsMessageBytes = Borsh.readbyteVector(_data, i);
+      final var signedMsgOrderParamsMessageBytes = Borsh.readbyteVector(_data, i);
       i += Borsh.lenVector(signedMsgOrderParamsMessageBytes);
       final var isDelegateSigner = _data[i] == 1;
       return new PlaceSignedMsgTakerOrderIxData(discriminator, signedMsgOrderParamsMessageBytes, isDelegateSigner);
@@ -5108,7 +5108,7 @@ public final class DriftProgram {
       createWrite(priceFeedKey)
     );
 
-    final byte[] _data = new byte[12 + Borsh.lenArray(feedId) + Borsh.lenVector(params)];
+    final byte[] _data = new byte[8 + Borsh.lenArray(feedId) + Borsh.lenVector(params)];
     int i = writeDiscriminator(UPDATE_PYTH_PULL_ORACLE_DISCRIMINATOR, _data, 0);
     i += Borsh.writeArray(feedId, _data, i);
     Borsh.writeVector(params, _data, i);
@@ -5131,7 +5131,7 @@ public final class DriftProgram {
       int i = offset + discriminator.length();
       final var feedId = new byte[32];
       i += Borsh.readArray(feedId, _data, i);
-      final byte[] params = Borsh.readbyteVector(_data, i);
+      final var params = Borsh.readbyteVector(_data, i);
       return new UpdatePythPullOracleIxData(discriminator, feedId, params);
     }
 
@@ -5165,7 +5165,7 @@ public final class DriftProgram {
       createWrite(priceFeedKey)
     );
 
-    final byte[] _data = new byte[12 + Borsh.lenArray(feedId) + Borsh.lenVector(params)];
+    final byte[] _data = new byte[8 + Borsh.lenArray(feedId) + Borsh.lenVector(params)];
     int i = writeDiscriminator(POST_PYTH_PULL_ORACLE_UPDATE_ATOMIC_DISCRIMINATOR, _data, 0);
     i += Borsh.writeArray(feedId, _data, i);
     Borsh.writeVector(params, _data, i);
@@ -5188,7 +5188,7 @@ public final class DriftProgram {
       int i = offset + discriminator.length();
       final var feedId = new byte[32];
       i += Borsh.readArray(feedId, _data, i);
-      final byte[] params = Borsh.readbyteVector(_data, i);
+      final var params = Borsh.readbyteVector(_data, i);
       return new PostPythPullOracleUpdateAtomicIxData(discriminator, feedId, params);
     }
 
@@ -5219,7 +5219,7 @@ public final class DriftProgram {
       createRead(guardianSetKey)
     );
 
-    final byte[] _data = new byte[12 + Borsh.lenVector(params)];
+    final byte[] _data = new byte[8 + Borsh.lenVector(params)];
     int i = writeDiscriminator(POST_MULTI_PYTH_PULL_ORACLE_UPDATES_ATOMIC_DISCRIMINATOR, _data, 0);
     Borsh.writeVector(params, _data, i);
 
@@ -5238,7 +5238,7 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final byte[] params = Borsh.readbyteVector(_data, i);
+      final var params = Borsh.readbyteVector(_data, i);
       return new PostMultiPythPullOracleUpdatesAtomicIxData(discriminator, params);
     }
 
@@ -11235,7 +11235,7 @@ public final class DriftProgram {
       createRead(ixSysvarKey)
     );
 
-    final byte[] _data = new byte[12 + Borsh.lenVector(pythMessage)];
+    final byte[] _data = new byte[8 + Borsh.lenVector(pythMessage)];
     int i = writeDiscriminator(POST_PYTH_LAZER_ORACLE_UPDATE_DISCRIMINATOR, _data, 0);
     Borsh.writeVector(pythMessage, _data, i);
 
@@ -11254,7 +11254,7 @@ public final class DriftProgram {
       }
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final byte[] pythMessage = Borsh.readbyteVector(_data, i);
+      final var pythMessage = Borsh.readbyteVector(_data, i);
       return new PostPythLazerOracleUpdateIxData(discriminator, pythMessage);
     }
 

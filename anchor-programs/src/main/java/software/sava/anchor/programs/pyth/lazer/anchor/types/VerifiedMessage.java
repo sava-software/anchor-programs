@@ -18,7 +18,7 @@ public record VerifiedMessage(// Public key that signed the message.
     int i = offset;
     final var publicKey = readPubKey(_data, i);
     i += 32;
-    final byte[] payload = Borsh.readbyteVector(_data, i);
+    final var payload = Borsh.readbyteVector(_data, i);
     return new VerifiedMessage(publicKey, payload);
   }
 

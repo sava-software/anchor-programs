@@ -40,6 +40,16 @@
     "package": "glam"
   },
   {
+    "name": "Glam Mint",
+    "program": "GM1NtvvnSXUptTrMCqbogAdZJydZSNv98DoU5AZVLmGh",
+    "package": "glam.mint"
+  },
+  {
+    "name": "Glam Protocol",
+    "program": "GLAMpaME8wdTEzxtiYEAa5yD8fZbxZiz2hNtV58RZiEz",
+    "package": "glam.protocol"
+  },
+  {
     "name": "GLAM Policy Program",
     "program": "po1iCYakK3gHCLbuju4wGzFowTMpAJxkqK1iwUqMonY",
     "package": "glam.policy"

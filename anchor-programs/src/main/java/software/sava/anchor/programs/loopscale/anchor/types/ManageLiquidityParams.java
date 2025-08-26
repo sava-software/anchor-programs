@@ -23,7 +23,7 @@ public record ManageLiquidityParams(int collateralIndex,
     i += 16;
     final var transferParams = TransferTypeParams.read(_data, i);
     i += Borsh.len(transferParams);
-    final byte[] assetIndexGuidance = Borsh.readbyteVector(_data, i);
+    final var assetIndexGuidance = Borsh.readbyteVector(_data, i);
     return new ManageLiquidityParams(collateralIndex,
                                      liquidityAmount,
                                      transferParams,

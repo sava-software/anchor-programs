@@ -173,7 +173,7 @@ public final class ScopeProgram {
       createRead(verifierProgramIdKey)
     );
 
-    final byte[] _data = new byte[14 + Borsh.lenVector(serializedChainlinkReport)];
+    final byte[] _data = new byte[10 + Borsh.lenVector(serializedChainlinkReport)];
     int i = writeDiscriminator(REFRESH_CHAINLINK_PRICE_DISCRIMINATOR, _data, 0);
     putInt16LE(_data, i, token);
     i += 2;
@@ -196,7 +196,7 @@ public final class ScopeProgram {
       int i = offset + discriminator.length();
       final var token = getInt16LE(_data, i);
       i += 2;
-      final byte[] serializedChainlinkReport = Borsh.readbyteVector(_data, i);
+      final var serializedChainlinkReport = Borsh.readbyteVector(_data, i);
       return new RefreshChainlinkPriceIxData(discriminator, token, serializedChainlinkReport);
     }
 
@@ -245,7 +245,7 @@ public final class ScopeProgram {
       createRead(instructionsSysvarKey)
     );
 
-    final byte[] _data = new byte[14 + Borsh.lenVector(tokens) + Borsh.lenVector(serializedPythMessage)];
+    final byte[] _data = new byte[10 + Borsh.lenVector(tokens) + Borsh.lenVector(serializedPythMessage)];
     int i = writeDiscriminator(REFRESH_PYTH_LAZER_PRICE_DISCRIMINATOR, _data, 0);
     i += Borsh.writeVector(tokens, _data, i);
     i += Borsh.writeVector(serializedPythMessage, _data, i);
@@ -271,7 +271,7 @@ public final class ScopeProgram {
       int i = offset + discriminator.length();
       final var tokens = Borsh.readshortVector(_data, i);
       i += Borsh.lenVector(tokens);
-      final byte[] serializedPythMessage = Borsh.readbyteVector(_data, i);
+      final var serializedPythMessage = Borsh.readbyteVector(_data, i);
       i += Borsh.lenVector(serializedPythMessage);
       final var ed25519InstructionIndex = getInt16LE(_data, i);
       return new RefreshPythLazerPriceIxData(discriminator, tokens, serializedPythMessage, ed25519InstructionIndex);
@@ -505,7 +505,7 @@ public final class ScopeProgram {
     );
 
     final byte[] _feedName = feedName.getBytes(UTF_8);
-    final byte[] _data = new byte[32 + Borsh.lenVector(_feedName) + Borsh.lenVector(value)];
+    final byte[] _data = new byte[28 + Borsh.lenVector(_feedName) + Borsh.lenVector(value)];
     int i = writeDiscriminator(UPDATE_TOKEN_METADATA_DISCRIMINATOR, _data, 0);
     putInt64LE(_data, i, index);
     i += 8;
@@ -551,7 +551,7 @@ public final class ScopeProgram {
       i += 8;
       final var feedName = Borsh.string(_data, i);
       i += (Integer.BYTES + getInt32LE(_data, i));
-      final byte[] value = Borsh.readbyteVector(_data, i);
+      final var value = Borsh.readbyteVector(_data, i);
       return new UpdateTokenMetadataIxData(discriminator,
                                            index,
                                            mode,

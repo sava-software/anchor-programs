@@ -11,7 +11,7 @@ public final class GlamConfigPDAs {
 
   public static ProgramDerivedAddress globalConfigPDA(final PublicKey program) {
     return PublicKey.findProgramAddress(List.of(
-      "global_config".getBytes(US_ASCII)
+      "global-config".getBytes(US_ASCII)
     ), program);
   }
 

@@ -18,7 +18,7 @@ public record SellLedgerParams(int ledgerIndex,
     ++i;
     final var expectedSalePrice = getInt64LE(_data, i);
     i += 8;
-    final byte[] assetIndexGuidance = Borsh.readbyteVector(_data, i);
+    final var assetIndexGuidance = Borsh.readbyteVector(_data, i);
     return new SellLedgerParams(ledgerIndex, expectedSalePrice, assetIndexGuidance);
   }
 

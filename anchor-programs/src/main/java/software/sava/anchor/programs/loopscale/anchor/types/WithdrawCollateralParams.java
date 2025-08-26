@@ -40,7 +40,7 @@ public record WithdrawCollateralParams(long amount,
     i += 8;
     final var collateralIndex = _data[i] & 0xFF;
     ++i;
-    final byte[] assetIndexGuidance = Borsh.readbyteVector(_data, i);
+    final var assetIndexGuidance = Borsh.readbyteVector(_data, i);
     i += Borsh.lenVector(assetIndexGuidance);
     final var expectedLoanValues = ExpectedLoanValues.read(_data, i);
     i += Borsh.len(expectedLoanValues);

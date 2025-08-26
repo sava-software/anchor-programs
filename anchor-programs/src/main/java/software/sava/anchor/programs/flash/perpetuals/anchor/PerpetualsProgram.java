@@ -1054,7 +1054,7 @@ public final class PerpetualsProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 142;
+    public static final int BYTES = 134;
 
     public static SetPoolConfigIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

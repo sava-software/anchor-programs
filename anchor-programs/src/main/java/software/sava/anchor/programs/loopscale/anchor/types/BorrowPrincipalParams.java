@@ -18,7 +18,7 @@ public record BorrowPrincipalParams(long amount,
     int i = offset;
     final var amount = getInt64LE(_data, i);
     i += 8;
-    final byte[] assetIndexGuidance = Borsh.readbyteVector(_data, i);
+    final var assetIndexGuidance = Borsh.readbyteVector(_data, i);
     i += Borsh.lenVector(assetIndexGuidance);
     final var duration = _data[i] & 0xFF;
     ++i;

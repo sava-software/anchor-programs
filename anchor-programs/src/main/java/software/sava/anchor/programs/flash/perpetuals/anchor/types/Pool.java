@@ -2,8 +2,6 @@ package software.sava.anchor.programs.flash.perpetuals.anchor.types;
 
 import java.lang.String;
 
-import java.math.BigInteger;
-
 import java.util.function.BiFunction;
 
 import software.sava.core.accounts.PublicKey;
@@ -15,10 +13,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
-import static software.sava.core.encoding.ByteUtil.getInt128LE;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
-import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record Pool(PublicKey _address,
@@ -33,8 +29,10 @@ public record Pool(PublicKey _address,
                    PublicKey[] custodies,
                    TokenRatios[] ratios,
                    PublicKey[] markets,
-                   BigInteger maxAumUsd,
-                   BigInteger aumUsd,
+                   long maxAumUsd,
+                   long buffer,
+                   long rawAumUsd,
+                   long equityUsd,
                    StakeStats totalStaked,
                    long stakingFeeShareBps,
                    int bump,
@@ -73,8 +71,10 @@ public record Pool(PublicKey _address,
                                   final PublicKey[] custodies,
                                   final TokenRatios[] ratios,
                                   final PublicKey[] markets,
-                                  final BigInteger maxAumUsd,
-                                  final BigInteger aumUsd,
+                                  final long maxAumUsd,
+                                  final long buffer,
+                                  final long rawAumUsd,
+                                  final long equityUsd,
                                   final StakeStats totalStaked,
                                   final long stakingFeeShareBps,
                                   final int bump,
@@ -108,7 +108,9 @@ public record Pool(PublicKey _address,
                     ratios,
                     markets,
                     maxAumUsd,
-                    aumUsd,
+                    buffer,
+                    rawAumUsd,
+                    equityUsd,
                     totalStaked,
                     stakingFeeShareBps,
                     bump,
@@ -171,10 +173,14 @@ public record Pool(PublicKey _address,
     i += Borsh.lenVector(ratios);
     final var markets = Borsh.readPublicKeyVector(_data, i);
     i += Borsh.lenVector(markets);
-    final var maxAumUsd = getInt128LE(_data, i);
-    i += 16;
-    final var aumUsd = getInt128LE(_data, i);
-    i += 16;
+    final var maxAumUsd = getInt64LE(_data, i);
+    i += 8;
+    final var buffer = getInt64LE(_data, i);
+    i += 8;
+    final var rawAumUsd = getInt64LE(_data, i);
+    i += 8;
+    final var equityUsd = getInt64LE(_data, i);
+    i += 8;
     final var totalStaked = StakeStats.read(_data, i);
     i += Borsh.len(totalStaked);
     final var stakingFeeShareBps = getInt64LE(_data, i);
@@ -228,7 +234,9 @@ public record Pool(PublicKey _address,
                     ratios,
                     markets,
                     maxAumUsd,
-                    aumUsd,
+                    buffer,
+                    rawAumUsd,
+                    equityUsd,
                     totalStaked,
                     stakingFeeShareBps,
                     bump,
@@ -269,10 +277,14 @@ public record Pool(PublicKey _address,
     i += Borsh.writeVector(custodies, _data, i);
     i += Borsh.writeVector(ratios, _data, i);
     i += Borsh.writeVector(markets, _data, i);
-    putInt128LE(_data, i, maxAumUsd);
-    i += 16;
-    putInt128LE(_data, i, aumUsd);
-    i += 16;
+    putInt64LE(_data, i, maxAumUsd);
+    i += 8;
+    putInt64LE(_data, i, buffer);
+    i += 8;
+    putInt64LE(_data, i, rawAumUsd);
+    i += 8;
+    putInt64LE(_data, i, equityUsd);
+    i += 8;
     i += Borsh.write(totalStaked, _data, i);
     putInt64LE(_data, i, stakingFeeShareBps);
     i += 8;
@@ -323,8 +335,10 @@ public record Pool(PublicKey _address,
          + Borsh.lenVector(custodies)
          + Borsh.lenVector(ratios)
          + Borsh.lenVector(markets)
-         + 16
-         + 16
+         + 8
+         + 8
+         + 8
+         + 8
          + Borsh.len(totalStaked)
          + 8
          + 1

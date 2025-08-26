@@ -350,7 +350,7 @@ public final class KaminoVaultProgram {
       createRead(klendProgramKey)
     );
 
-    final byte[] _data = new byte[12 + Borsh.len(entry) + Borsh.lenVector(data)];
+    final byte[] _data = new byte[8 + Borsh.len(entry) + Borsh.lenVector(data)];
     int i = writeDiscriminator(UPDATE_VAULT_CONFIG_DISCRIMINATOR, _data, 0);
     i += Borsh.write(entry, _data, i);
     Borsh.writeVector(data, _data, i);
@@ -372,7 +372,7 @@ public final class KaminoVaultProgram {
       int i = offset + discriminator.length();
       final var entry = VaultConfigField.read(_data, i);
       i += Borsh.len(entry);
-      final byte[] data = Borsh.readbyteVector(_data, i);
+      final var data = Borsh.readbyteVector(_data, i);
       return new UpdateVaultConfigIxData(discriminator, entry, data);
     }
 

@@ -283,7 +283,7 @@ public final class KaminoLendingProgram {
       createWrite(reserveKey)
     );
 
-    final byte[] _data = new byte[13 + Borsh.len(mode) + Borsh.lenVector(value)];
+    final byte[] _data = new byte[9 + Borsh.len(mode) + Borsh.lenVector(value)];
     int i = writeDiscriminator(UPDATE_RESERVE_CONFIG_DISCRIMINATOR, _data, 0);
     i += Borsh.write(mode, _data, i);
     i += Borsh.writeVector(value, _data, i);
@@ -309,7 +309,7 @@ public final class KaminoLendingProgram {
       int i = offset + discriminator.length();
       final var mode = UpdateConfigMode.read(_data, i);
       i += Borsh.len(mode);
-      final byte[] value = Borsh.readbyteVector(_data, i);
+      final var value = Borsh.readbyteVector(_data, i);
       i += Borsh.lenVector(value);
       final var skipConfigIntegrityValidation = _data[i] == 1;
       return new UpdateReserveConfigIxData(discriminator, mode, value, skipConfigIntegrityValidation);
@@ -2776,7 +2776,7 @@ public final class KaminoLendingProgram {
       createWrite(globalConfigKey)
     );
 
-    final byte[] _data = new byte[12 + Borsh.len(mode) + Borsh.lenVector(value)];
+    final byte[] _data = new byte[8 + Borsh.len(mode) + Borsh.lenVector(value)];
     int i = writeDiscriminator(UPDATE_GLOBAL_CONFIG_DISCRIMINATOR, _data, 0);
     i += Borsh.write(mode, _data, i);
     Borsh.writeVector(value, _data, i);
@@ -2798,7 +2798,7 @@ public final class KaminoLendingProgram {
       int i = offset + discriminator.length();
       final var mode = UpdateGlobalConfigMode.read(_data, i);
       i += Borsh.len(mode);
-      final byte[] value = Borsh.readbyteVector(_data, i);
+      final var value = Borsh.readbyteVector(_data, i);
       return new UpdateGlobalConfigIxData(discriminator, mode, value);
     }
 
