@@ -365,7 +365,7 @@ public final class GlamConfigProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 136;
+    public static final int BYTES = 80;
 
     public static UpsertAssetMetaIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

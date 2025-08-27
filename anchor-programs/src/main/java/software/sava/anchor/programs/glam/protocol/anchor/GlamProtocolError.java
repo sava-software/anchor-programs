@@ -3,8 +3,7 @@ package software.sava.anchor.programs.glam.protocol.anchor;
 import software.sava.anchor.ProgramError;
 
 public sealed interface GlamProtocolError extends ProgramError permits
-    GlamProtocolError.UnauthorizedSigner,
-    GlamProtocolError.UnauthorizedIntegrationProgram,
+    GlamProtocolError.NotAuthorized,
     GlamProtocolError.IntegrationDisabled,
     GlamProtocolError.GlamStateDisabled,
     GlamProtocolError.InvalidSignerAccount,
@@ -21,15 +20,13 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.InvalidAssetsLen,
     GlamProtocolError.GlamMintNotFound,
     GlamProtocolError.CannotCloseState,
-    GlamProtocolError.InvalidMintParams,
+    GlamProtocolError.InvalidMintId,
     GlamProtocolError.InvalidRemainingAccounts,
     GlamProtocolError.InvalidVaultTokenAccount,
     GlamProtocolError.NonZeroSupply,
     GlamProtocolError.MissingAccount,
     GlamProtocolError.InvalidTimestamp,
     GlamProtocolError.EngineFieldNotFound,
-    GlamProtocolError.InvalidBaseAsset,
-    GlamProtocolError.InvalidProtocolBits,
     GlamProtocolError.WithdrawDenied,
     GlamProtocolError.InvalidAssetForSwap,
     GlamProtocolError.UnsupportedSwapIx,
@@ -40,10 +37,16 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.MultipleStakeAccountsDisallowed,
     GlamProtocolError.InvalidAssetPrice,
     GlamProtocolError.InvalidStableCoinPriceForSubscribe,
+    GlamProtocolError.ActionPaused,
+    GlamProtocolError.InvalidAsset,
+    GlamProtocolError.LedgerNotFound,
+    GlamProtocolError.InvalidLedgerEntry,
+    GlamProtocolError.InvalidAmount,
+    GlamProtocolError.MaxCapExceeded,
     GlamProtocolError.InvalidPricingOracle,
     GlamProtocolError.PricingError,
     GlamProtocolError.PriceTooOld,
-    GlamProtocolError.ExternalPositionsNotPriced,
+    GlamProtocolError.ExternalAccountsNotPriced,
     GlamProtocolError.VaultAssetsNotPriced,
     GlamProtocolError.VaultNotPriced,
     GlamProtocolError.PositiveAumRequired,
@@ -61,17 +64,16 @@ public sealed interface GlamProtocolError extends ProgramError permits
 
   static GlamProtocolError getInstance(final int errorCode) {
     return switch (errorCode) {
-      case 48000 -> UnauthorizedSigner.INSTANCE;
-      case 48001 -> UnauthorizedIntegrationProgram.INSTANCE;
-      case 48002 -> IntegrationDisabled.INSTANCE;
-      case 48003 -> GlamStateDisabled.INSTANCE;
-      case 48004 -> InvalidSignerAccount.INSTANCE;
-      case 48005 -> EmergencyUpdateDenied.INSTANCE;
-      case 48006 -> TimelockStillActive.INSTANCE;
-      case 48007 -> CannotApplyChanges.INSTANCE;
-      case 48008 -> AssetNotBorrowable.INSTANCE;
-      case 48009 -> InvalidAccountOwner.INSTANCE;
-      case 48010 -> InvalidAuthority.INSTANCE;
+      case 48000 -> NotAuthorized.INSTANCE;
+      case 48001 -> IntegrationDisabled.INSTANCE;
+      case 48002 -> GlamStateDisabled.INSTANCE;
+      case 48003 -> InvalidSignerAccount.INSTANCE;
+      case 48004 -> EmergencyUpdateDenied.INSTANCE;
+      case 48005 -> TimelockStillActive.INSTANCE;
+      case 48006 -> CannotApplyChanges.INSTANCE;
+      case 48007 -> AssetNotBorrowable.INSTANCE;
+      case 48008 -> InvalidAccountOwner.INSTANCE;
+      case 48009 -> InvalidAuthority.INSTANCE;
       case 49000 -> InvalidAccountType.INSTANCE;
       case 49001 -> InvalidName.INSTANCE;
       case 49002 -> InvalidSymbol.INSTANCE;
@@ -79,15 +81,13 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 49004 -> InvalidAssetsLen.INSTANCE;
       case 49005 -> GlamMintNotFound.INSTANCE;
       case 49006 -> CannotCloseState.INSTANCE;
-      case 49007 -> InvalidMintParams.INSTANCE;
+      case 49007 -> InvalidMintId.INSTANCE;
       case 49008 -> InvalidRemainingAccounts.INSTANCE;
       case 49009 -> InvalidVaultTokenAccount.INSTANCE;
       case 49010 -> NonZeroSupply.INSTANCE;
       case 49011 -> MissingAccount.INSTANCE;
       case 49012 -> InvalidTimestamp.INSTANCE;
       case 49013 -> EngineFieldNotFound.INSTANCE;
-      case 49014 -> InvalidBaseAsset.INSTANCE;
-      case 49015 -> InvalidProtocolBits.INSTANCE;
       case 50000 -> WithdrawDenied.INSTANCE;
       case 50001 -> InvalidAssetForSwap.INSTANCE;
       case 50002 -> UnsupportedSwapIx.INSTANCE;
@@ -98,10 +98,16 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 50007 -> MultipleStakeAccountsDisallowed.INSTANCE;
       case 51000 -> InvalidAssetPrice.INSTANCE;
       case 51001 -> InvalidStableCoinPriceForSubscribe.INSTANCE;
+      case 51002 -> ActionPaused.INSTANCE;
+      case 51003 -> InvalidAsset.INSTANCE;
+      case 51004 -> LedgerNotFound.INSTANCE;
+      case 51005 -> InvalidLedgerEntry.INSTANCE;
+      case 51006 -> InvalidAmount.INSTANCE;
+      case 51007 -> MaxCapExceeded.INSTANCE;
       case 51100 -> InvalidPricingOracle.INSTANCE;
       case 51101 -> PricingError.INSTANCE;
       case 51102 -> PriceTooOld.INSTANCE;
-      case 51103 -> ExternalPositionsNotPriced.INSTANCE;
+      case 51103 -> ExternalAccountsNotPriced.INSTANCE;
       case 51104 -> VaultAssetsNotPriced.INSTANCE;
       case 51105 -> VaultNotPriced.INSTANCE;
       case 51106 -> PositiveAumRequired.INSTANCE;
@@ -120,80 +126,73 @@ public sealed interface GlamProtocolError extends ProgramError permits
     };
   }
 
-  record UnauthorizedSigner(int code, String msg) implements GlamProtocolError {
+  record NotAuthorized(int code, String msg) implements GlamProtocolError {
 
-    public static final UnauthorizedSigner INSTANCE = new UnauthorizedSigner(
+    public static final NotAuthorized INSTANCE = new NotAuthorized(
         48000, "Signer is not authorized"
-    );
-  }
-
-  record UnauthorizedIntegrationProgram(int code, String msg) implements GlamProtocolError {
-
-    public static final UnauthorizedIntegrationProgram INSTANCE = new UnauthorizedIntegrationProgram(
-        48001, "Integration program is not authorized"
     );
   }
 
   record IntegrationDisabled(int code, String msg) implements GlamProtocolError {
 
     public static final IntegrationDisabled INSTANCE = new IntegrationDisabled(
-        48002, "Integration is disabled"
+        48001, "Integration is disabled"
     );
   }
 
   record GlamStateDisabled(int code, String msg) implements GlamProtocolError {
 
     public static final GlamStateDisabled INSTANCE = new GlamStateDisabled(
-        48003, "GLAM state is disabled"
+        48002, "GLAM state is disabled"
     );
   }
 
   record InvalidSignerAccount(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidSignerAccount INSTANCE = new InvalidSignerAccount(
-        48004, "Invalid signer token account"
+        48003, "Invalid signer token account"
     );
   }
 
   record EmergencyUpdateDenied(int code, String msg) implements GlamProtocolError {
 
     public static final EmergencyUpdateDenied INSTANCE = new EmergencyUpdateDenied(
-        48005, "Emergency update denied"
+        48004, "Emergency update denied"
     );
   }
 
   record TimelockStillActive(int code, String msg) implements GlamProtocolError {
 
     public static final TimelockStillActive INSTANCE = new TimelockStillActive(
-        48006, "Timelock still active"
+        48005, "Timelock still active"
     );
   }
 
   record CannotApplyChanges(int code, String msg) implements GlamProtocolError {
 
     public static final CannotApplyChanges INSTANCE = new CannotApplyChanges(
-        48007, "Pending changes cannot be applied due to unfulfilled subscriptions or redemptions"
+        48006, "Pending changes cannot be applied due to unfulfilled subscriptions or redemptions"
     );
   }
 
   record AssetNotBorrowable(int code, String msg) implements GlamProtocolError {
 
     public static final AssetNotBorrowable INSTANCE = new AssetNotBorrowable(
-        48008, "Asset is not allowed to borrow"
+        48007, "Asset is not allowed to borrow"
     );
   }
 
   record InvalidAccountOwner(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidAccountOwner INSTANCE = new InvalidAccountOwner(
-        48009, "Account owned by an invalid program"
+        48008, "Account owned by an invalid program"
     );
   }
 
   record InvalidAuthority(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidAuthority INSTANCE = new InvalidAuthority(
-        48010, "Invalid authority"
+        48009, "Invalid authority"
     );
   }
 
@@ -207,7 +206,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
   record InvalidName(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidName INSTANCE = new InvalidName(
-        49001, "Invalid name"
+        49001, "Name too long: max 64 chars"
     );
   }
 
@@ -246,10 +245,10 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record InvalidMintParams(int code, String msg) implements GlamProtocolError {
+  record InvalidMintId(int code, String msg) implements GlamProtocolError {
 
-    public static final InvalidMintParams INSTANCE = new InvalidMintParams(
-        49007, "Invalid mint params"
+    public static final InvalidMintId INSTANCE = new InvalidMintId(
+        49007, "Invalid mint id"
     );
   }
 
@@ -292,20 +291,6 @@ public sealed interface GlamProtocolError extends ProgramError permits
 
     public static final EngineFieldNotFound INSTANCE = new EngineFieldNotFound(
         49013, "Engine field not found"
-    );
-  }
-
-  record InvalidBaseAsset(int code, String msg) implements GlamProtocolError {
-
-    public static final InvalidBaseAsset INSTANCE = new InvalidBaseAsset(
-        49014, "Invalid base asset"
-    );
-  }
-
-  record InvalidProtocolBits(int code, String msg) implements GlamProtocolError {
-
-    public static final InvalidProtocolBits INSTANCE = new InvalidProtocolBits(
-        49015, "Invalid protocol bits"
     );
   }
 
@@ -379,6 +364,48 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
+  record ActionPaused(int code, String msg) implements GlamProtocolError {
+
+    public static final ActionPaused INSTANCE = new ActionPaused(
+        51002, "Requested action is paused"
+    );
+  }
+
+  record InvalidAsset(int code, String msg) implements GlamProtocolError {
+
+    public static final InvalidAsset INSTANCE = new InvalidAsset(
+        51003, "Asset not allowed to subscribe"
+    );
+  }
+
+  record LedgerNotFound(int code, String msg) implements GlamProtocolError {
+
+    public static final LedgerNotFound INSTANCE = new LedgerNotFound(
+        51004, "Ledger not found"
+    );
+  }
+
+  record InvalidLedgerEntry(int code, String msg) implements GlamProtocolError {
+
+    public static final InvalidLedgerEntry INSTANCE = new InvalidLedgerEntry(
+        51005, "Invalid ledger entry"
+    );
+  }
+
+  record InvalidAmount(int code, String msg) implements GlamProtocolError {
+
+    public static final InvalidAmount INSTANCE = new InvalidAmount(
+        51006, "Invalid amount for subscription or redemption"
+    );
+  }
+
+  record MaxCapExceeded(int code, String msg) implements GlamProtocolError {
+
+    public static final MaxCapExceeded INSTANCE = new MaxCapExceeded(
+        51007, "Max cap exceeded"
+    );
+  }
+
   record InvalidPricingOracle(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidPricingOracle INSTANCE = new InvalidPricingOracle(
@@ -400,9 +427,9 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record ExternalPositionsNotPriced(int code, String msg) implements GlamProtocolError {
+  record ExternalAccountsNotPriced(int code, String msg) implements GlamProtocolError {
 
-    public static final ExternalPositionsNotPriced INSTANCE = new ExternalPositionsNotPriced(
+    public static final ExternalAccountsNotPriced INSTANCE = new ExternalAccountsNotPriced(
         51103, "Not all external vault accounts are priced"
     );
   }

@@ -11,15 +11,12 @@ public record AssetMeta(PublicKey asset,
                         int decimals,
                         PublicKey oracle,
                         OracleSource oracleSource,
-                        PublicKey aggOracle,
-                        OracleSource aggOracleSource,
-                        short[] aggIndexes,
                         int maxAgeSeconds,
+                        int priority,
                         byte[] padding) implements Borsh {
 
-  public static final int BYTES = 128;
-  public static final int AGG_INDEXES_LEN = 8;
-  public static final int PADDING_LEN = 11;
+  public static final int BYTES = 72;
+  public static final int PADDING_LEN = 3;
 
   public static AssetMeta read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -34,24 +31,18 @@ public record AssetMeta(PublicKey asset,
     i += 32;
     final var oracleSource = OracleSource.read(_data, i);
     i += Borsh.len(oracleSource);
-    final var aggOracle = readPubKey(_data, i);
-    i += 32;
-    final var aggOracleSource = OracleSource.read(_data, i);
-    i += Borsh.len(aggOracleSource);
-    final var aggIndexes = new short[8];
-    i += Borsh.readArray(aggIndexes, _data, i);
     final var maxAgeSeconds = getInt16LE(_data, i);
     i += 2;
-    final var padding = new byte[11];
+    final var priority = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[3];
     Borsh.readArray(padding, _data, i);
     return new AssetMeta(asset,
                          decimals,
                          oracle,
                          oracleSource,
-                         aggOracle,
-                         aggOracleSource,
-                         aggIndexes,
                          maxAgeSeconds,
+                         priority,
                          padding);
   }
 
@@ -65,12 +56,10 @@ public record AssetMeta(PublicKey asset,
     oracle.write(_data, i);
     i += 32;
     i += Borsh.write(oracleSource, _data, i);
-    aggOracle.write(_data, i);
-    i += 32;
-    i += Borsh.write(aggOracleSource, _data, i);
-    i += Borsh.writeArray(aggIndexes, _data, i);
     putInt16LE(_data, i, maxAgeSeconds);
     i += 2;
+    _data[i] = (byte) priority;
+    ++i;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

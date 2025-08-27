@@ -1,5 +1,7 @@
 package software.sava.anchor.programs.glam.protocol.anchor.types;
 
+import java.lang.String;
+
 import java.util.function.BiFunction;
 
 import software.sava.core.accounts.PublicKey;
@@ -8,97 +10,97 @@ import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 import software.sava.rpc.json.http.response.AccountInfo;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
-import static software.sava.core.encoding.ByteUtil.getInt64LE;
-import static software.sava.core.encoding.ByteUtil.putInt32LE;
-import static software.sava.core.encoding.ByteUtil.putInt64LE;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record StateAccount(PublicKey _address,
                            Discriminator discriminator,
                            AccountType accountType,
-                           boolean enabled,
-                           PublicKey vault,
                            PublicKey owner,
-                           byte[] portfolioManagerName,
+                           PublicKey vault,
+                           boolean enabled,
                            CreatedModel created,
-                           PublicKey baseAssetMint,
-                           int baseAssetTokenProgram,
-                           byte[] name,
-                           int timelockDuration,
-                           long timelockExpiresAt,
-                           PublicKey mint,
+                           PublicKey engine,
+                           PublicKey[] mints,
+                           Metadata metadata,
+                           String name, byte[] _name,
+                           String uri, byte[] _uri,
                            PublicKey[] assets,
-                           PublicKey[] borrowable,
-                           IntegrationAcl[] integrationAcls,
                            DelegateAcl[] delegateAcls,
-                           PublicKey[] externalPositions,
-                           PricedProtocol[] pricedProtocols,
+                           Integration[] integrations,
                            EngineField[][] params) implements Borsh {
 
-  public static final int PORTFOLIO_MANAGER_NAME_LEN = 32;
-  public static final int NAME_LEN = 32;
   public static final Discriminator DISCRIMINATOR = toDiscriminator(142, 247, 54, 95, 85, 133, 249, 103);
   public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int ACCOUNT_TYPE_OFFSET = 8;
-  public static final int ENABLED_OFFSET = 9;
-  public static final int VAULT_OFFSET = 10;
-  public static final int OWNER_OFFSET = 42;
-  public static final int PORTFOLIO_MANAGER_NAME_OFFSET = 74;
-  public static final int CREATED_OFFSET = 106;
-  public static final int BASE_ASSET_MINT_OFFSET = 154;
-  public static final int BASE_ASSET_TOKEN_PROGRAM_OFFSET = 186;
-  public static final int NAME_OFFSET = 187;
-  public static final int TIMELOCK_DURATION_OFFSET = 219;
-  public static final int TIMELOCK_EXPIRES_AT_OFFSET = 223;
-  public static final int MINT_OFFSET = 231;
-  public static final int ASSETS_OFFSET = 263;
+  public static final int OWNER_OFFSET = 9;
+  public static final int VAULT_OFFSET = 41;
+  public static final int ENABLED_OFFSET = 73;
+  public static final int CREATED_OFFSET = 74;
+  public static final int ENGINE_OFFSET = 122;
+  public static final int MINTS_OFFSET = 154;
 
   public static Filter createAccountTypeFilter(final AccountType accountType) {
     return Filter.createMemCompFilter(ACCOUNT_TYPE_OFFSET, accountType.write());
-  }
-
-  public static Filter createEnabledFilter(final boolean enabled) {
-    return Filter.createMemCompFilter(ENABLED_OFFSET, new byte[]{(byte) (enabled ? 1 : 0)});
-  }
-
-  public static Filter createVaultFilter(final PublicKey vault) {
-    return Filter.createMemCompFilter(VAULT_OFFSET, vault);
   }
 
   public static Filter createOwnerFilter(final PublicKey owner) {
     return Filter.createMemCompFilter(OWNER_OFFSET, owner);
   }
 
+  public static Filter createVaultFilter(final PublicKey vault) {
+    return Filter.createMemCompFilter(VAULT_OFFSET, vault);
+  }
+
+  public static Filter createEnabledFilter(final boolean enabled) {
+    return Filter.createMemCompFilter(ENABLED_OFFSET, new byte[]{(byte) (enabled ? 1 : 0)});
+  }
+
   public static Filter createCreatedFilter(final CreatedModel created) {
     return Filter.createMemCompFilter(CREATED_OFFSET, created.write());
   }
 
-  public static Filter createBaseAssetMintFilter(final PublicKey baseAssetMint) {
-    return Filter.createMemCompFilter(BASE_ASSET_MINT_OFFSET, baseAssetMint);
+  public static Filter createEngineFilter(final PublicKey engine) {
+    return Filter.createMemCompFilter(ENGINE_OFFSET, engine);
   }
 
-  public static Filter createBaseAssetTokenProgramFilter(final int baseAssetTokenProgram) {
-    return Filter.createMemCompFilter(BASE_ASSET_TOKEN_PROGRAM_OFFSET, new byte[]{(byte) baseAssetTokenProgram});
-  }
-
-  public static Filter createTimelockDurationFilter(final int timelockDuration) {
-    final byte[] _data = new byte[4];
-    putInt32LE(_data, 0, timelockDuration);
-    return Filter.createMemCompFilter(TIMELOCK_DURATION_OFFSET, _data);
-  }
-
-  public static Filter createTimelockExpiresAtFilter(final long timelockExpiresAt) {
-    final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, timelockExpiresAt);
-    return Filter.createMemCompFilter(TIMELOCK_EXPIRES_AT_OFFSET, _data);
-  }
-
-  public static Filter createMintFilter(final PublicKey mint) {
-    return Filter.createMemCompFilter(MINT_OFFSET, mint);
+  public static StateAccount createRecord(final PublicKey _address,
+                                          final Discriminator discriminator,
+                                          final AccountType accountType,
+                                          final PublicKey owner,
+                                          final PublicKey vault,
+                                          final boolean enabled,
+                                          final CreatedModel created,
+                                          final PublicKey engine,
+                                          final PublicKey[] mints,
+                                          final Metadata metadata,
+                                          final String name,
+                                          final String uri,
+                                          final PublicKey[] assets,
+                                          final DelegateAcl[] delegateAcls,
+                                          final Integration[] integrations,
+                                          final EngineField[][] params) {
+    return new StateAccount(_address,
+                            discriminator,
+                            accountType,
+                            owner,
+                            vault,
+                            enabled,
+                            created,
+                            engine,
+                            mints,
+                            metadata,
+                            name, name.getBytes(UTF_8),
+                            uri, uri.getBytes(UTF_8),
+                            assets,
+                            delegateAcls,
+                            integrations,
+                            params);
   }
 
   public static StateAccount read(final byte[] _data, final int offset) {
@@ -123,61 +125,48 @@ public record StateAccount(PublicKey _address,
     int i = offset + discriminator.length();
     final var accountType = AccountType.read(_data, i);
     i += Borsh.len(accountType);
-    final var enabled = _data[i] == 1;
-    ++i;
-    final var vault = readPubKey(_data, i);
-    i += 32;
     final var owner = readPubKey(_data, i);
     i += 32;
-    final var portfolioManagerName = new byte[32];
-    i += Borsh.readArray(portfolioManagerName, _data, i);
+    final var vault = readPubKey(_data, i);
+    i += 32;
+    final var enabled = _data[i] == 1;
+    ++i;
     final var created = CreatedModel.read(_data, i);
     i += Borsh.len(created);
-    final var baseAssetMint = readPubKey(_data, i);
+    final var engine = readPubKey(_data, i);
     i += 32;
-    final var baseAssetTokenProgram = _data[i] & 0xFF;
-    ++i;
-    final var name = new byte[32];
-    i += Borsh.readArray(name, _data, i);
-    final var timelockDuration = getInt32LE(_data, i);
-    i += 4;
-    final var timelockExpiresAt = getInt64LE(_data, i);
-    i += 8;
-    final var mint = readPubKey(_data, i);
-    i += 32;
+    final var mints = Borsh.readPublicKeyVector(_data, i);
+    i += Borsh.lenVector(mints);
+    final var metadata = _data[i++] == 0 ? null : Metadata.read(_data, i);
+    if (metadata != null) {
+      i += Borsh.len(metadata);
+    }
+    final var name = Borsh.string(_data, i);
+    i += (Integer.BYTES + getInt32LE(_data, i));
+    final var uri = Borsh.string(_data, i);
+    i += (Integer.BYTES + getInt32LE(_data, i));
     final var assets = Borsh.readPublicKeyVector(_data, i);
     i += Borsh.lenVector(assets);
-    final var borrowable = Borsh.readPublicKeyVector(_data, i);
-    i += Borsh.lenVector(borrowable);
-    final var integrationAcls = Borsh.readVector(IntegrationAcl.class, IntegrationAcl::read, _data, i);
-    i += Borsh.lenVector(integrationAcls);
     final var delegateAcls = Borsh.readVector(DelegateAcl.class, DelegateAcl::read, _data, i);
     i += Borsh.lenVector(delegateAcls);
-    final var externalPositions = Borsh.readPublicKeyVector(_data, i);
-    i += Borsh.lenVector(externalPositions);
-    final var pricedProtocols = Borsh.readVector(PricedProtocol.class, PricedProtocol::read, _data, i);
-    i += Borsh.lenVector(pricedProtocols);
+    final var integrations = Borsh.readVector(Integration.class, Integration::read, _data, i);
+    i += Borsh.lenVector(integrations);
     final var params = Borsh.readMultiDimensionVector(EngineField.class, EngineField::read, _data, i);
     return new StateAccount(_address,
                             discriminator,
                             accountType,
-                            enabled,
-                            vault,
                             owner,
-                            portfolioManagerName,
+                            vault,
+                            enabled,
                             created,
-                            baseAssetMint,
-                            baseAssetTokenProgram,
-                            name,
-                            timelockDuration,
-                            timelockExpiresAt,
-                            mint,
+                            engine,
+                            mints,
+                            metadata,
+                            name, name.getBytes(UTF_8),
+                            uri, uri.getBytes(UTF_8),
                             assets,
-                            borrowable,
-                            integrationAcls,
                             delegateAcls,
-                            externalPositions,
-                            pricedProtocols,
+                            integrations,
                             params);
   }
 
@@ -185,31 +174,22 @@ public record StateAccount(PublicKey _address,
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
     i += Borsh.write(accountType, _data, i);
-    _data[i] = (byte) (enabled ? 1 : 0);
-    ++i;
-    vault.write(_data, i);
-    i += 32;
     owner.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(portfolioManagerName, _data, i);
-    i += Borsh.write(created, _data, i);
-    baseAssetMint.write(_data, i);
+    vault.write(_data, i);
     i += 32;
-    _data[i] = (byte) baseAssetTokenProgram;
+    _data[i] = (byte) (enabled ? 1 : 0);
     ++i;
-    i += Borsh.writeArray(name, _data, i);
-    putInt32LE(_data, i, timelockDuration);
-    i += 4;
-    putInt64LE(_data, i, timelockExpiresAt);
-    i += 8;
-    mint.write(_data, i);
+    i += Borsh.write(created, _data, i);
+    engine.write(_data, i);
     i += 32;
+    i += Borsh.writeVector(mints, _data, i);
+    i += Borsh.writeOptional(metadata, _data, i);
+    i += Borsh.writeVector(_name, _data, i);
+    i += Borsh.writeVector(_uri, _data, i);
     i += Borsh.writeVector(assets, _data, i);
-    i += Borsh.writeVector(borrowable, _data, i);
-    i += Borsh.writeVector(integrationAcls, _data, i);
     i += Borsh.writeVector(delegateAcls, _data, i);
-    i += Borsh.writeVector(externalPositions, _data, i);
-    i += Borsh.writeVector(pricedProtocols, _data, i);
+    i += Borsh.writeVector(integrations, _data, i);
     i += Borsh.writeVector(params, _data, i);
     return i - offset;
   }
@@ -217,23 +197,18 @@ public record StateAccount(PublicKey _address,
   @Override
   public int l() {
     return 8 + Borsh.len(accountType)
+         + 32
+         + 32
          + 1
-         + 32
-         + 32
-         + Borsh.lenArray(portfolioManagerName)
          + Borsh.len(created)
          + 32
-         + 1
-         + Borsh.lenArray(name)
-         + 4
-         + 8
-         + 32
+         + Borsh.lenVector(mints)
+         + (metadata == null ? 1 : (1 + Borsh.len(metadata)))
+         + Borsh.lenVector(_name)
+         + Borsh.lenVector(_uri)
          + Borsh.lenVector(assets)
-         + Borsh.lenVector(borrowable)
-         + Borsh.lenVector(integrationAcls)
          + Borsh.lenVector(delegateAcls)
-         + Borsh.lenVector(externalPositions)
-         + Borsh.lenVector(pricedProtocols)
+         + Borsh.lenVector(integrations)
          + Borsh.lenVector(params);
   }
 }

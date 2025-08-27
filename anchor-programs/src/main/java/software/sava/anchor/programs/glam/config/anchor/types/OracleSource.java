@@ -24,7 +24,7 @@ public enum OracleSource implements Borsh.Enum {
   LstPoolState,
   MarinadeState,
   BaseAsset,
-  ScopePrices;
+  ChainlinkRWA;
 
   public static OracleSource read(final byte[] _data, final int offset) {
     return Borsh.read(OracleSource.values(), _data, offset);

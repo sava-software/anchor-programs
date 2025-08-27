@@ -7,21 +7,23 @@ import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record DelegateAcl(PublicKey pubkey,
-                          Permission[] permissions,
-                          long expiresAt) implements Borsh {
+public record PubkeyAmount(PublicKey pubkey,
+                           long amount,
+                           int decimals) implements Borsh {
 
-  public static DelegateAcl read(final byte[] _data, final int offset) {
+  public static final int BYTES = 41;
+
+  public static PubkeyAmount read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
     int i = offset;
     final var pubkey = readPubKey(_data, i);
     i += 32;
-    final var permissions = Borsh.readVector(Permission.class, Permission::read, _data, i);
-    i += Borsh.lenVector(permissions);
-    final var expiresAt = getInt64LE(_data, i);
-    return new DelegateAcl(pubkey, permissions, expiresAt);
+    final var amount = getInt64LE(_data, i);
+    i += 8;
+    final var decimals = _data[i] & 0xFF;
+    return new PubkeyAmount(pubkey, amount, decimals);
   }
 
   @Override
@@ -29,14 +31,15 @@ public record DelegateAcl(PublicKey pubkey,
     int i = offset;
     pubkey.write(_data, i);
     i += 32;
-    i += Borsh.writeVector(permissions, _data, i);
-    putInt64LE(_data, i, expiresAt);
+    putInt64LE(_data, i, amount);
     i += 8;
+    _data[i] = (byte) decimals;
+    ++i;
     return i - offset;
   }
 
   @Override
   public int l() {
-    return 32 + Borsh.lenVector(permissions) + 8;
+    return BYTES;
   }
 }
