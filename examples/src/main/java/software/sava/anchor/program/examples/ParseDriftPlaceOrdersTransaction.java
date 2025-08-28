@@ -28,7 +28,7 @@ public final class ParseDriftPlaceOrdersTransaction {
     try (final var httpClient = HttpClient.newHttpClient()) {
       // Fetch token contexts to make use of convenient scaled value conversions.
       final var jupiterClient = JupiterClient.createClient(httpClient);
-      final var verifiedTokensFuture = jupiterClient.verifiedTokenMap();
+      final var verifiedTokensFuture = jupiterClient.tokensForTag("verified");
 
       final var perpMarketsFuture = DynamicPerpMarkets.fetchMarkets(httpClient);
       final var spotMarketsFuture = DynamicSpotMarkets.fetchMarkets(httpClient);
