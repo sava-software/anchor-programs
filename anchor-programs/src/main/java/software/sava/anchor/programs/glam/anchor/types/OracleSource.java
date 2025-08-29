@@ -20,9 +20,11 @@ public enum OracleSource implements Borsh.Enum {
   PythLazer1K,
   PythLazer1M,
   PythLazerStableCoin,
+  NotSet,
   LstPoolState,
   MarinadeState,
-  BaseAsset;
+  BaseAsset,
+  ChainlinkRWA;
 
   public static OracleSource read(final byte[] _data, final int offset) {
     return Borsh.read(OracleSource.values(), _data, offset);

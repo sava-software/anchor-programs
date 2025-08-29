@@ -2,10 +2,8 @@ package software.sava.anchor.programs.flash.perpetuals.anchor.types;
 
 import software.sava.core.borsh.Borsh;
 
-import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
-import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
@@ -15,6 +13,7 @@ public record SetPerpetualsConfigParams(boolean allowUngatedTrading,
                                         long defaultRebate,
                                         VoltageMultiplier voltageMultiplier,
                                         int tradeLimit,
+                                        int triggerOrderLimit,
                                         int rebateLimitUsd) implements Borsh {
 
   public static final int BYTES = 135;
@@ -36,8 +35,10 @@ public record SetPerpetualsConfigParams(boolean allowUngatedTrading,
     i += 8;
     final var voltageMultiplier = VoltageMultiplier.read(_data, i);
     i += Borsh.len(voltageMultiplier);
-    final var tradeLimit = getInt16LE(_data, i);
-    i += 2;
+    final var tradeLimit = _data[i] & 0xFF;
+    ++i;
+    final var triggerOrderLimit = _data[i] & 0xFF;
+    ++i;
     final var rebateLimitUsd = getInt32LE(_data, i);
     return new SetPerpetualsConfigParams(allowUngatedTrading,
                                          tradingDiscount,
@@ -45,6 +46,7 @@ public record SetPerpetualsConfigParams(boolean allowUngatedTrading,
                                          defaultRebate,
                                          voltageMultiplier,
                                          tradeLimit,
+                                         triggerOrderLimit,
                                          rebateLimitUsd);
   }
 
@@ -58,8 +60,10 @@ public record SetPerpetualsConfigParams(boolean allowUngatedTrading,
     putInt64LE(_data, i, defaultRebate);
     i += 8;
     i += Borsh.write(voltageMultiplier, _data, i);
-    putInt16LE(_data, i, tradeLimit);
-    i += 2;
+    _data[i] = (byte) tradeLimit;
+    ++i;
+    _data[i] = (byte) triggerOrderLimit;
+    ++i;
     putInt32LE(_data, i, rebateLimitUsd);
     i += 4;
     return i - offset;

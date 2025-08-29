@@ -10,6 +10,8 @@ import software.sava.rpc.json.http.response.AccountInfo;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
+import static software.sava.core.encoding.ByteUtil.getInt64LE;
+import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record Order(PublicKey _address,
                     Discriminator discriminator,
@@ -26,13 +28,15 @@ public record Order(PublicKey _address,
                     int inactiveTp,
                     int activeOrders,
                     int bump,
+                    long referenceTimestamp,
+                    long executionCount,
                     long[] padding) implements Borsh {
 
   public static final int BYTES = 624;
   public static final int LIMIT_ORDERS_LEN = 5;
   public static final int TAKE_PROFIT_ORDERS_LEN = 5;
   public static final int STOP_LOSS_ORDERS_LEN = 5;
-  public static final int PADDING_LEN = 8;
+  public static final int PADDING_LEN = 6;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int OWNER_OFFSET = 8;
@@ -48,7 +52,9 @@ public record Order(PublicKey _address,
   public static final int INACTIVE_TP_OFFSET = 557;
   public static final int ACTIVE_ORDERS_OFFSET = 558;
   public static final int BUMP_OFFSET = 559;
-  public static final int PADDING_OFFSET = 560;
+  public static final int REFERENCE_TIMESTAMP_OFFSET = 560;
+  public static final int EXECUTION_COUNT_OFFSET = 568;
+  public static final int PADDING_OFFSET = 576;
 
   public static Filter createOwnerFilter(final PublicKey owner) {
     return Filter.createMemCompFilter(OWNER_OFFSET, owner);
@@ -88,6 +94,18 @@ public record Order(PublicKey _address,
 
   public static Filter createBumpFilter(final int bump) {
     return Filter.createMemCompFilter(BUMP_OFFSET, new byte[]{(byte) bump});
+  }
+
+  public static Filter createReferenceTimestampFilter(final long referenceTimestamp) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, referenceTimestamp);
+    return Filter.createMemCompFilter(REFERENCE_TIMESTAMP_OFFSET, _data);
+  }
+
+  public static Filter createExecutionCountFilter(final long executionCount) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, executionCount);
+    return Filter.createMemCompFilter(EXECUTION_COUNT_OFFSET, _data);
   }
 
   public static Order read(final byte[] _data, final int offset) {
@@ -136,7 +154,11 @@ public record Order(PublicKey _address,
     ++i;
     final var bump = _data[i] & 0xFF;
     ++i;
-    final var padding = new long[8];
+    final var referenceTimestamp = getInt64LE(_data, i);
+    i += 8;
+    final var executionCount = getInt64LE(_data, i);
+    i += 8;
+    final var padding = new long[6];
     Borsh.readArray(padding, _data, i);
     return new Order(_address,
                      discriminator,
@@ -153,6 +175,8 @@ public record Order(PublicKey _address,
                      inactiveTp,
                      activeOrders,
                      bump,
+                     referenceTimestamp,
+                     executionCount,
                      padding);
   }
 
@@ -182,6 +206,10 @@ public record Order(PublicKey _address,
     ++i;
     _data[i] = (byte) bump;
     ++i;
+    putInt64LE(_data, i, referenceTimestamp);
+    i += 8;
+    putInt64LE(_data, i, executionCount);
+    i += 8;
     i += Borsh.writeArray(padding, _data, i);
     return i - offset;
   }

@@ -581,7 +581,9 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 //  }
 
   @Override
-  public Instruction priceVault(final PublicKey solOracleKey, final PriceDenom priceDenom) {
+  public Instruction priceVaultTokens(final PublicKey solOracleKey,
+                                      final PriceDenom priceDenom,
+                                      final short[] aggIndexes) {
     return GlamProtocolProgram.priceVaultTokens(
         invokedProgram,
         glamVaultAccounts.glamPublicKey(),
@@ -589,7 +591,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         feePayer.publicKey(),
         solOracleKey,
         globalConfigKey,
-        priceDenom
+        priceDenom,
+        aggIndexes
     );
   }
 

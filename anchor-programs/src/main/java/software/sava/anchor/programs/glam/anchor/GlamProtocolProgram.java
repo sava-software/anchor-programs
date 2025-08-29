@@ -5077,15 +5077,19 @@ public final class GlamProtocolProgram {
 
   // Price vault SOL balance and tokens it holds.
   // 
+  // If aggregation oracle is used for token #`i`, `agg_indexes[i]` must be set to its index in the oracle mapping account.
+  // 
   // Extra accounts for pricing N tokens:
   // - (ata, mint, oracle) x N
+  // - optional oracle mapping (only add it if any token uses an agg oracle)
   public static Instruction priceVaultTokens(final AccountMeta invokedGlamProtocolProgramMeta,
                                              final PublicKey glamStateKey,
                                              final PublicKey glamVaultKey,
                                              final PublicKey signerKey,
                                              final PublicKey solOracleKey,
                                              final PublicKey glamConfigKey,
-                                             final PriceDenom denom) {
+                                             final PriceDenom denom,
+                                             final short[] aggIndexes) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
@@ -5094,20 +5098,19 @@ public final class GlamProtocolProgram {
       createRead(glamConfigKey)
     );
 
-    final byte[] _data = new byte[8 + Borsh.len(denom)];
+    final byte[] _data = new byte[8 + Borsh.len(denom) + Borsh.lenVector(aggIndexes)];
     int i = writeDiscriminator(PRICE_VAULT_TOKENS_DISCRIMINATOR, _data, 0);
-    Borsh.write(denom, _data, i);
+    i += Borsh.write(denom, _data, i);
+    Borsh.writeVector(aggIndexes, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
   }
 
-  public record PriceVaultTokensIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
+  public record PriceVaultTokensIxData(Discriminator discriminator, PriceDenom denom, short[] aggIndexes) implements Borsh {  
 
     public static PriceVaultTokensIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
-
-    public static final int BYTES = 9;
 
     public static PriceVaultTokensIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -5116,19 +5119,22 @@ public final class GlamProtocolProgram {
       final var discriminator = parseDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
-      return new PriceVaultTokensIxData(discriminator, denom);
+      i += Borsh.len(denom);
+      final var aggIndexes = Borsh.readshortVector(_data, i);
+      return new PriceVaultTokensIxData(discriminator, denom, aggIndexes);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.write(denom, _data, i);
+      i += Borsh.writeVector(aggIndexes, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return BYTES;
+      return 8 + Borsh.len(denom) + Borsh.lenVector(aggIndexes);
     }
   }
 

@@ -9,10 +9,8 @@ import software.sava.core.rpc.Filter;
 import software.sava.rpc.json.http.response.AccountInfo;
 
 import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
-import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
@@ -29,6 +27,7 @@ public record Perpetuals(PublicKey _address,
                          int transferAuthorityBump,
                          int perpetualsBump,
                          int tradeLimit,
+                         int triggerOrderLimit,
                          int rebateLimitUsd) implements Borsh {
 
   public static final int TRADING_DISCOUNT_LEN = 6;
@@ -80,8 +79,10 @@ public record Perpetuals(PublicKey _address,
     ++i;
     final var perpetualsBump = _data[i] & 0xFF;
     ++i;
-    final var tradeLimit = getInt16LE(_data, i);
-    i += 2;
+    final var tradeLimit = _data[i] & 0xFF;
+    ++i;
+    final var triggerOrderLimit = _data[i] & 0xFF;
+    ++i;
     final var rebateLimitUsd = getInt32LE(_data, i);
     return new Perpetuals(_address,
                           discriminator,
@@ -96,6 +97,7 @@ public record Perpetuals(PublicKey _address,
                           transferAuthorityBump,
                           perpetualsBump,
                           tradeLimit,
+                          triggerOrderLimit,
                           rebateLimitUsd);
   }
 
@@ -116,8 +118,10 @@ public record Perpetuals(PublicKey _address,
     ++i;
     _data[i] = (byte) perpetualsBump;
     ++i;
-    putInt16LE(_data, i, tradeLimit);
-    i += 2;
+    _data[i] = (byte) tradeLimit;
+    ++i;
+    _data[i] = (byte) triggerOrderLimit;
+    ++i;
     putInt32LE(_data, i, rebateLimitUsd);
     i += 4;
     return i - offset;
@@ -135,7 +139,8 @@ public record Perpetuals(PublicKey _address,
          + 8
          + 1
          + 1
-         + 2
+         + 1
+         + 1
          + 4;
   }
 }

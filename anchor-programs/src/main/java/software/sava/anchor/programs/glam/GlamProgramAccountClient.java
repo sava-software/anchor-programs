@@ -114,7 +114,9 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
     return fulfill(0, baseAssetMint, baseAssetTokenProgram);
   }
 
-  Instruction priceVault(final PublicKey solOracleKey, final PriceDenom priceDenom);
+  Instruction priceVaultTokens(final PublicKey solOracleKey,
+                               final PriceDenom priceDenom,
+                               final short[] aggIndexes);
 
   Instruction priceStakes(final PublicKey solOracleKey, final PriceDenom priceDenom);
 
