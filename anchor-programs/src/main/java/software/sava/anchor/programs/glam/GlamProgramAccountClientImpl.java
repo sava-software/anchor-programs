@@ -38,6 +38,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   private final GlamAccounts glamAccounts;
   private final AccountMeta invokedProgram;
   private final AccountMeta feePayer;
+  private final PublicKey globalConfigKey;
 
   GlamProgramAccountClientImpl(final SolanaAccounts solanaAccounts, final GlamVaultAccounts glamVaultAccounts) {
     this.solanaAccounts = solanaAccounts;
@@ -47,6 +48,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     this.invokedProgram = glamAccounts.invokedProgram();
     this.feePayer = createFeePayer(glamVaultAccounts.feePayer());
     this.nativeProgramAccountClient = NativeProgramAccountClient.createClient(solanaAccounts, glamVaultAccounts.vaultPublicKey(), feePayer);
+    this.globalConfigKey = glamVaultAccounts.glamAccounts().globalConfigPDA().publicKey();
   }
 
   @Override
@@ -586,7 +588,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         solOracleKey,
-        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        globalConfigKey,
         priceDenom
     );
   }
@@ -599,7 +601,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         solOracleKey,
-        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        globalConfigKey,
         priceDenom
     );
   }
@@ -612,7 +614,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         solOracleKey,
-        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        globalConfigKey,
         priceDenom,
         numUsers
     );
@@ -630,7 +632,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         solOracleKey,
-        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        globalConfigKey,
         priceDenom,
         numVaultDepositors,
         numSpotMarkets,
@@ -653,7 +655,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         feePayer.publicKey(),
         kaminoLendingProgramKey,
         solOracleKey,
-        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        globalConfigKey,
         pythOracleKey,
         switchboardPriceOracleKey,
         switchboardTwapOracleKey,
@@ -672,7 +674,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         solOracleKey,
-        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        globalConfigKey,
         priceDenom,
         numVaults
     );
@@ -686,7 +688,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         solOracleKey,
-        glamVaultAccounts.glamAccounts().glamConfigKey(),
+        globalConfigKey,
         priceDenom
     );
   }
