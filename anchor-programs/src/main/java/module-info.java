@@ -56,6 +56,7 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.kamino.liquidity.anchor;
   exports software.sava.anchor.programs.kamino.scope.anchor.types;
   exports software.sava.anchor.programs.kamino.scope.anchor;
+  exports software.sava.anchor.programs.kamino.scope;
   exports software.sava.anchor.programs.kamino.vaults.anchor.types;
   exports software.sava.anchor.programs.kamino.vaults.anchor;
   exports software.sava.anchor.programs.kamino.vaults;

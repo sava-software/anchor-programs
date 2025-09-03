@@ -2,10 +2,16 @@ package software.sava.anchor.programs.kamino.scope;
 
 import software.sava.anchor.programs.kamino.KaminoAccounts;
 import software.sava.anchor.programs.kamino.scope.anchor.types.Configuration;
+import software.sava.anchor.programs.kamino.scope.anchor.types.OracleMappings;
+import software.sava.anchor.programs.kamino.scope.anchor.types.OracleType;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
+import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.tx.Instruction;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
+
+import java.util.Arrays;
+import java.util.List;
 
 public interface ScopeProgramClient {
 
@@ -34,24 +40,6 @@ public interface ScopeProgramClient {
                          final PublicKey oracleMappingsKey,
                          final String feedName);
 
-  default Instruction initialize(final PublicKey adminKey,
-                                 final PublicKey configurationKey,
-                                 final PublicKey tokenMetadatasKey,
-                                 final PublicKey oracleTwapsKey,
-                                 final PublicKey oracleMappingsKey,
-                                 final String feedName) {
-    return initialize(
-        adminKey,
-        configurationKey,
-        tokenMetadatasKey,
-        oracleTwapsKey,
-        kaminoAccounts().scopeOraclePrices(),
-        oracleMappingsKey,
-        feedName
-    );
-  }
-
-
   default Instruction initialize(final Configuration configuration,
                                  final String feedName) {
     return initialize(
@@ -60,6 +48,7 @@ public interface ScopeProgramClient {
         configuration.tokensMetadata(),
         configuration.oracleTwaps(),
         configuration.oracleMappings(),
+        configuration.oraclePrices(),
         feedName
     );
   }
@@ -69,12 +58,6 @@ public interface ScopeProgramClient {
                                final PublicKey oracleTwapsKey,
                                final short[] tokens);
 
-  default Instruction refreshPriceList(final PublicKey oracleMappingsKey,
-                                       final PublicKey oracleTwapsKey,
-                                       final short[] tokens) {
-    return refreshPriceList(kaminoAccounts().scopeOraclePrices(), oracleMappingsKey, oracleTwapsKey, tokens);
-  }
-
   default Instruction refreshPriceList(final Configuration configuration,
                                        final short[] tokens) {
     return refreshPriceList(
@@ -83,6 +66,37 @@ public interface ScopeProgramClient {
         configuration.oracleTwaps(),
         tokens
     );
+  }
+
+  static List<AccountMeta> refreshPriceListExtraAccounts(final OracleMappings oracleMappings, final short[] tokens) {
+    final var priceInfoAccounts = oracleMappings.priceInfoAccounts();
+    final var oracleTypes = oracleMappings.priceTypes();
+    final var oracleTypeEnums = OracleType.values();
+    final var accountMetas = new AccountMeta[tokens.length];
+    for (int i = 0; i < tokens.length; i++) {
+      final int token = tokens[i];
+      final var oracleType = oracleTypeEnums[oracleTypes[token]];
+      switch (oracleType) {
+        case KToken, KTokenToTokenA, KTokenToTokenB,
+             JupiterLpCompute, JupiterLpFetch, JupiterLpScope,
+             MeteoraDlmmAtoB, MeteoraDlmmBtoA,
+             OrcaWhirlpoolAtoB, OrcaWhirlpoolBtoA,
+             Securitize -> throw new IllegalStateException(oracleType + "Requires asset mints as well.");
+      }
+      accountMetas[i] = AccountMeta.createRead(priceInfoAccounts[token]);
+    }
+    return Arrays.asList(accountMetas);
+  }
+
+  default Instruction refreshPriceList(final Configuration configuration,
+                                       final OracleMappings oracleMappings,
+                                       final short[] tokens) {
+    return refreshPriceList(
+        configuration.oraclePrices(),
+        configuration.oracleMappings(),
+        configuration.oracleTwaps(),
+        tokens
+    ).extraAccounts(refreshPriceListExtraAccounts(oracleMappings, tokens));
   }
 
   Instruction refreshChainlinkPrice(final PublicKey userKey,
@@ -97,36 +111,13 @@ public interface ScopeProgramClient {
                                     final byte[] serializedChainlinkReport);
 
   default Instruction refreshChainlinkPrice(final PublicKey userKey,
-                                           final PublicKey oracleMappingsKey,
-                                           final PublicKey oracleTwapsKey,
-                                           final PublicKey verifierAccountKey,
-                                           final PublicKey accessControllerKey,
-                                           final PublicKey configAccountKey,
-                                           final PublicKey verifierProgramIdKey,
-                                           final int token,
-                                           final byte[] serializedChainlinkReport) {
-    return refreshChainlinkPrice(
-        userKey,
-        kaminoAccounts().scopeOraclePrices(),
-        oracleMappingsKey,
-        oracleTwapsKey,
-        verifierAccountKey,
-        accessControllerKey,
-        configAccountKey,
-        verifierProgramIdKey,
-        token,
-        serializedChainlinkReport
-    );
-  }
-
-  default Instruction refreshChainlinkPrice(final PublicKey userKey,
-                                           final Configuration configuration,
-                                           final PublicKey verifierAccountKey,
-                                           final PublicKey accessControllerKey,
-                                           final PublicKey configAccountKey,
-                                           final PublicKey verifierProgramIdKey,
-                                           final int token,
-                                           final byte[] serializedChainlinkReport) {
+                                            final Configuration configuration,
+                                            final PublicKey verifierAccountKey,
+                                            final PublicKey accessControllerKey,
+                                            final PublicKey configAccountKey,
+                                            final PublicKey verifierProgramIdKey,
+                                            final int token,
+                                            final byte[] serializedChainlinkReport) {
     return refreshChainlinkPrice(
         userKey,
         configuration.oraclePrices(),
@@ -151,29 +142,6 @@ public interface ScopeProgramClient {
                                     final short[] tokens,
                                     final byte[] serializedPythMessage,
                                     final int ed25519InstructionIndex);
-
-  default Instruction refreshPythLazerPrice(final PublicKey userKey,
-                                            final PublicKey oracleMappingsKey,
-                                            final PublicKey oracleTwapsKey,
-                                            final PublicKey pythProgramKey,
-                                            final PublicKey pythStorageKey,
-                                            final PublicKey pythTreasuryKey,
-                                            final short[] tokens,
-                                            final byte[] serializedPythMessage,
-                                            final int ed25519InstructionIndex) {
-    return refreshPythLazerPrice(
-        userKey,
-        kaminoAccounts().scopeOraclePrices(),
-        oracleMappingsKey,
-        oracleTwapsKey,
-        pythProgramKey,
-        pythStorageKey,
-        pythTreasuryKey,
-        tokens,
-        serializedPythMessage,
-        ed25519InstructionIndex
-    );
-  }
 
   default Instruction refreshPythLazerPrice(final PublicKey userKey,
                                             final Configuration configuration,
@@ -297,7 +265,7 @@ public interface ScopeProgramClient {
                                  final String feedName);
 
   default Instruction approveAdminCached(final Configuration configuration,
-                                        final String feedName) {
+                                         final String feedName) {
     return approveAdminCached(configuration.adminCached(), configuration._address(), feedName);
   }
 

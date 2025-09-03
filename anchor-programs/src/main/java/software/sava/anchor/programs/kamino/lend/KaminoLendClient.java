@@ -125,23 +125,6 @@ public interface KaminoLendClient {
                              final PublicKey switchboardTwapOracleKey,
                              final PublicKey scopePricesKey);
 
-  default Instruction refreshReserve(final PublicKey lendingMarket, final PublicKey reserveKey) {
-    final var kaminoAccounts = kaminoAccounts();
-    final var kLendProgram = kaminoAccounts.kLendProgram();
-    return refreshReserve(
-        lendingMarket,
-        reserveKey,
-        kLendProgram,
-        kLendProgram,
-        kLendProgram,
-        kaminoAccounts.scopeOraclePrices()
-    );
-  }
-
-  default Instruction refreshReserve(final Reserve reserve) {
-    return refreshReserve(reserve.lendingMarket(), reserve._address());
-  }
-
   Instruction refreshReservesBatch(final boolean skipPriceUpdates);
 
   Instruction refreshObligation(final PublicKey lendingMarket, final PublicKey obligationKey);

@@ -105,7 +105,11 @@ public sealed interface Swap extends RustEnum permits
   Swap.PumpSwapSellV2,
   Swap.Heaven,
   Swap.SolFiV2,
-  Swap.Aquifer {
+  Swap.Aquifer,
+  Swap.PumpWrappedBuyV3,
+  Swap.PumpWrappedSellV3,
+  Swap.PumpSwapBuyV3,
+  Swap.PumpSwapSellV3 {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -208,6 +212,10 @@ public sealed interface Swap extends RustEnum permits
       case 94 -> Heaven.read(_data, i);
       case 95 -> SolFiV2.read(_data, i);
       case 96 -> Aquifer.INSTANCE;
+      case 97 -> PumpWrappedBuyV3.INSTANCE;
+      case 98 -> PumpWrappedSellV3.INSTANCE;
+      case 99 -> PumpSwapBuyV3.INSTANCE;
+      case 100 -> PumpSwapSellV3.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1512,6 +1520,46 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 96;
+    }
+  }
+
+  record PumpWrappedBuyV3() implements EnumNone, Swap {
+
+    public static final PumpWrappedBuyV3 INSTANCE = new PumpWrappedBuyV3();
+
+    @Override
+    public int ordinal() {
+      return 97;
+    }
+  }
+
+  record PumpWrappedSellV3() implements EnumNone, Swap {
+
+    public static final PumpWrappedSellV3 INSTANCE = new PumpWrappedSellV3();
+
+    @Override
+    public int ordinal() {
+      return 98;
+    }
+  }
+
+  record PumpSwapBuyV3() implements EnumNone, Swap {
+
+    public static final PumpSwapBuyV3 INSTANCE = new PumpSwapBuyV3();
+
+    @Override
+    public int ordinal() {
+      return 99;
+    }
+  }
+
+  record PumpSwapSellV3() implements EnumNone, Swap {
+
+    public static final PumpSwapSellV3 INSTANCE = new PumpSwapSellV3();
+
+    @Override
+    public int ordinal() {
+      return 100;
     }
   }
 }
