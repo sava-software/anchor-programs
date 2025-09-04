@@ -116,12 +116,11 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class PerpetualsProgram {
@@ -150,7 +149,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INIT_DISCRIMINATOR, _data, 0);
+    int i = INIT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -168,7 +167,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitParams.read(_data, i);
       return new InitIxData(discriminator, params);
@@ -219,7 +218,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ADD_POOL_DISCRIMINATOR, _data, 0);
+    int i = ADD_POOL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -235,7 +234,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = AddPoolParams.read(_data, i);
       return new AddPoolIxData(discriminator, params);
@@ -274,7 +273,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(REMOVE_POOL_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_POOL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -292,7 +291,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RemovePoolParams.read(_data, i);
       return new RemovePoolIxData(discriminator, params);
@@ -341,7 +340,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ADD_CUSTODY_DISCRIMINATOR, _data, 0);
+    int i = ADD_CUSTODY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -357,7 +356,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = AddCustodyParams.read(_data, i);
       return new AddCustodyIxData(discriminator, params);
@@ -405,7 +404,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ADD_CUSTODY_TOKEN_22_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = ADD_CUSTODY_TOKEN_22_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -423,7 +422,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = AddCustodyToken22AccountParams.read(_data, i);
       return new AddCustodyToken22AccountIxData(discriminator, params);
@@ -462,7 +461,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ADD_INTERNAL_ORACLE_DISCRIMINATOR, _data, 0);
+    int i = ADD_INTERNAL_ORACLE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -480,7 +479,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = AddInternalOracleParams.read(_data, i);
       return new AddInternalOracleIxData(discriminator, params);
@@ -517,7 +516,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ADD_COLLECTION_DISCRIMINATOR, _data, 0);
+    int i = ADD_COLLECTION_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -535,7 +534,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = AddCollectionParams.read(_data, i);
       return new AddCollectionIxData(discriminator, params);
@@ -588,7 +587,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(REMOVE_CUSTODY_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_CUSTODY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -604,7 +603,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RemoveCustodyParams.read(_data, i);
       return new RemoveCustodyIxData(discriminator, params);
@@ -651,7 +650,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ADD_MARKET_DISCRIMINATOR, _data, 0);
+    int i = ADD_MARKET_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -669,7 +668,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = AddMarketParams.read(_data, i);
       return new AddMarketIxData(discriminator, params);
@@ -716,7 +715,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(REMOVE_MARKET_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_MARKET_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -734,7 +733,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RemoveMarketParams.read(_data, i);
       return new RemoveMarketIxData(discriminator, params);
@@ -785,7 +784,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(REIMBURSE_DISCRIMINATOR, _data, 0);
+    int i = REIMBURSE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -803,7 +802,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ReimburseParams.read(_data, i);
       return new ReimburseIxData(discriminator, params);
@@ -834,7 +833,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_ADMIN_SIGNERS_DISCRIMINATOR, _data, 0);
+    int i = SET_ADMIN_SIGNERS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -852,7 +851,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetAdminSignersParams.read(_data, i);
       return new SetAdminSignersIxData(discriminator, params);
@@ -889,7 +888,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_CUSTODY_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = SET_CUSTODY_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -905,7 +904,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetCustodyConfigParams.read(_data, i);
       return new SetCustodyConfigIxData(discriminator, params);
@@ -938,7 +937,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_PERPETUALS_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = SET_PERPETUALS_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -956,7 +955,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetPerpetualsConfigParams.read(_data, i);
       return new SetPerpetualsConfigIxData(discriminator, params);
@@ -989,7 +988,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_PERMISSIONS_DISCRIMINATOR, _data, 0);
+    int i = SET_PERMISSIONS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1007,7 +1006,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetPermissionsParams.read(_data, i);
       return new SetPermissionsIxData(discriminator, params);
@@ -1042,7 +1041,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_POOL_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = SET_POOL_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1060,7 +1059,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetPoolConfigParams.read(_data, i);
       return new SetPoolConfigIxData(discriminator, params);
@@ -1093,7 +1092,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_PROTOCOL_FEE_SHARE_DISCRIMINATOR, _data, 0);
+    int i = SET_PROTOCOL_FEE_SHARE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1111,7 +1110,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetProtocolFeeShareParams.read(_data, i);
       return new SetProtocolFeeShareIxData(discriminator, params);
@@ -1148,7 +1147,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_MARKET_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = SET_MARKET_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1166,7 +1165,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetMarketConfigParams.read(_data, i);
       return new SetMarketConfigIxData(discriminator, params);
@@ -1199,7 +1198,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_FLP_STAKE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = SET_FLP_STAKE_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1217,7 +1216,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetFlpStakeConfigParams.read(_data, i);
       return new SetFlpStakeConfigIxData(discriminator, params);
@@ -1256,7 +1255,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_TOKEN_REWARD_DISCRIMINATOR, _data, 0);
+    int i = SET_TOKEN_REWARD_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1274,7 +1273,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetTokenRewardParams.read(_data, i);
       return new SetTokenRewardIxData(discriminator, params);
@@ -1307,7 +1306,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_TOKEN_STAKE_LEVEL_DISCRIMINATOR, _data, 0);
+    int i = SET_TOKEN_STAKE_LEVEL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1325,7 +1324,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetTokenStakeLevelParams.read(_data, i);
       return new SetTokenStakeLevelIxData(discriminator, params);
@@ -1360,7 +1359,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_TOKEN_VAULT_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = SET_TOKEN_VAULT_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1378,7 +1377,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetTokenVaultConfigParams.read(_data, i);
       return new SetTokenVaultConfigIxData(discriminator, params);
@@ -1423,7 +1422,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(WITHDRAW_FEES_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_FEES_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1441,7 +1440,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = WithdrawFeesParams.read(_data, i);
       return new WithdrawFeesIxData(discriminator, params);
@@ -1486,7 +1485,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(WITHDRAW_INSTANT_FEES_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_INSTANT_FEES_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1504,7 +1503,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = WithdrawInstantFeesParams.read(_data, i);
       return new WithdrawInstantFeesIxData(discriminator, params);
@@ -1541,7 +1540,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(WITHDRAW_SOL_FEES_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_SOL_FEES_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1559,7 +1558,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = WithdrawSolFeesParams.read(_data, i);
       return new WithdrawSolFeesIxData(discriminator, params);
@@ -1596,7 +1595,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UPDATE_CUSTODY_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_CUSTODY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1614,7 +1613,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UpdateCustodyParams.read(_data, i);
       return new UpdateCustodyIxData(discriminator, params);
@@ -1649,7 +1648,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UPDATE_TOKEN_RATIOS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_TOKEN_RATIOS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1665,7 +1664,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UpdateTokenRatiosParams.read(_data, i);
       return new UpdateTokenRatiosIxData(discriminator, params);
@@ -1714,7 +1713,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INIT_STAKING_DISCRIMINATOR, _data, 0);
+    int i = INIT_STAKING_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1732,7 +1731,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitStakingParams.read(_data, i);
       return new InitStakingIxData(discriminator, params);
@@ -1787,7 +1786,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INIT_COMPOUNDING_DISCRIMINATOR, _data, 0);
+    int i = INIT_COMPOUNDING_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1803,7 +1802,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitCompoundingParams.read(_data, i);
       return new InitCompoundingIxData(discriminator, params);
@@ -1854,7 +1853,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INIT_REVENUE_TOKEN_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = INIT_REVENUE_TOKEN_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1872,7 +1871,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitRevenueTokenAccountParams.read(_data, i);
       return new InitRevenueTokenAccountIxData(discriminator, params);
@@ -1921,7 +1920,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INIT_TOKEN_VAULT_DISCRIMINATOR, _data, 0);
+    int i = INIT_TOKEN_VAULT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1939,7 +1938,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitTokenVaultParams.read(_data, i);
       return new InitTokenVaultIxData(discriminator, params);
@@ -1980,7 +1979,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_CUSTOM_ORACLE_PRICE_DISCRIMINATOR, _data, 0);
+    int i = SET_CUSTOM_ORACLE_PRICE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -1998,7 +1997,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetCustomOraclePriceParams.read(_data, i);
       return new SetCustomOraclePriceIxData(discriminator, params);
@@ -2025,7 +2024,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_INTERNAL_CURRENT_PRICE_DISCRIMINATOR, _data, 0);
+    int i = SET_INTERNAL_CURRENT_PRICE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2041,7 +2040,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetInternalCurrentPriceParams.read(_data, i);
       return new SetInternalCurrentPriceIxData(discriminator, params);
@@ -2068,7 +2067,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_INTERNAL_EMA_PRICE_DISCRIMINATOR, _data, 0);
+    int i = SET_INTERNAL_EMA_PRICE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2084,7 +2083,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetInternalEmaPriceParams.read(_data, i);
       return new SetInternalEmaPriceIxData(discriminator, params);
@@ -2125,7 +2124,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_INTERNAL_ORACLE_PRICE_DISCRIMINATOR, _data, 0);
+    int i = SET_INTERNAL_ORACLE_PRICE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2143,7 +2142,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetInternalOraclePriceParams.read(_data, i);
       return new SetInternalOraclePriceIxData(discriminator, params);
@@ -2178,7 +2177,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_LP_TOKEN_PRICE_DISCRIMINATOR, _data, 0);
+    int i = SET_LP_TOKEN_PRICE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2196,7 +2195,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetLpTokenPriceParams.read(_data, i);
       return new SetLpTokenPriceIxData(discriminator, params);
@@ -2229,7 +2228,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_FEE_SHARE_DISCRIMINATOR, _data, 0);
+    int i = SET_FEE_SHARE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2247,7 +2246,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetFeeShareParams.read(_data, i);
       return new SetFeeShareIxData(discriminator, params);
@@ -2286,7 +2285,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(TEST_INIT_DISCRIMINATOR, _data, 0);
+    int i = TEST_INIT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2304,7 +2303,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = TestInitParams.read(_data, i);
       return new TestInitIxData(discriminator, params);
@@ -2337,7 +2336,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_TEST_TIME_DISCRIMINATOR, _data, 0);
+    int i = SET_TEST_TIME_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2355,7 +2354,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SetTestTimeParams.read(_data, i);
       return new SetTestTimeIxData(discriminator, params);
@@ -2408,7 +2407,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SWAP_FEE_INTERNAL_DISCRIMINATOR, _data, 0);
+    int i = SWAP_FEE_INTERNAL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2426,7 +2425,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SwapFeeInternalParams.read(_data, i);
       return new SwapFeeInternalIxData(discriminator, params);
@@ -2491,7 +2490,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SWAP_DISCRIMINATOR, _data, 0);
+    int i = SWAP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2509,7 +2508,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SwapParams.read(_data, i);
       return new SwapIxData(discriminator, params);
@@ -2578,7 +2577,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SWAP_AND_ADD_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = SWAP_AND_ADD_COLLATERAL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2596,7 +2595,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SwapAndAddCollateralParams.read(_data, i);
       return new SwapAndAddCollateralIxData(discriminator, params);
@@ -2671,7 +2670,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SWAP_AND_OPEN_DISCRIMINATOR, _data, 0);
+    int i = SWAP_AND_OPEN_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2689,7 +2688,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SwapAndOpenParams.read(_data, i);
       return new SwapAndOpenIxData(discriminator, params);
@@ -2764,7 +2763,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CLOSE_AND_SWAP_DISCRIMINATOR, _data, 0);
+    int i = CLOSE_AND_SWAP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2782,7 +2781,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CloseAndSwapParams.read(_data, i);
       return new CloseAndSwapIxData(discriminator, params);
@@ -2847,7 +2846,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_AND_STAKE_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_AND_STAKE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2865,7 +2864,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = AddLiquidityAndStakeParams.read(_data, i);
       return new AddLiquidityAndStakeIxData(discriminator, params);
@@ -2924,7 +2923,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -2942,7 +2941,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = AddLiquidityParams.read(_data, i);
       return new AddLiquidityIxData(discriminator, params);
@@ -3009,7 +3008,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ADD_COMPOUNDING_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = ADD_COMPOUNDING_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3027,7 +3026,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = AddCompoundingLiquidityParams.read(_data, i);
       return new AddCompoundingLiquidityIxData(discriminator, params);
@@ -3086,7 +3085,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(REMOVE_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3104,7 +3103,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RemoveLiquidityParams.read(_data, i);
       return new RemoveLiquidityIxData(discriminator, params);
@@ -3155,7 +3154,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(DEPOSIT_TOKEN_STAKE_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_TOKEN_STAKE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3173,7 +3172,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = DepositTokenStakeParams.read(_data, i);
       return new DepositTokenStakeIxData(discriminator, params);
@@ -3222,7 +3221,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(DISTRIBUTE_TOKEN_REWARD_DISCRIMINATOR, _data, 0);
+    int i = DISTRIBUTE_TOKEN_REWARD_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3240,7 +3239,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = DistributeTokenRewardParams.read(_data, i);
       return new DistributeTokenRewardIxData(discriminator, params);
@@ -3293,7 +3292,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(DEPOSIT_STAKE_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_STAKE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3311,7 +3310,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = DepositStakeParams.read(_data, i);
       return new DepositStakeIxData(discriminator, params);
@@ -3350,7 +3349,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(REFRESH_STAKE_DISCRIMINATOR, _data, 0);
+    int i = REFRESH_STAKE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3368,7 +3367,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RefreshStakeParams.read(_data, i);
       return new RefreshStakeIxData(discriminator, params);
@@ -3409,7 +3408,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UNSTAKE_INSTANT_DISCRIMINATOR, _data, 0);
+    int i = UNSTAKE_INSTANT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3427,7 +3426,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UnstakeInstantParams.read(_data, i);
       return new UnstakeInstantIxData(discriminator, params);
@@ -3478,7 +3477,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(WITHDRAW_STAKE_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_STAKE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3496,7 +3495,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = WithdrawStakeParams.read(_data, i);
       return new WithdrawStakeIxData(discriminator, params);
@@ -3545,7 +3544,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(WITHDRAW_TOKEN_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_TOKEN_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3563,7 +3562,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = WithdrawTokenParams.read(_data, i);
       return new WithdrawTokenIxData(discriminator, params);
@@ -3612,7 +3611,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(COLLECT_REVENUE_DISCRIMINATOR, _data, 0);
+    int i = COLLECT_REVENUE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3630,7 +3629,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CollectRevenueParams.read(_data, i);
       return new CollectRevenueIxData(discriminator, params);
@@ -3685,7 +3684,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(COLLECT_STAKE_FEES_DISCRIMINATOR, _data, 0);
+    int i = COLLECT_STAKE_FEES_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3703,7 +3702,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CollectStakeRewardParams.read(_data, i);
       return new CollectStakeFeesIxData(discriminator, params);
@@ -3752,7 +3751,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(COLLECT_TOKEN_REWARD_DISCRIMINATOR, _data, 0);
+    int i = COLLECT_TOKEN_REWARD_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3770,7 +3769,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CollectTokenRewardParams.read(_data, i);
       return new CollectTokenRewardIxData(discriminator, params);
@@ -3813,7 +3812,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UNSTAKE_REQUEST_DISCRIMINATOR, _data, 0);
+    int i = UNSTAKE_REQUEST_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3831,7 +3830,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UnstakeRequestParams.read(_data, i);
       return new UnstakeRequestIxData(discriminator, params);
@@ -3880,7 +3879,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UNSTAKE_TOKEN_INSTANT_DISCRIMINATOR, _data, 0);
+    int i = UNSTAKE_TOKEN_INSTANT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3898,7 +3897,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UnstakeTokenInstantParams.read(_data, i);
       return new UnstakeTokenInstantIxData(discriminator, params);
@@ -3935,7 +3934,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UNSTAKE_TOKEN_REQUEST_DISCRIMINATOR, _data, 0);
+    int i = UNSTAKE_TOKEN_REQUEST_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -3953,7 +3952,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UnstakeTokenRequestParams.read(_data, i);
       return new UnstakeTokenRequestIxData(discriminator, params);
@@ -4014,7 +4013,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(MIGRATE_FLP_DISCRIMINATOR, _data, 0);
+    int i = MIGRATE_FLP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4032,7 +4031,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = MigrateFlpParams.read(_data, i);
       return new MigrateFlpIxData(discriminator, params);
@@ -4091,7 +4090,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(MIGRATE_STAKE_DISCRIMINATOR, _data, 0);
+    int i = MIGRATE_STAKE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4109,7 +4108,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = MigrateStakeParams.read(_data, i);
       return new MigrateStakeIxData(discriminator, params);
@@ -4193,7 +4192,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(COMPOUND_FEES_DISCRIMINATOR, _data, 0);
+    int i = COMPOUND_FEES_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4211,7 +4210,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CompoundFeesParams.read(_data, i);
       return new CompoundFeesIxData(discriminator, params);
@@ -4278,7 +4277,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(REMOVE_COMPOUNDING_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_COMPOUNDING_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4296,7 +4295,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RemoveCompoundingLiquidityParams.read(_data, i);
       return new RemoveCompoundingLiquidityIxData(discriminator, params);
@@ -4333,7 +4332,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UPDATE_TRADING_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_TRADING_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4351,7 +4350,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UpdateTradingAccountParams.read(_data, i);
       return new UpdateTradingAccountIxData(discriminator, params);
@@ -4388,7 +4387,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CREATE_REFERRAL_DISCRIMINATOR, _data, 0);
+    int i = CREATE_REFERRAL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4406,7 +4405,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CreateReferralParams.read(_data, i);
       return new CreateReferralIxData(discriminator, params);
@@ -4471,7 +4470,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(OPEN_POSITION_DISCRIMINATOR, _data, 0);
+    int i = OPEN_POSITION_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4489,7 +4488,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OpenPositionParams.read(_data, i);
       return new OpenPositionIxData(discriminator, params);
@@ -4548,7 +4547,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ADD_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = ADD_COLLATERAL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4566,7 +4565,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = AddCollateralParams.read(_data, i);
       return new AddCollateralIxData(discriminator, params);
@@ -4641,7 +4640,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(REMOVE_COLLATERAL_AND_SWAP_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_COLLATERAL_AND_SWAP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4659,7 +4658,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RemoveCollateralAndSwapParams.read(_data, i);
       return new RemoveCollateralAndSwapIxData(discriminator, params);
@@ -4720,7 +4719,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(REMOVE_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_COLLATERAL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4738,7 +4737,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RemoveCollateralParams.read(_data, i);
       return new RemoveCollateralIxData(discriminator, params);
@@ -4797,7 +4796,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INCREASE_SIZE_DISCRIMINATOR, _data, 0);
+    int i = INCREASE_SIZE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4815,7 +4814,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = IncreaseSizeParams.read(_data, i);
       return new IncreaseSizeIxData(discriminator, params);
@@ -4874,7 +4873,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(DECREASE_SIZE_DISCRIMINATOR, _data, 0);
+    int i = DECREASE_SIZE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4892,7 +4891,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = DecreaseSizeParams.read(_data, i);
       return new DecreaseSizeIxData(discriminator, params);
@@ -4944,7 +4943,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CANCEL_TRIGGER_ORDER_DISCRIMINATOR, _data, 0);
+    int i = CANCEL_TRIGGER_ORDER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -4962,7 +4961,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CancelTriggerOrderParams.read(_data, i);
       return new CancelTriggerOrderIxData(discriminator, params);
@@ -4999,7 +4998,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CANCEL_UNSTAKE_TOKEN_REQUEST_DISCRIMINATOR, _data, 0);
+    int i = CANCEL_UNSTAKE_TOKEN_REQUEST_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5017,7 +5016,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CancelUnstakeTokenRequestParams.read(_data, i);
       return new CancelUnstakeTokenRequestIxData(discriminator, params);
@@ -5080,7 +5079,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CLOSE_POSITION_DISCRIMINATOR, _data, 0);
+    int i = CLOSE_POSITION_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5098,7 +5097,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ClosePositionParams.read(_data, i);
       return new ClosePositionIxData(discriminator, params);
@@ -5167,7 +5166,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(EXECUTE_LIMIT_WITH_SWAP_DISCRIMINATOR, _data, 0);
+    int i = EXECUTE_LIMIT_WITH_SWAP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5185,7 +5184,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ExecuteLimitWithSwapParams.read(_data, i);
       return new ExecuteLimitWithSwapIxData(discriminator, params);
@@ -5250,7 +5249,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(EXECUTE_LIMIT_ORDER_DISCRIMINATOR, _data, 0);
+    int i = EXECUTE_LIMIT_ORDER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5268,7 +5267,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ExecuteLimitOrderParams.read(_data, i);
       return new ExecuteLimitOrderIxData(discriminator, params);
@@ -5335,7 +5334,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PLACE_LIMIT_ORDER_DISCRIMINATOR, _data, 0);
+    int i = PLACE_LIMIT_ORDER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5353,7 +5352,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PlaceLimitOrderParams.read(_data, i);
       return new PlaceLimitOrderIxData(discriminator, params);
@@ -5420,7 +5419,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(EDIT_LIMIT_ORDER_DISCRIMINATOR, _data, 0);
+    int i = EDIT_LIMIT_ORDER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5438,7 +5437,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = EditLimitOrderParams.read(_data, i);
       return new EditLimitOrderIxData(discriminator, params);
@@ -5493,7 +5492,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(EDIT_TRIGGER_ORDER_DISCRIMINATOR, _data, 0);
+    int i = EDIT_TRIGGER_ORDER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5511,7 +5510,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = EditTriggerOrderParams.read(_data, i);
       return new EditTriggerOrderIxData(discriminator, params);
@@ -5570,7 +5569,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PLACE_TRIGGER_ORDER_DISCRIMINATOR, _data, 0);
+    int i = PLACE_TRIGGER_ORDER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5588,7 +5587,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PlaceTriggerOrderParams.read(_data, i);
       return new PlaceTriggerOrderIxData(discriminator, params);
@@ -5665,7 +5664,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(EXECUTE_TRIGGER_WITH_SWAP_DISCRIMINATOR, _data, 0);
+    int i = EXECUTE_TRIGGER_WITH_SWAP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5683,7 +5682,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ExecuteTriggerWithSwapParams.read(_data, i);
       return new ExecuteTriggerWithSwapIxData(discriminator, params);
@@ -5748,7 +5747,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(EXECUTE_TRIGGER_ORDER_DISCRIMINATOR, _data, 0);
+    int i = EXECUTE_TRIGGER_ORDER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5766,7 +5765,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ExecuteTriggerOrderParams.read(_data, i);
       return new ExecuteTriggerOrderIxData(discriminator, params);
@@ -5817,7 +5816,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(LEVEL_UP_DISCRIMINATOR, _data, 0);
+    int i = LEVEL_UP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5835,7 +5834,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = LevelUpParams.read(_data, i);
       return new LevelUpIxData(discriminator, params);
@@ -5886,7 +5885,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(LIQUIDATE_DISCRIMINATOR, _data, 0);
+    int i = LIQUIDATE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5904,7 +5903,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = LiquidateParams.read(_data, i);
       return new LiquidateIxData(discriminator, params);
@@ -5949,7 +5948,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_ADD_COMPOUNDING_LIQUIDITY_AMOUNT_AND_FEE_DISCRIMINATOR, _data, 0);
+    int i = GET_ADD_COMPOUNDING_LIQUIDITY_AMOUNT_AND_FEE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -5967,7 +5966,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetAddCompoundingLiquidityAmountAndFeeParams.read(_data, i);
       return new GetAddCompoundingLiquidityAmountAndFeeIxData(discriminator, params);
@@ -6006,7 +6005,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_ADD_LIQUIDITY_AMOUNT_AND_FEE_DISCRIMINATOR, _data, 0);
+    int i = GET_ADD_LIQUIDITY_AMOUNT_AND_FEE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6024,7 +6023,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetAddLiquidityAmountAndFeeParams.read(_data, i);
       return new GetAddLiquidityAmountAndFeeIxData(discriminator, params);
@@ -6069,7 +6068,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_REMOVE_COMPOUNDING_LIQUIDITY_AMOUNT_AND_FEE_DISCRIMINATOR, _data, 0);
+    int i = GET_REMOVE_COMPOUNDING_LIQUIDITY_AMOUNT_AND_FEE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6087,7 +6086,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetRemoveCompoundingLiquidityAmountAndFeeParams.read(_data, i);
       return new GetRemoveCompoundingLiquidityAmountAndFeeIxData(discriminator, params);
@@ -6126,7 +6125,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_REMOVE_LIQUIDITY_AMOUNT_AND_FEE_DISCRIMINATOR, _data, 0);
+    int i = GET_REMOVE_LIQUIDITY_AMOUNT_AND_FEE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6144,7 +6143,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetRemoveLiquidityAmountAndFeeParams.read(_data, i);
       return new GetRemoveLiquidityAmountAndFeeIxData(discriminator, params);
@@ -6187,7 +6186,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_ENTRY_PRICE_AND_FEE_DISCRIMINATOR, _data, 0);
+    int i = GET_ENTRY_PRICE_AND_FEE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6205,7 +6204,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetEntryPriceAndFeeParams.read(_data, i);
       return new GetEntryPriceAndFeeIxData(discriminator, params);
@@ -6250,7 +6249,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_EXIT_PRICE_AND_FEE_DISCRIMINATOR, _data, 0);
+    int i = GET_EXIT_PRICE_AND_FEE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6268,7 +6267,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetExitPriceAndFeeParams.read(_data, i);
       return new GetExitPriceAndFeeIxData(discriminator, params);
@@ -6313,7 +6312,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_PNL_DISCRIMINATOR, _data, 0);
+    int i = GET_PNL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6331,7 +6330,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetPnlParams.read(_data, i);
       return new GetPnlIxData(discriminator, params);
@@ -6376,7 +6375,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_POSITION_DATA_DISCRIMINATOR, _data, 0);
+    int i = GET_POSITION_DATA_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6394,7 +6393,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetPositionDataParams.read(_data, i);
       return new GetPositionDataIxData(discriminator, params);
@@ -6439,7 +6438,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_LIQUIDATION_STATE_DISCRIMINATOR, _data, 0);
+    int i = GET_LIQUIDATION_STATE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6457,7 +6456,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetLiquidationStateParams.read(_data, i);
       return new GetLiquidationStateIxData(discriminator, params);
@@ -6502,7 +6501,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_LIQUIDATION_PRICE_DISCRIMINATOR, _data, 0);
+    int i = GET_LIQUIDATION_PRICE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6520,7 +6519,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetLiquidationPriceParams.read(_data, i);
       return new GetLiquidationPriceIxData(discriminator, params);
@@ -6557,7 +6556,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_ORACLE_PRICE_DISCRIMINATOR, _data, 0);
+    int i = GET_ORACLE_PRICE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6575,7 +6574,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetOraclePriceParams.read(_data, i);
       return new GetOraclePriceIxData(discriminator, params);
@@ -6616,7 +6615,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_SWAP_AMOUNT_AND_FEES_DISCRIMINATOR, _data, 0);
+    int i = GET_SWAP_AMOUNT_AND_FEES_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6634,7 +6633,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetSwapAmountAndFeesParams.read(_data, i);
       return new GetSwapAmountAndFeesIxData(discriminator, params);
@@ -6667,7 +6666,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_ASSETS_UNDER_MANAGEMENT_DISCRIMINATOR, _data, 0);
+    int i = GET_ASSETS_UNDER_MANAGEMENT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6685,7 +6684,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetAssetsUnderManagementParams.read(_data, i);
       return new GetAssetsUnderManagementIxData(discriminator, params);
@@ -6720,7 +6719,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_COMPOUNDING_TOKEN_DATA_DISCRIMINATOR, _data, 0);
+    int i = GET_COMPOUNDING_TOKEN_DATA_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6738,7 +6737,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetCompoundingTokenDataParams.read(_data, i);
       return new GetCompoundingTokenDataIxData(discriminator, params);
@@ -6773,7 +6772,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_LP_TOKEN_PRICE_DISCRIMINATOR, _data, 0);
+    int i = GET_LP_TOKEN_PRICE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6791,7 +6790,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetLpTokenPriceParams.read(_data, i);
       return new GetLpTokenPriceIxData(discriminator, params);
@@ -6826,7 +6825,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_COMPOUNDING_TOKEN_PRICE_DISCRIMINATOR, _data, 0);
+    int i = GET_COMPOUNDING_TOKEN_PRICE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6844,7 +6843,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetCompoundingTokenPriceParams.read(_data, i);
       return new GetCompoundingTokenPriceIxData(discriminator, params);
@@ -6891,7 +6890,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_POSITION_QUOTE_DISCRIMINATOR, _data, 0);
+    int i = GET_POSITION_QUOTE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6907,7 +6906,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetPositionQuoteParams.read(_data, i);
       return new GetPositionQuoteIxData(discriminator, params);
@@ -6956,7 +6955,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_ADD_COLLATERAL_QUOTE_DISCRIMINATOR, _data, 0);
+    int i = GET_ADD_COLLATERAL_QUOTE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -6972,7 +6971,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetAddCollateralQuoteParams.read(_data, i);
       return new GetAddCollateralQuoteIxData(discriminator, params);
@@ -7017,7 +7016,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GET_CLOSE_POSITION_QUOTE_DISCRIMINATOR, _data, 0);
+    int i = GET_CLOSE_POSITION_QUOTE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -7033,7 +7032,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GetClosePositionQuoteParams.read(_data, i);
       return new GetClosePositionQuoteIxData(discriminator, params);
@@ -7082,7 +7081,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(RENAME_FLP_DISCRIMINATOR, _data, 0);
+    int i = RENAME_FLP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -7098,7 +7097,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RenameFlpParams.read(_data, i);
       return new RenameFlpIxData(discriminator, params);
@@ -7165,7 +7164,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(BURN_AND_CLAIM_DISCRIMINATOR, _data, 0);
+    int i = BURN_AND_CLAIM_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -7183,7 +7182,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = BurnAndClaimParams.read(_data, i);
       return new BurnAndClaimIxData(discriminator, params);
@@ -7250,7 +7249,7 @@ public final class PerpetualsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(BURN_AND_STAKE_DISCRIMINATOR, _data, 0);
+    int i = BURN_AND_STAKE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
@@ -7268,7 +7267,7 @@ public final class PerpetualsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = BurnAndStakeParams.read(_data, i);
       return new BurnAndStakeIxData(discriminator, params);

@@ -7,7 +7,7 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.rpc.json.http.response.AccountInfo;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 
 // * Used to store authenticated delegates for swift-like ws connections
 public record SignedMsgWsDelegates(PublicKey _address, Discriminator discriminator, PublicKey[] delegates) implements Borsh {
@@ -32,7 +32,7 @@ public record SignedMsgWsDelegates(PublicKey _address, Discriminator discriminat
     if (_data == null || _data.length == 0) {
       return null;
     }
-    final var discriminator = parseDiscriminator(_data, offset);
+    final var discriminator = createAnchorDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var delegates = Borsh.readPublicKeyVector(_data, i);
     return new SignedMsgWsDelegates(_address, discriminator, delegates);

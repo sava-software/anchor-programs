@@ -17,8 +17,6 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
@@ -27,6 +25,7 @@ import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class RaydiumLaunchpadProgram {
@@ -101,7 +100,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[32];
-    int i = writeDiscriminator(BUY_EXACT_IN_DISCRIMINATOR, _data, 0);
+    int i = BUY_EXACT_IN_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     putInt64LE(_data, i, minimumAmountOut);
@@ -126,7 +125,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountIn = getInt64LE(_data, i);
       i += 8;
@@ -223,7 +222,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[32];
-    int i = writeDiscriminator(BUY_EXACT_OUT_DISCRIMINATOR, _data, 0);
+    int i = BUY_EXACT_OUT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountOut);
     i += 8;
     putInt64LE(_data, i, maximumAmountIn);
@@ -248,7 +247,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountOut = getInt64LE(_data, i);
       i += 8;
@@ -540,7 +539,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[27];
-    int i = writeDiscriminator(CREATE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = CREATE_CONFIG_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) curveType;
     ++i;
     putInt16LE(_data, i, index);
@@ -568,7 +567,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var curveType = _data[i] & 0xFF;
       ++i;
@@ -638,7 +637,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(platformParams)];
-    int i = writeDiscriminator(CREATE_PLATFORM_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = CREATE_PLATFORM_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(platformParams, _data, i);
 
     return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, _data);
@@ -654,7 +653,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var platformParams = PlatformParams.read(_data, i);
       return new CreatePlatformConfigIxData(discriminator, platformParams);
@@ -704,7 +703,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(CREATE_VESTING_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = CREATE_VESTING_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, shareAmount);
 
     return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, _data);
@@ -722,7 +721,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var shareAmount = getInt64LE(_data, i);
       return new CreateVestingAccountIxData(discriminator, shareAmount);
@@ -812,7 +811,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(baseMintParam) + Borsh.len(curveParam) + Borsh.len(vestingParam)];
-    int i = writeDiscriminator(INITIALIZE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(baseMintParam, _data, i);
     i += Borsh.write(curveParam, _data, i);
     Borsh.write(vestingParam, _data, i);
@@ -833,7 +832,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var baseMintParam = MintParams.read(_data, i);
       i += Borsh.len(baseMintParam);
@@ -929,7 +928,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(baseMintParam) + Borsh.len(curveParam) + Borsh.len(vestingParam) + Borsh.len(ammFeeOn)];
-    int i = writeDiscriminator(INITIALIZE_V_2_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_V_2_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(baseMintParam, _data, i);
     i += Borsh.write(curveParam, _data, i);
     i += Borsh.write(vestingParam, _data, i);
@@ -952,7 +951,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var baseMintParam = MintParams.read(_data, i);
       i += Borsh.len(baseMintParam);
@@ -1051,7 +1050,7 @@ public final class RaydiumLaunchpadProgram {
         8 + Borsh.len(baseMintParam) + Borsh.len(curveParam) + Borsh.len(vestingParam) + Borsh.len(ammFeeOn)
         + (transferFeeExtensionParam == null ? 1 : (1 + Borsh.len(transferFeeExtensionParam)))
     ];
-    int i = writeDiscriminator(INITIALIZE_WITH_TOKEN_2222_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_WITH_TOKEN_2222_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(baseMintParam, _data, i);
     i += Borsh.write(curveParam, _data, i);
     i += Borsh.write(vestingParam, _data, i);
@@ -1076,7 +1075,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var baseMintParam = MintParams.read(_data, i);
       i += Borsh.len(baseMintParam);
@@ -1211,7 +1210,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[25];
-    int i = writeDiscriminator(MIGRATE_TO_AMM_DISCRIMINATOR, _data, 0);
+    int i = MIGRATE_TO_AMM_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, baseLotSize);
     i += 8;
     putInt64LE(_data, i, quoteLotSize);
@@ -1236,7 +1235,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var baseLotSize = getInt64LE(_data, i);
       i += 8;
@@ -1378,7 +1377,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(REMOVE_PLATFORM_CURVE_PARAM_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_PLATFORM_CURVE_PARAM_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) index;
 
     return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, _data);
@@ -1396,7 +1395,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var index = _data[i] & 0xFF;
       return new RemovePlatformCurveParamIxData(discriminator, index);
@@ -1486,7 +1485,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[32];
-    int i = writeDiscriminator(SELL_EXACT_IN_DISCRIMINATOR, _data, 0);
+    int i = SELL_EXACT_IN_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     putInt64LE(_data, i, minimumAmountOut);
@@ -1511,7 +1510,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountIn = getInt64LE(_data, i);
       i += 8;
@@ -1609,7 +1608,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[32];
-    int i = writeDiscriminator(SELL_EXACT_OUT_DISCRIMINATOR, _data, 0);
+    int i = SELL_EXACT_OUT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountOut);
     i += 8;
     putInt64LE(_data, i, maximumAmountIn);
@@ -1634,7 +1633,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountOut = getInt64LE(_data, i);
       i += 8;
@@ -1686,7 +1685,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(UPDATE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_CONFIG_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) param;
     ++i;
     putInt64LE(_data, i, value);
@@ -1706,7 +1705,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var param = _data[i] & 0xFF;
       ++i;
@@ -1750,7 +1749,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(param)];
-    int i = writeDiscriminator(UPDATE_PLATFORM_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PLATFORM_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(param, _data, i);
 
     return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, _data);
@@ -1766,7 +1765,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var param = PlatformConfigParam.read(_data, i);
       return new UpdatePlatformConfigIxData(discriminator, param);
@@ -1812,7 +1811,7 @@ public final class RaydiumLaunchpadProgram {
     );
 
     final byte[] _data = new byte[9 + Borsh.len(bondingCurveParam)];
-    int i = writeDiscriminator(UPDATE_PLATFORM_CURVE_PARAM_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PLATFORM_CURVE_PARAM_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) index;
     ++i;
     Borsh.write(bondingCurveParam, _data, i);
@@ -1832,7 +1831,7 @@ public final class RaydiumLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var index = _data[i] & 0xFF;
       ++i;

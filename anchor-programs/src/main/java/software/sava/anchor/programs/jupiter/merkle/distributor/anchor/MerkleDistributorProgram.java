@@ -11,8 +11,6 @@ import software.sava.core.tx.Instruction;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -20,6 +18,7 @@ import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class MerkleDistributorProgram {
@@ -59,7 +58,7 @@ public final class MerkleDistributorProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(NEW_DISTRIBUTOR_DISCRIMINATOR, _data, 0);
+    int i = NEW_DISTRIBUTOR_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedMerkleDistributorProgramMeta, keys, _data);
@@ -77,7 +76,7 @@ public final class MerkleDistributorProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = NewDistributorParams.read(_data, i);
       return new NewDistributorIxData(discriminator, params);
@@ -152,7 +151,7 @@ public final class MerkleDistributorProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SET_ACTIVATION_POINT_DISCRIMINATOR, _data, 0);
+    int i = SET_ACTIVATION_POINT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, activationPoint);
 
     return Instruction.createInstruction(invokedMerkleDistributorProgramMeta, keys, _data);
@@ -170,7 +169,7 @@ public final class MerkleDistributorProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var activationPoint = getInt64LE(_data, i);
       return new SetActivationPointIxData(discriminator, activationPoint);
@@ -261,7 +260,7 @@ public final class MerkleDistributorProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(SET_OPERATOR_DISCRIMINATOR, _data, 0);
+    int i = SET_OPERATOR_DISCRIMINATOR.write(_data, 0);
     newOperator.write(_data, i);
 
     return Instruction.createInstruction(invokedMerkleDistributorProgramMeta, keys, _data);
@@ -279,7 +278,7 @@ public final class MerkleDistributorProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newOperator = readPubKey(_data, i);
       return new SetOperatorIxData(discriminator, newOperator);
@@ -334,7 +333,7 @@ public final class MerkleDistributorProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.lenVectorArray(proof)];
-    int i = writeDiscriminator(NEW_CLAIM_DISCRIMINATOR, _data, 0);
+    int i = NEW_CLAIM_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountUnlocked);
     i += 8;
     putInt64LE(_data, i, amountLocked);
@@ -357,7 +356,7 @@ public final class MerkleDistributorProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountUnlocked = getInt64LE(_data, i);
       i += 8;
@@ -454,7 +453,7 @@ public final class MerkleDistributorProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.lenVectorArray(proof)];
-    int i = writeDiscriminator(NEW_CLAIM_AND_STAKE_DISCRIMINATOR, _data, 0);
+    int i = NEW_CLAIM_AND_STAKE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountUnlocked);
     i += 8;
     putInt64LE(_data, i, amountLocked);
@@ -477,7 +476,7 @@ public final class MerkleDistributorProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountUnlocked = getInt64LE(_data, i);
       i += 8;

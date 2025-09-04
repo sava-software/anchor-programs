@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.marginfi.v2.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface MarginfiError extends ProgramError permits
     MarginfiError.InternalLogicError,

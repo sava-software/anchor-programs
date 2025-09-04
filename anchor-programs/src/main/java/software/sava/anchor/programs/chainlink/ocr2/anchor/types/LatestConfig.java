@@ -8,11 +8,11 @@ import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 import software.sava.rpc.json.http.response.AccountInfo;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 
 public record LatestConfig(PublicKey _address,
                            Discriminator discriminator,
@@ -58,7 +58,7 @@ public record LatestConfig(PublicKey _address,
     if (_data == null || _data.length == 0) {
       return null;
     }
-    final var discriminator = parseDiscriminator(_data, offset);
+    final var discriminator = createAnchorDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var configCount = getInt32LE(_data, i);
     i += 4;

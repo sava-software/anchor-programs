@@ -15,8 +15,6 @@ import software.sava.core.tx.Instruction;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -28,6 +26,7 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class JitoTipRouterProgram {
@@ -59,7 +58,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[38];
-    int i = writeDiscriminator(INITIALIZE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, blockEngineFeeBps);
     i += 2;
     putInt16LE(_data, i, daoFeeBps);
@@ -93,7 +92,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var blockEngineFeeBps = getInt16LE(_data, i);
       i += 2;
@@ -216,7 +215,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(INITIALIZE_EPOCH_STATE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_EPOCH_STATE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -234,7 +233,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new InitializeEpochStateIxData(discriminator, epoch);
@@ -272,7 +271,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(REALLOC_EPOCH_STATE_DISCRIMINATOR, _data, 0);
+    int i = REALLOC_EPOCH_STATE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -290,7 +289,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new ReallocEpochStateIxData(discriminator, epoch);
@@ -332,7 +331,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(INITIALIZE_WEIGHT_TABLE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_WEIGHT_TABLE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -350,7 +349,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new InitializeWeightTableIxData(discriminator, epoch);
@@ -392,7 +391,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(REALLOC_WEIGHT_TABLE_DISCRIMINATOR, _data, 0);
+    int i = REALLOC_WEIGHT_TABLE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -410,7 +409,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new ReallocWeightTableIxData(discriminator, epoch);
@@ -447,7 +446,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[48];
-    int i = writeDiscriminator(SWITCHBOARD_SET_WEIGHT_DISCRIMINATOR, _data, 0);
+    int i = SWITCHBOARD_SET_WEIGHT_DISCRIMINATOR.write(_data, 0);
     stMint.write(_data, i);
     i += 32;
     putInt64LE(_data, i, epoch);
@@ -467,7 +466,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stMint = readPubKey(_data, i);
       i += 32;
@@ -515,7 +514,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(INITIALIZE_EPOCH_SNAPSHOT_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_EPOCH_SNAPSHOT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -533,7 +532,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new InitializeEpochSnapshotIxData(discriminator, epoch);
@@ -581,7 +580,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(INITIALIZE_OPERATOR_SNAPSHOT_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_OPERATOR_SNAPSHOT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -599,7 +598,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new InitializeOperatorSnapshotIxData(discriminator, epoch);
@@ -647,7 +646,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(REALLOC_OPERATOR_SNAPSHOT_DISCRIMINATOR, _data, 0);
+    int i = REALLOC_OPERATOR_SNAPSHOT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -665,7 +664,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new ReallocOperatorSnapshotIxData(discriminator, epoch);
@@ -717,7 +716,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SNAPSHOT_VAULT_OPERATOR_DELEGATION_DISCRIMINATOR, _data, 0);
+    int i = SNAPSHOT_VAULT_OPERATOR_DELEGATION_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -735,7 +734,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new SnapshotVaultOperatorDelegationIxData(discriminator, epoch);
@@ -777,7 +776,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(INITIALIZE_BALLOT_BOX_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_BALLOT_BOX_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -795,7 +794,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new InitializeBallotBoxIxData(discriminator, epoch);
@@ -835,7 +834,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(REALLOC_BALLOT_BOX_DISCRIMINATOR, _data, 0);
+    int i = REALLOC_BALLOT_BOX_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -853,7 +852,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new ReallocBallotBoxIxData(discriminator, epoch);
@@ -898,7 +897,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.lenArray(metaMerkleRoot)];
-    int i = writeDiscriminator(CAST_VOTE_DISCRIMINATOR, _data, 0);
+    int i = CAST_VOTE_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeArray(metaMerkleRoot, _data, i);
     putInt64LE(_data, i, epoch);
 
@@ -918,7 +917,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var metaMerkleRoot = new byte[32];
       i += Borsh.readArray(metaMerkleRoot, _data, i);
@@ -969,7 +968,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[32 + Borsh.lenVectorArray(proof) + Borsh.lenArray(merkleRoot)];
-    int i = writeDiscriminator(SET_MERKLE_ROOT_DISCRIMINATOR, _data, 0);
+    int i = SET_MERKLE_ROOT_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVectorArray(proof, _data, i);
     i += Borsh.writeArray(merkleRoot, _data, i);
     putInt64LE(_data, i, maxTotalClaim);
@@ -997,7 +996,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var proof = Borsh.readMultiDimensionbyteVectorArray(32, _data, i);
       i += Borsh.lenVectorArray(proof);
@@ -1062,7 +1061,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(INITIALIZE_BASE_REWARD_ROUTER_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_BASE_REWARD_ROUTER_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -1080,7 +1079,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new InitializeBaseRewardRouterIxData(discriminator, epoch);
@@ -1120,7 +1119,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(REALLOC_BASE_REWARD_ROUTER_DISCRIMINATOR, _data, 0);
+    int i = REALLOC_BASE_REWARD_ROUTER_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -1138,7 +1137,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new ReallocBaseRewardRouterIxData(discriminator, epoch);
@@ -1185,7 +1184,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(INITIALIZE_NCN_REWARD_ROUTER_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_NCN_REWARD_ROUTER_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) ncnFeeGroup;
     ++i;
     putInt64LE(_data, i, epoch);
@@ -1205,7 +1204,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ncnFeeGroup = _data[i] & 0xFF;
       ++i;
@@ -1252,7 +1251,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[18];
-    int i = writeDiscriminator(ROUTE_BASE_REWARDS_DISCRIMINATOR, _data, 0);
+    int i = ROUTE_BASE_REWARDS_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, maxIterations);
     i += 2;
     putInt64LE(_data, i, epoch);
@@ -1272,7 +1271,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxIterations = getInt16LE(_data, i);
       i += 2;
@@ -1318,7 +1317,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[19];
-    int i = writeDiscriminator(ROUTE_NCN_REWARDS_DISCRIMINATOR, _data, 0);
+    int i = ROUTE_NCN_REWARDS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) ncnFeeGroup;
     ++i;
     putInt16LE(_data, i, maxIterations);
@@ -1343,7 +1342,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ncnFeeGroup = _data[i] & 0xFF;
       ++i;
@@ -1412,7 +1411,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(DISTRIBUTE_BASE_REWARDS_DISCRIMINATOR, _data, 0);
+    int i = DISTRIBUTE_BASE_REWARDS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) baseFeeGroup;
     ++i;
     putInt64LE(_data, i, epoch);
@@ -1432,7 +1431,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var baseFeeGroup = _data[i] & 0xFF;
       ++i;
@@ -1483,7 +1482,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(DISTRIBUTE_BASE_NCN_REWARD_ROUTE_DISCRIMINATOR, _data, 0);
+    int i = DISTRIBUTE_BASE_NCN_REWARD_ROUTE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) ncnFeeGroup;
     ++i;
     putInt64LE(_data, i, epoch);
@@ -1503,7 +1502,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ncnFeeGroup = _data[i] & 0xFF;
       ++i;
@@ -1570,7 +1569,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(DISTRIBUTE_NCN_OPERATOR_REWARDS_DISCRIMINATOR, _data, 0);
+    int i = DISTRIBUTE_NCN_OPERATOR_REWARDS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) ncnFeeGroup;
     ++i;
     putInt64LE(_data, i, epoch);
@@ -1590,7 +1589,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ncnFeeGroup = _data[i] & 0xFF;
       ++i;
@@ -1659,7 +1658,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(DISTRIBUTE_NCN_VAULT_REWARDS_DISCRIMINATOR, _data, 0);
+    int i = DISTRIBUTE_NCN_VAULT_REWARDS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) ncnFeeGroup;
     ++i;
     putInt64LE(_data, i, epoch);
@@ -1679,7 +1678,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ncnFeeGroup = _data[i] & 0xFF;
       ++i;
@@ -1731,7 +1730,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[17 + Borsh.lenVectorArray(proof)];
-    int i = writeDiscriminator(CLAIM_WITH_PAYER_DISCRIMINATOR, _data, 0);
+    int i = CLAIM_WITH_PAYER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVectorArray(proof, _data, i);
     putInt64LE(_data, i, amount);
     i += 8;
@@ -1753,7 +1752,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var proof = Borsh.readMultiDimensionbyteVectorArray(32, _data, i);
       i += Borsh.lenVectorArray(proof);
@@ -1806,7 +1805,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(CLOSE_EPOCH_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = CLOSE_EPOCH_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -1824,7 +1823,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new CloseEpochAccountIxData(discriminator, epoch);
@@ -1867,7 +1866,7 @@ public final class JitoTipRouterProgram {
         + (epochsAfterConsensusBeforeClose == null || epochsAfterConsensusBeforeClose.isEmpty() ? 1 : 9)
         + (validSlotsAfterConsensus == null || validSlotsAfterConsensus.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(ADMIN_SET_PARAMETERS_DISCRIMINATOR, _data, 0);
+    int i = ADMIN_SET_PARAMETERS_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptional(startingValidEpoch, _data, i);
     i += Borsh.writeOptional(epochsBeforeStall, _data, i);
     i += Borsh.writeOptional(epochsAfterConsensusBeforeClose, _data, i);
@@ -1890,7 +1889,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var startingValidEpoch = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
       if (startingValidEpoch.isPresent()) {
@@ -1957,7 +1956,7 @@ public final class JitoTipRouterProgram {
         + (newNcnFeeBps == null || newNcnFeeBps.isEmpty() ? 1 : 3)
         + (newPriorityFeeDistributionFeeBps == null || newPriorityFeeDistributionFeeBps.isEmpty() ? 1 : 3)
     ];
-    int i = writeDiscriminator(ADMIN_SET_CONFIG_FEES_DISCRIMINATOR, _data, 0);
+    int i = ADMIN_SET_CONFIG_FEES_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptionalshort(newBlockEngineFeeBps, _data, i);
     i += Borsh.writeOptionalbyte(baseFeeGroup, _data, i);
     i += Borsh.writeOptional(newBaseFeeWallet, _data, i);
@@ -1986,7 +1985,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newBlockEngineFeeBps = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt16LE(_data, i));
       if (newBlockEngineFeeBps.isPresent()) {
@@ -2064,7 +2063,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(role)];
-    int i = writeDiscriminator(ADMIN_SET_NEW_ADMIN_DISCRIMINATOR, _data, 0);
+    int i = ADMIN_SET_NEW_ADMIN_DISCRIMINATOR.write(_data, 0);
     Borsh.write(role, _data, i);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -2082,7 +2081,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var role = ConfigAdminRole.read(_data, i);
       return new AdminSetNewAdminIxData(discriminator, role);
@@ -2120,7 +2119,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.lenArray(metaMerkleRoot)];
-    int i = writeDiscriminator(ADMIN_SET_TIE_BREAKER_DISCRIMINATOR, _data, 0);
+    int i = ADMIN_SET_TIE_BREAKER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeArray(metaMerkleRoot, _data, i);
     putInt64LE(_data, i, epoch);
 
@@ -2140,7 +2139,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var metaMerkleRoot = new byte[32];
       i += Borsh.readArray(metaMerkleRoot, _data, i);
@@ -2181,7 +2180,7 @@ public final class JitoTipRouterProgram {
     );
 
     final byte[] _data = new byte[64];
-    int i = writeDiscriminator(ADMIN_SET_WEIGHT_DISCRIMINATOR, _data, 0);
+    int i = ADMIN_SET_WEIGHT_DISCRIMINATOR.write(_data, 0);
     stMint.write(_data, i);
     i += 32;
     putInt128LE(_data, i, weight);
@@ -2206,7 +2205,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stMint = readPubKey(_data, i);
       i += 32;
@@ -2259,7 +2258,7 @@ public final class JitoTipRouterProgram {
         + (switchboardFeed == null ? 1 : 33)
         + (noFeedWeight == null ? 1 : 17)
     ];
-    int i = writeDiscriminator(ADMIN_REGISTER_ST_MINT_DISCRIMINATOR, _data, 0);
+    int i = ADMIN_REGISTER_ST_MINT_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) ncnFeeGroup;
     ++i;
     putInt64LE(_data, i, rewardMultiplierBps);
@@ -2284,7 +2283,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ncnFeeGroup = _data[i] & 0xFF;
       ++i;
@@ -2346,7 +2345,7 @@ public final class JitoTipRouterProgram {
         + (switchboardFeed == null ? 1 : 33)
         + (noFeedWeight == null ? 1 : 17)
     ];
-    int i = writeDiscriminator(ADMIN_SET_ST_MINT_DISCRIMINATOR, _data, 0);
+    int i = ADMIN_SET_ST_MINT_DISCRIMINATOR.write(_data, 0);
     stMint.write(_data, i);
     i += 32;
     i += Borsh.writeOptionalbyte(ncnFeeGroup, _data, i);
@@ -2372,7 +2371,7 @@ public final class JitoTipRouterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stMint = readPubKey(_data, i);
       i += 32;

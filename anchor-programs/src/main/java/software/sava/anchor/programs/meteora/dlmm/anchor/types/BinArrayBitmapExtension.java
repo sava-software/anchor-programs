@@ -8,8 +8,8 @@ import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 import software.sava.rpc.json.http.response.AccountInfo;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record BinArrayBitmapExtension(PublicKey _address,
@@ -54,7 +54,7 @@ public record BinArrayBitmapExtension(PublicKey _address,
     if (_data == null || _data.length == 0) {
       return null;
     }
-    final var discriminator = parseDiscriminator(_data, offset);
+    final var discriminator = createAnchorDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var lbPair = readPubKey(_data, i);
     i += 32;

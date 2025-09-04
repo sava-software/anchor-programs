@@ -10,13 +10,12 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class GlamPoliciesProgram {
@@ -81,7 +80,7 @@ public final class GlamPoliciesProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(CREATE_POLICY_DISCRIMINATOR, _data, 0);
+    int i = CREATE_POLICY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lockedUntilTs);
 
     return Instruction.createInstruction(invokedGlamPoliciesProgramMeta, keys, _data);
@@ -99,7 +98,7 @@ public final class GlamPoliciesProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lockedUntilTs = getInt64LE(_data, i);
       return new CreatePolicyIxData(discriminator, lockedUntilTs);
@@ -141,7 +140,7 @@ public final class GlamPoliciesProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(EXECUTE_DISCRIMINATOR, _data, 0);
+    int i = EXECUTE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamPoliciesProgramMeta, keys, _data);
@@ -159,7 +158,7 @@ public final class GlamPoliciesProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new ExecuteIxData(discriminator, amount);
@@ -197,7 +196,7 @@ public final class GlamPoliciesProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(metas)];
-    int i = writeDiscriminator(INITIALIZE_EXTRA_METAS_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_EXTRA_METAS_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(metas, _data, i);
 
     return Instruction.createInstruction(invokedGlamPoliciesProgramMeta, keys, _data);
@@ -213,7 +212,7 @@ public final class GlamPoliciesProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var metas = Borsh.readVector(AnchorExtraAccountMeta.class, AnchorExtraAccountMeta::read, _data, i);
       return new InitializeExtraMetasAccountIxData(discriminator, metas);

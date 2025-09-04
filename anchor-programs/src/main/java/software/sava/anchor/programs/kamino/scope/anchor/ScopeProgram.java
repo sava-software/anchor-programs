@@ -14,8 +14,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -26,6 +24,7 @@ import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class ScopeProgram {
@@ -53,7 +52,7 @@ public final class ScopeProgram {
 
     final byte[] _feedName = feedName.getBytes(UTF_8);
     final byte[] _data = new byte[12 + Borsh.lenVector(_feedName)];
-    int i = writeDiscriminator(INITIALIZE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(_feedName, _data, i);
 
     return Instruction.createInstruction(invokedScopeProgramMeta, keys, _data);
@@ -73,7 +72,7 @@ public final class ScopeProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feedName = Borsh.string(_data, i);
       return new InitializeIxData(discriminator, feedName, feedName.getBytes(UTF_8));
@@ -108,7 +107,7 @@ public final class ScopeProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(tokens)];
-    int i = writeDiscriminator(REFRESH_PRICE_LIST_DISCRIMINATOR, _data, 0);
+    int i = REFRESH_PRICE_LIST_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(tokens, _data, i);
 
     return Instruction.createInstruction(invokedScopeProgramMeta, keys, _data);
@@ -124,7 +123,7 @@ public final class ScopeProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tokens = Borsh.readshortVector(_data, i);
       return new RefreshPriceListIxData(discriminator, tokens);
@@ -174,7 +173,7 @@ public final class ScopeProgram {
     );
 
     final byte[] _data = new byte[10 + Borsh.lenVector(serializedChainlinkReport)];
-    int i = writeDiscriminator(REFRESH_CHAINLINK_PRICE_DISCRIMINATOR, _data, 0);
+    int i = REFRESH_CHAINLINK_PRICE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, token);
     i += 2;
     Borsh.writeVector(serializedChainlinkReport, _data, i);
@@ -192,7 +191,7 @@ public final class ScopeProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var token = getInt16LE(_data, i);
       i += 2;
@@ -246,7 +245,7 @@ public final class ScopeProgram {
     );
 
     final byte[] _data = new byte[10 + Borsh.lenVector(tokens) + Borsh.lenVector(serializedPythMessage)];
-    int i = writeDiscriminator(REFRESH_PYTH_LAZER_PRICE_DISCRIMINATOR, _data, 0);
+    int i = REFRESH_PYTH_LAZER_PRICE_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(tokens, _data, i);
     i += Borsh.writeVector(serializedPythMessage, _data, i);
     putInt16LE(_data, i, ed25519InstructionIndex);
@@ -267,7 +266,7 @@ public final class ScopeProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tokens = Borsh.readshortVector(_data, i);
       i += Borsh.lenVector(tokens);
@@ -316,7 +315,7 @@ public final class ScopeProgram {
 
     final byte[] _feedName = feedName.getBytes(UTF_8);
     final byte[] _data = new byte[20 + Borsh.lenVector(_feedName) + Borsh.lenArray(genericData)];
-    int i = writeDiscriminator(UPDATE_MAPPING_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_MAPPING_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, token);
     i += 2;
     _data[i] = (byte) priceType;
@@ -369,7 +368,7 @@ public final class ScopeProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var token = getInt16LE(_data, i);
       i += 2;
@@ -443,7 +442,7 @@ public final class ScopeProgram {
 
     final byte[] _feedName = feedName.getBytes(UTF_8);
     final byte[] _data = new byte[20 + Borsh.lenVector(_feedName)];
-    int i = writeDiscriminator(RESET_TWAP_DISCRIMINATOR, _data, 0);
+    int i = RESET_TWAP_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, token);
     i += 8;
     Borsh.writeVector(_feedName, _data, i);
@@ -465,7 +464,7 @@ public final class ScopeProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var token = getInt64LE(_data, i);
       i += 8;
@@ -506,7 +505,7 @@ public final class ScopeProgram {
 
     final byte[] _feedName = feedName.getBytes(UTF_8);
     final byte[] _data = new byte[28 + Borsh.lenVector(_feedName) + Borsh.lenVector(value)];
-    int i = writeDiscriminator(UPDATE_TOKEN_METADATA_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_TOKEN_METADATA_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, index);
     i += 8;
     putInt64LE(_data, i, mode);
@@ -543,7 +542,7 @@ public final class ScopeProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var index = getInt64LE(_data, i);
       i += 8;
@@ -591,7 +590,7 @@ public final class ScopeProgram {
 
     final byte[] _feedName = feedName.getBytes(UTF_8);
     final byte[] _data = new byte[44 + Borsh.lenVector(_feedName)];
-    int i = writeDiscriminator(SET_ADMIN_CACHED_DISCRIMINATOR, _data, 0);
+    int i = SET_ADMIN_CACHED_DISCRIMINATOR.write(_data, 0);
     newAdmin.write(_data, i);
     i += 32;
     Borsh.writeVector(_feedName, _data, i);
@@ -613,7 +612,7 @@ public final class ScopeProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newAdmin = readPubKey(_data, i);
       i += 32;
@@ -649,7 +648,7 @@ public final class ScopeProgram {
 
     final byte[] _feedName = feedName.getBytes(UTF_8);
     final byte[] _data = new byte[12 + Borsh.lenVector(_feedName)];
-    int i = writeDiscriminator(APPROVE_ADMIN_CACHED_DISCRIMINATOR, _data, 0);
+    int i = APPROVE_ADMIN_CACHED_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(_feedName, _data, i);
 
     return Instruction.createInstruction(invokedScopeProgramMeta, keys, _data);
@@ -669,7 +668,7 @@ public final class ScopeProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feedName = Borsh.string(_data, i);
       return new ApproveAdminCachedIxData(discriminator, feedName, feedName.getBytes(UTF_8));
@@ -707,7 +706,7 @@ public final class ScopeProgram {
     );
 
     final byte[] _data = new byte[49 + Borsh.lenVectorArray(scopeChains)];
-    int i = writeDiscriminator(CREATE_MINT_MAP_DISCRIMINATOR, _data, 0);
+    int i = CREATE_MINT_MAP_DISCRIMINATOR.write(_data, 0);
     seedPk.write(_data, i);
     i += 32;
     putInt64LE(_data, i, seedId);
@@ -733,7 +732,7 @@ public final class ScopeProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var seedPk = readPubKey(_data, i);
       i += 32;

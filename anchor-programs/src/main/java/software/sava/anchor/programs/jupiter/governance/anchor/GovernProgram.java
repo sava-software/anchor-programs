@@ -14,8 +14,6 @@ import software.sava.core.tx.Instruction;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -24,6 +22,7 @@ import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class GovernProgram {
@@ -53,7 +52,7 @@ public final class GovernProgram {
     );
 
     final byte[] _data = new byte[40 + Borsh.len(params)];
-    int i = writeDiscriminator(CREATE_GOVERNOR_DISCRIMINATOR, _data, 0);
+    int i = CREATE_GOVERNOR_DISCRIMINATOR.write(_data, 0);
     locker.write(_data, i);
     i += 32;
     Borsh.write(params, _data, i);
@@ -73,7 +72,7 @@ public final class GovernProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var locker = readPubKey(_data, i);
       i += 32;
@@ -132,7 +131,7 @@ public final class GovernProgram {
     );
 
     final byte[] _data = new byte[10 + Borsh.lenVector(instructions)];
-    int i = writeDiscriminator(CREATE_PROPOSAL_DISCRIMINATOR, _data, 0);
+    int i = CREATE_PROPOSAL_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) proposalType;
     ++i;
     _data[i] = (byte) maxOption;
@@ -155,7 +154,7 @@ public final class GovernProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var proposalType = _data[i] & 0xFF;
       ++i;
@@ -284,7 +283,7 @@ public final class GovernProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(NEW_VOTE_DISCRIMINATOR, _data, 0);
+    int i = NEW_VOTE_DISCRIMINATOR.write(_data, 0);
     voter.write(_data, i);
 
     return Instruction.createInstruction(invokedGovernProgramMeta, keys, _data);
@@ -302,7 +301,7 @@ public final class GovernProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var voter = readPubKey(_data, i);
       return new NewVoteIxData(discriminator, voter);
@@ -345,7 +344,7 @@ public final class GovernProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(SET_VOTE_DISCRIMINATOR, _data, 0);
+    int i = SET_VOTE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) side;
     ++i;
     putInt64LE(_data, i, weight);
@@ -365,7 +364,7 @@ public final class GovernProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var side = _data[i] & 0xFF;
       ++i;
@@ -405,7 +404,7 @@ public final class GovernProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_GOVERNANCE_PARAMS_DISCRIMINATOR, _data, 0);
+    int i = SET_GOVERNANCE_PARAMS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedGovernProgramMeta, keys, _data);
@@ -423,7 +422,7 @@ public final class GovernProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GovernanceParameters.read(_data, i);
       return new SetGovernanceParamsIxData(discriminator, params);
@@ -461,7 +460,7 @@ public final class GovernProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SET_VOTING_REWARD_DISCRIMINATOR, _data, 0);
+    int i = SET_VOTING_REWARD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardPerProposal);
 
     return Instruction.createInstruction(invokedGovernProgramMeta, keys, _data);
@@ -479,7 +478,7 @@ public final class GovernProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardPerProposal = getInt64LE(_data, i);
       return new SetVotingRewardIxData(discriminator, rewardPerProposal);
@@ -550,7 +549,7 @@ public final class GovernProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(SET_LOCKER_DISCRIMINATOR, _data, 0);
+    int i = SET_LOCKER_DISCRIMINATOR.write(_data, 0);
     newLocker.write(_data, i);
 
     return Instruction.createInstruction(invokedGovernProgramMeta, keys, _data);
@@ -568,7 +567,7 @@ public final class GovernProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newLocker = readPubKey(_data, i);
       return new SetLockerIxData(discriminator, newLocker);
@@ -620,7 +619,7 @@ public final class GovernProgram {
     final byte[] _title = title.getBytes(UTF_8);
     final byte[] _descriptionLink = descriptionLink.getBytes(UTF_8);
     final byte[] _data = new byte[17 + Borsh.lenVector(_title) + Borsh.lenVector(_descriptionLink)];
-    int i = writeDiscriminator(CREATE_PROPOSAL_META_DISCRIMINATOR, _data, 0);
+    int i = CREATE_PROPOSAL_META_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) bump;
     ++i;
     i += Borsh.writeVector(_title, _data, i);
@@ -649,7 +648,7 @@ public final class GovernProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var bump = _data[i] & 0xFF;
       ++i;
@@ -704,7 +703,7 @@ public final class GovernProgram {
     );
 
     final byte[] _data = new byte[9 + Borsh.lenVector(optionDescriptions)];
-    int i = writeDiscriminator(CREATE_OPTION_PROPOSAL_META_DISCRIMINATOR, _data, 0);
+    int i = CREATE_OPTION_PROPOSAL_META_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) bump;
     ++i;
     Borsh.writeVector(optionDescriptions, _data, i);
@@ -722,7 +721,7 @@ public final class GovernProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var bump = _data[i] & 0xFF;
       ++i;

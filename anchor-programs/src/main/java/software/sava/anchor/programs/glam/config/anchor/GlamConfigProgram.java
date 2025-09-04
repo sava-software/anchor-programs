@@ -10,8 +10,6 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -19,6 +17,7 @@ import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class GlamConfigProgram {
@@ -52,7 +51,7 @@ public final class GlamConfigProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(DELETE_ASSET_META_DISCRIMINATOR, _data, 0);
+    int i = DELETE_ASSET_META_DISCRIMINATOR.write(_data, 0);
     asset.write(_data, i);
 
     return Instruction.createInstruction(invokedGlamConfigProgramMeta, keys, _data);
@@ -70,7 +69,7 @@ public final class GlamConfigProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var asset = readPubKey(_data, i);
       return new DeleteAssetMetaIxData(discriminator, asset);
@@ -108,7 +107,7 @@ public final class GlamConfigProgram {
     );
 
     final byte[] _data = new byte[108];
-    int i = writeDiscriminator(INITIALIZE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_DISCRIMINATOR.write(_data, 0);
     admin.write(_data, i);
     i += 32;
     feeAuthority.write(_data, i);
@@ -139,7 +138,7 @@ public final class GlamConfigProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var admin = readPubKey(_data, i);
       i += 32;
@@ -194,7 +193,7 @@ public final class GlamConfigProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(UPDATE_ADMIN_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_ADMIN_DISCRIMINATOR.write(_data, 0);
     newAdmin.write(_data, i);
 
     return Instruction.createInstruction(invokedGlamConfigProgramMeta, keys, _data);
@@ -212,7 +211,7 @@ public final class GlamConfigProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newAdmin = readPubKey(_data, i);
       return new UpdateAdminIxData(discriminator, newAdmin);
@@ -245,7 +244,7 @@ public final class GlamConfigProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(UPDATE_PROTOCOL_FEES_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PROTOCOL_FEES_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, baseFeeBps);
     i += 2;
     putInt16LE(_data, i, flowFeeBps);
@@ -265,7 +264,7 @@ public final class GlamConfigProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var baseFeeBps = getInt16LE(_data, i);
       i += 2;
@@ -301,7 +300,7 @@ public final class GlamConfigProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(UPDATE_REFERRER_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_REFERRER_DISCRIMINATOR.write(_data, 0);
     referrer.write(_data, i);
 
     return Instruction.createInstruction(invokedGlamConfigProgramMeta, keys, _data);
@@ -319,7 +318,7 @@ public final class GlamConfigProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var referrer = readPubKey(_data, i);
       return new UpdateReferrerIxData(discriminator, referrer);
@@ -353,7 +352,7 @@ public final class GlamConfigProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(assetMeta)];
-    int i = writeDiscriminator(UPSERT_ASSET_META_DISCRIMINATOR, _data, 0);
+    int i = UPSERT_ASSET_META_DISCRIMINATOR.write(_data, 0);
     Borsh.write(assetMeta, _data, i);
 
     return Instruction.createInstruction(invokedGlamConfigProgramMeta, keys, _data);
@@ -371,7 +370,7 @@ public final class GlamConfigProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var assetMeta = AssetMeta.read(_data, i);
       return new UpsertAssetMetaIxData(discriminator, assetMeta);

@@ -9,13 +9,12 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class PythPushOracleProgram {
@@ -44,7 +43,7 @@ public final class PythPushOracleProgram {
     );
 
     final byte[] _data = new byte[10 + Borsh.len(params) + Borsh.lenArray(feedId)];
-    int i = writeDiscriminator(UPDATE_PRICE_FEED_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PRICE_FEED_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(params, _data, i);
     putInt16LE(_data, i, shardId);
     i += 2;
@@ -67,7 +66,7 @@ public final class PythPushOracleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PostUpdateParams.read(_data, i);
       i += Borsh.len(params);

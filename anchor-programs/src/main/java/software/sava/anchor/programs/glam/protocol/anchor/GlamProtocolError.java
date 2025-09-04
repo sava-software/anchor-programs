@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam.protocol.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.NotAuthorized,

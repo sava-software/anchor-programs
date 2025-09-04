@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.jupiter.voter.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface LockedVoterError extends ProgramError permits
     LockedVoterError.LockupDurationTooShort,

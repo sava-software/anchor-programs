@@ -12,8 +12,8 @@ import software.sava.rpc.json.http.response.AccountInfo;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 
 public record ShortUrl(PublicKey _address, Discriminator discriminator, PublicKey referrer, String shortUrl, byte[] _shortUrl) implements Borsh {
 
@@ -46,7 +46,7 @@ public record ShortUrl(PublicKey _address, Discriminator discriminator, PublicKe
     if (_data == null || _data.length == 0) {
       return null;
     }
-    final var discriminator = parseDiscriminator(_data, offset);
+    final var discriminator = createAnchorDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var referrer = readPubKey(_data, i);
     i += 32;

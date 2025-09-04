@@ -11,8 +11,6 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -24,6 +22,7 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class Ocr2Program {
@@ -63,7 +62,7 @@ public final class Ocr2Program {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(INITIALIZE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_DISCRIMINATOR.write(_data, 0);
     putInt128LE(_data, i, minAnswer);
     i += 16;
     putInt128LE(_data, i, maxAnswer);
@@ -83,7 +82,7 @@ public final class Ocr2Program {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var minAnswer = getInt128LE(_data, i);
       i += 16;
@@ -140,7 +139,7 @@ public final class Ocr2Program {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(TRANSFER_OWNERSHIP_DISCRIMINATOR, _data, 0);
+    int i = TRANSFER_OWNERSHIP_DISCRIMINATOR.write(_data, 0);
     proposedOwner.write(_data, i);
 
     return Instruction.createInstruction(invokedOcr2ProgramMeta, keys, _data);
@@ -158,7 +157,7 @@ public final class Ocr2Program {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var proposedOwner = readPubKey(_data, i);
       return new TransferOwnershipIxData(discriminator, proposedOwner);
@@ -201,7 +200,7 @@ public final class Ocr2Program {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(CREATE_PROPOSAL_DISCRIMINATOR, _data, 0);
+    int i = CREATE_PROPOSAL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, offchainConfigVersion);
 
     return Instruction.createInstruction(invokedOcr2ProgramMeta, keys, _data);
@@ -219,7 +218,7 @@ public final class Ocr2Program {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var offchainConfigVersion = getInt64LE(_data, i);
       return new CreateProposalIxData(discriminator, offchainConfigVersion);
@@ -251,7 +250,7 @@ public final class Ocr2Program {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(offchainConfig)];
-    int i = writeDiscriminator(WRITE_OFFCHAIN_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = WRITE_OFFCHAIN_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(offchainConfig, _data, i);
 
     return Instruction.createInstruction(invokedOcr2ProgramMeta, keys, _data);
@@ -267,7 +266,7 @@ public final class Ocr2Program {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var offchainConfig = Borsh.readbyteVector(_data, i);
       return new WriteOffchainConfigIxData(discriminator, offchainConfig);
@@ -334,7 +333,7 @@ public final class Ocr2Program {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(digest)];
-    int i = writeDiscriminator(ACCEPT_PROPOSAL_DISCRIMINATOR, _data, 0);
+    int i = ACCEPT_PROPOSAL_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(digest, _data, i);
 
     return Instruction.createInstruction(invokedOcr2ProgramMeta, keys, _data);
@@ -350,7 +349,7 @@ public final class Ocr2Program {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var digest = Borsh.readbyteVector(_data, i);
       return new AcceptProposalIxData(discriminator, digest);
@@ -382,7 +381,7 @@ public final class Ocr2Program {
     );
 
     final byte[] _data = new byte[9 + Borsh.lenVector(newOracles)];
-    int i = writeDiscriminator(PROPOSE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = PROPOSE_CONFIG_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(newOracles, _data, i);
     _data[i] = (byte) f;
 
@@ -399,7 +398,7 @@ public final class Ocr2Program {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newOracles = Borsh.readVector(NewOracle.class, NewOracle::read, _data, i);
       i += Borsh.lenVector(newOracles);
@@ -435,7 +434,7 @@ public final class Ocr2Program {
     );
 
     final byte[] _data = new byte[40 + Borsh.lenVector(payees)];
-    int i = writeDiscriminator(PROPOSE_PAYEES_DISCRIMINATOR, _data, 0);
+    int i = PROPOSE_PAYEES_DISCRIMINATOR.write(_data, 0);
     tokenMint.write(_data, i);
     i += 32;
     Borsh.writeVector(payees, _data, i);
@@ -453,7 +452,7 @@ public final class Ocr2Program {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tokenMint = readPubKey(_data, i);
       i += 32;
@@ -542,7 +541,7 @@ public final class Ocr2Program {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SET_BILLING_DISCRIMINATOR, _data, 0);
+    int i = SET_BILLING_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, observationPaymentGjuels);
     i += 4;
     putInt32LE(_data, i, transmissionPaymentGjuels);
@@ -562,7 +561,7 @@ public final class Ocr2Program {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var observationPaymentGjuels = getInt32LE(_data, i);
       i += 4;
@@ -608,7 +607,7 @@ public final class Ocr2Program {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_FUNDS_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_FUNDS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountGjuels);
 
     return Instruction.createInstruction(invokedOcr2ProgramMeta, keys, _data);
@@ -626,7 +625,7 @@ public final class Ocr2Program {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountGjuels = getInt64LE(_data, i);
       return new WithdrawFundsIxData(discriminator, amountGjuels);

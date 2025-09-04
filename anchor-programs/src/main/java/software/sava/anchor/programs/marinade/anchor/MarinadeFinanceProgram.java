@@ -12,8 +12,6 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -23,6 +21,7 @@ import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class MarinadeFinanceProgram {
@@ -59,7 +58,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(data)];
-    int i = writeDiscriminator(INITIALIZE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(data, _data, i);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -77,7 +76,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var data = InitializeData.read(_data, i);
       return new InitializeIxData(discriminator, data);
@@ -108,7 +107,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(data)];
-    int i = writeDiscriminator(CHANGE_AUTHORITY_DISCRIMINATOR, _data, 0);
+    int i = CHANGE_AUTHORITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(data, _data, i);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -124,7 +123,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var data = ChangeAuthorityData.read(_data, i);
       return new ChangeAuthorityIxData(discriminator, data);
@@ -170,7 +169,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(ADD_VALIDATOR_DISCRIMINATOR, _data, 0);
+    int i = ADD_VALIDATOR_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, score);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -188,7 +187,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var score = getInt32LE(_data, i);
       return new AddValidatorIxData(discriminator, score);
@@ -227,7 +226,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[44];
-    int i = writeDiscriminator(REMOVE_VALIDATOR_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_VALIDATOR_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, index);
     i += 4;
     validatorVote.write(_data, i);
@@ -247,7 +246,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var index = getInt32LE(_data, i);
       i += 4;
@@ -287,7 +286,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[48];
-    int i = writeDiscriminator(SET_VALIDATOR_SCORE_DISCRIMINATOR, _data, 0);
+    int i = SET_VALIDATOR_SCORE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, index);
     i += 4;
     validatorVote.write(_data, i);
@@ -312,7 +311,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var index = getInt32LE(_data, i);
       i += 4;
@@ -352,7 +351,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(CONFIG_VALIDATOR_SYSTEM_DISCRIMINATOR, _data, 0);
+    int i = CONFIG_VALIDATOR_SYSTEM_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, extraRuns);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -370,7 +369,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var extraRuns = getInt32LE(_data, i);
       return new ConfigValidatorSystemIxData(discriminator, extraRuns);
@@ -421,7 +420,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamports);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -439,7 +438,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
       return new DepositIxData(discriminator, lamports);
@@ -498,7 +497,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(DEPOSIT_STAKE_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_STAKE_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, validatorIndex);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -516,7 +515,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var validatorIndex = getInt32LE(_data, i);
       return new DepositStakeAccountIxData(discriminator, validatorIndex);
@@ -564,7 +563,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(LIQUID_UNSTAKE_DISCRIMINATOR, _data, 0);
+    int i = LIQUID_UNSTAKE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, msolAmount);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -582,7 +581,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var msolAmount = getInt64LE(_data, i);
       return new LiquidUnstakeIxData(discriminator, msolAmount);
@@ -628,7 +627,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(ADD_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamports);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -646,7 +645,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
       return new AddLiquidityIxData(discriminator, lamports);
@@ -696,7 +695,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(REMOVE_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, tokens);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -714,7 +713,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tokens = getInt64LE(_data, i);
       return new RemoveLiquidityIxData(discriminator, tokens);
@@ -746,7 +745,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CONFIG_LP_DISCRIMINATOR, _data, 0);
+    int i = CONFIG_LP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -762,7 +761,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ConfigLpParams.read(_data, i);
       return new ConfigLpIxData(discriminator, params);
@@ -793,7 +792,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CONFIG_MARINADE_DISCRIMINATOR, _data, 0);
+    int i = CONFIG_MARINADE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -809,7 +808,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ConfigMarinadeParams.read(_data, i);
       return new ConfigMarinadeIxData(discriminator, params);
@@ -852,7 +851,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(ORDER_UNSTAKE_DISCRIMINATOR, _data, 0);
+    int i = ORDER_UNSTAKE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, msolAmount);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -870,7 +869,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var msolAmount = getInt64LE(_data, i);
       return new OrderUnstakeIxData(discriminator, msolAmount);
@@ -949,7 +948,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(STAKE_RESERVE_DISCRIMINATOR, _data, 0);
+    int i = STAKE_RESERVE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, validatorIndex);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -967,7 +966,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var validatorIndex = getInt32LE(_data, i);
       return new StakeReserveIxData(discriminator, validatorIndex);
@@ -1022,7 +1021,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_ACTIVE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_ACTIVE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, stakeIndex);
     i += 4;
     putInt32LE(_data, i, validatorIndex);
@@ -1042,7 +1041,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stakeIndex = getInt32LE(_data, i);
       i += 4;
@@ -1102,7 +1101,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(UPDATE_DEACTIVATED_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_DEACTIVATED_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, stakeIndex);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -1120,7 +1119,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stakeIndex = getInt32LE(_data, i);
       return new UpdateDeactivatedIxData(discriminator, stakeIndex);
@@ -1177,7 +1176,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEACTIVATE_STAKE_DISCRIMINATOR, _data, 0);
+    int i = DEACTIVATE_STAKE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, stakeIndex);
     i += 4;
     putInt32LE(_data, i, validatorIndex);
@@ -1197,7 +1196,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stakeIndex = getInt32LE(_data, i);
       i += 4;
@@ -1246,7 +1245,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(EMERGENCY_UNSTAKE_DISCRIMINATOR, _data, 0);
+    int i = EMERGENCY_UNSTAKE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, stakeIndex);
     i += 4;
     putInt32LE(_data, i, validatorIndex);
@@ -1266,7 +1265,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stakeIndex = getInt32LE(_data, i);
       i += 4;
@@ -1328,7 +1327,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(PARTIAL_UNSTAKE_DISCRIMINATOR, _data, 0);
+    int i = PARTIAL_UNSTAKE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, stakeIndex);
     i += 4;
     putInt32LE(_data, i, validatorIndex);
@@ -1353,7 +1352,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stakeIndex = getInt32LE(_data, i);
       i += 4;
@@ -1413,7 +1412,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[20];
-    int i = writeDiscriminator(MERGE_STAKES_DISCRIMINATOR, _data, 0);
+    int i = MERGE_STAKES_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, destinationStakeIndex);
     i += 4;
     putInt32LE(_data, i, sourceStakeIndex);
@@ -1438,7 +1437,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var destinationStakeIndex = getInt32LE(_data, i);
       i += 4;
@@ -1506,7 +1505,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[20];
-    int i = writeDiscriminator(REDELEGATE_DISCRIMINATOR, _data, 0);
+    int i = REDELEGATE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, stakeIndex);
     i += 4;
     putInt32LE(_data, i, sourceValidatorIndex);
@@ -1531,7 +1530,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stakeIndex = getInt32LE(_data, i);
       i += 4;
@@ -1624,7 +1623,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[56];
-    int i = writeDiscriminator(WITHDRAW_STAKE_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_STAKE_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, stakeIndex);
     i += 4;
     putInt32LE(_data, i, validatorIndex);
@@ -1652,7 +1651,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stakeIndex = getInt32LE(_data, i);
       i += 4;
@@ -1706,7 +1705,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(REALLOC_VALIDATOR_LIST_DISCRIMINATOR, _data, 0);
+    int i = REALLOC_VALIDATOR_LIST_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, capacity);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -1724,7 +1723,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var capacity = getInt32LE(_data, i);
       return new ReallocValidatorListIxData(discriminator, capacity);
@@ -1762,7 +1761,7 @@ public final class MarinadeFinanceProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(REALLOC_STAKE_LIST_DISCRIMINATOR, _data, 0);
+    int i = REALLOC_STAKE_LIST_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, capacity);
 
     return Instruction.createInstruction(invokedMarinadeFinanceProgramMeta, keys, _data);
@@ -1780,7 +1779,7 @@ public final class MarinadeFinanceProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var capacity = getInt32LE(_data, i);
       return new ReallocStakeListIxData(discriminator, capacity);

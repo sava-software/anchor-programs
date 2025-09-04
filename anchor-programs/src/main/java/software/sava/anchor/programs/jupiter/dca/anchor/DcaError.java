@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.jupiter.dca.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface DcaError extends ProgramError permits
     DcaError.InvalidAmount,

@@ -47,12 +47,11 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class SbOnDemandProgram {
@@ -77,7 +76,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GUARDIAN_QUOTE_VERIFY_DISCRIMINATOR, _data, 0);
+    int i = GUARDIAN_QUOTE_VERIFY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -93,7 +92,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GuardianQuoteVerifyParams.read(_data, i);
       return new GuardianQuoteVerifyIxData(discriminator, params);
@@ -128,7 +127,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GUARDIAN_REGISTER_DISCRIMINATOR, _data, 0);
+    int i = GUARDIAN_REGISTER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -146,7 +145,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GuardianRegisterParams.read(_data, i);
       return new GuardianRegisterIxData(discriminator, params);
@@ -181,7 +180,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(GUARDIAN_UNREGISTER_DISCRIMINATOR, _data, 0);
+    int i = GUARDIAN_UNREGISTER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -199,7 +198,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = GuardianUnregisterParams.read(_data, i);
       return new GuardianUnregisterIxData(discriminator, params);
@@ -252,7 +251,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ORACLE_HEARTBEAT_DISCRIMINATOR, _data, 0);
+    int i = ORACLE_HEARTBEAT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -268,7 +267,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OracleHeartbeatParams.read(_data, i);
       return new OracleHeartbeatIxData(discriminator, params);
@@ -307,7 +306,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ORACLE_HEARTBEAT_V_2_DISCRIMINATOR, _data, 0);
+    int i = ORACLE_HEARTBEAT_V_2_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -323,7 +322,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OracleHeartbeatV2Params.read(_data, i);
       return new OracleHeartbeatV2IxData(discriminator, params);
@@ -366,7 +365,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ORACLE_INIT_DISCRIMINATOR, _data, 0);
+    int i = ORACLE_INIT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -382,7 +381,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OracleInitParams.read(_data, i);
       return new OracleInitIxData(discriminator, params);
@@ -429,7 +428,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ORACLE_INIT_SVM_DISCRIMINATOR, _data, 0);
+    int i = ORACLE_INIT_SVM_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -445,7 +444,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OracleInitSVMParams.read(_data, i);
       return new OracleInitSvmIxData(discriminator, params);
@@ -487,7 +486,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ORACLE_RESET_LUT_DISCRIMINATOR, _data, 0);
+    int i = ORACLE_RESET_LUT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -505,7 +504,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OracleResetLutParams.read(_data, i);
       return new OracleResetLutIxData(discriminator, params);
@@ -536,7 +535,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ORACLE_SET_CONFIGS_DISCRIMINATOR, _data, 0);
+    int i = ORACLE_SET_CONFIGS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -552,7 +551,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OracleSetConfigsParams.read(_data, i);
       return new OracleSetConfigsIxData(discriminator, params);
@@ -585,7 +584,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ORACLE_SET_OPERATOR_DISCRIMINATOR, _data, 0);
+    int i = ORACLE_SET_OPERATOR_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -603,7 +602,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OracleSetOperatorParams.read(_data, i);
       return new OracleSetOperatorIxData(discriminator, params);
@@ -659,7 +658,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(ORACLE_SYNC_LUT_DISCRIMINATOR, _data, 0);
+    int i = ORACLE_SYNC_LUT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -677,7 +676,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OracleSyncLutParams.read(_data, i);
       return new OracleSyncLutIxData(discriminator, params);
@@ -708,7 +707,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PERMISSION_SET_DISCRIMINATOR, _data, 0);
+    int i = PERMISSION_SET_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -726,7 +725,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PermissionSetParams.read(_data, i);
       return new PermissionSetIxData(discriminator, params);
@@ -772,7 +771,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PULL_FEED_CLOSE_DISCRIMINATOR, _data, 0);
+    int i = PULL_FEED_CLOSE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -790,7 +789,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PullFeedCloseParams.read(_data, i);
       return new PullFeedCloseIxData(discriminator, params);
@@ -839,7 +838,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PULL_FEED_INIT_DISCRIMINATOR, _data, 0);
+    int i = PULL_FEED_INIT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -855,7 +854,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PullFeedInitParams.read(_data, i);
       return new PullFeedInitIxData(discriminator, params);
@@ -886,7 +885,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PULL_FEED_SET_CONFIGS_DISCRIMINATOR, _data, 0);
+    int i = PULL_FEED_SET_CONFIGS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -902,7 +901,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PullFeedSetConfigsParams.read(_data, i);
       return new PullFeedSetConfigsIxData(discriminator, params);
@@ -944,7 +943,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PULL_FEED_SUBMIT_RESPONSE_DISCRIMINATOR, _data, 0);
+    int i = PULL_FEED_SUBMIT_RESPONSE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -960,7 +959,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PullFeedSubmitResponseParams.read(_data, i);
       return new PullFeedSubmitResponseIxData(discriminator, params);
@@ -1001,7 +1000,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PULL_FEED_SUBMIT_RESPONSE_CONSENSUS_DISCRIMINATOR, _data, 0);
+    int i = PULL_FEED_SUBMIT_RESPONSE_CONSENSUS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1017,7 +1016,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PullFeedSubmitResponseConsensusParams.read(_data, i);
       return new PullFeedSubmitResponseConsensusIxData(discriminator, params);
@@ -1051,7 +1050,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PULL_FEED_SUBMIT_RESPONSE_CONSENSUS_LIGHT_DISCRIMINATOR, _data, 0);
+    int i = PULL_FEED_SUBMIT_RESPONSE_CONSENSUS_LIGHT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1067,7 +1066,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PullFeedSubmitResponseConsensusLightParams.read(_data, i);
       return new PullFeedSubmitResponseConsensusLightIxData(discriminator, params);
@@ -1107,7 +1106,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PULL_FEED_SUBMIT_RESPONSE_MANY_DISCRIMINATOR, _data, 0);
+    int i = PULL_FEED_SUBMIT_RESPONSE_MANY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1123,7 +1122,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PullFeedSubmitResponseManyParams.read(_data, i);
       return new PullFeedSubmitResponseManyIxData(discriminator, params);
@@ -1165,7 +1164,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PULL_FEED_SUBMIT_RESPONSE_SVM_DISCRIMINATOR, _data, 0);
+    int i = PULL_FEED_SUBMIT_RESPONSE_SVM_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1181,7 +1180,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PullFeedSubmitResponseSVMParams.read(_data, i);
       return new PullFeedSubmitResponseSvmIxData(discriminator, params);
@@ -1216,7 +1215,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_ADD_MR_ENCLAVE_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_ADD_MR_ENCLAVE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1234,7 +1233,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueueAddMrEnclaveParams.read(_data, i);
       return new QueueAddMrEnclaveIxData(discriminator, params);
@@ -1267,7 +1266,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_ALLOW_SUBSIDIES_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_ALLOW_SUBSIDIES_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1285,7 +1284,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueueAllowSubsidiesParams.read(_data, i);
       return new QueueAllowSubsidiesIxData(discriminator, params);
@@ -1320,7 +1319,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_GARBAGE_COLLECT_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_GARBAGE_COLLECT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1338,7 +1337,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueueGarbageCollectParams.read(_data, i);
       return new QueueGarbageCollectIxData(discriminator, params);
@@ -1385,7 +1384,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_INIT_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_INIT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1403,7 +1402,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueueInitParams.read(_data, i);
       return new QueueInitIxData(discriminator, params);
@@ -1450,7 +1449,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_INIT_SVM_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_INIT_SVM_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1468,7 +1467,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueueInitSVMParams.read(_data, i);
       return new QueueInitSvmIxData(discriminator, params);
@@ -1503,7 +1502,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_OVERRIDE_SVM_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_OVERRIDE_SVM_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1521,7 +1520,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueueOverrideSVMParams.read(_data, i);
       return new QueueOverrideSvmIxData(discriminator, params);
@@ -1569,7 +1568,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_PAY_SUBSIDY_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_PAY_SUBSIDY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1587,7 +1586,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueuePaySubsidyParams.read(_data, i);
       return new QueuePaySubsidyIxData(discriminator, params);
@@ -1622,7 +1621,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_REMOVE_MR_ENCLAVE_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_REMOVE_MR_ENCLAVE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1640,7 +1639,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueueRemoveMrEnclaveParams.read(_data, i);
       return new QueueRemoveMrEnclaveIxData(discriminator, params);
@@ -1677,7 +1676,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_RESET_VAULT_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_RESET_VAULT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1695,7 +1694,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueueResetVaultParams.read(_data, i);
       return new QueueResetVaultIxData(discriminator, params);
@@ -1728,7 +1727,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_SET_CONFIGS_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_SET_CONFIGS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1744,7 +1743,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueueSetConfigsParams.read(_data, i);
       return new QueueSetConfigsIxData(discriminator, params);
@@ -1779,7 +1778,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_SET_NCN_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_SET_NCN_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1797,7 +1796,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueueSetNcnParams.read(_data, i);
       return new QueueSetNcnIxData(discriminator, params);
@@ -1834,7 +1833,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(QUEUE_SET_VAULT_DISCRIMINATOR, _data, 0);
+    int i = QUEUE_SET_VAULT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1852,7 +1851,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = QueueSetVaultParams.read(_data, i);
       return new QueueSetVaultIxData(discriminator, params);
@@ -1889,7 +1888,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(RANDOMNESS_COMMIT_DISCRIMINATOR, _data, 0);
+    int i = RANDOMNESS_COMMIT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1907,7 +1906,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RandomnessCommitParams.read(_data, i);
       return new RandomnessCommitIxData(discriminator, params);
@@ -1956,7 +1955,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(RANDOMNESS_INIT_DISCRIMINATOR, _data, 0);
+    int i = RANDOMNESS_INIT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -1974,7 +1973,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RandomnessInitParams.read(_data, i);
       return new RandomnessInitIxData(discriminator, params);
@@ -2022,7 +2021,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(RANDOMNESS_REVEAL_DISCRIMINATOR, _data, 0);
+    int i = RANDOMNESS_REVEAL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -2040,7 +2039,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RandomnessRevealParams.read(_data, i);
       return new RandomnessRevealIxData(discriminator, params);
@@ -2073,7 +2072,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(STATE_INIT_DISCRIMINATOR, _data, 0);
+    int i = STATE_INIT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -2091,7 +2090,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = StateInitParams.read(_data, i);
       return new StateInitIxData(discriminator, params);
@@ -2128,7 +2127,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(STATE_SET_CONFIGS_DISCRIMINATOR, _data, 0);
+    int i = STATE_SET_CONFIGS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -2146,7 +2145,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = StateSetConfigsParams.read(_data, i);
       return new StateSetConfigsIxData(discriminator, params);
@@ -2176,7 +2175,7 @@ public final class SbOnDemandProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(TEST_UPDATE_ORACLE_STATS_DISCRIMINATOR, _data, 0);
+    int i = TEST_UPDATE_ORACLE_STATS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
@@ -2194,7 +2193,7 @@ public final class SbOnDemandProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = TestUpdateOracleStatsParams.read(_data, i);
       return new TestUpdateOracleStatsIxData(discriminator, params);

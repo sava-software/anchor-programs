@@ -1,4 +1,5 @@
 module software.sava.anchor_programs {
+  exports software.sava.anchor.programs._commons;
   exports software.sava.anchor.programs.chainlink.ocr2.anchor.types;
   exports software.sava.anchor.programs.chainlink.ocr2.anchor;
   exports software.sava.anchor.programs.chainlink.store.anchor.types;
@@ -26,8 +27,6 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.glam.protocol.anchor;
   exports software.sava.anchor.programs.glam.proxy;
   exports software.sava.anchor.programs.glam;
-  exports software.sava.anchor.programs.jito.steward.anchor.types;
-  exports software.sava.anchor.programs.jito.steward.anchor;
   exports software.sava.anchor.programs.jito.tip_distribution.anchor.types;
   exports software.sava.anchor.programs.jito.tip_distribution.anchor;
   exports software.sava.anchor.programs.jito.tip_router.anchor.types;
@@ -84,14 +83,10 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.meteora;
   exports software.sava.anchor.programs.moonshot.anchor.types;
   exports software.sava.anchor.programs.moonshot.anchor;
-  exports software.sava.anchor.programs.pump.anchor.types;
-  exports software.sava.anchor.programs.pump.anchor;
   exports software.sava.anchor.programs.pyth.lazer.anchor.types;
   exports software.sava.anchor.programs.pyth.lazer.anchor;
   exports software.sava.anchor.programs.pyth.push.anchor.types;
   exports software.sava.anchor.programs.pyth.push.anchor;
-  exports software.sava.anchor.programs.pyth.receiver.anchor.types;
-  exports software.sava.anchor.programs.pyth.receiver.anchor;
   exports software.sava.anchor.programs.raydium.launchpad.anchor.types;
   exports software.sava.anchor.programs.raydium.launchpad.anchor;
   exports software.sava.anchor.programs.switchboard.on_demand.anchor.types;
@@ -99,7 +94,7 @@ module software.sava.anchor_programs {
   requires java.base;
   requires java.net.http;
   requires org.bouncycastle.provider;
-  requires transitive software.sava.anchor_src_gen;
+  requires software.sava.anchor_src_gen;
   requires transitive software.sava.core;
   requires transitive software.sava.rpc;
   requires transitive software.sava.solana_programs;

@@ -24,8 +24,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -33,6 +31,7 @@ import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class AlphaVaultProgram {
@@ -190,7 +189,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(configParameters)];
-    int i = writeDiscriminator(CREATE_FCFS_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = CREATE_FCFS_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(configParameters, _data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -208,7 +207,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var configParameters = FcfsConfigParameters.read(_data, i);
       return new CreateFcfsConfigIxData(discriminator, configParameters);
@@ -248,7 +247,7 @@ public final class AlphaVaultProgram {
 
     final byte[] _proofUrl = proofUrl.getBytes(UTF_8);
     final byte[] _data = new byte[12 + Borsh.lenVector(_proofUrl)];
-    int i = writeDiscriminator(CREATE_MERKLE_PROOF_METADATA_DISCRIMINATOR, _data, 0);
+    int i = CREATE_MERKLE_PROOF_METADATA_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(_proofUrl, _data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -268,7 +267,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var proofUrl = Borsh.string(_data, i);
       return new CreateMerkleProofMetadataIxData(discriminator, proofUrl, proofUrl.getBytes(UTF_8));
@@ -307,7 +306,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CREATE_MERKLE_ROOT_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = CREATE_MERKLE_ROOT_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -325,7 +324,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CreateMerkleRootConfigParams.read(_data, i);
       return new CreateMerkleRootConfigIxData(discriminator, params);
@@ -401,7 +400,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.lenVectorArray(proof)];
-    int i = writeDiscriminator(CREATE_PERMISSIONED_ESCROW_DISCRIMINATOR, _data, 0);
+    int i = CREATE_PERMISSIONED_ESCROW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxCap);
     i += 8;
     Borsh.writeVectorArray(proof, _data, i);
@@ -419,7 +418,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxCap = getInt64LE(_data, i);
       i += 8;
@@ -466,7 +465,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(CREATE_PERMISSIONED_ESCROW_WITH_AUTHORITY_DISCRIMINATOR, _data, 0);
+    int i = CREATE_PERMISSIONED_ESCROW_WITH_AUTHORITY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxCap);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -484,7 +483,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxCap = getInt64LE(_data, i);
       return new CreatePermissionedEscrowWithAuthorityIxData(discriminator, maxCap);
@@ -518,7 +517,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(configParameters)];
-    int i = writeDiscriminator(CREATE_PRORATA_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = CREATE_PRORATA_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(configParameters, _data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -536,7 +535,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var configParameters = ProrataConfigParameters.read(_data, i);
       return new CreateProrataConfigIxData(discriminator, configParameters);
@@ -583,7 +582,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxAmount);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -601,7 +600,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxAmount = getInt64LE(_data, i);
       return new DepositIxData(discriminator, maxAmount);
@@ -667,7 +666,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(FILL_DAMM_V_2_DISCRIMINATOR, _data, 0);
+    int i = FILL_DAMM_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxAmount);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -685,7 +684,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxAmount = getInt64LE(_data, i);
       return new FillDammV2IxData(discriminator, maxAmount);
@@ -756,7 +755,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(FILL_DLMM_DISCRIMINATOR, _data, 0);
+    int i = FILL_DLMM_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxAmount);
     i += 8;
     Borsh.write(remainingAccountsInfo, _data, i);
@@ -774,7 +773,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxAmount = getInt64LE(_data, i);
       i += 8;
@@ -849,7 +848,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(FILL_DYNAMIC_AMM_DISCRIMINATOR, _data, 0);
+    int i = FILL_DYNAMIC_AMM_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxAmount);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -867,7 +866,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxAmount = getInt64LE(_data, i);
       return new FillDynamicAmmIxData(discriminator, maxAmount);
@@ -909,7 +908,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_FCFS_VAULT_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_FCFS_VAULT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -927,7 +926,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitializeFcfsVaultParams.read(_data, i);
       return new InitializeFcfsVaultIxData(discriminator, params);
@@ -968,7 +967,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_PRORATA_VAULT_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_PRORATA_VAULT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -986,7 +985,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitializeProrataVaultParams.read(_data, i);
       return new InitializeProrataVaultIxData(discriminator, params);
@@ -1029,7 +1028,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_VAULT_WITH_FCFS_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_VAULT_WITH_FCFS_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -1047,7 +1046,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitializeVaultWithConfigParams.read(_data, i);
       return new InitializeVaultWithFcfsConfigIxData(discriminator, params);
@@ -1090,7 +1089,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_VAULT_WITH_PRORATA_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_VAULT_WITH_PRORATA_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -1108,7 +1107,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitializeVaultWithConfigParams.read(_data, i);
       return new InitializeVaultWithProrataConfigIxData(discriminator, params);
@@ -1139,7 +1138,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(TRANSFER_VAULT_AUTHORITY_DISCRIMINATOR, _data, 0);
+    int i = TRANSFER_VAULT_AUTHORITY_DISCRIMINATOR.write(_data, 0);
     newAuthority.write(_data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -1157,7 +1156,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newAuthority = readPubKey(_data, i);
       return new TransferVaultAuthorityIxData(discriminator, newAuthority);
@@ -1195,7 +1194,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UPDATE_FCFS_VAULT_PARAMETERS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_FCFS_VAULT_PARAMETERS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -1213,7 +1212,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UpdateFcfsVaultParams.read(_data, i);
       return new UpdateFcfsVaultParametersIxData(discriminator, params);
@@ -1250,7 +1249,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UPDATE_PRORATA_VAULT_PARAMETERS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PRORATA_VAULT_PARAMETERS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -1268,7 +1267,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UpdateProrataVaultParams.read(_data, i);
       return new UpdateProrataVaultParametersIxData(discriminator, params);
@@ -1315,7 +1314,7 @@ public final class AlphaVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
@@ -1333,7 +1332,7 @@ public final class AlphaVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new WithdrawIxData(discriminator, amount);

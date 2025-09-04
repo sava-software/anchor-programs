@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam.policy.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface GlamPoliciesError extends ProgramError permits
     GlamPoliciesError.InvalidSourcePolicyAccount,

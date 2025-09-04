@@ -9,8 +9,6 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -20,6 +18,7 @@ import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class PythLazerSolanaContractProgram {
@@ -39,7 +38,7 @@ public final class PythLazerSolanaContractProgram {
     );
 
     final byte[] _data = new byte[72];
-    int i = writeDiscriminator(INITIALIZE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_DISCRIMINATOR.write(_data, 0);
     topAuthority.write(_data, i);
     i += 32;
     treasury.write(_data, i);
@@ -59,7 +58,7 @@ public final class PythLazerSolanaContractProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var topAuthority = readPubKey(_data, i);
       i += 32;
@@ -96,7 +95,7 @@ public final class PythLazerSolanaContractProgram {
     );
 
     final byte[] _data = new byte[48];
-    int i = writeDiscriminator(UPDATE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_DISCRIMINATOR.write(_data, 0);
     trustedSigner.write(_data, i);
     i += 32;
     putInt64LE(_data, i, expiresAt);
@@ -116,7 +115,7 @@ public final class PythLazerSolanaContractProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var trustedSigner = readPubKey(_data, i);
       i += 32;
@@ -171,7 +170,7 @@ public final class PythLazerSolanaContractProgram {
     );
 
     final byte[] _data = new byte[11 + Borsh.lenVector(messageData)];
-    int i = writeDiscriminator(VERIFY_MESSAGE_DISCRIMINATOR, _data, 0);
+    int i = VERIFY_MESSAGE_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(messageData, _data, i);
     putInt16LE(_data, i, ed25519InstructionIndex);
     i += 2;
@@ -193,7 +192,7 @@ public final class PythLazerSolanaContractProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var messageData = Borsh.readbyteVector(_data, i);
       i += Borsh.lenVector(messageData);

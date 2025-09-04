@@ -12,8 +12,6 @@ import software.sava.core.tx.Instruction;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
@@ -22,6 +20,7 @@ import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class JupiterProgram {
@@ -40,7 +39,7 @@ public final class JupiterProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CLAIM_DISCRIMINATOR, _data, 0);
+    int i = CLAIM_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) id;
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
@@ -58,7 +57,7 @@ public final class JupiterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var id = _data[i] & 0xFF;
       return new ClaimIxData(discriminator, id);
@@ -103,7 +102,7 @@ public final class JupiterProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CLAIM_TOKEN_DISCRIMINATOR, _data, 0);
+    int i = CLAIM_TOKEN_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) id;
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
@@ -121,7 +120,7 @@ public final class JupiterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var id = _data[i] & 0xFF;
       return new ClaimTokenIxData(discriminator, id);
@@ -162,7 +161,7 @@ public final class JupiterProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(CLOSE_TOKEN_DISCRIMINATOR, _data, 0);
+    int i = CLOSE_TOKEN_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) id;
     ++i;
     _data[i] = (byte) (burnAll ? 1 : 0);
@@ -182,7 +181,7 @@ public final class JupiterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var id = _data[i] & 0xFF;
       ++i;
@@ -247,7 +246,7 @@ public final class JupiterProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CREATE_PROGRAM_OPEN_ORDERS_DISCRIMINATOR, _data, 0);
+    int i = CREATE_PROGRAM_OPEN_ORDERS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) id;
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
@@ -265,7 +264,7 @@ public final class JupiterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var id = _data[i] & 0xFF;
       return new CreateProgramOpenOrdersIxData(discriminator, id);
@@ -318,7 +317,7 @@ public final class JupiterProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CREATE_TOKEN_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = CREATE_TOKEN_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) bump;
 
     return Instruction.createInstruction(invokedJupiterProgramMeta, keys, _data);
@@ -336,7 +335,7 @@ public final class JupiterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var bump = _data[i] & 0xFF;
       return new CreateTokenAccountIxData(discriminator, bump);
@@ -390,7 +389,7 @@ public final class JupiterProgram {
     );
 
     final byte[] _data = new byte[27 + Borsh.lenVector(routePlan)];
-    int i = writeDiscriminator(EXACT_OUT_ROUTE_DISCRIMINATOR, _data, 0);
+    int i = EXACT_OUT_ROUTE_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(routePlan, _data, i);
     putInt64LE(_data, i, outAmount);
     i += 8;
@@ -418,7 +417,7 @@ public final class JupiterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var routePlan = Borsh.readVector(RoutePlanStep.class, RoutePlanStep::read, _data, i);
       i += Borsh.lenVector(routePlan);
@@ -493,7 +492,7 @@ public final class JupiterProgram {
     );
 
     final byte[] _data = new byte[27 + Borsh.lenVector(routePlan)];
-    int i = writeDiscriminator(ROUTE_DISCRIMINATOR, _data, 0);
+    int i = ROUTE_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(routePlan, _data, i);
     putInt64LE(_data, i, inAmount);
     i += 8;
@@ -521,7 +520,7 @@ public final class JupiterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var routePlan = Borsh.readVector(RoutePlanStep.class, RoutePlanStep::read, _data, i);
       i += Borsh.lenVector(routePlan);
@@ -596,7 +595,7 @@ public final class JupiterProgram {
     );
 
     final byte[] _data = new byte[19 + Borsh.lenVector(routePlan)];
-    int i = writeDiscriminator(ROUTE_WITH_TOKEN_LEDGER_DISCRIMINATOR, _data, 0);
+    int i = ROUTE_WITH_TOKEN_LEDGER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(routePlan, _data, i);
     putInt64LE(_data, i, quotedOutAmount);
     i += 8;
@@ -621,7 +620,7 @@ public final class JupiterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var routePlan = Borsh.readVector(RoutePlanStep.class, RoutePlanStep::read, _data, i);
       i += Borsh.lenVector(routePlan);
@@ -707,7 +706,7 @@ public final class JupiterProgram {
     );
 
     final byte[] _data = new byte[28 + Borsh.lenVector(routePlan)];
-    int i = writeDiscriminator(SHARED_ACCOUNTS_EXACT_OUT_ROUTE_DISCRIMINATOR, _data, 0);
+    int i = SHARED_ACCOUNTS_EXACT_OUT_ROUTE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) id;
     ++i;
     i += Borsh.writeVector(routePlan, _data, i);
@@ -738,7 +737,7 @@ public final class JupiterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var id = _data[i] & 0xFF;
       ++i;
@@ -828,7 +827,7 @@ public final class JupiterProgram {
     );
 
     final byte[] _data = new byte[28 + Borsh.lenVector(routePlan)];
-    int i = writeDiscriminator(SHARED_ACCOUNTS_ROUTE_DISCRIMINATOR, _data, 0);
+    int i = SHARED_ACCOUNTS_ROUTE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) id;
     ++i;
     i += Borsh.writeVector(routePlan, _data, i);
@@ -859,7 +858,7 @@ public final class JupiterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var id = _data[i] & 0xFF;
       ++i;
@@ -949,7 +948,7 @@ public final class JupiterProgram {
     );
 
     final byte[] _data = new byte[20 + Borsh.lenVector(routePlan)];
-    int i = writeDiscriminator(SHARED_ACCOUNTS_ROUTE_WITH_TOKEN_LEDGER_DISCRIMINATOR, _data, 0);
+    int i = SHARED_ACCOUNTS_ROUTE_WITH_TOKEN_LEDGER_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) id;
     ++i;
     i += Borsh.writeVector(routePlan, _data, i);
@@ -977,7 +976,7 @@ public final class JupiterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var id = _data[i] & 0xFF;
       ++i;

@@ -29,8 +29,6 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -44,6 +42,7 @@ import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class DriftProgram {
@@ -71,7 +70,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10 + Borsh.lenArray(name)];
-    int i = writeDiscriminator(INITIALIZE_USER_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_USER_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     Borsh.writeArray(name, _data, i);
@@ -92,7 +91,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -155,7 +154,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(INITIALIZE_SIGNED_MSG_USER_ORDERS_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_SIGNED_MSG_USER_ORDERS_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, numOrders);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -173,7 +172,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var numOrders = getInt16LE(_data, i);
       return new InitializeSignedMsgUserOrdersIxData(discriminator, numOrders);
@@ -211,7 +210,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(RESIZE_SIGNED_MSG_USER_ORDERS_DISCRIMINATOR, _data, 0);
+    int i = RESIZE_SIGNED_MSG_USER_ORDERS_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, numOrders);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -229,7 +228,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var numOrders = getInt16LE(_data, i);
       return new ResizeSignedMsgUserOrdersIxData(discriminator, numOrders);
@@ -265,7 +264,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(delegates)];
-    int i = writeDiscriminator(INITIALIZE_SIGNED_MSG_WS_DELEGATES_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_SIGNED_MSG_WS_DELEGATES_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(delegates, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -281,7 +280,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var delegates = Borsh.readPublicKeyVector(_data, i);
       return new InitializeSignedMsgWsDelegatesIxData(discriminator, delegates);
@@ -315,7 +314,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[41];
-    int i = writeDiscriminator(CHANGE_SIGNED_MSG_WS_DELEGATE_STATUS_DISCRIMINATOR, _data, 0);
+    int i = CHANGE_SIGNED_MSG_WS_DELEGATE_STATUS_DISCRIMINATOR.write(_data, 0);
     delegate.write(_data, i);
     i += 32;
     _data[i] = (byte) (add ? 1 : 0);
@@ -335,7 +334,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var delegate = readPubKey(_data, i);
       i += 32;
@@ -436,7 +435,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenArray(name)];
-    int i = writeDiscriminator(INITIALIZE_REFERRER_NAME_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_REFERRER_NAME_DISCRIMINATOR.write(_data, 0);
     Borsh.writeArray(name, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -455,7 +454,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var name = new byte[32];
       Borsh.readArray(name, _data, i);
@@ -499,7 +498,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[19];
-    int i = writeDiscriminator(DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
@@ -524,7 +523,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -578,7 +577,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[19];
-    int i = writeDiscriminator(WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
@@ -603,7 +602,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -652,7 +651,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[18];
-    int i = writeDiscriminator(TRANSFER_DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = TRANSFER_DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
@@ -672,7 +671,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -733,7 +732,7 @@ public final class DriftProgram {
         + (depositAmount == null || depositAmount.isEmpty() ? 1 : 9)
         + (borrowAmount == null || borrowAmount.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(TRANSFER_POOLS_DISCRIMINATOR, _data, 0);
+    int i = TRANSFER_POOLS_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, depositFromMarketIndex);
     i += 2;
     putInt16LE(_data, i, depositToMarketIndex);
@@ -764,7 +763,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var depositFromMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -837,7 +836,7 @@ public final class DriftProgram {
         10
         + (amount == null || amount.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(TRANSFER_PERP_POSITION_DISCRIMINATOR, _data, 0);
+    int i = TRANSFER_PERP_POSITION_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     Borsh.writeOptional(amount, _data, i);
@@ -855,7 +854,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -892,7 +891,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PLACE_PERP_ORDER_DISCRIMINATOR, _data, 0);
+    int i = PLACE_PERP_ORDER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -908,7 +907,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OrderParams.read(_data, i);
       return new PlacePerpOrderIxData(discriminator, params);
@@ -944,7 +943,7 @@ public final class DriftProgram {
         8
         + (orderId == null || orderId.isEmpty() ? 1 : 5)
     ];
-    int i = writeDiscriminator(CANCEL_ORDER_DISCRIMINATOR, _data, 0);
+    int i = CANCEL_ORDER_DISCRIMINATOR.write(_data, 0);
     Borsh.writeOptional(orderId, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -960,7 +959,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var orderId = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
       return new CancelOrderIxData(discriminator, orderId);
@@ -993,7 +992,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CANCEL_ORDER_BY_USER_ID_DISCRIMINATOR, _data, 0);
+    int i = CANCEL_ORDER_BY_USER_ID_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) userOrderId;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -1011,7 +1010,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var userOrderId = _data[i] & 0xFF;
       return new CancelOrderByUserIdIxData(discriminator, userOrderId);
@@ -1052,7 +1051,7 @@ public final class DriftProgram {
         + (marketIndex == null || marketIndex.isEmpty() ? 1 : 3)
         + (direction == null ? 1 : (1 + Borsh.len(direction)))
     ];
-    int i = writeDiscriminator(CANCEL_ORDERS_DISCRIMINATOR, _data, 0);
+    int i = CANCEL_ORDERS_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptional(marketType, _data, i);
     i += Borsh.writeOptionalshort(marketIndex, _data, i);
     Borsh.writeOptional(direction, _data, i);
@@ -1073,7 +1072,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketType = _data[i++] == 0 ? null : MarketType.read(_data, i);
       if (marketType != null) {
@@ -1116,7 +1115,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(orderIds)];
-    int i = writeDiscriminator(CANCEL_ORDERS_BY_IDS_DISCRIMINATOR, _data, 0);
+    int i = CANCEL_ORDERS_BY_IDS_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(orderIds, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -1132,7 +1131,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var orderIds = Borsh.readintVector(_data, i);
       return new CancelOrdersByIdsIxData(discriminator, orderIds);
@@ -1169,7 +1168,7 @@ public final class DriftProgram {
         8
         + (orderId == null || orderId.isEmpty() ? 1 : 5) + Borsh.len(modifyOrderParams)
     ];
-    int i = writeDiscriminator(MODIFY_ORDER_DISCRIMINATOR, _data, 0);
+    int i = MODIFY_ORDER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptional(orderId, _data, i);
     Borsh.write(modifyOrderParams, _data, i);
 
@@ -1186,7 +1185,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var orderId = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
       if (orderId.isPresent()) {
@@ -1225,7 +1224,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9 + Borsh.len(modifyOrderParams)];
-    int i = writeDiscriminator(MODIFY_ORDER_BY_USER_ID_DISCRIMINATOR, _data, 0);
+    int i = MODIFY_ORDER_BY_USER_ID_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) userOrderId;
     ++i;
     Borsh.write(modifyOrderParams, _data, i);
@@ -1243,7 +1242,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var userOrderId = _data[i] & 0xFF;
       ++i;
@@ -1286,7 +1285,7 @@ public final class DriftProgram {
         8 + Borsh.len(params)
         + (successCondition == null || successCondition.isEmpty() ? 1 : 5)
     ];
-    int i = writeDiscriminator(PLACE_AND_TAKE_PERP_ORDER_DISCRIMINATOR, _data, 0);
+    int i = PLACE_AND_TAKE_PERP_ORDER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(params, _data, i);
     Borsh.writeOptional(successCondition, _data, i);
 
@@ -1303,7 +1302,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OrderParams.read(_data, i);
       i += Borsh.len(params);
@@ -1346,7 +1345,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12 + Borsh.len(params)];
-    int i = writeDiscriminator(PLACE_AND_MAKE_PERP_ORDER_DISCRIMINATOR, _data, 0);
+    int i = PLACE_AND_MAKE_PERP_ORDER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(params, _data, i);
     putInt32LE(_data, i, takerOrderId);
 
@@ -1363,7 +1362,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OrderParams.read(_data, i);
       i += Borsh.len(params);
@@ -1409,7 +1408,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params) + Borsh.lenArray(signedMsgOrderUuid)];
-    int i = writeDiscriminator(PLACE_AND_MAKE_SIGNED_MSG_PERP_ORDER_DISCRIMINATOR, _data, 0);
+    int i = PLACE_AND_MAKE_SIGNED_MSG_PERP_ORDER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(params, _data, i);
     Borsh.writeArray(signedMsgOrderUuid, _data, i);
 
@@ -1427,7 +1426,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OrderParams.read(_data, i);
       i += Borsh.len(params);
@@ -1474,7 +1473,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9 + Borsh.lenVector(signedMsgOrderParamsMessageBytes)];
-    int i = writeDiscriminator(PLACE_SIGNED_MSG_TAKER_ORDER_DISCRIMINATOR, _data, 0);
+    int i = PLACE_SIGNED_MSG_TAKER_ORDER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(signedMsgOrderParamsMessageBytes, _data, i);
     _data[i] = (byte) (isDelegateSigner ? 1 : 0);
 
@@ -1491,7 +1490,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var signedMsgOrderParamsMessageBytes = Borsh.readbyteVector(_data, i);
       i += Borsh.lenVector(signedMsgOrderParamsMessageBytes);
@@ -1528,7 +1527,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(PLACE_SPOT_ORDER_DISCRIMINATOR, _data, 0);
+    int i = PLACE_SPOT_ORDER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -1544,7 +1543,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OrderParams.read(_data, i);
       return new PlaceSpotOrderIxData(discriminator, params);
@@ -1585,7 +1584,7 @@ public final class DriftProgram {
         + (fulfillmentType == null ? 1 : (1 + Borsh.len(fulfillmentType)))
         + (makerOrderId == null || makerOrderId.isEmpty() ? 1 : 5)
     ];
-    int i = writeDiscriminator(PLACE_AND_TAKE_SPOT_ORDER_DISCRIMINATOR, _data, 0);
+    int i = PLACE_AND_TAKE_SPOT_ORDER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(params, _data, i);
     i += Borsh.writeOptional(fulfillmentType, _data, i);
     Borsh.writeOptional(makerOrderId, _data, i);
@@ -1606,7 +1605,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OrderParams.read(_data, i);
       i += Borsh.len(params);
@@ -1658,7 +1657,7 @@ public final class DriftProgram {
         12 + Borsh.len(params)
         + (fulfillmentType == null ? 1 : (1 + Borsh.len(fulfillmentType)))
     ];
-    int i = writeDiscriminator(PLACE_AND_MAKE_SPOT_ORDER_DISCRIMINATOR, _data, 0);
+    int i = PLACE_AND_MAKE_SPOT_ORDER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(params, _data, i);
     putInt32LE(_data, i, takerOrderId);
     i += 4;
@@ -1680,7 +1679,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = OrderParams.read(_data, i);
       i += Borsh.len(params);
@@ -1720,7 +1719,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(params)];
-    int i = writeDiscriminator(PLACE_ORDERS_DISCRIMINATOR, _data, 0);
+    int i = PLACE_ORDERS_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -1736,7 +1735,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = Borsh.readVector(OrderParams.class, OrderParams::read, _data, i);
       return new PlaceOrdersIxData(discriminator, params);
@@ -1788,7 +1787,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[20];
-    int i = writeDiscriminator(BEGIN_SWAP_DISCRIMINATOR, _data, 0);
+    int i = BEGIN_SWAP_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, inMarketIndex);
     i += 2;
     putInt16LE(_data, i, outMarketIndex);
@@ -1813,7 +1812,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var inMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -1879,7 +1878,7 @@ public final class DriftProgram {
         + (limitPrice == null || limitPrice.isEmpty() ? 1 : 9)
         + (reduceOnly == null ? 1 : (1 + Borsh.len(reduceOnly)))
     ];
-    int i = writeDiscriminator(END_SWAP_DISCRIMINATOR, _data, 0);
+    int i = END_SWAP_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, inMarketIndex);
     i += 2;
     putInt16LE(_data, i, outMarketIndex);
@@ -1904,7 +1903,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var inMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -1955,7 +1954,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[18];
-    int i = writeDiscriminator(ADD_PERP_LP_SHARES_DISCRIMINATOR, _data, 0);
+    int i = ADD_PERP_LP_SHARES_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, nShares);
     i += 8;
     putInt16LE(_data, i, marketIndex);
@@ -1975,7 +1974,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var nShares = getInt64LE(_data, i);
       i += 8;
@@ -2014,7 +2013,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[18];
-    int i = writeDiscriminator(REMOVE_PERP_LP_SHARES_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_PERP_LP_SHARES_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, sharesToBurn);
     i += 8;
     putInt16LE(_data, i, marketIndex);
@@ -2034,7 +2033,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var sharesToBurn = getInt64LE(_data, i);
       i += 8;
@@ -2073,7 +2072,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[18];
-    int i = writeDiscriminator(REMOVE_PERP_LP_SHARES_IN_EXPIRING_MARKET_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_PERP_LP_SHARES_IN_EXPIRING_MARKET_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, sharesToBurn);
     i += 8;
     putInt16LE(_data, i, marketIndex);
@@ -2093,7 +2092,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var sharesToBurn = getInt64LE(_data, i);
       i += 8;
@@ -2130,7 +2129,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10 + Borsh.lenArray(name)];
-    int i = writeDiscriminator(UPDATE_USER_NAME_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_USER_NAME_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     Borsh.writeArray(name, _data, i);
@@ -2151,7 +2150,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -2188,7 +2187,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[14];
-    int i = writeDiscriminator(UPDATE_USER_CUSTOM_MARGIN_RATIO_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_USER_CUSTOM_MARGIN_RATIO_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     putInt32LE(_data, i, marginRatio);
@@ -2208,7 +2207,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -2245,7 +2244,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[11];
-    int i = writeDiscriminator(UPDATE_USER_MARGIN_TRADING_ENABLED_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_USER_MARGIN_TRADING_ENABLED_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     _data[i] = (byte) (marginTradingEnabled ? 1 : 0);
@@ -2265,7 +2264,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -2302,7 +2301,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[11];
-    int i = writeDiscriminator(UPDATE_USER_POOL_ID_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_USER_POOL_ID_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     _data[i] = (byte) poolId;
@@ -2322,7 +2321,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -2359,7 +2358,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[42];
-    int i = writeDiscriminator(UPDATE_USER_DELEGATE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_USER_DELEGATE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     delegate.write(_data, i);
@@ -2379,7 +2378,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -2416,7 +2415,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[11];
-    int i = writeDiscriminator(UPDATE_USER_REDUCE_ONLY_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_USER_REDUCE_ONLY_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     _data[i] = (byte) (reduceOnly ? 1 : 0);
@@ -2436,7 +2435,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -2473,7 +2472,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[11];
-    int i = writeDiscriminator(UPDATE_USER_ADVANCED_LP_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_USER_ADVANCED_LP_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     _data[i] = (byte) (advancedLp ? 1 : 0);
@@ -2493,7 +2492,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -2534,7 +2533,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[11];
-    int i = writeDiscriminator(UPDATE_USER_PROTECTED_MAKER_ORDERS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_USER_PROTECTED_MAKER_ORDERS_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     _data[i] = (byte) (protectedMakerOrders ? 1 : 0);
@@ -2554,7 +2553,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -2666,7 +2665,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(ENABLE_USER_HIGH_LEVERAGE_MODE_DISCRIMINATOR, _data, 0);
+    int i = ENABLE_USER_HIGH_LEVERAGE_MODE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -2684,7 +2683,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       return new EnableUserHighLeverageModeIxData(discriminator, subAccountId);
@@ -2729,7 +2728,7 @@ public final class DriftProgram {
         + (orderId == null || orderId.isEmpty() ? 1 : 5)
         + (makerOrderId == null || makerOrderId.isEmpty() ? 1 : 5)
     ];
-    int i = writeDiscriminator(FILL_PERP_ORDER_DISCRIMINATOR, _data, 0);
+    int i = FILL_PERP_ORDER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptional(orderId, _data, i);
     Borsh.writeOptional(makerOrderId, _data, i);
 
@@ -2746,7 +2745,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var orderId = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
       if (orderId.isPresent()) {
@@ -2814,7 +2813,7 @@ public final class DriftProgram {
         + (fulfillmentType == null ? 1 : (1 + Borsh.len(fulfillmentType)))
         + (makerOrderId == null || makerOrderId.isEmpty() ? 1 : 5)
     ];
-    int i = writeDiscriminator(FILL_SPOT_ORDER_DISCRIMINATOR, _data, 0);
+    int i = FILL_SPOT_ORDER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptional(orderId, _data, i);
     i += Borsh.writeOptional(fulfillmentType, _data, i);
     Borsh.writeOptional(makerOrderId, _data, i);
@@ -2835,7 +2834,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var orderId = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
       if (orderId.isPresent()) {
@@ -2880,7 +2879,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(TRIGGER_ORDER_DISCRIMINATOR, _data, 0);
+    int i = TRIGGER_ORDER_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, orderId);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -2898,7 +2897,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var orderId = getInt32LE(_data, i);
       return new TriggerOrderIxData(discriminator, orderId);
@@ -2983,7 +2982,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(DISABLE_USER_HIGH_LEVERAGE_MODE_DISCRIMINATOR, _data, 0);
+    int i = DISABLE_USER_HIGH_LEVERAGE_MODE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (disableMaintenance ? 1 : 0);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -3001,7 +3000,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var disableMaintenance = _data[i] == 1;
       return new DisableUserHighLeverageModeIxData(discriminator, disableMaintenance);
@@ -3084,7 +3083,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(ADMIN_DISABLE_UPDATE_PERP_BID_ASK_TWAP_DISCRIMINATOR, _data, 0);
+    int i = ADMIN_DISABLE_UPDATE_PERP_BID_ASK_TWAP_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (disable ? 1 : 0);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -3102,7 +3101,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var disable = _data[i] == 1;
       return new AdminDisableUpdatePerpBidAskTwapIxData(discriminator, disable);
@@ -3138,7 +3137,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(SETTLE_PNL_DISCRIMINATOR, _data, 0);
+    int i = SETTLE_PNL_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -3156,7 +3155,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new SettlePnlIxData(discriminator, marketIndex);
@@ -3193,7 +3192,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(marketIndexes) + Borsh.len(mode)];
-    int i = writeDiscriminator(SETTLE_MULTIPLE_PNLS_DISCRIMINATOR, _data, 0);
+    int i = SETTLE_MULTIPLE_PNLS_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(marketIndexes, _data, i);
     Borsh.write(mode, _data, i);
 
@@ -3210,7 +3209,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndexes = Borsh.readshortVector(_data, i);
       i += Borsh.lenVector(marketIndexes);
@@ -3255,7 +3254,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(SETTLE_LP_DISCRIMINATOR, _data, 0);
+    int i = SETTLE_LP_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -3273,7 +3272,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new SettleLpIxData(discriminator, marketIndex);
@@ -3307,7 +3306,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(SETTLE_EXPIRED_MARKET_DISCRIMINATOR, _data, 0);
+    int i = SETTLE_EXPIRED_MARKET_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -3325,7 +3324,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new SettleExpiredMarketIxData(discriminator, marketIndex);
@@ -3370,7 +3369,7 @@ public final class DriftProgram {
         18
         + (limitPrice == null || limitPrice.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(LIQUIDATE_PERP_DISCRIMINATOR, _data, 0);
+    int i = LIQUIDATE_PERP_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, liquidatorMaxBaseAssetAmount);
@@ -3393,7 +3392,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -3440,7 +3439,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(LIQUIDATE_PERP_WITH_FILL_DISCRIMINATOR, _data, 0);
+    int i = LIQUIDATE_PERP_WITH_FILL_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -3458,7 +3457,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new LiquidatePerpWithFillIxData(discriminator, marketIndex);
@@ -3504,7 +3503,7 @@ public final class DriftProgram {
         28
         + (limitPrice == null || limitPrice.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(LIQUIDATE_SPOT_DISCRIMINATOR, _data, 0);
+    int i = LIQUIDATE_SPOT_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, assetMarketIndex);
     i += 2;
     putInt16LE(_data, i, liabilityMarketIndex);
@@ -3530,7 +3529,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var assetMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -3602,7 +3601,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[20];
-    int i = writeDiscriminator(LIQUIDATE_SPOT_WITH_SWAP_BEGIN_DISCRIMINATOR, _data, 0);
+    int i = LIQUIDATE_SPOT_WITH_SWAP_BEGIN_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, assetMarketIndex);
     i += 2;
     putInt16LE(_data, i, liabilityMarketIndex);
@@ -3627,7 +3626,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var assetMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -3691,7 +3690,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(LIQUIDATE_SPOT_WITH_SWAP_END_DISCRIMINATOR, _data, 0);
+    int i = LIQUIDATE_SPOT_WITH_SWAP_END_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, assetMarketIndex);
     i += 2;
     putInt16LE(_data, i, liabilityMarketIndex);
@@ -3711,7 +3710,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var assetMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -3761,7 +3760,7 @@ public final class DriftProgram {
         28
         + (limitPrice == null || limitPrice.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(LIQUIDATE_BORROW_FOR_PERP_PNL_DISCRIMINATOR, _data, 0);
+    int i = LIQUIDATE_BORROW_FOR_PERP_PNL_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, perpMarketIndex);
     i += 2;
     putInt16LE(_data, i, spotMarketIndex);
@@ -3787,7 +3786,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var perpMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -3848,7 +3847,7 @@ public final class DriftProgram {
         28
         + (limitPrice == null || limitPrice.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(LIQUIDATE_PERP_PNL_FOR_DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = LIQUIDATE_PERP_PNL_FOR_DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, perpMarketIndex);
     i += 2;
     putInt16LE(_data, i, spotMarketIndex);
@@ -3874,7 +3873,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var perpMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -3945,7 +3944,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(RESOLVE_PERP_PNL_DEFICIT_DISCRIMINATOR, _data, 0);
+    int i = RESOLVE_PERP_PNL_DEFICIT_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, spotMarketIndex);
     i += 2;
     putInt16LE(_data, i, perpMarketIndex);
@@ -3965,7 +3964,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var spotMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -4018,7 +4017,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(RESOLVE_PERP_BANKRUPTCY_DISCRIMINATOR, _data, 0);
+    int i = RESOLVE_PERP_BANKRUPTCY_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, quoteSpotMarketIndex);
     i += 2;
     putInt16LE(_data, i, marketIndex);
@@ -4038,7 +4037,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var quoteSpotMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -4090,7 +4089,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(RESOLVE_SPOT_BANKRUPTCY_DISCRIMINATOR, _data, 0);
+    int i = RESOLVE_SPOT_BANKRUPTCY_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -4108,7 +4107,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new ResolveSpotBankruptcyIxData(discriminator, marketIndex);
@@ -4148,7 +4147,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(SETTLE_REVENUE_TO_INSURANCE_FUND_DISCRIMINATOR, _data, 0);
+    int i = SETTLE_REVENUE_TO_INSURANCE_FUND_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, spotMarketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -4166,7 +4165,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var spotMarketIndex = getInt16LE(_data, i);
       return new SettleRevenueToInsuranceFundIxData(discriminator, spotMarketIndex);
@@ -4200,7 +4199,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_FUNDING_RATE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_FUNDING_RATE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -4218,7 +4217,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new UpdateFundingRateIxData(discriminator, marketIndex);
@@ -4301,7 +4300,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(marketIndexes)];
-    int i = writeDiscriminator(UPDATE_AMMS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_AMMS_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(marketIndexes, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -4317,7 +4316,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndexes = Borsh.readshortVector(_data, i);
       return new UpdateAmmsIxData(discriminator, marketIndexes);
@@ -4350,7 +4349,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_EXPIRY_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_EXPIRY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, expiryTs);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -4368,7 +4367,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var expiryTs = getInt64LE(_data, i);
       return new UpdateSpotMarketExpiryIxData(discriminator, expiryTs);
@@ -4442,7 +4441,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_USER_GOV_TOKEN_INSURANCE_STAKE_DEVNET_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_USER_GOV_TOKEN_INSURANCE_STAKE_DEVNET_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, govStakeAmount);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -4460,7 +4459,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var govStakeAmount = getInt64LE(_data, i);
       return new UpdateUserGovTokenInsuranceStakeDevnetIxData(discriminator, govStakeAmount);
@@ -4504,7 +4503,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(INITIALIZE_INSURANCE_FUND_STAKE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_INSURANCE_FUND_STAKE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -4522,7 +4521,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new InitializeInsuranceFundStakeIxData(discriminator, marketIndex);
@@ -4571,7 +4570,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[18];
-    int i = writeDiscriminator(ADD_INSURANCE_FUND_STAKE_DISCRIMINATOR, _data, 0);
+    int i = ADD_INSURANCE_FUND_STAKE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
@@ -4591,7 +4590,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -4634,7 +4633,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[18];
-    int i = writeDiscriminator(REQUEST_REMOVE_INSURANCE_FUND_STAKE_DISCRIMINATOR, _data, 0);
+    int i = REQUEST_REMOVE_INSURANCE_FUND_STAKE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
@@ -4654,7 +4653,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -4696,7 +4695,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(CANCEL_REQUEST_REMOVE_INSURANCE_FUND_STAKE_DISCRIMINATOR, _data, 0);
+    int i = CANCEL_REQUEST_REMOVE_INSURANCE_FUND_STAKE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -4714,7 +4713,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new CancelRequestRemoveInsuranceFundStakeIxData(discriminator, marketIndex);
@@ -4760,7 +4759,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(REMOVE_INSURANCE_FUND_STAKE_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_INSURANCE_FUND_STAKE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -4778,7 +4777,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new RemoveInsuranceFundStakeIxData(discriminator, marketIndex);
@@ -4823,7 +4822,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[26];
-    int i = writeDiscriminator(TRANSFER_PROTOCOL_IF_SHARES_DISCRIMINATOR, _data, 0);
+    int i = TRANSFER_PROTOCOL_IF_SHARES_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt128LE(_data, i, shares);
@@ -4843,7 +4842,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -4898,7 +4897,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[20];
-    int i = writeDiscriminator(BEGIN_INSURANCE_FUND_SWAP_DISCRIMINATOR, _data, 0);
+    int i = BEGIN_INSURANCE_FUND_SWAP_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, inMarketIndex);
     i += 2;
     putInt16LE(_data, i, outMarketIndex);
@@ -4923,7 +4922,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var inMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -4981,7 +4980,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(END_INSURANCE_FUND_SWAP_DISCRIMINATOR, _data, 0);
+    int i = END_INSURANCE_FUND_SWAP_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, inMarketIndex);
     i += 2;
     putInt16LE(_data, i, outMarketIndex);
@@ -5001,7 +5000,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var inMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -5048,7 +5047,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[18];
-    int i = writeDiscriminator(TRANSFER_PROTOCOL_IF_SHARES_TO_REVENUE_POOL_DISCRIMINATOR, _data, 0);
+    int i = TRANSFER_PROTOCOL_IF_SHARES_TO_REVENUE_POOL_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
@@ -5068,7 +5067,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -5109,7 +5108,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenArray(feedId) + Borsh.lenVector(params)];
-    int i = writeDiscriminator(UPDATE_PYTH_PULL_ORACLE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PYTH_PULL_ORACLE_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeArray(feedId, _data, i);
     Borsh.writeVector(params, _data, i);
 
@@ -5127,7 +5126,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feedId = new byte[32];
       i += Borsh.readArray(feedId, _data, i);
@@ -5166,7 +5165,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenArray(feedId) + Borsh.lenVector(params)];
-    int i = writeDiscriminator(POST_PYTH_PULL_ORACLE_UPDATE_ATOMIC_DISCRIMINATOR, _data, 0);
+    int i = POST_PYTH_PULL_ORACLE_UPDATE_ATOMIC_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeArray(feedId, _data, i);
     Borsh.writeVector(params, _data, i);
 
@@ -5184,7 +5183,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feedId = new byte[32];
       i += Borsh.readArray(feedId, _data, i);
@@ -5220,7 +5219,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(params)];
-    int i = writeDiscriminator(POST_MULTI_PYTH_PULL_ORACLE_UPDATES_ATOMIC_DISCRIMINATOR, _data, 0);
+    int i = POST_MULTI_PYTH_PULL_ORACLE_UPDATES_ATOMIC_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -5236,7 +5235,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = Borsh.readbyteVector(_data, i);
       return new PostMultiPythPullOracleUpdatesAtomicIxData(discriminator, params);
@@ -5343,7 +5342,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[85 + Borsh.len(oracleSource) + Borsh.len(assetTier) + Borsh.lenArray(name)];
-    int i = writeDiscriminator(INITIALIZE_SPOT_MARKET_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_SPOT_MARKET_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, optimalUtilization);
     i += 4;
     putInt32LE(_data, i, optimalBorrowRate);
@@ -5415,7 +5414,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var optimalUtilization = getInt32LE(_data, i);
       i += 4;
@@ -5546,7 +5545,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(DELETE_INITIALIZED_SPOT_MARKET_DISCRIMINATOR, _data, 0);
+    int i = DELETE_INITIALIZED_SPOT_MARKET_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -5564,7 +5563,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new DeleteInitializedSpotMarketIxData(discriminator, marketIndex);
@@ -5614,7 +5613,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(INITIALIZE_SERUM_FULFILLMENT_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_SERUM_FULFILLMENT_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -5632,7 +5631,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new InitializeSerumFulfillmentConfigIxData(discriminator, marketIndex);
@@ -5666,7 +5665,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(status)];
-    int i = writeDiscriminator(UPDATE_SERUM_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SERUM_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(status, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -5684,7 +5683,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var status = SpotFulfillmentConfigStatus.read(_data, i);
       return new UpdateSerumFulfillmentConfigStatusIxData(discriminator, status);
@@ -5731,7 +5730,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(INITIALIZE_OPENBOOK_V_2_FULFILLMENT_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_OPENBOOK_V_2_FULFILLMENT_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -5749,7 +5748,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new InitializeOpenbookV2FulfillmentConfigIxData(discriminator, marketIndex);
@@ -5783,7 +5782,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(status)];
-    int i = writeDiscriminator(OPENBOOK_V_2_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR, _data, 0);
+    int i = OPENBOOK_V_2_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(status, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -5801,7 +5800,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var status = SpotFulfillmentConfigStatus.read(_data, i);
       return new OpenbookV2FulfillmentConfigStatusIxData(discriminator, status);
@@ -5848,7 +5847,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(INITIALIZE_PHOENIX_FULFILLMENT_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_PHOENIX_FULFILLMENT_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -5866,7 +5865,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new InitializePhoenixFulfillmentConfigIxData(discriminator, marketIndex);
@@ -5900,7 +5899,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(status)];
-    int i = writeDiscriminator(PHOENIX_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR, _data, 0);
+    int i = PHOENIX_FULFILLMENT_CONFIG_STATUS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(status, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -5918,7 +5917,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var status = SpotFulfillmentConfigStatus.read(_data, i);
       return new PhoenixFulfillmentConfigStatusIxData(discriminator, status);
@@ -5996,7 +5995,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[169 + Borsh.len(oracleSource) + Borsh.len(contractTier) + Borsh.lenArray(name)];
-    int i = writeDiscriminator(INITIALIZE_PERP_MARKET_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_PERP_MARKET_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt128LE(_data, i, ammBaseAssetReserve);
@@ -6086,7 +6085,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -6254,7 +6253,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(DELETE_INITIALIZED_PERP_MARKET_DISCRIMINATOR, _data, 0);
+    int i = DELETE_INITIALIZED_PERP_MARKET_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -6272,7 +6271,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new DeleteInitializedPerpMarketIxData(discriminator, marketIndex);
@@ -6308,7 +6307,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[56];
-    int i = writeDiscriminator(MOVE_AMM_PRICE_DISCRIMINATOR, _data, 0);
+    int i = MOVE_AMM_PRICE_DISCRIMINATOR.write(_data, 0);
     putInt128LE(_data, i, baseAssetReserve);
     i += 16;
     putInt128LE(_data, i, quoteAssetReserve);
@@ -6333,7 +6332,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var baseAssetReserve = getInt128LE(_data, i);
       i += 16;
@@ -6376,7 +6375,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(RECENTER_PERP_MARKET_AMM_DISCRIMINATOR, _data, 0);
+    int i = RECENTER_PERP_MARKET_AMM_DISCRIMINATOR.write(_data, 0);
     putInt128LE(_data, i, pegMultiplier);
     i += 16;
     putInt128LE(_data, i, sqrtK);
@@ -6396,7 +6395,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var pegMultiplier = getInt128LE(_data, i);
       i += 16;
@@ -6441,7 +6440,7 @@ public final class DriftProgram {
         8
         + (depth == null ? 1 : 17)
     ];
-    int i = writeDiscriminator(RECENTER_PERP_MARKET_AMM_CRANK_DISCRIMINATOR, _data, 0);
+    int i = RECENTER_PERP_MARKET_AMM_CRANK_DISCRIMINATOR.write(_data, 0);
     Borsh.write128Optional(depth, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -6457,7 +6456,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var depth = _data[i++] == 0 ? null : getInt128LE(_data, i);
       return new RecenterPerpMarketAmmCrankIxData(discriminator, depth);
@@ -6494,7 +6493,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_AMM_SUMMARY_STATS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_AMM_SUMMARY_STATS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -6510,7 +6509,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UpdatePerpMarketSummaryStatsParams.read(_data, i);
       return new UpdatePerpMarketAmmSummaryStatsIxData(discriminator, params);
@@ -6543,7 +6542,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_EXPIRY_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_EXPIRY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, expiryTs);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -6561,7 +6560,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var expiryTs = getInt64LE(_data, i);
       return new UpdatePerpMarketExpiryIxData(discriminator, expiryTs);
@@ -6622,7 +6621,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_INTO_PERP_MARKET_FEE_POOL_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_INTO_PERP_MARKET_FEE_POOL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -6640,7 +6639,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new DepositIntoPerpMarketFeePoolIxData(discriminator, amount);
@@ -6680,7 +6679,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_INTO_SPOT_MARKET_VAULT_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_INTO_SPOT_MARKET_VAULT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -6698,7 +6697,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new DepositIntoSpotMarketVaultIxData(discriminator, amount);
@@ -6738,7 +6737,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_INTO_SPOT_MARKET_REVENUE_POOL_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_INTO_SPOT_MARKET_REVENUE_POOL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -6756,7 +6755,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new DepositIntoSpotMarketRevenuePoolIxData(discriminator, amount);
@@ -6792,7 +6791,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(REPEG_AMM_CURVE_DISCRIMINATOR, _data, 0);
+    int i = REPEG_AMM_CURVE_DISCRIMINATOR.write(_data, 0);
     putInt128LE(_data, i, newPegCandidate);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -6810,7 +6809,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newPegCandidate = getInt128LE(_data, i);
       return new RepegAmmCurveIxData(discriminator, newPegCandidate);
@@ -6880,7 +6879,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(UPDATE_K_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_K_DISCRIMINATOR.write(_data, 0);
     putInt128LE(_data, i, sqrtK);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -6898,7 +6897,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var sqrtK = getInt128LE(_data, i);
       return new UpdateKIxData(discriminator, sqrtK);
@@ -6933,7 +6932,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_MARGIN_RATIO_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_MARGIN_RATIO_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, marginRatioInitial);
     i += 4;
     putInt32LE(_data, i, marginRatioMaintenance);
@@ -6953,7 +6952,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marginRatioInitial = getInt32LE(_data, i);
       i += 4;
@@ -6992,7 +6991,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_HIGH_LEVERAGE_MARGIN_RATIO_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_HIGH_LEVERAGE_MARGIN_RATIO_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marginRatioInitial);
     i += 2;
     putInt16LE(_data, i, marginRatioMaintenance);
@@ -7012,7 +7011,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marginRatioInitial = getInt16LE(_data, i);
       i += 2;
@@ -7050,7 +7049,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_FUNDING_PERIOD_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_FUNDING_PERIOD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, fundingPeriod);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -7068,7 +7067,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var fundingPeriod = getInt64LE(_data, i);
       return new UpdatePerpMarketFundingPeriodIxData(discriminator, fundingPeriod);
@@ -7104,7 +7103,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[32];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_MAX_IMBALANCES_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_MAX_IMBALANCES_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, unrealizedMaxImbalance);
     i += 8;
     putInt64LE(_data, i, maxRevenueWithdrawPerPeriod);
@@ -7129,7 +7128,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var unrealizedMaxImbalance = getInt64LE(_data, i);
       i += 8;
@@ -7172,7 +7171,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_LIQUIDATION_FEE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_LIQUIDATION_FEE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, liquidatorFee);
     i += 4;
     putInt32LE(_data, i, ifLiquidationFee);
@@ -7192,7 +7191,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidatorFee = getInt32LE(_data, i);
       i += 4;
@@ -7230,7 +7229,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_INSURANCE_FUND_UNSTAKING_PERIOD_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_INSURANCE_FUND_UNSTAKING_PERIOD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, insuranceFundUnstakingPeriod);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -7248,7 +7247,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var insuranceFundUnstakingPeriod = getInt64LE(_data, i);
       return new UpdateInsuranceFundUnstakingPeriodIxData(discriminator, insuranceFundUnstakingPeriod);
@@ -7282,7 +7281,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_POOL_ID_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_POOL_ID_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) poolId;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -7300,7 +7299,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var poolId = _data[i] & 0xFF;
       return new UpdateSpotMarketPoolIdIxData(discriminator, poolId);
@@ -7335,7 +7334,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_LIQUIDATION_FEE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_LIQUIDATION_FEE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, liquidatorFee);
     i += 4;
     putInt32LE(_data, i, ifLiquidationFee);
@@ -7355,7 +7354,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidatorFee = getInt32LE(_data, i);
       i += 4;
@@ -7393,7 +7392,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_WITHDRAW_GUARD_THRESHOLD_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_WITHDRAW_GUARD_THRESHOLD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, withdrawGuardThreshold);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -7411,7 +7410,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var withdrawGuardThreshold = getInt64LE(_data, i);
       return new UpdateWithdrawGuardThresholdIxData(discriminator, withdrawGuardThreshold);
@@ -7447,7 +7446,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[18];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_IF_FACTOR_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_IF_FACTOR_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, spotMarketIndex);
     i += 2;
     putInt32LE(_data, i, userIfFactor);
@@ -7472,7 +7471,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var spotMarketIndex = getInt16LE(_data, i);
       i += 2;
@@ -7514,7 +7513,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_REVENUE_SETTLE_PERIOD_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_REVENUE_SETTLE_PERIOD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, revenueSettlePeriod);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -7532,7 +7531,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var revenueSettlePeriod = getInt64LE(_data, i);
       return new UpdateSpotMarketRevenueSettlePeriodIxData(discriminator, revenueSettlePeriod);
@@ -7566,7 +7565,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(status)];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_STATUS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_STATUS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(status, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -7584,7 +7583,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var status = MarketStatus.read(_data, i);
       return new UpdateSpotMarketStatusIxData(discriminator, status);
@@ -7617,7 +7616,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_PAUSED_OPERATIONS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_PAUSED_OPERATIONS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) pausedOperations;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -7635,7 +7634,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var pausedOperations = _data[i] & 0xFF;
       return new UpdateSpotMarketPausedOperationsIxData(discriminator, pausedOperations);
@@ -7669,7 +7668,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(assetTier)];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_ASSET_TIER_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_ASSET_TIER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(assetTier, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -7687,7 +7686,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var assetTier = AssetTier.read(_data, i);
       return new UpdateSpotMarketAssetTierIxData(discriminator, assetTier);
@@ -7724,7 +7723,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[28];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_MARGIN_WEIGHTS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_MARGIN_WEIGHTS_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, initialAssetWeight);
     i += 4;
     putInt32LE(_data, i, maintenanceAssetWeight);
@@ -7755,7 +7754,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var initialAssetWeight = getInt32LE(_data, i);
       i += 4;
@@ -7816,7 +7815,7 @@ public final class DriftProgram {
         20
         + (minBorrowRate == null || minBorrowRate.isEmpty() ? 1 : 2)
     ];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_BORROW_RATE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_BORROW_RATE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, optimalUtilization);
     i += 4;
     putInt32LE(_data, i, optimalBorrowRate);
@@ -7842,7 +7841,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var optimalUtilization = getInt32LE(_data, i);
       i += 4;
@@ -7891,7 +7890,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_MAX_TOKEN_DEPOSITS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_MAX_TOKEN_DEPOSITS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxTokenDeposits);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -7909,7 +7908,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxTokenDeposits = getInt64LE(_data, i);
       return new UpdateSpotMarketMaxTokenDepositsIxData(discriminator, maxTokenDeposits);
@@ -7943,7 +7942,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_MAX_TOKEN_BORROWS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_MAX_TOKEN_BORROWS_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, maxTokenBorrowsFraction);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -7961,7 +7960,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxTokenBorrowsFraction = getInt16LE(_data, i);
       return new UpdateSpotMarketMaxTokenBorrowsIxData(discriminator, maxTokenBorrowsFraction);
@@ -7995,7 +7994,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_SCALE_INITIAL_ASSET_WEIGHT_START_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_SCALE_INITIAL_ASSET_WEIGHT_START_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, scaleInitialAssetWeightStart);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8013,7 +8012,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var scaleInitialAssetWeightStart = getInt64LE(_data, i);
       return new UpdateSpotMarketScaleInitialAssetWeightStartIxData(discriminator, scaleInitialAssetWeightStart);
@@ -8053,7 +8052,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[41 + Borsh.len(oracleSource)];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_ORACLE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_ORACLE_DISCRIMINATOR.write(_data, 0);
     oracle.write(_data, i);
     i += 32;
     i += Borsh.write(oracleSource, _data, i);
@@ -8077,7 +8076,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var oracle = readPubKey(_data, i);
       i += 32;
@@ -8119,7 +8118,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_STEP_SIZE_AND_TICK_SIZE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_STEP_SIZE_AND_TICK_SIZE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, stepSize);
     i += 8;
     putInt64LE(_data, i, tickSize);
@@ -8139,7 +8138,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stepSize = getInt64LE(_data, i);
       i += 8;
@@ -8177,7 +8176,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_MIN_ORDER_SIZE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_MIN_ORDER_SIZE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, orderSize);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8195,7 +8194,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var orderSize = getInt64LE(_data, i);
       return new UpdateSpotMarketMinOrderSizeIxData(discriminator, orderSize);
@@ -8229,7 +8228,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_ORDERS_ENABLED_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_ORDERS_ENABLED_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (ordersEnabled ? 1 : 0);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8247,7 +8246,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ordersEnabled = _data[i] == 1;
       return new UpdateSpotMarketOrdersEnabledIxData(discriminator, ordersEnabled);
@@ -8281,7 +8280,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_IF_PAUSED_OPERATIONS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_IF_PAUSED_OPERATIONS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) pausedOperations;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8299,7 +8298,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var pausedOperations = _data[i] & 0xFF;
       return new UpdateSpotMarketIfPausedOperationsIxData(discriminator, pausedOperations);
@@ -8333,7 +8332,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenArray(name)];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_NAME_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_NAME_DISCRIMINATOR.write(_data, 0);
     Borsh.writeArray(name, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8352,7 +8351,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var name = new byte[32];
       Borsh.readArray(name, _data, i);
@@ -8386,7 +8385,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(status)];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_STATUS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_STATUS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(status, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8404,7 +8403,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var status = MarketStatus.read(_data, i);
       return new UpdatePerpMarketStatusIxData(discriminator, status);
@@ -8437,7 +8436,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_PAUSED_OPERATIONS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_PAUSED_OPERATIONS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) pausedOperations;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8455,7 +8454,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var pausedOperations = _data[i] & 0xFF;
       return new UpdatePerpMarketPausedOperationsIxData(discriminator, pausedOperations);
@@ -8489,7 +8488,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(contractTier)];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_CONTRACT_TIER_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_CONTRACT_TIER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(contractTier, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8507,7 +8506,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var contractTier = ContractTier.read(_data, i);
       return new UpdatePerpMarketContractTierIxData(discriminator, contractTier);
@@ -8541,7 +8540,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_IMF_FACTOR_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_IMF_FACTOR_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, imfFactor);
     i += 4;
     putInt32LE(_data, i, unrealizedPnlImfFactor);
@@ -8561,7 +8560,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var imfFactor = getInt32LE(_data, i);
       i += 4;
@@ -8600,7 +8599,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_UNREALIZED_ASSET_WEIGHT_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_UNREALIZED_ASSET_WEIGHT_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, unrealizedInitialAssetWeight);
     i += 4;
     putInt32LE(_data, i, unrealizedMaintenanceAssetWeight);
@@ -8620,7 +8619,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var unrealizedInitialAssetWeight = getInt32LE(_data, i);
       i += 4;
@@ -8658,7 +8657,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_CONCENTRATION_COEF_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_CONCENTRATION_COEF_DISCRIMINATOR.write(_data, 0);
     putInt128LE(_data, i, concentrationScale);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8676,7 +8675,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var concentrationScale = getInt128LE(_data, i);
       return new UpdatePerpMarketConcentrationCoefIxData(discriminator, concentrationScale);
@@ -8710,7 +8709,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_CURVE_UPDATE_INTENSITY_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_CURVE_UPDATE_INTENSITY_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) curveUpdateIntensity;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8728,7 +8727,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var curveUpdateIntensity = _data[i] & 0xFF;
       return new UpdatePerpMarketCurveUpdateIntensityIxData(discriminator, curveUpdateIntensity);
@@ -8762,7 +8761,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_TARGET_BASE_ASSET_AMOUNT_PER_LP_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_TARGET_BASE_ASSET_AMOUNT_PER_LP_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, targetBaseAssetAmountPerLp);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8780,7 +8779,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var targetBaseAssetAmountPerLp = getInt32LE(_data, i);
       return new UpdatePerpMarketTargetBaseAssetAmountPerLpIxData(discriminator, targetBaseAssetAmountPerLp);
@@ -8814,7 +8813,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_PER_LP_BASE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_PER_LP_BASE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) perLpBase;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8832,7 +8831,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var perLpBase = _data[i];
       return new UpdatePerpMarketPerLpBaseIxData(discriminator, perLpBase);
@@ -8864,7 +8863,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_LP_COOLDOWN_TIME_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_LP_COOLDOWN_TIME_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lpCooldownTime);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8882,7 +8881,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lpCooldownTime = getInt64LE(_data, i);
       return new UpdateLpCooldownTimeIxData(discriminator, lpCooldownTime);
@@ -8914,7 +8913,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(feeStructure)];
-    int i = writeDiscriminator(UPDATE_PERP_FEE_STRUCTURE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_FEE_STRUCTURE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(feeStructure, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8932,7 +8931,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feeStructure = FeeStructure.read(_data, i);
       return new UpdatePerpFeeStructureIxData(discriminator, feeStructure);
@@ -8963,7 +8962,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(feeStructure)];
-    int i = writeDiscriminator(UPDATE_SPOT_FEE_STRUCTURE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_FEE_STRUCTURE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(feeStructure, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -8981,7 +8980,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feeStructure = FeeStructure.read(_data, i);
       return new UpdateSpotFeeStructureIxData(discriminator, feeStructure);
@@ -9012,7 +9011,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_INITIAL_PCT_TO_LIQUIDATE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_INITIAL_PCT_TO_LIQUIDATE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, initialPctToLiquidate);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9030,7 +9029,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var initialPctToLiquidate = getInt16LE(_data, i);
       return new UpdateInitialPctToLiquidateIxData(discriminator, initialPctToLiquidate);
@@ -9062,7 +9061,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_LIQUIDATION_DURATION_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_LIQUIDATION_DURATION_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) liquidationDuration;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9080,7 +9079,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidationDuration = _data[i] & 0xFF;
       return new UpdateLiquidationDurationIxData(discriminator, liquidationDuration);
@@ -9112,7 +9111,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(UPDATE_LIQUIDATION_MARGIN_BUFFER_RATIO_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_LIQUIDATION_MARGIN_BUFFER_RATIO_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, liquidationMarginBufferRatio);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9130,7 +9129,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidationMarginBufferRatio = getInt32LE(_data, i);
       return new UpdateLiquidationMarginBufferRatioIxData(discriminator, liquidationMarginBufferRatio);
@@ -9162,7 +9161,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(oracleGuardRails)];
-    int i = writeDiscriminator(UPDATE_ORACLE_GUARD_RAILS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_ORACLE_GUARD_RAILS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(oracleGuardRails, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9180,7 +9179,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var oracleGuardRails = OracleGuardRails.read(_data, i);
       return new UpdateOracleGuardRailsIxData(discriminator, oracleGuardRails);
@@ -9211,7 +9210,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_STATE_SETTLEMENT_DURATION_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_STATE_SETTLEMENT_DURATION_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, settlementDuration);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9229,7 +9228,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var settlementDuration = getInt16LE(_data, i);
       return new UpdateStateSettlementDurationIxData(discriminator, settlementDuration);
@@ -9261,7 +9260,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_STATE_MAX_NUMBER_OF_SUB_ACCOUNTS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_STATE_MAX_NUMBER_OF_SUB_ACCOUNTS_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, maxNumberOfSubAccounts);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9279,7 +9278,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxNumberOfSubAccounts = getInt16LE(_data, i);
       return new UpdateStateMaxNumberOfSubAccountsIxData(discriminator, maxNumberOfSubAccounts);
@@ -9311,7 +9310,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_STATE_MAX_INITIALIZE_USER_FEE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_STATE_MAX_INITIALIZE_USER_FEE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, maxInitializeUserFee);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9329,7 +9328,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxInitializeUserFee = getInt16LE(_data, i);
       return new UpdateStateMaxInitializeUserFeeIxData(discriminator, maxInitializeUserFee);
@@ -9369,7 +9368,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[41 + Borsh.len(oracleSource)];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_ORACLE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_ORACLE_DISCRIMINATOR.write(_data, 0);
     oracle.write(_data, i);
     i += 32;
     i += Borsh.write(oracleSource, _data, i);
@@ -9393,7 +9392,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var oracle = readPubKey(_data, i);
       i += 32;
@@ -9434,7 +9433,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_BASE_SPREAD_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_BASE_SPREAD_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, baseSpread);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9452,7 +9451,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var baseSpread = getInt32LE(_data, i);
       return new UpdatePerpMarketBaseSpreadIxData(discriminator, baseSpread);
@@ -9486,7 +9485,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_AMM_JIT_INTENSITY_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_AMM_JIT_INTENSITY_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) ammJitIntensity;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9504,7 +9503,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ammJitIntensity = _data[i] & 0xFF;
       return new UpdateAmmJitIntensityIxData(discriminator, ammJitIntensity);
@@ -9538,7 +9537,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_MAX_SPREAD_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_MAX_SPREAD_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, maxSpread);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9556,7 +9555,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxSpread = getInt32LE(_data, i);
       return new UpdatePerpMarketMaxSpreadIxData(discriminator, maxSpread);
@@ -9591,7 +9590,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_STEP_SIZE_AND_TICK_SIZE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_STEP_SIZE_AND_TICK_SIZE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, stepSize);
     i += 8;
     putInt64LE(_data, i, tickSize);
@@ -9611,7 +9610,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stepSize = getInt64LE(_data, i);
       i += 8;
@@ -9649,7 +9648,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenArray(name)];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_NAME_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_NAME_DISCRIMINATOR.write(_data, 0);
     Borsh.writeArray(name, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9668,7 +9667,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var name = new byte[32];
       Borsh.readArray(name, _data, i);
@@ -9702,7 +9701,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_MIN_ORDER_SIZE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_MIN_ORDER_SIZE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, orderSize);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9720,7 +9719,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var orderSize = getInt64LE(_data, i);
       return new UpdatePerpMarketMinOrderSizeIxData(discriminator, orderSize);
@@ -9754,7 +9753,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_MAX_SLIPPAGE_RATIO_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_MAX_SLIPPAGE_RATIO_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, maxSlippageRatio);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9772,7 +9771,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxSlippageRatio = getInt16LE(_data, i);
       return new UpdatePerpMarketMaxSlippageRatioIxData(discriminator, maxSlippageRatio);
@@ -9806,7 +9805,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_MAX_FILL_RESERVE_FRACTION_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_MAX_FILL_RESERVE_FRACTION_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, maxFillReserveFraction);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9824,7 +9823,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxFillReserveFraction = getInt16LE(_data, i);
       return new UpdatePerpMarketMaxFillReserveFractionIxData(discriminator, maxFillReserveFraction);
@@ -9858,7 +9857,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_MAX_OPEN_INTEREST_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_MAX_OPEN_INTEREST_DISCRIMINATOR.write(_data, 0);
     putInt128LE(_data, i, maxOpenInterest);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9876,7 +9875,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxOpenInterest = getInt128LE(_data, i);
       return new UpdatePerpMarketMaxOpenInterestIxData(discriminator, maxOpenInterest);
@@ -9915,7 +9914,7 @@ public final class DriftProgram {
         + (numberOfUsers == null || numberOfUsers.isEmpty() ? 1 : 5)
         + (numberOfUsersWithBase == null || numberOfUsersWithBase.isEmpty() ? 1 : 5)
     ];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_NUMBER_OF_USERS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_NUMBER_OF_USERS_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptional(numberOfUsers, _data, i);
     Borsh.writeOptional(numberOfUsersWithBase, _data, i);
 
@@ -9932,7 +9931,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var numberOfUsers = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
       if (numberOfUsers.isPresent()) {
@@ -9970,7 +9969,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_FEE_ADJUSTMENT_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_FEE_ADJUSTMENT_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, feeAdjustment);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -9988,7 +9987,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feeAdjustment = getInt16LE(_data, i);
       return new UpdatePerpMarketFeeAdjustmentIxData(discriminator, feeAdjustment);
@@ -10022,7 +10021,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_FEE_ADJUSTMENT_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_FEE_ADJUSTMENT_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, feeAdjustment);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -10040,7 +10039,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feeAdjustment = getInt16LE(_data, i);
       return new UpdateSpotMarketFeeAdjustmentIxData(discriminator, feeAdjustment);
@@ -10081,7 +10080,7 @@ public final class DriftProgram {
         + (fuelBoostMaker == null || fuelBoostMaker.isEmpty() ? 1 : 2)
         + (fuelBoostPosition == null || fuelBoostPosition.isEmpty() ? 1 : 2)
     ];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_FUEL_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_FUEL_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptionalbyte(fuelBoostTaker, _data, i);
     i += Borsh.writeOptionalbyte(fuelBoostMaker, _data, i);
     Borsh.writeOptionalbyte(fuelBoostPosition, _data, i);
@@ -10102,7 +10101,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var fuelBoostTaker = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
       if (fuelBoostTaker.isPresent()) {
@@ -10150,7 +10149,7 @@ public final class DriftProgram {
         + (protectedMakerLimitPriceDivisor == null || protectedMakerLimitPriceDivisor.isEmpty() ? 1 : 2)
         + (protectedMakerDynamicDivisor == null || protectedMakerDynamicDivisor.isEmpty() ? 1 : 2)
     ];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_PROTECTED_MAKER_PARAMS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_PROTECTED_MAKER_PARAMS_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptionalbyte(protectedMakerLimitPriceDivisor, _data, i);
     Borsh.writeOptionalbyte(protectedMakerDynamicDivisor, _data, i);
 
@@ -10167,7 +10166,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var protectedMakerLimitPriceDivisor = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
       if (protectedMakerLimitPriceDivisor.isPresent()) {
@@ -10205,7 +10204,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_TAKER_SPEED_BUMP_OVERRIDE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_TAKER_SPEED_BUMP_OVERRIDE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) takerSpeedBumpOverride;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -10223,7 +10222,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var takerSpeedBumpOverride = _data[i];
       return new UpdatePerpMarketTakerSpeedBumpOverrideIxData(discriminator, takerSpeedBumpOverride);
@@ -10259,7 +10258,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[14];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_AMM_SPREAD_ADJUSTMENT_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_AMM_SPREAD_ADJUSTMENT_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) ammSpreadAdjustment;
     ++i;
     _data[i] = (byte) ammInventorySpreadAdjustment;
@@ -10284,7 +10283,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ammSpreadAdjustment = _data[i];
       ++i;
@@ -10326,7 +10325,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_PERP_MARKET_ORACLE_SLOT_DELAY_OVERRIDE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_MARKET_ORACLE_SLOT_DELAY_OVERRIDE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) oracleSlotDelayOverride;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -10344,7 +10343,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var oracleSlotDelayOverride = _data[i];
       return new UpdatePerpMarketOracleSlotDelayOverrideIxData(discriminator, oracleSlotDelayOverride);
@@ -10389,7 +10388,7 @@ public final class DriftProgram {
         + (fuelBoostMaker == null || fuelBoostMaker.isEmpty() ? 1 : 2)
         + (fuelBoostInsurance == null || fuelBoostInsurance.isEmpty() ? 1 : 2)
     ];
-    int i = writeDiscriminator(UPDATE_SPOT_MARKET_FUEL_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_MARKET_FUEL_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptionalbyte(fuelBoostDeposits, _data, i);
     i += Borsh.writeOptionalbyte(fuelBoostBorrows, _data, i);
     i += Borsh.writeOptionalbyte(fuelBoostTaker, _data, i);
@@ -10414,7 +10413,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var fuelBoostDeposits = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
       if (fuelBoostDeposits.isPresent()) {
@@ -10489,7 +10488,7 @@ public final class DriftProgram {
         + (fuelBoostMaker == null || fuelBoostMaker.isEmpty() ? 1 : 5)
         + (fuelBoostInsurance == null || fuelBoostInsurance.isEmpty() ? 1 : 5)
     ];
-    int i = writeDiscriminator(INIT_USER_FUEL_DISCRIMINATOR, _data, 0);
+    int i = INIT_USER_FUEL_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptional(fuelBoostDeposits, _data, i);
     i += Borsh.writeOptional(fuelBoostBorrows, _data, i);
     i += Borsh.writeOptional(fuelBoostTaker, _data, i);
@@ -10514,7 +10513,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var fuelBoostDeposits = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
       if (fuelBoostDeposits.isPresent()) {
@@ -10574,7 +10573,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(UPDATE_ADMIN_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_ADMIN_DISCRIMINATOR.write(_data, 0);
     admin.write(_data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -10592,7 +10591,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var admin = readPubKey(_data, i);
       return new UpdateAdminIxData(discriminator, admin);
@@ -10624,7 +10623,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(UPDATE_WHITELIST_MINT_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_WHITELIST_MINT_DISCRIMINATOR.write(_data, 0);
     whitelistMint.write(_data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -10642,7 +10641,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var whitelistMint = readPubKey(_data, i);
       return new UpdateWhitelistMintIxData(discriminator, whitelistMint);
@@ -10674,7 +10673,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(UPDATE_DISCOUNT_MINT_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_DISCOUNT_MINT_DISCRIMINATOR.write(_data, 0);
     discountMint.write(_data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -10692,7 +10691,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var discountMint = readPubKey(_data, i);
       return new UpdateDiscountMintIxData(discriminator, discountMint);
@@ -10724,7 +10723,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_EXCHANGE_STATUS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_EXCHANGE_STATUS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) exchangeStatus;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -10742,7 +10741,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var exchangeStatus = _data[i] & 0xFF;
       return new UpdateExchangeStatusIxData(discriminator, exchangeStatus);
@@ -10774,7 +10773,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_PERP_AUCTION_DURATION_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PERP_AUCTION_DURATION_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) minPerpAuctionDuration;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -10792,7 +10791,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var minPerpAuctionDuration = _data[i] & 0xFF;
       return new UpdatePerpAuctionDurationIxData(discriminator, minPerpAuctionDuration);
@@ -10824,7 +10823,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_SPOT_AUCTION_DURATION_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SPOT_AUCTION_DURATION_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) defaultSpotAuctionDuration;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -10842,7 +10841,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var defaultSpotAuctionDuration = _data[i] & 0xFF;
       return new UpdateSpotAuctionDurationIxData(discriminator, defaultSpotAuctionDuration);
@@ -10900,7 +10899,7 @@ public final class DriftProgram {
         + (whitelistedSigners == null || whitelistedSigners.length == 0 ? 1 : (1 + Borsh.lenArray(whitelistedSigners)))
         + (maxTransferPerEpoch == null ? 1 : 17)
     ];
-    int i = writeDiscriminator(UPDATE_PROTOCOL_IF_SHARES_TRANSFER_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PROTOCOL_IF_SHARES_TRANSFER_CONFIG_DISCRIMINATOR.write(_data, 0);
     if (whitelistedSigners == null || whitelistedSigners.length == 0) {
       _data[i++] = 0;
     } else {
@@ -10922,7 +10921,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var whitelistedSigners = _data[i++] == 0 ? null : new PublicKey[4];
       if (whitelistedSigners != null) {
@@ -10969,7 +10968,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_PRELAUNCH_ORACLE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_PRELAUNCH_ORACLE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -10985,7 +10984,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PrelaunchOracleParams.read(_data, i);
       return new InitializePrelaunchOracleIxData(discriminator, params);
@@ -11020,7 +11019,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UPDATE_PRELAUNCH_ORACLE_PARAMS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PRELAUNCH_ORACLE_PARAMS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -11036,7 +11035,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = PrelaunchOracleParams.read(_data, i);
       return new UpdatePrelaunchOracleParamsIxData(discriminator, params);
@@ -11071,7 +11070,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(DELETE_PRELAUNCH_ORACLE_DISCRIMINATOR, _data, 0);
+    int i = DELETE_PRELAUNCH_ORACLE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, perpMarketIndex);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -11089,7 +11088,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var perpMarketIndex = getInt16LE(_data, i);
       return new DeletePrelaunchOracleIxData(discriminator, perpMarketIndex);
@@ -11127,7 +11126,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenArray(feedId)];
-    int i = writeDiscriminator(INITIALIZE_PYTH_PULL_ORACLE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_PYTH_PULL_ORACLE_DISCRIMINATOR.write(_data, 0);
     Borsh.writeArray(feedId, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -11146,7 +11145,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feedId = new byte[32];
       Borsh.readArray(feedId, _data, i);
@@ -11184,7 +11183,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(INITIALIZE_PYTH_LAZER_ORACLE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_PYTH_LAZER_ORACLE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, feedId);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -11202,7 +11201,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feedId = getInt32LE(_data, i);
       return new InitializePythLazerOracleIxData(discriminator, feedId);
@@ -11236,7 +11235,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(pythMessage)];
-    int i = writeDiscriminator(POST_PYTH_LAZER_ORACLE_UPDATE_DISCRIMINATOR, _data, 0);
+    int i = POST_PYTH_LAZER_ORACLE_UPDATE_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(pythMessage, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -11252,7 +11251,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var pythMessage = Borsh.readbyteVector(_data, i);
       return new PostPythLazerOracleUpdateIxData(discriminator, pythMessage);
@@ -11289,7 +11288,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(INITIALIZE_HIGH_LEVERAGE_MODE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_HIGH_LEVERAGE_MODE_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, maxUsers);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -11307,7 +11306,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxUsers = getInt32LE(_data, i);
       return new InitializeHighLeverageModeConfigIxData(discriminator, maxUsers);
@@ -11346,7 +11345,7 @@ public final class DriftProgram {
         13
         + (currentUsers == null || currentUsers.isEmpty() ? 1 : 5)
     ];
-    int i = writeDiscriminator(UPDATE_HIGH_LEVERAGE_MODE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_HIGH_LEVERAGE_MODE_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, maxUsers);
     i += 4;
     _data[i] = (byte) (reduceOnly ? 1 : 0);
@@ -11369,7 +11368,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxUsers = getInt32LE(_data, i);
       i += 4;
@@ -11414,7 +11413,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(INITIALIZE_PROTECTED_MAKER_MODE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_PROTECTED_MAKER_MODE_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, maxUsers);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -11432,7 +11431,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxUsers = getInt32LE(_data, i);
       return new InitializeProtectedMakerModeConfigIxData(discriminator, maxUsers);
@@ -11471,7 +11470,7 @@ public final class DriftProgram {
         13
         + (currentUsers == null || currentUsers.isEmpty() ? 1 : 5)
     ];
-    int i = writeDiscriminator(UPDATE_PROTECTED_MAKER_MODE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_PROTECTED_MAKER_MODE_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, maxUsers);
     i += 4;
     _data[i] = (byte) (reduceOnly ? 1 : 0);
@@ -11494,7 +11493,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxUsers = getInt32LE(_data, i);
       i += 4;
@@ -11542,7 +11541,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[18];
-    int i = writeDiscriminator(ADMIN_DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = ADMIN_DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
@@ -11562,7 +11561,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -11604,7 +11603,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_IF_REBALANCE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_IF_REBALANCE_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -11622,7 +11621,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = IfRebalanceConfigParams.read(_data, i);
       return new InitializeIfRebalanceConfigIxData(discriminator, params);
@@ -11655,7 +11654,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UPDATE_IF_REBALANCE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_IF_REBALANCE_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -11673,7 +11672,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = IfRebalanceConfigParams.read(_data, i);
       return new UpdateIfRebalanceConfigIxData(discriminator, params);
@@ -11704,7 +11703,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_FEATURE_BIT_FLAGS_MM_ORACLE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_FEATURE_BIT_FLAGS_MM_ORACLE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (enable ? 1 : 0);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -11722,7 +11721,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var enable = _data[i] == 1;
       return new UpdateFeatureBitFlagsMmOracleIxData(discriminator, enable);
@@ -11769,7 +11768,7 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_FEATURE_BIT_FLAGS_MEDIAN_TRIGGER_PRICE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_FEATURE_BIT_FLAGS_MEDIAN_TRIGGER_PRICE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (enable ? 1 : 0);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -11787,7 +11786,7 @@ public final class DriftProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var enable = _data[i] == 1;
       return new UpdateFeatureBitFlagsMedianTriggerPriceIxData(discriminator, enable);

@@ -11,12 +11,11 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class TokenLaunchpadProgram {
@@ -53,7 +52,7 @@ public final class TokenLaunchpadProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(mintParams)];
-    int i = writeDiscriminator(TOKEN_MINT_DISCRIMINATOR, _data, 0);
+    int i = TOKEN_MINT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(mintParams, _data, i);
 
     return Instruction.createInstruction(invokedTokenLaunchpadProgramMeta, keys, _data);
@@ -69,7 +68,7 @@ public final class TokenLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintParams = TokenMintParams.read(_data, i);
       return new TokenMintIxData(discriminator, mintParams);
@@ -118,7 +117,7 @@ public final class TokenLaunchpadProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(data)];
-    int i = writeDiscriminator(BUY_DISCRIMINATOR, _data, 0);
+    int i = BUY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(data, _data, i);
 
     return Instruction.createInstruction(invokedTokenLaunchpadProgramMeta, keys, _data);
@@ -136,7 +135,7 @@ public final class TokenLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var data = TradeParams.read(_data, i);
       return new BuyIxData(discriminator, data);
@@ -185,7 +184,7 @@ public final class TokenLaunchpadProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(data)];
-    int i = writeDiscriminator(SELL_DISCRIMINATOR, _data, 0);
+    int i = SELL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(data, _data, i);
 
     return Instruction.createInstruction(invokedTokenLaunchpadProgramMeta, keys, _data);
@@ -203,7 +202,7 @@ public final class TokenLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var data = TradeParams.read(_data, i);
       return new SellIxData(discriminator, data);
@@ -279,7 +278,7 @@ public final class TokenLaunchpadProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(data)];
-    int i = writeDiscriminator(CONFIG_INIT_DISCRIMINATOR, _data, 0);
+    int i = CONFIG_INIT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(data, _data, i);
 
     return Instruction.createInstruction(invokedTokenLaunchpadProgramMeta, keys, _data);
@@ -295,7 +294,7 @@ public final class TokenLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var data = ConfigParams.read(_data, i);
       return new ConfigInitIxData(discriminator, data);
@@ -326,7 +325,7 @@ public final class TokenLaunchpadProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(data)];
-    int i = writeDiscriminator(CONFIG_UPDATE_DISCRIMINATOR, _data, 0);
+    int i = CONFIG_UPDATE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(data, _data, i);
 
     return Instruction.createInstruction(invokedTokenLaunchpadProgramMeta, keys, _data);
@@ -342,7 +341,7 @@ public final class TokenLaunchpadProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var data = ConfigParams.read(_data, i);
       return new ConfigUpdateIxData(discriminator, data);

@@ -40,14 +40,13 @@ import software.sava.core.tx.Instruction;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class LoopscaleProgram {
@@ -91,7 +90,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(BORROW_PRINCIPAL_DISCRIMINATOR, _data, 0);
+    int i = BORROW_PRINCIPAL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -107,7 +106,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = BorrowPrincipalParams.read(_data, i);
       return new BorrowPrincipalIxData(discriminator, params);
@@ -189,7 +188,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CLAIM_VAULT_FEE_DISCRIMINATOR, _data, 0);
+    int i = CLAIM_VAULT_FEE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -207,7 +206,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ClaimVaultFeeParams.read(_data, i);
       return new ClaimVaultFeeIxData(discriminator, params);
@@ -257,7 +256,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(mints)];
-    int i = writeDiscriminator(CLAIM_VAULT_REWARDS_DISCRIMINATOR, _data, 0);
+    int i = CLAIM_VAULT_REWARDS_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(mints, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -273,7 +272,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mints = Borsh.readPublicKeyVector(_data, i);
       return new ClaimVaultRewardsIxData(discriminator, mints);
@@ -372,7 +371,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CREATE_LOAN_DISCRIMINATOR, _data, 0);
+    int i = CREATE_LOAN_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -390,7 +389,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CreateLoanParams.read(_data, i);
       return new CreateLoanIxData(discriminator, params);
@@ -425,7 +424,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CREATE_MARKET_INFORMATION_DISCRIMINATOR, _data, 0);
+    int i = CREATE_MARKET_INFORMATION_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -443,7 +442,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CreateMarketInformationParams.read(_data, i);
       return new CreateMarketInformationIxData(discriminator, params);
@@ -501,7 +500,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.len(params)];
-    int i = writeDiscriminator(CREATE_REWARDS_SCHEDULE_DISCRIMINATOR, _data, 0);
+    int i = CREATE_REWARDS_SCHEDULE_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(params, _data, i);
     putInt64LE(_data, i, amountToTransfer);
 
@@ -520,7 +519,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CreateRewardsScheduleParams.read(_data, i);
       i += Borsh.len(params);
@@ -571,7 +570,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CREATE_STRATEGY_DISCRIMINATOR, _data, 0);
+    int i = CREATE_STRATEGY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -587,7 +586,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CreateStrategyParams.read(_data, i);
       return new CreateStrategyIxData(discriminator, params);
@@ -636,7 +635,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CREATE_TIMELOCK_DISCRIMINATOR, _data, 0);
+    int i = CREATE_TIMELOCK_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -652,7 +651,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = TimelockUpdateParams.read(_data, i);
       return new CreateTimelockIxData(discriminator, params);
@@ -704,7 +703,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(CREATE_VAULT_DISCRIMINATOR, _data, 0);
+    int i = CREATE_VAULT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -720,7 +719,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CreateVaultParams.read(_data, i);
       return new CreateVaultIxData(discriminator, params);
@@ -777,7 +776,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(DEPOSIT_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_COLLATERAL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -793,7 +792,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = DepositCollateralParams.read(_data, i);
       return new DepositCollateralIxData(discriminator, params);
@@ -847,7 +846,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_STRATEGY_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_STRATEGY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -865,7 +864,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new DepositStrategyIxData(discriminator, amount);
@@ -931,7 +930,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(DEPOSIT_USER_VAULT_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_USER_VAULT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -947,7 +946,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = LpParams.read(_data, i);
       return new DepositUserVaultIxData(discriminator, params);
@@ -1041,7 +1040,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(LIQUIDATE_LEDGER_DISCRIMINATOR, _data, 0);
+    int i = LIQUIDATE_LEDGER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -1057,7 +1056,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = LiquidateLedgerParams.read(_data, i);
       return new LiquidateLedgerIxData(discriminator, params);
@@ -1097,7 +1096,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(LOCK_LOAN_DISCRIMINATOR, _data, 0);
+    int i = LOCK_LOAN_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -1115,7 +1114,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = LockLoanParams.read(_data, i);
       return new LockLoanIxData(discriminator, params);
@@ -1196,7 +1195,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(MANAGE_COLLATERAL_CLAIM_ORCA_FEE_DISCRIMINATOR, _data, 0);
+    int i = MANAGE_COLLATERAL_CLAIM_ORCA_FEE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (closeTa ? 1 : 0);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -1214,7 +1213,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var closeTa = _data[i] == 1;
       return new ManageCollateralClaimOrcaFeeIxData(discriminator, closeTa);
@@ -1295,7 +1294,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(MANAGE_COLLATERAL_DECREASE_RAYDIUM_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = MANAGE_COLLATERAL_DECREASE_RAYDIUM_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -1311,7 +1310,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ManageRaydiumLiquidityParams.read(_data, i);
       return new ManageCollateralDecreaseRaydiumLiquidityIxData(discriminator, params);
@@ -1389,7 +1388,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(MANAGE_COLLATERAL_INCREASE_ORCA_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = MANAGE_COLLATERAL_INCREASE_ORCA_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -1405,7 +1404,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ManageLiquidityParams.read(_data, i);
       return new ManageCollateralIncreaseOrcaLiquidityIxData(discriminator, params);
@@ -1485,7 +1484,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(MANAGE_COLLATERAL_INCREASE_RAYDIUM_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = MANAGE_COLLATERAL_INCREASE_RAYDIUM_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -1501,7 +1500,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ManageRaydiumLiquidityParams.read(_data, i);
       return new ManageCollateralIncreaseRaydiumLiquidityIxData(discriminator, params);
@@ -1593,7 +1592,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(MANAGE_COLLATERAL_TRANSFER_ORCA_POSITION_DISCRIMINATOR, _data, 0);
+    int i = MANAGE_COLLATERAL_TRANSFER_ORCA_POSITION_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -1609,7 +1608,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = TransferPositionParams.read(_data, i);
       return new ManageCollateralTransferOrcaPositionIxData(discriminator, params);
@@ -1701,7 +1700,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(MANAGE_COLLATERAL_TRANSFER_RAYDIUM_POSITION_DISCRIMINATOR, _data, 0);
+    int i = MANAGE_COLLATERAL_TRANSFER_RAYDIUM_POSITION_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -1717,7 +1716,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = TransferPositionParams.read(_data, i);
       return new ManageCollateralTransferRaydiumPositionIxData(discriminator, params);
@@ -1795,7 +1794,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(MANAGE_COLLATERAL_WITHDRAW_ORCA_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = MANAGE_COLLATERAL_WITHDRAW_ORCA_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -1811,7 +1810,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = ManageLiquidityParams.read(_data, i);
       return new ManageCollateralWithdrawOrcaLiquidityIxData(discriminator, params);
@@ -1846,7 +1845,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(allocations)];
-    int i = writeDiscriminator(MIGRATE_MARKET_INFO_ALLOCATION_DISCRIMINATOR, _data, 0);
+    int i = MIGRATE_MARKET_INFO_ALLOCATION_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(allocations, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -1862,7 +1861,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var allocations = Borsh.readVector(CollateralAllocationParam.class, CollateralAllocationParam::read, _data, i);
       return new MigrateMarketInfoAllocationIxData(discriminator, allocations);
@@ -1920,7 +1919,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(REFINANCE_LEDGER_DISCRIMINATOR, _data, 0);
+    int i = REFINANCE_LEDGER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -1936,7 +1935,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RefinanceLedgerParams.read(_data, i);
       return new RefinanceLedgerIxData(discriminator, params);
@@ -1992,7 +1991,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(REPAY_PRINCIPAL_DISCRIMINATOR, _data, 0);
+    int i = REPAY_PRINCIPAL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -2010,7 +2009,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RepayPrincipalParams.read(_data, i);
       return new RepayPrincipalIxData(discriminator, params);
@@ -2074,7 +2073,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SELL_LEDGER_DISCRIMINATOR, _data, 0);
+    int i = SELL_LEDGER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -2090,7 +2089,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = SellLedgerParams.read(_data, i);
       return new SellLedgerIxData(discriminator, params);
@@ -2150,7 +2149,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(STAKE_USER_VAULT_LP_DISCRIMINATOR, _data, 0);
+    int i = STAKE_USER_VAULT_LP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -2166,7 +2165,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = VaultStakeParams.read(_data, i);
       return new StakeUserVaultLpIxData(discriminator, params);
@@ -2204,7 +2203,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UNLOCK_LOAN_DISCRIMINATOR, _data, 0);
+    int i = UNLOCK_LOAN_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -2220,7 +2219,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = LoanUnlockParams.read(_data, i);
       return new UnlockLoanIxData(discriminator, params);
@@ -2278,7 +2277,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UNSTAKE_USER_VAULT_LP_DISCRIMINATOR, _data, 0);
+    int i = UNSTAKE_USER_VAULT_LP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -2296,7 +2295,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = VaultUnstakeParams.read(_data, i);
       return new UnstakeUserVaultLpIxData(discriminator, params);
@@ -2333,7 +2332,7 @@ public final class LoopscaleProgram {
         + (assetUpdateParams == null || assetUpdateParams.length == 0 ? 1 : (1 + Borsh.lenVector(assetUpdateParams)))
         + (updateCapParams == null ? 1 : (1 + Borsh.len(updateCapParams)))
     ];
-    int i = writeDiscriminator(UPDATE_MARKET_INFORMATION_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_MARKET_INFORMATION_DISCRIMINATOR.write(_data, 0);
     if (assetUpdateParams == null || assetUpdateParams.length == 0) {
       _data[i++] = 0;
     } else {
@@ -2355,7 +2354,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var assetUpdateParams = _data[i++] == 0 ? null : Borsh.readVector(UpdateAssetDataParams.class, UpdateAssetDataParams::read, _data, i);
       if (assetUpdateParams != null) {
@@ -2420,7 +2419,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UPDATE_REWARDS_SCHEDULE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_REWARDS_SCHEDULE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -2436,7 +2435,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UpdateRewardsScheduleParams.read(_data, i);
       return new UpdateRewardsScheduleIxData(discriminator, params);
@@ -2490,7 +2489,7 @@ public final class LoopscaleProgram {
         8 + Borsh.lenVector(collateralTerms)
         + (params == null ? 1 : (1 + Borsh.len(params)))
     ];
-    int i = writeDiscriminator(UPDATE_STRATEGY_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_STRATEGY_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(collateralTerms, _data, i);
     Borsh.writeOptional(params, _data, i);
 
@@ -2507,7 +2506,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var collateralTerms = Borsh.readVector(MultiCollateralTermsUpdateParams.class, MultiCollateralTermsUpdateParams::read, _data, i);
       i += Borsh.lenVector(collateralTerms);
@@ -2552,7 +2551,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UPDATE_VAULT_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_VAULT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -2570,7 +2569,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UpdateVaultParams.read(_data, i);
       return new UpdateVaultIxData(discriminator, params);
@@ -2604,7 +2603,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(UPDATE_WEIGHT_MATRIX_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_WEIGHT_MATRIX_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -2620,7 +2619,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = UpdateWeightMatrixParams.read(_data, i);
       return new UpdateWeightMatrixIxData(discriminator, params);
@@ -2672,7 +2671,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(WITHDRAW_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_COLLATERAL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -2688,7 +2687,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = WithdrawCollateralParams.read(_data, i);
       return new WithdrawCollateralIxData(discriminator, params);
@@ -2743,7 +2742,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(WITHDRAW_STRATEGY_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_STRATEGY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
     i += 8;
     _data[i] = (byte) (withdrawAll ? 1 : 0);
@@ -2763,7 +2762,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       i += 8;
@@ -2830,7 +2829,7 @@ public final class LoopscaleProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(WITHDRAW_USER_VAULT_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_USER_VAULT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLoopscaleProgramMeta, keys, _data);
@@ -2846,7 +2845,7 @@ public final class LoopscaleProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = LpParams.read(_data, i);
       return new WithdrawUserVaultIxData(discriminator, params);

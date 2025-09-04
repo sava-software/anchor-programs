@@ -13,8 +13,6 @@ import software.sava.core.tx.Instruction;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
@@ -22,6 +20,7 @@ import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class KaminoVaultProgram {
@@ -84,7 +83,7 @@ public final class KaminoVaultProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(UPDATE_RESERVE_ALLOCATION_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_RESERVE_ALLOCATION_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, weight);
     i += 8;
     putInt64LE(_data, i, cap);
@@ -104,7 +103,7 @@ public final class KaminoVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var weight = getInt64LE(_data, i);
       i += 8;
@@ -162,7 +161,7 @@ public final class KaminoVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxAmount);
 
     return Instruction.createInstruction(invokedKaminoVaultProgramMeta, keys, _data);
@@ -180,7 +179,7 @@ public final class KaminoVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxAmount = getInt64LE(_data, i);
       return new DepositIxData(discriminator, maxAmount);
@@ -256,7 +255,7 @@ public final class KaminoVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, sharesAmount);
 
     return Instruction.createInstruction(invokedKaminoVaultProgramMeta, keys, _data);
@@ -274,7 +273,7 @@ public final class KaminoVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var sharesAmount = getInt64LE(_data, i);
       return new WithdrawIxData(discriminator, sharesAmount);
@@ -351,7 +350,7 @@ public final class KaminoVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(entry) + Borsh.lenVector(data)];
-    int i = writeDiscriminator(UPDATE_VAULT_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_VAULT_CONFIG_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(entry, _data, i);
     Borsh.writeVector(data, _data, i);
 
@@ -368,7 +367,7 @@ public final class KaminoVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var entry = VaultConfigField.read(_data, i);
       i += Borsh.len(entry);
@@ -457,7 +456,7 @@ public final class KaminoVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(GIVE_UP_PENDING_FEES_DISCRIMINATOR, _data, 0);
+    int i = GIVE_UP_PENDING_FEES_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxAmountToGiveUp);
 
     return Instruction.createInstruction(invokedKaminoVaultProgramMeta, keys, _data);
@@ -475,7 +474,7 @@ public final class KaminoVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxAmountToGiveUp = getInt64LE(_data, i);
       return new GiveUpPendingFeesIxData(discriminator, maxAmountToGiveUp);
@@ -524,7 +523,7 @@ public final class KaminoVaultProgram {
     final byte[] _symbol = symbol.getBytes(UTF_8);
     final byte[] _uri = uri.getBytes(UTF_8);
     final byte[] _data = new byte[20 + Borsh.lenVector(_name) + Borsh.lenVector(_symbol) + Borsh.lenVector(_uri)];
-    int i = writeDiscriminator(INITIALIZE_SHARES_METADATA_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_SHARES_METADATA_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(_name, _data, i);
     i += Borsh.writeVector(_symbol, _data, i);
     Borsh.writeVector(_uri, _data, i);
@@ -552,7 +551,7 @@ public final class KaminoVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var name = Borsh.string(_data, i);
       i += (Integer.BYTES + getInt32LE(_data, i));
@@ -600,7 +599,7 @@ public final class KaminoVaultProgram {
     final byte[] _symbol = symbol.getBytes(UTF_8);
     final byte[] _uri = uri.getBytes(UTF_8);
     final byte[] _data = new byte[20 + Borsh.lenVector(_name) + Borsh.lenVector(_symbol) + Borsh.lenVector(_uri)];
-    int i = writeDiscriminator(UPDATE_SHARES_METADATA_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SHARES_METADATA_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(_name, _data, i);
     i += Borsh.writeVector(_symbol, _data, i);
     Borsh.writeVector(_uri, _data, i);
@@ -628,7 +627,7 @@ public final class KaminoVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var name = Borsh.string(_data, i);
       i += (Integer.BYTES + getInt32LE(_data, i));
@@ -687,7 +686,7 @@ public final class KaminoVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_FROM_AVAILABLE_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_FROM_AVAILABLE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, sharesAmount);
 
     return Instruction.createInstruction(invokedKaminoVaultProgramMeta, keys, _data);
@@ -705,7 +704,7 @@ public final class KaminoVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var sharesAmount = getInt64LE(_data, i);
       return new WithdrawFromAvailableIxData(discriminator, sharesAmount);

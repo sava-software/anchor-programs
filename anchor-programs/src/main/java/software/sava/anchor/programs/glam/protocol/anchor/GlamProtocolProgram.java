@@ -28,8 +28,6 @@ import software.sava.core.tx.Instruction;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
@@ -40,6 +38,7 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class GlamProtocolProgram {
@@ -67,7 +66,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(mintModel)];
-    int i = writeDiscriminator(ADD_MINT_DISCRIMINATOR, _data, 0);
+    int i = ADD_MINT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(mintModel, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -83,7 +82,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintModel = MintModel.read(_data, i);
       return new AddMintIxData(discriminator, mintModel);
@@ -123,7 +122,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(BURN_TOKENS_DISCRIMINATOR, _data, 0);
+    int i = BURN_TOKENS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amount);
@@ -143,7 +142,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       ++i;
@@ -192,7 +191,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CLAIM_DISCRIMINATOR, _data, 0);
+    int i = CLAIM_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -210,7 +209,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       return new ClaimIxData(discriminator, mintId);
@@ -255,7 +254,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CLOSE_MINT_DISCRIMINATOR, _data, 0);
+    int i = CLOSE_MINT_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -273,7 +272,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       return new CloseMintIxData(discriminator, mintId);
@@ -332,7 +331,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CRYSTALLIZE_FEES_DISCRIMINATOR, _data, 0);
+    int i = CRYSTALLIZE_FEES_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -350,7 +349,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       return new CrystallizeFeesIxData(discriminator, mintId);
@@ -406,7 +405,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(DISBURSE_FEES_DISCRIMINATOR, _data, 0);
+    int i = DISBURSE_FEES_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -424,7 +423,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       return new DisburseFeesIxData(discriminator, mintId);
@@ -471,7 +470,7 @@ public final class GlamProtocolProgram {
         + (marketIndex == null || marketIndex.isEmpty() ? 1 : 3)
         + (direction == null ? 1 : (1 + Borsh.len(direction)))
     ];
-    int i = writeDiscriminator(DRIFT_CANCEL_ORDERS_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_CANCEL_ORDERS_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptional(marketType, _data, i);
     i += Borsh.writeOptionalshort(marketIndex, _data, i);
     Borsh.writeOptional(direction, _data, i);
@@ -492,7 +491,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketType = _data[i++] == 0 ? null : MarketType.read(_data, i);
       if (marketType != null) {
@@ -541,7 +540,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(orderIds)];
-    int i = writeDiscriminator(DRIFT_CANCEL_ORDERS_BY_IDS_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_CANCEL_ORDERS_BY_IDS_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(orderIds, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -557,7 +556,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var orderIds = Borsh.readintVector(_data, i);
       return new DriftCancelOrdersByIdsIxData(discriminator, orderIds);
@@ -629,7 +628,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[19];
-    int i = writeDiscriminator(DRIFT_DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
@@ -654,7 +653,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -712,7 +711,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.lenVectorArray(proof)];
-    int i = writeDiscriminator(DRIFT_DISTRIBUTOR_NEW_CLAIM_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_DISTRIBUTOR_NEW_CLAIM_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountUnlocked);
     i += 8;
     putInt64LE(_data, i, amountLocked);
@@ -735,7 +734,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountUnlocked = getInt64LE(_data, i);
       i += 8;
@@ -790,7 +789,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[10 + Borsh.lenArray(name)];
-    int i = writeDiscriminator(DRIFT_INITIALIZE_USER_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_INITIALIZE_USER_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     Borsh.writeArray(name, _data, i);
@@ -811,7 +810,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -885,7 +884,7 @@ public final class GlamProtocolProgram {
         8
         + (orderId == null || orderId.isEmpty() ? 1 : 5) + Borsh.len(modifyOrderParams)
     ];
-    int i = writeDiscriminator(DRIFT_MODIFY_ORDER_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_MODIFY_ORDER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptional(orderId, _data, i);
     Borsh.write(modifyOrderParams, _data, i);
 
@@ -902,7 +901,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var orderId = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
       if (orderId.isPresent()) {
@@ -946,7 +945,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(params)];
-    int i = writeDiscriminator(DRIFT_PLACE_ORDERS_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_PLACE_ORDERS_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(params, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -962,7 +961,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = Borsh.readVector(OrderParams.class, OrderParams::read, _data, i);
       return new DriftPlaceOrdersIxData(discriminator, params);
@@ -1004,7 +1003,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(marketIndexes) + Borsh.len(mode)];
-    int i = writeDiscriminator(DRIFT_SETTLE_MULTIPLE_PNLS_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_SETTLE_MULTIPLE_PNLS_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(marketIndexes, _data, i);
     Borsh.write(mode, _data, i);
 
@@ -1021,7 +1020,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndexes = Borsh.readshortVector(_data, i);
       i += Borsh.lenVector(marketIndexes);
@@ -1065,7 +1064,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(DRIFT_SETTLE_PNL_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_SETTLE_PNL_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -1083,7 +1082,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       return new DriftSettlePnlIxData(discriminator, marketIndex);
@@ -1122,7 +1121,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[14];
-    int i = writeDiscriminator(DRIFT_UPDATE_USER_CUSTOM_MARGIN_RATIO_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_UPDATE_USER_CUSTOM_MARGIN_RATIO_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     putInt32LE(_data, i, marginRatio);
@@ -1142,7 +1141,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -1185,7 +1184,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[42];
-    int i = writeDiscriminator(DRIFT_UPDATE_USER_DELEGATE_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_UPDATE_USER_DELEGATE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     delegate.write(_data, i);
@@ -1205,7 +1204,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -1248,7 +1247,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[11];
-    int i = writeDiscriminator(DRIFT_UPDATE_USER_MARGIN_TRADING_ENABLED_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_UPDATE_USER_MARGIN_TRADING_ENABLED_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     _data[i] = (byte) (marginTradingEnabled ? 1 : 0);
@@ -1268,7 +1267,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -1311,7 +1310,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[11];
-    int i = writeDiscriminator(DRIFT_UPDATE_USER_POOL_ID_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_UPDATE_USER_POOL_ID_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
     _data[i] = (byte) poolId;
@@ -1331,7 +1330,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var subAccountId = getInt16LE(_data, i);
       i += 2;
@@ -1416,7 +1415,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DRIFT_VAULTS_DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_VAULTS_DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -1434,7 +1433,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new DriftVaultsDepositIxData(discriminator, amount);
@@ -1503,7 +1502,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.len(withdrawUnit)];
-    int i = writeDiscriminator(DRIFT_VAULTS_REQUEST_WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_VAULTS_REQUEST_WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, withdrawAmount);
     i += 8;
     Borsh.write(withdrawUnit, _data, i);
@@ -1523,7 +1522,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var withdrawAmount = getInt64LE(_data, i);
       i += 8;
@@ -1617,7 +1616,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[19];
-    int i = writeDiscriminator(DRIFT_WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = DRIFT_WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
     putInt64LE(_data, i, amount);
@@ -1642,7 +1641,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var marketIndex = getInt16LE(_data, i);
       i += 2;
@@ -1687,7 +1686,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9 + Borsh.len(mintModel)];
-    int i = writeDiscriminator(EMERGENCY_UPDATE_MINT_DISCRIMINATOR, _data, 0);
+    int i = EMERGENCY_UPDATE_MINT_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
     ++i;
     Borsh.write(mintModel, _data, i);
@@ -1705,7 +1704,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       ++i;
@@ -1740,7 +1739,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(state)];
-    int i = writeDiscriminator(EMERGENCY_UPDATE_STATE_DISCRIMINATOR, _data, 0);
+    int i = EMERGENCY_UPDATE_STATE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(state, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -1756,7 +1755,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var state = StateModel.read(_data, i);
       return new EmergencyUpdateStateIxData(discriminator, state);
@@ -1789,7 +1788,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(EXTEND_STATE_DISCRIMINATOR, _data, 0);
+    int i = EXTEND_STATE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, bytes);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -1807,7 +1806,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var bytes = getInt32LE(_data, i);
       return new ExtendStateIxData(discriminator, bytes);
@@ -1857,7 +1856,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(FORCE_TRANSFER_TOKENS_DISCRIMINATOR, _data, 0);
+    int i = FORCE_TRANSFER_TOKENS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amount);
@@ -1877,7 +1876,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       ++i;
@@ -1933,7 +1932,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(FULFILL_DISCRIMINATOR, _data, 0);
+    int i = FULFILL_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -1951,7 +1950,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       return new FulfillIxData(discriminator, mintId);
@@ -1989,7 +1988,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(state)];
-    int i = writeDiscriminator(INITIALIZE_STATE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_STATE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(state, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2005,7 +2004,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var state = StateModel.read(_data, i);
       return new InitializeStateIxData(discriminator, state);
@@ -2048,7 +2047,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(JUPITER_GOV_NEW_VOTE_DISCRIMINATOR, _data, 0);
+    int i = JUPITER_GOV_NEW_VOTE_DISCRIMINATOR.write(_data, 0);
     voter.write(_data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2066,7 +2065,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var voter = readPubKey(_data, i);
       return new JupiterGovNewVoteIxData(discriminator, voter);
@@ -2120,7 +2119,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(data)];
-    int i = writeDiscriminator(JUPITER_SWAP_DISCRIMINATOR, _data, 0);
+    int i = JUPITER_SWAP_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(data, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2136,7 +2135,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var data = Borsh.readbyteVector(_data, i);
       return new JupiterSwapIxData(discriminator, data);
@@ -2183,7 +2182,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(JUPITER_VOTE_CAST_VOTE_DISCRIMINATOR, _data, 0);
+    int i = JUPITER_VOTE_CAST_VOTE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) side;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2201,7 +2200,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var side = _data[i] & 0xFF;
       return new JupiterVoteCastVoteIxData(discriminator, side);
@@ -2250,7 +2249,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(JUPITER_VOTE_CAST_VOTE_CHECKED_DISCRIMINATOR, _data, 0);
+    int i = JUPITER_VOTE_CAST_VOTE_CHECKED_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) side;
     ++i;
     _data[i] = (byte) expectedSide;
@@ -2270,7 +2269,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var side = _data[i] & 0xFF;
       ++i;
@@ -2320,7 +2319,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(JUPITER_VOTE_INCREASE_LOCKED_AMOUNT_DISCRIMINATOR, _data, 0);
+    int i = JUPITER_VOTE_INCREASE_LOCKED_AMOUNT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2338,7 +2337,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new JupiterVoteIncreaseLockedAmountIxData(discriminator, amount);
@@ -2401,7 +2400,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(JUPITER_VOTE_TOGGLE_MAX_LOCK_DISCRIMINATOR, _data, 0);
+    int i = JUPITER_VOTE_TOGGLE_MAX_LOCK_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (isMaxLock ? 1 : 0);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2419,7 +2418,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var isMaxLock = _data[i] == 1;
       return new JupiterVoteToggleMaxLockIxData(discriminator, isMaxLock);
@@ -2502,7 +2501,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_FARM_HARVEST_REWARD_DISCRIMINATOR, _data, 0);
+    int i = KAMINO_FARM_HARVEST_REWARD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2520,7 +2519,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
       return new KaminoFarmHarvestRewardIxData(discriminator, rewardIndex);
@@ -2584,7 +2583,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_LENDING_BORROW_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR, _data, 0);
+    int i = KAMINO_LENDING_BORROW_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2602,7 +2601,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new KaminoLendingBorrowObligationLiquidityV2IxData(discriminator, liquidityAmount);
@@ -2670,7 +2669,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
+    int i = KAMINO_LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2688,7 +2687,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new KaminoLendingDepositReserveLiquidityAndObligationCollateralV2IxData(discriminator, liquidityAmount);
@@ -2739,7 +2738,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(args)];
-    int i = writeDiscriminator(KAMINO_LENDING_INIT_OBLIGATION_DISCRIMINATOR, _data, 0);
+    int i = KAMINO_LENDING_INIT_OBLIGATION_DISCRIMINATOR.write(_data, 0);
     Borsh.write(args, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2757,7 +2756,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var args = InitObligationArgs.read(_data, i);
       return new KaminoLendingInitObligationIxData(discriminator, args);
@@ -2811,7 +2810,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(KAMINO_LENDING_INIT_OBLIGATION_FARMS_FOR_RESERVE_DISCRIMINATOR, _data, 0);
+    int i = KAMINO_LENDING_INIT_OBLIGATION_FARMS_FOR_RESERVE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mode;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2829,7 +2828,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mode = _data[i] & 0xFF;
       return new KaminoLendingInitObligationFarmsForReserveIxData(discriminator, mode);
@@ -2874,7 +2873,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(KAMINO_LENDING_INIT_USER_METADATA_DISCRIMINATOR, _data, 0);
+    int i = KAMINO_LENDING_INIT_USER_METADATA_DISCRIMINATOR.write(_data, 0);
     userLookupTable.write(_data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2892,7 +2891,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var userLookupTable = readPubKey(_data, i);
       return new KaminoLendingInitUserMetadataIxData(discriminator, userLookupTable);
@@ -2952,7 +2951,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_LENDING_REPAY_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR, _data, 0);
+    int i = KAMINO_LENDING_REPAY_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -2970,7 +2969,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new KaminoLendingRepayObligationLiquidityV2IxData(discriminator, liquidityAmount);
@@ -3038,7 +3037,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_LENDING_WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
+    int i = KAMINO_LENDING_WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -3056,7 +3055,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var collateralAmount = getInt64LE(_data, i);
       return new KaminoLendingWithdrawObligationCollateralAndRedeemReserveCollateralV2IxData(discriminator, collateralAmount);
@@ -3116,7 +3115,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_VAULTS_DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = KAMINO_VAULTS_DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -3134,7 +3133,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new KaminoVaultsDepositIxData(discriminator, amount);
@@ -3216,7 +3215,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(KAMINO_VAULTS_WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = KAMINO_VAULTS_WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -3234,7 +3233,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new KaminoVaultsWithdrawIxData(discriminator, amount);
@@ -3290,7 +3289,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(MARINADE_DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = MARINADE_DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamports);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -3308,7 +3307,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
       return new MarinadeDepositIxData(discriminator, lamports);
@@ -3369,7 +3368,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(MARINADE_DEPOSIT_STAKE_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = MARINADE_DEPOSIT_STAKE_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, validatorIdx);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -3387,7 +3386,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var validatorIdx = getInt32LE(_data, i);
       return new MarinadeDepositStakeAccountIxData(discriminator, validatorIdx);
@@ -3454,7 +3453,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[56];
-    int i = writeDiscriminator(MARINADE_WITHDRAW_STAKE_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = MARINADE_WITHDRAW_STAKE_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, stakeIndex);
     i += 4;
     putInt32LE(_data, i, validatorIndex);
@@ -3482,7 +3481,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stakeIndex = getInt32LE(_data, i);
       i += 4;
@@ -3554,7 +3553,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.lenVectorArray(proof)];
-    int i = writeDiscriminator(MERKLE_DISTRIBUTOR_NEW_CLAIM_AND_STAKE_DISCRIMINATOR, _data, 0);
+    int i = MERKLE_DISTRIBUTOR_NEW_CLAIM_AND_STAKE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountUnlocked);
     i += 8;
     putInt64LE(_data, i, amountLocked);
@@ -3577,7 +3576,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountUnlocked = getInt64LE(_data, i);
       i += 8;
@@ -3647,7 +3646,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_ADD_LIQUIDITY_2_DISCRIMINATOR, _data, 0);
+    int i = METEORA_DLMM_ADD_LIQUIDITY_2_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(liquidityParameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -3664,7 +3663,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityParameter = LiquidityParameter.read(_data, i);
       i += Borsh.len(liquidityParameter);
@@ -3729,7 +3728,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_ADD_LIQUIDITY_BY_STRATEGY_2_DISCRIMINATOR, _data, 0);
+    int i = METEORA_DLMM_ADD_LIQUIDITY_BY_STRATEGY_2_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(liquidityParameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -3746,7 +3745,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityParameter = LiquidityParameterByStrategy.read(_data, i);
       i += Borsh.len(liquidityParameter);
@@ -3803,7 +3802,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(parameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_ADD_LIQUIDITY_ONE_SIDE_PRECISE_2_DISCRIMINATOR, _data, 0);
+    int i = METEORA_DLMM_ADD_LIQUIDITY_ONE_SIDE_PRECISE_2_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(parameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -3820,7 +3819,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var parameter = AddLiquiditySingleSidePreciseParameter2.read(_data, i);
       i += Borsh.len(parameter);
@@ -3886,7 +3885,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_CLAIM_FEE_2_DISCRIMINATOR, _data, 0);
+    int i = METEORA_DLMM_CLAIM_FEE_2_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, minBinId);
     i += 4;
     putInt32LE(_data, i, maxBinId);
@@ -3909,7 +3908,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var minBinId = getInt32LE(_data, i);
       i += 4;
@@ -3973,7 +3972,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_CLAIM_REWARD_2_DISCRIMINATOR, _data, 0);
+    int i = METEORA_DLMM_CLAIM_REWARD_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     putInt32LE(_data, i, minBinId);
@@ -3999,7 +3998,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
       i += 8;
@@ -4087,7 +4086,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(METEORA_DLMM_INITIALIZE_POSITION_DISCRIMINATOR, _data, 0);
+    int i = METEORA_DLMM_INITIALIZE_POSITION_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, lowerBinId);
     i += 4;
     putInt32LE(_data, i, width);
@@ -4107,7 +4106,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lowerBinId = getInt32LE(_data, i);
       i += 4;
@@ -4159,7 +4158,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(METEORA_DLMM_INITIALIZE_POSITION_PDA_DISCRIMINATOR, _data, 0);
+    int i = METEORA_DLMM_INITIALIZE_POSITION_PDA_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, lowerBinId);
     i += 4;
     putInt32LE(_data, i, width);
@@ -4179,7 +4178,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lowerBinId = getInt32LE(_data, i);
       i += 4;
@@ -4248,7 +4247,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(binLiquidityRemoval) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_REMOVE_LIQUIDITY_2_DISCRIMINATOR, _data, 0);
+    int i = METEORA_DLMM_REMOVE_LIQUIDITY_2_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(binLiquidityRemoval, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -4265,7 +4264,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var binLiquidityRemoval = Borsh.readVector(BinLiquidityReduction.class, BinLiquidityReduction::read, _data, i);
       i += Borsh.lenVector(binLiquidityRemoval);
@@ -4334,7 +4333,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[18 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_REMOVE_LIQUIDITY_BY_RANGE_2_DISCRIMINATOR, _data, 0);
+    int i = METEORA_DLMM_REMOVE_LIQUIDITY_BY_RANGE_2_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, fromBinId);
     i += 4;
     putInt32LE(_data, i, toBinId);
@@ -4360,7 +4359,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var fromBinId = getInt32LE(_data, i);
       i += 4;
@@ -4443,7 +4442,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(METEORA_DLMM_SWAP_2_DISCRIMINATOR, _data, 0);
+    int i = METEORA_DLMM_SWAP_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     putInt64LE(_data, i, minAmountOut);
@@ -4466,7 +4465,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountIn = getInt64LE(_data, i);
       i += 8;
@@ -4545,7 +4544,7 @@ public final class GlamProtocolProgram {
         18
         + (activeId == null || activeId.isEmpty() ? 1 : 5) + Borsh.len(remainingAccountsInfo)
     ];
-    int i = writeDiscriminator(METEORA_DLMM_SWAP_WITH_PRICE_IMPACT_2_DISCRIMINATOR, _data, 0);
+    int i = METEORA_DLMM_SWAP_WITH_PRICE_IMPACT_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     i += Borsh.writeOptional(activeId, _data, i);
@@ -4570,7 +4569,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountIn = getInt64LE(_data, i);
       i += 8;
@@ -4632,7 +4631,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(MINT_TOKENS_DISCRIMINATOR, _data, 0);
+    int i = MINT_TOKENS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amount);
@@ -4652,7 +4651,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       ++i;
@@ -4699,7 +4698,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9 + Borsh.len(denom)];
-    int i = writeDiscriminator(PRICE_DRIFT_USERS_DISCRIMINATOR, _data, 0);
+    int i = PRICE_DRIFT_USERS_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(denom, _data, i);
     _data[i] = (byte) numUsers;
 
@@ -4718,7 +4717,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
       i += Borsh.len(denom);
@@ -4767,7 +4766,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[11 + Borsh.len(denom)];
-    int i = writeDiscriminator(PRICE_DRIFT_VAULT_DEPOSITORS_DISCRIMINATOR, _data, 0);
+    int i = PRICE_DRIFT_VAULT_DEPOSITORS_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(denom, _data, i);
     _data[i] = (byte) numVaultDepositors;
     ++i;
@@ -4794,7 +4793,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
       i += Borsh.len(denom);
@@ -4857,7 +4856,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(denom)];
-    int i = writeDiscriminator(PRICE_KAMINO_OBLIGATIONS_DISCRIMINATOR, _data, 0);
+    int i = PRICE_KAMINO_OBLIGATIONS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(denom, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -4875,7 +4874,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
       return new PriceKaminoObligationsIxData(discriminator, denom);
@@ -4921,7 +4920,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9 + Borsh.len(denom)];
-    int i = writeDiscriminator(PRICE_KAMINO_VAULT_SHARES_DISCRIMINATOR, _data, 0);
+    int i = PRICE_KAMINO_VAULT_SHARES_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(denom, _data, i);
     _data[i] = (byte) numVaults;
 
@@ -4940,7 +4939,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
       i += Borsh.len(denom);
@@ -4981,7 +4980,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(denom)];
-    int i = writeDiscriminator(PRICE_METEORA_POSITIONS_DISCRIMINATOR, _data, 0);
+    int i = PRICE_METEORA_POSITIONS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(denom, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -4999,7 +4998,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
       return new PriceMeteoraPositionsIxData(discriminator, denom);
@@ -5036,7 +5035,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(denom)];
-    int i = writeDiscriminator(PRICE_STAKES_DISCRIMINATOR, _data, 0);
+    int i = PRICE_STAKES_DISCRIMINATOR.write(_data, 0);
     Borsh.write(denom, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -5054,7 +5053,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
       return new PriceStakesIxData(discriminator, denom);
@@ -5099,7 +5098,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(denom) + Borsh.lenVector(aggIndexes)];
-    int i = writeDiscriminator(PRICE_VAULT_TOKENS_DISCRIMINATOR, _data, 0);
+    int i = PRICE_VAULT_TOKENS_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(denom, _data, i);
     Borsh.writeVector(aggIndexes, _data, i);
 
@@ -5116,7 +5115,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var denom = PriceDenom.read(_data, i);
       i += Borsh.len(denom);
@@ -5163,7 +5162,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(QUEUED_REDEEM_DISCRIMINATOR, _data, 0);
+    int i = QUEUED_REDEEM_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, sharesIn);
@@ -5183,7 +5182,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       ++i;
@@ -5233,7 +5232,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(QUEUED_SUBSCRIBE_DISCRIMINATOR, _data, 0);
+    int i = QUEUED_SUBSCRIBE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amountIn);
@@ -5253,7 +5252,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       ++i;
@@ -5292,7 +5291,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(SET_PROTOCOL_FEES_DISCRIMINATOR, _data, 0);
+    int i = SET_PROTOCOL_FEES_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, baseFeeBps);
     i += 2;
     putInt16LE(_data, i, flowFeeBps);
@@ -5312,7 +5311,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var baseFeeBps = getInt16LE(_data, i);
       i += 2;
@@ -5353,7 +5352,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(SET_TOKEN_ACCOUNTS_STATES_DISCRIMINATOR, _data, 0);
+    int i = SET_TOKEN_ACCOUNTS_STATES_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
     ++i;
     _data[i] = (byte) (frozen ? 1 : 0);
@@ -5373,7 +5372,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       ++i;
@@ -5417,7 +5416,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[44];
-    int i = writeDiscriminator(STAKE_AUTHORIZE_DISCRIMINATOR, _data, 0);
+    int i = STAKE_AUTHORIZE_DISCRIMINATOR.write(_data, 0);
     newAuthority.write(_data, i);
     i += 32;
     putInt32LE(_data, i, stakerOrWithdrawer);
@@ -5437,7 +5436,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newAuthority = readPubKey(_data, i);
       i += 32;
@@ -5570,7 +5569,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(STAKE_MOVE_LAMPORTS_DISCRIMINATOR, _data, 0);
+    int i = STAKE_MOVE_LAMPORTS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamports);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -5588,7 +5587,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
       return new StakeMoveLamportsIxData(discriminator, lamports);
@@ -5628,7 +5627,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(STAKE_MOVE_STAKE_DISCRIMINATOR, _data, 0);
+    int i = STAKE_MOVE_STAKE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamports);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -5646,7 +5645,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
       return new StakeMoveStakeIxData(discriminator, lamports);
@@ -5700,7 +5699,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(STAKE_POOL_DEPOSIT_SOL_DISCRIMINATOR, _data, 0);
+    int i = STAKE_POOL_DEPOSIT_SOL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamportsIn);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -5718,7 +5717,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamportsIn = getInt64LE(_data, i);
       return new StakePoolDepositSolIxData(discriminator, lamportsIn);
@@ -5773,7 +5772,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(STAKE_POOL_DEPOSIT_SOL_WITH_SLIPPAGE_DISCRIMINATOR, _data, 0);
+    int i = STAKE_POOL_DEPOSIT_SOL_WITH_SLIPPAGE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamportsIn);
     i += 8;
     putInt64LE(_data, i, minimumPoolTokensOut);
@@ -5793,7 +5792,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamportsIn = getInt64LE(_data, i);
       i += 8;
@@ -5902,7 +5901,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(STAKE_POOL_DEPOSIT_STAKE_WITH_SLIPPAGE_DISCRIMINATOR, _data, 0);
+    int i = STAKE_POOL_DEPOSIT_STAKE_WITH_SLIPPAGE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, minimumPoolTokensOut);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -5920,7 +5919,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var minimumPoolTokensOut = getInt64LE(_data, i);
       return new StakePoolDepositStakeWithSlippageIxData(discriminator, minimumPoolTokensOut);
@@ -5974,7 +5973,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(STAKE_POOL_WITHDRAW_SOL_DISCRIMINATOR, _data, 0);
+    int i = STAKE_POOL_WITHDRAW_SOL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, poolTokensIn);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -5992,7 +5991,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var poolTokensIn = getInt64LE(_data, i);
       return new StakePoolWithdrawSolIxData(discriminator, poolTokensIn);
@@ -6047,7 +6046,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(STAKE_POOL_WITHDRAW_SOL_WITH_SLIPPAGE_DISCRIMINATOR, _data, 0);
+    int i = STAKE_POOL_WITHDRAW_SOL_WITH_SLIPPAGE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, poolTokensIn);
     i += 8;
     putInt64LE(_data, i, minimumLamportsOut);
@@ -6067,7 +6066,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var poolTokensIn = getInt64LE(_data, i);
       i += 8;
@@ -6128,7 +6127,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(STAKE_POOL_WITHDRAW_STAKE_DISCRIMINATOR, _data, 0);
+    int i = STAKE_POOL_WITHDRAW_STAKE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, poolTokensIn);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -6146,7 +6145,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var poolTokensIn = getInt64LE(_data, i);
       return new StakePoolWithdrawStakeIxData(discriminator, poolTokensIn);
@@ -6204,7 +6203,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(STAKE_POOL_WITHDRAW_STAKE_WITH_SLIPPAGE_DISCRIMINATOR, _data, 0);
+    int i = STAKE_POOL_WITHDRAW_STAKE_WITH_SLIPPAGE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, poolTokensIn);
     i += 8;
     putInt64LE(_data, i, minimumLamportsOut);
@@ -6224,7 +6223,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var poolTokensIn = getInt64LE(_data, i);
       i += 8;
@@ -6293,7 +6292,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(STAKE_SPLIT_DISCRIMINATOR, _data, 0);
+    int i = STAKE_SPLIT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamports);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -6311,7 +6310,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
       return new StakeSplitIxData(discriminator, lamports);
@@ -6352,7 +6351,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(STAKE_WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = STAKE_WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamports);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -6370,7 +6369,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
       return new StakeWithdrawIxData(discriminator, lamports);
@@ -6429,7 +6428,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(SUBSCRIBE_DISCRIMINATOR, _data, 0);
+    int i = SUBSCRIBE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
     ++i;
     putInt64LE(_data, i, amountIn);
@@ -6449,7 +6448,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       ++i;
@@ -6491,7 +6490,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SYSTEM_TRANSFER_DISCRIMINATOR, _data, 0);
+    int i = SYSTEM_TRANSFER_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamports);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -6509,7 +6508,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
       return new SystemTransferIxData(discriminator, lamports);
@@ -6570,7 +6569,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(TOKEN_TRANSFER_DISCRIMINATOR, _data, 0);
+    int i = TOKEN_TRANSFER_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamports);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -6588,7 +6587,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
       return new TokenTransferIxData(discriminator, lamports);
@@ -6631,7 +6630,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(TOKEN_TRANSFER_CHECKED_DISCRIMINATOR, _data, 0);
+    int i = TOKEN_TRANSFER_CHECKED_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamports);
     i += 8;
     _data[i] = (byte) decimals;
@@ -6651,7 +6650,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
       i += 8;
@@ -6692,7 +6691,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9 + Borsh.len(mintModel)];
-    int i = writeDiscriminator(UPDATE_MINT_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_MINT_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
     ++i;
     Borsh.write(mintModel, _data, i);
@@ -6710,7 +6709,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       ++i;
@@ -6749,7 +6748,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(UPDATE_MINT_APPLY_TIMELOCK_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_MINT_APPLY_TIMELOCK_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mintId;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -6767,7 +6766,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintId = _data[i] & 0xFF;
       return new UpdateMintApplyTimelockIxData(discriminator, mintId);
@@ -6799,7 +6798,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(state)];
-    int i = writeDiscriminator(UPDATE_STATE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_STATE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(state, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -6815,7 +6814,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var state = StateModel.read(_data, i);
       return new UpdateStateIxData(discriminator, state);
@@ -6865,7 +6864,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[40 + Borsh.len(voteAuthorize)];
-    int i = writeDiscriminator(VOTE_AUTHORIZE_DISCRIMINATOR, _data, 0);
+    int i = VOTE_AUTHORIZE_DISCRIMINATOR.write(_data, 0);
     newAuthority.write(_data, i);
     i += 32;
     Borsh.write(voteAuthorize, _data, i);
@@ -6885,7 +6884,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newAuthority = readPubKey(_data, i);
       i += 32;
@@ -6926,7 +6925,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(VOTE_UPDATE_COMMISSION_DISCRIMINATOR, _data, 0);
+    int i = VOTE_UPDATE_COMMISSION_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) newCommission;
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -6944,7 +6943,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newCommission = _data[i] & 0xFF;
       return new VoteUpdateCommissionIxData(discriminator, newCommission);
@@ -7005,7 +7004,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(VOTE_WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = VOTE_WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lamports);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -7023,7 +7022,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lamports = getInt64LE(_data, i);
       return new VoteWithdrawIxData(discriminator, lamports);
@@ -7065,7 +7064,7 @@ public final class GlamProtocolProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
@@ -7083,7 +7082,7 @@ public final class GlamProtocolProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new WithdrawIxData(discriminator, amount);

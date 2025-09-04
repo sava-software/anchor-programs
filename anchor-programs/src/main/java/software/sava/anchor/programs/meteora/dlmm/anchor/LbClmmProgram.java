@@ -30,8 +30,6 @@ import software.sava.core.tx.Instruction;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -43,6 +41,7 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class LbClmmProgram {
@@ -86,7 +85,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(liquidityParameter, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -102,7 +101,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityParameter = LiquidityParameter.read(_data, i);
       return new AddLiquidityIxData(discriminator, liquidityParameter);
@@ -158,7 +157,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_2_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_2_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(liquidityParameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -175,7 +174,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityParameter = LiquidityParameter.read(_data, i);
       i += Borsh.len(liquidityParameter);
@@ -236,7 +235,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_BY_STRATEGY_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_BY_STRATEGY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(liquidityParameter, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -254,7 +253,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityParameter = LiquidityParameterByStrategy.read(_data, i);
       return new AddLiquidityByStrategyIxData(discriminator, liquidityParameter);
@@ -310,7 +309,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_BY_STRATEGY_2_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_BY_STRATEGY_2_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(liquidityParameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -327,7 +326,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityParameter = LiquidityParameterByStrategy.read(_data, i);
       i += Borsh.len(liquidityParameter);
@@ -381,7 +380,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_BY_STRATEGY_ONE_SIDE_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_BY_STRATEGY_ONE_SIDE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(liquidityParameter, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -399,7 +398,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityParameter = LiquidityParameterByStrategyOneSide.read(_data, i);
       return new AddLiquidityByStrategyOneSideIxData(discriminator, liquidityParameter);
@@ -457,7 +456,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_BY_WEIGHT_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_BY_WEIGHT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(liquidityParameter, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -473,7 +472,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityParameter = LiquidityParameterByWeight.read(_data, i);
       return new AddLiquidityByWeightIxData(discriminator, liquidityParameter);
@@ -524,7 +523,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_ONE_SIDE_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_ONE_SIDE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(liquidityParameter, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -540,7 +539,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityParameter = LiquidityOneSideParameter.read(_data, i);
       return new AddLiquidityOneSideIxData(discriminator, liquidityParameter);
@@ -591,7 +590,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(parameter)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_ONE_SIDE_PRECISE_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_ONE_SIDE_PRECISE_DISCRIMINATOR.write(_data, 0);
     Borsh.write(parameter, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -607,7 +606,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var parameter = AddLiquiditySingleSidePreciseParameter.read(_data, i);
       return new AddLiquidityOneSidePreciseIxData(discriminator, parameter);
@@ -655,7 +654,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(liquidityParameter) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_ONE_SIDE_PRECISE_2_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_ONE_SIDE_PRECISE_2_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(liquidityParameter, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -672,7 +671,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityParameter = AddLiquiditySingleSidePreciseParameter2.read(_data, i);
       i += Borsh.len(liquidityParameter);
@@ -769,7 +768,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(CLAIM_FEE_2_DISCRIMINATOR, _data, 0);
+    int i = CLAIM_FEE_2_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, minBinId);
     i += 4;
     putInt32LE(_data, i, maxBinId);
@@ -792,7 +791,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var minBinId = getInt32LE(_data, i);
       i += 4;
@@ -849,7 +848,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(CLAIM_REWARD_DISCRIMINATOR, _data, 0);
+    int i = CLAIM_REWARD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -867,7 +866,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
       return new ClaimRewardIxData(discriminator, rewardIndex);
@@ -918,7 +917,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(CLAIM_REWARD_2_DISCRIMINATOR, _data, 0);
+    int i = CLAIM_REWARD_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     putInt32LE(_data, i, minBinId);
@@ -944,7 +943,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
       i += 8;
@@ -1125,7 +1124,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[11];
-    int i = writeDiscriminator(DECREASE_POSITION_LENGTH_DISCRIMINATOR, _data, 0);
+    int i = DECREASE_POSITION_LENGTH_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, lengthToRemove);
     i += 2;
     _data[i] = (byte) side;
@@ -1145,7 +1144,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lengthToRemove = getInt16LE(_data, i);
       i += 2;
@@ -1177,7 +1176,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(ix)];
-    int i = writeDiscriminator(FOR_IDL_TYPE_GENERATION_DO_NOT_CALL_DISCRIMINATOR, _data, 0);
+    int i = FOR_IDL_TYPE_GENERATION_DO_NOT_CALL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(ix, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -1195,7 +1194,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ix = DummyIx.read(_data, i);
       return new ForIdlTypeGenerationDoNotCallIxData(discriminator, ix);
@@ -1243,7 +1242,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[25 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(FUND_REWARD_DISCRIMINATOR, _data, 0);
+    int i = FUND_REWARD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     putInt64LE(_data, i, amount);
@@ -1269,7 +1268,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
       i += 8;
@@ -1324,7 +1323,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(GO_TO_A_BIN_DISCRIMINATOR, _data, 0);
+    int i = GO_TO_A_BIN_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, binId);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -1342,7 +1341,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var binId = getInt32LE(_data, i);
       return new GoToABinIxData(discriminator, binId);
@@ -1380,7 +1379,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(INCREASE_ORACLE_LENGTH_DISCRIMINATOR, _data, 0);
+    int i = INCREASE_ORACLE_LENGTH_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, lengthToAdd);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -1398,7 +1397,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lengthToAdd = getInt64LE(_data, i);
       return new IncreaseOracleLengthIxData(discriminator, lengthToAdd);
@@ -1441,7 +1440,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[11];
-    int i = writeDiscriminator(INCREASE_POSITION_LENGTH_DISCRIMINATOR, _data, 0);
+    int i = INCREASE_POSITION_LENGTH_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, lengthToAdd);
     i += 2;
     _data[i] = (byte) side;
@@ -1461,7 +1460,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lengthToAdd = getInt16LE(_data, i);
       i += 2;
@@ -1501,7 +1500,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(INITIALIZE_BIN_ARRAY_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_BIN_ARRAY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, index);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -1519,7 +1518,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var index = getInt64LE(_data, i);
       return new InitializeBinArrayIxData(discriminator, index);
@@ -1593,7 +1592,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_CUSTOMIZABLE_PERMISSIONLESS_LB_PAIR_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_CUSTOMIZABLE_PERMISSIONLESS_LB_PAIR_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -1609,7 +1608,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CustomizableParams.read(_data, i);
       return new InitializeCustomizablePermissionlessLbPairIxData(discriminator, params);
@@ -1670,7 +1669,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_CUSTOMIZABLE_PERMISSIONLESS_LB_PAIR_2_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_CUSTOMIZABLE_PERMISSIONLESS_LB_PAIR_2_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -1686,7 +1685,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = CustomizableParams.read(_data, i);
       return new InitializeCustomizablePermissionlessLbPair2IxData(discriminator, params);
@@ -1740,7 +1739,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[14];
-    int i = writeDiscriminator(INITIALIZE_LB_PAIR_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_LB_PAIR_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, activeId);
     i += 4;
     putInt16LE(_data, i, binStep);
@@ -1760,7 +1759,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var activeId = getInt32LE(_data, i);
       i += 4;
@@ -1824,7 +1823,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_LB_PAIR_2_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_LB_PAIR_2_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -1842,7 +1841,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitializeLbPair2Params.read(_data, i);
       return new InitializeLbPair2IxData(discriminator, params);
@@ -1902,7 +1901,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(ixData)];
-    int i = writeDiscriminator(INITIALIZE_PERMISSION_LB_PAIR_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_PERMISSION_LB_PAIR_DISCRIMINATOR.write(_data, 0);
     Borsh.write(ixData, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -1920,7 +1919,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ixData = InitPermissionPairIx.read(_data, i);
       return new InitializePermissionLbPairIxData(discriminator, ixData);
@@ -1963,7 +1962,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(INITIALIZE_POSITION_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_POSITION_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, lowerBinId);
     i += 4;
     putInt32LE(_data, i, width);
@@ -1983,7 +1982,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lowerBinId = getInt32LE(_data, i);
       i += 4;
@@ -2041,7 +2040,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[56];
-    int i = writeDiscriminator(INITIALIZE_POSITION_BY_OPERATOR_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_POSITION_BY_OPERATOR_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, lowerBinId);
     i += 4;
     putInt32LE(_data, i, width);
@@ -2069,7 +2068,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lowerBinId = getInt32LE(_data, i);
       i += 4;
@@ -2132,7 +2131,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(INITIALIZE_POSITION_PDA_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_POSITION_PDA_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, lowerBinId);
     i += 4;
     putInt32LE(_data, i, width);
@@ -2152,7 +2151,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var lowerBinId = getInt32LE(_data, i);
       i += 4;
@@ -2191,7 +2190,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(ix)];
-    int i = writeDiscriminator(INITIALIZE_PRESET_PARAMETER_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_PRESET_PARAMETER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(ix, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -2209,7 +2208,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ix = InitPresetParametersIx.read(_data, i);
       return new InitializePresetParameterIxData(discriminator, ix);
@@ -2242,7 +2241,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(ix)];
-    int i = writeDiscriminator(INITIALIZE_PRESET_PARAMETER_2_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_PRESET_PARAMETER_2_DISCRIMINATOR.write(_data, 0);
     Borsh.write(ix, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -2260,7 +2259,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var ix = InitPresetParameters2Ix.read(_data, i);
       return new InitializePresetParameter2IxData(discriminator, ix);
@@ -2308,7 +2307,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[56];
-    int i = writeDiscriminator(INITIALIZE_REWARD_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_REWARD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     putInt64LE(_data, i, rewardDuration);
@@ -2333,7 +2332,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
       i += 8;
@@ -2460,7 +2459,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(REBALANCE_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = REBALANCE_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(params, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -2477,7 +2476,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = RebalanceLiquidityParams.read(_data, i);
       i += Borsh.len(params);
@@ -2578,7 +2577,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(binLiquidityRemoval)];
-    int i = writeDiscriminator(REMOVE_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(binLiquidityRemoval, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -2594,7 +2593,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var binLiquidityRemoval = Borsh.readVector(BinLiquidityReduction.class, BinLiquidityReduction::read, _data, i);
       return new RemoveLiquidityIxData(discriminator, binLiquidityRemoval);
@@ -2652,7 +2651,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(binLiquidityRemoval) + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(REMOVE_LIQUIDITY_2_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_LIQUIDITY_2_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(binLiquidityRemoval, _data, i);
     Borsh.write(remainingAccountsInfo, _data, i);
 
@@ -2669,7 +2668,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var binLiquidityRemoval = Borsh.readVector(BinLiquidityReduction.class, BinLiquidityReduction::read, _data, i);
       i += Borsh.lenVector(binLiquidityRemoval);
@@ -2732,7 +2731,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[18];
-    int i = writeDiscriminator(REMOVE_LIQUIDITY_BY_RANGE_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_LIQUIDITY_BY_RANGE_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, fromBinId);
     i += 4;
     putInt32LE(_data, i, toBinId);
@@ -2757,7 +2756,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var fromBinId = getInt32LE(_data, i);
       i += 4;
@@ -2826,7 +2825,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[18 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(REMOVE_LIQUIDITY_BY_RANGE_2_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_LIQUIDITY_BY_RANGE_2_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, fromBinId);
     i += 4;
     putInt32LE(_data, i, toBinId);
@@ -2852,7 +2851,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var fromBinId = getInt32LE(_data, i);
       i += 4;
@@ -2899,7 +2898,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SET_ACTIVATION_POINT_DISCRIMINATOR, _data, 0);
+    int i = SET_ACTIVATION_POINT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, activationPoint);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -2917,7 +2916,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var activationPoint = getInt64LE(_data, i);
       return new SetActivationPointIxData(discriminator, activationPoint);
@@ -2949,7 +2948,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(SET_PAIR_STATUS_DISCRIMINATOR, _data, 0);
+    int i = SET_PAIR_STATUS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) status;
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -2967,7 +2966,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var status = _data[i] & 0xFF;
       return new SetPairStatusIxData(discriminator, status);
@@ -2999,7 +2998,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(SET_PAIR_STATUS_PERMISSIONLESS_DISCRIMINATOR, _data, 0);
+    int i = SET_PAIR_STATUS_PERMISSIONLESS_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) status;
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -3017,7 +3016,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var status = _data[i] & 0xFF;
       return new SetPairStatusPermissionlessIxData(discriminator, status);
@@ -3049,7 +3048,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SET_PRE_ACTIVATION_DURATION_DISCRIMINATOR, _data, 0);
+    int i = SET_PRE_ACTIVATION_DURATION_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, preActivationDuration);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -3067,7 +3066,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var preActivationDuration = getInt64LE(_data, i);
       return new SetPreActivationDurationIxData(discriminator, preActivationDuration);
@@ -3099,7 +3098,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(SET_PRE_ACTIVATION_SWAP_ADDRESS_DISCRIMINATOR, _data, 0);
+    int i = SET_PRE_ACTIVATION_SWAP_ADDRESS_DISCRIMINATOR.write(_data, 0);
     preActivationSwapAddress.write(_data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -3117,7 +3116,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var preActivationSwapAddress = readPubKey(_data, i);
       return new SetPreActivationSwapAddressIxData(discriminator, preActivationSwapAddress);
@@ -3175,7 +3174,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(SWAP_DISCRIMINATOR, _data, 0);
+    int i = SWAP_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     putInt64LE(_data, i, minAmountOut);
@@ -3195,7 +3194,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountIn = getInt64LE(_data, i);
       i += 8;
@@ -3261,7 +3260,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(SWAP_2_DISCRIMINATOR, _data, 0);
+    int i = SWAP_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     putInt64LE(_data, i, minAmountOut);
@@ -3284,7 +3283,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountIn = getInt64LE(_data, i);
       i += 8;
@@ -3349,7 +3348,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(SWAP_EXACT_OUT_DISCRIMINATOR, _data, 0);
+    int i = SWAP_EXACT_OUT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxInAmount);
     i += 8;
     putInt64LE(_data, i, outAmount);
@@ -3369,7 +3368,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxInAmount = getInt64LE(_data, i);
       i += 8;
@@ -3435,7 +3434,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(SWAP_EXACT_OUT_2_DISCRIMINATOR, _data, 0);
+    int i = SWAP_EXACT_OUT_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxInAmount);
     i += 8;
     putInt64LE(_data, i, outAmount);
@@ -3458,7 +3457,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxInAmount = getInt64LE(_data, i);
       i += 8;
@@ -3527,7 +3526,7 @@ public final class LbClmmProgram {
         18
         + (activeId == null || activeId.isEmpty() ? 1 : 5)
     ];
-    int i = writeDiscriminator(SWAP_WITH_PRICE_IMPACT_DISCRIMINATOR, _data, 0);
+    int i = SWAP_WITH_PRICE_IMPACT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     i += Borsh.writeOptional(activeId, _data, i);
@@ -3549,7 +3548,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountIn = getInt64LE(_data, i);
       i += 8;
@@ -3624,7 +3623,7 @@ public final class LbClmmProgram {
         18
         + (activeId == null || activeId.isEmpty() ? 1 : 5) + Borsh.len(remainingAccountsInfo)
     ];
-    int i = writeDiscriminator(SWAP_WITH_PRICE_IMPACT_2_DISCRIMINATOR, _data, 0);
+    int i = SWAP_WITH_PRICE_IMPACT_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountIn);
     i += 8;
     i += Borsh.writeOptional(activeId, _data, i);
@@ -3649,7 +3648,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountIn = getInt64LE(_data, i);
       i += 8;
@@ -3701,7 +3700,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(feeParameter)];
-    int i = writeDiscriminator(UPDATE_BASE_FEE_PARAMETERS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_BASE_FEE_PARAMETERS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(feeParameter, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -3719,7 +3718,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feeParameter = BaseFeeParameter.read(_data, i);
       return new UpdateBaseFeeParametersIxData(discriminator, feeParameter);
@@ -3754,7 +3753,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(feeParameter)];
-    int i = writeDiscriminator(UPDATE_DYNAMIC_FEE_PARAMETERS_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_DYNAMIC_FEE_PARAMETERS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(feeParameter, _data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -3772,7 +3771,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var feeParameter = DynamicFeeParameter.read(_data, i);
       return new UpdateDynamicFeeParametersIxData(discriminator, feeParameter);
@@ -3806,7 +3805,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(UPDATE_FEES_AND_REWARD_2_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_FEES_AND_REWARD_2_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, minBinId);
     i += 4;
     putInt32LE(_data, i, maxBinId);
@@ -3826,7 +3825,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var minBinId = getInt32LE(_data, i);
       i += 4;
@@ -3885,7 +3884,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(UPDATE_POSITION_OPERATOR_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_POSITION_OPERATOR_DISCRIMINATOR.write(_data, 0);
     operator.write(_data, i);
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
@@ -3903,7 +3902,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var operator = readPubKey(_data, i);
       return new UpdatePositionOperatorIxData(discriminator, operator);
@@ -3942,7 +3941,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(UPDATE_REWARD_DURATION_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_REWARD_DURATION_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     putInt64LE(_data, i, newDuration);
@@ -3962,7 +3961,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
       i += 8;
@@ -4003,7 +4002,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[48];
-    int i = writeDiscriminator(UPDATE_REWARD_FUNDER_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_REWARD_FUNDER_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     newFunder.write(_data, i);
@@ -4023,7 +4022,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
       i += 8;
@@ -4076,7 +4075,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(WITHDRAW_INELIGIBLE_REWARD_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_INELIGIBLE_REWARD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     Borsh.write(remainingAccountsInfo, _data, i);
@@ -4094,7 +4093,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
       i += 8;
@@ -4152,7 +4151,7 @@ public final class LbClmmProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
-    int i = writeDiscriminator(WITHDRAW_PROTOCOL_FEE_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_PROTOCOL_FEE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxAmountX);
     i += 8;
     putInt64LE(_data, i, maxAmountY);
@@ -4175,7 +4174,7 @@ public final class LbClmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxAmountX = getInt64LE(_data, i);
       i += 8;

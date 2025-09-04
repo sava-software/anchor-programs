@@ -24,8 +24,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -33,6 +31,7 @@ import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class KaminoLendingProgram {
@@ -55,7 +54,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenArray(quoteCurrency)];
-    int i = writeDiscriminator(INIT_LENDING_MARKET_DISCRIMINATOR, _data, 0);
+    int i = INIT_LENDING_MARKET_DISCRIMINATOR.write(_data, 0);
     Borsh.writeArray(quoteCurrency, _data, i);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -74,7 +73,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var quoteCurrency = new byte[32];
       Borsh.readArray(quoteCurrency, _data, i);
@@ -107,7 +106,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.lenArray(value)];
-    int i = writeDiscriminator(UPDATE_LENDING_MARKET_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_LENDING_MARKET_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, mode);
     i += 8;
     Borsh.writeArray(value, _data, i);
@@ -128,7 +127,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mode = getInt64LE(_data, i);
       i += 8;
@@ -228,7 +227,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(INIT_FARMS_FOR_RESERVE_DISCRIMINATOR, _data, 0);
+    int i = INIT_FARMS_FOR_RESERVE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mode;
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -246,7 +245,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mode = _data[i] & 0xFF;
       return new InitFarmsForReserveIxData(discriminator, mode);
@@ -284,7 +283,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[9 + Borsh.len(mode) + Borsh.lenVector(value)];
-    int i = writeDiscriminator(UPDATE_RESERVE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_RESERVE_CONFIG_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(mode, _data, i);
     i += Borsh.writeVector(value, _data, i);
     _data[i] = (byte) (skipConfigIntegrityValidation ? 1 : 0);
@@ -305,7 +304,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mode = UpdateConfigMode.read(_data, i);
       i += Borsh.len(mode);
@@ -378,7 +377,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_PROTOCOL_FEE_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_PROTOCOL_FEE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -396,7 +395,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new WithdrawProtocolFeeIxData(discriminator, amount);
@@ -434,7 +433,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SOCIALIZE_LOSS_DISCRIMINATOR, _data, 0);
+    int i = SOCIALIZE_LOSS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -452,7 +451,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new SocializeLossIxData(discriminator, liquidityAmount);
@@ -498,7 +497,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SOCIALIZE_LOSS_V_2_DISCRIMINATOR, _data, 0);
+    int i = SOCIALIZE_LOSS_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -516,7 +515,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new SocializeLossV2IxData(discriminator, liquidityAmount);
@@ -550,7 +549,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(MARK_OBLIGATION_FOR_DELEVERAGING_DISCRIMINATOR, _data, 0);
+    int i = MARK_OBLIGATION_FOR_DELEVERAGING_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) autodeleverageTargetLtvPct;
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -568,7 +567,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var autodeleverageTargetLtvPct = _data[i] & 0xFF;
       return new MarkObligationForDeleveragingIxData(discriminator, autodeleverageTargetLtvPct);
@@ -615,7 +614,7 @@ public final class KaminoLendingProgram {
     final var keys = AccountMeta.NO_KEYS;
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(REFRESH_RESERVES_BATCH_DISCRIMINATOR, _data, 0);
+    int i = REFRESH_RESERVES_BATCH_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (skipPriceUpdates ? 1 : 0);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -633,7 +632,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var skipPriceUpdates = _data[i] == 1;
       return new RefreshReservesBatchIxData(discriminator, skipPriceUpdates);
@@ -685,7 +684,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_RESERVE_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_RESERVE_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -703,7 +702,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new DepositReserveLiquidityIxData(discriminator, liquidityAmount);
@@ -755,7 +754,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(REDEEM_RESERVE_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = REDEEM_RESERVE_COLLATERAL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -773,7 +772,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var collateralAmount = getInt64LE(_data, i);
       return new RedeemReserveCollateralIxData(discriminator, collateralAmount);
@@ -819,7 +818,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(args)];
-    int i = writeDiscriminator(INIT_OBLIGATION_DISCRIMINATOR, _data, 0);
+    int i = INIT_OBLIGATION_DISCRIMINATOR.write(_data, 0);
     Borsh.write(args, _data, i);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -837,7 +836,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var args = InitObligationArgs.read(_data, i);
       return new InitObligationIxData(discriminator, args);
@@ -886,7 +885,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(INIT_OBLIGATION_FARMS_FOR_RESERVE_DISCRIMINATOR, _data, 0);
+    int i = INIT_OBLIGATION_FARMS_FOR_RESERVE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mode;
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -904,7 +903,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mode = _data[i] & 0xFF;
       return new InitObligationFarmsForReserveIxData(discriminator, mode);
@@ -952,7 +951,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(REFRESH_OBLIGATION_FARMS_FOR_RESERVE_DISCRIMINATOR, _data, 0);
+    int i = REFRESH_OBLIGATION_FARMS_FOR_RESERVE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mode;
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -970,7 +969,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mode = _data[i] & 0xFF;
       return new RefreshObligationFarmsForReserveIxData(discriminator, mode);
@@ -1025,7 +1024,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_OBLIGATION_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_OBLIGATION_COLLATERAL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1043,7 +1042,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var collateralAmount = getInt64LE(_data, i);
       return new DepositObligationCollateralIxData(discriminator, collateralAmount);
@@ -1095,7 +1094,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1113,7 +1112,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var collateralAmount = getInt64LE(_data, i);
       return new DepositObligationCollateralV2IxData(discriminator, collateralAmount);
@@ -1159,7 +1158,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_OBLIGATION_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_OBLIGATION_COLLATERAL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1177,7 +1176,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var collateralAmount = getInt64LE(_data, i);
       return new WithdrawObligationCollateralIxData(discriminator, collateralAmount);
@@ -1229,7 +1228,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1247,7 +1246,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var collateralAmount = getInt64LE(_data, i);
       return new WithdrawObligationCollateralV2IxData(discriminator, collateralAmount);
@@ -1299,7 +1298,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(BORROW_OBLIGATION_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = BORROW_OBLIGATION_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1317,7 +1316,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new BorrowObligationLiquidityIxData(discriminator, liquidityAmount);
@@ -1375,7 +1374,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(BORROW_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR, _data, 0);
+    int i = BORROW_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1393,7 +1392,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new BorrowObligationLiquidityV2IxData(discriminator, liquidityAmount);
@@ -1439,7 +1438,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(REPAY_OBLIGATION_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = REPAY_OBLIGATION_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1457,7 +1456,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new RepayObligationLiquidityIxData(discriminator, liquidityAmount);
@@ -1511,7 +1510,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(REPAY_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR, _data, 0);
+    int i = REPAY_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1529,7 +1528,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new RepayObligationLiquidityV2IxData(discriminator, liquidityAmount);
@@ -1614,7 +1613,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(REPAY_AND_WITHDRAW_AND_REDEEM_DISCRIMINATOR, _data, 0);
+    int i = REPAY_AND_WITHDRAW_AND_REDEEM_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, repayAmount);
     i += 8;
     putInt64LE(_data, i, withdrawCollateralAmount);
@@ -1634,7 +1633,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var repayAmount = getInt64LE(_data, i);
       i += 8;
@@ -1733,7 +1732,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(DEPOSIT_AND_WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_AND_WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
     i += 8;
     putInt64LE(_data, i, withdrawCollateralAmount);
@@ -1753,7 +1752,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       i += 8;
@@ -1813,7 +1812,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1831,7 +1830,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new DepositReserveLiquidityAndObligationCollateralIxData(discriminator, liquidityAmount);
@@ -1893,7 +1892,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1911,7 +1910,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new DepositReserveLiquidityAndObligationCollateralV2IxData(discriminator, liquidityAmount);
@@ -1967,7 +1966,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -1985,7 +1984,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var collateralAmount = getInt64LE(_data, i);
       return new WithdrawObligationCollateralAndRedeemReserveCollateralIxData(discriminator, collateralAmount);
@@ -2047,7 +2046,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, collateralAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -2065,7 +2064,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var collateralAmount = getInt64LE(_data, i);
       return new WithdrawObligationCollateralAndRedeemReserveCollateralV2IxData(discriminator, collateralAmount);
@@ -2135,7 +2134,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[32];
-    int i = writeDiscriminator(LIQUIDATE_OBLIGATION_AND_REDEEM_RESERVE_COLLATERAL_DISCRIMINATOR, _data, 0);
+    int i = LIQUIDATE_OBLIGATION_AND_REDEEM_RESERVE_COLLATERAL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
     i += 8;
     putInt64LE(_data, i, minAcceptableReceivedLiquidityAmount);
@@ -2160,7 +2159,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       i += 8;
@@ -2248,7 +2247,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[32];
-    int i = writeDiscriminator(LIQUIDATE_OBLIGATION_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR, _data, 0);
+    int i = LIQUIDATE_OBLIGATION_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
     i += 8;
     putInt64LE(_data, i, minAcceptableReceivedLiquidityAmount);
@@ -2273,7 +2272,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       i += 8;
@@ -2334,7 +2333,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(FLASH_REPAY_RESERVE_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = FLASH_REPAY_RESERVE_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
     i += 8;
     _data[i] = (byte) borrowInstructionIndex;
@@ -2354,7 +2353,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       i += 8;
@@ -2410,7 +2409,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(FLASH_BORROW_RESERVE_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = FLASH_BORROW_RESERVE_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, liquidityAmount);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -2428,7 +2427,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var liquidityAmount = getInt64LE(_data, i);
       return new FlashBorrowReserveLiquidityIxData(discriminator, liquidityAmount);
@@ -2462,7 +2461,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(REQUEST_ELEVATION_GROUP_DISCRIMINATOR, _data, 0);
+    int i = REQUEST_ELEVATION_GROUP_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) elevationGroup;
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -2480,7 +2479,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var elevationGroup = _data[i] & 0xFF;
       return new RequestElevationGroupIxData(discriminator, elevationGroup);
@@ -2543,7 +2542,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(INIT_USER_METADATA_DISCRIMINATOR, _data, 0);
+    int i = INIT_USER_METADATA_DISCRIMINATOR.write(_data, 0);
     userLookupTable.write(_data, i);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -2561,7 +2560,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var userLookupTable = readPubKey(_data, i);
       return new InitUserMetadataIxData(discriminator, userLookupTable);
@@ -2629,7 +2628,7 @@ public final class KaminoLendingProgram {
 
     final byte[] _shortUrl = shortUrl.getBytes(UTF_8);
     final byte[] _data = new byte[12 + Borsh.lenVector(_shortUrl)];
-    int i = writeDiscriminator(INIT_REFERRER_STATE_AND_SHORT_URL_DISCRIMINATOR, _data, 0);
+    int i = INIT_REFERRER_STATE_AND_SHORT_URL_DISCRIMINATOR.write(_data, 0);
     Borsh.writeVector(_shortUrl, _data, i);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
@@ -2649,7 +2648,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var shortUrl = Borsh.string(_data, i);
       return new InitReferrerStateAndShortUrlIxData(discriminator, shortUrl, shortUrl.getBytes(UTF_8));
@@ -2702,7 +2701,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[9 + Borsh.len(order)];
-    int i = writeDiscriminator(SET_OBLIGATION_ORDER_DISCRIMINATOR, _data, 0);
+    int i = SET_OBLIGATION_ORDER_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) index;
     ++i;
     Borsh.write(order, _data, i);
@@ -2722,7 +2721,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var index = _data[i] & 0xFF;
       ++i;
@@ -2777,7 +2776,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(mode) + Borsh.lenVector(value)];
-    int i = writeDiscriminator(UPDATE_GLOBAL_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_GLOBAL_CONFIG_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(mode, _data, i);
     Borsh.writeVector(value, _data, i);
 
@@ -2794,7 +2793,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mode = UpdateGlobalConfigMode.read(_data, i);
       i += Borsh.len(mode);
@@ -2849,7 +2848,7 @@ public final class KaminoLendingProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(reserveFarmKind) + Borsh.len(assetTier) + Borsh.len(feeCalculation) + Borsh.len(reserveStatus) + Borsh.len(updateConfigMode) + Borsh.len(updateLendingMarketConfigValue) + Borsh.len(updateLendingMarketConfigMode)];
-    int i = writeDiscriminator(IDL_MISSING_TYPES_DISCRIMINATOR, _data, 0);
+    int i = IDL_MISSING_TYPES_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(reserveFarmKind, _data, i);
     i += Borsh.write(assetTier, _data, i);
     i += Borsh.write(feeCalculation, _data, i);
@@ -2878,7 +2877,7 @@ public final class KaminoLendingProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var reserveFarmKind = ReserveFarmKind.read(_data, i);
       i += Borsh.len(reserveFarmKind);

@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.metadao.conditional_vault.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface ConditionalVaultError extends ProgramError permits
     ConditionalVaultError.AssertFailed,

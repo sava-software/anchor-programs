@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.marinade.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface MarinadeFinanceError extends ProgramError permits
     MarinadeFinanceError.WrongReserveOwner,

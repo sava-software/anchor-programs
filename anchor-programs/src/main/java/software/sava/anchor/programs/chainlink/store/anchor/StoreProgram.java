@@ -14,14 +14,13 @@ import software.sava.core.tx.Instruction;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class StoreProgram {
@@ -42,7 +41,7 @@ public final class StoreProgram {
 
     final byte[] _description = description.getBytes(UTF_8);
     final byte[] _data = new byte[18 + Borsh.lenVector(_description)];
-    int i = writeDiscriminator(CREATE_FEED_DISCRIMINATOR, _data, 0);
+    int i = CREATE_FEED_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(_description, _data, i);
     _data[i] = (byte) decimals;
     ++i;
@@ -79,7 +78,7 @@ public final class StoreProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var description = Borsh.string(_data, i);
       i += (Integer.BYTES + getInt32LE(_data, i));
@@ -145,7 +144,7 @@ public final class StoreProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(TRANSFER_FEED_OWNERSHIP_DISCRIMINATOR, _data, 0);
+    int i = TRANSFER_FEED_OWNERSHIP_DISCRIMINATOR.write(_data, 0);
     proposedOwner.write(_data, i);
 
     return Instruction.createInstruction(invokedStoreProgramMeta, keys, _data);
@@ -163,7 +162,7 @@ public final class StoreProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var proposedOwner = readPubKey(_data, i);
       return new TransferFeedOwnershipIxData(discriminator, proposedOwner);
@@ -212,7 +211,7 @@ public final class StoreProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(SET_VALIDATOR_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = SET_VALIDATOR_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt32LE(_data, i, flaggingThreshold);
 
     return Instruction.createInstruction(invokedStoreProgramMeta, keys, _data);
@@ -230,7 +229,7 @@ public final class StoreProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var flaggingThreshold = getInt32LE(_data, i);
       return new SetValidatorConfigIxData(discriminator, flaggingThreshold);
@@ -264,7 +263,7 @@ public final class StoreProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(SET_WRITER_DISCRIMINATOR, _data, 0);
+    int i = SET_WRITER_DISCRIMINATOR.write(_data, 0);
     writer.write(_data, i);
 
     return Instruction.createInstruction(invokedStoreProgramMeta, keys, _data);
@@ -282,7 +281,7 @@ public final class StoreProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var writer = readPubKey(_data, i);
       return new SetWriterIxData(discriminator, writer);
@@ -331,7 +330,7 @@ public final class StoreProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(round)];
-    int i = writeDiscriminator(SUBMIT_DISCRIMINATOR, _data, 0);
+    int i = SUBMIT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(round, _data, i);
 
     return Instruction.createInstruction(invokedStoreProgramMeta, keys, _data);
@@ -349,7 +348,7 @@ public final class StoreProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var round = NewTransmission.read(_data, i);
       return new SubmitIxData(discriminator, round);
@@ -395,7 +394,7 @@ public final class StoreProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(TRANSFER_STORE_OWNERSHIP_DISCRIMINATOR, _data, 0);
+    int i = TRANSFER_STORE_OWNERSHIP_DISCRIMINATOR.write(_data, 0);
     proposedOwner.write(_data, i);
 
     return Instruction.createInstruction(invokedStoreProgramMeta, keys, _data);
@@ -413,7 +412,7 @@ public final class StoreProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var proposedOwner = readPubKey(_data, i);
       return new TransferStoreOwnershipIxData(discriminator, proposedOwner);
@@ -467,7 +466,7 @@ public final class StoreProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(scope)];
-    int i = writeDiscriminator(QUERY_DISCRIMINATOR, _data, 0);
+    int i = QUERY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(scope, _data, i);
 
     return Instruction.createInstruction(invokedStoreProgramMeta, keys, _data);
@@ -483,7 +482,7 @@ public final class StoreProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var scope = Scope.read(_data, i);
       return new QueryIxData(discriminator, scope);

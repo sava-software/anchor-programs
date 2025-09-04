@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.chainlink.store.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface StoreError extends ProgramError permits
     StoreError.Unauthorized,

@@ -8,10 +8,10 @@ import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 import software.sava.rpc.json.http.response.AccountInfo;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 
 // * This struct is a duplicate of SignedMsgUserOrdersZeroCopy
 // * It is used to give anchor an struct to generate the idl for clients
@@ -54,7 +54,7 @@ public record SignedMsgUserOrders(PublicKey _address,
     if (_data == null || _data.length == 0) {
       return null;
     }
-    final var discriminator = parseDiscriminator(_data, offset);
+    final var discriminator = createAnchorDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var authorityPubkey = readPubKey(_data, i);
     i += 32;

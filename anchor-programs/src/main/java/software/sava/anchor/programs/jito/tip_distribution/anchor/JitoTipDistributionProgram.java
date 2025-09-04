@@ -9,8 +9,6 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -20,6 +18,7 @@ import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class JitoTipDistributionProgram {
@@ -52,7 +51,7 @@ public final class JitoTipDistributionProgram {
     );
 
     final byte[] _data = new byte[17 + Borsh.lenVectorArray(proof)];
-    int i = writeDiscriminator(CLAIM_DISCRIMINATOR, _data, 0);
+    int i = CLAIM_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) bump;
     ++i;
     putInt64LE(_data, i, amount);
@@ -75,7 +74,7 @@ public final class JitoTipDistributionProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var bump = _data[i] & 0xFF;
       ++i;
@@ -142,7 +141,7 @@ public final class JitoTipDistributionProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(CLOSE_TIP_DISTRIBUTION_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = CLOSE_TIP_DISTRIBUTION_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, _data);
@@ -160,7 +159,7 @@ public final class JitoTipDistributionProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var epoch = getInt64LE(_data, i);
       return new CloseTipDistributionAccountIxData(discriminator, epoch);
@@ -199,7 +198,7 @@ public final class JitoTipDistributionProgram {
     );
 
     final byte[] _data = new byte[83];
-    int i = writeDiscriminator(INITIALIZE_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_DISCRIMINATOR.write(_data, 0);
     authority.write(_data, i);
     i += 32;
     expiredFundsAccount.write(_data, i);
@@ -230,7 +229,7 @@ public final class JitoTipDistributionProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var authority = readPubKey(_data, i);
       i += 32;
@@ -290,7 +289,7 @@ public final class JitoTipDistributionProgram {
     );
 
     final byte[] _data = new byte[72];
-    int i = writeDiscriminator(INITIALIZE_MERKLE_ROOT_UPLOAD_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_MERKLE_ROOT_UPLOAD_CONFIG_DISCRIMINATOR.write(_data, 0);
     authority.write(_data, i);
     i += 32;
     originalAuthority.write(_data, i);
@@ -310,7 +309,7 @@ public final class JitoTipDistributionProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var authority = readPubKey(_data, i);
       i += 32;
@@ -358,7 +357,7 @@ public final class JitoTipDistributionProgram {
     );
 
     final byte[] _data = new byte[43];
-    int i = writeDiscriminator(INITIALIZE_TIP_DISTRIBUTION_ACCOUNT_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_TIP_DISTRIBUTION_ACCOUNT_DISCRIMINATOR.write(_data, 0);
     merkleRootUploadAuthority.write(_data, i);
     i += 32;
     putInt16LE(_data, i, validatorCommissionBps);
@@ -383,7 +382,7 @@ public final class JitoTipDistributionProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var merkleRootUploadAuthority = readPubKey(_data, i);
       i += 32;
@@ -435,7 +434,7 @@ public final class JitoTipDistributionProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(newConfig)];
-    int i = writeDiscriminator(UPDATE_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_CONFIG_DISCRIMINATOR.write(_data, 0);
     Borsh.write(newConfig, _data, i);
 
     return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, _data);
@@ -453,7 +452,7 @@ public final class JitoTipDistributionProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newConfig = Config.read(_data, i);
       return new UpdateConfigIxData(discriminator, newConfig);
@@ -489,7 +488,7 @@ public final class JitoTipDistributionProgram {
     );
 
     final byte[] _data = new byte[72];
-    int i = writeDiscriminator(UPDATE_MERKLE_ROOT_UPLOAD_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_MERKLE_ROOT_UPLOAD_CONFIG_DISCRIMINATOR.write(_data, 0);
     authority.write(_data, i);
     i += 32;
     originalAuthority.write(_data, i);
@@ -509,7 +508,7 @@ public final class JitoTipDistributionProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var authority = readPubKey(_data, i);
       i += 32;
@@ -553,7 +552,7 @@ public final class JitoTipDistributionProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.lenArray(root)];
-    int i = writeDiscriminator(UPLOAD_MERKLE_ROOT_DISCRIMINATOR, _data, 0);
+    int i = UPLOAD_MERKLE_ROOT_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeArray(root, _data, i);
     putInt64LE(_data, i, maxTotalClaim);
     i += 8;
@@ -578,7 +577,7 @@ public final class JitoTipDistributionProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var root = new byte[32];
       i += Borsh.readArray(root, _data, i);

@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam.config.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface GlamConfigError extends ProgramError permits
     GlamConfigError.InvalidAuthority,

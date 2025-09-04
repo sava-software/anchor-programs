@@ -19,8 +19,6 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -32,6 +30,7 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class MarginfiProgram {
@@ -54,7 +53,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CONFIG_GROUP_FEE_DISCRIMINATOR, _data, 0);
+    int i = CONFIG_GROUP_FEE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (enableProgramFee ? 1 : 0);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -72,7 +71,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var enableProgramFee = _data[i] == 1;
       return new ConfigGroupFeeIxData(discriminator, enableProgramFee);
@@ -110,7 +109,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[76 + Borsh.len(programFeeFixed) + Borsh.len(programFeeRate)];
-    int i = writeDiscriminator(EDIT_GLOBAL_FEE_STATE_DISCRIMINATOR, _data, 0);
+    int i = EDIT_GLOBAL_FEE_STATE_DISCRIMINATOR.write(_data, 0);
     admin.write(_data, i);
     i += 32;
     feeWallet.write(_data, i);
@@ -140,7 +139,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var admin = readPubKey(_data, i);
       i += 32;
@@ -193,7 +192,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(settings)];
-    int i = writeDiscriminator(EDIT_STAKED_SETTINGS_DISCRIMINATOR, _data, 0);
+    int i = EDIT_STAKED_SETTINGS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(settings, _data, i);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -209,7 +208,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var settings = StakedSettingsEditConfig.read(_data, i);
       return new EditStakedSettingsIxData(discriminator, settings);
@@ -250,7 +249,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[76 + Borsh.len(programFeeFixed) + Borsh.len(programFeeRate)];
-    int i = writeDiscriminator(INIT_GLOBAL_FEE_STATE_DISCRIMINATOR, _data, 0);
+    int i = INIT_GLOBAL_FEE_STATE_DISCRIMINATOR.write(_data, 0);
     admin.write(_data, i);
     i += 32;
     feeWallet.write(_data, i);
@@ -280,7 +279,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var admin = readPubKey(_data, i);
       i += 32;
@@ -343,7 +342,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(settings)];
-    int i = writeDiscriminator(INIT_STAKED_SETTINGS_DISCRIMINATOR, _data, 0);
+    int i = INIT_STAKED_SETTINGS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(settings, _data, i);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -361,7 +360,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var settings = StakedSettingsConfig.read(_data, i);
       return new InitStakedSettingsIxData(discriminator, settings);
@@ -404,7 +403,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(LENDING_ACCOUNT_BORROW_DISCRIMINATOR, _data, 0);
+    int i = LENDING_ACCOUNT_BORROW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -422,7 +421,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new LendingAccountBorrowIxData(discriminator, amount);
@@ -485,7 +484,7 @@ public final class MarginfiProgram {
         16
         + (depositUpToLimit == null ? 1 : 2)
     ];
-    int i = writeDiscriminator(LENDING_ACCOUNT_DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = LENDING_ACCOUNT_DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
     i += 8;
     Borsh.writeOptional(depositUpToLimit, _data, i);
@@ -503,7 +502,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       i += 8;
@@ -566,7 +565,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(LENDING_ACCOUNT_LIQUIDATE_DISCRIMINATOR, _data, 0);
+    int i = LENDING_ACCOUNT_LIQUIDATE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, assetAmount);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -584,7 +583,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var assetAmount = getInt64LE(_data, i);
       return new LendingAccountLiquidateIxData(discriminator, assetAmount);
@@ -645,7 +644,7 @@ public final class MarginfiProgram {
         16
         + (repayAll == null ? 1 : 2)
     ];
-    int i = writeDiscriminator(LENDING_ACCOUNT_REPAY_DISCRIMINATOR, _data, 0);
+    int i = LENDING_ACCOUNT_REPAY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
     i += 8;
     Borsh.writeOptional(repayAll, _data, i);
@@ -663,7 +662,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       i += 8;
@@ -725,7 +724,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(LENDING_ACCOUNT_START_FLASHLOAN_DISCRIMINATOR, _data, 0);
+    int i = LENDING_ACCOUNT_START_FLASHLOAN_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, endIndex);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -743,7 +742,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var endIndex = getInt64LE(_data, i);
       return new LendingAccountStartFlashloanIxData(discriminator, endIndex);
@@ -791,7 +790,7 @@ public final class MarginfiProgram {
         16
         + (withdrawAll == null ? 1 : 2)
     ];
-    int i = writeDiscriminator(LENDING_ACCOUNT_WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = LENDING_ACCOUNT_WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
     i += 8;
     Borsh.writeOptional(withdrawAll, _data, i);
@@ -809,7 +808,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       i += 8;
@@ -936,7 +935,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(bankConfig)];
-    int i = writeDiscriminator(LENDING_POOL_ADD_BANK_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_ADD_BANK_DISCRIMINATOR.write(_data, 0);
     Borsh.write(bankConfig, _data, i);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -954,7 +953,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var bankConfig = BankConfigCompact.read(_data, i);
       return new LendingPoolAddBankIxData(discriminator, bankConfig);
@@ -1020,7 +1019,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(LENDING_POOL_ADD_BANK_PERMISSIONLESS_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_ADD_BANK_PERMISSIONLESS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, bankSeed);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -1038,7 +1037,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var bankSeed = getInt64LE(_data, i);
       return new LendingPoolAddBankPermissionlessIxData(discriminator, bankSeed);
@@ -1102,7 +1101,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.len(bankConfig)];
-    int i = writeDiscriminator(LENDING_POOL_ADD_BANK_WITH_SEED_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_ADD_BANK_WITH_SEED_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(bankConfig, _data, i);
     putInt64LE(_data, i, bankSeed);
 
@@ -1121,7 +1120,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var bankConfig = BankConfigCompact.read(_data, i);
       i += Borsh.len(bankConfig);
@@ -1203,7 +1202,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(bankConfigOpt)];
-    int i = writeDiscriminator(LENDING_POOL_CONFIGURE_BANK_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_CONFIGURE_BANK_DISCRIMINATOR.write(_data, 0);
     Borsh.write(bankConfigOpt, _data, i);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -1219,7 +1218,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var bankConfigOpt = BankConfigOpt.read(_data, i);
       return new LendingPoolConfigureBankIxData(discriminator, bankConfigOpt);
@@ -1254,7 +1253,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[10 + Borsh.lenArray(entries)];
-    int i = writeDiscriminator(LENDING_POOL_CONFIGURE_BANK_EMODE_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_CONFIGURE_BANK_EMODE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, emodeTag);
     i += 2;
     Borsh.writeArray(entries, _data, i);
@@ -1275,7 +1274,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var emodeTag = getInt16LE(_data, i);
       i += 2;
@@ -1314,7 +1313,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(interestRateConfig)];
-    int i = writeDiscriminator(LENDING_POOL_CONFIGURE_BANK_INTEREST_ONLY_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_CONFIGURE_BANK_INTEREST_ONLY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(interestRateConfig, _data, i);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -1330,7 +1329,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var interestRateConfig = InterestRateConfigOpt.read(_data, i);
       return new LendingPoolConfigureBankInterestOnlyIxData(discriminator, interestRateConfig);
@@ -1371,7 +1370,7 @@ public final class MarginfiProgram {
         + (borrowLimit == null || borrowLimit.isEmpty() ? 1 : 9)
         + (totalAssetValueInitLimit == null || totalAssetValueInitLimit.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(LENDING_POOL_CONFIGURE_BANK_LIMITS_ONLY_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_CONFIGURE_BANK_LIMITS_ONLY_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptional(depositLimit, _data, i);
     i += Borsh.writeOptional(borrowLimit, _data, i);
     Borsh.writeOptional(totalAssetValueInitLimit, _data, i);
@@ -1392,7 +1391,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var depositLimit = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
       if (depositLimit.isPresent()) {
@@ -1437,7 +1436,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[41];
-    int i = writeDiscriminator(LENDING_POOL_CONFIGURE_BANK_ORACLE_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_CONFIGURE_BANK_ORACLE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) setup;
     ++i;
     oracle.write(_data, i);
@@ -1457,7 +1456,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var setup = _data[i] & 0xFF;
       ++i;
@@ -1539,7 +1538,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[32];
-    int i = writeDiscriminator(LENDING_POOL_SETUP_EMISSIONS_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_SETUP_EMISSIONS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, flags);
     i += 8;
     putInt64LE(_data, i, rate);
@@ -1564,7 +1563,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var flags = getInt64LE(_data, i);
       i += 8;
@@ -1622,7 +1621,7 @@ public final class MarginfiProgram {
         + (emissionsRate == null || emissionsRate.isEmpty() ? 1 : 9)
         + (additionalEmissions == null || additionalEmissions.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(LENDING_POOL_UPDATE_EMISSIONS_PARAMETERS_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_UPDATE_EMISSIONS_PARAMETERS_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeOptional(emissionsFlags, _data, i);
     i += Borsh.writeOptional(emissionsRate, _data, i);
     Borsh.writeOptional(additionalEmissions, _data, i);
@@ -1643,7 +1642,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var emissionsFlags = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
       if (emissionsFlags.isPresent()) {
@@ -1712,7 +1711,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(LENDING_POOL_WITHDRAW_FEES_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_WITHDRAW_FEES_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -1730,7 +1729,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new LendingPoolWithdrawFeesIxData(discriminator, amount);
@@ -1770,7 +1769,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(LENDING_POOL_WITHDRAW_FEES_PERMISSIONLESS_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_WITHDRAW_FEES_PERMISSIONLESS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -1788,7 +1787,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new LendingPoolWithdrawFeesPermissionlessIxData(discriminator, amount);
@@ -1830,7 +1829,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(LENDING_POOL_WITHDRAW_INSURANCE_DISCRIMINATOR, _data, 0);
+    int i = LENDING_POOL_WITHDRAW_INSURANCE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -1848,7 +1847,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new LendingPoolWithdrawInsuranceIxData(discriminator, amount);
@@ -1937,7 +1936,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[169];
-    int i = writeDiscriminator(MARGINFI_GROUP_CONFIGURE_DISCRIMINATOR, _data, 0);
+    int i = MARGINFI_GROUP_CONFIGURE_DISCRIMINATOR.write(_data, 0);
     newAdmin.write(_data, i);
     i += 32;
     newEmodeAdmin.write(_data, i);
@@ -1971,7 +1970,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newAdmin = readPubKey(_data, i);
       i += 32;
@@ -2033,7 +2032,7 @@ public final class MarginfiProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(MARGINFI_GROUP_INITIALIZE_DISCRIMINATOR, _data, 0);
+    int i = MARGINFI_GROUP_INITIALIZE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (isArenaGroup ? 1 : 0);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
@@ -2051,7 +2050,7 @@ public final class MarginfiProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var isArenaGroup = _data[i] == 1;
       return new MarginfiGroupInitializeIxData(discriminator, isArenaGroup);

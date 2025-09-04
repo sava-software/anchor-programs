@@ -11,14 +11,13 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class ConditionalVaultProgram {
@@ -41,7 +40,7 @@ public final class ConditionalVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(args)];
-    int i = writeDiscriminator(INITIALIZE_QUESTION_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_QUESTION_DISCRIMINATOR.write(_data, 0);
     Borsh.write(args, _data, i);
 
     return Instruction.createInstruction(invokedConditionalVaultProgramMeta, keys, _data);
@@ -59,7 +58,7 @@ public final class ConditionalVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var args = InitializeQuestionArgs.read(_data, i);
       return new InitializeQuestionIxData(discriminator, args);
@@ -94,7 +93,7 @@ public final class ConditionalVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(args)];
-    int i = writeDiscriminator(RESOLVE_QUESTION_DISCRIMINATOR, _data, 0);
+    int i = RESOLVE_QUESTION_DISCRIMINATOR.write(_data, 0);
     Borsh.write(args, _data, i);
 
     return Instruction.createInstruction(invokedConditionalVaultProgramMeta, keys, _data);
@@ -110,7 +109,7 @@ public final class ConditionalVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var args = ResolveQuestionArgs.read(_data, i);
       return new ResolveQuestionIxData(discriminator, args);
@@ -182,7 +181,7 @@ public final class ConditionalVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SPLIT_TOKENS_DISCRIMINATOR, _data, 0);
+    int i = SPLIT_TOKENS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedConditionalVaultProgramMeta, keys, _data);
@@ -200,7 +199,7 @@ public final class ConditionalVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new SplitTokensIxData(discriminator, amount);
@@ -244,7 +243,7 @@ public final class ConditionalVaultProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(MERGE_TOKENS_DISCRIMINATOR, _data, 0);
+    int i = MERGE_TOKENS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedConditionalVaultProgramMeta, keys, _data);
@@ -262,7 +261,7 @@ public final class ConditionalVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new MergeTokensIxData(discriminator, amount);
@@ -333,7 +332,7 @@ public final class ConditionalVaultProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(args)];
-    int i = writeDiscriminator(ADD_METADATA_TO_CONDITIONAL_TOKENS_DISCRIMINATOR, _data, 0);
+    int i = ADD_METADATA_TO_CONDITIONAL_TOKENS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(args, _data, i);
 
     return Instruction.createInstruction(invokedConditionalVaultProgramMeta, keys, _data);
@@ -349,7 +348,7 @@ public final class ConditionalVaultProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var args = AddMetadataToConditionalTokensArgs.read(_data, i);
       return new AddMetadataToConditionalTokensIxData(discriminator, args);

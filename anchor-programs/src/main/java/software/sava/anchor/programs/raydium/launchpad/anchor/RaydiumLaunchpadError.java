@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.raydium.launchpad.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface RaydiumLaunchpadError extends ProgramError permits
     RaydiumLaunchpadError.NotApproved,

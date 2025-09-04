@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.metadao.autocrat.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface AutocratError extends ProgramError permits
     AutocratError.AmmTooOld,

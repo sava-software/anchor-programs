@@ -14,14 +14,13 @@ import software.sava.core.tx.Instruction;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class DcaProgram {
@@ -71,7 +70,7 @@ public final class DcaProgram {
         + (startAt == null || startAt.isEmpty() ? 1 : 9)
         + (closeWsolInAta == null ? 1 : 2)
     ];
-    int i = writeDiscriminator(OPEN_DCA_DISCRIMINATOR, _data, 0);
+    int i = OPEN_DCA_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, applicationIdx);
     i += 8;
     putInt64LE(_data, i, inAmount);
@@ -106,7 +105,7 @@ public final class DcaProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var applicationIdx = getInt64LE(_data, i);
       i += 8;
@@ -216,7 +215,7 @@ public final class DcaProgram {
         + (maxOutAmount == null || maxOutAmount.isEmpty() ? 1 : 9)
         + (startAt == null || startAt.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(OPEN_DCA_V_2_DISCRIMINATOR, _data, 0);
+    int i = OPEN_DCA_V_2_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, applicationIdx);
     i += 8;
     putInt64LE(_data, i, inAmount);
@@ -249,7 +248,7 @@ public final class DcaProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var applicationIdx = getInt64LE(_data, i);
       i += 8;
@@ -374,7 +373,7 @@ public final class DcaProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(withdrawParams)];
-    int i = writeDiscriminator(WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_DISCRIMINATOR.write(_data, 0);
     Borsh.write(withdrawParams, _data, i);
 
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
@@ -392,7 +391,7 @@ public final class DcaProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var withdrawParams = WithdrawParams.read(_data, i);
       return new WithdrawIxData(discriminator, withdrawParams);
@@ -433,7 +432,7 @@ public final class DcaProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, depositIn);
 
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
@@ -451,7 +450,7 @@ public final class DcaProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var depositIn = getInt64LE(_data, i);
       return new DepositIxData(discriminator, depositIn);
@@ -496,7 +495,7 @@ public final class DcaProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_FEES_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_FEES_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
@@ -514,7 +513,7 @@ public final class DcaProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new WithdrawFeesIxData(discriminator, amount);
@@ -608,7 +607,7 @@ public final class DcaProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(FULFILL_FLASH_FILL_DISCRIMINATOR, _data, 0);
+    int i = FULFILL_FLASH_FILL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, repayAmount);
 
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
@@ -626,7 +625,7 @@ public final class DcaProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var repayAmount = getInt64LE(_data, i);
       return new FulfillFlashFillIxData(discriminator, repayAmount);
@@ -720,7 +719,7 @@ public final class DcaProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(FULFILL_DLMM_FILL_DISCRIMINATOR, _data, 0);
+    int i = FULFILL_DLMM_FILL_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, repayAmount);
 
     return Instruction.createInstruction(invokedDcaProgramMeta, keys, _data);
@@ -738,7 +737,7 @@ public final class DcaProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var repayAmount = getInt64LE(_data, i);
       return new FulfillDlmmFillIxData(discriminator, repayAmount);

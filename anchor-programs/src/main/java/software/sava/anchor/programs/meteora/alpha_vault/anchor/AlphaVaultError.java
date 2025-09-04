@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.meteora.alpha_vault.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface AlphaVaultError extends ProgramError permits
     AlphaVaultError.TimePointNotInFuture,

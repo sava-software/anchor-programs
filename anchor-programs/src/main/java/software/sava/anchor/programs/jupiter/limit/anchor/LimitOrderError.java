@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.jupiter.limit.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface LimitOrderError extends ProgramError permits
     LimitOrderError.InvalidMakingAmount,

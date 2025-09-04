@@ -12,9 +12,9 @@ import software.sava.rpc.json.http.response.AccountInfo;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 
 // Metadata about a proposal.
 public record ProposalMeta(PublicKey _address,
@@ -59,7 +59,7 @@ public record ProposalMeta(PublicKey _address,
     if (_data == null || _data.length == 0) {
       return null;
     }
-    final var discriminator = parseDiscriminator(_data, offset);
+    final var discriminator = createAnchorDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var proposal = readPubKey(_data, i);
     i += 32;

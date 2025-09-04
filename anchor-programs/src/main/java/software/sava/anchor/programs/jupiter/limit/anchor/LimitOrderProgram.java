@@ -11,14 +11,13 @@ import software.sava.core.tx.Instruction;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class LimitOrderProgram {
@@ -61,7 +60,7 @@ public final class LimitOrderProgram {
         24
         + (expiredAt == null || expiredAt.isEmpty() ? 1 : 9)
     ];
-    int i = writeDiscriminator(INITIALIZE_ORDER_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_ORDER_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, makingAmount);
     i += 8;
     putInt64LE(_data, i, takingAmount);
@@ -84,7 +83,7 @@ public final class LimitOrderProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var makingAmount = getInt64LE(_data, i);
       i += 8;
@@ -144,7 +143,7 @@ public final class LimitOrderProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(FILL_ORDER_DISCRIMINATOR, _data, 0);
+    int i = FILL_ORDER_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, makingAmount);
     i += 8;
     putInt64LE(_data, i, maxTakingAmount);
@@ -164,7 +163,7 @@ public final class LimitOrderProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var makingAmount = getInt64LE(_data, i);
       i += 8;
@@ -212,7 +211,7 @@ public final class LimitOrderProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(PRE_FLASH_FILL_ORDER_DISCRIMINATOR, _data, 0);
+    int i = PRE_FLASH_FILL_ORDER_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, makingAmount);
 
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
@@ -230,7 +229,7 @@ public final class LimitOrderProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var makingAmount = getInt64LE(_data, i);
       return new PreFlashFillOrderIxData(discriminator, makingAmount);
@@ -286,7 +285,7 @@ public final class LimitOrderProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(FLASH_FILL_ORDER_DISCRIMINATOR, _data, 0);
+    int i = FLASH_FILL_ORDER_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxTakingAmount);
 
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
@@ -304,7 +303,7 @@ public final class LimitOrderProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var maxTakingAmount = getInt64LE(_data, i);
       return new FlashFillOrderIxData(discriminator, maxTakingAmount);
@@ -395,7 +394,7 @@ public final class LimitOrderProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_FEE_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_FEE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedLimitOrderProgramMeta, keys, _data);
@@ -413,7 +412,7 @@ public final class LimitOrderProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new WithdrawFeeIxData(discriminator, amount);
@@ -450,7 +449,7 @@ public final class LimitOrderProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(INIT_FEE_DISCRIMINATOR, _data, 0);
+    int i = INIT_FEE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, makerFee);
     i += 8;
     putInt64LE(_data, i, makerStableFee);
@@ -478,7 +477,7 @@ public final class LimitOrderProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var makerFee = getInt64LE(_data, i);
       i += 8;
@@ -529,7 +528,7 @@ public final class LimitOrderProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(UPDATE_FEE_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_FEE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, makerFee);
     i += 8;
     putInt64LE(_data, i, makerStableFee);
@@ -557,7 +556,7 @@ public final class LimitOrderProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var makerFee = getInt64LE(_data, i);
       i += 8;

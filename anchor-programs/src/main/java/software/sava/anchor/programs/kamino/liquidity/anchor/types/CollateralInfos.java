@@ -8,7 +8,7 @@ import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 import software.sava.rpc.json.http.response.AccountInfo;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 
 public record CollateralInfos(PublicKey _address, Discriminator discriminator, CollateralInfo[] infos) implements Borsh {
 
@@ -36,7 +36,7 @@ public record CollateralInfos(PublicKey _address, Discriminator discriminator, C
     if (_data == null || _data.length == 0) {
       return null;
     }
-    final var discriminator = parseDiscriminator(_data, offset);
+    final var discriminator = createAnchorDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var infos = new CollateralInfo[256];
     Borsh.readArray(infos, CollateralInfo::read, _data, i);

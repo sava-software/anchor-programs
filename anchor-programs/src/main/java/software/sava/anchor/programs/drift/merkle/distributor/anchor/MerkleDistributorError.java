@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.drift.merkle.distributor.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface MerkleDistributorError extends ProgramError permits
     MerkleDistributorError.InsufficientUnlockedTokens,

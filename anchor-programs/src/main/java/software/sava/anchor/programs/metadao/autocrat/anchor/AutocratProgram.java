@@ -11,12 +11,11 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class AutocratProgram {
@@ -57,7 +56,7 @@ public final class AutocratProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_DAO_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_DAO_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedAutocratProgramMeta, keys, _data);
@@ -73,7 +72,7 @@ public final class AutocratProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitializeDaoParams.read(_data, i);
       return new InitializeDaoIxData(discriminator, params);
@@ -142,7 +141,7 @@ public final class AutocratProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(INITIALIZE_PROPOSAL_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_PROPOSAL_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedAutocratProgramMeta, keys, _data);
@@ -158,7 +157,7 @@ public final class AutocratProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = InitializeProposalParams.read(_data, i);
       return new InitializeProposalIxData(discriminator, params);
@@ -236,7 +235,7 @@ public final class AutocratProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(daoParams)];
-    int i = writeDiscriminator(UPDATE_DAO_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_DAO_DISCRIMINATOR.write(_data, 0);
     Borsh.write(daoParams, _data, i);
 
     return Instruction.createInstruction(invokedAutocratProgramMeta, keys, _data);
@@ -252,7 +251,7 @@ public final class AutocratProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var daoParams = UpdateDaoParams.read(_data, i);
       return new UpdateDaoIxData(discriminator, daoParams);

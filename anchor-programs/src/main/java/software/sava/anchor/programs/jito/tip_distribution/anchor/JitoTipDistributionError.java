@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.jito.tip_distribution.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface JitoTipDistributionError extends ProgramError permits
     JitoTipDistributionError.AccountValidationFailure,

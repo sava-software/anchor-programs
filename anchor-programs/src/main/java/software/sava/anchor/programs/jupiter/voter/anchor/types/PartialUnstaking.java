@@ -14,10 +14,10 @@ import software.sava.rpc.json.http.response.AccountInfo;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 
 // Account to store infor for partial unstaking
 public record PartialUnstaking(PublicKey _address,
@@ -90,7 +90,7 @@ public record PartialUnstaking(PublicKey _address,
     if (_data == null || _data.length == 0) {
       return null;
     }
-    final var discriminator = parseDiscriminator(_data, offset);
+    final var discriminator = createAnchorDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var escrow = readPubKey(_data, i);
     i += 32;

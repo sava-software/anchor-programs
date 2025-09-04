@@ -13,8 +13,6 @@ import software.sava.core.tx.Instruction;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -22,6 +20,7 @@ import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class LockedVoterProgram {
@@ -53,7 +52,7 @@ public final class LockedVoterProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(NEW_LOCKER_DISCRIMINATOR, _data, 0);
+    int i = NEW_LOCKER_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLockedVoterProgramMeta, keys, _data);
@@ -71,7 +70,7 @@ public final class LockedVoterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = LockerParams.read(_data, i);
       return new NewLockerIxData(discriminator, params);
@@ -145,7 +144,7 @@ public final class LockedVoterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(INCREASE_LOCKED_AMOUNT_DISCRIMINATOR, _data, 0);
+    int i = INCREASE_LOCKED_AMOUNT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedLockedVoterProgramMeta, keys, _data);
@@ -163,7 +162,7 @@ public final class LockedVoterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new IncreaseLockedAmountIxData(discriminator, amount);
@@ -201,7 +200,7 @@ public final class LockedVoterProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(EXTEND_LOCK_DURATION_DISCRIMINATOR, _data, 0);
+    int i = EXTEND_LOCK_DURATION_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, duration);
 
     return Instruction.createInstruction(invokedLockedVoterProgramMeta, keys, _data);
@@ -219,7 +218,7 @@ public final class LockedVoterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var duration = getInt64LE(_data, i);
       return new ExtendLockDurationIxData(discriminator, duration);
@@ -257,7 +256,7 @@ public final class LockedVoterProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(TOGGLE_MAX_LOCK_DISCRIMINATOR, _data, 0);
+    int i = TOGGLE_MAX_LOCK_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (isMaxLock ? 1 : 0);
 
     return Instruction.createInstruction(invokedLockedVoterProgramMeta, keys, _data);
@@ -275,7 +274,7 @@ public final class LockedVoterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var isMaxLock = _data[i] == 1;
       return new ToggleMaxLockIxData(discriminator, isMaxLock);
@@ -381,7 +380,7 @@ public final class LockedVoterProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(CAST_VOTE_DISCRIMINATOR, _data, 0);
+    int i = CAST_VOTE_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) side;
 
     return Instruction.createInstruction(invokedLockedVoterProgramMeta, keys, _data);
@@ -399,7 +398,7 @@ public final class LockedVoterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var side = _data[i] & 0xFF;
       return new CastVoteIxData(discriminator, side);
@@ -434,7 +433,7 @@ public final class LockedVoterProgram {
     );
 
     final byte[] _data = new byte[40];
-    int i = writeDiscriminator(SET_VOTE_DELEGATE_DISCRIMINATOR, _data, 0);
+    int i = SET_VOTE_DELEGATE_DISCRIMINATOR.write(_data, 0);
     newDelegate.write(_data, i);
 
     return Instruction.createInstruction(invokedLockedVoterProgramMeta, keys, _data);
@@ -452,7 +451,7 @@ public final class LockedVoterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newDelegate = readPubKey(_data, i);
       return new SetVoteDelegateIxData(discriminator, newDelegate);
@@ -490,7 +489,7 @@ public final class LockedVoterProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = writeDiscriminator(SET_LOCKER_PARAMS_DISCRIMINATOR, _data, 0);
+    int i = SET_LOCKER_PARAMS_DISCRIMINATOR.write(_data, 0);
     Borsh.write(params, _data, i);
 
     return Instruction.createInstruction(invokedLockedVoterProgramMeta, keys, _data);
@@ -508,7 +507,7 @@ public final class LockedVoterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var params = LockerParams.read(_data, i);
       return new SetLockerParamsIxData(discriminator, params);
@@ -552,7 +551,7 @@ public final class LockedVoterProgram {
 
     final byte[] _memo = memo.getBytes(UTF_8);
     final byte[] _data = new byte[20 + Borsh.lenVector(_memo)];
-    int i = writeDiscriminator(OPEN_PARTIAL_UNSTAKING_DISCRIMINATOR, _data, 0);
+    int i = OPEN_PARTIAL_UNSTAKING_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
     i += 8;
     Borsh.writeVector(_memo, _data, i);
@@ -574,7 +573,7 @@ public final class LockedVoterProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       i += 8;

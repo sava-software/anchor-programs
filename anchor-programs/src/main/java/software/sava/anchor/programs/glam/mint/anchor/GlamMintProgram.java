@@ -14,8 +14,6 @@ import software.sava.core.tx.Instruction;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
@@ -23,6 +21,7 @@ import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class GlamMintProgram {
@@ -47,7 +46,7 @@ public final class GlamMintProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(BURN_TOKENS_DISCRIMINATOR, _data, 0);
+    int i = BURN_TOKENS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
@@ -65,7 +64,7 @@ public final class GlamMintProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new BurnTokensIxData(discriminator, amount);
@@ -263,7 +262,7 @@ public final class GlamMintProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(mintModel)];
-    int i = writeDiscriminator(EMERGENCY_UPDATE_MINT_DISCRIMINATOR, _data, 0);
+    int i = EMERGENCY_UPDATE_MINT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(mintModel, _data, i);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
@@ -279,7 +278,7 @@ public final class GlamMintProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintModel = MintModel.read(_data, i);
       return new EmergencyUpdateMintIxData(discriminator, mintModel);
@@ -327,7 +326,7 @@ public final class GlamMintProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(FORCE_TRANSFER_TOKENS_DISCRIMINATOR, _data, 0);
+    int i = FORCE_TRANSFER_TOKENS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
@@ -345,7 +344,7 @@ public final class GlamMintProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new ForceTransferTokensIxData(discriminator, amount);
@@ -441,7 +440,7 @@ public final class GlamMintProgram {
         8 + Borsh.len(mintModel) + Borsh.lenArray(createdKey) + Borsh.len(accountType)
         + (decimals == null || decimals.isEmpty() ? 1 : 2)
     ];
-    int i = writeDiscriminator(INITIALIZE_MINT_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_MINT_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(mintModel, _data, i);
     i += Borsh.writeArray(createdKey, _data, i);
     i += Borsh.write(accountType, _data, i);
@@ -465,7 +464,7 @@ public final class GlamMintProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintModel = MintModel.read(_data, i);
       i += Borsh.len(mintModel);
@@ -522,7 +521,7 @@ public final class GlamMintProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(MINT_TOKENS_DISCRIMINATOR, _data, 0);
+    int i = MINT_TOKENS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
@@ -540,7 +539,7 @@ public final class GlamMintProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new MintTokensIxData(discriminator, amount);
@@ -586,7 +585,7 @@ public final class GlamMintProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(QUEUED_REDEEM_DISCRIMINATOR, _data, 0);
+    int i = QUEUED_REDEEM_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountIn);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
@@ -604,7 +603,7 @@ public final class GlamMintProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountIn = getInt64LE(_data, i);
       return new QueuedRedeemIxData(discriminator, amountIn);
@@ -653,7 +652,7 @@ public final class GlamMintProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(QUEUED_SUBSCRIBE_DISCRIMINATOR, _data, 0);
+    int i = QUEUED_SUBSCRIBE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountIn);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
@@ -671,7 +670,7 @@ public final class GlamMintProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountIn = getInt64LE(_data, i);
       return new QueuedSubscribeIxData(discriminator, amountIn);
@@ -708,7 +707,7 @@ public final class GlamMintProgram {
     );
 
     final byte[] _data = new byte[12];
-    int i = writeDiscriminator(SET_PROTOCOL_FEES_DISCRIMINATOR, _data, 0);
+    int i = SET_PROTOCOL_FEES_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, baseFeeBps);
     i += 2;
     putInt16LE(_data, i, flowFeeBps);
@@ -728,7 +727,7 @@ public final class GlamMintProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var baseFeeBps = getInt16LE(_data, i);
       i += 2;
@@ -768,7 +767,7 @@ public final class GlamMintProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(SET_TOKEN_ACCOUNTS_STATES_DISCRIMINATOR, _data, 0);
+    int i = SET_TOKEN_ACCOUNTS_STATES_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (frozen ? 1 : 0);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
@@ -786,7 +785,7 @@ public final class GlamMintProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var frozen = _data[i] == 1;
       return new SetTokenAccountsStatesIxData(discriminator, frozen);
@@ -848,7 +847,7 @@ public final class GlamMintProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SUBSCRIBE_DISCRIMINATOR, _data, 0);
+    int i = SUBSCRIBE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amountIn);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
@@ -866,7 +865,7 @@ public final class GlamMintProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amountIn = getInt64LE(_data, i);
       return new SubscribeIxData(discriminator, amountIn);
@@ -907,7 +906,7 @@ public final class GlamMintProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(mintModel)];
-    int i = writeDiscriminator(UPDATE_MINT_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_MINT_DISCRIMINATOR.write(_data, 0);
     Borsh.write(mintModel, _data, i);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
@@ -923,7 +922,7 @@ public final class GlamMintProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mintModel = MintModel.read(_data, i);
       return new UpdateMintIxData(discriminator, mintModel);

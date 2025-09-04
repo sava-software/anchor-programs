@@ -12,11 +12,10 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class AmmProgram {
@@ -53,7 +52,7 @@ public final class AmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(args)];
-    int i = writeDiscriminator(CREATE_AMM_DISCRIMINATOR, _data, 0);
+    int i = CREATE_AMM_DISCRIMINATOR.write(_data, 0);
     Borsh.write(args, _data, i);
 
     return Instruction.createInstruction(invokedAmmProgramMeta, keys, _data);
@@ -71,7 +70,7 @@ public final class AmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var args = CreateAmmArgs.read(_data, i);
       return new CreateAmmIxData(discriminator, args);
@@ -120,7 +119,7 @@ public final class AmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(args)];
-    int i = writeDiscriminator(ADD_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = ADD_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(args, _data, i);
 
     return Instruction.createInstruction(invokedAmmProgramMeta, keys, _data);
@@ -138,7 +137,7 @@ public final class AmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var args = AddLiquidityArgs.read(_data, i);
       return new AddLiquidityIxData(discriminator, args);
@@ -187,7 +186,7 @@ public final class AmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(args)];
-    int i = writeDiscriminator(REMOVE_LIQUIDITY_DISCRIMINATOR, _data, 0);
+    int i = REMOVE_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
     Borsh.write(args, _data, i);
 
     return Instruction.createInstruction(invokedAmmProgramMeta, keys, _data);
@@ -205,7 +204,7 @@ public final class AmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var args = RemoveLiquidityArgs.read(_data, i);
       return new RemoveLiquidityIxData(discriminator, args);
@@ -250,7 +249,7 @@ public final class AmmProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(args)];
-    int i = writeDiscriminator(SWAP_DISCRIMINATOR, _data, 0);
+    int i = SWAP_DISCRIMINATOR.write(_data, 0);
     Borsh.write(args, _data, i);
 
     return Instruction.createInstruction(invokedAmmProgramMeta, keys, _data);
@@ -268,7 +267,7 @@ public final class AmmProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var args = SwapArgs.read(_data, i);
       return new SwapIxData(discriminator, args);

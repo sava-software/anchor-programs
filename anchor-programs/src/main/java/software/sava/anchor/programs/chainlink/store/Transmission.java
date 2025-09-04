@@ -1,6 +1,5 @@
 package software.sava.anchor.programs.chainlink.store;
 
-import software.sava.anchor.AnchorUtil;
 import software.sava.anchor.programs.chainlink.store.anchor.StoreConstants;
 import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
@@ -33,7 +32,7 @@ public record Transmission(long slot,
     if (transmissionsData == null || transmissionsData.length == 0) {
       return null;
     } else {
-      final int offset = AnchorUtil.DISCRIMINATOR_LENGTH
+      final int offset = Discriminator.ANCHOR_DISCRIMINATOR_LENGTH
           + Math.toIntExact(StoreConstants.HEADER_SIZE)
           + (cursor * BYTES);
       return read(transmissionsData, offset);
@@ -44,7 +43,7 @@ public record Transmission(long slot,
     if (transmissionsData == null || transmissionsData.length == 0) {
       return null;
     }
-    int offset = AnchorUtil.DISCRIMINATOR_LENGTH + Math.toIntExact(StoreConstants.HEADER_SIZE);
+    int offset = Discriminator.ANCHOR_DISCRIMINATOR_LENGTH + Math.toIntExact(StoreConstants.HEADER_SIZE);
     final int numTransmissions = (transmissionsData.length - offset) / BYTES;
     final var transmissions = new Transmission[numTransmissions];
     for (int i = 0; i < numTransmissions; i++) {

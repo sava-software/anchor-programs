@@ -17,8 +17,6 @@ import software.sava.core.tx.Instruction;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
@@ -29,6 +27,7 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class FarmsProgram {
@@ -63,7 +62,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[9 + Borsh.lenArray(value)];
-    int i = writeDiscriminator(UPDATE_GLOBAL_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_GLOBAL_CONFIG_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mode;
     ++i;
     Borsh.writeArray(value, _data, i);
@@ -84,7 +83,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mode = _data[i] & 0xFF;
       ++i;
@@ -214,7 +213,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(ADD_REWARDS_DISCRIMINATOR, _data, 0);
+    int i = ADD_REWARDS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
     i += 8;
     putInt64LE(_data, i, rewardIndex);
@@ -234,7 +233,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       i += 8;
@@ -273,7 +272,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[10 + Borsh.lenVector(data)];
-    int i = writeDiscriminator(UPDATE_FARM_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_FARM_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, mode);
     i += 2;
     Borsh.writeVector(data, _data, i);
@@ -291,7 +290,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mode = getInt16LE(_data, i);
       i += 2;
@@ -379,7 +378,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(REWARD_USER_ONCE_DISCRIMINATOR, _data, 0);
+    int i = REWARD_USER_ONCE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     putInt64LE(_data, i, amount);
@@ -399,7 +398,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
       i += 8;
@@ -458,7 +457,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(STAKE_DISCRIMINATOR, _data, 0);
+    int i = STAKE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedFarmsProgramMeta, keys, _data);
@@ -476,7 +475,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new StakeIxData(discriminator, amount);
@@ -510,7 +509,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(SET_STAKE_DELEGATED_DISCRIMINATOR, _data, 0);
+    int i = SET_STAKE_DELEGATED_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, newAmount);
 
     return Instruction.createInstruction(invokedFarmsProgramMeta, keys, _data);
@@ -528,7 +527,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var newAmount = getInt64LE(_data, i);
       return new SetStakeDelegatedIxData(discriminator, newAmount);
@@ -578,7 +577,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(HARVEST_REWARD_DISCRIMINATOR, _data, 0);
+    int i = HARVEST_REWARD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
 
     return Instruction.createInstruction(invokedFarmsProgramMeta, keys, _data);
@@ -596,7 +595,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = getInt64LE(_data, i);
       return new HarvestRewardIxData(discriminator, rewardIndex);
@@ -632,7 +631,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(UNSTAKE_DISCRIMINATOR, _data, 0);
+    int i = UNSTAKE_DISCRIMINATOR.write(_data, 0);
     putInt128LE(_data, i, stakeSharesScaled);
 
     return Instruction.createInstruction(invokedFarmsProgramMeta, keys, _data);
@@ -650,7 +649,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var stakeSharesScaled = getInt128LE(_data, i);
       return new UnstakeIxData(discriminator, stakeSharesScaled);
@@ -730,7 +729,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_TREASURY_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_TREASURY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedFarmsProgramMeta, keys, _data);
@@ -748,7 +747,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new WithdrawTreasuryIxData(discriminator, amount);
@@ -786,7 +785,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(DEPOSIT_TO_FARM_VAULT_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_TO_FARM_VAULT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedFarmsProgramMeta, keys, _data);
@@ -804,7 +803,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new DepositToFarmVaultIxData(discriminator, amount);
@@ -844,7 +843,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_FROM_FARM_VAULT_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_FROM_FARM_VAULT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedFarmsProgramMeta, keys, _data);
@@ -862,7 +861,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new WithdrawFromFarmVaultIxData(discriminator, amount);
@@ -950,7 +949,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(WITHDRAW_REWARD_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_REWARD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
     i += 8;
     putInt64LE(_data, i, rewardIndex);
@@ -970,7 +969,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       i += 8;
@@ -1027,7 +1026,7 @@ public final class FarmsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.len(globalConfigOptionKind) + Borsh.len(farmConfigOptionKind) + Borsh.len(timeUnit) + Borsh.len(lockingMode) + Borsh.len(rewardType)];
-    int i = writeDiscriminator(IDL_MISSING_TYPES_DISCRIMINATOR, _data, 0);
+    int i = IDL_MISSING_TYPES_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(globalConfigOptionKind, _data, i);
     i += Borsh.write(farmConfigOptionKind, _data, i);
     i += Borsh.write(timeUnit, _data, i);
@@ -1054,7 +1053,7 @@ public final class FarmsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var globalConfigOptionKind = GlobalConfigOption.read(_data, i);
       i += Borsh.len(globalConfigOptionKind);

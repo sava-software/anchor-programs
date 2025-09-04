@@ -8,7 +8,7 @@ import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 import software.sava.rpc.json.http.response.AccountInfo;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public record DummyZcAccount(PublicKey _address, Discriminator discriminator, PositionBinData positionBinData) implements Borsh {
@@ -43,7 +43,7 @@ public record DummyZcAccount(PublicKey _address, Discriminator discriminator, Po
     if (_data == null || _data.length == 0) {
       return null;
     }
-    final var discriminator = parseDiscriminator(_data, offset);
+    final var discriminator = createAnchorDiscriminator(_data, offset);
     int i = offset + discriminator.length();
     final var positionBinData = PositionBinData.read(_data, i);
     return new DummyZcAccount(_address, discriminator, positionBinData);

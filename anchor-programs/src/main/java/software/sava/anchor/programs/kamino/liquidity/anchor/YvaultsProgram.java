@@ -17,8 +17,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 import static java.util.Objects.requireNonNullElse;
 
-import static software.sava.anchor.AnchorUtil.parseDiscriminator;
-import static software.sava.anchor.AnchorUtil.writeDiscriminator;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
@@ -30,6 +28,7 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
+import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class YvaultsProgram {
@@ -79,7 +78,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[32];
-    int i = writeDiscriminator(INITIALIZE_STRATEGY_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_STRATEGY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, strategyType);
     i += 8;
     putInt64LE(_data, i, tokenACollateralId);
@@ -104,7 +103,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var strategyType = getInt64LE(_data, i);
       i += 8;
@@ -161,7 +160,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(INITIALIZE_KAMINO_REWARD_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_KAMINO_REWARD_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, kaminoRewardIndex);
     i += 8;
     putInt64LE(_data, i, collateralToken);
@@ -181,7 +180,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var kaminoRewardIndex = getInt64LE(_data, i);
       i += 8;
@@ -228,7 +227,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(ADD_KAMINO_REWARDS_DISCRIMINATOR, _data, 0);
+    int i = ADD_KAMINO_REWARDS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, kaminoRewardIndex);
     i += 8;
     putInt64LE(_data, i, amount);
@@ -248,7 +247,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var kaminoRewardIndex = getInt64LE(_data, i);
       i += 8;
@@ -320,7 +319,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[24 + Borsh.lenArray(value)];
-    int i = writeDiscriminator(UPDATE_COLLATERAL_INFO_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_COLLATERAL_INFO_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, index);
     i += 8;
     putInt64LE(_data, i, mode);
@@ -346,7 +345,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var index = getInt64LE(_data, i);
       i += 8;
@@ -389,7 +388,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[16 + Borsh.len(params)];
-    int i = writeDiscriminator(INSERT_COLLATERAL_INFO_DISCRIMINATOR, _data, 0);
+    int i = INSERT_COLLATERAL_INFO_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, index);
     i += 8;
     Borsh.write(params, _data, i);
@@ -409,7 +408,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var index = getInt64LE(_data, i);
       i += 8;
@@ -463,7 +462,7 @@ public final class YvaultsProgram {
     final byte[] _symbol = symbol.getBytes(UTF_8);
     final byte[] _uri = uri.getBytes(UTF_8);
     final byte[] _data = new byte[20 + Borsh.lenVector(_name) + Borsh.lenVector(_symbol) + Borsh.lenVector(_uri)];
-    int i = writeDiscriminator(INITIALIZE_SHARES_METADATA_DISCRIMINATOR, _data, 0);
+    int i = INITIALIZE_SHARES_METADATA_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(_name, _data, i);
     i += Borsh.writeVector(_symbol, _data, i);
     Borsh.writeVector(_uri, _data, i);
@@ -491,7 +490,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var name = Borsh.string(_data, i);
       i += (Integer.BYTES + getInt32LE(_data, i));
@@ -543,7 +542,7 @@ public final class YvaultsProgram {
     final byte[] _symbol = symbol.getBytes(UTF_8);
     final byte[] _uri = uri.getBytes(UTF_8);
     final byte[] _data = new byte[20 + Borsh.lenVector(_name) + Borsh.lenVector(_symbol) + Borsh.lenVector(_uri)];
-    int i = writeDiscriminator(UPDATE_SHARES_METADATA_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_SHARES_METADATA_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(_name, _data, i);
     i += Borsh.writeVector(_symbol, _data, i);
     Borsh.writeVector(_uri, _data, i);
@@ -571,7 +570,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var name = Borsh.string(_data, i);
       i += (Integer.BYTES + getInt32LE(_data, i));
@@ -612,7 +611,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[12 + Borsh.lenArray(value)];
-    int i = writeDiscriminator(UPDATE_GLOBAL_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_GLOBAL_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, key);
     i += 2;
     putInt16LE(_data, i, index);
@@ -638,7 +637,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var key = getInt16LE(_data, i);
       i += 2;
@@ -692,7 +691,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_TREASURY_FEE_VAULT_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_TREASURY_FEE_VAULT_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, collateralId);
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
@@ -710,7 +709,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var collateralId = getInt16LE(_data, i);
       return new UpdateTreasuryFeeVaultIxData(discriminator, collateralId);
@@ -749,7 +748,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[10 + Borsh.lenArray(value)];
-    int i = writeDiscriminator(UPDATE_STRATEGY_CONFIG_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_STRATEGY_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, mode);
     i += 2;
     Borsh.writeArray(value, _data, i);
@@ -770,7 +769,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var mode = getInt16LE(_data, i);
       i += 2;
@@ -825,7 +824,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[10];
-    int i = writeDiscriminator(UPDATE_REWARD_MAPPING_DISCRIMINATOR, _data, 0);
+    int i = UPDATE_REWARD_MAPPING_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) rewardIndex;
     ++i;
     _data[i] = (byte) collateralToken;
@@ -845,7 +844,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var rewardIndex = _data[i] & 0xFF;
       ++i;
@@ -949,7 +948,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[25];
-    int i = writeDiscriminator(OPEN_LIQUIDITY_POSITION_DISCRIMINATOR, _data, 0);
+    int i = OPEN_LIQUIDITY_POSITION_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, tickLowerIndex);
     i += 8;
     putInt64LE(_data, i, tickUpperIndex);
@@ -974,7 +973,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tickLowerIndex = getInt64LE(_data, i);
       i += 8;
@@ -1144,7 +1143,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(DEPOSIT_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, tokenMaxA);
     i += 8;
     putInt64LE(_data, i, tokenMaxB);
@@ -1164,7 +1163,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tokenMaxA = getInt64LE(_data, i);
       i += 8;
@@ -1321,7 +1320,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(DEPOSIT_AND_INVEST_DISCRIMINATOR, _data, 0);
+    int i = DEPOSIT_AND_INVEST_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, tokenMaxA);
     i += 8;
     putInt64LE(_data, i, tokenMaxB);
@@ -1341,7 +1340,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tokenMaxA = getInt64LE(_data, i);
       i += 8;
@@ -1431,7 +1430,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, sharesAmount);
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
@@ -1449,7 +1448,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var sharesAmount = getInt64LE(_data, i);
       return new WithdrawIxData(discriminator, sharesAmount);
@@ -1527,7 +1526,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = writeDiscriminator(EXECUTIVE_WITHDRAW_DISCRIMINATOR, _data, 0);
+    int i = EXECUTIVE_WITHDRAW_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) action;
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
@@ -1545,7 +1544,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var action = _data[i] & 0xFF;
       return new ExecutiveWithdrawIxData(discriminator, action);
@@ -1706,7 +1705,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[48];
-    int i = writeDiscriminator(SWAP_REWARDS_DISCRIMINATOR, _data, 0);
+    int i = SWAP_REWARDS_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, tokenAIn);
     i += 8;
     putInt64LE(_data, i, tokenBIn);
@@ -1737,7 +1736,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tokenAIn = getInt64LE(_data, i);
       i += 8;
@@ -1793,7 +1792,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(CHECK_EXPECTED_VAULTS_BALANCES_DISCRIMINATOR, _data, 0);
+    int i = CHECK_EXPECTED_VAULTS_BALANCES_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, tokenAAtaBalance);
     i += 8;
     putInt64LE(_data, i, tokenBAtaBalance);
@@ -1813,7 +1812,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tokenAAtaBalance = getInt64LE(_data, i);
       i += 8;
@@ -1909,7 +1908,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(SINGLE_TOKEN_DEPOSIT_AND_INVEST_WITH_MIN_DISCRIMINATOR, _data, 0);
+    int i = SINGLE_TOKEN_DEPOSIT_AND_INVEST_WITH_MIN_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, tokenAMinPostDepositBalance);
     i += 8;
     putInt64LE(_data, i, tokenBMinPostDepositBalance);
@@ -1929,7 +1928,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tokenAMinPostDepositBalance = getInt64LE(_data, i);
       i += 8;
@@ -2008,7 +2007,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[24];
-    int i = writeDiscriminator(SINGLE_TOKEN_DEPOSIT_WITH_MIN_DISCRIMINATOR, _data, 0);
+    int i = SINGLE_TOKEN_DEPOSIT_WITH_MIN_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, tokenAMinPostDepositBalance);
     i += 8;
     putInt64LE(_data, i, tokenBMinPostDepositBalance);
@@ -2028,7 +2027,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var tokenAMinPostDepositBalance = getInt64LE(_data, i);
       i += 8;
@@ -2110,7 +2109,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(FLASH_SWAP_UNEVEN_VAULTS_START_DISCRIMINATOR, _data, 0);
+    int i = FLASH_SWAP_UNEVEN_VAULTS_START_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
     i += 8;
     _data[i] = (byte) (aToB ? 1 : 0);
@@ -2130,7 +2129,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       i += 8;
@@ -2211,7 +2210,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[25];
-    int i = writeDiscriminator(FLASH_SWAP_UNEVEN_VAULTS_END_DISCRIMINATOR, _data, 0);
+    int i = FLASH_SWAP_UNEVEN_VAULTS_END_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, minRepayAmount);
     i += 8;
     putInt64LE(_data, i, amountToLeaveToUser);
@@ -2236,7 +2235,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var minRepayAmount = getInt64LE(_data, i);
       i += 8;
@@ -2320,7 +2319,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[17];
-    int i = writeDiscriminator(EMERGENCY_SWAP_DISCRIMINATOR, _data, 0);
+    int i = EMERGENCY_SWAP_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) (aToB ? 1 : 0);
     ++i;
     putInt64LE(_data, i, targetLimitBps);
@@ -2340,7 +2339,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var aToB = _data[i] == 1;
       ++i;
@@ -2390,7 +2389,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_FROM_TREASURY_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_FROM_TREASURY_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
@@ -2408,7 +2407,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new WithdrawFromTreasuryIxData(discriminator, amount);
@@ -2465,7 +2464,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[16];
-    int i = writeDiscriminator(WITHDRAW_FROM_TOPUP_DISCRIMINATOR, _data, 0);
+    int i = WITHDRAW_FROM_TOPUP_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
@@ -2483,7 +2482,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       return new WithdrawFromTopupIxData(discriminator, amount);
@@ -2593,7 +2592,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[42];
-    int i = writeDiscriminator(ORCA_SWAP_DISCRIMINATOR, _data, 0);
+    int i = ORCA_SWAP_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, amount);
     i += 8;
     putInt64LE(_data, i, otherAmountThreshold);
@@ -2624,7 +2623,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var amount = getInt64LE(_data, i);
       i += 8;
@@ -2681,7 +2680,7 @@ public final class YvaultsProgram {
     );
 
     final byte[] _data = new byte[8 + Borsh.lenArray(signature)];
-    int i = writeDiscriminator(SIGN_TERMS_DISCRIMINATOR, _data, 0);
+    int i = SIGN_TERMS_DISCRIMINATOR.write(_data, 0);
     Borsh.writeArray(signature, _data, i);
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
@@ -2700,7 +2699,7 @@ public final class YvaultsProgram {
       if (_data == null || _data.length == 0) {
         return null;
       }
-      final var discriminator = parseDiscriminator(_data, offset);
+      final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var signature = new byte[64];
       Borsh.readArray(signature, _data, i);

@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.kamino.scope.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface ScopeError extends ProgramError permits
     ScopeError.IntegerOverflow,

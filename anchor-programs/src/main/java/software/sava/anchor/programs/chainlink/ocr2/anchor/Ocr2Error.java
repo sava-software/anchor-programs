@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.chainlink.ocr2.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface Ocr2Error extends ProgramError permits
     Ocr2Error.Unauthorized,

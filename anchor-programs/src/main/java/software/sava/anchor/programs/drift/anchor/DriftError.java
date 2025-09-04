@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.drift.anchor;
 
-import software.sava.anchor.ProgramError;
+import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface DriftError extends ProgramError permits
     DriftError.InvalidSpotMarketAuthority,
