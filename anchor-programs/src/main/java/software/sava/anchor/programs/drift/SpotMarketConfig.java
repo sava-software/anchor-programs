@@ -1,6 +1,5 @@
 package software.sava.anchor.programs.drift;
 
-import software.sava.anchor.AnchorUtil;
 import software.sava.anchor.programs.drift.anchor.types.OracleSource;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -11,7 +10,6 @@ import systems.comodal.jsoniter.JsonIterator;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static java.lang.System.Logger.Level.WARNING;
 import static systems.comodal.jsoniter.JsonIterator.fieldEquals;
@@ -47,33 +45,34 @@ public record SpotMarketConfig(String symbol,
     return configs;
   }
 
-  private static String replaceScale(final String enumString,
-                                     final int index,
-                                     final char replacement) {
-    final var prefix = enumString.substring(0, index + 1);
-    final int fromSuffix = index + 2;
-    if (fromSuffix < enumString.length()) {
-      return prefix + replacement + enumString.substring(fromSuffix);
-    } else {
-      return prefix + replacement;
-    }
-  }
-
   static OracleSource parseOracleSource(final JsonIterator ji) {
     final var oracleSource = ji.readString();
     if (oracleSource == null || oracleSource.isBlank()) {
       return null;
     }
-    var enumString = AnchorUtil.camelCase(oracleSource.toLowerCase(Locale.ENGLISH), true);
-    int i = enumString.indexOf("1k");
-    if (i > 0) {
-      enumString = replaceScale(enumString, i, 'K');
-    } else {
-      i = enumString.indexOf("1m");
-      if (i > 0) {
-        enumString = replaceScale(enumString, i, 'M');
+    final char[] chars = oracleSource.toCharArray();
+    int len = chars.length;
+    boolean nextLowerCase = false;
+    for (int i = 0; i < chars.length; ) {
+      final char c = chars[i];
+      if (c == '_') {
+        --len;
+        System.arraycopy(chars, i + 1, chars, i, len - i);
+        nextLowerCase = false;
+        continue;
+      } else if (Character.isDigit(c)) {
+        nextLowerCase = false;
+        ++i;
+        continue;
+      } else if (nextLowerCase) {
+        chars[i] = Character.toLowerCase(c);
+      } else if (Character.isLowerCase(c)) {
+        chars[i] = Character.toUpperCase(c);
       }
+      nextLowerCase = true;
+      ++i;
     }
+    final var enumString = new String(chars, 0, len);
     try {
       return OracleSource.valueOf(enumString);
     } catch (final RuntimeException ex) {
