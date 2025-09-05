@@ -8,7 +8,7 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record DelegateAcl(PublicKey pubkey,
-                          Permission[] permissions,
+                          IntegrationPermissions[] integrationPermissions,
                           long expiresAt) implements Borsh {
 
   public static DelegateAcl read(final byte[] _data, final int offset) {
@@ -18,10 +18,10 @@ public record DelegateAcl(PublicKey pubkey,
     int i = offset;
     final var pubkey = readPubKey(_data, i);
     i += 32;
-    final var permissions = Borsh.readVector(Permission.class, Permission::read, _data, i);
-    i += Borsh.lenVector(permissions);
+    final var integrationPermissions = Borsh.readVector(IntegrationPermissions.class, IntegrationPermissions::read, _data, i);
+    i += Borsh.lenVector(integrationPermissions);
     final var expiresAt = getInt64LE(_data, i);
-    return new DelegateAcl(pubkey, permissions, expiresAt);
+    return new DelegateAcl(pubkey, integrationPermissions, expiresAt);
   }
 
   @Override
@@ -29,7 +29,7 @@ public record DelegateAcl(PublicKey pubkey,
     int i = offset;
     pubkey.write(_data, i);
     i += 32;
-    i += Borsh.writeVector(permissions, _data, i);
+    i += Borsh.writeVector(integrationPermissions, _data, i);
     putInt64LE(_data, i, expiresAt);
     i += 8;
     return i - offset;
@@ -37,6 +37,6 @@ public record DelegateAcl(PublicKey pubkey,
 
   @Override
   public int l() {
-    return 32 + Borsh.lenVector(permissions) + 8;
+    return 32 + Borsh.lenVector(integrationPermissions) + 8;
   }
 }
