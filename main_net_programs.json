@@ -180,6 +180,11 @@
     "package": "pyth.push"
   },
   {
+    "name": "Pyth Receiver",
+    "program": "rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ",
+    "package": "pyth.receiver"
+  },
+  {
     "name": "Raydium Launchpad",
     "program": "LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj",
     "package": "raydium.launchpad"

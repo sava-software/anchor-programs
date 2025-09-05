@@ -1,7 +1,10 @@
 package software.sava.anchor.programs.pyth.receiver.anchor;
 
+import java.util.List;
+
 import software.sava.anchor.programs.pyth.receiver.anchor.types.Config;
 import software.sava.anchor.programs.pyth.receiver.anchor.types.DataSource;
+import software.sava.anchor.programs.pyth.receiver.anchor.types.PostTwapUpdateParams;
 import software.sava.anchor.programs.pyth.receiver.anchor.types.PostUpdateAtomicParams;
 import software.sava.anchor.programs.pyth.receiver.anchor.types.PostUpdateParams;
 import software.sava.core.accounts.PublicKey;
@@ -10,10 +13,11 @@ import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
-import java.util.List;
-
 import static software.sava.core.accounts.PublicKey.readPubKey;
-import static software.sava.core.accounts.meta.AccountMeta.*;
+import static software.sava.core.accounts.meta.AccountMeta.createRead;
+import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
+import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
+import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
@@ -29,9 +33,9 @@ public final class PythSolanaReceiverProgram {
                                        final PublicKey systemProgramKey,
                                        final Config initialConfig) {
     final var keys = List.of(
-        createWritableSigner(payerKey),
-        createWrite(configKey),
-        createRead(systemProgramKey)
+      createWritableSigner(payerKey),
+      createWrite(configKey),
+      createRead(systemProgramKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(initialConfig)];
@@ -41,7 +45,7 @@ public final class PythSolanaReceiverProgram {
     return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, _data);
   }
 
-  public record InitializeIxData(Discriminator discriminator, Config initialConfig) implements Borsh {
+  public record InitializeIxData(Discriminator discriminator, Config initialConfig) implements Borsh {  
 
     public static InitializeIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -77,8 +81,8 @@ public final class PythSolanaReceiverProgram {
                                                                final PublicKey configKey,
                                                                final PublicKey targetGovernanceAuthority) {
     final var keys = List.of(
-        createReadOnlySigner(payerKey),
-        createWrite(configKey)
+      createReadOnlySigner(payerKey),
+      createWrite(configKey)
     );
 
     final byte[] _data = new byte[40];
@@ -88,8 +92,7 @@ public final class PythSolanaReceiverProgram {
     return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, _data);
   }
 
-  public record RequestGovernanceAuthorityTransferIxData(Discriminator discriminator,
-                                                         PublicKey targetGovernanceAuthority) implements Borsh {
+  public record RequestGovernanceAuthorityTransferIxData(Discriminator discriminator, PublicKey targetGovernanceAuthority) implements Borsh {  
 
     public static RequestGovernanceAuthorityTransferIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -121,14 +124,23 @@ public final class PythSolanaReceiverProgram {
     }
   }
 
+  public static final Discriminator CANCEL_GOVERNANCE_AUTHORITY_TRANSFER_DISCRIMINATOR = toDiscriminator(39, 93, 70, 137, 137, 90, 248, 154);
+
+  public static Instruction cancelGovernanceAuthorityTransfer(final AccountMeta invokedPythSolanaReceiverProgramMeta, final PublicKey payerKey, final PublicKey configKey) {
+    final var keys = List.of(
+      createReadOnlySigner(payerKey),
+      createWrite(configKey)
+    );
+
+    return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, CANCEL_GOVERNANCE_AUTHORITY_TRANSFER_DISCRIMINATOR);
+  }
+
   public static final Discriminator ACCEPT_GOVERNANCE_AUTHORITY_TRANSFER_DISCRIMINATOR = toDiscriminator(254, 39, 222, 79, 64, 217, 205, 127);
 
-  public static Instruction acceptGovernanceAuthorityTransfer(final AccountMeta invokedPythSolanaReceiverProgramMeta,
-                                                              final PublicKey payerKey,
-                                                              final PublicKey configKey) {
+  public static Instruction acceptGovernanceAuthorityTransfer(final AccountMeta invokedPythSolanaReceiverProgramMeta, final PublicKey payerKey, final PublicKey configKey) {
     final var keys = List.of(
-        createReadOnlySigner(payerKey),
-        createWrite(configKey)
+      createReadOnlySigner(payerKey),
+      createWrite(configKey)
     );
 
     return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, ACCEPT_GOVERNANCE_AUTHORITY_TRANSFER_DISCRIMINATOR);
@@ -141,8 +153,8 @@ public final class PythSolanaReceiverProgram {
                                            final PublicKey configKey,
                                            final DataSource[] validDataSources) {
     final var keys = List.of(
-        createReadOnlySigner(payerKey),
-        createWrite(configKey)
+      createReadOnlySigner(payerKey),
+      createWrite(configKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(validDataSources)];
@@ -152,7 +164,7 @@ public final class PythSolanaReceiverProgram {
     return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, _data);
   }
 
-  public record SetDataSourcesIxData(Discriminator discriminator, DataSource[] validDataSources) implements Borsh {
+  public record SetDataSourcesIxData(Discriminator discriminator, DataSource[] validDataSources) implements Borsh {  
 
     public static SetDataSourcesIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -188,8 +200,8 @@ public final class PythSolanaReceiverProgram {
                                    final PublicKey configKey,
                                    final long singleUpdateFeeInLamports) {
     final var keys = List.of(
-        createReadOnlySigner(payerKey),
-        createWrite(configKey)
+      createReadOnlySigner(payerKey),
+      createWrite(configKey)
     );
 
     final byte[] _data = new byte[16];
@@ -199,7 +211,7 @@ public final class PythSolanaReceiverProgram {
     return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, _data);
   }
 
-  public record SetFeeIxData(Discriminator discriminator, long singleUpdateFeeInLamports) implements Borsh {
+  public record SetFeeIxData(Discriminator discriminator, long singleUpdateFeeInLamports) implements Borsh {  
 
     public static SetFeeIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -238,8 +250,8 @@ public final class PythSolanaReceiverProgram {
                                                final PublicKey configKey,
                                                final PublicKey wormhole) {
     final var keys = List.of(
-        createReadOnlySigner(payerKey),
-        createWrite(configKey)
+      createReadOnlySigner(payerKey),
+      createWrite(configKey)
     );
 
     final byte[] _data = new byte[40];
@@ -249,7 +261,7 @@ public final class PythSolanaReceiverProgram {
     return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, _data);
   }
 
-  public record SetWormholeAddressIxData(Discriminator discriminator, PublicKey wormhole) implements Borsh {
+  public record SetWormholeAddressIxData(Discriminator discriminator, PublicKey wormhole) implements Borsh {  
 
     public static SetWormholeAddressIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -288,8 +300,8 @@ public final class PythSolanaReceiverProgram {
                                                  final PublicKey configKey,
                                                  final int minimumSignatures) {
     final var keys = List.of(
-        createReadOnlySigner(payerKey),
-        createWrite(configKey)
+      createReadOnlySigner(payerKey),
+      createWrite(configKey)
     );
 
     final byte[] _data = new byte[9];
@@ -299,7 +311,7 @@ public final class PythSolanaReceiverProgram {
     return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, _data);
   }
 
-  public record SetMinimumSignaturesIxData(Discriminator discriminator, int minimumSignatures) implements Borsh {
+  public record SetMinimumSignaturesIxData(Discriminator discriminator, int minimumSignatures) implements Borsh {  
 
     public static SetMinimumSignaturesIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -333,26 +345,36 @@ public final class PythSolanaReceiverProgram {
 
   public static final Discriminator POST_UPDATE_ATOMIC_DISCRIMINATOR = toDiscriminator(49, 172, 84, 192, 175, 180, 52, 234);
 
+  // Post a price update using a VAA and a MerklePriceUpdate.
+  // This function allows you to post a price update in a single transaction.
+  // Compared to `post_update`, it only checks whatever signatures are present in the provided VAA and doesn't fail if the number of signatures is lower than the Wormhole quorum of two thirds of the guardians.
+  // The number of signatures that were in the VAA is stored in the `VerificationLevel` of the `PriceUpdateV2` account.
+  // 
+  // We recommend using `post_update_atomic` with 5 signatures. This is close to the maximum signatures you can verify in one transaction without exceeding the transaction size limit.
+  // 
+  // # Warning
+  // 
+  // Using partially verified price updates is dangerous, as it lowers the threshold of guardians that need to collude to produce a malicious price update.
   public static Instruction postUpdateAtomic(final AccountMeta invokedPythSolanaReceiverProgramMeta,
                                              final PublicKey payerKey,
                                              // Instead we do the same steps in deserialize_guardian_set_checked.
                                              final PublicKey guardianSetKey,
                                              final PublicKey configKey,
                                              final PublicKey treasuryKey,
-                                             // The contraint is such that either the price_update_account is uninitialized or the payer is the write_authority.
+                                             // The constraint is such that either the price_update_account is uninitialized or the write_authority is the write_authority.
                                              // Pubkey::default() is the SystemProgram on Solana and it can't sign so it's impossible that price_update_account.write_authority == Pubkey::default() once the account is initialized
                                              final PublicKey priceUpdateAccountKey,
                                              final PublicKey systemProgramKey,
                                              final PublicKey writeAuthorityKey,
                                              final PostUpdateAtomicParams params) {
     final var keys = List.of(
-        createWritableSigner(payerKey),
-        createRead(guardianSetKey),
-        createRead(configKey),
-        createWrite(treasuryKey),
-        createWritableSigner(priceUpdateAccountKey),
-        createRead(systemProgramKey),
-        createReadOnlySigner(writeAuthorityKey)
+      createWritableSigner(payerKey),
+      createRead(guardianSetKey),
+      createRead(configKey),
+      createWrite(treasuryKey),
+      createWritableSigner(priceUpdateAccountKey),
+      createRead(systemProgramKey),
+      createReadOnlySigner(writeAuthorityKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
@@ -362,7 +384,7 @@ public final class PythSolanaReceiverProgram {
     return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, _data);
   }
 
-  public record PostUpdateAtomicIxData(Discriminator discriminator, PostUpdateAtomicParams params) implements Borsh {
+  public record PostUpdateAtomicIxData(Discriminator discriminator, PostUpdateAtomicParams params) implements Borsh {  
 
     public static PostUpdateAtomicIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -393,25 +415,28 @@ public final class PythSolanaReceiverProgram {
 
   public static final Discriminator POST_UPDATE_DISCRIMINATOR = toDiscriminator(133, 95, 207, 175, 11, 79, 118, 44);
 
+  // Post a price update using an encoded_vaa account and a MerklePriceUpdate calldata.
+  // This should be called after the client has already verified the Vaa via the Wormhole contract.
+  // Check out target_chains/solana/cli/src/main.rs for an example of how to do this.
   public static Instruction postUpdate(final AccountMeta invokedPythSolanaReceiverProgramMeta,
                                        final PublicKey payerKey,
                                        final PublicKey encodedVaaKey,
                                        final PublicKey configKey,
                                        final PublicKey treasuryKey,
-                                       // The contraint is such that either the price_update_account is uninitialized or the payer is the write_authority.
+                                       // The constraint is such that either the price_update_account is uninitialized or the write_authority is the write_authority.
                                        // Pubkey::default() is the SystemProgram on Solana and it can't sign so it's impossible that price_update_account.write_authority == Pubkey::default() once the account is initialized
                                        final PublicKey priceUpdateAccountKey,
                                        final PublicKey systemProgramKey,
                                        final PublicKey writeAuthorityKey,
                                        final PostUpdateParams params) {
     final var keys = List.of(
-        createWritableSigner(payerKey),
-        createRead(encodedVaaKey),
-        createRead(configKey),
-        createWrite(treasuryKey),
-        createWritableSigner(priceUpdateAccountKey),
-        createRead(systemProgramKey),
-        createReadOnlySigner(writeAuthorityKey)
+      createWritableSigner(payerKey),
+      createRead(encodedVaaKey),
+      createRead(configKey),
+      createWrite(treasuryKey),
+      createWritableSigner(priceUpdateAccountKey),
+      createRead(systemProgramKey),
+      createReadOnlySigner(writeAuthorityKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
@@ -421,7 +446,7 @@ public final class PythSolanaReceiverProgram {
     return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, _data);
   }
 
-  public record PostUpdateIxData(Discriminator discriminator, PostUpdateParams params) implements Borsh {
+  public record PostUpdateIxData(Discriminator discriminator, PostUpdateParams params) implements Borsh {  
 
     public static PostUpdateIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -450,17 +475,90 @@ public final class PythSolanaReceiverProgram {
     }
   }
 
+  public static final Discriminator POST_TWAP_UPDATE_DISCRIMINATOR = toDiscriminator(232, 176, 212, 105, 69, 121, 18, 30);
+
+  // Post a TWAP (time weighted average price) update for a given time window.
+  // This should be called after the client has already verified the VAAs via the Wormhole contract.
+  // Check out target_chains/solana/cli/src/main.rs for an example of how to do this.
+  public static Instruction postTwapUpdate(final AccountMeta invokedPythSolanaReceiverProgramMeta,
+                                           final PublicKey payerKey,
+                                           final PublicKey startEncodedVaaKey,
+                                           final PublicKey endEncodedVaaKey,
+                                           final PublicKey configKey,
+                                           final PublicKey treasuryKey,
+                                           // The constraint is such that either the price_update_account is uninitialized or the write_authority is the write_authority.
+                                           // Pubkey::default() is the SystemProgram on Solana and it can't sign so it's impossible that price_update_account.write_authority == Pubkey::default() once the account is initialized
+                                           final PublicKey twapUpdateAccountKey,
+                                           final PublicKey systemProgramKey,
+                                           final PublicKey writeAuthorityKey,
+                                           final PostTwapUpdateParams params) {
+    final var keys = List.of(
+      createWritableSigner(payerKey),
+      createRead(startEncodedVaaKey),
+      createRead(endEncodedVaaKey),
+      createRead(configKey),
+      createWrite(treasuryKey),
+      createWritableSigner(twapUpdateAccountKey),
+      createRead(systemProgramKey),
+      createReadOnlySigner(writeAuthorityKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = POST_TWAP_UPDATE_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, _data);
+  }
+
+  public record PostTwapUpdateIxData(Discriminator discriminator, PostTwapUpdateParams params) implements Borsh {  
+
+    public static PostTwapUpdateIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static PostTwapUpdateIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = PostTwapUpdateParams.read(_data, i);
+      return new PostTwapUpdateIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(params);
+    }
+  }
+
   public static final Discriminator RECLAIM_RENT_DISCRIMINATOR = toDiscriminator(218, 200, 19, 197, 227, 89, 192, 22);
 
-  public static Instruction reclaimRent(final AccountMeta invokedPythSolanaReceiverProgramMeta,
-                                        final PublicKey payerKey,
-                                        final PublicKey priceUpdateAccountKey) {
+  public static Instruction reclaimRent(final AccountMeta invokedPythSolanaReceiverProgramMeta, final PublicKey payerKey, final PublicKey priceUpdateAccountKey) {
     final var keys = List.of(
-        createWritableSigner(payerKey),
-        createWrite(priceUpdateAccountKey)
+      createWritableSigner(payerKey),
+      createWrite(priceUpdateAccountKey)
     );
 
     return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, RECLAIM_RENT_DISCRIMINATOR);
+  }
+
+  public static final Discriminator RECLAIM_TWAP_RENT_DISCRIMINATOR = toDiscriminator(84, 3, 32, 238, 108, 217, 135, 39);
+
+  public static Instruction reclaimTwapRent(final AccountMeta invokedPythSolanaReceiverProgramMeta, final PublicKey payerKey, final PublicKey twapUpdateAccountKey) {
+    final var keys = List.of(
+      createWritableSigner(payerKey),
+      createWrite(twapUpdateAccountKey)
+    );
+
+    return Instruction.createInstruction(invokedPythSolanaReceiverProgramMeta, keys, RECLAIM_TWAP_RENT_DISCRIMINATOR);
   }
 
   private PythSolanaReceiverProgram() {

@@ -11,7 +11,7 @@ public record PostUpdateAtomicParams(byte[] vaa,
       return null;
     }
     int i = offset;
-    final byte[] vaa = Borsh.readbyteVector(_data, i);
+    final var vaa = Borsh.readbyteVector(_data, i);
     i += Borsh.lenVector(vaa);
     final var merklePriceUpdate = MerklePriceUpdate.read(_data, i);
     i += Borsh.len(merklePriceUpdate);

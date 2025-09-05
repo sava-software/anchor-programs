@@ -1,12 +1,12 @@
 package software.sava.anchor.programs.pyth.receiver.anchor.types;
 
+import java.util.function.BiFunction;
+
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 import software.sava.rpc.json.http.response.AccountInfo;
-
-import java.util.function.BiFunction;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
@@ -70,14 +70,13 @@ public record Config(PublicKey _address,
     i += 8;
     final var minimumSignatures = _data[i] & 0xFF;
     return new Config(_address,
-        discriminator,
-        governanceAuthority,
-        targetGovernanceAuthority,
-        wormhole,
-        validDataSources,
-        singleUpdateFeeInLamports,
-        minimumSignatures
-    );
+                      discriminator,
+                      governanceAuthority,
+                      targetGovernanceAuthority,
+                      wormhole,
+                      validDataSources,
+                      singleUpdateFeeInLamports,
+                      minimumSignatures);
   }
 
   @Override
@@ -99,10 +98,10 @@ public record Config(PublicKey _address,
   @Override
   public int l() {
     return 8 + 32
-        + (targetGovernanceAuthority == null ? 1 : (1 + 32))
-        + 32
-        + Borsh.lenVector(validDataSources)
-        + 8
-        + 1;
+         + (targetGovernanceAuthority == null ? 1 : (1 + 32))
+         + 32
+         + Borsh.lenVector(validDataSources)
+         + 8
+         + 1;
   }
 }

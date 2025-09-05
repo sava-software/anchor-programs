@@ -1,12 +1,12 @@
 package software.sava.anchor.programs.pyth.receiver.anchor.types;
 
+import java.util.function.BiFunction;
+
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 import software.sava.rpc.json.http.response.AccountInfo;
-
-import java.util.function.BiFunction;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
@@ -59,12 +59,11 @@ public record PriceUpdateV2(PublicKey _address,
     i += Borsh.len(priceMessage);
     final var postedSlot = getInt64LE(_data, i);
     return new PriceUpdateV2(_address,
-        discriminator,
-        writeAuthority,
-        verificationLevel,
-        priceMessage,
-        postedSlot
-    );
+                             discriminator,
+                             writeAuthority,
+                             verificationLevel,
+                             priceMessage,
+                             postedSlot);
   }
 
   @Override

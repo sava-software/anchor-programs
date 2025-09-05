@@ -9,7 +9,7 @@ public record MerklePriceUpdate(byte[] message, byte[][] proof) implements Borsh
       return null;
     }
     int i = offset;
-    final byte[] message = Borsh.readbyteVector(_data, i);
+    final var message = Borsh.readbyteVector(_data, i);
     i += Borsh.lenVector(message);
     final var proof = Borsh.readMultiDimensionbyteVectorArray(20, _data, i);
     return new MerklePriceUpdate(message, proof);

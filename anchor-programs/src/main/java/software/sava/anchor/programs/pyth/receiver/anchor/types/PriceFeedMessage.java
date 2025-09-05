@@ -17,6 +17,7 @@ public record PriceFeedMessage(byte[] feedId,
                                long emaConf) implements Borsh {
 
   public static final int BYTES = 84;
+  public static final int FEED_ID_LEN = 32;
 
   public static PriceFeedMessage read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
