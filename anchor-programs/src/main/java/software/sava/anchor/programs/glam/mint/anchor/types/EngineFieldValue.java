@@ -22,7 +22,6 @@ public sealed interface EngineFieldValue extends RustEnum permits
   EngineFieldValue.VecU32,
   EngineFieldValue.VecDelegateAcl,
   EngineFieldValue.VecIntegrationAcl,
-  EngineFieldValue.VecPricedAssets,
   EngineFieldValue.FeeStructure,
   EngineFieldValue.FeeParams,
   EngineFieldValue.AccruedFees,
@@ -43,11 +42,10 @@ public sealed interface EngineFieldValue extends RustEnum permits
       case 8 -> VecU32.read(_data, i);
       case 9 -> VecDelegateAcl.read(_data, i);
       case 10 -> VecIntegrationAcl.read(_data, i);
-      case 11 -> VecPricedAssets.read(_data, i);
-      case 12 -> FeeStructure.read(_data, i);
-      case 13 -> FeeParams.read(_data, i);
-      case 14 -> AccruedFees.read(_data, i);
-      case 15 -> NotifyAndSettle.read(_data, i);
+      case 11 -> FeeStructure.read(_data, i);
+      case 12 -> FeeParams.read(_data, i);
+      case 13 -> AccruedFees.read(_data, i);
+      case 14 -> NotifyAndSettle.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [EngineFieldValue]", ordinal
       ));
@@ -273,34 +271,6 @@ public sealed interface EngineFieldValue extends RustEnum permits
     }
   }
 
-  record VecPricedAssets(PricedProtocol[] val) implements EngineFieldValue {
-
-    public static VecPricedAssets read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var val = Borsh.readVector(PricedProtocol.class, PricedProtocol::read, _data, offset);
-      return new VecPricedAssets(val);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = writeOrdinal(_data, offset);
-      i += Borsh.writeVector(val, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 1 + Borsh.lenVector(val);
-    }
-
-    @Override
-    public int ordinal() {
-      return 11;
-    }
-  }
-
   record FeeStructure(software.sava.anchor.programs.glam.mint.anchor.types.FeeStructure val) implements BorshEnum, EngineFieldValue {
 
     public static FeeStructure read(final byte[] _data, final int offset) {
@@ -309,7 +279,7 @@ public sealed interface EngineFieldValue extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 12;
+      return 11;
     }
   }
 
@@ -321,7 +291,7 @@ public sealed interface EngineFieldValue extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 13;
+      return 12;
     }
   }
 
@@ -333,7 +303,7 @@ public sealed interface EngineFieldValue extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 14;
+      return 13;
     }
   }
 
@@ -345,7 +315,7 @@ public sealed interface EngineFieldValue extends RustEnum permits
 
     @Override
     public int ordinal() {
-      return 15;
+      return 14;
     }
   }
 }

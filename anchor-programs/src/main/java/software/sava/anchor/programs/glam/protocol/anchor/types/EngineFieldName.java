@@ -12,7 +12,6 @@ public enum EngineFieldName implements Borsh.Enum {
   DelegateAcls,
   IntegrationAcls,
   TimelockDuration,
-  DeprecatedTimelockExpiresAt,
   Borrowable,
   DefaultAccountStateFrozen,
   PermanentDelegate,

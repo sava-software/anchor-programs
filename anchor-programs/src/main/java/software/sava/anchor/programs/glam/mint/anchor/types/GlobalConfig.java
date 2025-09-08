@@ -18,8 +18,7 @@ public record GlobalConfig(PublicKey _address,
                            Discriminator discriminator,
                            // The authority that can modify the config
                            PublicKey admin,
-                           // The authority that can modify fee structure of individual glam state
-                           // and claim protocol fees
+                           // The authority that can modify fee structure of individual glam state and claim protocol fees
                            PublicKey feeAuthority,
                            PublicKey referrer,
                            int baseFeeBps,

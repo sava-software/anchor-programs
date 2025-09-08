@@ -25,13 +25,13 @@ public record StateAccount(PublicKey _address,
                            byte[] portfolioManagerName,
                            CreatedModel created,
                            PublicKey baseAssetMint,
+                           int baseAssetDecimals,
                            int baseAssetTokenProgram,
                            byte[] name,
                            int timelockDuration,
                            long timelockExpiresAt,
                            PublicKey mint,
                            PublicKey[] assets,
-                           PublicKey[] borrowable,
                            IntegrationAcl[] integrationAcls,
                            DelegateAcl[] delegateAcls,
                            PublicKey[] externalPositions,
@@ -50,12 +50,13 @@ public record StateAccount(PublicKey _address,
   public static final int PORTFOLIO_MANAGER_NAME_OFFSET = 74;
   public static final int CREATED_OFFSET = 106;
   public static final int BASE_ASSET_MINT_OFFSET = 154;
-  public static final int BASE_ASSET_TOKEN_PROGRAM_OFFSET = 186;
-  public static final int NAME_OFFSET = 187;
-  public static final int TIMELOCK_DURATION_OFFSET = 219;
-  public static final int TIMELOCK_EXPIRES_AT_OFFSET = 223;
-  public static final int MINT_OFFSET = 231;
-  public static final int ASSETS_OFFSET = 263;
+  public static final int BASE_ASSET_DECIMALS_OFFSET = 186;
+  public static final int BASE_ASSET_TOKEN_PROGRAM_OFFSET = 187;
+  public static final int NAME_OFFSET = 188;
+  public static final int TIMELOCK_DURATION_OFFSET = 220;
+  public static final int TIMELOCK_EXPIRES_AT_OFFSET = 224;
+  public static final int MINT_OFFSET = 232;
+  public static final int ASSETS_OFFSET = 264;
 
   public static Filter createAccountTypeFilter(final AccountType accountType) {
     return Filter.createMemCompFilter(ACCOUNT_TYPE_OFFSET, accountType.write());
@@ -79,6 +80,10 @@ public record StateAccount(PublicKey _address,
 
   public static Filter createBaseAssetMintFilter(final PublicKey baseAssetMint) {
     return Filter.createMemCompFilter(BASE_ASSET_MINT_OFFSET, baseAssetMint);
+  }
+
+  public static Filter createBaseAssetDecimalsFilter(final int baseAssetDecimals) {
+    return Filter.createMemCompFilter(BASE_ASSET_DECIMALS_OFFSET, new byte[]{(byte) baseAssetDecimals});
   }
 
   public static Filter createBaseAssetTokenProgramFilter(final int baseAssetTokenProgram) {
@@ -135,6 +140,8 @@ public record StateAccount(PublicKey _address,
     i += Borsh.len(created);
     final var baseAssetMint = readPubKey(_data, i);
     i += 32;
+    final var baseAssetDecimals = _data[i] & 0xFF;
+    ++i;
     final var baseAssetTokenProgram = _data[i] & 0xFF;
     ++i;
     final var name = new byte[32];
@@ -147,8 +154,6 @@ public record StateAccount(PublicKey _address,
     i += 32;
     final var assets = Borsh.readPublicKeyVector(_data, i);
     i += Borsh.lenVector(assets);
-    final var borrowable = Borsh.readPublicKeyVector(_data, i);
-    i += Borsh.lenVector(borrowable);
     final var integrationAcls = Borsh.readVector(IntegrationAcl.class, IntegrationAcl::read, _data, i);
     i += Borsh.lenVector(integrationAcls);
     final var delegateAcls = Borsh.readVector(DelegateAcl.class, DelegateAcl::read, _data, i);
@@ -167,13 +172,13 @@ public record StateAccount(PublicKey _address,
                             portfolioManagerName,
                             created,
                             baseAssetMint,
+                            baseAssetDecimals,
                             baseAssetTokenProgram,
                             name,
                             timelockDuration,
                             timelockExpiresAt,
                             mint,
                             assets,
-                            borrowable,
                             integrationAcls,
                             delegateAcls,
                             externalPositions,
@@ -195,6 +200,8 @@ public record StateAccount(PublicKey _address,
     i += Borsh.write(created, _data, i);
     baseAssetMint.write(_data, i);
     i += 32;
+    _data[i] = (byte) baseAssetDecimals;
+    ++i;
     _data[i] = (byte) baseAssetTokenProgram;
     ++i;
     i += Borsh.writeArray(name, _data, i);
@@ -205,7 +212,6 @@ public record StateAccount(PublicKey _address,
     mint.write(_data, i);
     i += 32;
     i += Borsh.writeVector(assets, _data, i);
-    i += Borsh.writeVector(borrowable, _data, i);
     i += Borsh.writeVector(integrationAcls, _data, i);
     i += Borsh.writeVector(delegateAcls, _data, i);
     i += Borsh.writeVector(externalPositions, _data, i);
@@ -224,12 +230,12 @@ public record StateAccount(PublicKey _address,
          + Borsh.len(created)
          + 32
          + 1
+         + 1
          + Borsh.lenArray(name)
          + 4
          + 8
          + 32
          + Borsh.lenVector(assets)
-         + Borsh.lenVector(borrowable)
          + Borsh.lenVector(integrationAcls)
          + Borsh.lenVector(delegateAcls)
          + Borsh.lenVector(externalPositions)

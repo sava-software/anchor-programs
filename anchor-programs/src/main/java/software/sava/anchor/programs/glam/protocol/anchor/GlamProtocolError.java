@@ -5,9 +5,10 @@ import software.sava.anchor.programs._commons.ProgramError;
 public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.UnauthorizedSigner,
     GlamProtocolError.UnauthorizedIntegrationProgram,
-    GlamProtocolError.IntegrationDisabled,
+    GlamProtocolError.IntegrationNotEnabled,
+    GlamProtocolError.ProtocolNotEnabled,
     GlamProtocolError.GlamStateDisabled,
-    GlamProtocolError.InvalidSignerAccount,
+    GlamProtocolError.ProtocolPolicyViolation,
     GlamProtocolError.EmergencyUpdateDenied,
     GlamProtocolError.TimelockStillActive,
     GlamProtocolError.CannotApplyChanges,
@@ -19,7 +20,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.InvalidSymbol,
     GlamProtocolError.InvalidUri,
     GlamProtocolError.InvalidAssetsLen,
-    GlamProtocolError.GlamMintNotFound,
+    GlamProtocolError.InvalidIxArgs,
     GlamProtocolError.CannotCloseState,
     GlamProtocolError.InvalidMintParams,
     GlamProtocolError.InvalidRemainingAccounts,
@@ -29,7 +30,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.InvalidTimestamp,
     GlamProtocolError.EngineFieldNotFound,
     GlamProtocolError.InvalidBaseAsset,
-    GlamProtocolError.InvalidProtocolBits,
+    GlamProtocolError.InvalidProtocolBitflag,
     GlamProtocolError.WithdrawDenied,
     GlamProtocolError.InvalidAssetForSwap,
     GlamProtocolError.UnsupportedSwapIx,
@@ -44,7 +45,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.PricingError,
     GlamProtocolError.PriceTooOld,
     GlamProtocolError.ExternalPositionsNotPriced,
-    GlamProtocolError.VaultAssetsNotPriced,
+    GlamProtocolError.VaultTokensNotPriced,
     GlamProtocolError.VaultNotPriced,
     GlamProtocolError.PositiveAumRequired,
     GlamProtocolError.MathError,
@@ -63,21 +64,22 @@ public sealed interface GlamProtocolError extends ProgramError permits
     return switch (errorCode) {
       case 48000 -> UnauthorizedSigner.INSTANCE;
       case 48001 -> UnauthorizedIntegrationProgram.INSTANCE;
-      case 48002 -> IntegrationDisabled.INSTANCE;
-      case 48003 -> GlamStateDisabled.INSTANCE;
-      case 48004 -> InvalidSignerAccount.INSTANCE;
-      case 48005 -> EmergencyUpdateDenied.INSTANCE;
-      case 48006 -> TimelockStillActive.INSTANCE;
-      case 48007 -> CannotApplyChanges.INSTANCE;
-      case 48008 -> AssetNotBorrowable.INSTANCE;
-      case 48009 -> InvalidAccountOwner.INSTANCE;
-      case 48010 -> InvalidAuthority.INSTANCE;
+      case 48002 -> IntegrationNotEnabled.INSTANCE;
+      case 48003 -> ProtocolNotEnabled.INSTANCE;
+      case 48004 -> GlamStateDisabled.INSTANCE;
+      case 48005 -> ProtocolPolicyViolation.INSTANCE;
+      case 48006 -> EmergencyUpdateDenied.INSTANCE;
+      case 48007 -> TimelockStillActive.INSTANCE;
+      case 48008 -> CannotApplyChanges.INSTANCE;
+      case 48009 -> AssetNotBorrowable.INSTANCE;
+      case 48010 -> InvalidAccountOwner.INSTANCE;
+      case 48011 -> InvalidAuthority.INSTANCE;
       case 49000 -> InvalidAccountType.INSTANCE;
       case 49001 -> InvalidName.INSTANCE;
       case 49002 -> InvalidSymbol.INSTANCE;
       case 49003 -> InvalidUri.INSTANCE;
       case 49004 -> InvalidAssetsLen.INSTANCE;
-      case 49005 -> GlamMintNotFound.INSTANCE;
+      case 49005 -> InvalidIxArgs.INSTANCE;
       case 49006 -> CannotCloseState.INSTANCE;
       case 49007 -> InvalidMintParams.INSTANCE;
       case 49008 -> InvalidRemainingAccounts.INSTANCE;
@@ -87,7 +89,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 49012 -> InvalidTimestamp.INSTANCE;
       case 49013 -> EngineFieldNotFound.INSTANCE;
       case 49014 -> InvalidBaseAsset.INSTANCE;
-      case 49015 -> InvalidProtocolBits.INSTANCE;
+      case 49015 -> InvalidProtocolBitflag.INSTANCE;
       case 50000 -> WithdrawDenied.INSTANCE;
       case 50001 -> InvalidAssetForSwap.INSTANCE;
       case 50002 -> UnsupportedSwapIx.INSTANCE;
@@ -102,7 +104,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 51101 -> PricingError.INSTANCE;
       case 51102 -> PriceTooOld.INSTANCE;
       case 51103 -> ExternalPositionsNotPriced.INSTANCE;
-      case 51104 -> VaultAssetsNotPriced.INSTANCE;
+      case 51104 -> VaultTokensNotPriced.INSTANCE;
       case 51105 -> VaultNotPriced.INSTANCE;
       case 51106 -> PositiveAumRequired.INSTANCE;
       case 51107 -> MathError.INSTANCE;
@@ -134,66 +136,73 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record IntegrationDisabled(int code, String msg) implements GlamProtocolError {
+  record IntegrationNotEnabled(int code, String msg) implements GlamProtocolError {
 
-    public static final IntegrationDisabled INSTANCE = new IntegrationDisabled(
-        48002, "Integration is disabled"
+    public static final IntegrationNotEnabled INSTANCE = new IntegrationNotEnabled(
+        48002, "Integration is not enabled"
+    );
+  }
+
+  record ProtocolNotEnabled(int code, String msg) implements GlamProtocolError {
+
+    public static final ProtocolNotEnabled INSTANCE = new ProtocolNotEnabled(
+        48003, "Protocol is not enabled"
     );
   }
 
   record GlamStateDisabled(int code, String msg) implements GlamProtocolError {
 
     public static final GlamStateDisabled INSTANCE = new GlamStateDisabled(
-        48003, "GLAM state is disabled"
+        48004, "GLAM state is disabled"
     );
   }
 
-  record InvalidSignerAccount(int code, String msg) implements GlamProtocolError {
+  record ProtocolPolicyViolation(int code, String msg) implements GlamProtocolError {
 
-    public static final InvalidSignerAccount INSTANCE = new InvalidSignerAccount(
-        48004, "Invalid signer token account"
+    public static final ProtocolPolicyViolation INSTANCE = new ProtocolPolicyViolation(
+        48005, "Protocol policy violation"
     );
   }
 
   record EmergencyUpdateDenied(int code, String msg) implements GlamProtocolError {
 
     public static final EmergencyUpdateDenied INSTANCE = new EmergencyUpdateDenied(
-        48005, "Emergency update denied"
+        48006, "Emergency update denied"
     );
   }
 
   record TimelockStillActive(int code, String msg) implements GlamProtocolError {
 
     public static final TimelockStillActive INSTANCE = new TimelockStillActive(
-        48006, "Timelock still active"
+        48007, "Timelock still active"
     );
   }
 
   record CannotApplyChanges(int code, String msg) implements GlamProtocolError {
 
     public static final CannotApplyChanges INSTANCE = new CannotApplyChanges(
-        48007, "Pending changes cannot be applied due to unfulfilled subscriptions or redemptions"
+        48008, "Pending changes cannot be applied due to unfulfilled subscriptions or redemptions"
     );
   }
 
   record AssetNotBorrowable(int code, String msg) implements GlamProtocolError {
 
     public static final AssetNotBorrowable INSTANCE = new AssetNotBorrowable(
-        48008, "Asset is not allowed to borrow"
+        48009, "Asset is not allowed to borrow"
     );
   }
 
   record InvalidAccountOwner(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidAccountOwner INSTANCE = new InvalidAccountOwner(
-        48009, "Account owned by an invalid program"
+        48010, "Account owned by an invalid program"
     );
   }
 
   record InvalidAuthority(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidAuthority INSTANCE = new InvalidAuthority(
-        48010, "Invalid authority"
+        48011, "Invalid authority"
     );
   }
 
@@ -232,9 +241,9 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record GlamMintNotFound(int code, String msg) implements GlamProtocolError {
+  record InvalidIxArgs(int code, String msg) implements GlamProtocolError {
 
-    public static final GlamMintNotFound INSTANCE = new GlamMintNotFound(
+    public static final InvalidIxArgs INSTANCE = new InvalidIxArgs(
         49005, "Glam mint not found"
     );
   }
@@ -302,10 +311,10 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record InvalidProtocolBits(int code, String msg) implements GlamProtocolError {
+  record InvalidProtocolBitflag(int code, String msg) implements GlamProtocolError {
 
-    public static final InvalidProtocolBits INSTANCE = new InvalidProtocolBits(
-        49015, "Invalid protocol bits"
+    public static final InvalidProtocolBitflag INSTANCE = new InvalidProtocolBitflag(
+        49015, "Invalid protocol bitflag"
     );
   }
 
@@ -407,10 +416,10 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record VaultAssetsNotPriced(int code, String msg) implements GlamProtocolError {
+  record VaultTokensNotPriced(int code, String msg) implements GlamProtocolError {
 
-    public static final VaultAssetsNotPriced INSTANCE = new VaultAssetsNotPriced(
-        51104, "Not all vault assets are priced"
+    public static final VaultTokensNotPriced INSTANCE = new VaultTokensNotPriced(
+        51104, "Not all vault tokens are priced"
     );
   }
 

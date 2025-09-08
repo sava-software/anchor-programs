@@ -4,7 +4,7 @@ import software.sava.anchor.programs._commons.ProgramError;
 
 public sealed interface GlamMintError extends ProgramError permits
     GlamMintError.InvalidAuthority,
-    GlamMintError.NotAuthorized,
+    GlamMintError.UnauthorizedSigner,
     GlamMintError.ActionPaused,
     GlamMintError.InvalidAsset,
     GlamMintError.MaxCapExceeded,
@@ -12,12 +12,13 @@ public sealed interface GlamMintError extends ProgramError permits
     GlamMintError.NewRequestNotAllowed,
     GlamMintError.RequestNotClaimable,
     GlamMintError.RequestNotCancellable,
-    GlamMintError.RequestNotFound {
+    GlamMintError.RequestNotFound,
+    GlamMintError.RequestQueueNotEmpty {
 
   static GlamMintError getInstance(final int errorCode) {
     return switch (errorCode) {
       case 6000 -> InvalidAuthority.INSTANCE;
-      case 6001 -> NotAuthorized.INSTANCE;
+      case 6001 -> UnauthorizedSigner.INSTANCE;
       case 6002 -> ActionPaused.INSTANCE;
       case 6003 -> InvalidAsset.INSTANCE;
       case 6004 -> MaxCapExceeded.INSTANCE;
@@ -26,6 +27,7 @@ public sealed interface GlamMintError extends ProgramError permits
       case 6007 -> RequestNotClaimable.INSTANCE;
       case 6008 -> RequestNotCancellable.INSTANCE;
       case 6009 -> RequestNotFound.INSTANCE;
+      case 6010 -> RequestQueueNotEmpty.INSTANCE;
       default -> throw new IllegalStateException("Unexpected GlamMint error code: " + errorCode);
     };
   }
@@ -37,9 +39,9 @@ public sealed interface GlamMintError extends ProgramError permits
     );
   }
 
-  record NotAuthorized(int code, String msg) implements GlamMintError {
+  record UnauthorizedSigner(int code, String msg) implements GlamMintError {
 
-    public static final NotAuthorized INSTANCE = new NotAuthorized(
+    public static final UnauthorizedSigner INSTANCE = new UnauthorizedSigner(
         6001, "Signer is not authorized"
     );
   }
@@ -97,6 +99,13 @@ public sealed interface GlamMintError extends ProgramError permits
 
     public static final RequestNotFound INSTANCE = new RequestNotFound(
         6009, "Request not found"
+    );
+  }
+
+  record RequestQueueNotEmpty(int code, String msg) implements GlamMintError {
+
+    public static final RequestQueueNotEmpty INSTANCE = new RequestQueueNotEmpty(
+        6010, "Request queue not empty"
     );
   }
 }

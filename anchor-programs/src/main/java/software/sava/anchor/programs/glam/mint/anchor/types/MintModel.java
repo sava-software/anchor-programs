@@ -16,8 +16,6 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 public record MintModel(String symbol, byte[] _symbol,
                         byte[] name,
                         String uri, byte[] _uri,
-                        PublicKey asset,
-                        String imageUri, byte[] _imageUri,
                         OptionalInt yearInSeconds,
                         PublicKey permanentDelegate,
                         Boolean defaultAccountStateFrozen,
@@ -27,16 +25,12 @@ public record MintModel(String symbol, byte[] _symbol,
                         OptionalLong maxCap,
                         OptionalLong minSubscription,
                         OptionalLong minRedemption,
-                        Boolean subscriptionPaused,
-                        Boolean redemptionPaused,
                         PublicKey[] allowlist,
                         PublicKey[] blocklist) implements Borsh {
 
   public static MintModel createRecord(final String symbol,
                                        final byte[] name,
                                        final String uri,
-                                       final PublicKey asset,
-                                       final String imageUri,
                                        final OptionalInt yearInSeconds,
                                        final PublicKey permanentDelegate,
                                        final Boolean defaultAccountStateFrozen,
@@ -46,15 +40,11 @@ public record MintModel(String symbol, byte[] _symbol,
                                        final OptionalLong maxCap,
                                        final OptionalLong minSubscription,
                                        final OptionalLong minRedemption,
-                                       final Boolean subscriptionPaused,
-                                       final Boolean redemptionPaused,
                                        final PublicKey[] allowlist,
                                        final PublicKey[] blocklist) {
     return new MintModel(symbol, Borsh.getBytes(symbol),
                          name,
                          uri, Borsh.getBytes(uri),
-                         asset,
-                         imageUri, Borsh.getBytes(imageUri),
                          yearInSeconds,
                          permanentDelegate,
                          defaultAccountStateFrozen,
@@ -64,8 +54,6 @@ public record MintModel(String symbol, byte[] _symbol,
                          maxCap,
                          minSubscription,
                          minRedemption,
-                         subscriptionPaused,
-                         redemptionPaused,
                          allowlist,
                          blocklist);
   }
@@ -85,14 +73,6 @@ public record MintModel(String symbol, byte[] _symbol,
     }
     final var uri = _data[i++] == 0 ? null : Borsh.string(_data, i);
     if (uri != null) {
-      i += (Integer.BYTES + getInt32LE(_data, i));
-    }
-    final var asset = _data[i++] == 0 ? null : readPubKey(_data, i);
-    if (asset != null) {
-      i += 32;
-    }
-    final var imageUri = _data[i++] == 0 ? null : Borsh.string(_data, i);
-    if (imageUri != null) {
       i += (Integer.BYTES + getInt32LE(_data, i));
     }
     final var yearInSeconds = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
@@ -131,14 +111,6 @@ public record MintModel(String symbol, byte[] _symbol,
     if (minRedemption.isPresent()) {
       i += 8;
     }
-    final var subscriptionPaused = _data[i++] == 0 ? null : _data[i] == 1;
-    if (subscriptionPaused != null) {
-      ++i;
-    }
-    final var redemptionPaused = _data[i++] == 0 ? null : _data[i] == 1;
-    if (redemptionPaused != null) {
-      ++i;
-    }
     final var allowlist = _data[i++] == 0 ? null : Borsh.readPublicKeyVector(_data, i);
     if (allowlist != null) {
       i += Borsh.lenVector(allowlist);
@@ -147,8 +119,6 @@ public record MintModel(String symbol, byte[] _symbol,
     return new MintModel(symbol, Borsh.getBytes(symbol),
                          name,
                          uri, Borsh.getBytes(uri),
-                         asset,
-                         imageUri, Borsh.getBytes(imageUri),
                          yearInSeconds,
                          permanentDelegate,
                          defaultAccountStateFrozen,
@@ -158,8 +128,6 @@ public record MintModel(String symbol, byte[] _symbol,
                          maxCap,
                          minSubscription,
                          minRedemption,
-                         subscriptionPaused,
-                         redemptionPaused,
                          allowlist,
                          blocklist);
   }
@@ -175,8 +143,6 @@ public record MintModel(String symbol, byte[] _symbol,
       i += Borsh.writeArray(name, _data, i);
     }
     i += Borsh.writeOptionalVector(_uri, _data, i);
-    i += Borsh.writeOptional(asset, _data, i);
-    i += Borsh.writeOptionalVector(_imageUri, _data, i);
     i += Borsh.writeOptional(yearInSeconds, _data, i);
     i += Borsh.writeOptional(permanentDelegate, _data, i);
     i += Borsh.writeOptional(defaultAccountStateFrozen, _data, i);
@@ -186,8 +152,6 @@ public record MintModel(String symbol, byte[] _symbol,
     i += Borsh.writeOptional(maxCap, _data, i);
     i += Borsh.writeOptional(minSubscription, _data, i);
     i += Borsh.writeOptional(minRedemption, _data, i);
-    i += Borsh.writeOptional(subscriptionPaused, _data, i);
-    i += Borsh.writeOptional(redemptionPaused, _data, i);
     if (allowlist == null || allowlist.length == 0) {
       _data[i++] = 0;
     } else {
@@ -208,8 +172,6 @@ public record MintModel(String symbol, byte[] _symbol,
     return (_symbol == null || _symbol.length == 0 ? 1 : (1 + Borsh.lenVector(_symbol)))
          + (name == null || name.length == 0 ? 1 : (1 + Borsh.lenArray(name)))
          + (_uri == null || _uri.length == 0 ? 1 : (1 + Borsh.lenVector(_uri)))
-         + (asset == null ? 1 : (1 + 32))
-         + (_imageUri == null || _imageUri.length == 0 ? 1 : (1 + Borsh.lenVector(_imageUri)))
          + (yearInSeconds == null || yearInSeconds.isEmpty() ? 1 : (1 + 4))
          + (permanentDelegate == null ? 1 : (1 + 32))
          + (defaultAccountStateFrozen == null ? 1 : (1 + 1))
@@ -219,8 +181,6 @@ public record MintModel(String symbol, byte[] _symbol,
          + (maxCap == null || maxCap.isEmpty() ? 1 : (1 + 8))
          + (minSubscription == null || minSubscription.isEmpty() ? 1 : (1 + 8))
          + (minRedemption == null || minRedemption.isEmpty() ? 1 : (1 + 8))
-         + (subscriptionPaused == null ? 1 : (1 + 1))
-         + (redemptionPaused == null ? 1 : (1 + 1))
          + (allowlist == null || allowlist.length == 0 ? 1 : (1 + Borsh.lenVector(allowlist)))
          + (blocklist == null || blocklist.length == 0 ? 1 : (1 + Borsh.lenVector(blocklist)));
   }

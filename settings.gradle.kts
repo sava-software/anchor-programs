@@ -1,3 +1,5 @@
+rootProject.name = "anchor-programs"
+
 pluginManagement {
   repositories {
     gradlePluginPortal()
@@ -10,10 +12,8 @@ pluginManagement {
 }
 
 plugins {
-  id("software.sava.build")  version "0.1.36"
+  id("software.sava.build")  version "0.1.37"
 }
-
-rootProject.name = "anchor-programs"
 
 javaModules {
   directory(".") {

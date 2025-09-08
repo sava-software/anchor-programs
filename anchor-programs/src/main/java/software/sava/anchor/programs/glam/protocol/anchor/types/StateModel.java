@@ -16,8 +16,6 @@ public record StateModel(AccountType accountType,
                          String uri, byte[] _uri,
                          Boolean enabled,
                          PublicKey[] assets,
-                         PublicKey baseAssetMint,
-                         OptionalInt baseAssetTokenProgram,
                          CreatedModel created,
                          PublicKey owner,
                          byte[] portfolioManagerName,
@@ -31,8 +29,6 @@ public record StateModel(AccountType accountType,
                                         final String uri,
                                         final Boolean enabled,
                                         final PublicKey[] assets,
-                                        final PublicKey baseAssetMint,
-                                        final OptionalInt baseAssetTokenProgram,
                                         final CreatedModel created,
                                         final PublicKey owner,
                                         final byte[] portfolioManagerName,
@@ -45,8 +41,6 @@ public record StateModel(AccountType accountType,
                           uri, Borsh.getBytes(uri),
                           enabled,
                           assets,
-                          baseAssetMint,
-                          baseAssetTokenProgram,
                           created,
                           owner,
                           portfolioManagerName,
@@ -81,14 +75,6 @@ public record StateModel(AccountType accountType,
     if (assets != null) {
       i += Borsh.lenVector(assets);
     }
-    final var baseAssetMint = _data[i++] == 0 ? null : readPubKey(_data, i);
-    if (baseAssetMint != null) {
-      i += 32;
-    }
-    final var baseAssetTokenProgram = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
-    if (baseAssetTokenProgram.isPresent()) {
-      ++i;
-    }
     final var created = _data[i++] == 0 ? null : CreatedModel.read(_data, i);
     if (created != null) {
       i += Borsh.len(created);
@@ -119,8 +105,6 @@ public record StateModel(AccountType accountType,
                           uri, Borsh.getBytes(uri),
                           enabled,
                           assets,
-                          baseAssetMint,
-                          baseAssetTokenProgram,
                           created,
                           owner,
                           portfolioManagerName,
@@ -148,8 +132,6 @@ public record StateModel(AccountType accountType,
       _data[i++] = 1;
       i += Borsh.writeVector(assets, _data, i);
     }
-    i += Borsh.writeOptional(baseAssetMint, _data, i);
-    i += Borsh.writeOptionalbyte(baseAssetTokenProgram, _data, i);
     i += Borsh.writeOptional(created, _data, i);
     i += Borsh.writeOptional(owner, _data, i);
     if (portfolioManagerName == null || portfolioManagerName.length == 0) {
@@ -187,8 +169,6 @@ public record StateModel(AccountType accountType,
          + (_uri == null || _uri.length == 0 ? 1 : (1 + Borsh.lenVector(_uri)))
          + (enabled == null ? 1 : (1 + 1))
          + (assets == null || assets.length == 0 ? 1 : (1 + Borsh.lenVector(assets)))
-         + (baseAssetMint == null ? 1 : (1 + 32))
-         + (baseAssetTokenProgram == null || baseAssetTokenProgram.isEmpty() ? 1 : (1 + 1))
          + (created == null ? 1 : (1 + Borsh.len(created)))
          + (owner == null ? 1 : (1 + 32))
          + (portfolioManagerName == null || portfolioManagerName.length == 0 ? 1 : (1 + Borsh.lenArray(portfolioManagerName)))

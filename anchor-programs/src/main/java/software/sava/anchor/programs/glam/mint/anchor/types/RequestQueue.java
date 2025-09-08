@@ -16,6 +16,8 @@ public record RequestQueue(PublicKey _address,
                            Discriminator discriminator,
                            PublicKey glamState,
                            PublicKey glamMint,
+                           boolean subscriptionPaused,
+                           boolean redemptionPaused,
                            PendingRequest[] data) implements Borsh {
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(172, 124, 172, 253, 233, 63, 70, 234);
@@ -23,7 +25,9 @@ public record RequestQueue(PublicKey _address,
 
   public static final int GLAM_STATE_OFFSET = 8;
   public static final int GLAM_MINT_OFFSET = 40;
-  public static final int DATA_OFFSET = 72;
+  public static final int SUBSCRIPTION_PAUSED_OFFSET = 72;
+  public static final int REDEMPTION_PAUSED_OFFSET = 73;
+  public static final int DATA_OFFSET = 74;
 
   public static Filter createGlamStateFilter(final PublicKey glamState) {
     return Filter.createMemCompFilter(GLAM_STATE_OFFSET, glamState);
@@ -31,6 +35,14 @@ public record RequestQueue(PublicKey _address,
 
   public static Filter createGlamMintFilter(final PublicKey glamMint) {
     return Filter.createMemCompFilter(GLAM_MINT_OFFSET, glamMint);
+  }
+
+  public static Filter createSubscriptionPausedFilter(final boolean subscriptionPaused) {
+    return Filter.createMemCompFilter(SUBSCRIPTION_PAUSED_OFFSET, new byte[]{(byte) (subscriptionPaused ? 1 : 0)});
+  }
+
+  public static Filter createRedemptionPausedFilter(final boolean redemptionPaused) {
+    return Filter.createMemCompFilter(REDEMPTION_PAUSED_OFFSET, new byte[]{(byte) (redemptionPaused ? 1 : 0)});
   }
 
   public static RequestQueue read(final byte[] _data, final int offset) {
@@ -57,8 +69,18 @@ public record RequestQueue(PublicKey _address,
     i += 32;
     final var glamMint = readPubKey(_data, i);
     i += 32;
+    final var subscriptionPaused = _data[i] == 1;
+    ++i;
+    final var redemptionPaused = _data[i] == 1;
+    ++i;
     final var data = Borsh.readVector(PendingRequest.class, PendingRequest::read, _data, i);
-    return new RequestQueue(_address, discriminator, glamState, glamMint, data);
+    return new RequestQueue(_address,
+                            discriminator,
+                            glamState,
+                            glamMint,
+                            subscriptionPaused,
+                            redemptionPaused,
+                            data);
   }
 
   @Override
@@ -68,12 +90,20 @@ public record RequestQueue(PublicKey _address,
     i += 32;
     glamMint.write(_data, i);
     i += 32;
+    _data[i] = (byte) (subscriptionPaused ? 1 : 0);
+    ++i;
+    _data[i] = (byte) (redemptionPaused ? 1 : 0);
+    ++i;
     i += Borsh.writeVector(data, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return 8 + 32 + 32 + Borsh.lenVector(data);
+    return 8 + 32
+         + 32
+         + 1
+         + 1
+         + Borsh.lenVector(data);
   }
 }

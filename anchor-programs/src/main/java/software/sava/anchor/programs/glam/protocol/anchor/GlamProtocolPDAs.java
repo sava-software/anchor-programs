@@ -9,12 +9,6 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 public final class GlamProtocolPDAs {
 
-  public static ProgramDerivedAddress glamConfigPDA(final PublicKey program) {
-    return PublicKey.findProgramAddress(List.of(
-      "global-config".getBytes(US_ASCII)
-    ), program);
-  }
-
   public static ProgramDerivedAddress glamStatePDA(final PublicKey program,
                                                    final PublicKey glamSignerAccount,
                                                    final byte[] stateModelCreated) {
@@ -41,14 +35,6 @@ public final class GlamProtocolPDAs {
       glamVaultAccount.toByteArray(),
       inputTokenProgramAccount.toByteArray(),
       inputMintAccount.toByteArray()
-    ), program);
-  }
-
-  public static ProgramDerivedAddress metadataPDA(final PublicKey program,
-                                                  final PublicKey glamStateAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      "metadata".getBytes(US_ASCII),
-      glamStateAccount.toByteArray()
     ), program);
   }
 
