@@ -19,6 +19,10 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.glam.anchor;
   exports software.sava.anchor.programs.glam.config.anchor.types;
   exports software.sava.anchor.programs.glam.config.anchor;
+  exports software.sava.anchor.programs.glam.drift.anchor.types;
+  exports software.sava.anchor.programs.glam.drift.anchor;
+  exports software.sava.anchor.programs.glam.kamino.anchor.types;
+  exports software.sava.anchor.programs.glam.kamino.anchor;
   exports software.sava.anchor.programs.glam.mint.anchor.types;
   exports software.sava.anchor.programs.glam.mint.anchor;
   exports software.sava.anchor.programs.glam.policy.anchor.types;
@@ -26,6 +30,8 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.glam.protocol.anchor.types;
   exports software.sava.anchor.programs.glam.protocol.anchor;
   exports software.sava.anchor.programs.glam.proxy;
+  exports software.sava.anchor.programs.glam.spl.anchor.types;
+  exports software.sava.anchor.programs.glam.spl.anchor;
   exports software.sava.anchor.programs.glam;
   exports software.sava.anchor.programs.jito.tip_distribution.anchor.types;
   exports software.sava.anchor.programs.jito.tip_distribution.anchor;
