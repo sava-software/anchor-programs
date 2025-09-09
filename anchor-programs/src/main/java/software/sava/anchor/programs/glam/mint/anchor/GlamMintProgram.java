@@ -28,6 +28,64 @@ import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class GlamMintProgram {
 
+  public static final Discriminator BURN_TOKENS_DISCRIMINATOR = toDiscriminator(76, 15, 51, 254, 229, 215, 121, 66);
+
+  public static Instruction burnTokens(final AccountMeta invokedGlamMintProgramMeta,
+                                       final SolanaAccounts solanaAccounts,
+                                       final PublicKey glamStateKey,
+                                       final PublicKey glamSignerKey,
+                                       final PublicKey glamMintKey,
+                                       final PublicKey fromAtaKey,
+                                       final PublicKey fromKey,
+                                       final long amount) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createWrite(glamMintKey),
+      createWrite(fromAtaKey),
+      createRead(fromKey),
+      createRead(solanaAccounts.token2022Program())
+    );
+
+    final byte[] _data = new byte[16];
+    int i = BURN_TOKENS_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
+  }
+
+  public record BurnTokensIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static BurnTokensIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static BurnTokensIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new BurnTokensIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator CANCEL_DISCRIMINATOR = toDiscriminator(232, 219, 223, 41, 219, 236, 220, 190);
 
   public static Instruction cancel(final AccountMeta invokedGlamMintProgramMeta,
@@ -240,6 +298,73 @@ public final class GlamMintProgram {
     }
   }
 
+  public static final Discriminator FORCE_TRANSFER_TOKENS_DISCRIMINATOR = toDiscriminator(185, 34, 78, 211, 192, 13, 160, 37);
+
+  public static Instruction forceTransferTokens(final AccountMeta invokedGlamMintProgramMeta,
+                                                final SolanaAccounts solanaAccounts,
+                                                final PublicKey glamStateKey,
+                                                final PublicKey glamSignerKey,
+                                                final PublicKey glamMintKey,
+                                                final PublicKey fromAtaKey,
+                                                final PublicKey toAtaKey,
+                                                final PublicKey fromKey,
+                                                final PublicKey toKey,
+                                                final PublicKey toPolicyAccountKey,
+                                                final PublicKey policiesProgramKey,
+                                                final long amount) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createWrite(glamMintKey),
+      createWrite(fromAtaKey),
+      createWrite(toAtaKey),
+      createRead(fromKey),
+      createRead(toKey),
+      createWrite(requireNonNullElse(toPolicyAccountKey, invokedGlamMintProgramMeta.publicKey())),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.token2022Program()),
+      createRead(policiesProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = FORCE_TRANSFER_TOKENS_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
+  }
+
+  public record ForceTransferTokensIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static ForceTransferTokensIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static ForceTransferTokensIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new ForceTransferTokensIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator FULFILL_DISCRIMINATOR = toDiscriminator(143, 2, 52, 206, 174, 164, 247, 72);
 
   public static Instruction fulfill(final AccountMeta invokedGlamMintProgramMeta,
@@ -369,6 +494,69 @@ public final class GlamMintProgram {
     @Override
     public int l() {
       return 8 + Borsh.len(mintModel) + Borsh.lenArray(createdKey) + Borsh.len(accountType) + (decimals == null || decimals.isEmpty() ? 1 : (1 + 1));
+    }
+  }
+
+  public static final Discriminator MINT_TOKENS_DISCRIMINATOR = toDiscriminator(59, 132, 24, 246, 122, 39, 8, 243);
+
+  public static Instruction mintTokens(final AccountMeta invokedGlamMintProgramMeta,
+                                       final SolanaAccounts solanaAccounts,
+                                       final PublicKey glamStateKey,
+                                       final PublicKey glamSignerKey,
+                                       final PublicKey glamMintKey,
+                                       final PublicKey mintToKey,
+                                       final PublicKey recipientKey,
+                                       final PublicKey policyAccountKey,
+                                       final PublicKey policiesProgramKey,
+                                       final long amount) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createWrite(glamMintKey),
+      createWrite(mintToKey),
+      createWrite(recipientKey),
+      createWrite(requireNonNullElse(policyAccountKey, invokedGlamMintProgramMeta.publicKey())),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.token2022Program()),
+      createRead(policiesProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = MINT_TOKENS_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
+  }
+
+  public record MintTokensIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static MintTokensIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static MintTokensIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new MintTokensIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
     }
   }
 
@@ -994,6 +1182,60 @@ public final class GlamMintProgram {
       i += 2;
       putInt16LE(_data, i, flowFeeBps);
       i += 2;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator SET_TOKEN_ACCOUNTS_STATES_DISCRIMINATOR = toDiscriminator(50, 133, 45, 86, 117, 66, 115, 195);
+
+  public static Instruction setTokenAccountsStates(final AccountMeta invokedGlamMintProgramMeta,
+                                                   final SolanaAccounts solanaAccounts,
+                                                   final PublicKey glamStateKey,
+                                                   final PublicKey glamSignerKey,
+                                                   final PublicKey glamMintKey,
+                                                   final boolean frozen) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createWrite(glamMintKey),
+      createRead(solanaAccounts.token2022Program())
+    );
+
+    final byte[] _data = new byte[9];
+    int i = SET_TOKEN_ACCOUNTS_STATES_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) (frozen ? 1 : 0);
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
+  }
+
+  public record SetTokenAccountsStatesIxData(Discriminator discriminator, boolean frozen) implements Borsh {  
+
+    public static SetTokenAccountsStatesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static SetTokenAccountsStatesIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var frozen = _data[i] == 1;
+      return new SetTokenAccountsStatesIxData(discriminator, frozen);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) (frozen ? 1 : 0);
+      ++i;
       return i - offset;
     }
 

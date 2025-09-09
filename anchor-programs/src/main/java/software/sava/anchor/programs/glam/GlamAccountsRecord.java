@@ -10,8 +10,10 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public record GlamAccountsRecord(PublicKey program,
                                  AccountMeta invokedProgram,
+                                 AccountMeta invokedProtocolProgram,
                                  PublicKey configProgram,
-                                 PublicKey mintProgram) implements GlamAccounts {
+                                 PublicKey mintProgram,
+                                 PublicKey policyProgram) implements GlamAccounts {
 
   @Override
   public ProgramDerivedAddress mintPDA(final PublicKey glamPublicKey, final int shareClassId) {
