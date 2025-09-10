@@ -6,6 +6,8 @@ public enum ActionType implements Borsh.Enum {
 
   AddExternalAccount,
   DeleteExternalAccount,
+  DeleteExternalAccountIfZeroLamports,
+  DeleteExternalAccountIfZeroBalance,
   AddAsset,
   DeleteAsset,
   Refund;

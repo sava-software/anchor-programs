@@ -64,17 +64,6 @@ public final class GlamMintPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress fromAtaPDA(final PublicKey program,
-                                                 final PublicKey fromAccount,
-                                                 final PublicKey token2022ProgramAccount,
-                                                 final PublicKey glamMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      fromAccount.toByteArray(),
-      token2022ProgramAccount.toByteArray(),
-      glamMintAccount.toByteArray()
-    ), program);
-  }
-
   public static ProgramDerivedAddress glamConfigPDA(final PublicKey program) {
     return PublicKey.findProgramAddress(List.of(
       "global-config".getBytes(US_ASCII)
@@ -111,17 +100,6 @@ public final class GlamMintPDAs {
       managerFeeAuthorityAccount.toByteArray(),
       depositTokenProgramAccount.toByteArray(),
       depositAssetAccount.toByteArray()
-    ), program);
-  }
-
-  public static ProgramDerivedAddress mintToPDA(final PublicKey program,
-                                                final PublicKey recipientAccount,
-                                                final PublicKey token2022ProgramAccount,
-                                                final PublicKey glamMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      recipientAccount.toByteArray(),
-      token2022ProgramAccount.toByteArray(),
-      glamMintAccount.toByteArray()
     ), program);
   }
 
@@ -191,17 +169,6 @@ public final class GlamMintPDAs {
                                                        final PublicKey glamMintAccount) {
     return PublicKey.findProgramAddress(List.of(
       signerAccount.toByteArray(),
-      token2022ProgramAccount.toByteArray(),
-      glamMintAccount.toByteArray()
-    ), program);
-  }
-
-  public static ProgramDerivedAddress toAtaPDA(final PublicKey program,
-                                               final PublicKey toAccount,
-                                               final PublicKey token2022ProgramAccount,
-                                               final PublicKey glamMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      toAccount.toByteArray(),
       token2022ProgramAccount.toByteArray(),
       glamMintAccount.toByteArray()
     ), program);
