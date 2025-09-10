@@ -13,7 +13,10 @@ public record GlamAccountsRecord(PublicKey program,
                                  AccountMeta invokedProtocolProgram,
                                  PublicKey configProgram,
                                  PublicKey mintProgram,
-                                 PublicKey policyProgram) implements GlamAccounts {
+                                 PublicKey policyProgram,
+                                 PublicKey tokenExtensionProgram,
+                                 PublicKey driftExtensionProgram,
+                                 PublicKey kaminoExtensionProgram) implements GlamAccounts {
 
   @Override
   public ProgramDerivedAddress mintPDA(final PublicKey glamPublicKey, final int shareClassId) {
