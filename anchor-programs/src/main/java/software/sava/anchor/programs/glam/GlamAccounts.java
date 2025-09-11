@@ -1,6 +1,7 @@
 package software.sava.anchor.programs.glam;
 
 import software.sava.anchor.programs.glam.config.anchor.GlamConfigPDAs;
+import software.sava.anchor.programs.glam.protocol.anchor.types.StateAccount;
 import software.sava.anchor.programs.glam.proxy.DynamicGlamAccountFactory;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -11,6 +12,7 @@ import java.nio.file.Path;
 
 public interface GlamAccounts {
 
+  // https://github.com/glamsystems/glam-sdk/tree/main/idl
   GlamAccounts MAIN_NET = createAccounts(
       "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc",
       "GLAMpaME8wdTEzxtiYEAa5yD8fZbxZiz2hNtV58RZiEz",
@@ -27,7 +29,7 @@ public interface GlamAccounts {
                                      final PublicKey configProgram,
                                      final PublicKey mintProgram,
                                      final PublicKey policyProgram,
-                                     final PublicKey tokenExtensionProgram,
+                                     final PublicKey splExtensionProgram,
                                      final PublicKey driftExtensionProgram,
                                      final PublicKey kaminoExtensionProgram) {
     return new GlamAccountsRecord(
@@ -37,7 +39,7 @@ public interface GlamAccounts {
         configProgram,
         mintProgram,
         policyProgram,
-        tokenExtensionProgram,
+        splExtensionProgram,
         driftExtensionProgram,
         kaminoExtensionProgram
     );
@@ -48,7 +50,7 @@ public interface GlamAccounts {
                                      final String configProgram,
                                      final String mintProgram,
                                      final String policyProgram,
-                                     final String tokenExtensionProgram,
+                                     final String splExtensionProgram,
                                      final String driftExtensionProgram,
                                      final String kaminoExtensionProgram) {
     return createAccounts(
@@ -57,7 +59,7 @@ public interface GlamAccounts {
         PublicKey.fromBase58Encoded(configProgram),
         PublicKey.fromBase58Encoded(mintProgram),
         PublicKey.fromBase58Encoded(policyProgram),
-        PublicKey.fromBase58Encoded(tokenExtensionProgram),
+        PublicKey.fromBase58Encoded(splExtensionProgram),
         PublicKey.fromBase58Encoded(driftExtensionProgram),
         PublicKey.fromBase58Encoded(kaminoExtensionProgram)
     );
@@ -90,9 +92,21 @@ public interface GlamAccounts {
     return GlamVaultAccounts.createMapper(invokedProgram(), mappingsDirectory, dynamicGlamAccountFactory);
   }
 
-  PublicKey tokenExtensionProgram();
+  PublicKey splExtensionProgram();
 
   PublicKey driftExtensionProgram();
 
   PublicKey kaminoExtensionProgram();
+
+  static boolean usesIntegration(final StateAccount stateAccount,
+                                 final PublicKey program,
+                                 final int bitFlag) {
+    for (final var acl : stateAccount.integrationAcls()) {
+      if (acl.integrationProgram().equals(program)) {
+        final int mask = acl.protocolsBitmask();
+        return (mask & bitFlag) == bitFlag;
+      }
+    }
+    return false;
+  }
 }

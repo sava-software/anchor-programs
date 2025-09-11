@@ -25,6 +25,7 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.glam.kamino.anchor;
   exports software.sava.anchor.programs.glam.mint.anchor.types;
   exports software.sava.anchor.programs.glam.mint.anchor;
+  exports software.sava.anchor.programs.glam.mint;
   exports software.sava.anchor.programs.glam.policy.anchor.types;
   exports software.sava.anchor.programs.glam.policy.anchor;
   exports software.sava.anchor.programs.glam.protocol.anchor.types;

@@ -14,7 +14,7 @@ public record GlamAccountsRecord(PublicKey program,
                                  PublicKey configProgram,
                                  PublicKey mintProgram,
                                  PublicKey policyProgram,
-                                 PublicKey tokenExtensionProgram,
+                                 PublicKey splExtensionProgram,
                                  PublicKey driftExtensionProgram,
                                  PublicKey kaminoExtensionProgram) implements GlamAccounts {
 

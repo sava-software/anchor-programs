@@ -35,6 +35,16 @@
     "package": "glam.config"
   },
   {
+    "name": "GLAM Drift",
+    "program": "G1NTdrBmBpW43msRQmsf7qXSw3MFBNaqJcAkGiRmRq2F",
+    "package": "glam.drift"
+  },
+  {
+    "name": "GLAM Kamino",
+    "program": "G1NTkDEUR3pkEqGCKZtmtmVzCUEdYa86pezHkwYbLyde",
+    "package": "glam.kamino"
+  },
+  {
     "name": "Glam Protocol Legacy",
     "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc",
     "package": "glam"
@@ -53,6 +63,11 @@
     "name": "GLAM Policy Program",
     "program": "po1iCYakK3gHCLbuju4wGzFowTMpAJxkqK1iwUqMonY",
     "package": "glam.policy"
+  },
+  {
+    "name": "GLAM SPL",
+    "program": "G1NTsQ36mjPe89HtPYqxKsjY5HmYsDR6CbD2gd2U2pta",
+    "package": "glam.spl"
   },
   {
     "name": "Jito Tip Distribution",
