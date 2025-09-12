@@ -82,6 +82,9 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.metadao.conditional_vault.anchor;
   exports software.sava.anchor.programs.metadao.launchpad.anchor.types;
   exports software.sava.anchor.programs.metadao.launchpad.anchor;
+  exports software.sava.anchor.programs.metaplex.token.metadata.anchor.types;
+  exports software.sava.anchor.programs.metaplex.token.metadata.anchor;
+  exports software.sava.anchor.programs.metaplex.token.metadata;
   exports software.sava.anchor.programs.meteora.alpha_vault.anchor.types;
   exports software.sava.anchor.programs.meteora.alpha_vault.anchor;
   exports software.sava.anchor.programs.meteora.dlmm.anchor.types;

@@ -165,6 +165,13 @@
     "package": "metadao.launchpad"
   },
   {
+    "name": "Metaplex",
+    "program": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
+    "package": "metaplex.token.metadata",
+    "idlFile": "idls/shank/metaplex/token_metadata.json",
+    "accountsHaveDiscriminators": false
+  },
+  {
     "name": "merkle distributor",
     "program": "DiS3nNjFVMieMgmiQFm6wgJL7nevk4NrhXKLbtEH1Z2R",
     "package": "jupiter.merkle.distributor"
