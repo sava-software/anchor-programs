@@ -13,7 +13,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.TimelockStillActive,
     GlamProtocolError.CannotApplyChanges,
     GlamProtocolError.AssetNotBorrowable,
-    GlamProtocolError.InvalidAccountOwner,
+    GlamProtocolError.UnexpectedProgramOwner,
     GlamProtocolError.InvalidAuthority,
     GlamProtocolError.InvalidAccountType,
     GlamProtocolError.InvalidName,
@@ -46,7 +46,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.PriceTooOld,
     GlamProtocolError.ExternalPositionsNotPriced,
     GlamProtocolError.VaultTokensNotPriced,
-    GlamProtocolError.VaultNotPriced,
+    GlamProtocolError.PriceDivergenceTooLarge,
     GlamProtocolError.PositiveAumRequired,
     GlamProtocolError.MathError,
     GlamProtocolError.TypeCastingError,
@@ -72,7 +72,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 48007 -> TimelockStillActive.INSTANCE;
       case 48008 -> CannotApplyChanges.INSTANCE;
       case 48009 -> AssetNotBorrowable.INSTANCE;
-      case 48010 -> InvalidAccountOwner.INSTANCE;
+      case 48010 -> UnexpectedProgramOwner.INSTANCE;
       case 48011 -> InvalidAuthority.INSTANCE;
       case 49000 -> InvalidAccountType.INSTANCE;
       case 49001 -> InvalidName.INSTANCE;
@@ -105,7 +105,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 51102 -> PriceTooOld.INSTANCE;
       case 51103 -> ExternalPositionsNotPriced.INSTANCE;
       case 51104 -> VaultTokensNotPriced.INSTANCE;
-      case 51105 -> VaultNotPriced.INSTANCE;
+      case 51105 -> PriceDivergenceTooLarge.INSTANCE;
       case 51106 -> PositiveAumRequired.INSTANCE;
       case 51107 -> MathError.INSTANCE;
       case 51108 -> TypeCastingError.INSTANCE;
@@ -181,7 +181,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
   record CannotApplyChanges(int code, String msg) implements GlamProtocolError {
 
     public static final CannotApplyChanges INSTANCE = new CannotApplyChanges(
-        48008, "Pending changes cannot be applied due to unfulfilled subscriptions or redemptions"
+        48008, "Pending changes cannot be applied due to unfulfilled requests"
     );
   }
 
@@ -192,10 +192,10 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record InvalidAccountOwner(int code, String msg) implements GlamProtocolError {
+  record UnexpectedProgramOwner(int code, String msg) implements GlamProtocolError {
 
-    public static final InvalidAccountOwner INSTANCE = new InvalidAccountOwner(
-        48010, "Account owned by an invalid program"
+    public static final UnexpectedProgramOwner INSTANCE = new UnexpectedProgramOwner(
+        48010, "Account is owned by an unexpected program"
     );
   }
 
@@ -423,9 +423,9 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record VaultNotPriced(int code, String msg) implements GlamProtocolError {
+  record PriceDivergenceTooLarge(int code, String msg) implements GlamProtocolError {
 
-    public static final VaultNotPriced INSTANCE = new VaultNotPriced(
+    public static final PriceDivergenceTooLarge INSTANCE = new PriceDivergenceTooLarge(
         51105, "No priced assets found"
     );
   }

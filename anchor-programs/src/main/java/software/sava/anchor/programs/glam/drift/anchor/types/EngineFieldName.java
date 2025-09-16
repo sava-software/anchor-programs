@@ -19,7 +19,8 @@ public enum EngineFieldName implements Borsh.Enum {
   FeeStructure,
   FeeParams,
   ClaimableFees,
-  ClaimedFees;
+  ClaimedFees,
+  OracleConfigs;
 
   public static EngineFieldName read(final byte[] _data, final int offset) {
     return Borsh.read(EngineFieldName.values(), _data, offset);

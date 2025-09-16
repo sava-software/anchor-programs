@@ -540,6 +540,18 @@ public final class GlamProtocolProgram {
     }
   }
 
+  public static final Discriminator RESET_PRICED_PROTOCOLS_DISCRIMINATOR = toDiscriminator(60, 176, 141, 208, 132, 51, 54, 9);
+
+  // Resets glam_state.priced_protocols to an empty vector
+  public static Instruction resetPricedProtocols(final AccountMeta invokedGlamProtocolProgramMeta, final PublicKey glamStateKey, final PublicKey glamSignerKey) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createReadOnlySigner(glamSignerKey)
+    );
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, RESET_PRICED_PROTOCOLS_DISCRIMINATOR);
+  }
+
   public static final Discriminator SET_JUPITER_SWAP_POLICY_DISCRIMINATOR = toDiscriminator(189, 182, 227, 165, 127, 148, 246, 189);
 
   public static Instruction setJupiterSwapPolicy(final AccountMeta invokedGlamProtocolProgramMeta,

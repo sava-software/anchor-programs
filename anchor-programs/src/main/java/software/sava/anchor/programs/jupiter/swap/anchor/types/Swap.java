@@ -109,7 +109,12 @@ public sealed interface Swap extends RustEnum permits
   Swap.PumpWrappedBuyV3,
   Swap.PumpWrappedSellV3,
   Swap.PumpSwapBuyV3,
-  Swap.PumpSwapSellV3 {
+  Swap.PumpSwapSellV3,
+  Swap.JupiterLendDeposit,
+  Swap.JupiterLendRedeem,
+  Swap.DefiTuna,
+  Swap.AlphaQ,
+  Swap.RaydiumV2 {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -216,6 +221,11 @@ public sealed interface Swap extends RustEnum permits
       case 98 -> PumpWrappedSellV3.INSTANCE;
       case 99 -> PumpSwapBuyV3.INSTANCE;
       case 100 -> PumpSwapSellV3.INSTANCE;
+      case 101 -> JupiterLendDeposit.INSTANCE;
+      case 102 -> JupiterLendRedeem.INSTANCE;
+      case 103 -> DefiTuna.read(_data, i);
+      case 104 -> AlphaQ.read(_data, i);
+      case 105 -> RaydiumV2.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1560,6 +1570,84 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 100;
+    }
+  }
+
+  record JupiterLendDeposit() implements EnumNone, Swap {
+
+    public static final JupiterLendDeposit INSTANCE = new JupiterLendDeposit();
+
+    @Override
+    public int ordinal() {
+      return 101;
+    }
+  }
+
+  record JupiterLendRedeem() implements EnumNone, Swap {
+
+    public static final JupiterLendRedeem INSTANCE = new JupiterLendRedeem();
+
+    @Override
+    public int ordinal() {
+      return 102;
+    }
+  }
+
+  record DefiTuna(boolean aToB, RemainingAccountsInfo remainingAccountsInfo) implements Swap {
+
+    public static DefiTuna read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      int i = offset;
+      final var aToB = _data[i] == 1;
+      ++i;
+      final var remainingAccountsInfo = _data[i++] == 0 ? null : RemainingAccountsInfo.read(_data, i);
+      return new DefiTuna(aToB, remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      _data[i] = (byte) (aToB ? 1 : 0);
+      ++i;
+      i += Borsh.writeOptional(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 1 + 1 + (remainingAccountsInfo == null ? 1 : (1 + Borsh.len(remainingAccountsInfo)));
+    }
+
+    @Override
+    public int ordinal() {
+      return 103;
+    }
+  }
+
+  record AlphaQ(boolean val) implements EnumBool, Swap {
+
+    public static final AlphaQ TRUE = new AlphaQ(true);
+    public static final AlphaQ FALSE = new AlphaQ(false);
+
+    public static AlphaQ read(final byte[] _data, int i) {
+      return _data[i] == 1 ? AlphaQ.TRUE : AlphaQ.FALSE;
+    }
+
+    @Override
+    public int ordinal() {
+      return 104;
+    }
+  }
+
+  record RaydiumV2() implements EnumNone, Swap {
+
+    public static final RaydiumV2 INSTANCE = new RaydiumV2();
+
+    @Override
+    public int ordinal() {
+      return 105;
     }
   }
 }

@@ -6,7 +6,7 @@ import java.util.OptionalInt;
 import software.sava.anchor.programs.glam.mint.anchor.types.AccountType;
 import software.sava.anchor.programs.glam.mint.anchor.types.EmergencyUpdateMintArgs;
 import software.sava.anchor.programs.glam.mint.anchor.types.MintModel;
-import software.sava.anchor.programs.glam.mint.anchor.types.PriceDenom;
+import software.sava.anchor.programs.glam.mint.anchor.types.MintPolicy;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -27,6 +27,64 @@ import static software.sava.core.programs.Discriminator.createAnchorDiscriminato
 import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class GlamMintProgram {
+
+  public static final Discriminator BURN_TOKENS_DISCRIMINATOR = toDiscriminator(76, 15, 51, 254, 229, 215, 121, 66);
+
+  public static Instruction burnTokens(final AccountMeta invokedGlamMintProgramMeta,
+                                       final SolanaAccounts solanaAccounts,
+                                       final PublicKey glamStateKey,
+                                       final PublicKey glamSignerKey,
+                                       final PublicKey glamMintKey,
+                                       final PublicKey fromAtaKey,
+                                       final PublicKey fromKey,
+                                       final long amount) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createWrite(glamMintKey),
+      createWrite(fromAtaKey),
+      createRead(fromKey),
+      createRead(solanaAccounts.token2022Program())
+    );
+
+    final byte[] _data = new byte[16];
+    int i = BURN_TOKENS_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
+  }
+
+  public record BurnTokensIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static BurnTokensIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static BurnTokensIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new BurnTokensIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
 
   public static final Discriminator CANCEL_DISCRIMINATOR = toDiscriminator(232, 219, 223, 41, 219, 236, 220, 190);
 
@@ -240,6 +298,73 @@ public final class GlamMintProgram {
     }
   }
 
+  public static final Discriminator FORCE_TRANSFER_TOKENS_DISCRIMINATOR = toDiscriminator(185, 34, 78, 211, 192, 13, 160, 37);
+
+  public static Instruction forceTransferTokens(final AccountMeta invokedGlamMintProgramMeta,
+                                                final SolanaAccounts solanaAccounts,
+                                                final PublicKey glamStateKey,
+                                                final PublicKey glamSignerKey,
+                                                final PublicKey glamMintKey,
+                                                final PublicKey fromAtaKey,
+                                                final PublicKey toAtaKey,
+                                                final PublicKey fromKey,
+                                                final PublicKey toKey,
+                                                final PublicKey toPolicyAccountKey,
+                                                final PublicKey policiesProgramKey,
+                                                final long amount) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createWrite(glamMintKey),
+      createWrite(fromAtaKey),
+      createWrite(toAtaKey),
+      createRead(fromKey),
+      createRead(toKey),
+      createWrite(requireNonNullElse(toPolicyAccountKey, invokedGlamMintProgramMeta.publicKey())),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.token2022Program()),
+      createRead(policiesProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = FORCE_TRANSFER_TOKENS_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
+  }
+
+  public record ForceTransferTokensIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static ForceTransferTokensIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static ForceTransferTokensIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new ForceTransferTokensIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator FULFILL_DISCRIMINATOR = toDiscriminator(143, 2, 52, 206, 174, 164, 247, 72);
 
   public static Instruction fulfill(final AccountMeta invokedGlamMintProgramMeta,
@@ -372,6 +497,69 @@ public final class GlamMintProgram {
     }
   }
 
+  public static final Discriminator MINT_TOKENS_DISCRIMINATOR = toDiscriminator(59, 132, 24, 246, 122, 39, 8, 243);
+
+  public static Instruction mintTokens(final AccountMeta invokedGlamMintProgramMeta,
+                                       final SolanaAccounts solanaAccounts,
+                                       final PublicKey glamStateKey,
+                                       final PublicKey glamSignerKey,
+                                       final PublicKey glamMintKey,
+                                       final PublicKey mintToKey,
+                                       final PublicKey recipientKey,
+                                       final PublicKey policyAccountKey,
+                                       final PublicKey policiesProgramKey,
+                                       final long amount) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createWrite(glamMintKey),
+      createWrite(mintToKey),
+      createWrite(recipientKey),
+      createWrite(requireNonNullElse(policyAccountKey, invokedGlamMintProgramMeta.publicKey())),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.token2022Program()),
+      createRead(policiesProgramKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = MINT_TOKENS_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
+  }
+
+  public record MintTokensIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static MintTokensIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static MintTokensIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new MintTokensIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator PRICE_DRIFT_USERS_DISCRIMINATOR = toDiscriminator(12, 5, 143, 51, 101, 81, 200, 150);
 
   // Extra accounts for pricing N drift users under the same user stats:
@@ -382,37 +570,37 @@ public final class GlamMintProgram {
                                             final PublicKey glamStateKey,
                                             final PublicKey glamVaultKey,
                                             final PublicKey signerKey,
-                                            final PublicKey solOracleKey,
+                                            final PublicKey solUsdOracleKey,
+                                            final PublicKey baseAssetUsdOracleKey,
                                             final PublicKey integrationAuthorityKey,
                                             final PublicKey glamConfigKey,
                                             final PublicKey glamProtocolKey,
-                                            final PriceDenom denom,
                                             final int numUsers) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
-      createRead(solOracleKey),
+      createRead(solUsdOracleKey),
+      createRead(baseAssetUsdOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
       createRead(glamProtocolKey)
     );
 
-    final byte[] _data = new byte[9 + Borsh.len(denom)];
+    final byte[] _data = new byte[9];
     int i = PRICE_DRIFT_USERS_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.write(denom, _data, i);
     _data[i] = (byte) numUsers;
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
   }
 
-  public record PriceDriftUsersIxData(Discriminator discriminator, PriceDenom denom, int numUsers) implements Borsh {  
+  public record PriceDriftUsersIxData(Discriminator discriminator, int numUsers) implements Borsh {  
 
     public static PriceDriftUsersIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 10;
+    public static final int BYTES = 9;
 
     public static PriceDriftUsersIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -420,16 +608,13 @@ public final class GlamMintProgram {
       }
       final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var denom = PriceDenom.read(_data, i);
-      i += Borsh.len(denom);
       final var numUsers = _data[i] & 0xFF;
-      return new PriceDriftUsersIxData(discriminator, denom, numUsers);
+      return new PriceDriftUsersIxData(discriminator, numUsers);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(denom, _data, i);
       _data[i] = (byte) numUsers;
       ++i;
       return i - offset;
@@ -452,11 +637,11 @@ public final class GlamMintProgram {
                                                       final PublicKey glamStateKey,
                                                       final PublicKey glamVaultKey,
                                                       final PublicKey signerKey,
-                                                      final PublicKey solOracleKey,
+                                                      final PublicKey solUsdOracleKey,
+                                                      final PublicKey baseAssetUsdOracleKey,
                                                       final PublicKey integrationAuthorityKey,
                                                       final PublicKey glamConfigKey,
                                                       final PublicKey glamProtocolKey,
-                                                      final PriceDenom denom,
                                                       final int numVaultDepositors,
                                                       final int numSpotMarkets,
                                                       final int numPerpMarkets) {
@@ -464,15 +649,15 @@ public final class GlamMintProgram {
       createWrite(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
-      createRead(solOracleKey),
+      createRead(solUsdOracleKey),
+      createRead(baseAssetUsdOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
       createRead(glamProtocolKey)
     );
 
-    final byte[] _data = new byte[11 + Borsh.len(denom)];
+    final byte[] _data = new byte[11];
     int i = PRICE_DRIFT_VAULT_DEPOSITORS_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.write(denom, _data, i);
     _data[i] = (byte) numVaultDepositors;
     ++i;
     _data[i] = (byte) numSpotMarkets;
@@ -483,7 +668,6 @@ public final class GlamMintProgram {
   }
 
   public record PriceDriftVaultDepositorsIxData(Discriminator discriminator,
-                                                PriceDenom denom,
                                                 int numVaultDepositors,
                                                 int numSpotMarkets,
                                                 int numPerpMarkets) implements Borsh {  
@@ -492,7 +676,7 @@ public final class GlamMintProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 12;
+    public static final int BYTES = 11;
 
     public static PriceDriftVaultDepositorsIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -500,24 +684,17 @@ public final class GlamMintProgram {
       }
       final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var denom = PriceDenom.read(_data, i);
-      i += Borsh.len(denom);
       final var numVaultDepositors = _data[i] & 0xFF;
       ++i;
       final var numSpotMarkets = _data[i] & 0xFF;
       ++i;
       final var numPerpMarkets = _data[i] & 0xFF;
-      return new PriceDriftVaultDepositorsIxData(discriminator,
-                                                 denom,
-                                                 numVaultDepositors,
-                                                 numSpotMarkets,
-                                                 numPerpMarkets);
+      return new PriceDriftVaultDepositorsIxData(discriminator, numVaultDepositors, numSpotMarkets, numPerpMarkets);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(denom, _data, i);
       _data[i] = (byte) numVaultDepositors;
       ++i;
       _data[i] = (byte) numSpotMarkets;
@@ -546,21 +723,22 @@ public final class GlamMintProgram {
                                                    final PublicKey glamVaultKey,
                                                    final PublicKey signerKey,
                                                    final PublicKey kaminoLendingProgramKey,
-                                                   final PublicKey solOracleKey,
+                                                   final PublicKey solUsdOracleKey,
+                                                   final PublicKey baseAssetUsdOracleKey,
                                                    final PublicKey integrationAuthorityKey,
                                                    final PublicKey glamConfigKey,
                                                    final PublicKey glamProtocolKey,
                                                    final PublicKey pythOracleKey,
                                                    final PublicKey switchboardPriceOracleKey,
                                                    final PublicKey switchboardTwapOracleKey,
-                                                   final PublicKey scopePricesKey,
-                                                   final PriceDenom denom) {
+                                                   final PublicKey scopePricesKey) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
       createRead(kaminoLendingProgramKey),
-      createRead(solOracleKey),
+      createRead(solUsdOracleKey),
+      createRead(baseAssetUsdOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
       createRead(glamProtocolKey),
@@ -570,42 +748,7 @@ public final class GlamMintProgram {
       createRead(requireNonNullElse(scopePricesKey, invokedGlamMintProgramMeta.publicKey()))
     );
 
-    final byte[] _data = new byte[8 + Borsh.len(denom)];
-    int i = PRICE_KAMINO_OBLIGATIONS_DISCRIMINATOR.write(_data, 0);
-    Borsh.write(denom, _data, i);
-
-    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
-  }
-
-  public record PriceKaminoObligationsIxData(Discriminator discriminator, PriceDenom denom) implements Borsh {  
-
-    public static PriceKaminoObligationsIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 9;
-
-    public static PriceKaminoObligationsIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var denom = PriceDenom.read(_data, i);
-      return new PriceKaminoObligationsIxData(discriminator, denom);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(denom, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, PRICE_KAMINO_OBLIGATIONS_DISCRIMINATOR);
   }
 
   public static final Discriminator PRICE_KAMINO_VAULT_SHARES_DISCRIMINATOR = toDiscriminator(112, 92, 238, 224, 145, 105, 38, 249);
@@ -622,37 +765,37 @@ public final class GlamMintProgram {
                                                    final PublicKey glamStateKey,
                                                    final PublicKey glamVaultKey,
                                                    final PublicKey signerKey,
-                                                   final PublicKey solOracleKey,
+                                                   final PublicKey solUsdOracleKey,
+                                                   final PublicKey baseAssetUsdOracleKey,
                                                    final PublicKey integrationAuthorityKey,
                                                    final PublicKey glamConfigKey,
                                                    final PublicKey glamProtocolKey,
-                                                   final PriceDenom denom,
                                                    final int numVaults) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
-      createRead(solOracleKey),
+      createRead(solUsdOracleKey),
+      createRead(baseAssetUsdOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
       createRead(glamProtocolKey)
     );
 
-    final byte[] _data = new byte[9 + Borsh.len(denom)];
+    final byte[] _data = new byte[9];
     int i = PRICE_KAMINO_VAULT_SHARES_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.write(denom, _data, i);
     _data[i] = (byte) numVaults;
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
   }
 
-  public record PriceKaminoVaultSharesIxData(Discriminator discriminator, PriceDenom denom, int numVaults) implements Borsh {  
+  public record PriceKaminoVaultSharesIxData(Discriminator discriminator, int numVaults) implements Borsh {  
 
     public static PriceKaminoVaultSharesIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 10;
+    public static final int BYTES = 9;
 
     public static PriceKaminoVaultSharesIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -660,16 +803,13 @@ public final class GlamMintProgram {
       }
       final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var denom = PriceDenom.read(_data, i);
-      i += Borsh.len(denom);
       final var numVaults = _data[i] & 0xFF;
-      return new PriceKaminoVaultSharesIxData(discriminator, denom, numVaults);
+      return new PriceKaminoVaultSharesIxData(discriminator, numVaults);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(denom, _data, i);
       _data[i] = (byte) numVaults;
       ++i;
       return i - offset;
@@ -679,6 +819,31 @@ public final class GlamMintProgram {
     public int l() {
       return BYTES;
     }
+  }
+
+  public static final Discriminator PRICE_STAKE_ACCOUNTS_DISCRIMINATOR = toDiscriminator(119, 137, 9, 15, 196, 73, 30, 27);
+
+  public static Instruction priceStakeAccounts(final AccountMeta invokedGlamMintProgramMeta,
+                                               final PublicKey glamStateKey,
+                                               final PublicKey glamVaultKey,
+                                               final PublicKey signerKey,
+                                               final PublicKey solUsdOracleKey,
+                                               final PublicKey baseAssetUsdOracleKey,
+                                               final PublicKey integrationAuthorityKey,
+                                               final PublicKey glamConfigKey,
+                                               final PublicKey glamProtocolKey) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createRead(glamVaultKey),
+      createWritableSigner(signerKey),
+      createRead(solUsdOracleKey),
+      createRead(baseAssetUsdOracleKey),
+      createRead(integrationAuthorityKey),
+      createRead(glamConfigKey),
+      createRead(glamProtocolKey)
+    );
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, PRICE_STAKE_ACCOUNTS_DISCRIMINATOR);
   }
 
   public static final Discriminator PRICE_VAULT_TOKENS_DISCRIMINATOR = toDiscriminator(54, 42, 16, 199, 20, 183, 50, 137);
@@ -696,31 +861,31 @@ public final class GlamMintProgram {
                                              final PublicKey glamStateKey,
                                              final PublicKey glamVaultKey,
                                              final PublicKey signerKey,
-                                             final PublicKey solOracleKey,
+                                             final PublicKey solUsdOracleKey,
+                                             final PublicKey baseAssetUsdOracleKey,
                                              final PublicKey integrationAuthorityKey,
                                              final PublicKey glamConfigKey,
                                              final PublicKey glamProtocolKey,
-                                             final PriceDenom denom,
                                              final short[] aggIndexes) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
-      createRead(solOracleKey),
+      createRead(solUsdOracleKey),
+      createRead(baseAssetUsdOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
       createRead(glamProtocolKey)
     );
 
-    final byte[] _data = new byte[8 + Borsh.len(denom) + Borsh.lenVector(aggIndexes)];
+    final byte[] _data = new byte[8 + Borsh.lenVector(aggIndexes)];
     int i = PRICE_VAULT_TOKENS_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.write(denom, _data, i);
     Borsh.writeVector(aggIndexes, _data, i);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
   }
 
-  public record PriceVaultTokensIxData(Discriminator discriminator, PriceDenom denom, short[] aggIndexes) implements Borsh {  
+  public record PriceVaultTokensIxData(Discriminator discriminator, short[] aggIndexes) implements Borsh {  
 
     public static PriceVaultTokensIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -732,23 +897,20 @@ public final class GlamMintProgram {
       }
       final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var denom = PriceDenom.read(_data, i);
-      i += Borsh.len(denom);
       final var aggIndexes = Borsh.readshortVector(_data, i);
-      return new PriceVaultTokensIxData(discriminator, denom, aggIndexes);
+      return new PriceVaultTokensIxData(discriminator, aggIndexes);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(denom, _data, i);
       i += Borsh.writeVector(aggIndexes, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + Borsh.len(denom) + Borsh.lenVector(aggIndexes);
+      return 8 + Borsh.lenVector(aggIndexes);
     }
   }
 
@@ -883,6 +1045,55 @@ public final class GlamMintProgram {
     }
   }
 
+  public static final Discriminator SET_MINT_POLICY_DISCRIMINATOR = toDiscriminator(12, 208, 252, 52, 166, 250, 137, 169);
+
+  public static Instruction setMintPolicy(final AccountMeta invokedGlamMintProgramMeta,
+                                          final PublicKey glamStateKey,
+                                          final PublicKey glamSignerKey,
+                                          final PublicKey glamProtocolProgramKey,
+                                          final MintPolicy policy) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createRead(glamProtocolProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(policy)];
+    int i = SET_MINT_POLICY_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(policy, _data, i);
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
+  }
+
+  public record SetMintPolicyIxData(Discriminator discriminator, MintPolicy policy) implements Borsh {  
+
+    public static SetMintPolicyIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static SetMintPolicyIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var policy = MintPolicy.read(_data, i);
+      return new SetMintPolicyIxData(discriminator, policy);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(policy, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(policy);
+    }
+  }
+
   public static final Discriminator SET_PROTOCOL_FEES_DISCRIMINATOR = toDiscriminator(49, 143, 189, 18, 56, 206, 158, 226);
 
   public static Instruction setProtocolFees(final AccountMeta invokedGlamMintProgramMeta,
@@ -935,6 +1146,60 @@ public final class GlamMintProgram {
       i += 2;
       putInt16LE(_data, i, flowFeeBps);
       i += 2;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator SET_TOKEN_ACCOUNTS_STATES_DISCRIMINATOR = toDiscriminator(50, 133, 45, 86, 117, 66, 115, 195);
+
+  public static Instruction setTokenAccountsStates(final AccountMeta invokedGlamMintProgramMeta,
+                                                   final SolanaAccounts solanaAccounts,
+                                                   final PublicKey glamStateKey,
+                                                   final PublicKey glamSignerKey,
+                                                   final PublicKey glamMintKey,
+                                                   final boolean frozen) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createWrite(glamMintKey),
+      createRead(solanaAccounts.token2022Program())
+    );
+
+    final byte[] _data = new byte[9];
+    int i = SET_TOKEN_ACCOUNTS_STATES_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) (frozen ? 1 : 0);
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
+  }
+
+  public record SetTokenAccountsStatesIxData(Discriminator discriminator, boolean frozen) implements Borsh {  
+
+    public static SetTokenAccountsStatesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static SetTokenAccountsStatesIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var frozen = _data[i] == 1;
+      return new SetTokenAccountsStatesIxData(discriminator, frozen);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) (frozen ? 1 : 0);
+      ++i;
       return i - offset;
     }
 

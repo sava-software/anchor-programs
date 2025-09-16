@@ -13,8 +13,7 @@ import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record PricedProtocol(PriceDenom denom,
-                             long rent,
+public record PricedProtocol(long rent,
                              BigInteger amount,
                              int decimals,
                              long lastUpdatedSlot,
@@ -27,8 +26,6 @@ public record PricedProtocol(PriceDenom denom,
       return null;
     }
     int i = offset;
-    final var denom = PriceDenom.read(_data, i);
-    i += Borsh.len(denom);
     final var rent = getInt64LE(_data, i);
     i += 8;
     final var amount = getInt128LE(_data, i);
@@ -42,8 +39,7 @@ public record PricedProtocol(PriceDenom denom,
     final var protocolBitflag = getInt16LE(_data, i);
     i += 2;
     final var positions = Borsh.readPublicKeyVector(_data, i);
-    return new PricedProtocol(denom,
-                              rent,
+    return new PricedProtocol(rent,
                               amount,
                               decimals,
                               lastUpdatedSlot,
@@ -55,7 +51,6 @@ public record PricedProtocol(PriceDenom denom,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.write(denom, _data, i);
     putInt64LE(_data, i, rent);
     i += 8;
     putInt128LE(_data, i, amount);
@@ -74,8 +69,7 @@ public record PricedProtocol(PriceDenom denom,
 
   @Override
   public int l() {
-    return Borsh.len(denom)
-         + 8
+    return 8
          + 16
          + 1
          + 8

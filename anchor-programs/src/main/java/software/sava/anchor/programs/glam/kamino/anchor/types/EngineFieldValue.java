@@ -25,7 +25,8 @@ public sealed interface EngineFieldValue extends RustEnum permits
   EngineFieldValue.FeeStructure,
   EngineFieldValue.FeeParams,
   EngineFieldValue.AccruedFees,
-  EngineFieldValue.NotifyAndSettle {
+  EngineFieldValue.NotifyAndSettle,
+  EngineFieldValue.OracleConfigs {
 
   static EngineFieldValue read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -46,6 +47,7 @@ public sealed interface EngineFieldValue extends RustEnum permits
       case 12 -> FeeParams.read(_data, i);
       case 13 -> AccruedFees.read(_data, i);
       case 14 -> NotifyAndSettle.read(_data, i);
+      case 15 -> OracleConfigs.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [EngineFieldValue]", ordinal
       ));
@@ -316,6 +318,18 @@ public sealed interface EngineFieldValue extends RustEnum permits
     @Override
     public int ordinal() {
       return 14;
+    }
+  }
+
+  record OracleConfigs(software.sava.anchor.programs.glam.kamino.anchor.types.OracleConfigs val) implements BorshEnum, EngineFieldValue {
+
+    public static OracleConfigs read(final byte[] _data, final int offset) {
+      return new OracleConfigs(software.sava.anchor.programs.glam.kamino.anchor.types.OracleConfigs.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 15;
     }
   }
 }

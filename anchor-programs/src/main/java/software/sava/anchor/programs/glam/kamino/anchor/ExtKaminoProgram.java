@@ -5,6 +5,8 @@ import java.math.BigInteger;
 import java.util.List;
 
 import software.sava.anchor.programs.glam.kamino.anchor.types.InitObligationArgs;
+import software.sava.anchor.programs.glam.kamino.anchor.types.LendingPolicy;
+import software.sava.anchor.programs.glam.kamino.anchor.types.VaultsPolicy;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -802,6 +804,104 @@ public final class ExtKaminoProgram {
     @Override
     public int l() {
       return BYTES;
+    }
+  }
+
+  public static final Discriminator SET_LENDING_POLICY_DISCRIMINATOR = toDiscriminator(226, 185, 23, 3, 113, 88, 118, 176);
+
+  public static Instruction setLendingPolicy(final AccountMeta invokedExtKaminoProgramMeta,
+                                             final PublicKey glamStateKey,
+                                             final PublicKey glamSignerKey,
+                                             final PublicKey glamProtocolProgramKey,
+                                             final LendingPolicy policy) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createRead(glamProtocolProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(policy)];
+    int i = SET_LENDING_POLICY_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(policy, _data, i);
+
+    return Instruction.createInstruction(invokedExtKaminoProgramMeta, keys, _data);
+  }
+
+  public record SetLendingPolicyIxData(Discriminator discriminator, LendingPolicy policy) implements Borsh {  
+
+    public static SetLendingPolicyIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static SetLendingPolicyIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var policy = LendingPolicy.read(_data, i);
+      return new SetLendingPolicyIxData(discriminator, policy);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(policy, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(policy);
+    }
+  }
+
+  public static final Discriminator SET_VAULTS_POLICY_DISCRIMINATOR = toDiscriminator(211, 177, 22, 152, 235, 59, 192, 62);
+
+  public static Instruction setVaultsPolicy(final AccountMeta invokedExtKaminoProgramMeta,
+                                            final PublicKey glamStateKey,
+                                            final PublicKey glamSignerKey,
+                                            final PublicKey glamProtocolProgramKey,
+                                            final VaultsPolicy policy) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createRead(glamProtocolProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(policy)];
+    int i = SET_VAULTS_POLICY_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(policy, _data, i);
+
+    return Instruction.createInstruction(invokedExtKaminoProgramMeta, keys, _data);
+  }
+
+  public record SetVaultsPolicyIxData(Discriminator discriminator, VaultsPolicy policy) implements Borsh {  
+
+    public static SetVaultsPolicyIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static SetVaultsPolicyIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var policy = VaultsPolicy.read(_data, i);
+      return new SetVaultsPolicyIxData(discriminator, policy);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(policy, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(policy);
     }
   }
 

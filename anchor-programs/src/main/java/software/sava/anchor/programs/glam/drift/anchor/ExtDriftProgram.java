@@ -3,6 +3,8 @@ package software.sava.anchor.programs.glam.drift.anchor;
 import java.util.List;
 import java.util.OptionalInt;
 
+import software.sava.anchor.programs.glam.drift.anchor.types.DriftProtocolPolicy;
+import software.sava.anchor.programs.glam.drift.anchor.types.DriftVaultsPolicy;
 import software.sava.anchor.programs.glam.drift.anchor.types.MarketType;
 import software.sava.anchor.programs.glam.drift.anchor.types.ModifyOrderParams;
 import software.sava.anchor.programs.glam.drift.anchor.types.OrderParams;
@@ -543,6 +545,104 @@ public final class ExtDriftProgram {
     );
 
     return Instruction.createInstruction(invokedExtDriftProgramMeta, keys, RECLAIM_RENT_DISCRIMINATOR);
+  }
+
+  public static final Discriminator SET_DRIFT_PROTOCOL_POLICY_DISCRIMINATOR = toDiscriminator(200, 22, 110, 2, 58, 22, 76, 162);
+
+  public static Instruction setDriftProtocolPolicy(final AccountMeta invokedExtDriftProgramMeta,
+                                                   final PublicKey glamStateKey,
+                                                   final PublicKey glamSignerKey,
+                                                   final PublicKey glamProtocolProgramKey,
+                                                   final DriftProtocolPolicy policy) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createRead(glamProtocolProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(policy)];
+    int i = SET_DRIFT_PROTOCOL_POLICY_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(policy, _data, i);
+
+    return Instruction.createInstruction(invokedExtDriftProgramMeta, keys, _data);
+  }
+
+  public record SetDriftProtocolPolicyIxData(Discriminator discriminator, DriftProtocolPolicy policy) implements Borsh {  
+
+    public static SetDriftProtocolPolicyIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static SetDriftProtocolPolicyIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var policy = DriftProtocolPolicy.read(_data, i);
+      return new SetDriftProtocolPolicyIxData(discriminator, policy);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(policy, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(policy);
+    }
+  }
+
+  public static final Discriminator SET_DRIFT_VAULTS_POLICY_DISCRIMINATOR = toDiscriminator(168, 134, 53, 33, 18, 88, 142, 223);
+
+  public static Instruction setDriftVaultsPolicy(final AccountMeta invokedExtDriftProgramMeta,
+                                                 final PublicKey glamStateKey,
+                                                 final PublicKey glamSignerKey,
+                                                 final PublicKey glamProtocolProgramKey,
+                                                 final DriftVaultsPolicy policy) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey),
+      createRead(glamProtocolProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(policy)];
+    int i = SET_DRIFT_VAULTS_POLICY_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(policy, _data, i);
+
+    return Instruction.createInstruction(invokedExtDriftProgramMeta, keys, _data);
+  }
+
+  public record SetDriftVaultsPolicyIxData(Discriminator discriminator, DriftVaultsPolicy policy) implements Borsh {  
+
+    public static SetDriftVaultsPolicyIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static SetDriftVaultsPolicyIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var policy = DriftVaultsPolicy.read(_data, i);
+      return new SetDriftVaultsPolicyIxData(discriminator, policy);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(policy, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(policy);
+    }
   }
 
   public static final Discriminator SETTLE_MULTIPLE_PNLS_DISCRIMINATOR = toDiscriminator(127, 66, 117, 57, 40, 50, 152, 127);
