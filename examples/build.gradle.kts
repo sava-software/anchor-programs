@@ -1,10 +1,10 @@
-dependencyAnalysis {
-  issues {
-//    onIncorrectConfiguration {
+//dependencyAnalysis {
+//  issues {
+////    onIncorrectConfiguration {
+////      severity("ignore")
+////    }
+//    onAny {
 //      severity("ignore")
 //    }
-    onAny {
-      severity("ignore")
-    }
-  }
-}
+//  }
+//}
