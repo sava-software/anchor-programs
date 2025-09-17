@@ -31,7 +31,7 @@ jobs:
       - name: Generate Source & Check
         run: |
           cd ./anchor-src-gen
-          ./genSrc.sh --tjv="${{ steps.setup.outputs.java-version }}" --tl=2 --bdm=200 --nt=5 --sd="../anchor-programs/src/main/java" --bp="software.sava.anchor.programs" --mn="software.sava.anchor_programs" --p="../main_net_programs.json" --rpc="${{ secrets.RPC_URL }}"
+          ./genSrc.sh --tl=2 --bdm=200 --nt=5 --sd="../anchor-programs/src/main/java" --bp="software.sava.anchor.programs" --mn="software.sava.anchor_programs" --p="../main_net_programs.json" --rpc="${{ secrets.RPC_URL }}"
           cd ..
           ./gradlew --stacktrace -PjavaVersion=${{ steps.setup.outputs.java-version }} -Pversion=${{ github.ref_name }} check
         env:
