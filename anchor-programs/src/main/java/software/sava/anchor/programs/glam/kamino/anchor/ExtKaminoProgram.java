@@ -32,6 +32,7 @@ public final class ExtKaminoProgram {
   public static final Discriminator FARMS_HARVEST_REWARD_DISCRIMINATOR = toDiscriminator(244, 248, 124, 210, 194, 52, 75, 152);
 
   public static Instruction farmsHarvestReward(final AccountMeta invokedExtKaminoProgramMeta,
+                                               final SolanaAccounts solanaAccounts,
                                                final PublicKey glamStateKey,
                                                final PublicKey glamVaultKey,
                                                final PublicKey glamSignerKey,
@@ -56,6 +57,7 @@ public final class ExtKaminoProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(userStateKey),
       createWrite(farmStateKey),
       createRead(globalConfigKey),
@@ -110,6 +112,7 @@ public final class ExtKaminoProgram {
   public static final Discriminator FARMS_STAKE_DISCRIMINATOR = toDiscriminator(224, 105, 208, 179, 98, 200, 213, 238);
 
   public static Instruction farmsStake(final AccountMeta invokedExtKaminoProgramMeta,
+                                       final SolanaAccounts solanaAccounts,
                                        final PublicKey glamStateKey,
                                        final PublicKey glamVaultKey,
                                        final PublicKey glamSignerKey,
@@ -131,6 +134,7 @@ public final class ExtKaminoProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(userStateKey),
       createWrite(farmStateKey),
       createWrite(farmVaultKey),
@@ -182,6 +186,7 @@ public final class ExtKaminoProgram {
   public static final Discriminator FARMS_UNSTAKE_DISCRIMINATOR = toDiscriminator(180, 131, 50, 144, 26, 242, 175, 242);
 
   public static Instruction farmsUnstake(final AccountMeta invokedExtKaminoProgramMeta,
+                                         final SolanaAccounts solanaAccounts,
                                          final PublicKey glamStateKey,
                                          final PublicKey glamVaultKey,
                                          final PublicKey glamSignerKey,
@@ -199,6 +204,7 @@ public final class ExtKaminoProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(userStateKey),
       createWrite(farmStateKey),
       createRead(requireNonNullElse(scopePricesKey, invokedExtKaminoProgramMeta.publicKey()))
@@ -246,6 +252,7 @@ public final class ExtKaminoProgram {
   public static final Discriminator LENDING_BORROW_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR = toDiscriminator(149, 226, 84, 157, 124, 178, 35, 122);
 
   public static Instruction lendingBorrowObligationLiquidityV2(final AccountMeta invokedExtKaminoProgramMeta,
+                                                               final SolanaAccounts solanaAccounts,
                                                                final PublicKey glamStateKey,
                                                                final PublicKey glamVaultKey,
                                                                final PublicKey glamSignerKey,
@@ -274,6 +281,7 @@ public final class ExtKaminoProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(obligationKey),
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),
@@ -332,6 +340,7 @@ public final class ExtKaminoProgram {
   public static final Discriminator LENDING_DEPOSIT_RESERVE_LIQUIDITY_AND_OBLIGATION_COLLATERAL_V_2_DISCRIMINATOR = toDiscriminator(33, 146, 50, 121, 127, 94, 92, 192);
 
   public static Instruction lendingDepositReserveLiquidityAndObligationCollateralV2(final AccountMeta invokedExtKaminoProgramMeta,
+                                                                                    final SolanaAccounts solanaAccounts,
                                                                                     final PublicKey glamStateKey,
                                                                                     final PublicKey glamVaultKey,
                                                                                     final PublicKey glamSignerKey,
@@ -362,6 +371,7 @@ public final class ExtKaminoProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(obligationKey),
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),
@@ -638,6 +648,7 @@ public final class ExtKaminoProgram {
   public static final Discriminator LENDING_REPAY_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR = toDiscriminator(79, 34, 126, 170, 174, 156, 174, 29);
 
   public static Instruction lendingRepayObligationLiquidityV2(final AccountMeta invokedExtKaminoProgramMeta,
+                                                              final SolanaAccounts solanaAccounts,
                                                               final PublicKey glamStateKey,
                                                               final PublicKey glamVaultKey,
                                                               final PublicKey glamSignerKey,
@@ -664,6 +675,7 @@ public final class ExtKaminoProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(obligationKey),
       createRead(lendingMarketKey),
       createWrite(repayReserveKey),
@@ -720,6 +732,7 @@ public final class ExtKaminoProgram {
   public static final Discriminator LENDING_WITHDRAW_OBLIGATION_COLLATERAL_AND_REDEEM_RESERVE_COLLATERAL_V_2_DISCRIMINATOR = toDiscriminator(217, 223, 173, 35, 64, 225, 161, 222);
 
   public static Instruction lendingWithdrawObligationCollateralAndRedeemReserveCollateralV2(final AccountMeta invokedExtKaminoProgramMeta,
+                                                                                            final SolanaAccounts solanaAccounts,
                                                                                             final PublicKey glamStateKey,
                                                                                             final PublicKey glamVaultKey,
                                                                                             final PublicKey glamSignerKey,
@@ -750,6 +763,7 @@ public final class ExtKaminoProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(obligationKey),
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),
@@ -908,6 +922,7 @@ public final class ExtKaminoProgram {
   public static final Discriminator VAULTS_DEPOSIT_DISCRIMINATOR = toDiscriminator(124, 173, 191, 223, 48, 26, 84, 84);
 
   public static Instruction vaultsDeposit(final AccountMeta invokedExtKaminoProgramMeta,
+                                          final SolanaAccounts solanaAccounts,
                                           final PublicKey glamStateKey,
                                           final PublicKey glamVaultKey,
                                           final PublicKey glamSignerKey,
@@ -934,6 +949,7 @@ public final class ExtKaminoProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(vaultStateKey),
       createWrite(tokenVaultKey),
       createRead(tokenMintKey),
@@ -990,6 +1006,7 @@ public final class ExtKaminoProgram {
   public static final Discriminator VAULTS_WITHDRAW_DISCRIMINATOR = toDiscriminator(12, 8, 236, 92, 134, 144, 196, 87);
 
   public static Instruction vaultsWithdraw(final AccountMeta invokedExtKaminoProgramMeta,
+                                           final SolanaAccounts solanaAccounts,
                                            final PublicKey glamStateKey,
                                            final PublicKey glamVaultKey,
                                            final PublicKey glamSignerKey,
@@ -1027,6 +1044,7 @@ public final class ExtKaminoProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(withdrawFromAvailableVaultStateKey),
       createWrite(withdrawFromAvailableTokenVaultKey),
       createRead(withdrawFromAvailableBaseVaultAuthorityKey),

@@ -713,11 +713,14 @@ public final class GlamMintProgram {
   public static final Discriminator PRICE_KAMINO_OBLIGATIONS_DISCRIMINATOR = toDiscriminator(166, 110, 234, 179, 240, 179, 69, 246);
 
   // Prices Kamino obligations.
+  // - `num_obligations` Number of kamino obligations to price.
+  // - `num_markets` Number of unique markets used by obligations.
+  // - `num_reserves` Number of unique reserves used by obligations.
   // 
   // Extra accounts for pricing N kamino obligations:
-  // - obligation x N
-  // - reserves used by all obligations (no specific order)
-  // - markets used by all reserves (no specific order)
+  // - obligation x num_obligations
+  // - reserve x num_reserves: no specific order
+  // - market x num_markets: no specific order
   public static Instruction priceKaminoObligations(final AccountMeta invokedGlamMintProgramMeta,
                                                    final PublicKey glamStateKey,
                                                    final PublicKey glamVaultKey,
@@ -731,7 +734,10 @@ public final class GlamMintProgram {
                                                    final PublicKey pythOracleKey,
                                                    final PublicKey switchboardPriceOracleKey,
                                                    final PublicKey switchboardTwapOracleKey,
-                                                   final PublicKey scopePricesKey) {
+                                                   final PublicKey scopePricesKey,
+                                                   final int numObligations,
+                                                   final int numMarkets,
+                                                   final int numReserves) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
@@ -748,7 +754,58 @@ public final class GlamMintProgram {
       createRead(requireNonNullElse(scopePricesKey, invokedGlamMintProgramMeta.publicKey()))
     );
 
-    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, PRICE_KAMINO_OBLIGATIONS_DISCRIMINATOR);
+    final byte[] _data = new byte[11];
+    int i = PRICE_KAMINO_OBLIGATIONS_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) numObligations;
+    ++i;
+    _data[i] = (byte) numMarkets;
+    ++i;
+    _data[i] = (byte) numReserves;
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
+  }
+
+  public record PriceKaminoObligationsIxData(Discriminator discriminator,
+                                             int numObligations,
+                                             int numMarkets,
+                                             int numReserves) implements Borsh {  
+
+    public static PriceKaminoObligationsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 11;
+
+    public static PriceKaminoObligationsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var numObligations = _data[i] & 0xFF;
+      ++i;
+      final var numMarkets = _data[i] & 0xFF;
+      ++i;
+      final var numReserves = _data[i] & 0xFF;
+      return new PriceKaminoObligationsIxData(discriminator, numObligations, numMarkets, numReserves);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) numObligations;
+      ++i;
+      _data[i] = (byte) numMarkets;
+      ++i;
+      _data[i] = (byte) numReserves;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
   }
 
   public static final Discriminator PRICE_KAMINO_VAULT_SHARES_DISCRIMINATOR = toDiscriminator(112, 92, 238, 224, 145, 105, 38, 249);

@@ -9,8 +9,7 @@ public enum ActionType implements Borsh.Enum {
   DeleteExternalAccountIfZeroLamports,
   DeleteExternalAccountIfZeroBalance,
   AddAsset,
-  DeleteAsset,
-  Refund;
+  DeleteAsset;
 
   public static ActionType read(final byte[] _data, final int offset) {
     return Borsh.read(ActionType.values(), _data, offset);

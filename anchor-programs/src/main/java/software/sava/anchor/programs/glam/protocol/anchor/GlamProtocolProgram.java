@@ -8,6 +8,7 @@ import software.sava.anchor.programs.glam.protocol.anchor.types.ExtraParams;
 import software.sava.anchor.programs.glam.protocol.anchor.types.JupiterSwapPolicy;
 import software.sava.anchor.programs.glam.protocol.anchor.types.PricedProtocol;
 import software.sava.anchor.programs.glam.protocol.anchor.types.StateModel;
+import software.sava.anchor.programs.glam.protocol.anchor.types.TransferPolicy;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -54,6 +55,7 @@ public final class GlamProtocolProgram {
 
   // Only accessible by integration programs
   public static Instruction cpiProxy(final AccountMeta invokedGlamProtocolProgramMeta,
+                                     final SolanaAccounts solanaAccounts,
                                      final PublicKey glamStateKey,
                                      final PublicKey glamVaultKey,
                                      final PublicKey glamSignerKey,
@@ -66,7 +68,8 @@ public final class GlamProtocolProgram {
       createWrite(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
-      createReadOnlySigner(integrationAuthorityKey)
+      createReadOnlySigner(integrationAuthorityKey),
+      createRead(solanaAccounts.systemProgram())
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(data) + Borsh.lenVector(extraParams)];
@@ -660,6 +663,53 @@ public final class GlamProtocolProgram {
     @Override
     public int l() {
       return 8 + 32 + 2 + Borsh.lenVector(data);
+    }
+  }
+
+  public static final Discriminator SET_SYSTEM_TRANSFER_POLICY_DISCRIMINATOR = toDiscriminator(102, 21, 157, 101, 19, 4, 100, 213);
+
+  public static Instruction setSystemTransferPolicy(final AccountMeta invokedGlamProtocolProgramMeta,
+                                                    final PublicKey glamStateKey,
+                                                    final PublicKey glamSignerKey,
+                                                    final TransferPolicy policy) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(policy)];
+    int i = SET_SYSTEM_TRANSFER_POLICY_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(policy, _data, i);
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
+  }
+
+  public record SetSystemTransferPolicyIxData(Discriminator discriminator, TransferPolicy policy) implements Borsh {  
+
+    public static SetSystemTransferPolicyIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static SetSystemTransferPolicyIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var policy = TransferPolicy.read(_data, i);
+      return new SetSystemTransferPolicyIxData(discriminator, policy);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(policy, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(policy);
     }
   }
 
