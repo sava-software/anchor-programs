@@ -681,36 +681,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction removePerpLpShares(final PublicKey userKey,
-                                        final PublicKey authorityKey,
-                                        final long sharesToBurn,
-                                        final int marketIndex) {
-    return DriftProgram.removePerpLpShares(
-        accounts.invokedDriftProgram(),
-        accounts.stateKey(),
-        userKey,
-        authorityKey,
-        sharesToBurn,
-        marketIndex
-    );
-  }
-
-  @Override
-  public Instruction addPerpLpShares(final PublicKey userKey,
-                                     final PublicKey authorityKey,
-                                     final long nShares,
-                                     final int marketIndex) {
-    return DriftProgram.addPerpLpShares(
-        accounts.invokedDriftProgram(),
-        accounts.stateKey(),
-        userKey,
-        authorityKey,
-        nShares,
-        marketIndex
-    );
-  }
-
-  @Override
   public Instruction initializeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
                                                    final PublicKey authorityKey,
                                                    final PublicKey payerKey,

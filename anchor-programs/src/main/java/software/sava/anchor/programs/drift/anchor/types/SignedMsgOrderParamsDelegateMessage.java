@@ -1,9 +1,12 @@
 package software.sava.anchor.programs.drift.anchor.types;
 
+import java.util.OptionalInt;
+
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
+import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
@@ -12,7 +15,8 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
                                                   long slot,
                                                   byte[] uuid,
                                                   SignedMsgTriggerOrderParams takeProfitOrderParams,
-                                                  SignedMsgTriggerOrderParams stopLossOrderParams) implements Borsh {
+                                                  SignedMsgTriggerOrderParams stopLossOrderParams,
+                                                  OptionalInt maxMarginRatio) implements Borsh {
 
   public static final int UUID_LEN = 8;
   public static SignedMsgOrderParamsDelegateMessage read(final byte[] _data, final int offset) {
@@ -33,12 +37,17 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
       i += Borsh.len(takeProfitOrderParams);
     }
     final var stopLossOrderParams = _data[i++] == 0 ? null : SignedMsgTriggerOrderParams.read(_data, i);
+    if (stopLossOrderParams != null) {
+      i += Borsh.len(stopLossOrderParams);
+    }
+    final var maxMarginRatio = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt16LE(_data, i));
     return new SignedMsgOrderParamsDelegateMessage(signedMsgOrderParams,
                                                    takerPubkey,
                                                    slot,
                                                    uuid,
                                                    takeProfitOrderParams,
-                                                   stopLossOrderParams);
+                                                   stopLossOrderParams,
+                                                   maxMarginRatio);
   }
 
   @Override
@@ -52,6 +61,7 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
     i += Borsh.writeArray(uuid, _data, i);
     i += Borsh.writeOptional(takeProfitOrderParams, _data, i);
     i += Borsh.writeOptional(stopLossOrderParams, _data, i);
+    i += Borsh.writeOptionalshort(maxMarginRatio, _data, i);
     return i - offset;
   }
 
@@ -62,6 +72,7 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
          + 8
          + Borsh.lenArray(uuid)
          + (takeProfitOrderParams == null ? 1 : (1 + Borsh.len(takeProfitOrderParams)))
-         + (stopLossOrderParams == null ? 1 : (1 + Borsh.len(stopLossOrderParams)));
+         + (stopLossOrderParams == null ? 1 : (1 + Borsh.len(stopLossOrderParams)))
+         + (maxMarginRatio == null || maxMarginRatio.isEmpty() ? 1 : (1 + 2));
   }
 }

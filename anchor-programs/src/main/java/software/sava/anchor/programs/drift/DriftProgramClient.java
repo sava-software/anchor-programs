@@ -463,17 +463,7 @@ public interface DriftProgramClient {
   Instruction updateUserProtectedMakerOrders(final PublicKey protectedMakerModeConfigKey,
                                              final int subAccountId,
                                              final boolean protectedMakerOrders);
-
-  Instruction removePerpLpShares(final PublicKey userKey,
-                                 final PublicKey authorityKey,
-                                 final long sharesToBurn,
-                                 final int marketIndex);
-
-  Instruction addPerpLpShares(final PublicKey userKey,
-                              final PublicKey authorityKey,
-                              final long nShares,
-                              final int marketIndex);
-
+  
   Instruction initializeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
                                             final PublicKey authorityKey,
                                             final PublicKey payerKey,

@@ -3,10 +3,8 @@ package software.sava.anchor.programs.drift.anchor.types;
 import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
-import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
-import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record PerpPosition(// The perp market's last cumulative funding rate. Used to calculate the funding payment owed to user
@@ -48,10 +46,8 @@ public record PerpPosition(// The perp market's last cumulative funding rate. Us
                            // Used to settle the users lp position
                            // precision: QUOTE_PRECISION
                            long lastQuoteAssetAmountPerLp,
-                           // Settling LP position can lead to a small amount of base asset being left over smaller than step size
-                           // This records that remainder so it can be settled later on
-                           // precision: BASE_PRECISION
-                           int remainderBaseAssetAmount,
+                           byte[] padding,
+                           int maxMarginRatio,
                            // The market index for the perp market
                            int marketIndex,
                            // The number of open orders
@@ -59,6 +55,7 @@ public record PerpPosition(// The perp market's last cumulative funding rate. Us
                            int perLpBase) implements Borsh {
 
   public static final int BYTES = 96;
+  public static final int PADDING_LEN = 2;
 
   public static PerpPosition read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -87,8 +84,10 @@ public record PerpPosition(// The perp market's last cumulative funding rate. Us
     i += 8;
     final var lastQuoteAssetAmountPerLp = getInt64LE(_data, i);
     i += 8;
-    final var remainderBaseAssetAmount = getInt32LE(_data, i);
-    i += 4;
+    final var padding = new byte[2];
+    i += Borsh.readArray(padding, _data, i);
+    final var maxMarginRatio = getInt16LE(_data, i);
+    i += 2;
     final var marketIndex = getInt16LE(_data, i);
     i += 2;
     final var openOrders = _data[i] & 0xFF;
@@ -105,7 +104,8 @@ public record PerpPosition(// The perp market's last cumulative funding rate. Us
                             lpShares,
                             lastBaseAssetAmountPerLp,
                             lastQuoteAssetAmountPerLp,
-                            remainderBaseAssetAmount,
+                            padding,
+                            maxMarginRatio,
                             marketIndex,
                             openOrders,
                             perLpBase);
@@ -136,8 +136,9 @@ public record PerpPosition(// The perp market's last cumulative funding rate. Us
     i += 8;
     putInt64LE(_data, i, lastQuoteAssetAmountPerLp);
     i += 8;
-    putInt32LE(_data, i, remainderBaseAssetAmount);
-    i += 4;
+    i += Borsh.writeArray(padding, _data, i);
+    putInt16LE(_data, i, maxMarginRatio);
+    i += 2;
     putInt16LE(_data, i, marketIndex);
     i += 2;
     _data[i] = (byte) openOrders;

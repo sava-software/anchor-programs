@@ -1939,183 +1939,6 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator ADD_PERP_LP_SHARES_DISCRIMINATOR = toDiscriminator(56, 209, 56, 197, 119, 254, 188, 117);
-
-  public static Instruction addPerpLpShares(final AccountMeta invokedDriftProgramMeta,
-                                            final PublicKey stateKey,
-                                            final PublicKey userKey,
-                                            final PublicKey authorityKey,
-                                            final long nShares,
-                                            final int marketIndex) {
-    final var keys = List.of(
-      createRead(stateKey),
-      createWrite(userKey),
-      createReadOnlySigner(authorityKey)
-    );
-
-    final byte[] _data = new byte[18];
-    int i = ADD_PERP_LP_SHARES_DISCRIMINATOR.write(_data, 0);
-    putInt64LE(_data, i, nShares);
-    i += 8;
-    putInt16LE(_data, i, marketIndex);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record AddPerpLpSharesIxData(Discriminator discriminator, long nShares, int marketIndex) implements Borsh {  
-
-    public static AddPerpLpSharesIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 18;
-
-    public static AddPerpLpSharesIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var nShares = getInt64LE(_data, i);
-      i += 8;
-      final var marketIndex = getInt16LE(_data, i);
-      return new AddPerpLpSharesIxData(discriminator, nShares, marketIndex);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, nShares);
-      i += 8;
-      putInt16LE(_data, i, marketIndex);
-      i += 2;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
-  public static final Discriminator REMOVE_PERP_LP_SHARES_DISCRIMINATOR = toDiscriminator(213, 89, 217, 18, 160, 55, 53, 141);
-
-  public static Instruction removePerpLpShares(final AccountMeta invokedDriftProgramMeta,
-                                               final PublicKey stateKey,
-                                               final PublicKey userKey,
-                                               final PublicKey authorityKey,
-                                               final long sharesToBurn,
-                                               final int marketIndex) {
-    final var keys = List.of(
-      createRead(stateKey),
-      createWrite(userKey),
-      createReadOnlySigner(authorityKey)
-    );
-
-    final byte[] _data = new byte[18];
-    int i = REMOVE_PERP_LP_SHARES_DISCRIMINATOR.write(_data, 0);
-    putInt64LE(_data, i, sharesToBurn);
-    i += 8;
-    putInt16LE(_data, i, marketIndex);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record RemovePerpLpSharesIxData(Discriminator discriminator, long sharesToBurn, int marketIndex) implements Borsh {  
-
-    public static RemovePerpLpSharesIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 18;
-
-    public static RemovePerpLpSharesIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var sharesToBurn = getInt64LE(_data, i);
-      i += 8;
-      final var marketIndex = getInt16LE(_data, i);
-      return new RemovePerpLpSharesIxData(discriminator, sharesToBurn, marketIndex);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, sharesToBurn);
-      i += 8;
-      putInt16LE(_data, i, marketIndex);
-      i += 2;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
-  public static final Discriminator REMOVE_PERP_LP_SHARES_IN_EXPIRING_MARKET_DISCRIMINATOR = toDiscriminator(83, 254, 253, 137, 59, 122, 68, 156);
-
-  public static Instruction removePerpLpSharesInExpiringMarket(final AccountMeta invokedDriftProgramMeta,
-                                                               final PublicKey stateKey,
-                                                               final PublicKey userKey,
-                                                               final PublicKey signerKey,
-                                                               final long sharesToBurn,
-                                                               final int marketIndex) {
-    final var keys = List.of(
-      createRead(stateKey),
-      createWrite(userKey),
-      createReadOnlySigner(signerKey)
-    );
-
-    final byte[] _data = new byte[18];
-    int i = REMOVE_PERP_LP_SHARES_IN_EXPIRING_MARKET_DISCRIMINATOR.write(_data, 0);
-    putInt64LE(_data, i, sharesToBurn);
-    i += 8;
-    putInt16LE(_data, i, marketIndex);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record RemovePerpLpSharesInExpiringMarketIxData(Discriminator discriminator, long sharesToBurn, int marketIndex) implements Borsh {  
-
-    public static RemovePerpLpSharesInExpiringMarketIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 18;
-
-    public static RemovePerpLpSharesInExpiringMarketIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var sharesToBurn = getInt64LE(_data, i);
-      i += 8;
-      final var marketIndex = getInt16LE(_data, i);
-      return new RemovePerpLpSharesInExpiringMarketIxData(discriminator, sharesToBurn, marketIndex);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, sharesToBurn);
-      i += 8;
-      putInt16LE(_data, i, marketIndex);
-      i += 2;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
   public static final Discriminator UPDATE_USER_NAME_DISCRIMINATOR = toDiscriminator(135, 25, 185, 56, 165, 53, 34, 136);
 
   public static Instruction updateUserName(final AccountMeta invokedDriftProgramMeta,
@@ -2222,6 +2045,73 @@ public final class DriftProgram {
       i += 2;
       putInt32LE(_data, i, marginRatio);
       i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_USER_PERP_POSITION_CUSTOM_MARGIN_RATIO_DISCRIMINATOR = toDiscriminator(121, 137, 157, 155, 89, 186, 145, 113);
+
+  public static Instruction updateUserPerpPositionCustomMarginRatio(final AccountMeta invokedDriftProgramMeta,
+                                                                    final PublicKey userKey,
+                                                                    final PublicKey authorityKey,
+                                                                    final int subAccountId,
+                                                                    final int perpMarketIndex,
+                                                                    final int marginRatio) {
+    final var keys = List.of(
+      createWrite(userKey),
+      createReadOnlySigner(authorityKey)
+    );
+
+    final byte[] _data = new byte[14];
+    int i = UPDATE_USER_PERP_POSITION_CUSTOM_MARGIN_RATIO_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, subAccountId);
+    i += 2;
+    putInt16LE(_data, i, perpMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, marginRatio);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateUserPerpPositionCustomMarginRatioIxData(Discriminator discriminator,
+                                                              int subAccountId,
+                                                              int perpMarketIndex,
+                                                              int marginRatio) implements Borsh {  
+
+    public static UpdateUserPerpPositionCustomMarginRatioIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 14;
+
+    public static UpdateUserPerpPositionCustomMarginRatioIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var subAccountId = getInt16LE(_data, i);
+      i += 2;
+      final var perpMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var marginRatio = getInt16LE(_data, i);
+      return new UpdateUserPerpPositionCustomMarginRatioIxData(discriminator, subAccountId, perpMarketIndex, marginRatio);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, subAccountId);
+      i += 2;
+      putInt16LE(_data, i, perpMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, marginRatio);
+      i += 2;
       return i - offset;
     }
 
@@ -3240,56 +3130,6 @@ public final class DriftProgram {
     );
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, SETTLE_FUNDING_PAYMENT_DISCRIMINATOR);
-  }
-
-  public static final Discriminator SETTLE_LP_DISCRIMINATOR = toDiscriminator(155, 231, 116, 113, 97, 229, 139, 141);
-
-  public static Instruction settleLp(final AccountMeta invokedDriftProgramMeta,
-                                     final PublicKey stateKey,
-                                     final PublicKey userKey,
-                                     final int marketIndex) {
-    final var keys = List.of(
-      createRead(stateKey),
-      createWrite(userKey)
-    );
-
-    final byte[] _data = new byte[10];
-    int i = SETTLE_LP_DISCRIMINATOR.write(_data, 0);
-    putInt16LE(_data, i, marketIndex);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record SettleLpIxData(Discriminator discriminator, int marketIndex) implements Borsh {  
-
-    public static SettleLpIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 10;
-
-    public static SettleLpIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var marketIndex = getInt16LE(_data, i);
-      return new SettleLpIxData(discriminator, marketIndex);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt16LE(_data, i, marketIndex);
-      i += 2;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
   }
 
   public static final Discriminator SETTLE_EXPIRED_MARKET_DISCRIMINATOR = toDiscriminator(120, 89, 11, 25, 122, 77, 72, 193);
@@ -6659,6 +6499,62 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator UPDATE_PERP_MARKET_PNL_POOL_DISCRIMINATOR = toDiscriminator(50, 202, 249, 224, 166, 184, 13, 143);
+
+  public static Instruction updatePerpMarketPnlPool(final AccountMeta invokedDriftProgramMeta,
+                                                    final PublicKey stateKey,
+                                                    final PublicKey adminKey,
+                                                    final PublicKey spotMarketKey,
+                                                    final PublicKey spotMarketVaultKey,
+                                                    final PublicKey perpMarketKey,
+                                                    final long amount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createReadOnlySigner(adminKey),
+      createWrite(spotMarketKey),
+      createWrite(spotMarketVaultKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = UPDATE_PERP_MARKET_PNL_POOL_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketPnlPoolIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static UpdatePerpMarketPnlPoolIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static UpdatePerpMarketPnlPoolIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new UpdatePerpMarketPnlPoolIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator DEPOSIT_INTO_SPOT_MARKET_VAULT_DISCRIMINATOR = toDiscriminator(48, 252, 119, 73, 255, 205, 174, 247);
 
   public static Instruction depositIntoSpotMarketVault(final AccountMeta invokedDriftProgramMeta,
@@ -8737,110 +8633,6 @@ public final class DriftProgram {
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       _data[i] = (byte) curveUpdateIntensity;
-      ++i;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
-  public static final Discriminator UPDATE_PERP_MARKET_TARGET_BASE_ASSET_AMOUNT_PER_LP_DISCRIMINATOR = toDiscriminator(62, 87, 68, 115, 29, 150, 150, 165);
-
-  public static Instruction updatePerpMarketTargetBaseAssetAmountPerLp(final AccountMeta invokedDriftProgramMeta,
-                                                                       final PublicKey adminKey,
-                                                                       final PublicKey stateKey,
-                                                                       final PublicKey perpMarketKey,
-                                                                       final int targetBaseAssetAmountPerLp) {
-    final var keys = List.of(
-      createReadOnlySigner(adminKey),
-      createRead(stateKey),
-      createWrite(perpMarketKey)
-    );
-
-    final byte[] _data = new byte[12];
-    int i = UPDATE_PERP_MARKET_TARGET_BASE_ASSET_AMOUNT_PER_LP_DISCRIMINATOR.write(_data, 0);
-    putInt32LE(_data, i, targetBaseAssetAmountPerLp);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record UpdatePerpMarketTargetBaseAssetAmountPerLpIxData(Discriminator discriminator, int targetBaseAssetAmountPerLp) implements Borsh {  
-
-    public static UpdatePerpMarketTargetBaseAssetAmountPerLpIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 12;
-
-    public static UpdatePerpMarketTargetBaseAssetAmountPerLpIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var targetBaseAssetAmountPerLp = getInt32LE(_data, i);
-      return new UpdatePerpMarketTargetBaseAssetAmountPerLpIxData(discriminator, targetBaseAssetAmountPerLp);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt32LE(_data, i, targetBaseAssetAmountPerLp);
-      i += 4;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
-  public static final Discriminator UPDATE_PERP_MARKET_PER_LP_BASE_DISCRIMINATOR = toDiscriminator(103, 152, 103, 102, 89, 144, 193, 71);
-
-  public static Instruction updatePerpMarketPerLpBase(final AccountMeta invokedDriftProgramMeta,
-                                                      final PublicKey adminKey,
-                                                      final PublicKey stateKey,
-                                                      final PublicKey perpMarketKey,
-                                                      final int perLpBase) {
-    final var keys = List.of(
-      createReadOnlySigner(adminKey),
-      createRead(stateKey),
-      createWrite(perpMarketKey)
-    );
-
-    final byte[] _data = new byte[9];
-    int i = UPDATE_PERP_MARKET_PER_LP_BASE_DISCRIMINATOR.write(_data, 0);
-    _data[i] = (byte) perLpBase;
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record UpdatePerpMarketPerLpBaseIxData(Discriminator discriminator, int perLpBase) implements Borsh {  
-
-    public static UpdatePerpMarketPerLpBaseIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 9;
-
-    public static UpdatePerpMarketPerLpBaseIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var perLpBase = _data[i];
-      return new UpdatePerpMarketPerLpBaseIxData(discriminator, perLpBase);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) perLpBase;
       ++i;
       return i - offset;
     }

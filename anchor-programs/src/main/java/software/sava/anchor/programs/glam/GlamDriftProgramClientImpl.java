@@ -562,22 +562,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
-  public Instruction removePerpLpShares(final PublicKey userKey,
-                                        final PublicKey authorityKey,
-                                        final long sharesToBurn,
-                                        final int marketIndex) {
-    throw new UnsupportedOperationException("Use Ix-proxy instead.");
-  }
-
-  @Override
-  public Instruction addPerpLpShares(final PublicKey userKey,
-                                     final PublicKey authorityKey,
-                                     final long nShares,
-                                     final int marketIndex) {
-    throw new UnsupportedOperationException("Use Ix-proxy instead.");
-  }
-
-  @Override
   public Instruction initializeSignedMsgUserOrders(final PublicKey signedMsgUserOrdersKey,
                                                    final PublicKey authorityKey,
                                                    final PublicKey payerKey,
