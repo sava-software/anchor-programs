@@ -923,7 +923,7 @@ public final class GlamMintProgram {
                                              final PublicKey integrationAuthorityKey,
                                              final PublicKey glamConfigKey,
                                              final PublicKey glamProtocolKey,
-                                             final short[] aggIndexes) {
+                                             final short[][] aggIndexes) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createRead(glamVaultKey),
@@ -935,14 +935,14 @@ public final class GlamMintProgram {
       createRead(glamProtocolKey)
     );
 
-    final byte[] _data = new byte[8 + Borsh.lenVector(aggIndexes)];
+    final byte[] _data = new byte[8 + Borsh.lenVectorArray(aggIndexes)];
     int i = PRICE_VAULT_TOKENS_DISCRIMINATOR.write(_data, 0);
-    Borsh.writeVector(aggIndexes, _data, i);
+    Borsh.writeVectorArray(aggIndexes, _data, i);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
   }
 
-  public record PriceVaultTokensIxData(Discriminator discriminator, short[] aggIndexes) implements Borsh {  
+  public record PriceVaultTokensIxData(Discriminator discriminator, short[][] aggIndexes) implements Borsh {  
 
     public static PriceVaultTokensIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
@@ -954,20 +954,20 @@ public final class GlamMintProgram {
       }
       final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var aggIndexes = Borsh.readshortVector(_data, i);
+      final var aggIndexes = Borsh.readMultiDimensionshortVectorArray(4, _data, i);
       return new PriceVaultTokensIxData(discriminator, aggIndexes);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeVector(aggIndexes, _data, i);
+      i += Borsh.writeVectorArray(aggIndexes, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + Borsh.lenVector(aggIndexes);
+      return 8 + Borsh.lenVectorArray(aggIndexes);
     }
   }
 
@@ -1155,6 +1155,7 @@ public final class GlamMintProgram {
 
   public static Instruction setProtocolFees(final AccountMeta invokedGlamMintProgramMeta,
                                             final PublicKey glamStateKey,
+                                            final PublicKey glamMintKey,
                                             final PublicKey signerKey,
                                             final PublicKey glamConfigKey,
                                             final PublicKey glamProtocolProgramKey,
@@ -1162,6 +1163,7 @@ public final class GlamMintProgram {
                                             final int flowFeeBps) {
     final var keys = List.of(
       createWrite(glamStateKey),
+      createRead(glamMintKey),
       createWritableSigner(signerKey),
       createRead(glamConfigKey),
       createRead(glamProtocolProgramKey)

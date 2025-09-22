@@ -500,7 +500,7 @@ public final class GlamProtocolProgram {
                                                           final boolean link) {
     final var keys = List.of(
       createWrite(glamStateKey),
-      createWrite(glamMintKey),
+      createRead(glamMintKey),
       createReadOnlySigner(glamMintAuthorityKey)
     );
 
@@ -1191,7 +1191,7 @@ public final class GlamProtocolProgram {
 
   public static final Discriminator UPDATE_MINT_PARAMS_BY_MINT_AUTHORITY_DISCRIMINATOR = toDiscriminator(94, 160, 55, 53, 175, 225, 62, 118);
 
-  // For glam mint program's use only
+  // For glam mint program's use only, timelock is not enforced
   public static Instruction updateMintParamsByMintAuthority(final AccountMeta invokedGlamProtocolProgramMeta,
                                                             final PublicKey glamStateKey,
                                                             final PublicKey glamMintKey,
@@ -1199,7 +1199,7 @@ public final class GlamProtocolProgram {
                                                             final EngineField[] params) {
     final var keys = List.of(
       createWrite(glamStateKey),
-      createWrite(glamMintKey),
+      createRead(glamMintKey),
       createReadOnlySigner(glamMintAuthorityKey)
     );
 
