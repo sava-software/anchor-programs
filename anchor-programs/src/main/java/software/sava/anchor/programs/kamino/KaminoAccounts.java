@@ -20,12 +20,15 @@ public interface KaminoAccounts {
       "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
       "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
       "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
+      // https://github.com/Kamino-Finance/klend-sdk/blob/d097dcb24478de3be2bce20723aa0b17c101b4cd/src/classes/farm_utils.ts#L26
+      "6UodrBjL2ZreDy7QdR4YV1oxqMBjVYSEyrFpctqqwGwL",
       "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd"
   );
 
   static KaminoAccounts createAccounts(final PublicKey kLendProgram,
                                        final PublicKey scopePricesProgram,
                                        final PublicKey farmProgram,
+                                       final PublicKey farmsGlobalConfig,
                                        final PublicKey kVaultsProgram) {
     final var kVaultsEventAuthority = PublicKey.findProgramAddress(
         List.of("__event_authority".getBytes(US_ASCII)),
@@ -36,7 +39,7 @@ public interface KaminoAccounts {
         scopePricesProgram,
         ScopeFeedAccounts.SCOPE_MAINNET_HUBBLE_FEED,
         ScopeFeedAccounts.SCOPE_MAINNET_KLEND_FEED,
-        farmProgram,
+        farmProgram, farmsGlobalConfig,
         AccountMeta.createInvoked(kVaultsProgram),
         kVaultsEventAuthority
     );
@@ -45,11 +48,13 @@ public interface KaminoAccounts {
   static KaminoAccounts createAccounts(final String kLendProgram,
                                        final String scopePricesProgram,
                                        final String farmProgram,
+                                       final String farmsGlobalConfig,
                                        final String kVaultsProgram) {
     return createAccounts(
         PublicKey.fromBase58Encoded(kLendProgram),
         PublicKey.fromBase58Encoded(scopePricesProgram),
         PublicKey.fromBase58Encoded(farmProgram),
+        PublicKey.fromBase58Encoded(farmsGlobalConfig),
         PublicKey.fromBase58Encoded(kVaultsProgram)
     );
   }
@@ -242,6 +247,8 @@ public interface KaminoAccounts {
   }
 
   PublicKey farmProgram();
+
+  PublicKey farmsGlobalConfig();
 
   AccountMeta invokedKVaultsProgram();
 

@@ -8,6 +8,7 @@ public record KaminoAccountsRecord(AccountMeta invokedKLendProgram,
                                    ScopeFeedAccounts scopeMainnetHubbleFeed,
                                    ScopeFeedAccounts scopeMainnetKLendFeed,
                                    PublicKey farmProgram,
+                                   PublicKey farmsGlobalConfig,
                                    AccountMeta invokedKVaultsProgram,
                                    PublicKey kVaultsEventAuthority) implements KaminoAccounts {
 
