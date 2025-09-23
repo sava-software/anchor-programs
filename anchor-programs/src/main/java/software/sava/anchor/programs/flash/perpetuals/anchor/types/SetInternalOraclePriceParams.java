@@ -7,19 +7,22 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record SetInternalOraclePriceParams(long price,
+public record SetInternalOraclePriceParams(int useCurrentTime,
+                                           long price,
                                            int expo,
                                            long conf,
                                            long ema,
                                            long publishTime) implements Borsh {
 
-  public static final int BYTES = 36;
+  public static final int BYTES = 37;
 
   public static SetInternalOraclePriceParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
     int i = offset;
+    final var useCurrentTime = _data[i] & 0xFF;
+    ++i;
     final var price = getInt64LE(_data, i);
     i += 8;
     final var expo = getInt32LE(_data, i);
@@ -29,7 +32,8 @@ public record SetInternalOraclePriceParams(long price,
     final var ema = getInt64LE(_data, i);
     i += 8;
     final var publishTime = getInt64LE(_data, i);
-    return new SetInternalOraclePriceParams(price,
+    return new SetInternalOraclePriceParams(useCurrentTime,
+                                            price,
                                             expo,
                                             conf,
                                             ema,
@@ -39,6 +43,8 @@ public record SetInternalOraclePriceParams(long price,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
+    _data[i] = (byte) useCurrentTime;
+    ++i;
     putInt64LE(_data, i, price);
     i += 8;
     putInt32LE(_data, i, expo);

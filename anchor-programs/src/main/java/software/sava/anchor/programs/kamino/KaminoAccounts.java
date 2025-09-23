@@ -13,6 +13,7 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 public interface KaminoAccounts {
 
+  // https://github.com/Kamino-Finance/klend-sdk/blob/d097dcb24478de3be2bce20723aa0b17c101b4cd/examples/utils/constants.ts#L3
   // https://github.com/Kamino-Finance/klend-sdk/blob/master/src/utils/seeds.ts
   // https://github.com/Kamino-Finance/klend/blob/master/programs/klend/src/utils/seeds.rs
 

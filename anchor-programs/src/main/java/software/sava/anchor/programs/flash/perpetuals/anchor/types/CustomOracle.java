@@ -8,6 +8,7 @@ import software.sava.core.programs.Discriminator;
 import software.sava.core.rpc.Filter;
 import software.sava.rpc.json.http.response.AccountInfo;
 
+import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
@@ -20,9 +21,10 @@ public record CustomOracle(PublicKey _address,
                            int expo,
                            long conf,
                            long ema,
-                           long publishTime) implements Borsh {
+                           long publishTime,
+                           PublicKey extOracleAccount) implements Borsh {
 
-  public static final int BYTES = 44;
+  public static final int BYTES = 76;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int PRICE_OFFSET = 8;
@@ -30,6 +32,7 @@ public record CustomOracle(PublicKey _address,
   public static final int CONF_OFFSET = 20;
   public static final int EMA_OFFSET = 28;
   public static final int PUBLISH_TIME_OFFSET = 36;
+  public static final int EXT_ORACLE_ACCOUNT_OFFSET = 44;
 
   public static Filter createPriceFilter(final long price) {
     final byte[] _data = new byte[8];
@@ -61,6 +64,10 @@ public record CustomOracle(PublicKey _address,
     return Filter.createMemCompFilter(PUBLISH_TIME_OFFSET, _data);
   }
 
+  public static Filter createExtOracleAccountFilter(final PublicKey extOracleAccount) {
+    return Filter.createMemCompFilter(EXT_ORACLE_ACCOUNT_OFFSET, extOracleAccount);
+  }
+
   public static CustomOracle read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -90,13 +97,16 @@ public record CustomOracle(PublicKey _address,
     final var ema = getInt64LE(_data, i);
     i += 8;
     final var publishTime = getInt64LE(_data, i);
+    i += 8;
+    final var extOracleAccount = readPubKey(_data, i);
     return new CustomOracle(_address,
                             discriminator,
                             price,
                             expo,
                             conf,
                             ema,
-                            publishTime);
+                            publishTime,
+                            extOracleAccount);
   }
 
   @Override
@@ -112,6 +122,8 @@ public record CustomOracle(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, publishTime);
     i += 8;
+    extOracleAccount.write(_data, i);
+    i += 32;
     return i - offset;
   }
 

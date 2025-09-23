@@ -75,6 +75,7 @@ import software.sava.anchor.programs.flash.perpetuals.anchor.types.RemoveLiquidi
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.RemoveMarketParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.RemovePoolParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.RenameFlpParams;
+import software.sava.anchor.programs.flash.perpetuals.anchor.types.ResizeInternalOracleParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.SetAdminSignersParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.SetCustodyConfigParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.SetCustomOraclePriceParams;
@@ -473,7 +474,7 @@ public final class PerpetualsProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 12;
+    public static final int BYTES = 44;
 
     public static AddInternalOracleIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -806,6 +807,61 @@ public final class PerpetualsProgram {
       int i = offset + discriminator.length();
       final var params = ReimburseParams.read(_data, i);
       return new ReimburseIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator RESIZE_INTERNAL_ORACLE_DISCRIMINATOR = toDiscriminator(111, 166, 24, 12, 251, 82, 69, 230);
+
+  public static Instruction resizeInternalOracle(final AccountMeta invokedPerpetualsProgramMeta,
+                                                 final PublicKey adminKey,
+                                                 final PublicKey multisigKey,
+                                                 final PublicKey custodyTokenMintKey,
+                                                 final PublicKey intOracleAccountKey,
+                                                 final PublicKey systemProgramKey,
+                                                 final ResizeInternalOracleParams params) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(multisigKey),
+      createRead(custodyTokenMintKey),
+      createWrite(intOracleAccountKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = RESIZE_INTERNAL_ORACLE_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
+  }
+
+  public record ResizeInternalOracleIxData(Discriminator discriminator, ResizeInternalOracleParams params) implements Borsh {  
+
+    public static ResizeInternalOracleIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 40;
+
+    public static ResizeInternalOracleIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = ResizeInternalOracleParams.read(_data, i);
+      return new ResizeInternalOracleIxData(discriminator, params);
     }
 
     @Override
@@ -2136,7 +2192,7 @@ public final class PerpetualsProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 44;
+    public static final int BYTES = 45;
 
     public static SetInternalOraclePriceIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
