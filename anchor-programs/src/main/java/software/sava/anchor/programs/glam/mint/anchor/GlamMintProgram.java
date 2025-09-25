@@ -3,10 +3,10 @@ package software.sava.anchor.programs.glam.mint.anchor;
 import java.util.List;
 import java.util.OptionalInt;
 
-import software.sava.anchor.programs.glam.mint.anchor.types.AccountType;
 import software.sava.anchor.programs.glam.mint.anchor.types.EmergencyUpdateMintArgs;
 import software.sava.anchor.programs.glam.mint.anchor.types.MintModel;
 import software.sava.anchor.programs.glam.mint.anchor.types.MintPolicy;
+import software.sava.anchor.programs.glam.protocol.anchor.types.AccountType;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;

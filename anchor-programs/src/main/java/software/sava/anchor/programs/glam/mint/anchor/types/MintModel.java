@@ -6,6 +6,8 @@ import java.lang.String;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
+import software.sava.anchor.programs.glam.protocol.anchor.types.FeeStructure;
+import software.sava.anchor.programs.glam.protocol.anchor.types.NotifyAndSettle;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 

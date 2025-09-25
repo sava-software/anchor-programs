@@ -2,7 +2,7 @@ package software.sava.anchor.programs.glam.spl.anchor;
 
 import java.util.List;
 
-import software.sava.anchor.programs.glam.spl.anchor.types.TransferPolicy;
+import software.sava.anchor.programs.glam.protocol.anchor.types.TransferPolicy;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;

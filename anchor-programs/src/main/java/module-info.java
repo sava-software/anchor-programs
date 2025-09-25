@@ -30,7 +30,6 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.glam.protocol.anchor.types;
   exports software.sava.anchor.programs.glam.protocol.anchor;
   exports software.sava.anchor.programs.glam.proxy;
-  exports software.sava.anchor.programs.glam.spl.anchor.types;
   exports software.sava.anchor.programs.glam.spl.anchor;
   exports software.sava.anchor.programs.glam;
   exports software.sava.anchor.programs.jito.tip_distribution.anchor.types;
