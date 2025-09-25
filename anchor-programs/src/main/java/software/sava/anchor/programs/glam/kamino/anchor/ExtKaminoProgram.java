@@ -4,9 +4,9 @@ import java.math.BigInteger;
 
 import java.util.List;
 
-import software.sava.anchor.programs.glam.kamino.anchor.types.InitObligationArgs;
 import software.sava.anchor.programs.glam.kamino.anchor.types.LendingPolicy;
 import software.sava.anchor.programs.glam.kamino.anchor.types.VaultsPolicy;
+import software.sava.anchor.programs.kamino.lend.anchor.types.InitObligationArgs;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.accounts.meta.AccountMeta;

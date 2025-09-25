@@ -1,5 +1,9 @@
 package software.sava.anchor.programs.kamino.vaults.anchor.types;
 
+import software.sava.anchor.programs.kamino.lend.anchor.types.BorrowRateCurve;
+import software.sava.anchor.programs.kamino.lend.anchor.types.ReserveFees;
+import software.sava.anchor.programs.kamino.lend.anchor.types.TokenInfo;
+import software.sava.anchor.programs.kamino.lend.anchor.types.WithdrawalCaps;
 import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.encoding.ByteUtil.getInt16LE;

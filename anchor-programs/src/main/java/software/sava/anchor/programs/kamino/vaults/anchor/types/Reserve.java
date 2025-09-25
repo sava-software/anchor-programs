@@ -2,6 +2,9 @@ package software.sava.anchor.programs.kamino.vaults.anchor.types;
 
 import java.util.function.BiFunction;
 
+import software.sava.anchor.programs.kamino.lend.anchor.types.LastUpdate;
+import software.sava.anchor.programs.kamino.lend.anchor.types.ReserveCollateral;
+import software.sava.anchor.programs.kamino.lend.anchor.types.ReserveLiquidity;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 import software.sava.core.programs.Discriminator;

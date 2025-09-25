@@ -22,7 +22,16 @@
   {
     "name": "Drift Vaults",
     "program": "vAuLTsyrvSfZRuRB3XgvkPwNGgYSs9YRYymVebLKoxR",
-    "package": "drift.vaults"
+    "package": "drift.vaults",
+    "typeRefs": [
+      {
+        "refProgram": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [],
+        "explicitRules": []
+      }
+    ]
   },
   {
     "name": "Flash Trade Perpetuals",
@@ -78,7 +87,46 @@
   {
     "name": "GLAM Kamino",
     "program": "G1NTkDEUR3pkEqGCKZtmtmVzCUEdYa86pezHkwYbLyde",
-    "package": "glam.kamino"
+    "package": "glam.kamino",
+    "typeRefs": [
+      {
+        "refProgram": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [],
+        "explicitRules": []
+      },
+      {
+        "refProgram": "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [],
+        "explicitRules": []
+      },
+      {
+        "refProgram": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [
+          "TimeUnit"
+        ],
+        "explicitRules": []
+      },
+      {
+        "refProgram": "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [],
+        "explicitRules": []
+      },
+      {
+        "refProgram": "GLAMpaME8wdTEzxtiYEAa5yD8fZbxZiz2hNtV58RZiEz",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [],
+        "explicitRules": []
+      }
+    ]
   },
   {
     "name": "Glam Protocol Legacy",
@@ -191,7 +239,35 @@
   {
     "name": "Kamino Vaults",
     "program": "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd",
-    "package": "kamino.vaults"
+    "package": "kamino.vaults",
+    "typeRefs": [
+      {
+        "refProgram": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [
+          "ReserveConfig",
+          "Reserve"
+        ],
+        "explicitRules": []
+      },
+      {
+        "refProgram": "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [],
+        "explicitRules": []
+      },
+      {
+        "refProgram": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [
+          "TimeUnit"
+        ],
+        "explicitRules": []
+      }
+    ]
   },
   {
     "name": "Loopscale",
