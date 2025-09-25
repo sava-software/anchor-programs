@@ -11,7 +11,8 @@
   },
   {
     "name": "Drift",
-    "program": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH"
+    "program": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+    "package": "drift"
   },
   {
     "name": "Drift Merkle Distributor",
@@ -21,7 +22,6 @@
   {
     "name": "Drift Vaults",
     "program": "vAuLTsyrvSfZRuRB3XgvkPwNGgYSs9YRYymVebLKoxR",
-    "idlURL": "https://raw.githubusercontent.com/drift-labs/drift-vaults/refs/heads/master/ts/sdk/src/idl/drift_vaults.json",
     "package": "drift.vaults"
   },
   {
@@ -46,7 +46,34 @@
   {
     "name": "GLAM Drift",
     "program": "G1NTdrBmBpW43msRQmsf7qXSw3MFBNaqJcAkGiRmRq2F",
-    "package": "glam.drift"
+    "package": "glam.drift",
+    "typeRefs": [
+      {
+        "refProgram": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [
+          "FeeStructure"
+        ],
+        "explicitRules": []
+      },
+      {
+        "refProgram": "vAuLTsyrvSfZRuRB3XgvkPwNGgYSs9YRYymVebLKoxR",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [
+          "FeeStructure"
+        ],
+        "explicitRules": []
+      },
+      {
+        "refProgram": "GLAMpaME8wdTEzxtiYEAa5yD8fZbxZiz2hNtV58RZiEz",
+        "srcMismatch": "ERROR",
+        "matchOnTypeName": true,
+        "excludeTypes": [],
+        "explicitRules": []
+      }
+    ]
   },
   {
     "name": "GLAM Kamino",
