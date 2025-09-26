@@ -5,7 +5,10 @@ import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import systems.glam.ix.proxy.DynamicAccount;
 
-record IndexedReadState(int index) implements DynamicAccount<GlamVaultAccounts> {
+import java.util.Map;
+
+public record IndexedExtAuthority(int index,
+                                  Map<PublicKey, AccountMeta> extensionAuthorities) implements DynamicAccount<GlamVaultAccounts> {
 
   @Override
   public void setAccount(final AccountMeta[] mappedAccounts,
@@ -13,6 +16,6 @@ record IndexedReadState(int index) implements DynamicAccount<GlamVaultAccounts> 
                          final AccountMeta cpiProgram,
                          final AccountMeta feePayer,
                          final GlamVaultAccounts runtimeAccounts) {
-    mappedAccounts[index] = runtimeAccounts.readGlamState();
+    mappedAccounts[index] = extensionAuthorities.get(proxyProgram);
   }
 }

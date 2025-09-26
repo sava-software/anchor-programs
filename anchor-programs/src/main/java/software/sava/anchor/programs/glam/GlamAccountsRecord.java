@@ -5,6 +5,7 @@ import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 
 import java.util.List;
+import java.util.Map;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -15,8 +16,12 @@ public record GlamAccountsRecord(PublicKey program,
                                  PublicKey mintProgram,
                                  PublicKey policyProgram,
                                  PublicKey splExtensionProgram,
+                                 AccountMeta readSplExtensionAuthority,
                                  PublicKey driftExtensionProgram,
-                                 PublicKey kaminoExtensionProgram) implements GlamAccounts {
+                                 AccountMeta readDriftExtensionAuthority,
+                                 PublicKey kaminoExtensionProgram,
+                                 AccountMeta readKaminoExtensionAuthority,
+                                 Map<PublicKey, AccountMeta> extensionAuthorities) implements GlamAccounts {
 
   @Override
   public ProgramDerivedAddress mintPDA(final PublicKey glamPublicKey, final int shareClassId) {

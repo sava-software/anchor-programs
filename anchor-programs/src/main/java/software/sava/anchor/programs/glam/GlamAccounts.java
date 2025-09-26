@@ -1,14 +1,20 @@
 package software.sava.anchor.programs.glam;
 
 import software.sava.anchor.programs.glam.config.anchor.GlamConfigPDAs;
+import software.sava.anchor.programs.glam.drift.anchor.ExtDriftPDAs;
+import software.sava.anchor.programs.glam.kamino.anchor.ExtKaminoPDAs;
 import software.sava.anchor.programs.glam.protocol.anchor.types.StateAccount;
 import software.sava.anchor.programs.glam.proxy.DynamicGlamAccountFactory;
+import software.sava.anchor.programs.glam.spl.anchor.ExtSplPDAs;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import systems.glam.ix.proxy.TransactionMapper;
 
 import java.nio.file.Path;
+import java.util.Map;
+
+import static software.sava.core.accounts.meta.AccountMeta.createRead;
 
 public interface GlamAccounts {
 
@@ -32,6 +38,14 @@ public interface GlamAccounts {
                                      final PublicKey splExtensionProgram,
                                      final PublicKey driftExtensionProgram,
                                      final PublicKey kaminoExtensionProgram) {
+    final var splExtensionAuthority = createRead(ExtSplPDAs.integrationAuthorityPDA(splExtensionProgram).publicKey());
+    final var driftExtensionAuthority = createRead(ExtDriftPDAs.integrationAuthorityPDA(driftExtensionProgram).publicKey());
+    final var kaminoExtensionAuthority = createRead(ExtKaminoPDAs.integrationAuthorityPDA(kaminoExtensionProgram).publicKey());
+    final var extensionAuthorities = Map.of(
+        splExtensionProgram, splExtensionAuthority,
+        driftExtensionProgram, driftExtensionAuthority,
+        kaminoExtensionProgram, kaminoExtensionAuthority
+    );
     return new GlamAccountsRecord(
         program,
         AccountMeta.createInvoked(program),
@@ -40,8 +54,12 @@ public interface GlamAccounts {
         mintProgram,
         policyProgram,
         splExtensionProgram,
+        splExtensionAuthority,
         driftExtensionProgram,
-        kaminoExtensionProgram
+        driftExtensionAuthority,
+        kaminoExtensionProgram,
+        kaminoExtensionAuthority,
+        extensionAuthorities
     );
   }
 
@@ -94,9 +112,17 @@ public interface GlamAccounts {
 
   PublicKey splExtensionProgram();
 
+  AccountMeta readSplExtensionAuthority();
+
   PublicKey driftExtensionProgram();
 
+  AccountMeta readDriftExtensionAuthority();
+
   PublicKey kaminoExtensionProgram();
+
+  AccountMeta readKaminoExtensionAuthority();
+
+  Map<PublicKey, AccountMeta> extensionAuthorities();
 
   static boolean usesIntegration(final StateAccount stateAccount,
                                  final PublicKey program,
