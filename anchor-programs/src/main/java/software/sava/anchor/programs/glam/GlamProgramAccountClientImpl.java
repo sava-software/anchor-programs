@@ -1,9 +1,11 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.anchor.GlamProtocolPDAs;
-import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
 import software.sava.anchor.programs.glam.anchor.types.PriceDenom;
-import software.sava.anchor.programs.glam.anchor.types.StateModel;
+import software.sava.anchor.programs.glam.mint.anchor.GlamMintPDAs;
+import software.sava.anchor.programs.glam.mint.anchor.GlamMintProgram;
+import software.sava.anchor.programs.glam.protocol.anchor.GlamProtocolProgram;
+import software.sava.anchor.programs.glam.protocol.anchor.types.StateModel;
+import software.sava.anchor.programs.glam.spl.anchor.ExtSplProgram;
 import software.sava.core.accounts.AccountWithSeed;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -36,7 +38,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   private final NativeProgramAccountClient nativeProgramAccountClient;
   private final GlamVaultAccounts glamVaultAccounts;
   private final GlamAccounts glamAccounts;
-  private final AccountMeta invokedProgram;
+  private final AccountMeta invokedProtocolProgram;
   private final AccountMeta feePayer;
   private final PublicKey globalConfigKey;
 
@@ -45,7 +47,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
     this.nativeProgramClient = GlamNativeProgramClient.createClient(solanaAccounts, glamVaultAccounts);
     this.glamVaultAccounts = glamVaultAccounts;
     this.glamAccounts = glamVaultAccounts.glamAccounts();
-    this.invokedProgram = glamAccounts.invokedProgram();
+    this.invokedProtocolProgram = glamAccounts.invokedProtocolProgram();
     this.feePayer = createFeePayer(glamVaultAccounts.feePayer());
     this.nativeProgramAccountClient = NativeProgramAccountClient.createClient(solanaAccounts, glamVaultAccounts.vaultPublicKey(), feePayer);
     this.globalConfigKey = glamVaultAccounts.glamAccounts().globalConfigPDA().publicKey();
@@ -359,7 +361,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   @Override
   public Instruction transferSolLamports(final PublicKey toPublicKey, final long lamports) {
     return GlamProtocolProgram.systemTransfer(
-        invokedProgram,
+        invokedProtocolProgram,
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
@@ -460,16 +462,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                    final PublicKey fromTokenAccount,
                                    final PublicKey toTokenAccount,
                                    final long scaledAmount) {
-    return GlamProtocolProgram.tokenTransfer(
-        invokedProgram,
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        feePayer.publicKey(),
-        invokedTokenProgram.publicKey(),
-        fromTokenAccount,
-        toTokenAccount,
-        scaledAmount
-    );
+    throw new UnsupportedOperationException();
   }
 
   @Override
@@ -479,11 +472,13 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                           final long scaledAmount,
                                           final int decimals,
                                           final PublicKey tokenMint) {
-    return GlamProtocolProgram.tokenTransferChecked(
-        invokedProgram,
+    return ExtSplProgram.tokenTransferChecked(
+        glamAccounts.invokedSplExtensionProgram(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
+        glamAccounts.readSplExtensionAuthority().publicKey(),
+        invokedProtocolProgram.publicKey(),
         invokedTokenProgram.publicKey(),
         fromTokenAccount,
         tokenMint,
@@ -495,13 +490,15 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction closeTokenAccount(final AccountMeta invokedTokenProgram, final PublicKey tokenAccount) {
-    return GlamProtocolProgram.tokenCloseAccount(
-        invokedProgram,
+    return ExtSplProgram.tokenCloseAccount(
+        glamAccounts.invokedSplExtensionProgram(),
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
+        glamAccounts.readSplExtensionAuthority().publicKey(),
         invokedTokenProgram.publicKey(),
+        invokedProtocolProgram.publicKey(),
         tokenAccount
     );
   }
@@ -518,9 +515,9 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction fulfill(final int mintId, final PublicKey baseAssetMint, final PublicKey baseAssetTokenProgram) {
-    final var glamProgram = invokedProgram.publicKey();
+    final var glamProgram = invokedProtocolProgram.publicKey();
 
-    final var escrow = GlamProtocolPDAs.glamEscrowPDA(glamProgram, glamVaultAccounts.glamPublicKey()).publicKey();
+    final var escrow = GlamMintPDAs.glamEscrowPDA(glamProgram, glamVaultAccounts.glamPublicKey()).publicKey();
 
     final var mint = glamVaultAccounts.mintPDA(mintId).publicKey();
     final var escrowMintTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, escrow, solanaAccounts.token2022Program(), mint);
@@ -530,20 +527,22 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
     final var escrowTokenAccount = AssociatedTokenProgram.findATA(solanaAccounts, escrow, baseAssetTokenProgram, baseAssetMint);
 
-    return GlamProtocolProgram.fulfill(
-        invokedProgram,
+    final var requestQueueKey = GlamMintPDAs.requestQueuePDA(glamAccounts.mintProgram(), mint).publicKey();
+    return GlamMintProgram.fulfill(
+        glamAccounts.invokedMintProgram(),
         solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         vault,
-        escrow,
         mint,
+        escrow,
+        requestQueueKey,
         feePayer.publicKey(),
         escrowMintTokenAccount.publicKey(),
         baseAssetMint,
         vaultTokenAccount.publicKey(),
         escrowTokenAccount.publicKey(),
         baseAssetTokenProgram,
-        mintId
+        invokedProtocolProgram.publicKey()
     );
   }
 
@@ -581,62 +580,72 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 //  }
 
   @Override
-  public Instruction priceVaultTokens(final PublicKey solOracleKey,
-                                      final PriceDenom priceDenom,
-                                      final short[] aggIndexes) {
-    return GlamProtocolProgram.priceVaultTokens(
-        invokedProgram,
+  public Instruction priceVaultTokens(final PublicKey solUsdOracleKey,
+                                      final PublicKey baseAssetUsdOracleKey,
+                                      final short[][] aggIndexes) {
+    return GlamMintProgram.priceVaultTokens(
+        glamAccounts.invokedMintExtensionProgram(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
-        solOracleKey,
+        solUsdOracleKey,
+        baseAssetUsdOracleKey,
+        glamAccounts.readMintExtensionAuthority().publicKey(),
         globalConfigKey,
-        priceDenom,
+        invokedProtocolProgram.publicKey(),
         aggIndexes
     );
   }
 
   @Override
-  public Instruction priceStakes(final PublicKey solOracleKey, final PriceDenom priceDenom) {
-    return GlamProtocolProgram.priceStakes(
-        invokedProgram,
+  public Instruction priceStakes(final PublicKey solUsdOracleKey, final PublicKey baseAssetUsdOracleKey) {
+    return GlamMintProgram.priceStakeAccounts(
+        glamAccounts.invokedMintExtensionProgram(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
-        solOracleKey,
+        solUsdOracleKey,
+        baseAssetUsdOracleKey,
+        glamAccounts.readMintExtensionAuthority().publicKey(),
         globalConfigKey,
-        priceDenom
+        invokedProtocolProgram.publicKey()
     );
   }
 
   @Override
-  public Instruction priceDriftUsers(final PublicKey solOracleKey, final PriceDenom priceDenom, final int numUsers) {
-    return GlamProtocolProgram.priceDriftUsers(
-        invokedProgram,
+  public Instruction priceDriftUsers(final PublicKey solUSDOracleKey,
+                                     final PublicKey baseAssetUsdOracleKey,
+                                     final int numUsers) {
+    return GlamMintProgram.priceDriftUsers(
+        glamAccounts.invokedMintExtensionProgram(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
-        solOracleKey,
+        solUSDOracleKey,
+        baseAssetUsdOracleKey,
+        glamAccounts.readMintExtensionAuthority().publicKey(),
         globalConfigKey,
-        priceDenom,
+        invokedProtocolProgram.publicKey(),
         numUsers
     );
   }
 
   @Override
   public Instruction priceDriftVaultDepositors(final PublicKey solOracleKey,
-                                               final PriceDenom priceDenom,
+                                               final PublicKey baseAssetUsdOracleKey,
                                                final int numVaultDepositors,
                                                final int numSpotMarkets,
                                                final int numPerpMarkets) {
-    return GlamProtocolProgram.priceDriftVaultDepositors(
-        invokedProgram,
+    return GlamMintProgram.priceDriftVaultDepositors(
+        glamAccounts.invokedMintExtensionProgram(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         solOracleKey,
+        baseAssetUsdOracleKey,
+        glamAccounts.readMintExtensionAuthority().publicKey(),
         globalConfigKey,
-        priceDenom,
+        invokedProtocolProgram.publicKey(),
         numVaultDepositors,
         numSpotMarkets,
         numPerpMarkets
@@ -645,61 +654,73 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
 
   @Override
   public Instruction priceKaminoObligations(final PublicKey kaminoLendingProgramKey,
-                                            final PublicKey solOracleKey,
+                                            final PublicKey solUSDOracleKey,
+                                            final PublicKey baseAssetUsdOracleKey,
                                             final PublicKey pythOracleKey,
                                             final PublicKey switchboardPriceOracleKey,
                                             final PublicKey switchboardTwapOracleKey,
                                             final PublicKey scopePricesKey,
-                                            final PriceDenom priceDenom) {
-    return GlamProtocolProgram.priceKaminoObligations(
-        invokedProgram,
+                                            final int numObligations,
+                                            final int numMarkets,
+                                            final int numReserves) {
+    return GlamMintProgram.priceKaminoObligations(
+        glamAccounts.invokedMintExtensionProgram(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         kaminoLendingProgramKey,
-        solOracleKey,
+        solUSDOracleKey,
+        baseAssetUsdOracleKey,
+        glamAccounts.readMintExtensionAuthority().publicKey(),
         globalConfigKey,
+        invokedProtocolProgram.publicKey(),
         pythOracleKey,
         switchboardPriceOracleKey,
         switchboardTwapOracleKey,
         scopePricesKey,
-        priceDenom
+        numObligations,
+        numMarkets,
+        numReserves
     );
   }
 
   @Override
-  public Instruction priceKaminoVaultShares(final PublicKey solOracleKey,
-                                            final PriceDenom priceDenom,
+  public Instruction priceKaminoVaultShares(final PublicKey solUSDOracleKey,
+                                            final PublicKey baseAssetUsdOracleKey,
                                             final int numVaults) {
-    return GlamProtocolProgram.priceKaminoVaultShares(
-        invokedProgram,
+    return GlamMintProgram.priceKaminoVaultShares(
+        glamAccounts.invokedMintExtensionProgram(),
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
-        solOracleKey,
+        solUSDOracleKey,
+        baseAssetUsdOracleKey,
+        glamAccounts.readMintExtensionAuthority().publicKey(),
         globalConfigKey,
-        priceDenom,
+        invokedProtocolProgram.publicKey(),
         numVaults
     );
   }
 
   @Override
   public Instruction priceMeteoraPositions(final PublicKey solOracleKey, final PriceDenom priceDenom) {
-    return GlamProtocolProgram.priceMeteoraPositions(
-        invokedProgram,
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        feePayer.publicKey(),
-        solOracleKey,
-        globalConfigKey,
-        priceDenom
-    );
+    throw new IllegalStateException("TODO: add meteora extension program");
+//    return software.sava.anchor.programs.glam.anchor.GlamProtocolProgram.priceMeteoraPositions(
+//        invokedProtocolProgram,
+//        glamVaultAccounts.glamPublicKey(),
+//        glamVaultAccounts.vaultPublicKey(),
+//        feePayer.publicKey(),
+//        solOracleKey,
+//        glamAccounts.readMintExtensionAuthority().publicKey(),
+//        globalConfigKey,
+//        invokedProtocolProgram.publicKey()
+//    );
   }
 
   @Override
   public Instruction updateState(final StateModel state) {
     return GlamProtocolProgram.updateState(
-        invokedProgram,
+        invokedProtocolProgram,
         glamVaultAccounts.glamPublicKey(),
         feePayer.publicKey(),
         state

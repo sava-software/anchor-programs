@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.anchor.GlamProtocolProgram;
+import software.sava.anchor.programs.glam.protocol.anchor.GlamProtocolProgram;
 import software.sava.anchor.programs.jupiter.JupiterAccounts;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
@@ -29,7 +29,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
     this.nativeProgramClient = programAccountClient.nativeProgramClient();
     this.solanaAccounts = programAccountClient.solanaAccounts();
     this.glamVaultAccounts = programAccountClient.vaultAccounts();
-    this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProgram();
+    this.invokedProgram = glamVaultAccounts.glamAccounts().invokedProtocolProgram();
     this.feePayer = programAccountClient.feePayer();
     this.jupiterAccounts = jupiterAccounts;
     this.swapProgram = jupiterAccounts.swapProgram();

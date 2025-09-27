@@ -1,6 +1,6 @@
 package software.sava.anchor.programs.glam;
 
-import software.sava.anchor.programs.glam.anchor.GlamProtocolPDAs;
+import software.sava.anchor.programs.glam.protocol.anchor.GlamProtocolPDAs;
 import software.sava.anchor.programs.glam.proxy.DynamicGlamAccountFactory;
 import software.sava.core.accounts.ProgramDerivedAddress;
 import software.sava.core.accounts.PublicKey;
@@ -22,9 +22,9 @@ public interface GlamVaultAccounts {
   static GlamVaultAccounts createAccounts(final GlamAccounts glamAccounts,
                                           final PublicKey feePayer,
                                           final PublicKey glamPublicKey) {
-    final var program = glamAccounts.program();
-    final var vaultPDA = GlamProtocolPDAs.glamVaultPDA(program, glamPublicKey);
-    final var metadataPDA = GlamProtocolPDAs.metadataPDA(program, glamPublicKey);
+    final var protocolProgram = glamAccounts.protocolProgram();
+    final var vaultPDA = GlamProtocolPDAs.glamVaultPDA(protocolProgram, glamPublicKey);
+    final var metadataPDA = software.sava.anchor.programs.glam.anchor.GlamProtocolPDAs.metadataPDA(glamAccounts.program(), glamPublicKey);
     return new GlamVaultAccountsRecord(
         glamAccounts,
         AccountMeta.createReadOnlySigner(feePayer),
@@ -104,6 +104,7 @@ public interface GlamVaultAccounts {
 
   AccountMeta readVault();
 
+  @Deprecated
   ProgramDerivedAddress metadataPDA();
 
   ProgramDerivedAddress mintPDA(final int id);

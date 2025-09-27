@@ -13,13 +13,14 @@ public record GlamAccountsRecord(PublicKey program,
                                  AccountMeta invokedProgram,
                                  AccountMeta invokedProtocolProgram,
                                  PublicKey configProgram,
-                                 PublicKey mintProgram,
                                  PublicKey policyProgram,
-                                 PublicKey splExtensionProgram,
+                                 AccountMeta invokedMintExtensionProgram,
+                                 AccountMeta readMintExtensionAuthority,
+                                 AccountMeta invokedSplExtensionProgram,
                                  AccountMeta readSplExtensionAuthority,
-                                 PublicKey driftExtensionProgram,
+                                 AccountMeta invokedDriftExtensionProgram,
                                  AccountMeta readDriftExtensionAuthority,
-                                 PublicKey kaminoExtensionProgram,
+                                 AccountMeta invokedKaminoExtensionProgram,
                                  AccountMeta readKaminoExtensionAuthority,
                                  Map<PublicKey, AccountMeta> extensionAuthorities) implements GlamAccounts {
 
@@ -30,7 +31,7 @@ public record GlamAccountsRecord(PublicKey program,
             "mint".getBytes(UTF_8),
             new byte[]{(byte) (shareClassId % 256)},
             glamPublicKey.toByteArray()
-        ), program()
+        ), protocolProgram()
     );
   }
 }

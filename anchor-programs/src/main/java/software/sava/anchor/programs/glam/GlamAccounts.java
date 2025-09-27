@@ -3,6 +3,7 @@ package software.sava.anchor.programs.glam;
 import software.sava.anchor.programs.glam.config.anchor.GlamConfigPDAs;
 import software.sava.anchor.programs.glam.drift.anchor.ExtDriftPDAs;
 import software.sava.anchor.programs.glam.kamino.anchor.ExtKaminoPDAs;
+import software.sava.anchor.programs.glam.mint.anchor.GlamMintPDAs;
 import software.sava.anchor.programs.glam.protocol.anchor.types.StateAccount;
 import software.sava.anchor.programs.glam.proxy.DynamicGlamAccountFactory;
 import software.sava.anchor.programs.glam.spl.anchor.ExtSplPDAs;
@@ -38,10 +39,12 @@ public interface GlamAccounts {
                                      final PublicKey splExtensionProgram,
                                      final PublicKey driftExtensionProgram,
                                      final PublicKey kaminoExtensionProgram) {
+    final var mintExtensionAuthority = createRead(GlamMintPDAs.integrationAuthorityPDA(mintProgram).publicKey());
     final var splExtensionAuthority = createRead(ExtSplPDAs.integrationAuthorityPDA(splExtensionProgram).publicKey());
     final var driftExtensionAuthority = createRead(ExtDriftPDAs.integrationAuthorityPDA(driftExtensionProgram).publicKey());
     final var kaminoExtensionAuthority = createRead(ExtKaminoPDAs.integrationAuthorityPDA(kaminoExtensionProgram).publicKey());
     final var extensionAuthorities = Map.of(
+        mintProgram, mintExtensionAuthority,
         splExtensionProgram, splExtensionAuthority,
         driftExtensionProgram, driftExtensionAuthority,
         kaminoExtensionProgram, kaminoExtensionAuthority
@@ -51,13 +54,14 @@ public interface GlamAccounts {
         AccountMeta.createInvoked(program),
         AccountMeta.createInvoked(protocolProgram),
         configProgram,
-        mintProgram,
         policyProgram,
-        splExtensionProgram,
+        AccountMeta.createInvoked(mintProgram),
+        mintExtensionAuthority,
+        AccountMeta.createInvoked(splExtensionProgram),
         splExtensionAuthority,
-        driftExtensionProgram,
+        AccountMeta.createInvoked(driftExtensionProgram),
         driftExtensionAuthority,
-        kaminoExtensionProgram,
+        AccountMeta.createInvoked(kaminoExtensionProgram),
         kaminoExtensionAuthority,
         extensionAuthorities
     );
@@ -95,7 +99,9 @@ public interface GlamAccounts {
 
   PublicKey configProgram();
 
-  PublicKey mintProgram();
+  default PublicKey mintProgram() {
+    return invokedMintProgram().publicKey();
+  }
 
   PublicKey policyProgram();
 
@@ -107,18 +113,42 @@ public interface GlamAccounts {
 
   default TransactionMapper<GlamVaultAccounts> createMapper(final Path mappingsDirectory,
                                                             final DynamicGlamAccountFactory dynamicGlamAccountFactory) {
-    return GlamVaultAccounts.createMapper(invokedProgram(), mappingsDirectory, dynamicGlamAccountFactory);
+    return GlamVaultAccounts.createMapper(invokedProtocolProgram(), mappingsDirectory, dynamicGlamAccountFactory);
   }
 
-  PublicKey splExtensionProgram();
+  AccountMeta invokedMintExtensionProgram();
+
+  default AccountMeta invokedMintProgram() {
+    return invokedMintExtensionProgram();
+  }
+
+  default PublicKey mintExtensionProgram() {
+    return invokedMintExtensionProgram().publicKey();
+  }
+
+  AccountMeta readMintExtensionAuthority();
+
+  AccountMeta invokedSplExtensionProgram();
+
+  default PublicKey splExtensionProgram() {
+    return invokedSplExtensionProgram().publicKey();
+  }
 
   AccountMeta readSplExtensionAuthority();
 
-  PublicKey driftExtensionProgram();
+  AccountMeta invokedDriftExtensionProgram();
+
+  default PublicKey driftExtensionProgram() {
+    return invokedDriftExtensionProgram().publicKey();
+  }
 
   AccountMeta readDriftExtensionAuthority();
 
-  PublicKey kaminoExtensionProgram();
+  AccountMeta invokedKaminoExtensionProgram();
+
+  default PublicKey kaminoExtensionProgram() {
+    return invokedKaminoExtensionProgram().publicKey();
+  }
 
   AccountMeta readKaminoExtensionAuthority();
 

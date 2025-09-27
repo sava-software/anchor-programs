@@ -1,7 +1,9 @@
 package software.sava.anchor.programs.glam;
 
 
-import software.sava.anchor.programs.glam.anchor.types.*;
+import software.sava.anchor.programs.glam.anchor.types.PriceDenom;
+import software.sava.anchor.programs.glam.protocol.anchor.types.StateAccount;
+import software.sava.anchor.programs.glam.protocol.anchor.types.StateModel;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.SolanaAccounts;
 import software.sava.core.tx.Instruction;
@@ -10,7 +12,6 @@ import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 public interface GlamProgramAccountClient extends NativeProgramAccountClient {
@@ -62,48 +63,6 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
     return false;
   }
 
-  static boolean isDelegatedWithPermission(final StateAccount glamAccount,
-                                           final PublicKey delegate,
-                                           final Permission permission) {
-    for (final var delegateAcl : glamAccount.delegateAcls()) {
-      if (delegate.equals(delegateAcl.pubkey())) {
-        for (final var _permission : delegateAcl.permissions()) {
-          if (_permission == permission) {
-            return true;
-          }
-        }
-        return false;
-      }
-    }
-    return false;
-  }
-
-  static void removePresentPermissions(final StateAccount glamAccount,
-                                       final PublicKey delegateKey,
-                                       final Set<Permission> requiredPermissions,
-                                       final Set<Integration> requiredIntegrations) {
-    for (final var delegateAcl : glamAccount.delegateAcls()) {
-      if (delegateKey.equals(delegateAcl.pubkey())) {
-        for (final var permission : delegateAcl.permissions()) {
-          requiredPermissions.remove(permission);
-        }
-        break;
-      }
-    }
-    for (final var integration : glamAccount.integrations()) {
-      requiredIntegrations.remove(integration);
-    }
-  }
-
-  static boolean hasIntegration(final StateAccount glamAccount, final Integration integration) {
-    for (final var _integration : glamAccount.integrations()) {
-      if (_integration == integration) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   NativeProgramAccountClient delegatedNativeProgramAccountClient();
 
   GlamVaultAccounts vaultAccounts();
@@ -114,30 +73,33 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
     return fulfill(0, baseAssetMint, baseAssetTokenProgram);
   }
 
-  Instruction priceVaultTokens(final PublicKey solOracleKey,
-                               final PriceDenom priceDenom,
-                               final short[] aggIndexes);
+  Instruction priceVaultTokens(final PublicKey solUsdOracleKey,
+                               final PublicKey baseAssetUsdOracleKey,
+                               final short[][] aggIndexes);
 
-  Instruction priceStakes(final PublicKey solOracleKey, final PriceDenom priceDenom);
+  Instruction priceStakes(final PublicKey solUsdOracleKey, final PublicKey baseAssetUsdOracleKey);
 
-  Instruction priceDriftUsers(final PublicKey solOracleKey, final PriceDenom priceDenom, final int numUsers);
+  Instruction priceDriftUsers(final PublicKey solUSDOracleKey, final PublicKey baseAssetUsdOracleKey, final int numUsers);
 
   Instruction priceDriftVaultDepositors(final PublicKey solOracleKey,
-                                        final PriceDenom priceDenom,
+                                        final PublicKey baseAssetUsdOracleKey,
                                         final int numVaultDepositors,
                                         final int numSpotMarkets,
                                         final int numPerpMarkets);
 
   Instruction priceKaminoObligations(final PublicKey kaminoLendingProgramKey,
-                                     final PublicKey solOracleKey,
+                                     final PublicKey solUSDOracleKey,
+                                     final PublicKey baseAssetUsdOracleKey,
                                      final PublicKey pythOracleKey,
                                      final PublicKey switchboardPriceOracleKey,
                                      final PublicKey switchboardTwapOracleKey,
                                      final PublicKey scopePricesKey,
-                                     final PriceDenom priceDenom);
+                                     final int numObligations,
+                                     final int numMarkets,
+                                     final int numReserves);
 
-  Instruction priceKaminoVaultShares(final PublicKey solOracleKey,
-                                     final PriceDenom priceDenom,
+  Instruction priceKaminoVaultShares(final PublicKey solUSDOracleKey,
+                                     final PublicKey baseAssetUsdOracleKey,
                                      final int numVaults);
 
   Instruction priceMeteoraPositions(final PublicKey solOracleKey, final PriceDenom priceDenom);
