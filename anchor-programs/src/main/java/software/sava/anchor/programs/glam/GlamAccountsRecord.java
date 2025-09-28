@@ -26,12 +26,15 @@ public record GlamAccountsRecord(PublicKey program,
 
   @Override
   public ProgramDerivedAddress mintPDA(final PublicKey glamPublicKey, final int shareClassId) {
+    if (shareClassId < 0 || shareClassId > 256) {
+      throw new IllegalStateException("Invalid share class id: " + shareClassId);
+    }
     return PublicKey.findProgramAddress(
         List.of(
             "mint".getBytes(UTF_8),
-            new byte[]{(byte) (shareClassId % 256)},
+            new byte[]{(byte) shareClassId},
             glamPublicKey.toByteArray()
-        ), protocolProgram()
+        ), mintProgram()
     );
   }
 }
