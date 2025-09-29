@@ -209,7 +209,7 @@ public record PresetParameter2(PublicKey _address,
     ++i;
     _data[i] = (byte) padding0;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 20, _data, i);
     return i - offset;
   }
 

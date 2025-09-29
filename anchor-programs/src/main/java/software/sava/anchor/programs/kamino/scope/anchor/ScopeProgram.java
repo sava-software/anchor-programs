@@ -327,7 +327,7 @@ public final class ScopeProgram {
     putInt16LE(_data, i, refPriceIndex);
     i += 2;
     i += Borsh.writeVector(_feedName, _data, i);
-    Borsh.writeArray(genericData, _data, i);
+    Borsh.writeArrayChecked(genericData, 20, _data, i);
 
     return Instruction.createInstruction(invokedScopeProgramMeta, keys, _data);
   }
@@ -408,7 +408,7 @@ public final class ScopeProgram {
       putInt16LE(_data, i, refPriceIndex);
       i += 2;
       i += Borsh.writeVector(_feedName, _data, i);
-      i += Borsh.writeArray(genericData, _data, i);
+      i += Borsh.writeArrayChecked(genericData, 20, _data, i);
       return i - offset;
     }
 
@@ -713,7 +713,7 @@ public final class ScopeProgram {
     i += 8;
     _data[i] = (byte) bump;
     ++i;
-    Borsh.writeVectorArray(scopeChains, _data, i);
+    Borsh.writeVectorArrayChecked(scopeChains, 4, _data, i);
 
     return Instruction.createInstruction(invokedScopeProgramMeta, keys, _data);
   }
@@ -757,7 +757,7 @@ public final class ScopeProgram {
       i += 8;
       _data[i] = (byte) bump;
       ++i;
-      i += Borsh.writeVectorArray(scopeChains, _data, i);
+      i += Borsh.writeVectorArrayChecked(scopeChains, 4, _data, i);
       return i - offset;
     }
 

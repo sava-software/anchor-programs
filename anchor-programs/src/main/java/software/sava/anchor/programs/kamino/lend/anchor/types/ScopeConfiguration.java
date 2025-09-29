@@ -35,8 +35,8 @@ public record ScopeConfiguration(// Pubkey of the scope price feed (disabled if 
     int i = offset;
     priceFeed.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(priceChain, _data, i);
-    i += Borsh.writeArray(twapChain, _data, i);
+    i += Borsh.writeArrayChecked(priceChain, 4, _data, i);
+    i += Borsh.writeArrayChecked(twapChain, 4, _data, i);
     return i - offset;
   }
 

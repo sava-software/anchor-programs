@@ -49,7 +49,7 @@ public record MerkleRootConfigCreated(PublicKey admin,
     i += 32;
     putInt64LE(_data, i, version);
     i += 8;
-    i += Borsh.writeArray(root, _data, i);
+    i += Borsh.writeArrayChecked(root, 32, _data, i);
     return i - offset;
   }
 

@@ -41,7 +41,7 @@ public record PoolBalance(// To get the pool's token amount, you must multiply t
     i += 16;
     putInt16LE(_data, i, marketIndex);
     i += 2;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 6, _data, i);
     return i - offset;
   }
 

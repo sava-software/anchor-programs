@@ -209,7 +209,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     ++i;
     putInt16LE(_data, i, hostFixedInterestRateBps);
     i += 2;
-    i += Borsh.writeArray(reserved1, _data, i);
+    i += Borsh.writeArrayChecked(reserved1, 9, _data, i);
     _data[i] = (byte) protocolOrderExecutionFeePct;
     ++i;
     _data[i] = (byte) protocolTakeRatePct;
@@ -241,7 +241,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     i += Borsh.write(tokenInfo, _data, i);
     i += Borsh.write(depositWithdrawalCap, _data, i);
     i += Borsh.write(debtWithdrawalCap, _data, i);
-    i += Borsh.writeArray(elevationGroups, _data, i);
+    i += Borsh.writeArrayChecked(elevationGroups, 20, _data, i);
     _data[i] = (byte) disableUsageAsCollOutsideEmode;
     ++i;
     _data[i] = (byte) utilizationLimitBlockBorrowingAbovePct;
@@ -252,7 +252,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     ++i;
     putInt64LE(_data, i, borrowLimitOutsideElevationGroup);
     i += 8;
-    i += Borsh.writeArray(borrowLimitAgainstThisCollateralInElevationGroup, _data, i);
+    i += Borsh.writeArrayChecked(borrowLimitAgainstThisCollateralInElevationGroup, 32, _data, i);
     putInt64LE(_data, i, deleveragingBonusIncreaseBpsPerDay);
     i += 8;
     putInt64LE(_data, i, debtMaturityTimestamp);

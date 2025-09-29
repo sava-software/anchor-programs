@@ -144,8 +144,8 @@ public record OracleStatsAccountData(PublicKey _address,
     i += 8;
     _data[i] = (byte) bump;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
-    i += Borsh.writeArray(ebuf, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 7, _data, i);
+    i += Borsh.writeArrayChecked(ebuf, 1024, _data, i);
     return i - offset;
   }
 

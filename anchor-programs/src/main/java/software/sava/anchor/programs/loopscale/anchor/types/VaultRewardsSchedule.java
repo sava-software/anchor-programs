@@ -74,7 +74,7 @@ public record VaultRewardsSchedule(PublicKey rewardMint,
     i += Borsh.write(lastRewardIndexUpdateTime, _data, i);
     i += Borsh.write(emissionsClaimed, _data, i);
     i += Borsh.write(createdAt, _data, i);
-    i += Borsh.writeArray(durationStakeWeights, _data, i);
+    i += Borsh.writeArrayChecked(durationStakeWeights, 5, _data, i);
     return i - offset;
   }
 

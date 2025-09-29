@@ -46,7 +46,7 @@ public record AddLiquidity(PublicKey lbPair,
     i += 32;
     position.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(amounts, _data, i);
+    i += Borsh.writeArrayChecked(amounts, 2, _data, i);
     putInt32LE(_data, i, activeBinId);
     i += 4;
     return i - offset;

@@ -189,10 +189,10 @@ public record StakedSettings(PublicKey _address,
     putInt16LE(_data, i, oracleMaxAge);
     i += 2;
     i += Borsh.write(riskTier, _data, i);
-    i += Borsh.writeArray(pad0, _data, i);
-    i += Borsh.writeArray(reserved0, _data, i);
-    i += Borsh.writeArray(reserved1, _data, i);
-    i += Borsh.writeArray(reserved2, _data, i);
+    i += Borsh.writeArrayChecked(pad0, 5, _data, i);
+    i += Borsh.writeArrayChecked(reserved0, 8, _data, i);
+    i += Borsh.writeArrayChecked(reserved1, 32, _data, i);
+    i += Borsh.writeArrayChecked(reserved2, 64, _data, i);
     return i - offset;
   }
 

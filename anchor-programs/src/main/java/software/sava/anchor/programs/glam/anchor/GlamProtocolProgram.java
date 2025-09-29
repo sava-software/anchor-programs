@@ -716,7 +716,7 @@ public final class GlamProtocolProgram {
     i += 8;
     putInt64LE(_data, i, amountLocked);
     i += 8;
-    Borsh.writeVectorArray(proof, _data, i);
+    Borsh.writeVectorArrayChecked(proof, 32, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
   }
@@ -751,7 +751,7 @@ public final class GlamProtocolProgram {
       i += 8;
       putInt64LE(_data, i, amountLocked);
       i += 8;
-      i += Borsh.writeVectorArray(proof, _data, i);
+      i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
       return i - offset;
     }
 
@@ -792,7 +792,7 @@ public final class GlamProtocolProgram {
     int i = DRIFT_INITIALIZE_USER_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
-    Borsh.writeArray(name, _data, i);
+    Borsh.writeArrayChecked(name, 32, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
   }
@@ -824,7 +824,7 @@ public final class GlamProtocolProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt16LE(_data, i, subAccountId);
       i += 2;
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
       return i - offset;
     }
 
@@ -3558,7 +3558,7 @@ public final class GlamProtocolProgram {
     i += 8;
     putInt64LE(_data, i, amountLocked);
     i += 8;
-    Borsh.writeVectorArray(proof, _data, i);
+    Borsh.writeVectorArrayChecked(proof, 32, _data, i);
 
     return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, _data);
   }
@@ -3593,7 +3593,7 @@ public final class GlamProtocolProgram {
       i += 8;
       putInt64LE(_data, i, amountLocked);
       i += 8;
-      i += Borsh.writeVectorArray(proof, _data, i);
+      i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
       return i - offset;
     }
 

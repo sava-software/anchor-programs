@@ -258,7 +258,7 @@ public record VaultDepositor(PublicKey _address,
     i += 16;
     putInt128LE(_data, i, fuelAmount);
     i += 16;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 4, _data, i);
     return i - offset;
   }
 

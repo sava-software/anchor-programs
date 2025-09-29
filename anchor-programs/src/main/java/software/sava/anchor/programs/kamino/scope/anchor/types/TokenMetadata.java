@@ -36,12 +36,12 @@ public record TokenMetadata(byte[] name,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
     putInt64LE(_data, i, maxAgePriceSlots);
     i += 8;
     putInt64LE(_data, i, groupIdsBitset);
     i += 8;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 15, _data, i);
     return i - offset;
   }
 

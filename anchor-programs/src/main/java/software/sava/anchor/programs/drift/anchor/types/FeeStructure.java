@@ -34,7 +34,7 @@ public record FeeStructure(FeeTier[] feeTiers,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(feeTiers, _data, i);
+    i += Borsh.writeArrayChecked(feeTiers, 10, _data, i);
     i += Borsh.write(fillerRewardStructure, _data, i);
     putInt64LE(_data, i, referrerRewardEpochUpperBound);
     i += 8;

@@ -23,8 +23,8 @@ public record LendingAccount(Balance[] balances, long[] padding) implements Bors
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(balances, _data, i);
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(balances, 16, _data, i);
+    i += Borsh.writeArrayChecked(padding, 8, _data, i);
     return i - offset;
   }
 

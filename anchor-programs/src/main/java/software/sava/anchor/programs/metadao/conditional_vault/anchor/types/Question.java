@@ -87,7 +87,7 @@ public record Question(PublicKey _address,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(questionId, _data, i);
+    i += Borsh.writeArrayChecked(questionId, 32, _data, i);
     oracle.write(_data, i);
     i += 32;
     i += Borsh.writeVector(payoutNumerators, _data, i);

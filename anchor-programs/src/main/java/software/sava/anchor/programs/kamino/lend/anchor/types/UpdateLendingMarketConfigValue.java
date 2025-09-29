@@ -85,7 +85,7 @@ public sealed interface UpdateLendingMarketConfigValue extends RustEnum permits
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = writeOrdinal(_data, offset);
-      i += Borsh.writeArray(val, _data, i);
+      i += Borsh.writeArrayChecked(val, 8, _data, i);
       return i - offset;
     }
 
@@ -177,7 +177,7 @@ public sealed interface UpdateLendingMarketConfigValue extends RustEnum permits
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = writeOrdinal(_data, offset);
-      i += Borsh.writeArray(val, _data, i);
+      i += Borsh.writeArrayChecked(val, 32, _data, i);
       return i - offset;
     }
 

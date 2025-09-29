@@ -27,10 +27,10 @@ public record Ballot(byte[] metaMerkleRoot,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(metaMerkleRoot, _data, i);
+    i += Borsh.writeArrayChecked(metaMerkleRoot, 32, _data, i);
     _data[i] = (byte) (isValid ? 1 : 0);
     ++i;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 63, _data, i);
     return i - offset;
   }
 

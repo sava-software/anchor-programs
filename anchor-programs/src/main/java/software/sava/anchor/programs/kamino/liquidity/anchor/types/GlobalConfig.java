@@ -310,12 +310,12 @@ public record GlobalConfig(PublicKey _address,
     i += 32;
     scopePriceId.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(swapRewardsDiscountBps, _data, i);
+    i += Borsh.writeArrayChecked(swapRewardsDiscountBps, 256, _data, i);
     actionsAuthority.write(_data, i);
     i += 32;
     adminAuthority.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(treasuryFeeVaults, _data, i);
+    i += Borsh.writeArrayChecked(treasuryFeeVaults, 256, _data, i);
     tokenInfos.write(_data, i);
     i += 32;
     putInt64LE(_data, i, blockLocalAdmin);
@@ -330,7 +330,7 @@ public record GlobalConfig(PublicKey _address,
     i += 8;
     treasuryFeeVaultReceiver.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 2035, _data, i);
     return i - offset;
   }
 

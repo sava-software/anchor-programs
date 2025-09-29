@@ -172,9 +172,9 @@ public record Position(PublicKey _address,
     i += 32;
     owner.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(liquidityShares, _data, i);
-    i += Borsh.writeArray(rewardInfos, _data, i);
-    i += Borsh.writeArray(feeInfos, _data, i);
+    i += Borsh.writeArrayChecked(liquidityShares, 70, _data, i);
+    i += Borsh.writeArrayChecked(rewardInfos, 70, _data, i);
+    i += Borsh.writeArrayChecked(feeInfos, 70, _data, i);
     putInt32LE(_data, i, lowerBinId);
     i += 4;
     putInt32LE(_data, i, upperBinId);
@@ -185,8 +185,8 @@ public record Position(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, totalClaimedFeeYAmount);
     i += 8;
-    i += Borsh.writeArray(totalClaimedRewards, _data, i);
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(totalClaimedRewards, 2, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 160, _data, i);
     return i - offset;
   }
 

@@ -129,7 +129,7 @@ public record Vote(PublicKey _address,
     i += 8;
     _data[i] = (byte) (claimed ? 1 : 0);
     ++i;
-    i += Borsh.writeArray(buffers, _data, i);
+    i += Borsh.writeArrayChecked(buffers, 32, _data, i);
     return i - offset;
   }
 

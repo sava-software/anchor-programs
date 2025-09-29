@@ -209,16 +209,16 @@ public record PlatformConfig(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, feeRate);
     i += 8;
-    i += Borsh.writeArray(name, _data, i);
-    i += Borsh.writeArray(web, _data, i);
-    i += Borsh.writeArray(img, _data, i);
+    i += Borsh.writeArrayChecked(name, 64, _data, i);
+    i += Borsh.writeArrayChecked(web, 256, _data, i);
+    i += Borsh.writeArrayChecked(img, 256, _data, i);
     cpswapConfig.write(_data, i);
     i += 32;
     putInt64LE(_data, i, creatorFeeRate);
     i += 8;
     transferFeeExtensionAuth.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 180, _data, i);
     i += Borsh.writeVector(curveParams, _data, i);
     return i - offset;
   }

@@ -821,7 +821,7 @@ public record SpotMarket(PublicKey _address,
     i += 32;
     vault.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
     i += Borsh.write(historicalOracleData, _data, i);
     i += Borsh.write(historicalIndexData, _data, i);
     i += Borsh.write(revenuePool, _data, i);
@@ -930,7 +930,7 @@ public record SpotMarket(PublicKey _address,
     ++i;
     _data[i] = (byte) poolId;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 40, _data, i);
     return i - offset;
   }
 

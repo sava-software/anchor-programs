@@ -164,20 +164,20 @@ public record HealthCache(// Internal risk engine asset value, using initial wei
     i += 4;
     putInt32LE(_data, i, mrgnErr);
     i += 4;
-    i += Borsh.writeArray(prices, _data, i);
+    i += Borsh.writeArrayChecked(prices, 16, _data, i);
     putInt32LE(_data, i, internalErr);
     i += 4;
     _data[i] = (byte) errIndex;
     ++i;
     _data[i] = (byte) programVersion;
     ++i;
-    i += Borsh.writeArray(pad0, _data, i);
+    i += Borsh.writeArrayChecked(pad0, 2, _data, i);
     putInt32LE(_data, i, internalLiqErr);
     i += 4;
     putInt32LE(_data, i, internalBankruptcyErr);
     i += 4;
-    i += Borsh.writeArray(reserved0, _data, i);
-    i += Borsh.writeArray(reserved1, _data, i);
+    i += Borsh.writeArrayChecked(reserved0, 32, _data, i);
+    i += Borsh.writeArrayChecked(reserved1, 16, _data, i);
     return i - offset;
   }
 

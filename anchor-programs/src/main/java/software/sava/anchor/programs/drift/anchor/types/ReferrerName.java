@@ -84,7 +84,7 @@ public record ReferrerName(PublicKey _address,
     i += 32;
     userStats.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
     return i - offset;
   }
 

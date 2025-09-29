@@ -19,7 +19,7 @@ public record BorrowRateCurve(CurvePoint[] points) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(points, _data, i);
+    i += Borsh.writeArrayChecked(points, 11, _data, i);
     return i - offset;
   }
 

@@ -31,7 +31,7 @@ public record OracleSetConfigsParams(PublicKey newAuthority, byte[] newSecpAutho
       _data[i++] = 0;
     } else {
       _data[i++] = 1;
-      i += Borsh.writeArray(newSecpAuthority, _data, i);
+      i += Borsh.writeArrayChecked(newSecpAuthority, 64, _data, i);
     }
     return i - offset;
   }

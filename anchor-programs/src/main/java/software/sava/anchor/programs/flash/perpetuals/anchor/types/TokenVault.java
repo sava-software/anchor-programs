@@ -303,7 +303,7 @@ public record TokenVault(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, withdrawInstantFeeEarned);
     i += 8;
-    i += Borsh.writeArray(stakeLevel, _data, i);
+    i += Borsh.writeArrayChecked(stakeLevel, 6, _data, i);
     i += Borsh.write(tokensStaked, _data, i);
     putInt128LE(_data, i, rewardTokensToDistribute);
     i += 16;
@@ -317,7 +317,7 @@ public record TokenVault(PublicKey _address,
     i += 4;
     putInt128LE(_data, i, rewardTokensDistributed);
     i += 16;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 3, _data, i);
     _data[i] = (byte) revenueTokenAccountBump;
     ++i;
     putInt64LE(_data, i, revenuePerFafStaked);
@@ -328,7 +328,7 @@ public record TokenVault(PublicKey _address,
     i += 16;
     putInt128LE(_data, i, revenuePaid);
     i += 16;
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 4, _data, i);
     return i - offset;
   }
 

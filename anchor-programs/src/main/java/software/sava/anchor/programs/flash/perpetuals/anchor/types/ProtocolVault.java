@@ -134,7 +134,7 @@ public record ProtocolVault(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, feeAmount);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 4, _data, i);
     return i - offset;
   }
 

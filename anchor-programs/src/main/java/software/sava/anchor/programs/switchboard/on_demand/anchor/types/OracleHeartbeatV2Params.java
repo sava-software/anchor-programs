@@ -22,7 +22,7 @@ public record OracleHeartbeatV2Params(byte[] gatewayUri) implements Borsh {
       _data[i++] = 0;
     } else {
       _data[i++] = 1;
-      i += Borsh.writeArray(gatewayUri, _data, i);
+      i += Borsh.writeArrayChecked(gatewayUri, 64, _data, i);
     }
     return i - offset;
   }

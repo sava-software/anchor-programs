@@ -180,7 +180,7 @@ public record Transmissions(PublicKey _address,
     i += 32;
     writer.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(description, _data, i);
+    i += Borsh.writeArrayChecked(description, 32, _data, i);
     _data[i] = (byte) decimals;
     ++i;
     putInt32LE(_data, i, flaggingThreshold);

@@ -443,7 +443,7 @@ public final class GlamMintProgram {
     ];
     int i = INITIALIZE_MINT_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(mintModel, _data, i);
-    i += Borsh.writeArray(createdKey, _data, i);
+    i += Borsh.writeArrayChecked(createdKey, 8, _data, i);
     i += Borsh.write(accountType, _data, i);
     Borsh.writeOptionalbyte(decimals, _data, i);
 
@@ -485,7 +485,7 @@ public final class GlamMintProgram {
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.write(mintModel, _data, i);
-      i += Borsh.writeArray(createdKey, _data, i);
+      i += Borsh.writeArrayChecked(createdKey, 8, _data, i);
       i += Borsh.write(accountType, _data, i);
       i += Borsh.writeOptionalbyte(decimals, _data, i);
       return i - offset;
@@ -937,7 +937,7 @@ public final class GlamMintProgram {
 
     final byte[] _data = new byte[8 + Borsh.lenVectorArray(aggIndexes)];
     int i = PRICE_VAULT_TOKENS_DISCRIMINATOR.write(_data, 0);
-    Borsh.writeVectorArray(aggIndexes, _data, i);
+    Borsh.writeVectorArrayChecked(aggIndexes, 4, _data, i);
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
   }
@@ -961,7 +961,7 @@ public final class GlamMintProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeVectorArray(aggIndexes, _data, i);
+      i += Borsh.writeVectorArrayChecked(aggIndexes, 4, _data, i);
       return i - offset;
     }
 

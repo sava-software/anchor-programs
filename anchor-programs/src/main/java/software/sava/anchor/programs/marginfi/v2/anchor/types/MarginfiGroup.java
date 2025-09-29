@@ -179,7 +179,7 @@ public record MarginfiGroup(PublicKey _address,
     i += Borsh.write(feeStateCache, _data, i);
     putInt16LE(_data, i, banks);
     i += 2;
-    i += Borsh.writeArray(pad0, _data, i);
+    i += Borsh.writeArrayChecked(pad0, 6, _data, i);
     emodeAdmin.write(_data, i);
     i += 32;
     delegateCurveAdmin.write(_data, i);
@@ -188,8 +188,8 @@ public record MarginfiGroup(PublicKey _address,
     i += 32;
     delegateEmissionsAdmin.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding0, _data, i);
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 18, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 32, _data, i);
     putInt64LE(_data, i, padding4);
     i += 8;
     return i - offset;

@@ -200,7 +200,7 @@ public record Escrow(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, padding);
     i += 8;
-    i += Borsh.write128Array(buffers, _data, i);
+    i += Borsh.write128ArrayChecked(buffers, 9, _data, i);
     return i - offset;
   }
 

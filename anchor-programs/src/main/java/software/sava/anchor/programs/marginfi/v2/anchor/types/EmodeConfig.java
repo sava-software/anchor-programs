@@ -23,7 +23,7 @@ public record EmodeConfig(EmodeEntry[] entries) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(entries, _data, i);
+    i += Borsh.writeArrayChecked(entries, 10, _data, i);
     return i - offset;
   }
 

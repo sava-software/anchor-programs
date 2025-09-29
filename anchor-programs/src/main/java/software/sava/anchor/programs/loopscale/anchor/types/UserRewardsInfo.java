@@ -142,9 +142,9 @@ public record UserRewardsInfo(PublicKey _address,
     i += Borsh.write(lpAmount, _data, i);
     _data[i] = (byte) durationIndex;
     ++i;
-    i += Borsh.writeArray(lastRewardIndexes, _data, i);
-    i += Borsh.writeArray(pendingRewards, _data, i);
-    i += Borsh.writeArray(lastRewardIndexUpdateTime, _data, i);
+    i += Borsh.writeArrayChecked(lastRewardIndexes, 5, _data, i);
+    i += Borsh.writeArrayChecked(pendingRewards, 5, _data, i);
+    i += Borsh.writeArrayChecked(lastRewardIndexUpdateTime, 5, _data, i);
     return i - offset;
   }
 

@@ -58,15 +58,15 @@ public record PullFeedInitParams(byte[] feedHash,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(feedHash, _data, i);
+    i += Borsh.writeArrayChecked(feedHash, 32, _data, i);
     putInt64LE(_data, i, maxVariance);
     i += 8;
     putInt32LE(_data, i, minResponses);
     i += 4;
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
     putInt64LE(_data, i, recentSlot);
     i += 8;
-    i += Borsh.writeArray(ipfsHash, _data, i);
+    i += Borsh.writeArrayChecked(ipfsHash, 32, _data, i);
     _data[i] = (byte) minSampleSize;
     ++i;
     putInt32LE(_data, i, maxStaleness);

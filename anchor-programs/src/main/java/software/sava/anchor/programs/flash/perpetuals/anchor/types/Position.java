@@ -313,7 +313,7 @@ public record Position(PublicKey _address,
     ++i;
     _data[i] = (byte) bump;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 12, _data, i);
     return i - offset;
   }
 

@@ -190,7 +190,7 @@ public record VaultProtocol(PublicKey _address,
     ++i;
     _data[i] = (byte) version;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 2, _data, i);
     return i - offset;
   }
 

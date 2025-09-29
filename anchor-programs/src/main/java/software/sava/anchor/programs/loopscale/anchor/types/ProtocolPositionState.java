@@ -204,10 +204,10 @@ public record ProtocolPositionState(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, tokenFeesOwed1);
     i += 8;
-    i += Borsh.write128Array(rewardGrowthInside, _data, i);
+    i += Borsh.write128ArrayChecked(rewardGrowthInside, 3, _data, i);
     putInt64LE(_data, i, recentEpoch);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 7, _data, i);
     return i - offset;
   }
 

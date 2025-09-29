@@ -187,9 +187,9 @@ public record Order(PublicKey _address,
     i += 32;
     market.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(limitOrders, _data, i);
-    i += Borsh.writeArray(takeProfitOrders, _data, i);
-    i += Borsh.writeArray(stopLossOrders, _data, i);
+    i += Borsh.writeArrayChecked(limitOrders, 5, _data, i);
+    i += Borsh.writeArrayChecked(takeProfitOrders, 5, _data, i);
+    i += Borsh.writeArrayChecked(stopLossOrders, 5, _data, i);
     _data[i] = (byte) (isInitialised ? 1 : 0);
     ++i;
     _data[i] = (byte) openOrders;
@@ -210,7 +210,7 @@ public record Order(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, executionCount);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 6, _data, i);
     return i - offset;
   }
 

@@ -58,7 +58,7 @@ public record StMintEntry(PublicKey stMint,
     i += 32;
     putInt128LE(_data, i, noFeedWeight);
     i += 16;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 128, _data, i);
     return i - offset;
   }
 

@@ -74,7 +74,7 @@ public record ElevationGroup(int maxLiquidationBonusBps,
     ++i;
     debtReserve.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 4, _data, i);
     return i - offset;
   }
 

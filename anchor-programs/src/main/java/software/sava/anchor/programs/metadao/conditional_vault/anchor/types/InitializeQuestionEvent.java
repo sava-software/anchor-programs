@@ -39,7 +39,7 @@ public record InitializeQuestionEvent(CommonFields common,
   public int write(final byte[] _data, final int offset) {
     int i = offset;
     i += Borsh.write(common, _data, i);
-    i += Borsh.writeArray(questionId, _data, i);
+    i += Borsh.writeArrayChecked(questionId, 32, _data, i);
     oracle.write(_data, i);
     i += 32;
     _data[i] = (byte) numOutcomes;

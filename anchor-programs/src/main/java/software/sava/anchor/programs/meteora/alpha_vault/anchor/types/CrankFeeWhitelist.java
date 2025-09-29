@@ -62,7 +62,7 @@ public record CrankFeeWhitelist(PublicKey _address, Discriminator discriminator,
     int i = offset + discriminator.write(_data, offset);
     owner.write(_data, i);
     i += 32;
-    i += Borsh.write128Array(padding, _data, i);
+    i += Borsh.write128ArrayChecked(padding, 5, _data, i);
     return i - offset;
   }
 

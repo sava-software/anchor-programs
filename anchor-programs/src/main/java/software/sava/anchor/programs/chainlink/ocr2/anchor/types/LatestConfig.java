@@ -73,7 +73,7 @@ public record LatestConfig(PublicKey _address,
     int i = offset + discriminator.write(_data, offset);
     putInt32LE(_data, i, configCount);
     i += 4;
-    i += Borsh.writeArray(configDigest, _data, i);
+    i += Borsh.writeArrayChecked(configDigest, 32, _data, i);
     putInt64LE(_data, i, blockNumber);
     i += 8;
     return i - offset;

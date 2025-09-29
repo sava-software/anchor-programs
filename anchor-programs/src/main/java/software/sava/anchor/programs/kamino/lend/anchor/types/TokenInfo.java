@@ -71,7 +71,7 @@ public record TokenInfo(// UTF-8 encoded name of the token (null-terminated)
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
     i += Borsh.write(heuristic, _data, i);
     putInt64LE(_data, i, maxTwapDivergenceBps);
     i += 8;
@@ -84,8 +84,8 @@ public record TokenInfo(// UTF-8 encoded name of the token (null-terminated)
     i += Borsh.write(pythConfiguration, _data, i);
     _data[i] = (byte) blockPriceUsage;
     ++i;
-    i += Borsh.writeArray(reserved, _data, i);
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 7, _data, i);
+    i += Borsh.writeArrayChecked(padding, 19, _data, i);
     return i - offset;
   }
 

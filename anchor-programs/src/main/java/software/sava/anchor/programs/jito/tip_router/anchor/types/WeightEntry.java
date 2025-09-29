@@ -50,7 +50,7 @@ public record WeightEntry(StMintEntry stMintEntry,
     i += 8;
     putInt64LE(_data, i, slotUpdated);
     i += 8;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 128, _data, i);
     return i - offset;
   }
 

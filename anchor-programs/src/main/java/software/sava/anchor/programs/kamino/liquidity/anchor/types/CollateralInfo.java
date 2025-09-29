@@ -96,9 +96,9 @@ public record CollateralInfo(PublicKey mint,
     i += 8;
     putInt64LE(_data, i, maxTwapDivergenceBps);
     i += 8;
-    i += Borsh.writeArray(scopeTwapPriceChain, _data, i);
-    i += Borsh.writeArray(scopePriceChain, _data, i);
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(scopeTwapPriceChain, 4, _data, i);
+    i += Borsh.writeArrayChecked(scopePriceChain, 4, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
     putInt64LE(_data, i, maxAgePriceSeconds);
     i += 8;
     putInt64LE(_data, i, maxAgeTwapSeconds);
@@ -107,9 +107,9 @@ public record CollateralInfo(PublicKey mint,
     i += 8;
     _data[i] = (byte) disabled;
     ++i;
-    i += Borsh.writeArray(padding0, _data, i);
-    i += Borsh.writeArray(scopeStakingRateChain, _data, i);
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 7, _data, i);
+    i += Borsh.writeArrayChecked(scopeStakingRateChain, 4, _data, i);
+    i += Borsh.writeArrayChecked(padding, 8, _data, i);
     return i - offset;
   }
 

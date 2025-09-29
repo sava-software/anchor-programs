@@ -217,12 +217,12 @@ public record NcnRewardRouter(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, operatorRewards);
     i += 8;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 128, _data, i);
     putInt64LE(_data, i, lastRewardsToProcess);
     i += 8;
     putInt16LE(_data, i, lastVaultOperatorDelegationIndex);
     i += 2;
-    i += Borsh.writeArray(vaultRewardRoutes, _data, i);
+    i += Borsh.writeArrayChecked(vaultRewardRoutes, 64, _data, i);
     return i - offset;
   }
 

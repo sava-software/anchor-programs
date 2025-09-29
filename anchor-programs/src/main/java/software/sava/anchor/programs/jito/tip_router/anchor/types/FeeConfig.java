@@ -42,8 +42,8 @@ public record FeeConfig(int blockEngineFeeBps,
     int i = offset;
     putInt16LE(_data, i, blockEngineFeeBps);
     i += 2;
-    i += Borsh.writeArray(baseFeeWallets, _data, i);
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(baseFeeWallets, 8, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 128, _data, i);
     i += Borsh.write(fee1, _data, i);
     i += Borsh.write(fee2, _data, i);
     return i - offset;

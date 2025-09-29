@@ -85,7 +85,7 @@ public record NotifyAndSettle(ValuationModel model,
     putInt64LE(_data, i, redeemCancellationWindow);
     i += 8;
     i += Borsh.write(timeUnit, _data, i);
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 3, _data, i);
     return i - offset;
   }
 

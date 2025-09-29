@@ -84,7 +84,7 @@ public record CustomizableParams(// Pool price
     ++i;
     _data[i] = (byte) baseFeePowerFactor;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 62, _data, i);
     return i - offset;
   }
 

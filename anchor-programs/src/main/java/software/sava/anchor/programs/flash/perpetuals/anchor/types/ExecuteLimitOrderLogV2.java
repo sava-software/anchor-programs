@@ -141,7 +141,7 @@ public record ExecuteLimitOrderLogV2(PublicKey owner,
     i += 4;
     putInt64LE(_data, i, feeRebateAmount);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 3, _data, i);
     return i - offset;
   }
 

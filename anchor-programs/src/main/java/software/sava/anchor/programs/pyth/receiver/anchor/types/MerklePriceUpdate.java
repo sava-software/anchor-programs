@@ -19,7 +19,7 @@ public record MerklePriceUpdate(byte[] message, byte[][] proof) implements Borsh
   public int write(final byte[] _data, final int offset) {
     int i = offset;
     i += Borsh.writeVector(message, _data, i);
-    i += Borsh.writeVectorArray(proof, _data, i);
+    i += Borsh.writeVectorArrayChecked(proof, 20, _data, i);
     return i - offset;
   }
 

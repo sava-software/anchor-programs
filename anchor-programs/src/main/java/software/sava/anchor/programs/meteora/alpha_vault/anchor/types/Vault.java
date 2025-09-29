@@ -409,7 +409,7 @@ public record Vault(PublicKey _address,
     ++i;
     _data[i] = (byte) vaultMode;
     ++i;
-    i += Borsh.writeArray(padding0, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 5, _data, i);
     putInt64LE(_data, i, maxDepositingCap);
     i += 8;
     putInt64LE(_data, i, individualDepositingCap);
@@ -424,10 +424,10 @@ public record Vault(PublicKey _address,
     ++i;
     _data[i] = (byte) activationType;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 6, _data, i);
     vaultAuthority.write(_data, i);
     i += 32;
-    i += Borsh.write128Array(padding, _data, i);
+    i += Borsh.write128ArrayChecked(padding, 5, _data, i);
     return i - offset;
   }
 

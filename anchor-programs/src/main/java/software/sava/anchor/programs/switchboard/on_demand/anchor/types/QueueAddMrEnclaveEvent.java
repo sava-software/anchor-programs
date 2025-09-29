@@ -27,7 +27,7 @@ public record QueueAddMrEnclaveEvent(PublicKey queue, byte[] mrEnclave) implemen
     int i = offset;
     queue.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(mrEnclave, _data, i);
+    i += Borsh.writeArrayChecked(mrEnclave, 32, _data, i);
     return i - offset;
   }
 

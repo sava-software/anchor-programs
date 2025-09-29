@@ -412,7 +412,7 @@ public record PoolState(PublicKey _address,
     _data[i] = (byte) tokenProgramFlag;
     ++i;
     i += Borsh.write(ammCreatorFeeOn, _data, i);
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 62, _data, i);
     return i - offset;
   }
 

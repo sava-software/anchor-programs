@@ -119,7 +119,7 @@ public record ProrataVaultConfig(PublicKey _address,
     i += 8;
     _data[i] = (byte) activationType;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 191, _data, i);
     return i - offset;
   }
 

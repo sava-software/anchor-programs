@@ -449,7 +449,7 @@ public record FarmState(PublicKey _address,
     globalConfig.write(_data, i);
     i += 32;
     i += Borsh.write(token, _data, i);
-    i += Borsh.writeArray(rewardInfos, _data, i);
+    i += Borsh.writeArrayChecked(rewardInfos, 10, _data, i);
     putInt64LE(_data, i, numRewardTokens);
     i += 8;
     putInt64LE(_data, i, numUsers);
@@ -470,7 +470,7 @@ public record FarmState(PublicKey _address,
     ++i;
     _data[i] = (byte) isFarmDelegated;
     ++i;
-    i += Borsh.writeArray(padding0, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 5, _data, i);
     withdrawAuthority.write(_data, i);
     i += 32;
     putInt32LE(_data, i, depositWarmupPeriod);
@@ -515,7 +515,7 @@ public record FarmState(PublicKey _address,
     i += 32;
     secondDelegatedAuthority.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 74, _data, i);
     return i - offset;
   }
 

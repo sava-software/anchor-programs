@@ -24,7 +24,7 @@ public record ProposedOracles(ProposedOracle[] xs, long len) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(xs, _data, i);
+    i += Borsh.writeArrayChecked(xs, 19, _data, i);
     putInt64LE(_data, i, len);
     i += 8;
     return i - offset;

@@ -379,10 +379,10 @@ public record User(PublicKey _address,
     i += 32;
     delegate.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(name, _data, i);
-    i += Borsh.writeArray(spotPositions, _data, i);
-    i += Borsh.writeArray(perpPositions, _data, i);
-    i += Borsh.writeArray(orders, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
+    i += Borsh.writeArrayChecked(spotPositions, 8, _data, i);
+    i += Borsh.writeArrayChecked(perpPositions, 8, _data, i);
+    i += Borsh.writeArrayChecked(orders, 32, _data, i);
     putInt64LE(_data, i, lastAddPerpLpSharesTs);
     i += 8;
     putInt64LE(_data, i, totalDeposits);
@@ -426,10 +426,10 @@ public record User(PublicKey _address,
     i += Borsh.write(marginMode, _data, i);
     _data[i] = (byte) poolId;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 3, _data, i);
     putInt32LE(_data, i, lastFuelBonusUpdateTs);
     i += 4;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 12, _data, i);
     return i - offset;
   }
 

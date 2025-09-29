@@ -123,7 +123,7 @@ public record BankConfigCompact(WrappedI80F48 assetWeightInit,
     ++i;
     _data[i] = (byte) configFlags;
     ++i;
-    i += Borsh.writeArray(pad0, _data, i);
+    i += Borsh.writeArrayChecked(pad0, 5, _data, i);
     putInt64LE(_data, i, totalAssetValueInitLimit);
     i += 8;
     putInt16LE(_data, i, oracleMaxAge);

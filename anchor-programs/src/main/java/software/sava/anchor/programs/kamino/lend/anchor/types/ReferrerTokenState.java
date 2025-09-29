@@ -124,7 +124,7 @@ public record ReferrerTokenState(PublicKey _address,
     i += 16;
     putInt64LE(_data, i, bump);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 31, _data, i);
     return i - offset;
   }
 

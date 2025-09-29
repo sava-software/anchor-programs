@@ -65,7 +65,7 @@ public final class FarmsProgram {
     int i = UPDATE_GLOBAL_CONFIG_DISCRIMINATOR.write(_data, 0);
     _data[i] = (byte) mode;
     ++i;
-    Borsh.writeArray(value, _data, i);
+    Borsh.writeArrayChecked(value, 32, _data, i);
 
     return Instruction.createInstruction(invokedFarmsProgramMeta, keys, _data);
   }
@@ -97,7 +97,7 @@ public final class FarmsProgram {
       int i = offset + discriminator.write(_data, offset);
       _data[i] = (byte) mode;
       ++i;
-      i += Borsh.writeArray(value, _data, i);
+      i += Borsh.writeArrayChecked(value, 32, _data, i);
       return i - offset;
     }
 

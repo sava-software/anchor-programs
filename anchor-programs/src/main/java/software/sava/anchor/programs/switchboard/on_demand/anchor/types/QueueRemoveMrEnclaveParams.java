@@ -19,7 +19,7 @@ public record QueueRemoveMrEnclaveParams(byte[] mrEnclave) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(mrEnclave, _data, i);
+    i += Borsh.writeArrayChecked(mrEnclave, 32, _data, i);
     return i - offset;
   }
 

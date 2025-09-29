@@ -69,8 +69,8 @@ public record InterestRateConfig(WrappedI80F48 optimalUtilizationRate,
     i += Borsh.write(protocolFixedFeeApr, _data, i);
     i += Borsh.write(protocolIrFee, _data, i);
     i += Borsh.write(protocolOriginationFee, _data, i);
-    i += Borsh.writeArray(padding0, _data, i);
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 16, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 3, _data, i);
     return i - offset;
   }
 

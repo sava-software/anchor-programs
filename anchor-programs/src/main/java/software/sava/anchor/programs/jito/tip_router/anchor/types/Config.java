@@ -155,7 +155,7 @@ public record Config(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, startingValidEpoch);
     i += 8;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 111, _data, i);
     return i - offset;
   }
 

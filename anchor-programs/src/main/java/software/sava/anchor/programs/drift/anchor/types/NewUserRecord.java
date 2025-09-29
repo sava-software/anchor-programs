@@ -54,7 +54,7 @@ public record NewUserRecord(long ts,
     i += 32;
     putInt16LE(_data, i, subAccountId);
     i += 2;
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
     referrer.write(_data, i);
     i += 32;
     return i - offset;

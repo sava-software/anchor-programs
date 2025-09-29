@@ -46,7 +46,7 @@ public record TermsSignature(PublicKey _address, Discriminator discriminator, by
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(signature, _data, i);
+    i += Borsh.writeArrayChecked(signature, 64, _data, i);
     return i - offset;
   }
 

@@ -668,7 +668,7 @@ public record AMM(// oracle price data public key
     i += 4;
     _data[i] = (byte) ammInventorySpreadAdjustment;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 3, _data, i);
     putInt64LE(_data, i, lastFundingOracleTwap);
     i += 8;
     return i - offset;

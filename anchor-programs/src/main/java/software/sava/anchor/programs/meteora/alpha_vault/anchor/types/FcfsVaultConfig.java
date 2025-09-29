@@ -145,7 +145,7 @@ public record FcfsVaultConfig(PublicKey _address,
     i += 8;
     _data[i] = (byte) activationType;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 175, _data, i);
     return i - offset;
   }
 

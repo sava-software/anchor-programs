@@ -1256,7 +1256,7 @@ public final class MarginfiProgram {
     int i = LENDING_POOL_CONFIGURE_BANK_EMODE_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, emodeTag);
     i += 2;
-    Borsh.writeArray(entries, _data, i);
+    Borsh.writeArrayChecked(entries, 10, _data, i);
 
     return Instruction.createInstruction(invokedMarginfiProgramMeta, keys, _data);
   }
@@ -1288,7 +1288,7 @@ public final class MarginfiProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt16LE(_data, i, emodeTag);
       i += 2;
-      i += Borsh.writeArray(entries, _data, i);
+      i += Borsh.writeArrayChecked(entries, 10, _data, i);
       return i - offset;
     }
 

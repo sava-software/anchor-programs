@@ -91,7 +91,7 @@ public record RebalanceLiquidityParams(// active id
     i += 8;
     putInt64LE(_data, i, maxDepositYAmount);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 32, _data, i);
     i += Borsh.writeVector(removes, _data, i);
     i += Borsh.writeVector(adds, _data, i);
     return i - offset;

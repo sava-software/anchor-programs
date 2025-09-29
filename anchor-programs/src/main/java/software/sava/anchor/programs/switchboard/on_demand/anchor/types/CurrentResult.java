@@ -97,7 +97,7 @@ public record CurrentResult(// The median value of the submissions needed for qu
     ++i;
     _data[i] = (byte) submissionIdx;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 6, _data, i);
     putInt64LE(_data, i, slot);
     i += 8;
     putInt64LE(_data, i, minSlot);

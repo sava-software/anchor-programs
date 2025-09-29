@@ -40,7 +40,7 @@ public record SetTokenVaultConfigParams(TokenPermissions tokenPermissions,
     i += 8;
     putInt64LE(_data, i, withdrawInstantFee);
     i += 8;
-    i += Borsh.writeArray(stakeLevel, _data, i);
+    i += Borsh.writeArrayChecked(stakeLevel, 6, _data, i);
     return i - offset;
   }
 

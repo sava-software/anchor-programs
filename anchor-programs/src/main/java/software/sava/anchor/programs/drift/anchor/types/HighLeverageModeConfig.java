@@ -106,10 +106,10 @@ public record HighLeverageModeConfig(PublicKey _address,
     i += 4;
     _data[i] = (byte) reduceOnly;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 3, _data, i);
     putInt32LE(_data, i, currentMaintenanceUsers);
     i += 4;
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 24, _data, i);
     return i - offset;
   }
 

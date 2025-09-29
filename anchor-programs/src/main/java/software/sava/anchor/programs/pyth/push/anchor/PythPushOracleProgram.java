@@ -47,7 +47,7 @@ public final class PythPushOracleProgram {
     i += Borsh.write(params, _data, i);
     putInt16LE(_data, i, shardId);
     i += 2;
-    Borsh.writeArray(feedId, _data, i);
+    Borsh.writeArrayChecked(feedId, 32, _data, i);
 
     return Instruction.createInstruction(invokedPythPushOracleProgramMeta, keys, _data);
   }
@@ -83,7 +83,7 @@ public final class PythPushOracleProgram {
       i += Borsh.write(params, _data, i);
       putInt16LE(_data, i, shardId);
       i += 2;
-      i += Borsh.writeArray(feedId, _data, i);
+      i += Borsh.writeArrayChecked(feedId, 32, _data, i);
       return i - offset;
     }
 

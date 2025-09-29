@@ -373,7 +373,7 @@ public record LendingMarket(PublicKey _address,
     i += 32;
     lendingMarketOwnerCached.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(quoteCurrency, _data, i);
+    i += Borsh.writeArrayChecked(quoteCurrency, 32, _data, i);
     putInt16LE(_data, i, referralFeeBps);
     i += 2;
     _data[i] = (byte) emergencyMode;
@@ -392,19 +392,19 @@ public record LendingMarket(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, maxLiquidatableDebtMarketValueAtOnce);
     i += 8;
-    i += Borsh.writeArray(reserved0, _data, i);
+    i += Borsh.writeArrayChecked(reserved0, 8, _data, i);
     putInt64LE(_data, i, globalAllowedBorrowValue);
     i += 8;
     riskCouncil.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(reserved1, _data, i);
-    i += Borsh.writeArray(elevationGroups, _data, i);
-    i += Borsh.writeArray(elevationGroupPadding, _data, i);
+    i += Borsh.writeArrayChecked(reserved1, 8, _data, i);
+    i += Borsh.writeArrayChecked(elevationGroups, 32, _data, i);
+    i += Borsh.writeArrayChecked(elevationGroupPadding, 90, _data, i);
     putInt128LE(_data, i, minNetValueInObligationSf);
     i += 16;
     putInt64LE(_data, i, minValueSkipLiquidationLtvChecks);
     i += 8;
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
     putInt64LE(_data, i, minValueSkipLiquidationBfChecks);
     i += 8;
     putInt64LE(_data, i, individualAutodeleverageMarginCallPeriodSecs);
@@ -417,8 +417,8 @@ public record LendingMarket(PublicKey _address,
     ++i;
     _data[i] = (byte) obligationOrderCreationEnabled;
     ++i;
-    i += Borsh.writeArray(padding2, _data, i);
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 5, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 169, _data, i);
     return i - offset;
   }
 

@@ -51,7 +51,7 @@ public record CollectRevenueLog(PublicKey owner,
     i += 8;
     putInt32LE(_data, i, lastEpochCount);
     i += 4;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 2, _data, i);
     return i - offset;
   }
 

@@ -58,7 +58,7 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
     i += 32;
     putInt64LE(_data, i, slot);
     i += 8;
-    i += Borsh.writeArray(uuid, _data, i);
+    i += Borsh.writeArrayChecked(uuid, 8, _data, i);
     i += Borsh.writeOptional(takeProfitOrderParams, _data, i);
     i += Borsh.writeOptional(stopLossOrderParams, _data, i);
     i += Borsh.writeOptionalshort(maxMarginRatio, _data, i);

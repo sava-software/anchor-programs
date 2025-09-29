@@ -54,8 +54,8 @@ public record ReserveCollateral(// Reserve collateral mint address
     i += 8;
     supplyVault.write(_data, i);
     i += 32;
-    i += Borsh.write128Array(padding1, _data, i);
-    i += Borsh.write128Array(padding2, _data, i);
+    i += Borsh.write128ArrayChecked(padding1, 32, _data, i);
+    i += Borsh.write128ArrayChecked(padding2, 32, _data, i);
     return i - offset;
   }
 

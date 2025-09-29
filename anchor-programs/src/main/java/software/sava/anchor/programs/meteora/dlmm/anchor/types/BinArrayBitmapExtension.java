@@ -70,8 +70,8 @@ public record BinArrayBitmapExtension(PublicKey _address,
     int i = offset + discriminator.write(_data, offset);
     lbPair.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(positiveBinArrayBitmap, _data, i);
-    i += Borsh.writeArray(negativeBinArrayBitmap, _data, i);
+    i += Borsh.writeArrayChecked(positiveBinArrayBitmap, 12, _data, i);
+    i += Borsh.writeArrayChecked(negativeBinArrayBitmap, 12, _data, i);
     return i - offset;
   }
 

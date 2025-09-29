@@ -275,7 +275,7 @@ public record GlobalConfig(PublicKey _address,
     i += 32;
     migrateToCpswapWallet.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 16, _data, i);
     return i - offset;
   }
 

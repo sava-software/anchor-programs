@@ -49,7 +49,7 @@ public record EmodeEntry(// emode_tag of the bank(s) whose collateral you wish t
     i += 2;
     _data[i] = (byte) flags;
     ++i;
-    i += Borsh.writeArray(pad0, _data, i);
+    i += Borsh.writeArrayChecked(pad0, 5, _data, i);
     i += Borsh.write(assetWeightInit, _data, i);
     i += Borsh.write(assetWeightMaint, _data, i);
     return i - offset;

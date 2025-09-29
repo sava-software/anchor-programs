@@ -313,7 +313,7 @@ public record Custody(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, limitPriceBufferBps);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 32, _data, i);
     return i - offset;
   }
 

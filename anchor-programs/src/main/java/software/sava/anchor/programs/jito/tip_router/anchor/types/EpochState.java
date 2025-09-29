@@ -243,16 +243,16 @@ public record EpochState(PublicKey _address,
     i += Borsh.write(accountStatus, _data, i);
     i += Borsh.write(setWeightProgress, _data, i);
     i += Borsh.write(epochSnapshotProgress, _data, i);
-    i += Borsh.writeArray(operatorSnapshotProgress, _data, i);
+    i += Borsh.writeArrayChecked(operatorSnapshotProgress, 256, _data, i);
     i += Borsh.write(votingProgress, _data, i);
     i += Borsh.write(validationProgress, _data, i);
     i += Borsh.write(uploadProgress, _data, i);
     i += Borsh.write(totalDistributionProgress, _data, i);
     i += Borsh.write(baseDistributionProgress, _data, i);
-    i += Borsh.writeArray(ncnDistributionProgress, _data, i);
+    i += Borsh.writeArrayChecked(ncnDistributionProgress, 2048, _data, i);
     _data[i] = (byte) (isClosing ? 1 : 0);
     ++i;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 1023, _data, i);
     return i - offset;
   }
 

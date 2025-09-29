@@ -27,7 +27,7 @@ public record CollateralTerms(PublicKey assetIdentifier, long[] terms) implement
     int i = offset;
     assetIdentifier.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(terms, _data, i);
+    i += Borsh.writeArrayChecked(terms, 5, _data, i);
     return i - offset;
   }
 

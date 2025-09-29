@@ -116,7 +116,7 @@ public record PythLazerOracle(PublicKey _address,
     i += 8;
     putInt32LE(_data, i, exponent);
     i += 4;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 4, _data, i);
     putInt64LE(_data, i, conf);
     i += 8;
     return i - offset;

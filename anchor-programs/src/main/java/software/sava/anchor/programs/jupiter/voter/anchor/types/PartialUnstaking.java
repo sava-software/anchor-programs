@@ -119,7 +119,7 @@ public record PartialUnstaking(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, expiration);
     i += 8;
-    i += Borsh.write128Array(buffers, _data, i);
+    i += Borsh.write128ArrayChecked(buffers, 6, _data, i);
     i += Borsh.writeVector(_memo, _data, i);
     return i - offset;
   }

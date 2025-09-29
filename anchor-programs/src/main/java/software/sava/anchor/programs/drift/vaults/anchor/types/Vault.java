@@ -527,7 +527,7 @@ public record Vault(PublicKey _address,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
     pubkey.write(_data, i);
     i += 32;
     manager.write(_data, i);
@@ -607,7 +607,7 @@ public record Vault(PublicKey _address,
     i += 16;
     putInt64LE(_data, i, managerBorrowedValue);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 2, _data, i);
     return i - offset;
   }
 

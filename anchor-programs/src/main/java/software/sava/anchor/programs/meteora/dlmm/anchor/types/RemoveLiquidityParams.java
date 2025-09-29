@@ -44,7 +44,7 @@ public record RemoveLiquidityParams(OptionalInt minBinId,
     i += Borsh.writeOptional(maxBinId, _data, i);
     putInt16LE(_data, i, bps);
     i += 2;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 16, _data, i);
     return i - offset;
   }
 

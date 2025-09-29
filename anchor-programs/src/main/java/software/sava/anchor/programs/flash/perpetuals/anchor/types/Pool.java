@@ -298,8 +298,8 @@ public record Pool(PublicKey _address,
     ++i;
     _data[i] = (byte) uniqueCustodyCount;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
-    i += Borsh.writeArray(stakingFeeBoostBps, _data, i);
+    i += Borsh.writeArrayChecked(padding, 3, _data, i);
+    i += Borsh.writeArrayChecked(stakingFeeBoostBps, 6, _data, i);
     compoundingMint.write(_data, i);
     i += 32;
     compoundingLpVault.write(_data, i);
@@ -319,7 +319,7 @@ public record Pool(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, lastUpdatedTimestamp);
     i += 8;
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 1, _data, i);
     return i - offset;
   }
 

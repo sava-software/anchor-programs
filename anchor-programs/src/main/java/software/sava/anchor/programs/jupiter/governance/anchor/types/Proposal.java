@@ -204,7 +204,7 @@ public record Proposal(PublicKey _address,
     i += 8;
     _data[i] = (byte) proposalType;
     ++i;
-    i += Borsh.write128Array(buffers, _data, i);
+    i += Borsh.write128ArrayChecked(buffers, 10, _data, i);
     i += Borsh.writeVector(instructions, _data, i);
     return i - offset;
   }

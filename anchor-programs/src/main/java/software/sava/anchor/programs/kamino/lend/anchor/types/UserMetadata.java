@@ -110,8 +110,8 @@ public record UserMetadata(PublicKey _address,
     i += 32;
     owner.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding1, _data, i);
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 51, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 64, _data, i);
     return i - offset;
   }
 

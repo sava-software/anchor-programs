@@ -82,7 +82,7 @@ public final class MerkleDistributorProgram {
     int i = NEW_DISTRIBUTOR_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, version);
     i += 8;
-    i += Borsh.writeArray(root, _data, i);
+    i += Borsh.writeArrayChecked(root, 32, _data, i);
     putInt64LE(_data, i, maxTotalClaim);
     i += 8;
     putInt64LE(_data, i, maxNumNodes);
@@ -158,7 +158,7 @@ public final class MerkleDistributorProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, version);
       i += 8;
-      i += Borsh.writeArray(root, _data, i);
+      i += Borsh.writeArrayChecked(root, 32, _data, i);
       putInt64LE(_data, i, maxTotalClaim);
       i += 8;
       putInt64LE(_data, i, maxNumNodes);
@@ -314,7 +314,7 @@ public final class MerkleDistributorProgram {
     i += 8;
     putInt64LE(_data, i, amountLocked);
     i += 8;
-    Borsh.writeVectorArray(proof, _data, i);
+    Borsh.writeVectorArrayChecked(proof, 32, _data, i);
 
     return Instruction.createInstruction(invokedMerkleDistributorProgramMeta, keys, _data);
   }
@@ -349,7 +349,7 @@ public final class MerkleDistributorProgram {
       i += 8;
       putInt64LE(_data, i, amountLocked);
       i += 8;
-      i += Borsh.writeVectorArray(proof, _data, i);
+      i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
       return i - offset;
     }
 

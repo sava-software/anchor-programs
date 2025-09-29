@@ -338,7 +338,7 @@ public final class MerkleDistributorProgram {
     i += 8;
     putInt64LE(_data, i, amountLocked);
     i += 8;
-    Borsh.writeVectorArray(proof, _data, i);
+    Borsh.writeVectorArrayChecked(proof, 32, _data, i);
 
     return Instruction.createInstruction(invokedMerkleDistributorProgramMeta, keys, _data);
   }
@@ -373,7 +373,7 @@ public final class MerkleDistributorProgram {
       i += 8;
       putInt64LE(_data, i, amountLocked);
       i += 8;
-      i += Borsh.writeVectorArray(proof, _data, i);
+      i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
       return i - offset;
     }
 
@@ -458,7 +458,7 @@ public final class MerkleDistributorProgram {
     i += 8;
     putInt64LE(_data, i, amountLocked);
     i += 8;
-    Borsh.writeVectorArray(proof, _data, i);
+    Borsh.writeVectorArrayChecked(proof, 32, _data, i);
 
     return Instruction.createInstruction(invokedMerkleDistributorProgramMeta, keys, _data);
   }
@@ -493,7 +493,7 @@ public final class MerkleDistributorProgram {
       i += 8;
       putInt64LE(_data, i, amountLocked);
       i += 8;
-      i += Borsh.writeVectorArray(proof, _data, i);
+      i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
       return i - offset;
     }
 

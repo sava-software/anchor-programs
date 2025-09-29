@@ -196,7 +196,7 @@ public record StateAccount(PublicKey _address,
     i += 32;
     owner.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(portfolioManagerName, _data, i);
+    i += Borsh.writeArrayChecked(portfolioManagerName, 32, _data, i);
     i += Borsh.write(created, _data, i);
     baseAssetMint.write(_data, i);
     i += 32;
@@ -204,7 +204,7 @@ public record StateAccount(PublicKey _address,
     ++i;
     _data[i] = (byte) baseAssetTokenProgram;
     ++i;
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
     putInt32LE(_data, i, timelockDuration);
     i += 4;
     putInt64LE(_data, i, timelockExpiresAt);

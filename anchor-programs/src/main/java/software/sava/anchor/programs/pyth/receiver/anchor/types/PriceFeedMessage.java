@@ -52,7 +52,7 @@ public record PriceFeedMessage(byte[] feedId,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(feedId, _data, i);
+    i += Borsh.writeArrayChecked(feedId, 32, _data, i);
     putInt64LE(_data, i, price);
     i += 8;
     putInt64LE(_data, i, conf);

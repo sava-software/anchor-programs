@@ -21,8 +21,8 @@ public record OracleConfigs(short[][] maxAgesSeconds, byte[] padding) implements
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeVectorArray(maxAgesSeconds, _data, i);
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeVectorArrayChecked(maxAgesSeconds, 2, _data, i);
+    i += Borsh.writeArrayChecked(padding, 12, _data, i);
     return i - offset;
   }
 

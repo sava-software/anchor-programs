@@ -87,12 +87,12 @@ public record MerkleRootConfig(PublicKey _address,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(root, _data, i);
+    i += Borsh.writeArrayChecked(root, 32, _data, i);
     vault.write(_data, i);
     i += 32;
     putInt64LE(_data, i, version);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 8, _data, i);
     return i - offset;
   }
 

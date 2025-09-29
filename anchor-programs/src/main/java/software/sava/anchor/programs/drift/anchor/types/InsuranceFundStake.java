@@ -174,7 +174,7 @@ public record InsuranceFundStake(PublicKey _address,
     i += 8;
     putInt16LE(_data, i, marketIndex);
     i += 2;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 14, _data, i);
     return i - offset;
   }
 

@@ -245,10 +245,10 @@ public record Whirlpool(PublicKey _address,
     int i = offset + discriminator.write(_data, offset);
     whirlpoolsConfig.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(whirlpoolBump, _data, i);
+    i += Borsh.writeArrayChecked(whirlpoolBump, 1, _data, i);
     putInt16LE(_data, i, tickSpacing);
     i += 2;
-    i += Borsh.writeArray(feeTierIndexSeed, _data, i);
+    i += Borsh.writeArrayChecked(feeTierIndexSeed, 2, _data, i);
     putInt16LE(_data, i, feeRate);
     i += 2;
     putInt16LE(_data, i, protocolFeeRate);
@@ -277,7 +277,7 @@ public record Whirlpool(PublicKey _address,
     i += 16;
     putInt64LE(_data, i, rewardLastUpdatedTimestamp);
     i += 8;
-    i += Borsh.writeArray(rewardInfos, _data, i);
+    i += Borsh.writeArrayChecked(rewardInfos, 3, _data, i);
     return i - offset;
   }
 

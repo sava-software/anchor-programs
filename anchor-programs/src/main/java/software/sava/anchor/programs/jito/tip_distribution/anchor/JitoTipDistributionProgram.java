@@ -56,7 +56,7 @@ public final class JitoTipDistributionProgram {
     ++i;
     putInt64LE(_data, i, amount);
     i += 8;
-    Borsh.writeVectorArray(proof, _data, i);
+    Borsh.writeVectorArrayChecked(proof, 32, _data, i);
 
     return Instruction.createInstruction(invokedJitoTipDistributionProgramMeta, keys, _data);
   }
@@ -91,7 +91,7 @@ public final class JitoTipDistributionProgram {
       ++i;
       putInt64LE(_data, i, amount);
       i += 8;
-      i += Borsh.writeVectorArray(proof, _data, i);
+      i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
       return i - offset;
     }
 
@@ -553,7 +553,7 @@ public final class JitoTipDistributionProgram {
 
     final byte[] _data = new byte[24 + Borsh.lenArray(root)];
     int i = UPLOAD_MERKLE_ROOT_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.writeArray(root, _data, i);
+    i += Borsh.writeArrayChecked(root, 32, _data, i);
     putInt64LE(_data, i, maxTotalClaim);
     i += 8;
     putInt64LE(_data, i, maxNumNodes);
@@ -590,7 +590,7 @@ public final class JitoTipDistributionProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeArray(root, _data, i);
+      i += Borsh.writeArrayChecked(root, 32, _data, i);
       putInt64LE(_data, i, maxTotalClaim);
       i += 8;
       putInt64LE(_data, i, maxNumNodes);

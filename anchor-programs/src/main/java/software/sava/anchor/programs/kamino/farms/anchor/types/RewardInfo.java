@@ -104,8 +104,8 @@ public record RewardInfo(TokenInfo token,
     ++i;
     _data[i] = (byte) rewardsPerSecondDecimals;
     ++i;
-    i += Borsh.writeArray(padding0, _data, i);
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 6, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 20, _data, i);
     return i - offset;
   }
 

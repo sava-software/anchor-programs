@@ -77,14 +77,14 @@ public record VaultAllocation(PublicKey reserve,
     i += 8;
     putInt64LE(_data, i, ctokenVaultBump);
     i += 8;
-    i += Borsh.writeArray(configPadding, _data, i);
+    i += Borsh.writeArrayChecked(configPadding, 127, _data, i);
     putInt64LE(_data, i, ctokenAllocation);
     i += 8;
     putInt64LE(_data, i, lastInvestSlot);
     i += 8;
     putInt128LE(_data, i, tokenTargetAllocationSf);
     i += 16;
-    i += Borsh.writeArray(statePadding, _data, i);
+    i += Borsh.writeArrayChecked(statePadding, 128, _data, i);
     return i - offset;
   }
 

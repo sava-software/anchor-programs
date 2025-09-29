@@ -898,7 +898,7 @@ public final class JitoTipRouterProgram {
 
     final byte[] _data = new byte[16 + Borsh.lenArray(metaMerkleRoot)];
     int i = CAST_VOTE_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.writeArray(metaMerkleRoot, _data, i);
+    i += Borsh.writeArrayChecked(metaMerkleRoot, 32, _data, i);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -928,7 +928,7 @@ public final class JitoTipRouterProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeArray(metaMerkleRoot, _data, i);
+      i += Borsh.writeArrayChecked(metaMerkleRoot, 32, _data, i);
       putInt64LE(_data, i, epoch);
       i += 8;
       return i - offset;
@@ -969,8 +969,8 @@ public final class JitoTipRouterProgram {
 
     final byte[] _data = new byte[32 + Borsh.lenVectorArray(proof) + Borsh.lenArray(merkleRoot)];
     int i = SET_MERKLE_ROOT_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.writeVectorArray(proof, _data, i);
-    i += Borsh.writeArray(merkleRoot, _data, i);
+    i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
+    i += Borsh.writeArrayChecked(merkleRoot, 32, _data, i);
     putInt64LE(_data, i, maxTotalClaim);
     i += 8;
     putInt64LE(_data, i, maxNumNodes);
@@ -1018,8 +1018,8 @@ public final class JitoTipRouterProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeVectorArray(proof, _data, i);
-      i += Borsh.writeArray(merkleRoot, _data, i);
+      i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
+      i += Borsh.writeArrayChecked(merkleRoot, 32, _data, i);
       putInt64LE(_data, i, maxTotalClaim);
       i += 8;
       putInt64LE(_data, i, maxNumNodes);
@@ -1731,7 +1731,7 @@ public final class JitoTipRouterProgram {
 
     final byte[] _data = new byte[17 + Borsh.lenVectorArray(proof)];
     int i = CLAIM_WITH_PAYER_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.writeVectorArray(proof, _data, i);
+    i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
     putInt64LE(_data, i, amount);
     i += 8;
     _data[i] = (byte) bump;
@@ -1765,7 +1765,7 @@ public final class JitoTipRouterProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeVectorArray(proof, _data, i);
+      i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
       putInt64LE(_data, i, amount);
       i += 8;
       _data[i] = (byte) bump;
@@ -2120,7 +2120,7 @@ public final class JitoTipRouterProgram {
 
     final byte[] _data = new byte[16 + Borsh.lenArray(metaMerkleRoot)];
     int i = ADMIN_SET_TIE_BREAKER_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.writeArray(metaMerkleRoot, _data, i);
+    i += Borsh.writeArrayChecked(metaMerkleRoot, 32, _data, i);
     putInt64LE(_data, i, epoch);
 
     return Instruction.createInstruction(invokedJitoTipRouterProgramMeta, keys, _data);
@@ -2150,7 +2150,7 @@ public final class JitoTipRouterProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeArray(metaMerkleRoot, _data, i);
+      i += Borsh.writeArrayChecked(metaMerkleRoot, 32, _data, i);
       putInt64LE(_data, i, epoch);
       i += 8;
       return i - offset;

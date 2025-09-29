@@ -148,11 +148,11 @@ public record Loan(PublicKey _address,
     putInt64LE(_data, i, nonce);
     i += 8;
     i += Borsh.write(startTime, _data, i);
-    i += Borsh.writeArray(ledgers, _data, i);
-    i += Borsh.writeArray(collateral, _data, i);
-    i += Borsh.writeArray(weightMatrix, _data, i);
-    i += Borsh.writeArray(ltvMatrix, _data, i);
-    i += Borsh.writeArray(lqtMatrix, _data, i);
+    i += Borsh.writeArrayChecked(ledgers, 5, _data, i);
+    i += Borsh.writeArrayChecked(collateral, 5, _data, i);
+    i += Borsh.writeArrayChecked(weightMatrix, 5, _data, i);
+    i += Borsh.writeArrayChecked(ltvMatrix, 5, _data, i);
+    i += Borsh.writeArrayChecked(lqtMatrix, 5, _data, i);
     return i - offset;
   }
 

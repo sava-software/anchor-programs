@@ -66,13 +66,13 @@ public record Balance(int active,
     i += 32;
     _data[i] = (byte) bankAssetTag;
     ++i;
-    i += Borsh.writeArray(pad0, _data, i);
+    i += Borsh.writeArrayChecked(pad0, 6, _data, i);
     i += Borsh.write(assetShares, _data, i);
     i += Borsh.write(liabilityShares, _data, i);
     i += Borsh.write(emissionsOutstanding, _data, i);
     putInt64LE(_data, i, lastUpdate);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 1, _data, i);
     return i - offset;
   }
 

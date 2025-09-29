@@ -49,7 +49,7 @@ public record OracleInitSVMParams(long recentSlot,
       _data[i++] = 0;
     } else {
       _data[i++] = 1;
-      i += Borsh.writeArray(secpAuthority, _data, i);
+      i += Borsh.writeArrayChecked(secpAuthority, 64, _data, i);
     }
     sourceOracleKey.write(_data, i);
     i += 32;

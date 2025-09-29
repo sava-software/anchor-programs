@@ -78,7 +78,7 @@ public record SpotPosition(// The scaled balance of the position. To get the tok
     i += Borsh.write(balanceType, _data, i);
     _data[i] = (byte) openOrders;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 4, _data, i);
     return i - offset;
   }
 

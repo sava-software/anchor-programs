@@ -49,7 +49,7 @@ public record VoltagePointsLog(PublicKey tokenStake,
     i += 8;
     _data[i] = (byte) voltagePointsType;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 4, _data, i);
     return i - offset;
   }
 

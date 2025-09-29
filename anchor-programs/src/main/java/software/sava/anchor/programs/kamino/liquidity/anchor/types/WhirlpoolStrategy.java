@@ -1039,8 +1039,8 @@ public record WhirlpoolStrategy(PublicKey _address,
     i += 32;
     tokenBVault.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(deprecated0, _data, i);
-    i += Borsh.writeArray(deprecated1, _data, i);
+    i += Borsh.writeArrayChecked(deprecated0, 2, _data, i);
+    i += Borsh.writeArrayChecked(deprecated1, 2, _data, i);
     tokenAMint.write(_data, i);
     i += 32;
     tokenBMint.write(_data, i);
@@ -1135,7 +1135,7 @@ public record WhirlpoolStrategy(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, positionTimestamp);
     i += 8;
-    i += Borsh.writeArray(kaminoRewards, _data, i);
+    i += Borsh.writeArrayChecked(kaminoRewards, 3, _data, i);
     putInt64LE(_data, i, strategyDex);
     i += 8;
     raydiumProtocolPositionOrBaseVaultAuthority.write(_data, i);
@@ -1166,9 +1166,9 @@ public record WhirlpoolStrategy(PublicKey _address,
     ++i;
     _data[i] = (byte) rebalanceType;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 6, _data, i);
     i += Borsh.write(rebalanceRaw, _data, i);
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 7, _data, i);
     putInt64LE(_data, i, tokenAFeesFromRewardsCumulative);
     i += 8;
     putInt64LE(_data, i, tokenBFeesFromRewardsCumulative);
@@ -1190,10 +1190,10 @@ public record WhirlpoolStrategy(PublicKey _address,
     i += 32;
     putInt64LE(_data, i, padding3);
     i += 8;
-    i += Borsh.write128Array(padding4, _data, i);
-    i += Borsh.write128Array(padding5, _data, i);
-    i += Borsh.write128Array(padding6, _data, i);
-    i += Borsh.write128Array(padding7, _data, i);
+    i += Borsh.write128ArrayChecked(padding4, 13, _data, i);
+    i += Borsh.write128ArrayChecked(padding5, 32, _data, i);
+    i += Borsh.write128ArrayChecked(padding6, 32, _data, i);
+    i += Borsh.write128ArrayChecked(padding7, 32, _data, i);
     return i - offset;
   }
 

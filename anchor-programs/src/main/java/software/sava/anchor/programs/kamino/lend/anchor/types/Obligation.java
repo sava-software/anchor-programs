@@ -326,12 +326,12 @@ public record Obligation(PublicKey _address,
     i += 32;
     owner.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(deposits, _data, i);
+    i += Borsh.writeArrayChecked(deposits, 8, _data, i);
     putInt64LE(_data, i, lowestReserveDepositLiquidationLtv);
     i += 8;
     putInt128LE(_data, i, depositedValueSf);
     i += 16;
-    i += Borsh.writeArray(borrows, _data, i);
+    i += Borsh.writeArrayChecked(borrows, 5, _data, i);
     putInt128LE(_data, i, borrowFactorAdjustedDebtValueSf);
     i += 16;
     putInt128LE(_data, i, borrowedAssetsMarketValueSf);
@@ -340,8 +340,8 @@ public record Obligation(PublicKey _address,
     i += 16;
     putInt128LE(_data, i, unhealthyBorrowValueSf);
     i += 16;
-    i += Borsh.writeArray(depositsAssetTiers, _data, i);
-    i += Borsh.writeArray(borrowsAssetTiers, _data, i);
+    i += Borsh.writeArrayChecked(depositsAssetTiers, 8, _data, i);
+    i += Borsh.writeArrayChecked(borrowsAssetTiers, 5, _data, i);
     _data[i] = (byte) elevationGroup;
     ++i;
     _data[i] = (byte) numOfObsoleteDepositReserves;
@@ -358,13 +358,13 @@ public record Obligation(PublicKey _address,
     ++i;
     _data[i] = (byte) numOfObsoleteBorrowReserves;
     ++i;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 4, _data, i);
     putInt64LE(_data, i, highestBorrowFactorPct);
     i += 8;
     putInt64LE(_data, i, autodeleverageMarginCallStartedTimestamp);
     i += 8;
-    i += Borsh.writeArray(orders, _data, i);
-    i += Borsh.writeArray(padding3, _data, i);
+    i += Borsh.writeArrayChecked(orders, 2, _data, i);
+    i += Borsh.writeArrayChecked(padding3, 93, _data, i);
     return i - offset;
   }
 

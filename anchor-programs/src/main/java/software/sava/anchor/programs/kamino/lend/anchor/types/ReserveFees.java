@@ -47,7 +47,7 @@ public record ReserveFees(// Fee assessed on `BorrowObligationLiquidity`, as sca
     i += 8;
     putInt64LE(_data, i, flashLoanFeeSf);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 8, _data, i);
     return i - offset;
   }
 

@@ -66,7 +66,7 @@ public record PendingRequest(PublicKey user,
     _data[i] = (byte) timeUnit;
     ++i;
     i += Borsh.write(requestType, _data, i);
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 6, _data, i);
     return i - offset;
   }
 

@@ -191,7 +191,7 @@ public record PersonalPositionState(PublicKey _address,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(bump, _data, i);
+    i += Borsh.writeArrayChecked(bump, 1, _data, i);
     nftMint.write(_data, i);
     i += 32;
     poolId.write(_data, i);
@@ -210,10 +210,10 @@ public record PersonalPositionState(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, tokenFeesOwed1);
     i += 8;
-    i += Borsh.writeArray(rewardInfos, _data, i);
+    i += Borsh.writeArrayChecked(rewardInfos, 3, _data, i);
     putInt64LE(_data, i, recentEpoch);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 7, _data, i);
     return i - offset;
   }
 

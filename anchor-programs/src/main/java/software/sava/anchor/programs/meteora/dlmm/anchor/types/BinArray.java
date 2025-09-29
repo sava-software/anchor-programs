@@ -101,10 +101,10 @@ public record BinArray(PublicKey _address,
     i += 8;
     _data[i] = (byte) version;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 7, _data, i);
     lbPair.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(bins, _data, i);
+    i += Borsh.writeArrayChecked(bins, 70, _data, i);
     return i - offset;
   }
 

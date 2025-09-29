@@ -47,7 +47,7 @@ public record VaultOperatorStakeWeight(PublicKey vault,
     i += 8;
     i += Borsh.write(ncnFeeGroup, _data, i);
     i += Borsh.write(stakeWeight, _data, i);
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 32, _data, i);
     return i - offset;
   }
 

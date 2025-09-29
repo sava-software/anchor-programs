@@ -178,7 +178,7 @@ public record EpochSnapshot(PublicKey _address,
     putInt64LE(_data, i, validOperatorVaultDelegations);
     i += 8;
     i += Borsh.write(stakeWeights, _data, i);
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 128, _data, i);
     return i - offset;
   }
 

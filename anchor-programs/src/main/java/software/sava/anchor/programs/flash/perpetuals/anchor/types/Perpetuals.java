@@ -108,8 +108,8 @@ public record Perpetuals(PublicKey _address,
     i += Borsh.writeVector(pools, _data, i);
     i += Borsh.writeVector(collections, _data, i);
     i += Borsh.write(voltageMultiplier, _data, i);
-    i += Borsh.writeArray(tradingDiscount, _data, i);
-    i += Borsh.writeArray(referralRebate, _data, i);
+    i += Borsh.writeArrayChecked(tradingDiscount, 6, _data, i);
+    i += Borsh.writeArrayChecked(referralRebate, 6, _data, i);
     putInt64LE(_data, i, defaultRebate);
     i += 8;
     putInt64LE(_data, i, inceptionTime);

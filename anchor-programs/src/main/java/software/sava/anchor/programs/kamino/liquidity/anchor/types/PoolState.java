@@ -489,9 +489,9 @@ public record PoolState(PublicKey _address,
     i += 16;
     _data[i] = (byte) status;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
-    i += Borsh.writeArray(rewardInfos, _data, i);
-    i += Borsh.writeArray(tickArrayBitmap, _data, i);
+    i += Borsh.writeArrayChecked(padding, 7, _data, i);
+    i += Borsh.writeArrayChecked(rewardInfos, 3, _data, i);
+    i += Borsh.writeArrayChecked(tickArrayBitmap, 16, _data, i);
     putInt64LE(_data, i, totalFeesToken0);
     i += 8;
     putInt64LE(_data, i, totalFeesClaimedToken0);
@@ -506,8 +506,8 @@ public record PoolState(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, openTime);
     i += 8;
-    i += Borsh.writeArray(padding1, _data, i);
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 25, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 32, _data, i);
     return i - offset;
   }
 

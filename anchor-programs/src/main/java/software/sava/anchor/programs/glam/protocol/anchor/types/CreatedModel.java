@@ -30,7 +30,7 @@ public record CreatedModel(byte[] key,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(key, _data, i);
+    i += Borsh.writeArrayChecked(key, 8, _data, i);
     createdBy.write(_data, i);
     i += 32;
     putInt64LE(_data, i, createdAt);

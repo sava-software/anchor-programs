@@ -44,9 +44,9 @@ public record Fees(long activationEpoch,
     putInt64LE(_data, i, activationEpoch);
     i += 8;
     i += Borsh.write(priorityFeeDistributionFeeBps, _data, i);
-    i += Borsh.writeArray(reserved, _data, i);
-    i += Borsh.writeArray(baseFeeGroupsBps, _data, i);
-    i += Borsh.writeArray(ncnFeeGroupsBps, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 126, _data, i);
+    i += Borsh.writeArrayChecked(baseFeeGroupsBps, 8, _data, i);
+    i += Borsh.writeArrayChecked(ncnFeeGroupsBps, 8, _data, i);
     return i - offset;
   }
 

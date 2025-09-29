@@ -28,7 +28,7 @@ public record RewardScheduleCurve(// This is a stepwise function, meaning that e
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(points, _data, i);
+    i += Borsh.writeArrayChecked(points, 20, _data, i);
     return i - offset;
   }
 

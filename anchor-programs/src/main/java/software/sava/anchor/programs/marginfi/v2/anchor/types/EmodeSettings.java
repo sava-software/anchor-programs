@@ -58,7 +58,7 @@ public record EmodeSettings(// This bank's NON-unique id that other banks will u
     int i = offset;
     putInt16LE(_data, i, emodeTag);
     i += 2;
-    i += Borsh.writeArray(pad0, _data, i);
+    i += Borsh.writeArrayChecked(pad0, 6, _data, i);
     putInt64LE(_data, i, timestamp);
     i += 8;
     putInt64LE(_data, i, flags);

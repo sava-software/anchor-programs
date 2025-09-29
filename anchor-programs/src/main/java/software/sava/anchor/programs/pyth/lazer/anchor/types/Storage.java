@@ -109,8 +109,8 @@ public record Storage(PublicKey _address,
     i += 8;
     _data[i] = (byte) numTrustedSigners;
     ++i;
-    i += Borsh.writeArray(trustedSigners, _data, i);
-    i += Borsh.writeArray(extraSpace, _data, i);
+    i += Borsh.writeArrayChecked(trustedSigners, 5, _data, i);
+    i += Borsh.writeArrayChecked(extraSpace, 100, _data, i);
     return i - offset;
   }
 

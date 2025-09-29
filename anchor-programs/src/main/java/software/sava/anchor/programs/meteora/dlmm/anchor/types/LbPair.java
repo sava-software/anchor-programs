@@ -369,8 +369,8 @@ public record LbPair(PublicKey _address,
     int i = offset + discriminator.write(_data, offset);
     i += Borsh.write(parameters, _data, i);
     i += Borsh.write(vParameters, _data, i);
-    i += Borsh.writeArray(bumpSeed, _data, i);
-    i += Borsh.writeArray(binStepSeed, _data, i);
+    i += Borsh.writeArrayChecked(bumpSeed, 1, _data, i);
+    i += Borsh.writeArrayChecked(binStepSeed, 2, _data, i);
     _data[i] = (byte) pairType;
     ++i;
     putInt32LE(_data, i, activeId);
@@ -381,7 +381,7 @@ public record LbPair(PublicKey _address,
     ++i;
     _data[i] = (byte) requireBaseFactorSeed;
     ++i;
-    i += Borsh.writeArray(baseFactorSeed, _data, i);
+    i += Borsh.writeArrayChecked(baseFactorSeed, 2, _data, i);
     _data[i] = (byte) activationType;
     ++i;
     _data[i] = (byte) creatorPoolOnOffControl;
@@ -395,14 +395,14 @@ public record LbPair(PublicKey _address,
     reserveY.write(_data, i);
     i += 32;
     i += Borsh.write(protocolFee, _data, i);
-    i += Borsh.writeArray(padding1, _data, i);
-    i += Borsh.writeArray(rewardInfos, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 32, _data, i);
+    i += Borsh.writeArrayChecked(rewardInfos, 2, _data, i);
     oracle.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(binArrayBitmap, _data, i);
+    i += Borsh.writeArrayChecked(binArrayBitmap, 16, _data, i);
     putInt64LE(_data, i, lastUpdatedAt);
     i += 8;
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 32, _data, i);
     preActivationSwapAddress.write(_data, i);
     i += 32;
     baseKey.write(_data, i);
@@ -411,7 +411,7 @@ public record LbPair(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, preActivationDuration);
     i += 8;
-    i += Borsh.writeArray(padding3, _data, i);
+    i += Borsh.writeArrayChecked(padding3, 8, _data, i);
     putInt64LE(_data, i, padding4);
     i += 8;
     creator.write(_data, i);
@@ -420,7 +420,7 @@ public record LbPair(PublicKey _address,
     ++i;
     _data[i] = (byte) tokenMintYProgramFlag;
     ++i;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 22, _data, i);
     return i - offset;
   }
 

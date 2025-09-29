@@ -31,7 +31,7 @@ public record UpdateWeightMatrixParams(int collateralIndex,
     int i = offset;
     _data[i] = (byte) collateralIndex;
     ++i;
-    i += Borsh.writeArray(weightMatrix, _data, i);
+    i += Borsh.writeArrayChecked(weightMatrix, 5, _data, i);
     i += Borsh.write(expectedLoanValues, _data, i);
     i += Borsh.writeVector(assetIndexGuidance, _data, i);
     return i - offset;

@@ -97,7 +97,7 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
     i += 2;
     _data[i] = (byte) baseFeePowerFactor;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 5, _data, i);
     return i - offset;
   }
 

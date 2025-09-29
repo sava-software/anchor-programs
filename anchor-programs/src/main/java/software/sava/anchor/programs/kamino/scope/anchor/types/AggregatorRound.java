@@ -96,11 +96,11 @@ public record AggregatorRound(int numSuccess,
     i += Borsh.write(stdDeviation, _data, i);
     i += Borsh.write(minResponse, _data, i);
     i += Borsh.write(maxResponse, _data, i);
-    i += Borsh.writeArray(oraclePubkeysData, _data, i);
-    i += Borsh.writeArray(mediansData, _data, i);
-    i += Borsh.writeArray(currentPayout, _data, i);
-    i += Borsh.writeArray(mediansFulfilled, _data, i);
-    i += Borsh.writeArray(errorsFulfilled, _data, i);
+    i += Borsh.writeArrayChecked(oraclePubkeysData, 16, _data, i);
+    i += Borsh.writeArrayChecked(mediansData, 16, _data, i);
+    i += Borsh.writeArrayChecked(currentPayout, 16, _data, i);
+    i += Borsh.writeArrayChecked(mediansFulfilled, 16, _data, i);
+    i += Borsh.writeArrayChecked(errorsFulfilled, 16, _data, i);
     return i - offset;
   }
 

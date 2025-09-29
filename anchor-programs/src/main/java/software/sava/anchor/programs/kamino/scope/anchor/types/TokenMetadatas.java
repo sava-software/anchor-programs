@@ -46,7 +46,7 @@ public record TokenMetadatas(PublicKey _address, Discriminator discriminator, To
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(metadatasArray, _data, i);
+    i += Borsh.writeArrayChecked(metadatasArray, 512, _data, i);
     return i - offset;
   }
 

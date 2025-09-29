@@ -320,7 +320,7 @@ public final class ExtDriftProgram {
     int i = INITIALIZE_USER_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
-    Borsh.writeArray(name, _data, i);
+    Borsh.writeArrayChecked(name, 32, _data, i);
 
     return Instruction.createInstruction(invokedExtDriftProgramMeta, keys, _data);
   }
@@ -352,7 +352,7 @@ public final class ExtDriftProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt16LE(_data, i, subAccountId);
       i += 2;
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
       return i - offset;
     }
 

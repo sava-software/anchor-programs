@@ -43,7 +43,7 @@ public record RandomnessCommitEvent(PublicKey randomnessAccount,
     i += 32;
     putInt64LE(_data, i, slot);
     i += 8;
-    i += Borsh.writeArray(slothash, _data, i);
+    i += Borsh.writeArrayChecked(slothash, 32, _data, i);
     return i - offset;
   }
 

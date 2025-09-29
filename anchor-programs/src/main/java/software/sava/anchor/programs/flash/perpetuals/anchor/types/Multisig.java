@@ -138,8 +138,8 @@ public record Multisig(PublicKey _address,
     i += 2;
     putInt64LE(_data, i, instructionHash);
     i += 8;
-    i += Borsh.writeArray(signers, _data, i);
-    i += Borsh.writeArray(signed, _data, i);
+    i += Borsh.writeArrayChecked(signers, 6, _data, i);
+    i += Borsh.writeArrayChecked(signed, 6, _data, i);
     _data[i] = (byte) bump;
     ++i;
     return i - offset;

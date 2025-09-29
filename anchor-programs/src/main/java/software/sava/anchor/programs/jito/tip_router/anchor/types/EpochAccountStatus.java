@@ -51,12 +51,12 @@ public record EpochAccountStatus(int epochState,
     ++i;
     _data[i] = (byte) epochSnapshot;
     ++i;
-    i += Borsh.writeArray(operatorSnapshot, _data, i);
+    i += Borsh.writeArrayChecked(operatorSnapshot, 256, _data, i);
     _data[i] = (byte) ballotBox;
     ++i;
     _data[i] = (byte) baseRewardRouter;
     ++i;
-    i += Borsh.writeArray(ncnRewardRouter, _data, i);
+    i += Borsh.writeArrayChecked(ncnRewardRouter, 2048, _data, i);
     return i - offset;
   }
 

@@ -95,14 +95,14 @@ public record ProtocolIfSharesTransferConfig(PublicKey _address,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(whitelistedSigners, _data, i);
+    i += Borsh.writeArrayChecked(whitelistedSigners, 4, _data, i);
     putInt128LE(_data, i, maxTransferPerEpoch);
     i += 16;
     putInt128LE(_data, i, currentEpochTransfer);
     i += 16;
     putInt64LE(_data, i, nextEpochTs);
     i += 8;
-    i += Borsh.write128Array(padding, _data, i);
+    i += Borsh.write128ArrayChecked(padding, 8, _data, i);
     return i - offset;
   }
 

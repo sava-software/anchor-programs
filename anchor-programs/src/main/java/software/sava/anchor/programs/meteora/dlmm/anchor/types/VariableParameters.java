@@ -60,10 +60,10 @@ public record VariableParameters(// Volatility accumulator measure the number of
     i += 4;
     putInt32LE(_data, i, indexReference);
     i += 4;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 4, _data, i);
     putInt64LE(_data, i, lastUpdateTimestamp);
     i += 8;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 8, _data, i);
     return i - offset;
   }
 

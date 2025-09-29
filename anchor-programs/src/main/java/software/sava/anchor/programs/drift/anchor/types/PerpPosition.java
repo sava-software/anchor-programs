@@ -136,7 +136,7 @@ public record PerpPosition(// The perp market's last cumulative funding rate. Us
     i += 8;
     putInt64LE(_data, i, lastQuoteAssetAmountPerLp);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 2, _data, i);
     putInt16LE(_data, i, maxMarginRatio);
     i += 2;
     putInt16LE(_data, i, marketIndex);

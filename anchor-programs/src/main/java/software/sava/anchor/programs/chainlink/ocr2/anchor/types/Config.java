@@ -130,7 +130,7 @@ public record Config(PublicKey owner,
     i += 32;
     putInt32LE(_data, i, configCount);
     i += 4;
-    i += Borsh.writeArray(latestConfigDigest, _data, i);
+    i += Borsh.writeArrayChecked(latestConfigDigest, 32, _data, i);
     putInt64LE(_data, i, latestConfigBlockNumber);
     i += 8;
     i += Borsh.write(billing, _data, i);

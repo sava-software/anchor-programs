@@ -128,8 +128,8 @@ public record ObligationOrder(// A threshold value used by the condition (scaled
     ++i;
     _data[i] = (byte) opportunityType;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
-    i += Borsh.write128Array(padding2, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 10, _data, i);
+    i += Borsh.write128ArrayChecked(padding2, 5, _data, i);
     return i - offset;
   }
 

@@ -172,7 +172,7 @@ public record Position(PublicKey _address,
     i += 16;
     putInt64LE(_data, i, feeOwedB);
     i += 8;
-    i += Borsh.writeArray(rewardInfos, _data, i);
+    i += Borsh.writeArrayChecked(rewardInfos, 3, _data, i);
     return i - offset;
   }
 

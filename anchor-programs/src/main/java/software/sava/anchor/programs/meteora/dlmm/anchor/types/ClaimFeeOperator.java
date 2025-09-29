@@ -66,7 +66,7 @@ public record ClaimFeeOperator(PublicKey _address,
     int i = offset + discriminator.write(_data, offset);
     operator.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 128, _data, i);
     return i - offset;
   }
 

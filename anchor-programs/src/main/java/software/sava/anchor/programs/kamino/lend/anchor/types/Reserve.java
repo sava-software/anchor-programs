@@ -168,15 +168,15 @@ public record Reserve(PublicKey _address,
     farmDebt.write(_data, i);
     i += 32;
     i += Borsh.write(liquidity, _data, i);
-    i += Borsh.writeArray(reserveLiquidityPadding, _data, i);
+    i += Borsh.writeArrayChecked(reserveLiquidityPadding, 150, _data, i);
     i += Borsh.write(collateral, _data, i);
-    i += Borsh.writeArray(reserveCollateralPadding, _data, i);
+    i += Borsh.writeArrayChecked(reserveCollateralPadding, 150, _data, i);
     i += Borsh.write(config, _data, i);
-    i += Borsh.writeArray(configPadding, _data, i);
+    i += Borsh.writeArrayChecked(configPadding, 116, _data, i);
     putInt64LE(_data, i, borrowedAmountOutsideElevationGroup);
     i += 8;
-    i += Borsh.writeArray(borrowedAmountsAgainstThisReserveInElevationGroups, _data, i);
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(borrowedAmountsAgainstThisReserveInElevationGroups, 32, _data, i);
+    i += Borsh.writeArrayChecked(padding, 207, _data, i);
     return i - offset;
   }
 

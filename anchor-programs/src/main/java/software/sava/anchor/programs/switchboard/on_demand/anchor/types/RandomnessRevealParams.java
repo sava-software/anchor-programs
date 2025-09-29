@@ -27,10 +27,10 @@ public record RandomnessRevealParams(byte[] signature,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(signature, _data, i);
+    i += Borsh.writeArrayChecked(signature, 64, _data, i);
     _data[i] = (byte) recoveryId;
     ++i;
-    i += Borsh.writeArray(value, _data, i);
+    i += Borsh.writeArrayChecked(value, 32, _data, i);
     return i - offset;
   }
 

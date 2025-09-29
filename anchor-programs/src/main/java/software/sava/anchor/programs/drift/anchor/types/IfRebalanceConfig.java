@@ -255,7 +255,7 @@ public record IfRebalanceConfig(PublicKey _address,
     ++i;
     _data[i] = (byte) status;
     ++i;
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 32, _data, i);
     return i - offset;
   }
 

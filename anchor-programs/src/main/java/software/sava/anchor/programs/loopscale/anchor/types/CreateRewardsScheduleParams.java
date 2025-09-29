@@ -35,7 +35,7 @@ public record CreateRewardsScheduleParams(PodDecimal totalWeightedStakeSupply,
     i += Borsh.write(totalWeightedStakeSupply, _data, i);
     i += Borsh.write(rewardStartTime, _data, i);
     i += Borsh.write(rewardEndTime, _data, i);
-    i += Borsh.writeArray(durationStakeWeights, _data, i);
+    i += Borsh.writeArrayChecked(durationStakeWeights, 5, _data, i);
     return i - offset;
   }
 

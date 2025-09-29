@@ -55,8 +55,8 @@ public record SetPerpetualsConfigParams(boolean allowUngatedTrading,
     int i = offset;
     _data[i] = (byte) (allowUngatedTrading ? 1 : 0);
     ++i;
-    i += Borsh.writeArray(tradingDiscount, _data, i);
-    i += Borsh.writeArray(referralRebate, _data, i);
+    i += Borsh.writeArrayChecked(tradingDiscount, 6, _data, i);
+    i += Borsh.writeArrayChecked(referralRebate, 6, _data, i);
     putInt64LE(_data, i, defaultRebate);
     i += 8;
     i += Borsh.write(voltageMultiplier, _data, i);

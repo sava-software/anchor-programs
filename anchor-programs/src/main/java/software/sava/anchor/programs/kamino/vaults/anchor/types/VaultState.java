@@ -443,8 +443,8 @@ public record VaultState(PublicKey _address,
     i += 16;
     putInt128LE(_data, i, pendingFeesSf);
     i += 16;
-    i += Borsh.writeArray(vaultAllocationStrategy, _data, i);
-    i += Borsh.write128Array(padding1, _data, i);
+    i += Borsh.writeArrayChecked(vaultAllocationStrategy, 25, _data, i);
+    i += Borsh.write128ArrayChecked(padding1, 256, _data, i);
     putInt64LE(_data, i, minDepositAmount);
     i += 8;
     putInt64LE(_data, i, minWithdrawAmount);
@@ -463,7 +463,7 @@ public record VaultState(PublicKey _address,
     i += 16;
     putInt128LE(_data, i, cumulativePerfFeesSf);
     i += 16;
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(name, 40, _data, i);
     vaultLookupTable.write(_data, i);
     i += 32;
     vaultFarm.write(_data, i);
@@ -474,7 +474,7 @@ public record VaultState(PublicKey _address,
     i += 8;
     allocationAdmin.write(_data, i);
     i += 32;
-    i += Borsh.write128Array(padding3, _data, i);
+    i += Borsh.write128ArrayChecked(padding3, 242, _data, i);
     return i - offset;
   }
 

@@ -228,8 +228,8 @@ public record OperatorSnapshot(PublicKey _address,
     putInt64LE(_data, i, validOperatorVaultDelegations);
     i += 8;
     i += Borsh.write(stakeWeights, _data, i);
-    i += Borsh.writeArray(reserved, _data, i);
-    i += Borsh.writeArray(vaultOperatorStakeWeight, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 256, _data, i);
+    i += Borsh.writeArrayChecked(vaultOperatorStakeWeight, 64, _data, i);
     return i - offset;
   }
 

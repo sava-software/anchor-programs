@@ -43,7 +43,7 @@ public record MerkleRoot(// The 256-bit merkle root.
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(root, _data, i);
+    i += Borsh.writeArrayChecked(root, 32, _data, i);
     putInt64LE(_data, i, maxTotalClaim);
     i += 8;
     putInt64LE(_data, i, maxNumNodes);

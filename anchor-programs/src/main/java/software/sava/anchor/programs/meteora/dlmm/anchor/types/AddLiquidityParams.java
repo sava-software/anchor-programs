@@ -73,7 +73,7 @@ public record AddLiquidityParams(int minDeltaId,
     ++i;
     _data[i] = (byte) (favorXInActiveId ? 1 : 0);
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 16, _data, i);
     return i - offset;
   }
 

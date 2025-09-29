@@ -114,8 +114,8 @@ public record FeeUpdate(PublicKey _address,
     i += 4;
     putInt32LE(_data, i, incomingHurdleRate);
     i += 4;
-    i += Borsh.write128Array(padding, _data, i);
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.write128ArrayChecked(padding, 10, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 8, _data, i);
     return i - offset;
   }
 

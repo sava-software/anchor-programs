@@ -374,7 +374,7 @@ public record UserStats(PublicKey _address,
     ++i;
     _data[i] = (byte) (disableUpdatePerpBidAskTwap ? 1 : 0);
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 1, _data, i);
     _data[i] = (byte) fuelOverflowStatus;
     ++i;
     putInt32LE(_data, i, fuelInsurance);
@@ -393,7 +393,7 @@ public record UserStats(PublicKey _address,
     i += 8;
     putInt32LE(_data, i, lastFuelIfBonusUpdateTs);
     i += 4;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 12, _data, i);
     return i - offset;
   }
 

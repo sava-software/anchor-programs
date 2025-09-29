@@ -30,7 +30,7 @@ public record MostRecentOfData(short[] sourceEntries,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(sourceEntries, _data, i);
+    i += Borsh.writeArrayChecked(sourceEntries, 4, _data, i);
     putInt16LE(_data, i, maxDivergenceBps);
     i += 2;
     putInt64LE(_data, i, sourcesMaxAgeS);

@@ -12,8 +12,8 @@ import static software.sava.core.programs.Discriminator.createAnchorDiscriminato
 
 public record CollateralInfos(PublicKey _address, Discriminator discriminator, CollateralInfo[] infos) implements Borsh {
 
-  public static final int BYTES = 55304;
-  public static final int INFOS_LEN = 256;
+  public static final int BYTES = 65456;
+  public static final int INFOS_LEN = 303;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int INFOS_OFFSET = 8;
@@ -38,7 +38,7 @@ public record CollateralInfos(PublicKey _address, Discriminator discriminator, C
     }
     final var discriminator = createAnchorDiscriminator(_data, offset);
     int i = offset + discriminator.length();
-    final var infos = new CollateralInfo[256];
+    final var infos = new CollateralInfo[303];
     Borsh.readArray(infos, CollateralInfo::read, _data, i);
     return new CollateralInfos(_address, discriminator, infos);
   }
@@ -46,7 +46,7 @@ public record CollateralInfos(PublicKey _address, Discriminator discriminator, C
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(infos, _data, i);
+    i += Borsh.writeArrayChecked(infos, 303, _data, i);
     return i - offset;
   }
 

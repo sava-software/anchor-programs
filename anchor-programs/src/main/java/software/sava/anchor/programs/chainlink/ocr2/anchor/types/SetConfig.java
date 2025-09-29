@@ -23,10 +23,10 @@ public record SetConfig(byte[] configDigest,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(configDigest, _data, i);
+    i += Borsh.writeArrayChecked(configDigest, 32, _data, i);
     _data[i] = (byte) f;
     ++i;
-    i += Borsh.writeVectorArray(signers, _data, i);
+    i += Borsh.writeVectorArrayChecked(signers, 20, _data, i);
     return i - offset;
   }
 

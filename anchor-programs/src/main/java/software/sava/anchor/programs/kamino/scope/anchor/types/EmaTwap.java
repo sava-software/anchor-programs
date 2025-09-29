@@ -58,7 +58,7 @@ public record EmaTwap(long lastUpdateSlot,
     i += 8;
     putInt64LE(_data, i, padding0);
     i += 8;
-    i += Borsh.write128Array(padding1, _data, i);
+    i += Borsh.write128ArrayChecked(padding1, 39, _data, i);
     return i - offset;
   }
 

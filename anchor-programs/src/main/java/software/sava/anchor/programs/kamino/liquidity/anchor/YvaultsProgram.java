@@ -324,7 +324,7 @@ public final class YvaultsProgram {
     i += 8;
     putInt64LE(_data, i, mode);
     i += 8;
-    Borsh.writeArray(value, _data, i);
+    Borsh.writeArrayChecked(value, 32, _data, i);
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
@@ -363,7 +363,7 @@ public final class YvaultsProgram {
       i += 8;
       putInt64LE(_data, i, mode);
       i += 8;
-      i += Borsh.writeArray(value, _data, i);
+      i += Borsh.writeArrayChecked(value, 32, _data, i);
       return i - offset;
     }
 
@@ -616,7 +616,7 @@ public final class YvaultsProgram {
     i += 2;
     putInt16LE(_data, i, index);
     i += 2;
-    Borsh.writeArray(value, _data, i);
+    Borsh.writeArrayChecked(value, 32, _data, i);
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
@@ -655,7 +655,7 @@ public final class YvaultsProgram {
       i += 2;
       putInt16LE(_data, i, index);
       i += 2;
-      i += Borsh.writeArray(value, _data, i);
+      i += Borsh.writeArrayChecked(value, 32, _data, i);
       return i - offset;
     }
 
@@ -751,7 +751,7 @@ public final class YvaultsProgram {
     int i = UPDATE_STRATEGY_CONFIG_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, mode);
     i += 2;
-    Borsh.writeArray(value, _data, i);
+    Borsh.writeArrayChecked(value, 128, _data, i);
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
@@ -783,7 +783,7 @@ public final class YvaultsProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt16LE(_data, i, mode);
       i += 2;
-      i += Borsh.writeArray(value, _data, i);
+      i += Borsh.writeArrayChecked(value, 128, _data, i);
       return i - offset;
     }
 
@@ -2681,7 +2681,7 @@ public final class YvaultsProgram {
 
     final byte[] _data = new byte[8 + Borsh.lenArray(signature)];
     int i = SIGN_TERMS_DISCRIMINATOR.write(_data, 0);
-    Borsh.writeArray(signature, _data, i);
+    Borsh.writeArrayChecked(signature, 64, _data, i);
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, _data);
   }
@@ -2709,7 +2709,7 @@ public final class YvaultsProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeArray(signature, _data, i);
+      i += Borsh.writeArrayChecked(signature, 64, _data, i);
       return i - offset;
     }
 
@@ -2728,6 +2728,23 @@ public final class YvaultsProgram {
     );
 
     return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, UPDATE_STRATEGY_ADMIN_DISCRIMINATOR);
+  }
+
+  public static final Discriminator RESIZE_TOKEN_INFOS_DISCRIMINATOR = toDiscriminator(29, 211, 127, 192, 213, 128, 200, 187);
+
+  public static Instruction resizeTokenInfos(final AccountMeta invokedYvaultsProgramMeta,
+                                             final PublicKey signerKey,
+                                             final PublicKey tokenInfosKey,
+                                             final PublicKey systemProgramKey,
+                                             final PublicKey rentKey) {
+    final var keys = List.of(
+      createWritableSigner(signerKey),
+      createWrite(tokenInfosKey),
+      createRead(systemProgramKey),
+      createRead(rentKey)
+    );
+
+    return Instruction.createInstruction(invokedYvaultsProgramMeta, keys, RESIZE_TOKEN_INFOS_DISCRIMINATOR);
   }
 
   private YvaultsProgram() {

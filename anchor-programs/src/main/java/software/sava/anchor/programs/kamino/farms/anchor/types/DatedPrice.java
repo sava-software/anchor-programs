@@ -50,8 +50,8 @@ public record DatedPrice(Price price,
     i += 8;
     putInt64LE(_data, i, unixTimestamp);
     i += 8;
-    i += Borsh.writeArray(reserved, _data, i);
-    i += Borsh.writeArray(reserved2, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 2, _data, i);
+    i += Borsh.writeArrayChecked(reserved2, 3, _data, i);
     putInt16LE(_data, i, index);
     i += 2;
     return i - offset;

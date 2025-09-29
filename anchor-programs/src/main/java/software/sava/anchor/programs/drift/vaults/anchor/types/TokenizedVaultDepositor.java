@@ -241,8 +241,8 @@ public record TokenizedVaultDepositor(PublicKey _address,
     i += 4;
     _data[i] = (byte) bump;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 3, _data, i);
+    i += Borsh.writeArrayChecked(padding, 10, _data, i);
     return i - offset;
   }
 

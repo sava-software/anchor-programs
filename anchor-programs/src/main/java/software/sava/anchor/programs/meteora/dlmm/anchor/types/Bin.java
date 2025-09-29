@@ -75,7 +75,7 @@ public record Bin(// Amount of token X in the bin. This already excluded protoco
     i += 16;
     putInt128LE(_data, i, liquiditySupply);
     i += 16;
-    i += Borsh.write128Array(rewardPerTokenStored, _data, i);
+    i += Borsh.write128ArrayChecked(rewardPerTokenStored, 2, _data, i);
     putInt128LE(_data, i, feeAmountXPerTokenStored);
     i += 16;
     putInt128LE(_data, i, feeAmountYPerTokenStored);

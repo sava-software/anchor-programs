@@ -122,7 +122,7 @@ public record StateModel(AccountType accountType,
       _data[i++] = 0;
     } else {
       _data[i++] = 1;
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
     }
     i += Borsh.writeOptionalVector(_uri, _data, i);
     i += Borsh.writeOptional(enabled, _data, i);
@@ -138,7 +138,7 @@ public record StateModel(AccountType accountType,
       _data[i++] = 0;
     } else {
       _data[i++] = 1;
-      i += Borsh.writeArray(portfolioManagerName, _data, i);
+      i += Borsh.writeArrayChecked(portfolioManagerName, 32, _data, i);
     }
     if (borrowable == null || borrowable.length == 0) {
       _data[i++] = 0;

@@ -40,7 +40,7 @@ public record StrategyParameters(int minBinId,
     putInt32LE(_data, i, maxBinId);
     i += 4;
     i += Borsh.write(strategyType, _data, i);
-    i += Borsh.writeArray(parameteres, _data, i);
+    i += Borsh.writeArrayChecked(parameteres, 64, _data, i);
     return i - offset;
   }
 

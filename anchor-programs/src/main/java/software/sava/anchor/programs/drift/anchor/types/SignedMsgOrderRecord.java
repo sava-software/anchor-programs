@@ -76,7 +76,7 @@ public record SignedMsgOrderRecord(PublicKey user,
     i += 4;
     putInt64LE(_data, i, signedMsgOrderMaxSlot);
     i += 8;
-    i += Borsh.writeArray(signedMsgOrderUuid, _data, i);
+    i += Borsh.writeArrayChecked(signedMsgOrderUuid, 8, _data, i);
     putInt64LE(_data, i, ts);
     i += 8;
     return i - offset;

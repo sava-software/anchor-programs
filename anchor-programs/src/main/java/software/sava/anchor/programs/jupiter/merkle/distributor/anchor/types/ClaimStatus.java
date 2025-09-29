@@ -174,7 +174,7 @@ public record ClaimStatus(PublicKey _address,
     i += 8;
     _data[i] = (byte) closable;
     ++i;
-    i += Borsh.writeArray(padding0, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 7, _data, i);
     putInt128LE(_data, i, padding1);
     i += 16;
     return i - offset;

@@ -60,15 +60,15 @@ public record GuardianQuoteVerifyParams(long timestamp,
     int i = offset;
     putInt64LE(_data, i, timestamp);
     i += 8;
-    i += Borsh.writeArray(mrEnclave, _data, i);
+    i += Borsh.writeArrayChecked(mrEnclave, 32, _data, i);
     putInt32LE(_data, i, reserved1);
     i += 4;
     ed25519Key.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(secp256k1Key, _data, i);
+    i += Borsh.writeArrayChecked(secp256k1Key, 64, _data, i);
     putInt64LE(_data, i, slot);
     i += 8;
-    i += Borsh.writeArray(signature, _data, i);
+    i += Borsh.writeArrayChecked(signature, 64, _data, i);
     _data[i] = (byte) recoveryId;
     ++i;
     i += Borsh.writeVector(advisories, _data, i);

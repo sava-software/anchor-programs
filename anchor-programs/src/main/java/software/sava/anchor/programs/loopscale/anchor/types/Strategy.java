@@ -348,7 +348,7 @@ public record Strategy(PublicKey _address,
     i += Borsh.write(activeLoanCount, _data, i);
     marketInformation.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(collateralMap, _data, i);
+    i += Borsh.writeArrayChecked(collateralMap, 200, _data, i);
     i += Borsh.write(externalYieldAccounts, _data, i);
     i += Borsh.write(supplyMonitor, _data, i);
     i += Borsh.write(withdrawMonitor, _data, i);

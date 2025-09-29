@@ -15,7 +15,7 @@ public record ProofInfo(byte[][] proof) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeVectorArray(proof, _data, i);
+    i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
     return i - offset;
   }
 

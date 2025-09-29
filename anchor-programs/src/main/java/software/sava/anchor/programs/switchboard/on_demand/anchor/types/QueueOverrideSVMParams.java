@@ -35,10 +35,10 @@ public record QueueOverrideSVMParams(byte[] secp256k1Signer,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(secp256k1Signer, _data, i);
+    i += Borsh.writeArrayChecked(secp256k1Signer, 64, _data, i);
     putInt64LE(_data, i, maxQuoteVerificationAge);
     i += 8;
-    i += Borsh.writeArray(mrEnclave, _data, i);
+    i += Borsh.writeArrayChecked(mrEnclave, 32, _data, i);
     putInt64LE(_data, i, slot);
     i += 8;
     return i - offset;

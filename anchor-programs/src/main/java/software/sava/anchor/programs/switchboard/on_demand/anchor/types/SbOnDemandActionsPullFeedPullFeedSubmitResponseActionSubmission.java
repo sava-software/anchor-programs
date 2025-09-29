@@ -38,7 +38,7 @@ public record SbOnDemandActionsPullFeedPullFeedSubmitResponseActionSubmission(Bi
     int i = offset;
     putInt128LE(_data, i, value);
     i += 16;
-    i += Borsh.writeArray(signature, _data, i);
+    i += Borsh.writeArrayChecked(signature, 64, _data, i);
     _data[i] = (byte) recoveryId;
     ++i;
     _data[i] = (byte) _offset;

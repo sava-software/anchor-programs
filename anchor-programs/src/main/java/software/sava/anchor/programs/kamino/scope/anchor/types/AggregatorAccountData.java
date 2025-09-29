@@ -125,8 +125,8 @@ public record AggregatorAccountData(byte[] name,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(name, _data, i);
-    i += Borsh.writeArray(metadata, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
+    i += Borsh.writeArrayChecked(metadata, 128, _data, i);
     authorWallet.write(_data, i);
     i += 32;
     queuePubkey.write(_data, i);
@@ -152,17 +152,17 @@ public record AggregatorAccountData(byte[] name,
     i += 8;
     _data[i] = (byte) (isLocked ? 1 : 0);
     ++i;
-    i += Borsh.writeArray(schedule, _data, i);
+    i += Borsh.writeArrayChecked(schedule, 32, _data, i);
     i += Borsh.write(latestConfirmedRound, _data, i);
     i += Borsh.write(currentRound, _data, i);
-    i += Borsh.writeArray(jobPubkeysData, _data, i);
-    i += Borsh.writeArray(jobHashes, _data, i);
+    i += Borsh.writeArrayChecked(jobPubkeysData, 16, _data, i);
+    i += Borsh.writeArrayChecked(jobHashes, 16, _data, i);
     putInt32LE(_data, i, jobPubkeysSize);
     i += 4;
-    i += Borsh.writeArray(jobsChecksum, _data, i);
+    i += Borsh.writeArrayChecked(jobsChecksum, 32, _data, i);
     authority.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(ebuf, _data, i);
+    i += Borsh.writeArrayChecked(ebuf, 224, _data, i);
     return i - offset;
   }
 

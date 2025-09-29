@@ -85,9 +85,9 @@ public record VaultRegistry(PublicKey _address,
     i += 32;
     _data[i] = (byte) bump;
     ++i;
-    i += Borsh.writeArray(reserved, _data, i);
-    i += Borsh.writeArray(stMintList, _data, i);
-    i += Borsh.writeArray(vaultList, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 127, _data, i);
+    i += Borsh.writeArrayChecked(stMintList, 64, _data, i);
+    i += Borsh.writeArrayChecked(vaultList, 64, _data, i);
     return i - offset;
   }
 

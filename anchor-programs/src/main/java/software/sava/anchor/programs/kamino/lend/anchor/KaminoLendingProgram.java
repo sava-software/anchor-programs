@@ -55,7 +55,7 @@ public final class KaminoLendingProgram {
 
     final byte[] _data = new byte[8 + Borsh.lenArray(quoteCurrency)];
     int i = INIT_LENDING_MARKET_DISCRIMINATOR.write(_data, 0);
-    Borsh.writeArray(quoteCurrency, _data, i);
+    Borsh.writeArrayChecked(quoteCurrency, 32, _data, i);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
@@ -83,7 +83,7 @@ public final class KaminoLendingProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeArray(quoteCurrency, _data, i);
+      i += Borsh.writeArrayChecked(quoteCurrency, 32, _data, i);
       return i - offset;
     }
 
@@ -109,7 +109,7 @@ public final class KaminoLendingProgram {
     int i = UPDATE_LENDING_MARKET_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, mode);
     i += 8;
-    Borsh.writeArray(value, _data, i);
+    Borsh.writeArrayChecked(value, 72, _data, i);
 
     return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, _data);
   }
@@ -141,7 +141,7 @@ public final class KaminoLendingProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, mode);
       i += 8;
-      i += Borsh.writeArray(value, _data, i);
+      i += Borsh.writeArrayChecked(value, 72, _data, i);
       return i - offset;
     }
 

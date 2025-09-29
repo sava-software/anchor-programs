@@ -30,7 +30,7 @@ public record InitializeLbPair2Params(// Pool price
     int i = offset;
     putInt32LE(_data, i, activeId);
     i += 4;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 96, _data, i);
     return i - offset;
   }
 

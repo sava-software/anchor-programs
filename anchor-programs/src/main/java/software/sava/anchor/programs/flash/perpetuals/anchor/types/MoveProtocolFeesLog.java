@@ -61,7 +61,7 @@ public record MoveProtocolFeesLog(String poolName, byte[] _poolName,
     i += 8;
     putInt64LE(_data, i, revenueFeeShare);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 2, _data, i);
     return i - offset;
   }
 

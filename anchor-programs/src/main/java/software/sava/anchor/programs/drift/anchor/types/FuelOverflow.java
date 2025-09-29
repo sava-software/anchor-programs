@@ -173,7 +173,7 @@ public record FuelOverflow(PublicKey _address,
     i += 4;
     putInt32LE(_data, i, lastResetTs);
     i += 4;
-    i += Borsh.write128Array(padding, _data, i);
+    i += Borsh.write128ArrayChecked(padding, 6, _data, i);
     return i - offset;
   }
 

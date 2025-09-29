@@ -53,7 +53,7 @@ public record PlatformCurveParam(// The epoch for update interval, 0 means not u
     globalConfig.write(_data, i);
     i += 32;
     i += Borsh.write(bondingCurveParam, _data, i);
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 50, _data, i);
     return i - offset;
   }
 

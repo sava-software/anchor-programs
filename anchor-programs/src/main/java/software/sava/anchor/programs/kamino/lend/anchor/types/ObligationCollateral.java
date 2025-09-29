@@ -61,7 +61,7 @@ public record ObligationCollateral(// Reserve collateral is deposited to
     i += 16;
     putInt64LE(_data, i, borrowedAmountAgainstThisCollateralInElevationGroup);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 9, _data, i);
     return i - offset;
   }
 

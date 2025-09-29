@@ -33,7 +33,7 @@ public record Progress(long tally,
     i += 8;
     putInt64LE(_data, i, total);
     i += 8;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 8, _data, i);
     return i - offset;
   }
 

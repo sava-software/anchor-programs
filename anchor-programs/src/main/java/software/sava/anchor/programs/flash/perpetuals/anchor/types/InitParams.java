@@ -47,8 +47,8 @@ public record InitParams(int minSignatures,
     ++i;
     i += Borsh.write(permissions, _data, i);
     i += Borsh.write(voltageMultiplier, _data, i);
-    i += Borsh.writeArray(tradingDiscount, _data, i);
-    i += Borsh.writeArray(referralRebate, _data, i);
+    i += Borsh.writeArrayChecked(tradingDiscount, 6, _data, i);
+    i += Borsh.writeArrayChecked(referralRebate, 6, _data, i);
     putInt64LE(_data, i, defaultRebate);
     i += 8;
     return i - offset;

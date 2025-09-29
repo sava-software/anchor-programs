@@ -321,8 +321,8 @@ public record QueueAccountData(PublicKey _address,
     int i = offset + discriminator.write(_data, offset);
     authority.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(mrEnclaves, _data, i);
-    i += Borsh.writeArray(oracleKeys, _data, i);
+    i += Borsh.writeArrayChecked(mrEnclaves, 32, _data, i);
+    i += Borsh.writeArrayChecked(oracleKeys, 128, _data, i);
     putInt64LE(_data, i, maxQuoteVerificationAge);
     i += 8;
     putInt64LE(_data, i, lastHeartbeat);
@@ -357,15 +357,15 @@ public record QueueAccountData(PublicKey _address,
     i += 8;
     _data[i] = (byte) allowSubsidies;
     ++i;
-    i += Borsh.writeArray(ebuf6, _data, i);
+    i += Borsh.writeArrayChecked(ebuf6, 15, _data, i);
     ncn.write(_data, i);
     i += 32;
     putInt64LE(_data, i, resrved);
     i += 8;
-    i += Borsh.writeArray(vaults, _data, i);
-    i += Borsh.writeArray(ebuf4, _data, i);
-    i += Borsh.writeArray(ebuf2, _data, i);
-    i += Borsh.writeArray(ebuf1, _data, i);
+    i += Borsh.writeArrayChecked(vaults, 4, _data, i);
+    i += Borsh.writeArrayChecked(ebuf4, 32, _data, i);
+    i += Borsh.writeArrayChecked(ebuf2, 256, _data, i);
+    i += Borsh.writeArrayChecked(ebuf1, 512, _data, i);
     return i - offset;
   }
 

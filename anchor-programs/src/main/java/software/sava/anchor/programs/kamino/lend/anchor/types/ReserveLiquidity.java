@@ -148,8 +148,8 @@ public record ReserveLiquidity(// Reserve liquidity mint address
     i += 16;
     tokenProgram.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding2, _data, i);
-    i += Borsh.write128Array(padding3, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 51, _data, i);
+    i += Borsh.write128ArrayChecked(padding3, 32, _data, i);
     return i - offset;
   }
 

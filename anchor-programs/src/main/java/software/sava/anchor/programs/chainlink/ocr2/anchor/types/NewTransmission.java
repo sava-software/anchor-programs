@@ -63,7 +63,7 @@ public record NewTransmission(int roundId,
     int i = offset;
     putInt32LE(_data, i, roundId);
     i += 4;
-    i += Borsh.writeArray(configDigest, _data, i);
+    i += Borsh.writeArrayChecked(configDigest, 32, _data, i);
     putInt128LE(_data, i, answer);
     i += 16;
     _data[i] = (byte) transmitter;
@@ -72,7 +72,7 @@ public record NewTransmission(int roundId,
     i += 4;
     _data[i] = (byte) observerCount;
     ++i;
-    i += Borsh.writeArray(observers, _data, i);
+    i += Borsh.writeArrayChecked(observers, 19, _data, i);
     putInt64LE(_data, i, juelsPerLamport);
     i += 8;
     putInt64LE(_data, i, reimbursementGjuels);

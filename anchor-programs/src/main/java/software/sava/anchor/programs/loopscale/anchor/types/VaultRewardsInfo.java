@@ -73,7 +73,7 @@ public record VaultRewardsInfo(PublicKey _address,
     i += 32;
     _data[i] = (byte) bump;
     ++i;
-    i += Borsh.writeArray(schedules, _data, i);
+    i += Borsh.writeArrayChecked(schedules, 5, _data, i);
     return i - offset;
   }
 

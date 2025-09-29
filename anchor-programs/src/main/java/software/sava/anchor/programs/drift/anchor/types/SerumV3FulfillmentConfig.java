@@ -211,7 +211,7 @@ public record SerumV3FulfillmentConfig(PublicKey _address,
     i += 2;
     i += Borsh.write(fulfillmentType, _data, i);
     i += Borsh.write(status, _data, i);
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 4, _data, i);
     return i - offset;
   }
 

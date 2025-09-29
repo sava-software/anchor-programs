@@ -95,7 +95,7 @@ public record Referral(PublicKey _address,
     i += 32;
     refererBoosterAccount.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 4, _data, i);
     return i - offset;
   }
 

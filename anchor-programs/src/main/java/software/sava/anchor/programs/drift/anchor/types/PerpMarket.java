@@ -494,7 +494,7 @@ public record PerpMarket(PublicKey _address,
     i += 32;
     i += Borsh.write(amm, _data, i);
     i += Borsh.write(pnlPool, _data, i);
-    i += Borsh.writeArray(name, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
     i += Borsh.write(insuranceClaim, _data, i);
     putInt64LE(_data, i, unrealizedPnlMaxImbalance);
     i += 8;
@@ -559,7 +559,7 @@ public record PerpMarket(PublicKey _address,
     i += 4;
     putInt64LE(_data, i, lastFillPrice);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 24, _data, i);
     return i - offset;
   }
 

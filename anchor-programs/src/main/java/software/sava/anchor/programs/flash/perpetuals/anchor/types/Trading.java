@@ -200,7 +200,7 @@ public record Trading(PublicKey _address,
     i += 32;
     _data[i] = (byte) (burnt ? 1 : 0);
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 15, _data, i);
     return i - offset;
   }
 

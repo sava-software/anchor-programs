@@ -26,8 +26,8 @@ public record RebalanceRaw(byte[] params,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(params, _data, i);
-    i += Borsh.writeArray(state, _data, i);
+    i += Borsh.writeArrayChecked(params, 128, _data, i);
+    i += Borsh.writeArrayChecked(state, 256, _data, i);
     _data[i] = (byte) referencePriceType;
     ++i;
     return i - offset;

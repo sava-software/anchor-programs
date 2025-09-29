@@ -253,12 +253,12 @@ public record PullFeedAccountData(PublicKey _address,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(submissions, _data, i);
+    i += Borsh.writeArrayChecked(submissions, 32, _data, i);
     authority.write(_data, i);
     i += 32;
     queue.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(feedHash, _data, i);
+    i += Borsh.writeArrayChecked(feedHash, 32, _data, i);
     putInt64LE(_data, i, initializedAt);
     i += 8;
     putInt64LE(_data, i, permissions);
@@ -267,8 +267,8 @@ public record PullFeedAccountData(PublicKey _address,
     i += 8;
     putInt32LE(_data, i, minResponses);
     i += 4;
-    i += Borsh.writeArray(name, _data, i);
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 1, _data, i);
     _data[i] = (byte) permitWriteByAuthority;
     ++i;
     _data[i] = (byte) historicalResultIdx;
@@ -279,15 +279,15 @@ public record PullFeedAccountData(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, lutSlot);
     i += 8;
-    i += Borsh.writeArray(reserved1, _data, i);
+    i += Borsh.writeArrayChecked(reserved1, 32, _data, i);
     i += Borsh.write(result, _data, i);
     putInt32LE(_data, i, maxStaleness);
     i += 4;
-    i += Borsh.writeArray(padding2, _data, i);
-    i += Borsh.writeArray(historicalResults, _data, i);
-    i += Borsh.writeArray(ebuf4, _data, i);
-    i += Borsh.writeArray(ebuf3, _data, i);
-    i += Borsh.writeArray(submissionTimestamps, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 12, _data, i);
+    i += Borsh.writeArrayChecked(historicalResults, 32, _data, i);
+    i += Borsh.writeArrayChecked(ebuf4, 8, _data, i);
+    i += Borsh.writeArrayChecked(ebuf3, 24, _data, i);
+    i += Borsh.writeArrayChecked(submissionTimestamps, 32, _data, i);
     return i - offset;
   }
 

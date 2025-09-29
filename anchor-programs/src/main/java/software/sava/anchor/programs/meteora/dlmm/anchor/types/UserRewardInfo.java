@@ -25,8 +25,8 @@ public record UserRewardInfo(BigInteger[] rewardPerTokenCompletes, long[] reward
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.write128Array(rewardPerTokenCompletes, _data, i);
-    i += Borsh.writeArray(rewardPendings, _data, i);
+    i += Borsh.write128ArrayChecked(rewardPerTokenCompletes, 2, _data, i);
+    i += Borsh.writeArrayChecked(rewardPendings, 2, _data, i);
     return i - offset;
   }
 

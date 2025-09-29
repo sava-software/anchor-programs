@@ -27,7 +27,7 @@ public record ExpectedLoanValues(long expectedApy, int[] expectedLqt) implements
     int i = offset;
     putInt64LE(_data, i, expectedApy);
     i += 8;
-    i += Borsh.writeArray(expectedLqt, _data, i);
+    i += Borsh.writeArrayChecked(expectedLqt, 5, _data, i);
     return i - offset;
   }
 

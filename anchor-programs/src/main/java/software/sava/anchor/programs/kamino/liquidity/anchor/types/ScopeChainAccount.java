@@ -46,7 +46,7 @@ public record ScopeChainAccount(PublicKey _address, Discriminator discriminator,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(chainArray, _data, i);
+    i += Borsh.writeArrayChecked(chainArray, 512, _data, i);
     return i - offset;
   }
 

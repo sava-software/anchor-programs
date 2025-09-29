@@ -403,7 +403,7 @@ public final class AlphaVaultProgram {
     int i = CREATE_PERMISSIONED_ESCROW_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, maxCap);
     i += 8;
-    Borsh.writeVectorArray(proof, _data, i);
+    Borsh.writeVectorArrayChecked(proof, 32, _data, i);
 
     return Instruction.createInstruction(invokedAlphaVaultProgramMeta, keys, _data);
   }
@@ -431,7 +431,7 @@ public final class AlphaVaultProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt64LE(_data, i, maxCap);
       i += 8;
-      i += Borsh.writeVectorArray(proof, _data, i);
+      i += Borsh.writeVectorArrayChecked(proof, 32, _data, i);
       return i - offset;
     }
 

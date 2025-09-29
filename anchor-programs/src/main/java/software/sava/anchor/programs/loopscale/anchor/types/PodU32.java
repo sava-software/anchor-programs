@@ -20,7 +20,7 @@ public record PodU32(byte[] _array) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(_array, _data, i);
+    i += Borsh.writeArrayChecked(_array, 4, _data, i);
     return i - offset;
   }
 

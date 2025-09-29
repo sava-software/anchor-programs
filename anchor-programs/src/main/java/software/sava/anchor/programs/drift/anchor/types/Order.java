@@ -208,7 +208,7 @@ public record Order(// The slot the order was placed
     ++i;
     _data[i] = (byte) bitFlags;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 1, _data, i);
     return i - offset;
   }
 

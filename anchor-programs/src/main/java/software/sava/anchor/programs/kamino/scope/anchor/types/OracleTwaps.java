@@ -69,7 +69,7 @@ public record OracleTwaps(PublicKey _address,
     i += 32;
     oracleMappings.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(twaps, _data, i);
+    i += Borsh.writeArrayChecked(twaps, 512, _data, i);
     return i - offset;
   }
 

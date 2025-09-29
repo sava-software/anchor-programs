@@ -78,7 +78,7 @@ public record PullFeedSetConfigsParams(byte[] feedHash,
       _data[i++] = 0;
     } else {
       _data[i++] = 1;
-      i += Borsh.writeArray(feedHash, _data, i);
+      i += Borsh.writeArrayChecked(feedHash, 32, _data, i);
     }
     i += Borsh.writeOptional(authority, _data, i);
     i += Borsh.writeOptional(maxVariance, _data, i);
@@ -87,13 +87,13 @@ public record PullFeedSetConfigsParams(byte[] feedHash,
       _data[i++] = 0;
     } else {
       _data[i++] = 1;
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
     }
     if (ipfsHash == null || ipfsHash.length == 0) {
       _data[i++] = 0;
     } else {
       _data[i++] = 1;
-      i += Borsh.writeArray(ipfsHash, _data, i);
+      i += Borsh.writeArrayChecked(ipfsHash, 32, _data, i);
     }
     i += Borsh.writeOptionalbyte(minSampleSize, _data, i);
     i += Borsh.writeOptional(maxStaleness, _data, i);

@@ -146,7 +146,7 @@ public record Governor(PublicKey _address,
     i += 32;
     i += Borsh.write(params, _data, i);
     i += Borsh.write(votingReward, _data, i);
-    i += Borsh.write128Array(buffers, _data, i);
+    i += Borsh.write128ArrayChecked(buffers, 32, _data, i);
     return i - offset;
   }
 

@@ -135,7 +135,7 @@ public record IncreaseSizeLogV4(PublicKey owner,
     i += 4;
     _data[i] = (byte) (isDegen ? 1 : 0);
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 31, _data, i);
     return i - offset;
   }
 

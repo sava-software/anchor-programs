@@ -82,7 +82,7 @@ public record NewDistributorParams(long version,
     int i = offset;
     putInt64LE(_data, i, version);
     i += 8;
-    i += Borsh.writeArray(root, _data, i);
+    i += Borsh.writeArrayChecked(root, 32, _data, i);
     putInt64LE(_data, i, totalClaim);
     i += 8;
     putInt64LE(_data, i, maxNumNodes);

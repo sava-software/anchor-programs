@@ -27,7 +27,7 @@ public record MintToScopeChain(PublicKey mint, short[] scopeChain) implements Bo
     int i = offset;
     mint.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(scopeChain, _data, i);
+    i += Borsh.writeArrayChecked(scopeChain, 4, _data, i);
     return i - offset;
   }
 

@@ -23,8 +23,8 @@ public record BigFractionBytes(long[] value, long[] padding) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(value, _data, i);
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(value, 4, _data, i);
+    i += Borsh.writeArrayChecked(padding, 2, _data, i);
     return i - offset;
   }
 

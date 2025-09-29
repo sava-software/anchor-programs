@@ -307,7 +307,7 @@ public record MerkleDistributor(PublicKey _address,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(root, _data, i);
+    i += Borsh.writeArrayChecked(root, 32, _data, i);
     mint.write(_data, i);
     i += 32;
     base.write(_data, i);
@@ -350,9 +350,9 @@ public record MerkleDistributor(PublicKey _address,
     ++i;
     _data[i] = (byte) closable;
     ++i;
-    i += Borsh.writeArray(padding0, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 3, _data, i);
     i += Borsh.write(airdropBonus, _data, i);
-    i += Borsh.write128Array(padding2, _data, i);
+    i += Borsh.write128ArrayChecked(padding2, 5, _data, i);
     return i - offset;
   }
 

@@ -168,12 +168,12 @@ public record Escrow(PublicKey _address,
     i += 8;
     _data[i] = (byte) refunded;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 7, _data, i);
     putInt64LE(_data, i, maxCap);
     i += 8;
     putInt64LE(_data, i, withdrawnDepositOverflow);
     i += 8;
-    i += Borsh.write128Array(padding, _data, i);
+    i += Borsh.write128ArrayChecked(padding, 1, _data, i);
     return i - offset;
   }
 

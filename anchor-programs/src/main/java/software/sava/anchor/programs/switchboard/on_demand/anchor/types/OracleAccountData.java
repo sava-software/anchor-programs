@@ -199,22 +199,22 @@ public record OracleAccountData(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, lastHeartbeat);
     i += 8;
-    i += Borsh.writeArray(secpAuthority, _data, i);
-    i += Borsh.writeArray(gatewayUri, _data, i);
+    i += Borsh.writeArrayChecked(secpAuthority, 64, _data, i);
+    i += Borsh.writeArrayChecked(gatewayUri, 64, _data, i);
     putInt64LE(_data, i, permissions);
     i += 8;
     _data[i] = (byte) isOnQueue;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 7, _data, i);
     putInt64LE(_data, i, lutSlot);
     i += 8;
     putInt64LE(_data, i, lastRewardEpoch);
     i += 8;
     operator.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(ebuf3, _data, i);
-    i += Borsh.writeArray(ebuf2, _data, i);
-    i += Borsh.writeArray(ebuf1, _data, i);
+    i += Borsh.writeArrayChecked(ebuf3, 16, _data, i);
+    i += Borsh.writeArrayChecked(ebuf2, 64, _data, i);
+    i += Borsh.writeArrayChecked(ebuf1, 1024, _data, i);
     return i - offset;
   }
 

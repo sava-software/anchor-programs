@@ -36,7 +36,7 @@ public record SignedMsgOrderId(byte[] uuid,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(uuid, _data, i);
+    i += Borsh.writeArrayChecked(uuid, 8, _data, i);
     putInt64LE(_data, i, maxSlot);
     i += 8;
     putInt32LE(_data, i, orderId);

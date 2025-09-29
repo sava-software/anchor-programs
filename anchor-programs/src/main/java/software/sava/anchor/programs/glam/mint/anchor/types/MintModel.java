@@ -142,7 +142,7 @@ public record MintModel(String symbol, byte[] _symbol,
       _data[i++] = 0;
     } else {
       _data[i++] = 1;
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
     }
     i += Borsh.writeOptionalVector(_uri, _data, i);
     i += Borsh.writeOptional(yearInSeconds, _data, i);

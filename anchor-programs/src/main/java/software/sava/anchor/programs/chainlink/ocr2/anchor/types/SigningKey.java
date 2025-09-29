@@ -19,7 +19,7 @@ public record SigningKey(byte[] key) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(key, _data, i);
+    i += Borsh.writeArrayChecked(key, 20, _data, i);
     return i - offset;
   }
 

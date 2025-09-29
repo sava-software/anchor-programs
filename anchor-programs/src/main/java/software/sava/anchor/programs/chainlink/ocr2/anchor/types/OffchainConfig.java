@@ -30,7 +30,7 @@ public record OffchainConfig(long version,
     int i = offset;
     putInt64LE(_data, i, version);
     i += 8;
-    i += Borsh.writeArray(xs, _data, i);
+    i += Borsh.writeArrayChecked(xs, 4096, _data, i);
     putInt64LE(_data, i, len);
     i += 8;
     return i - offset;

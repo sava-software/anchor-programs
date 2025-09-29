@@ -50,7 +50,7 @@ public record OperatorVote(PublicKey operator,
     i += Borsh.write(stakeWeights, _data, i);
     putInt16LE(_data, i, ballotIndex);
     i += 2;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 64, _data, i);
     return i - offset;
   }
 

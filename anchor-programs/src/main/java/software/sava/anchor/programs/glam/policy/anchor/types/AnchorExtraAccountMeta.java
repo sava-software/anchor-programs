@@ -33,7 +33,7 @@ public record AnchorExtraAccountMeta(int discriminator,
     int i = offset;
     _data[i] = (byte) discriminator;
     ++i;
-    i += Borsh.writeArray(addressConfig, _data, i);
+    i += Borsh.writeArrayChecked(addressConfig, 32, _data, i);
     _data[i] = (byte) (isSigner ? 1 : 0);
     ++i;
     _data[i] = (byte) (isWritable ? 1 : 0);

@@ -191,16 +191,16 @@ public record BaseRewardRouter(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, rewardsProcessed);
     i += 8;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 128, _data, i);
     _data[i] = (byte) lastNcnGroupIndex;
     ++i;
     putInt16LE(_data, i, lastVoteIndex);
     i += 2;
     putInt64LE(_data, i, lastRewardsToProcess);
     i += 8;
-    i += Borsh.writeArray(baseFeeGroupRewards, _data, i);
-    i += Borsh.writeArray(ncnFeeGroupRewards, _data, i);
-    i += Borsh.writeArray(ncnFeeGroupRewardRoutes, _data, i);
+    i += Borsh.writeArrayChecked(baseFeeGroupRewards, 8, _data, i);
+    i += Borsh.writeArrayChecked(ncnFeeGroupRewards, 8, _data, i);
+    i += Borsh.writeArrayChecked(ncnFeeGroupRewardRoutes, 256, _data, i);
     return i - offset;
   }
 

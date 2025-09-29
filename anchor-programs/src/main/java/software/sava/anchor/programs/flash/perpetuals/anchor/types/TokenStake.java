@@ -208,7 +208,7 @@ public record TokenStake(PublicKey _address,
     ++i;
     _data[i] = (byte) withdrawRequestCount;
     ++i;
-    i += Borsh.writeArray(withdrawRequest, _data, i);
+    i += Borsh.writeArrayChecked(withdrawRequest, 5, _data, i);
     putInt64LE(_data, i, activeStakeAmount);
     i += 8;
     putInt64LE(_data, i, updateTimestamp);
@@ -225,7 +225,7 @@ public record TokenStake(PublicKey _address,
     i += 8;
     putInt128LE(_data, i, revenueSnapshot);
     i += 16;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 1, _data, i);
     return i - offset;
   }
 

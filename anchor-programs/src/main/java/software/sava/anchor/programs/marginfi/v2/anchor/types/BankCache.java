@@ -67,7 +67,7 @@ public record BankCache(// Actual (spot) interest/fee rates of the bank, based o
     putInt32LE(_data, i, interestAccumulatedFor);
     i += 4;
     i += Borsh.write(accumulatedSinceLastUpdate, _data, i);
-    i += Borsh.writeArray(reserved0, _data, i);
+    i += Borsh.writeArrayChecked(reserved0, 128, _data, i);
     return i - offset;
   }
 

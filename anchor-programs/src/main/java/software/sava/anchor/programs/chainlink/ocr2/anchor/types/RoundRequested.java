@@ -36,7 +36,7 @@ public record RoundRequested(byte[] configDigest,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(configDigest, _data, i);
+    i += Borsh.writeArrayChecked(configDigest, 32, _data, i);
     requester.write(_data, i);
     i += 32;
     putInt32LE(_data, i, epoch);

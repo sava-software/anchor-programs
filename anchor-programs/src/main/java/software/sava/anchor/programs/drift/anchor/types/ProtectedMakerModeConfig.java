@@ -89,7 +89,7 @@ public record ProtectedMakerModeConfig(PublicKey _address,
     i += 4;
     _data[i] = (byte) reduceOnly;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 31, _data, i);
     return i - offset;
   }
 

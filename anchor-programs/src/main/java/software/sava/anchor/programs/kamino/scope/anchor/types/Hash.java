@@ -19,7 +19,7 @@ public record Hash(byte[] data) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(data, _data, i);
+    i += Borsh.writeArrayChecked(data, 32, _data, i);
     return i - offset;
   }
 

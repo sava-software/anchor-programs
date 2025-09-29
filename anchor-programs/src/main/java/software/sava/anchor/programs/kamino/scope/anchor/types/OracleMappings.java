@@ -80,12 +80,12 @@ public record OracleMappings(PublicKey _address,
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset + discriminator.write(_data, offset);
-    i += Borsh.writeArray(priceInfoAccounts, _data, i);
-    i += Borsh.writeArray(priceTypes, _data, i);
-    i += Borsh.writeArray(twapSource, _data, i);
-    i += Borsh.writeArray(twapEnabled, _data, i);
-    i += Borsh.writeArray(refPrice, _data, i);
-    i += Borsh.writeArray(generic, _data, i);
+    i += Borsh.writeArrayChecked(priceInfoAccounts, 512, _data, i);
+    i += Borsh.writeArrayChecked(priceTypes, 512, _data, i);
+    i += Borsh.writeArrayChecked(twapSource, 512, _data, i);
+    i += Borsh.writeArrayChecked(twapEnabled, 512, _data, i);
+    i += Borsh.writeArrayChecked(refPrice, 512, _data, i);
+    i += Borsh.writeArrayChecked(generic, 512, _data, i);
     return i - offset;
   }
 

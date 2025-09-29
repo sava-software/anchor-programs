@@ -77,7 +77,7 @@ public record ObligationLiquidity(// Reserve liquidity is borrowed from
     i += 16;
     putInt64LE(_data, i, borrowedAmountOutsideElevationGroups);
     i += 8;
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 7, _data, i);
     return i - offset;
   }
 

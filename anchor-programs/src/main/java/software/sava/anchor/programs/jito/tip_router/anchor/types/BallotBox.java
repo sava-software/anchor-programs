@@ -157,14 +157,14 @@ public record BallotBox(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, slotConsensusReached);
     i += 8;
-    i += Borsh.writeArray(reserved, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 128, _data, i);
     putInt64LE(_data, i, operatorsVoted);
     i += 8;
     putInt64LE(_data, i, uniqueBallots);
     i += 8;
     i += Borsh.write(winningBallot, _data, i);
-    i += Borsh.writeArray(operatorVotes, _data, i);
-    i += Borsh.writeArray(ballotTallies, _data, i);
+    i += Borsh.writeArrayChecked(operatorVotes, 256, _data, i);
+    i += Borsh.writeArrayChecked(ballotTallies, 256, _data, i);
     return i - offset;
   }
 

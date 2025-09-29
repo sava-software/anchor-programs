@@ -73,7 +73,7 @@ public final class DriftProgram {
     int i = INITIALIZE_USER_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
-    Borsh.writeArray(name, _data, i);
+    Borsh.writeArrayChecked(name, 32, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -105,7 +105,7 @@ public final class DriftProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt16LE(_data, i, subAccountId);
       i += 2;
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
       return i - offset;
     }
 
@@ -436,7 +436,7 @@ public final class DriftProgram {
 
     final byte[] _data = new byte[8 + Borsh.lenArray(name)];
     int i = INITIALIZE_REFERRER_NAME_DISCRIMINATOR.write(_data, 0);
-    Borsh.writeArray(name, _data, i);
+    Borsh.writeArrayChecked(name, 32, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -464,7 +464,7 @@ public final class DriftProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
       return i - offset;
     }
 
@@ -1410,7 +1410,7 @@ public final class DriftProgram {
     final byte[] _data = new byte[8 + Borsh.len(params) + Borsh.lenArray(signedMsgOrderUuid)];
     int i = PLACE_AND_MAKE_SIGNED_MSG_PERP_ORDER_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(params, _data, i);
-    Borsh.writeArray(signedMsgOrderUuid, _data, i);
+    Borsh.writeArrayChecked(signedMsgOrderUuid, 8, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -1439,7 +1439,7 @@ public final class DriftProgram {
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.write(params, _data, i);
-      i += Borsh.writeArray(signedMsgOrderUuid, _data, i);
+      i += Borsh.writeArrayChecked(signedMsgOrderUuid, 8, _data, i);
       return i - offset;
     }
 
@@ -1955,7 +1955,7 @@ public final class DriftProgram {
     int i = UPDATE_USER_NAME_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, subAccountId);
     i += 2;
-    Borsh.writeArray(name, _data, i);
+    Borsh.writeArrayChecked(name, 32, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -1987,7 +1987,7 @@ public final class DriftProgram {
       int i = offset + discriminator.write(_data, offset);
       putInt16LE(_data, i, subAccountId);
       i += 2;
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
       return i - offset;
     }
 
@@ -4949,7 +4949,7 @@ public final class DriftProgram {
 
     final byte[] _data = new byte[8 + Borsh.lenArray(feedId) + Borsh.lenVector(params)];
     int i = UPDATE_PYTH_PULL_ORACLE_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.writeArray(feedId, _data, i);
+    i += Borsh.writeArrayChecked(feedId, 32, _data, i);
     Borsh.writeVector(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -4977,7 +4977,7 @@ public final class DriftProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeArray(feedId, _data, i);
+      i += Borsh.writeArrayChecked(feedId, 32, _data, i);
       i += Borsh.writeVector(params, _data, i);
       return i - offset;
     }
@@ -5006,7 +5006,7 @@ public final class DriftProgram {
 
     final byte[] _data = new byte[8 + Borsh.lenArray(feedId) + Borsh.lenVector(params)];
     int i = POST_PYTH_PULL_ORACLE_UPDATE_ATOMIC_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.writeArray(feedId, _data, i);
+    i += Borsh.writeArrayChecked(feedId, 32, _data, i);
     Borsh.writeVector(params, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
@@ -5034,7 +5034,7 @@ public final class DriftProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeArray(feedId, _data, i);
+      i += Borsh.writeArrayChecked(feedId, 32, _data, i);
       i += Borsh.writeVector(params, _data, i);
       return i - offset;
     }
@@ -5217,7 +5217,7 @@ public final class DriftProgram {
     i += 8;
     putInt32LE(_data, i, ifTotalFactor);
     i += 4;
-    Borsh.writeArray(name, _data, i);
+    Borsh.writeArrayChecked(name, 32, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -5353,7 +5353,7 @@ public final class DriftProgram {
       i += 8;
       putInt32LE(_data, i, ifTotalFactor);
       i += 4;
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
       return i - offset;
     }
 
@@ -5882,7 +5882,7 @@ public final class DriftProgram {
     ++i;
     _data[i] = (byte) ammJitIntensity;
     ++i;
-    Borsh.writeArray(name, _data, i);
+    Borsh.writeArrayChecked(name, 32, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -6054,7 +6054,7 @@ public final class DriftProgram {
       ++i;
       _data[i] = (byte) ammJitIntensity;
       ++i;
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
       return i - offset;
     }
 
@@ -8229,7 +8229,7 @@ public final class DriftProgram {
 
     final byte[] _data = new byte[8 + Borsh.lenArray(name)];
     int i = UPDATE_SPOT_MARKET_NAME_DISCRIMINATOR.write(_data, 0);
-    Borsh.writeArray(name, _data, i);
+    Borsh.writeArrayChecked(name, 32, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -8257,7 +8257,7 @@ public final class DriftProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
       return i - offset;
     }
 
@@ -9441,7 +9441,7 @@ public final class DriftProgram {
 
     final byte[] _data = new byte[8 + Borsh.lenArray(name)];
     int i = UPDATE_PERP_MARKET_NAME_DISCRIMINATOR.write(_data, 0);
-    Borsh.writeArray(name, _data, i);
+    Borsh.writeArrayChecked(name, 32, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -9469,7 +9469,7 @@ public final class DriftProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeArray(name, _data, i);
+      i += Borsh.writeArrayChecked(name, 32, _data, i);
       return i - offset;
     }
 
@@ -10696,7 +10696,7 @@ public final class DriftProgram {
       _data[i++] = 0;
     } else {
       _data[i++] = 1;
-      i += Borsh.writeArray(whitelistedSigners, _data, i);
+      i += Borsh.writeArrayChecked(whitelistedSigners, 4, _data, i);
     }
     Borsh.write128Optional(maxTransferPerEpoch, _data, i);
 
@@ -10730,7 +10730,7 @@ public final class DriftProgram {
         _data[i++] = 0;
       } else {
         _data[i++] = 1;
-        i += Borsh.writeArray(whitelistedSigners, _data, i);
+        i += Borsh.writeArrayChecked(whitelistedSigners, 4, _data, i);
       }
       i += Borsh.write128Optional(maxTransferPerEpoch, _data, i);
       return i - offset;
@@ -10919,7 +10919,7 @@ public final class DriftProgram {
 
     final byte[] _data = new byte[8 + Borsh.lenArray(feedId)];
     int i = INITIALIZE_PYTH_PULL_ORACLE_DISCRIMINATOR.write(_data, 0);
-    Borsh.writeArray(feedId, _data, i);
+    Borsh.writeArrayChecked(feedId, 32, _data, i);
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -10947,7 +10947,7 @@ public final class DriftProgram {
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeArray(feedId, _data, i);
+      i += Borsh.writeArrayChecked(feedId, 32, _data, i);
       return i - offset;
     }
 

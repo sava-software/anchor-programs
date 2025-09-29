@@ -187,10 +187,10 @@ public record Market(PublicKey _address,
     i += Borsh.write(collectivePosition, _data, i);
     _data[i] = (byte) targetCustodyUid;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 7, _data, i);
     _data[i] = (byte) collateralCustodyUid;
     ++i;
-    i += Borsh.writeArray(padding2, _data, i);
+    i += Borsh.writeArrayChecked(padding2, 7, _data, i);
     _data[i] = (byte) bump;
     ++i;
     return i - offset;

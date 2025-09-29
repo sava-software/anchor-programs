@@ -124,7 +124,7 @@ public record VestingRecord(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, tokenShareAmount);
     i += 8;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 8, _data, i);
     return i - offset;
   }
 

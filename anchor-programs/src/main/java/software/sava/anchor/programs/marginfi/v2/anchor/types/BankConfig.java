@@ -144,8 +144,8 @@ public record BankConfig(WrappedI80F48 assetWeightInit,
     i += Borsh.write(interestRateConfig, _data, i);
     i += Borsh.write(operationalState, _data, i);
     i += Borsh.write(oracleSetup, _data, i);
-    i += Borsh.writeArray(oracleKeys, _data, i);
-    i += Borsh.writeArray(pad0, _data, i);
+    i += Borsh.writeArrayChecked(oracleKeys, 5, _data, i);
+    i += Borsh.writeArrayChecked(pad0, 6, _data, i);
     putInt64LE(_data, i, borrowLimit);
     i += 8;
     i += Borsh.write(riskTier, _data, i);
@@ -153,15 +153,15 @@ public record BankConfig(WrappedI80F48 assetWeightInit,
     ++i;
     _data[i] = (byte) configFlags;
     ++i;
-    i += Borsh.writeArray(pad1, _data, i);
+    i += Borsh.writeArrayChecked(pad1, 5, _data, i);
     putInt64LE(_data, i, totalAssetValueInitLimit);
     i += 8;
     putInt16LE(_data, i, oracleMaxAge);
     i += 2;
-    i += Borsh.writeArray(padding0, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 2, _data, i);
     putInt32LE(_data, i, oracleMaxConfidence);
     i += 4;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 32, _data, i);
     return i - offset;
   }
 

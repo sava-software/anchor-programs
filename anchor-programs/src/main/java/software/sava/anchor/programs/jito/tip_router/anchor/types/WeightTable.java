@@ -126,9 +126,9 @@ public record WeightTable(PublicKey _address,
     i += 8;
     _data[i] = (byte) bump;
     ++i;
-    i += Borsh.writeArray(reserved, _data, i);
-    i += Borsh.writeArray(vaultRegistry, _data, i);
-    i += Borsh.writeArray(table, _data, i);
+    i += Borsh.writeArrayChecked(reserved, 128, _data, i);
+    i += Borsh.writeArrayChecked(vaultRegistry, 64, _data, i);
+    i += Borsh.writeArrayChecked(table, 64, _data, i);
     return i - offset;
   }
 

@@ -26,7 +26,7 @@ public record MultiSubmission(BigInteger[] values,
   public int write(final byte[] _data, final int offset) {
     int i = offset;
     i += Borsh.write128Vector(values, _data, i);
-    i += Borsh.writeArray(signature, _data, i);
+    i += Borsh.writeArrayChecked(signature, 64, _data, i);
     _data[i] = (byte) recoveryId;
     ++i;
     return i - offset;

@@ -50,7 +50,7 @@ public record EditionMarker(PublicKey _address, Key key, byte[] ledger) implemen
   public int write(final byte[] _data, final int offset) {
     int i = offset;
     i += Borsh.write(key, _data, i);
-    i += Borsh.writeArray(ledger, _data, i);
+    i += Borsh.writeArrayChecked(ledger, 31, _data, i);
     return i - offset;
   }
 

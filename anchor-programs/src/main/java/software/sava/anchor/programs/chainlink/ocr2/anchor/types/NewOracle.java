@@ -24,7 +24,7 @@ public record NewOracle(byte[] signer, PublicKey transmitter) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(signer, _data, i);
+    i += Borsh.writeArrayChecked(signer, 20, _data, i);
     transmitter.write(_data, i);
     i += 32;
     return i - offset;

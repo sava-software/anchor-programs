@@ -114,7 +114,7 @@ public record GlobalConfig(PublicKey _address,
     i += 8;
     pendingGlobalAdmin.write(_data, i);
     i += 32;
-    i += Borsh.write128Array(padding1, _data, i);
+    i += Borsh.write128ArrayChecked(padding1, 126, _data, i);
     return i - offset;
   }
 

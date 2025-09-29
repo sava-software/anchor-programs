@@ -174,12 +174,12 @@ public record FeeState(PublicKey _address,
     i += 4;
     _data[i] = (byte) bumpSeed;
     ++i;
-    i += Borsh.writeArray(padding0, _data, i);
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 4, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 15, _data, i);
     i += Borsh.write(programFeeFixed, _data, i);
     i += Borsh.write(programFeeRate, _data, i);
-    i += Borsh.writeArray(reserved0, _data, i);
-    i += Borsh.writeArray(reserved1, _data, i);
+    i += Borsh.writeArrayChecked(reserved0, 32, _data, i);
+    i += Borsh.writeArrayChecked(reserved1, 64, _data, i);
     return i - offset;
   }
 

@@ -45,7 +45,7 @@ public record LastUpdate(// Last slot when updated
     ++i;
     _data[i] = (byte) priceStatus;
     ++i;
-    i += Borsh.writeArray(placeholder, _data, i);
+    i += Borsh.writeArrayChecked(placeholder, 6, _data, i);
     return i - offset;
   }
 

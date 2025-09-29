@@ -123,7 +123,7 @@ public record MarketInformation(PublicKey _address,
     i += 32;
     principalMint.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(assetData, _data, i);
+    i += Borsh.writeArrayChecked(assetData, 200, _data, i);
     i += Borsh.write(borrowCaps, _data, i);
     i += Borsh.write(withdrawCaps, _data, i);
     i += Borsh.write(supplyCaps, _data, i);

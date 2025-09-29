@@ -61,7 +61,7 @@ public record SetPoolConfigParams(Permissions permissions,
     i += 8;
     _data[i] = (byte) vpVolumeFactor;
     ++i;
-    i += Borsh.writeArray(stakingFeeBoostBps, _data, i);
+    i += Borsh.writeArrayChecked(stakingFeeBoostBps, 6, _data, i);
     putInt64LE(_data, i, minLpPriceUsd);
     i += 8;
     putInt64LE(_data, i, maxLpPriceUsd);

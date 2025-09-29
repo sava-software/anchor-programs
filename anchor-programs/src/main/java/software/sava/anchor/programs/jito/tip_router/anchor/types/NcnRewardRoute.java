@@ -27,7 +27,7 @@ public record NcnRewardRoute(PublicKey operator, BaseRewardRouterRewards[] ncnFe
     int i = offset;
     operator.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(ncnFeeGroupRewards, _data, i);
+    i += Borsh.writeArrayChecked(ncnFeeGroupRewards, 8, _data, i);
     return i - offset;
   }
 

@@ -19,7 +19,7 @@ public record WrappedI80F48(byte[] value) implements Borsh {
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    i += Borsh.writeArray(value, _data, i);
+    i += Borsh.writeArrayChecked(value, 16, _data, i);
     return i - offset;
   }
 

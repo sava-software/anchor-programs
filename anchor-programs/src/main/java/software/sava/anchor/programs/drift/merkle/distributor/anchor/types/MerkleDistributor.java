@@ -270,7 +270,7 @@ public record MerkleDistributor(PublicKey _address,
     ++i;
     putInt64LE(_data, i, version);
     i += 8;
-    i += Borsh.writeArray(root, _data, i);
+    i += Borsh.writeArrayChecked(root, 32, _data, i);
     mint.write(_data, i);
     i += 32;
     tokenVault.write(_data, i);
@@ -301,9 +301,9 @@ public record MerkleDistributor(PublicKey _address,
     i += 8;
     _data[i] = (byte) (closable ? 1 : 0);
     ++i;
-    i += Borsh.writeArray(buffer0, _data, i);
-    i += Borsh.writeArray(buffer1, _data, i);
-    i += Borsh.writeArray(buffer2, _data, i);
+    i += Borsh.writeArrayChecked(buffer0, 32, _data, i);
+    i += Borsh.writeArrayChecked(buffer1, 32, _data, i);
+    i += Borsh.writeArrayChecked(buffer2, 32, _data, i);
     return i - offset;
   }
 

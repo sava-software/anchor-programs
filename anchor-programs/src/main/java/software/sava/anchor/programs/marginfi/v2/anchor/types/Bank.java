@@ -386,7 +386,7 @@ public record Bank(PublicKey _address,
     ++i;
     group.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(pad0, _data, i);
+    i += Borsh.writeArrayChecked(pad0, 7, _data, i);
     i += Borsh.write(assetShareValue, _data, i);
     i += Borsh.write(liabilityShareValue, _data, i);
     liquidityVault.write(_data, i);
@@ -401,7 +401,7 @@ public record Bank(PublicKey _address,
     ++i;
     _data[i] = (byte) insuranceVaultAuthorityBump;
     ++i;
-    i += Borsh.writeArray(pad1, _data, i);
+    i += Borsh.writeArrayChecked(pad1, 4, _data, i);
     i += Borsh.write(collectedInsuranceFeesOutstanding, _data, i);
     feeVault.write(_data, i);
     i += 32;
@@ -409,7 +409,7 @@ public record Bank(PublicKey _address,
     ++i;
     _data[i] = (byte) feeVaultAuthorityBump;
     ++i;
-    i += Borsh.writeArray(pad2, _data, i);
+    i += Borsh.writeArrayChecked(pad2, 6, _data, i);
     i += Borsh.write(collectedGroupFeesOutstanding, _data, i);
     i += Borsh.write(totalLiabilityShares, _data, i);
     i += Borsh.write(totalAssetShares, _data, i);
@@ -432,8 +432,8 @@ public record Bank(PublicKey _address,
     i += 4;
     putInt32LE(_data, i, borrowingPositionCount);
     i += 4;
-    i += Borsh.writeArray(padding0, _data, i);
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 16, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 19, _data, i);
     return i - offset;
   }
 

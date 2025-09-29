@@ -60,7 +60,7 @@ public record AssetMeta(PublicKey asset,
     i += 2;
     _data[i] = (byte) priority;
     ++i;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 3, _data, i);
     return i - offset;
   }
 

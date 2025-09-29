@@ -276,7 +276,7 @@ public record State(PublicKey _address,
     ++i;
     _data[i] = (byte) enableStaking;
     ++i;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 5, _data, i);
     authority.write(_data, i);
     i += 32;
     guardianQueue.write(_data, i);
@@ -285,10 +285,10 @@ public record State(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, epochLength);
     i += 8;
-    i += Borsh.writeArray(reserved2, _data, i);
+    i += Borsh.writeArrayChecked(reserved2, 136, _data, i);
     switchMint.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(sgxAdvisories, _data, i);
+    i += Borsh.writeArrayChecked(sgxAdvisories, 32, _data, i);
     _data[i] = (byte) advisoriesLen;
     ++i;
     _data[i] = (byte) padding2;
@@ -303,15 +303,15 @@ public record State(PublicKey _address,
     i += 8;
     putInt32LE(_data, i, baseReward);
     i += 4;
-    i += Borsh.writeArray(padding4, _data, i);
+    i += Borsh.writeArrayChecked(padding4, 4, _data, i);
     putInt64LE(_data, i, subsidyAmount);
     i += 8;
-    i += Borsh.writeArray(ebuf6, _data, i);
-    i += Borsh.writeArray(ebuf5, _data, i);
-    i += Borsh.writeArray(ebuf4, _data, i);
-    i += Borsh.writeArray(ebuf3, _data, i);
-    i += Borsh.writeArray(ebuf2, _data, i);
-    i += Borsh.writeArray(costWhitelist, _data, i);
+    i += Borsh.writeArrayChecked(ebuf6, 16, _data, i);
+    i += Borsh.writeArrayChecked(ebuf5, 32, _data, i);
+    i += Borsh.writeArrayChecked(ebuf4, 64, _data, i);
+    i += Borsh.writeArrayChecked(ebuf3, 128, _data, i);
+    i += Borsh.writeArrayChecked(ebuf2, 512, _data, i);
+    i += Borsh.writeArrayChecked(costWhitelist, 32, _data, i);
     return i - offset;
   }
 

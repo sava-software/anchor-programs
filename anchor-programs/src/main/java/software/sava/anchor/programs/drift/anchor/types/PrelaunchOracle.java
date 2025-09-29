@@ -132,7 +132,7 @@ public record PrelaunchOracle(PublicKey _address,
     i += 8;
     putInt16LE(_data, i, perpMarketIndex);
     i += 2;
-    i += Borsh.writeArray(padding, _data, i);
+    i += Borsh.writeArrayChecked(padding, 70, _data, i);
     return i - offset;
   }
 

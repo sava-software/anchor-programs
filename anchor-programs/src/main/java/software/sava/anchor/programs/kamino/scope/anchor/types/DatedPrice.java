@@ -40,7 +40,7 @@ public record DatedPrice(Price price,
     i += 8;
     putInt64LE(_data, i, unixTimestamp);
     i += 8;
-    i += Borsh.writeArray(genericData, _data, i);
+    i += Borsh.writeArrayChecked(genericData, 24, _data, i);
     return i - offset;
   }
 

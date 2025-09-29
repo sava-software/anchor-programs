@@ -56,7 +56,7 @@ public record OraclePrices(PublicKey _address, Discriminator discriminator, Publ
     int i = offset + discriminator.write(_data, offset);
     oracleMappings.write(_data, i);
     i += 32;
-    i += Borsh.writeArray(prices, _data, i);
+    i += Borsh.writeArrayChecked(prices, 512, _data, i);
     return i - offset;
   }
 

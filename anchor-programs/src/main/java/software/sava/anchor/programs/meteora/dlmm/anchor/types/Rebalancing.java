@@ -111,7 +111,7 @@ public record Rebalancing(PublicKey lbPair,
     i += 4;
     putInt32LE(_data, i, newMaxId);
     i += 4;
-    i += Borsh.writeArray(rewards, _data, i);
+    i += Borsh.writeArrayChecked(rewards, 2, _data, i);
     return i - offset;
   }
 

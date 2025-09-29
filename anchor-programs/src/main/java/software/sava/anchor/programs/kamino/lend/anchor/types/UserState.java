@@ -228,10 +228,10 @@ public record UserState(PublicKey _address,
     i += 32;
     _data[i] = (byte) isFarmDelegated;
     ++i;
-    i += Borsh.writeArray(padding0, _data, i);
-    i += Borsh.write128Array(rewardsTallyScaled, _data, i);
-    i += Borsh.writeArray(rewardsIssuedUnclaimed, _data, i);
-    i += Borsh.writeArray(lastClaimTs, _data, i);
+    i += Borsh.writeArrayChecked(padding0, 7, _data, i);
+    i += Borsh.write128ArrayChecked(rewardsTallyScaled, 10, _data, i);
+    i += Borsh.writeArrayChecked(rewardsIssuedUnclaimed, 10, _data, i);
+    i += Borsh.writeArrayChecked(lastClaimTs, 10, _data, i);
     putInt128LE(_data, i, activeStakeScaled);
     i += 16;
     putInt128LE(_data, i, pendingDepositStakeScaled);
@@ -248,7 +248,7 @@ public record UserState(PublicKey _address,
     i += 32;
     putInt64LE(_data, i, lastStakeTs);
     i += 8;
-    i += Borsh.writeArray(padding1, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 50, _data, i);
     return i - offset;
   }
 
