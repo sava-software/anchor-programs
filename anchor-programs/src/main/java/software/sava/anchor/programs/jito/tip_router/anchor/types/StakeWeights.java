@@ -29,7 +29,7 @@ public record StakeWeights(BigInteger stakeWeight, NcnFeeGroupWeight[] ncnFeeGro
     int i = offset;
     putInt128LE(_data, i, stakeWeight);
     i += 16;
-    i += Borsh.writeArray(ncnFeeGroupStakeWeights, _data, i);
+    i += Borsh.writeArrayChecked(ncnFeeGroupStakeWeights, 8, _data, i);
     return i - offset;
   }
 

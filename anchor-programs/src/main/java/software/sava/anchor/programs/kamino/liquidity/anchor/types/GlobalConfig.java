@@ -29,7 +29,7 @@ public record GlobalConfig(PublicKey _address,
                            long minWithdrawalFeeBps,
                            PublicKey scopeProgramId,
                            PublicKey scopePriceId,
-                           long[] swapRewardsDiscountBps,
+                           long[] padding0NonZeroed,
                            PublicKey actionsAuthority,
                            PublicKey adminAuthority,
                            PublicKey[] treasuryFeeVaults,
@@ -43,7 +43,7 @@ public record GlobalConfig(PublicKey _address,
                            long[] padding) implements Borsh {
 
   public static final int BYTES = 26832;
-  public static final int SWAP_REWARDS_DISCOUNT_BPS_LEN = 256;
+  public static final int PADDING_0_NON_ZEROED_LEN = 256;
   public static final int TREASURY_FEE_VAULTS_LEN = 256;
   public static final int PADDING_LEN = 2035;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -60,7 +60,7 @@ public record GlobalConfig(PublicKey _address,
   public static final int MIN_WITHDRAWAL_FEE_BPS_OFFSET = 72;
   public static final int SCOPE_PROGRAM_ID_OFFSET = 80;
   public static final int SCOPE_PRICE_ID_OFFSET = 112;
-  public static final int SWAP_REWARDS_DISCOUNT_BPS_OFFSET = 144;
+  public static final int PADDING_0_NON_ZEROED_OFFSET = 144;
   public static final int ACTIONS_AUTHORITY_OFFSET = 2192;
   public static final int ADMIN_AUTHORITY_OFFSET = 2224;
   public static final int TREASURY_FEE_VAULTS_OFFSET = 2256;
@@ -231,8 +231,8 @@ public record GlobalConfig(PublicKey _address,
     i += 32;
     final var scopePriceId = readPubKey(_data, i);
     i += 32;
-    final var swapRewardsDiscountBps = new long[256];
-    i += Borsh.readArray(swapRewardsDiscountBps, _data, i);
+    final var padding0NonZeroed = new long[256];
+    i += Borsh.readArray(padding0NonZeroed, _data, i);
     final var actionsAuthority = readPubKey(_data, i);
     i += 32;
     final var adminAuthority = readPubKey(_data, i);
@@ -269,7 +269,7 @@ public record GlobalConfig(PublicKey _address,
                             minWithdrawalFeeBps,
                             scopeProgramId,
                             scopePriceId,
-                            swapRewardsDiscountBps,
+                            padding0NonZeroed,
                             actionsAuthority,
                             adminAuthority,
                             treasuryFeeVaults,
@@ -310,7 +310,7 @@ public record GlobalConfig(PublicKey _address,
     i += 32;
     scopePriceId.write(_data, i);
     i += 32;
-    i += Borsh.writeArrayChecked(swapRewardsDiscountBps, 256, _data, i);
+    i += Borsh.writeArrayChecked(padding0NonZeroed, 256, _data, i);
     actionsAuthority.write(_data, i);
     i += 32;
     adminAuthority.write(_data, i);

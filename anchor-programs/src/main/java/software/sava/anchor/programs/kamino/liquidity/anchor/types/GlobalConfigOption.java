@@ -13,7 +13,7 @@ public enum GlobalConfigOption implements Borsh.Enum {
   BlockSwapRewards,
   BlockSwapUnevenVaults,
   WithdrawalFeeBps,
-  SwapDiscountBps,
+  DeprecatedSwapDiscountBps,
   ActionsAuthority,
   DeprecatedTreasuryFeeVaults,
   AdminAuthority,

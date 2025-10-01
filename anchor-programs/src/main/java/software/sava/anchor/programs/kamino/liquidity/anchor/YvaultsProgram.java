@@ -680,7 +680,7 @@ public final class YvaultsProgram {
                                                    final int collateralId) {
     final var keys = List.of(
       createWritableSigner(signerKey),
-      createWrite(globalConfigKey),
+      createRead(globalConfigKey),
       createRead(feeMintKey),
       createWrite(treasuryFeeVaultKey),
       createRead(treasuryFeeVaultAuthorityKey),
