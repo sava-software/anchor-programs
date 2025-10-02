@@ -319,7 +319,15 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.InvalidSignedMsgUserOrdersResize,
     DriftError.CouldNotDeserializeHighLeverageModeConfig,
     DriftError.InvalidIfRebalanceConfig,
-    DriftError.InvalidIfRebalanceSwap {
+    DriftError.InvalidIfRebalanceSwap,
+    DriftError.InvalidRevenueShareResize,
+    DriftError.BuilderRevoked,
+    DriftError.InvalidBuilderFee,
+    DriftError.RevenueShareEscrowAuthorityMismatch,
+    DriftError.RevenueShareEscrowOrdersAccountFull,
+    DriftError.InvalidRevenueShareAccount,
+    DriftError.CannotRevokeBuilderWithOpenOrders,
+    DriftError.UnableToLoadRevenueShareAccount {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -640,6 +648,14 @@ public sealed interface DriftError extends ProgramError permits
       case 6314 -> CouldNotDeserializeHighLeverageModeConfig.INSTANCE;
       case 6315 -> InvalidIfRebalanceConfig.INSTANCE;
       case 6316 -> InvalidIfRebalanceSwap.INSTANCE;
+      case 6317 -> InvalidRevenueShareResize.INSTANCE;
+      case 6318 -> BuilderRevoked.INSTANCE;
+      case 6319 -> InvalidBuilderFee.INSTANCE;
+      case 6320 -> RevenueShareEscrowAuthorityMismatch.INSTANCE;
+      case 6321 -> RevenueShareEscrowOrdersAccountFull.INSTANCE;
+      case 6322 -> InvalidRevenueShareAccount.INSTANCE;
+      case 6323 -> CannotRevokeBuilderWithOpenOrders.INSTANCE;
+      case 6324 -> UnableToLoadRevenueShareAccount.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2860,6 +2876,62 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final InvalidIfRebalanceSwap INSTANCE = new InvalidIfRebalanceSwap(
         6316, "Invalid If Rebalance Swap"
+    );
+  }
+
+  record InvalidRevenueShareResize(int code, String msg) implements DriftError {
+
+    public static final InvalidRevenueShareResize INSTANCE = new InvalidRevenueShareResize(
+        6317, "Invalid RevenueShare resize"
+    );
+  }
+
+  record BuilderRevoked(int code, String msg) implements DriftError {
+
+    public static final BuilderRevoked INSTANCE = new BuilderRevoked(
+        6318, "Builder has been revoked"
+    );
+  }
+
+  record InvalidBuilderFee(int code, String msg) implements DriftError {
+
+    public static final InvalidBuilderFee INSTANCE = new InvalidBuilderFee(
+        6319, "Builder fee is greater than max fee bps"
+    );
+  }
+
+  record RevenueShareEscrowAuthorityMismatch(int code, String msg) implements DriftError {
+
+    public static final RevenueShareEscrowAuthorityMismatch INSTANCE = new RevenueShareEscrowAuthorityMismatch(
+        6320, "RevenueShareEscrow authority mismatch"
+    );
+  }
+
+  record RevenueShareEscrowOrdersAccountFull(int code, String msg) implements DriftError {
+
+    public static final RevenueShareEscrowOrdersAccountFull INSTANCE = new RevenueShareEscrowOrdersAccountFull(
+        6321, "RevenueShareEscrow has too many active orders"
+    );
+  }
+
+  record InvalidRevenueShareAccount(int code, String msg) implements DriftError {
+
+    public static final InvalidRevenueShareAccount INSTANCE = new InvalidRevenueShareAccount(
+        6322, "Invalid RevenueShareAccount"
+    );
+  }
+
+  record CannotRevokeBuilderWithOpenOrders(int code, String msg) implements DriftError {
+
+    public static final CannotRevokeBuilderWithOpenOrders INSTANCE = new CannotRevokeBuilderWithOpenOrders(
+        6323, "Cannot revoke builder with open orders"
+    );
+  }
+
+  record UnableToLoadRevenueShareAccount(int code, String msg) implements DriftError {
+
+    public static final UnableToLoadRevenueShareAccount INSTANCE = new UnableToLoadRevenueShareAccount(
+        6324, "Unable to load builder account"
     );
   }
 }

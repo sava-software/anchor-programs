@@ -458,8 +458,6 @@ public interface DriftProgramClient {
 
   Instruction updateUserReduceOnly(final int subAccountId, final boolean reduceOnly);
 
-  Instruction updateUserAdvancedLp(final int subAccountId, final boolean advancedLp);
-
   Instruction updateUserProtectedMakerOrders(final PublicKey protectedMakerModeConfigKey,
                                              final int subAccountId,
                                              final boolean protectedMakerOrders);

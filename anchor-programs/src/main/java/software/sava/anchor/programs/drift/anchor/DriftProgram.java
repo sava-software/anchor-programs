@@ -2349,63 +2349,6 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator UPDATE_USER_ADVANCED_LP_DISCRIMINATOR = toDiscriminator(66, 80, 107, 186, 27, 242, 66, 95);
-
-  public static Instruction updateUserAdvancedLp(final AccountMeta invokedDriftProgramMeta,
-                                                 final PublicKey userKey,
-                                                 final PublicKey authorityKey,
-                                                 final int subAccountId,
-                                                 final boolean advancedLp) {
-    final var keys = List.of(
-      createWrite(userKey),
-      createReadOnlySigner(authorityKey)
-    );
-
-    final byte[] _data = new byte[11];
-    int i = UPDATE_USER_ADVANCED_LP_DISCRIMINATOR.write(_data, 0);
-    putInt16LE(_data, i, subAccountId);
-    i += 2;
-    _data[i] = (byte) (advancedLp ? 1 : 0);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record UpdateUserAdvancedLpIxData(Discriminator discriminator, int subAccountId, boolean advancedLp) implements Borsh {  
-
-    public static UpdateUserAdvancedLpIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 11;
-
-    public static UpdateUserAdvancedLpIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var subAccountId = getInt16LE(_data, i);
-      i += 2;
-      final var advancedLp = _data[i] == 1;
-      return new UpdateUserAdvancedLpIxData(discriminator, subAccountId, advancedLp);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt16LE(_data, i, subAccountId);
-      i += 2;
-      _data[i] = (byte) (advancedLp ? 1 : 0);
-      ++i;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
   public static final Discriminator UPDATE_USER_PROTECTED_MAKER_ORDERS_DISCRIMINATOR = toDiscriminator(114, 39, 123, 198, 187, 25, 90, 219);
 
   public static Instruction updateUserProtectedMakerOrders(final AccountMeta invokedDriftProgramMeta,
@@ -2940,23 +2883,6 @@ public final class DriftProgram {
     );
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_USER_STATS_REFERRER_STATUS_DISCRIMINATOR);
-  }
-
-  public static final Discriminator UPDATE_USER_OPEN_ORDERS_COUNT_DISCRIMINATOR = toDiscriminator(104, 39, 65, 210, 250, 163, 100, 134);
-
-  public static Instruction updateUserOpenOrdersCount(final AccountMeta invokedDriftProgramMeta,
-                                                      final PublicKey stateKey,
-                                                      final PublicKey authorityKey,
-                                                      final PublicKey fillerKey,
-                                                      final PublicKey userKey) {
-    final var keys = List.of(
-      createRead(stateKey),
-      createReadOnlySigner(authorityKey),
-      createWrite(fillerKey),
-      createWrite(userKey)
-    );
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_USER_OPEN_ORDERS_COUNT_DISCRIMINATOR);
   }
 
   public static final Discriminator ADMIN_DISABLE_UPDATE_PERP_BID_ASK_TWAP_DISCRIMINATOR = toDiscriminator(17, 164, 82, 45, 183, 86, 191, 199);
@@ -4269,54 +4195,25 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_USER_GOV_TOKEN_INSURANCE_STAKE_DISCRIMINATOR);
   }
 
-  public static final Discriminator UPDATE_USER_GOV_TOKEN_INSURANCE_STAKE_DEVNET_DISCRIMINATOR = toDiscriminator(129, 185, 243, 183, 228, 111, 64, 175);
+  public static final Discriminator UPDATE_DELEGATE_USER_GOV_TOKEN_INSURANCE_STAKE_DISCRIMINATOR = toDiscriminator(241, 29, 215, 228, 142, 116, 22, 160);
 
-  public static Instruction updateUserGovTokenInsuranceStakeDevnet(final AccountMeta invokedDriftProgramMeta,
-                                                                   final PublicKey userStatsKey,
-                                                                   final PublicKey signerKey,
-                                                                   final long govStakeAmount) {
+  public static Instruction updateDelegateUserGovTokenInsuranceStake(final AccountMeta invokedDriftProgramMeta,
+                                                                     final PublicKey spotMarketKey,
+                                                                     final PublicKey insuranceFundStakeKey,
+                                                                     final PublicKey userStatsKey,
+                                                                     final PublicKey adminKey,
+                                                                     final PublicKey insuranceFundVaultKey,
+                                                                     final PublicKey stateKey) {
     final var keys = List.of(
+      createWrite(spotMarketKey),
+      createRead(insuranceFundStakeKey),
       createWrite(userStatsKey),
-      createReadOnlySigner(signerKey)
+      createReadOnlySigner(adminKey),
+      createWrite(insuranceFundVaultKey),
+      createRead(stateKey)
     );
 
-    final byte[] _data = new byte[16];
-    int i = UPDATE_USER_GOV_TOKEN_INSURANCE_STAKE_DEVNET_DISCRIMINATOR.write(_data, 0);
-    putInt64LE(_data, i, govStakeAmount);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record UpdateUserGovTokenInsuranceStakeDevnetIxData(Discriminator discriminator, long govStakeAmount) implements Borsh {  
-
-    public static UpdateUserGovTokenInsuranceStakeDevnetIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 16;
-
-    public static UpdateUserGovTokenInsuranceStakeDevnetIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var govStakeAmount = getInt64LE(_data, i);
-      return new UpdateUserGovTokenInsuranceStakeDevnetIxData(discriminator, govStakeAmount);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, govStakeAmount);
-      i += 8;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_DELEGATE_USER_GOV_TOKEN_INSURANCE_STAKE_DISCRIMINATOR);
   }
 
   public static final Discriminator INITIALIZE_INSURANCE_FUND_STAKE_DISCRIMINATOR = toDiscriminator(187, 179, 243, 70, 248, 90, 92, 147);
@@ -4637,75 +4534,6 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator TRANSFER_PROTOCOL_IF_SHARES_DISCRIMINATOR = toDiscriminator(94, 93, 226, 240, 195, 201, 184, 109);
-
-  public static Instruction transferProtocolIfShares(final AccountMeta invokedDriftProgramMeta,
-                                                     final PublicKey signerKey,
-                                                     final PublicKey transferConfigKey,
-                                                     final PublicKey stateKey,
-                                                     final PublicKey spotMarketKey,
-                                                     final PublicKey insuranceFundStakeKey,
-                                                     final PublicKey userStatsKey,
-                                                     final PublicKey authorityKey,
-                                                     final PublicKey insuranceFundVaultKey,
-                                                     final int marketIndex,
-                                                     final BigInteger shares) {
-    final var keys = List.of(
-      createReadOnlySigner(signerKey),
-      createWrite(transferConfigKey),
-      createRead(stateKey),
-      createWrite(spotMarketKey),
-      createWrite(insuranceFundStakeKey),
-      createWrite(userStatsKey),
-      createReadOnlySigner(authorityKey),
-      createRead(insuranceFundVaultKey)
-    );
-
-    final byte[] _data = new byte[26];
-    int i = TRANSFER_PROTOCOL_IF_SHARES_DISCRIMINATOR.write(_data, 0);
-    putInt16LE(_data, i, marketIndex);
-    i += 2;
-    putInt128LE(_data, i, shares);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record TransferProtocolIfSharesIxData(Discriminator discriminator, int marketIndex, BigInteger shares) implements Borsh {  
-
-    public static TransferProtocolIfSharesIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 26;
-
-    public static TransferProtocolIfSharesIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var marketIndex = getInt16LE(_data, i);
-      i += 2;
-      final var shares = getInt128LE(_data, i);
-      return new TransferProtocolIfSharesIxData(discriminator, marketIndex, shares);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt16LE(_data, i, marketIndex);
-      i += 2;
-      putInt128LE(_data, i, shares);
-      i += 16;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
   public static final Discriminator BEGIN_INSURANCE_FUND_SWAP_DISCRIMINATOR = toDiscriminator(176, 69, 143, 205, 32, 132, 163, 0);
 
   public static Instruction beginInsuranceFundSwap(final AccountMeta invokedDriftProgramMeta,
@@ -4913,6 +4741,79 @@ public final class DriftProgram {
       i += 2;
       final var amount = getInt64LE(_data, i);
       return new TransferProtocolIfSharesToRevenuePoolIxData(discriminator, marketIndex, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, marketIndex);
+      i += 2;
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator DEPOSIT_INTO_INSURANCE_FUND_STAKE_DISCRIMINATOR = toDiscriminator(4, 22, 226, 201, 124, 44, 82, 230);
+
+  public static Instruction depositIntoInsuranceFundStake(final AccountMeta invokedDriftProgramMeta,
+                                                          final PublicKey signerKey,
+                                                          final PublicKey stateKey,
+                                                          final PublicKey spotMarketKey,
+                                                          final PublicKey insuranceFundStakeKey,
+                                                          final PublicKey userStatsKey,
+                                                          final PublicKey spotMarketVaultKey,
+                                                          final PublicKey insuranceFundVaultKey,
+                                                          final PublicKey userTokenAccountKey,
+                                                          final PublicKey tokenProgramKey,
+                                                          final PublicKey driftSignerKey,
+                                                          final int marketIndex,
+                                                          final long amount) {
+    final var keys = List.of(
+      createReadOnlySigner(signerKey),
+      createWrite(stateKey),
+      createWrite(spotMarketKey),
+      createWrite(insuranceFundStakeKey),
+      createWrite(userStatsKey),
+      createWrite(spotMarketVaultKey),
+      createWrite(insuranceFundVaultKey),
+      createWrite(userTokenAccountKey),
+      createRead(tokenProgramKey),
+      createRead(driftSignerKey)
+    );
+
+    final byte[] _data = new byte[18];
+    int i = DEPOSIT_INTO_INSURANCE_FUND_STAKE_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, marketIndex);
+    i += 2;
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record DepositIntoInsuranceFundStakeIxData(Discriminator discriminator, int marketIndex, long amount) implements Borsh {  
+
+    public static DepositIntoInsuranceFundStakeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 18;
+
+    public static DepositIntoInsuranceFundStakeIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var marketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var amount = getInt64LE(_data, i);
+      return new DepositIntoInsuranceFundStakeIxData(discriminator, marketIndex, amount);
     }
 
     @Override
@@ -5774,21 +5675,6 @@ public final class DriftProgram {
     public int l() {
       return BYTES;
     }
-  }
-
-  public static final Discriminator UPDATE_SERUM_VAULT_DISCRIMINATOR = toDiscriminator(219, 8, 246, 96, 169, 121, 91, 110);
-
-  public static Instruction updateSerumVault(final AccountMeta invokedDriftProgramMeta,
-                                             final PublicKey stateKey,
-                                             final PublicKey adminKey,
-                                             final PublicKey srmVaultKey) {
-    final var keys = List.of(
-      createWrite(stateKey),
-      createWritableSigner(adminKey),
-      createRead(srmVaultKey)
-    );
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_SERUM_VAULT_DISCRIMINATOR);
   }
 
   public static final Discriminator INITIALIZE_PERP_MARKET_DISCRIMINATOR = toDiscriminator(132, 9, 229, 118, 117, 118, 117, 62);
@@ -10653,95 +10539,6 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator INITIALIZE_PROTOCOL_IF_SHARES_TRANSFER_CONFIG_DISCRIMINATOR = toDiscriminator(89, 131, 239, 200, 178, 141, 106, 194);
-
-  public static Instruction initializeProtocolIfSharesTransferConfig(final AccountMeta invokedDriftProgramMeta,
-                                                                     final PublicKey adminKey,
-                                                                     final PublicKey protocolIfSharesTransferConfigKey,
-                                                                     final PublicKey stateKey,
-                                                                     final PublicKey rentKey,
-                                                                     final PublicKey systemProgramKey) {
-    final var keys = List.of(
-      createWritableSigner(adminKey),
-      createWrite(protocolIfSharesTransferConfigKey),
-      createRead(stateKey),
-      createRead(rentKey),
-      createRead(systemProgramKey)
-    );
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, INITIALIZE_PROTOCOL_IF_SHARES_TRANSFER_CONFIG_DISCRIMINATOR);
-  }
-
-  public static final Discriminator UPDATE_PROTOCOL_IF_SHARES_TRANSFER_CONFIG_DISCRIMINATOR = toDiscriminator(34, 135, 47, 91, 220, 24, 212, 53);
-
-  public static Instruction updateProtocolIfSharesTransferConfig(final AccountMeta invokedDriftProgramMeta,
-                                                                 final PublicKey adminKey,
-                                                                 final PublicKey protocolIfSharesTransferConfigKey,
-                                                                 final PublicKey stateKey,
-                                                                 final PublicKey[] whitelistedSigners,
-                                                                 final BigInteger maxTransferPerEpoch) {
-    final var keys = List.of(
-      createWritableSigner(adminKey),
-      createWrite(protocolIfSharesTransferConfigKey),
-      createRead(stateKey)
-    );
-
-    final byte[] _data = new byte[
-        8
-        + (whitelistedSigners == null || whitelistedSigners.length == 0 ? 1 : (1 + Borsh.lenArray(whitelistedSigners)))
-        + (maxTransferPerEpoch == null ? 1 : 17)
-    ];
-    int i = UPDATE_PROTOCOL_IF_SHARES_TRANSFER_CONFIG_DISCRIMINATOR.write(_data, 0);
-    if (whitelistedSigners == null || whitelistedSigners.length == 0) {
-      _data[i++] = 0;
-    } else {
-      _data[i++] = 1;
-      i += Borsh.writeArrayChecked(whitelistedSigners, 4, _data, i);
-    }
-    Borsh.write128Optional(maxTransferPerEpoch, _data, i);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record UpdateProtocolIfSharesTransferConfigIxData(Discriminator discriminator, PublicKey[] whitelistedSigners, BigInteger maxTransferPerEpoch) implements Borsh {  
-
-    public static UpdateProtocolIfSharesTransferConfigIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static UpdateProtocolIfSharesTransferConfigIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var whitelistedSigners = _data[i++] == 0 ? null : new PublicKey[4];
-      if (whitelistedSigners != null) {
-        i += Borsh.readArray(whitelistedSigners, _data, i);
-      }
-      final var maxTransferPerEpoch = _data[i++] == 0 ? null : getInt128LE(_data, i);
-      return new UpdateProtocolIfSharesTransferConfigIxData(discriminator, whitelistedSigners, maxTransferPerEpoch);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      if (whitelistedSigners == null || whitelistedSigners.length == 0) {
-        _data[i++] = 0;
-      } else {
-        _data[i++] = 1;
-        i += Borsh.writeArrayChecked(whitelistedSigners, 4, _data, i);
-      }
-      i += Borsh.write128Optional(maxTransferPerEpoch, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 8 + (whitelistedSigners == null || whitelistedSigners.length == 0 ? 1 : (1 + Borsh.lenArray(whitelistedSigners))) + (maxTransferPerEpoch == null ? 1 : (1 + 16));
-    }
-  }
-
   public static final Discriminator INITIALIZE_PRELAUNCH_ORACLE_DISCRIMINATOR = toDiscriminator(169, 178, 84, 25, 175, 62, 29, 247);
 
   public static Instruction initializePrelaunchOracle(final AccountMeta invokedDriftProgramMeta,
@@ -11588,6 +11385,260 @@ public final class DriftProgram {
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       _data[i] = (byte) (enable ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_FEATURE_BIT_FLAGS_BUILDER_CODES_DISCRIMINATOR = toDiscriminator(1, 128, 177, 51, 173, 45, 11, 102);
+
+  public static Instruction updateFeatureBitFlagsBuilderCodes(final AccountMeta invokedDriftProgramMeta,
+                                                              final PublicKey adminKey,
+                                                              final PublicKey stateKey,
+                                                              final boolean enable) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createWrite(stateKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = UPDATE_FEATURE_BIT_FLAGS_BUILDER_CODES_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) (enable ? 1 : 0);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateFeatureBitFlagsBuilderCodesIxData(Discriminator discriminator, boolean enable) implements Borsh {  
+
+    public static UpdateFeatureBitFlagsBuilderCodesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdateFeatureBitFlagsBuilderCodesIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var enable = _data[i] == 1;
+      return new UpdateFeatureBitFlagsBuilderCodesIxData(discriminator, enable);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) (enable ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INITIALIZE_REVENUE_SHARE_DISCRIMINATOR = toDiscriminator(57, 9, 123, 131, 82, 52, 50, 13);
+
+  public static Instruction initializeRevenueShare(final AccountMeta invokedDriftProgramMeta,
+                                                   final PublicKey revenueShareKey,
+                                                   final PublicKey authorityKey,
+                                                   final PublicKey payerKey,
+                                                   final PublicKey rentKey,
+                                                   final PublicKey systemProgramKey) {
+    final var keys = List.of(
+      createWrite(revenueShareKey),
+      createRead(authorityKey),
+      createWritableSigner(payerKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, INITIALIZE_REVENUE_SHARE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator INITIALIZE_REVENUE_SHARE_ESCROW_DISCRIMINATOR = toDiscriminator(187, 18, 123, 88, 238, 104, 84, 154);
+
+  public static Instruction initializeRevenueShareEscrow(final AccountMeta invokedDriftProgramMeta,
+                                                         final PublicKey escrowKey,
+                                                         final PublicKey authorityKey,
+                                                         final PublicKey userStatsKey,
+                                                         final PublicKey stateKey,
+                                                         final PublicKey payerKey,
+                                                         final PublicKey rentKey,
+                                                         final PublicKey systemProgramKey,
+                                                         final int numOrders) {
+    final var keys = List.of(
+      createWrite(escrowKey),
+      createRead(authorityKey),
+      createWrite(userStatsKey),
+      createRead(stateKey),
+      createWritableSigner(payerKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[10];
+    int i = INITIALIZE_REVENUE_SHARE_ESCROW_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, numOrders);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record InitializeRevenueShareEscrowIxData(Discriminator discriminator, int numOrders) implements Borsh {  
+
+    public static InitializeRevenueShareEscrowIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 10;
+
+    public static InitializeRevenueShareEscrowIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var numOrders = getInt16LE(_data, i);
+      return new InitializeRevenueShareEscrowIxData(discriminator, numOrders);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, numOrders);
+      i += 2;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator RESIZE_REVENUE_SHARE_ESCROW_ORDERS_DISCRIMINATOR = toDiscriminator(32, 124, 247, 225, 151, 213, 225, 38);
+
+  public static Instruction resizeRevenueShareEscrowOrders(final AccountMeta invokedDriftProgramMeta,
+                                                           final PublicKey escrowKey,
+                                                           final PublicKey authorityKey,
+                                                           final PublicKey payerKey,
+                                                           final PublicKey systemProgramKey,
+                                                           final int numOrders) {
+    final var keys = List.of(
+      createWrite(escrowKey),
+      createRead(authorityKey),
+      createWritableSigner(payerKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[10];
+    int i = RESIZE_REVENUE_SHARE_ESCROW_ORDERS_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, numOrders);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record ResizeRevenueShareEscrowOrdersIxData(Discriminator discriminator, int numOrders) implements Borsh {  
+
+    public static ResizeRevenueShareEscrowOrdersIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 10;
+
+    public static ResizeRevenueShareEscrowOrdersIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var numOrders = getInt16LE(_data, i);
+      return new ResizeRevenueShareEscrowOrdersIxData(discriminator, numOrders);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, numOrders);
+      i += 2;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator CHANGE_APPROVED_BUILDER_DISCRIMINATOR = toDiscriminator(179, 134, 211, 45, 195, 5, 189, 173);
+
+  public static Instruction changeApprovedBuilder(final AccountMeta invokedDriftProgramMeta,
+                                                  final PublicKey escrowKey,
+                                                  final PublicKey authorityKey,
+                                                  final PublicKey payerKey,
+                                                  final PublicKey systemProgramKey,
+                                                  final PublicKey builder,
+                                                  final int maxFeeBps,
+                                                  final boolean add) {
+    final var keys = List.of(
+      createWrite(escrowKey),
+      createReadOnlySigner(authorityKey),
+      createWritableSigner(payerKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[43];
+    int i = CHANGE_APPROVED_BUILDER_DISCRIMINATOR.write(_data, 0);
+    builder.write(_data, i);
+    i += 32;
+    putInt16LE(_data, i, maxFeeBps);
+    i += 2;
+    _data[i] = (byte) (add ? 1 : 0);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record ChangeApprovedBuilderIxData(Discriminator discriminator,
+                                            PublicKey builder,
+                                            int maxFeeBps,
+                                            boolean add) implements Borsh {  
+
+    public static ChangeApprovedBuilderIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 43;
+
+    public static ChangeApprovedBuilderIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var builder = readPubKey(_data, i);
+      i += 32;
+      final var maxFeeBps = getInt16LE(_data, i);
+      i += 2;
+      final var add = _data[i] == 1;
+      return new ChangeApprovedBuilderIxData(discriminator, builder, maxFeeBps, add);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      builder.write(_data, i);
+      i += 32;
+      putInt16LE(_data, i, maxFeeBps);
+      i += 2;
+      _data[i] = (byte) (add ? 1 : 0);
       ++i;
       return i - offset;
     }

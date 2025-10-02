@@ -550,11 +550,6 @@ final class GlamDriftProgramClientImpl implements GlamDriftProgramClient {
   }
 
   @Override
-  public Instruction updateUserAdvancedLp(final int subAccountId, final boolean advancedLp) {
-    throw new UnsupportedOperationException("Use Ix-proxy instead.");
-  }
-
-  @Override
   public Instruction updateUserProtectedMakerOrders(final PublicKey protectedMakerModeConfigKey,
                                                     final int subAccountId,
                                                     final boolean protectedMakerOrders) {

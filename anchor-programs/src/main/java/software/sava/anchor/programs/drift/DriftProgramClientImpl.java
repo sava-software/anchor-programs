@@ -655,17 +655,6 @@ final class DriftProgramClientImpl implements DriftProgramClient {
   }
 
   @Override
-  public Instruction updateUserAdvancedLp(final int subAccountId, final boolean advancedLp) {
-    return DriftProgram.updateUserAdvancedLp(
-        accounts.invokedDriftProgram(),
-        user,
-        authority,
-        subAccountId,
-        advancedLp
-    );
-  }
-
-  @Override
   public Instruction updateUserProtectedMakerOrders(final PublicKey protectedMakerModeConfigKey,
                                                     final int subAccountId,
                                                     final boolean protectedMakerOrders) {

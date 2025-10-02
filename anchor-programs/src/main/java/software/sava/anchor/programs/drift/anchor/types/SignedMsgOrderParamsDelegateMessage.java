@@ -16,7 +16,9 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
                                                   byte[] uuid,
                                                   SignedMsgTriggerOrderParams takeProfitOrderParams,
                                                   SignedMsgTriggerOrderParams stopLossOrderParams,
-                                                  OptionalInt maxMarginRatio) implements Borsh {
+                                                  OptionalInt maxMarginRatio,
+                                                  OptionalInt builderIdx,
+                                                  OptionalInt builderFeeTenthBps) implements Borsh {
 
   public static final int UUID_LEN = 8;
   public static SignedMsgOrderParamsDelegateMessage read(final byte[] _data, final int offset) {
@@ -41,13 +43,23 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
       i += Borsh.len(stopLossOrderParams);
     }
     final var maxMarginRatio = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt16LE(_data, i));
+    if (maxMarginRatio.isPresent()) {
+      i += 2;
+    }
+    final var builderIdx = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
+    if (builderIdx.isPresent()) {
+      ++i;
+    }
+    final var builderFeeTenthBps = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt16LE(_data, i));
     return new SignedMsgOrderParamsDelegateMessage(signedMsgOrderParams,
                                                    takerPubkey,
                                                    slot,
                                                    uuid,
                                                    takeProfitOrderParams,
                                                    stopLossOrderParams,
-                                                   maxMarginRatio);
+                                                   maxMarginRatio,
+                                                   builderIdx,
+                                                   builderFeeTenthBps);
   }
 
   @Override
@@ -62,6 +74,8 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
     i += Borsh.writeOptional(takeProfitOrderParams, _data, i);
     i += Borsh.writeOptional(stopLossOrderParams, _data, i);
     i += Borsh.writeOptionalshort(maxMarginRatio, _data, i);
+    i += Borsh.writeOptionalbyte(builderIdx, _data, i);
+    i += Borsh.writeOptionalshort(builderFeeTenthBps, _data, i);
     return i - offset;
   }
 
@@ -73,6 +87,8 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
          + Borsh.lenArray(uuid)
          + (takeProfitOrderParams == null ? 1 : (1 + Borsh.len(takeProfitOrderParams)))
          + (stopLossOrderParams == null ? 1 : (1 + Borsh.len(stopLossOrderParams)))
-         + (maxMarginRatio == null || maxMarginRatio.isEmpty() ? 1 : (1 + 2));
+         + (maxMarginRatio == null || maxMarginRatio.isEmpty() ? 1 : (1 + 2))
+         + (builderIdx == null || builderIdx.isEmpty() ? 1 : (1 + 1))
+         + (builderFeeTenthBps == null || builderFeeTenthBps.isEmpty() ? 1 : (1 + 2));
   }
 }

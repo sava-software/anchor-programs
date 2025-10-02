@@ -9,7 +9,8 @@ public enum StakeAction implements Borsh.Enum {
   UnstakeCancelRequest,
   Unstake,
   UnstakeTransfer,
-  StakeTransfer;
+  StakeTransfer,
+  AdminDeposit;
 
   public static StakeAction read(final byte[] _data, final int offset) {
     return Borsh.read(StakeAction.values(), _data, offset);
