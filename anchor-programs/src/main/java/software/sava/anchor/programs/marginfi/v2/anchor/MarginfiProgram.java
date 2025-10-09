@@ -2125,13 +2125,15 @@ public final class MarginfiProgram {
                                                  final PublicKey oldMarginfiAccountKey,
                                                  final PublicKey newMarginfiAccountKey,
                                                  final PublicKey authorityKey,
+                                                 final PublicKey feePayerKey,
                                                  final PublicKey newAuthorityKey,
                                                  final PublicKey globalFeeWalletKey) {
     final var keys = List.of(
       createRead(groupKey),
       createWrite(oldMarginfiAccountKey),
       createWritableSigner(newMarginfiAccountKey),
-      createWritableSigner(authorityKey),
+      createReadOnlySigner(authorityKey),
+      createWritableSigner(feePayerKey),
       createRead(newAuthorityKey),
       createWrite(globalFeeWalletKey),
       createRead(solanaAccounts.systemProgram())

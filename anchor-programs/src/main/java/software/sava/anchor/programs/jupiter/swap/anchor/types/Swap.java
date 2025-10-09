@@ -114,7 +114,10 @@ public sealed interface Swap extends RustEnum permits
   Swap.JupiterLendRedeem,
   Swap.DefiTuna,
   Swap.AlphaQ,
-  Swap.RaydiumV2 {
+  Swap.RaydiumV2,
+  Swap.SarosDlmm,
+  Swap.Futarchy,
+  Swap.MeteoraDammV2WithRemainingAccounts {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -226,6 +229,9 @@ public sealed interface Swap extends RustEnum permits
       case 103 -> DefiTuna.read(_data, i);
       case 104 -> AlphaQ.read(_data, i);
       case 105 -> RaydiumV2.INSTANCE;
+      case 106 -> SarosDlmm.read(_data, i);
+      case 107 -> Futarchy.read(_data, i);
+      case 108 -> MeteoraDammV2WithRemainingAccounts.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1648,6 +1654,43 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 105;
+    }
+  }
+
+  record SarosDlmm(boolean val) implements EnumBool, Swap {
+
+    public static final SarosDlmm TRUE = new SarosDlmm(true);
+    public static final SarosDlmm FALSE = new SarosDlmm(false);
+
+    public static SarosDlmm read(final byte[] _data, int i) {
+      return _data[i] == 1 ? SarosDlmm.TRUE : SarosDlmm.FALSE;
+    }
+
+    @Override
+    public int ordinal() {
+      return 106;
+    }
+  }
+
+  record Futarchy(Side val) implements BorshEnum, Swap {
+
+    public static Futarchy read(final byte[] _data, final int offset) {
+      return new Futarchy(Side.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 107;
+    }
+  }
+
+  record MeteoraDammV2WithRemainingAccounts() implements EnumNone, Swap {
+
+    public static final MeteoraDammV2WithRemainingAccounts INSTANCE = new MeteoraDammV2WithRemainingAccounts();
+
+    @Override
+    public int ordinal() {
+      return 108;
     }
   }
 }

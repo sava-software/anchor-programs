@@ -28,7 +28,8 @@ public sealed interface JupiterError extends ProgramError permits
     JupiterError.InvalidFeeWallet,
     JupiterError.InvalidAuthority,
     JupiterError.InsufficientFunds,
-    JupiterError.InvalidTokenAccount {
+    JupiterError.InvalidTokenAccount,
+    JupiterError.BondingCurveAlreadyCompleted {
 
   static JupiterError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -58,6 +59,7 @@ public sealed interface JupiterError extends ProgramError permits
       case 6023 -> InvalidAuthority.INSTANCE;
       case 6024 -> InsufficientFunds.INSTANCE;
       case 6025 -> InvalidTokenAccount.INSTANCE;
+      case 6026 -> BondingCurveAlreadyCompleted.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Jupiter error code: " + errorCode);
     };
   }
@@ -241,6 +243,13 @@ public sealed interface JupiterError extends ProgramError permits
 
     public static final InvalidTokenAccount INSTANCE = new InvalidTokenAccount(
         6025, "Invalid token account"
+    );
+  }
+
+  record BondingCurveAlreadyCompleted(int code, String msg) implements JupiterError {
+
+    public static final BondingCurveAlreadyCompleted INSTANCE = new BondingCurveAlreadyCompleted(
+        6026, "Bonding curve already completed"
     );
   }
 }

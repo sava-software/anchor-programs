@@ -46,7 +46,9 @@ public record OrderActionRecord(long ts,
                                 OptionalLong takerExistingBaseAssetAmount,
                                 OptionalLong makerExistingQuoteEntryAmount,
                                 OptionalLong makerExistingBaseAssetAmount,
-                                OptionalLong triggerPrice) implements Borsh {
+                                OptionalLong triggerPrice,
+                                OptionalInt builderIdx,
+                                OptionalLong builderFee) implements Borsh {
 
   public static OrderActionRecord read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -172,6 +174,14 @@ public record OrderActionRecord(long ts,
       i += 8;
     }
     final var triggerPrice = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
+    if (triggerPrice.isPresent()) {
+      i += 8;
+    }
+    final var builderIdx = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
+    if (builderIdx.isPresent()) {
+      ++i;
+    }
+    final var builderFee = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
     return new OrderActionRecord(ts,
                                  action,
                                  actionExplanation,
@@ -205,7 +215,9 @@ public record OrderActionRecord(long ts,
                                  takerExistingBaseAssetAmount,
                                  makerExistingQuoteEntryAmount,
                                  makerExistingBaseAssetAmount,
-                                 triggerPrice);
+                                 triggerPrice,
+                                 builderIdx,
+                                 builderFee);
   }
 
   @Override
@@ -249,6 +261,8 @@ public record OrderActionRecord(long ts,
     i += Borsh.writeOptional(makerExistingQuoteEntryAmount, _data, i);
     i += Borsh.writeOptional(makerExistingBaseAssetAmount, _data, i);
     i += Borsh.writeOptional(triggerPrice, _data, i);
+    i += Borsh.writeOptionalbyte(builderIdx, _data, i);
+    i += Borsh.writeOptional(builderFee, _data, i);
     return i - offset;
   }
 
@@ -287,6 +301,8 @@ public record OrderActionRecord(long ts,
          + (takerExistingBaseAssetAmount == null || takerExistingBaseAssetAmount.isEmpty() ? 1 : (1 + 8))
          + (makerExistingQuoteEntryAmount == null || makerExistingQuoteEntryAmount.isEmpty() ? 1 : (1 + 8))
          + (makerExistingBaseAssetAmount == null || makerExistingBaseAssetAmount.isEmpty() ? 1 : (1 + 8))
-         + (triggerPrice == null || triggerPrice.isEmpty() ? 1 : (1 + 8));
+         + (triggerPrice == null || triggerPrice.isEmpty() ? 1 : (1 + 8))
+         + (builderIdx == null || builderIdx.isEmpty() ? 1 : (1 + 1))
+         + (builderFee == null || builderFee.isEmpty() ? 1 : (1 + 8));
   }
 }
