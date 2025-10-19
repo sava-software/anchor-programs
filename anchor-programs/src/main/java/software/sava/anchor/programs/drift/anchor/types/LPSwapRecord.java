@@ -33,9 +33,10 @@ public record LPSwapRecord(long ts,
                            long inMarketTargetWeight,
                            long outMarketTargetWeight,
                            long inSwapId,
-                           long outSwapId) implements Borsh {
+                           long outSwapId,
+                           PublicKey lpPool) implements Borsh {
 
-  public static final int BYTES = 208;
+  public static final int BYTES = 240;
 
   public static LPSwapRecord read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -83,6 +84,8 @@ public record LPSwapRecord(long ts,
     final var inSwapId = getInt64LE(_data, i);
     i += 8;
     final var outSwapId = getInt64LE(_data, i);
+    i += 8;
+    final var lpPool = readPubKey(_data, i);
     return new LPSwapRecord(ts,
                             slot,
                             authority,
@@ -103,7 +106,8 @@ public record LPSwapRecord(long ts,
                             inMarketTargetWeight,
                             outMarketTargetWeight,
                             inSwapId,
-                            outSwapId);
+                            outSwapId,
+                            lpPool);
   }
 
   @Override
@@ -151,6 +155,8 @@ public record LPSwapRecord(long ts,
     i += 8;
     putInt64LE(_data, i, outSwapId);
     i += 8;
+    lpPool.write(_data, i);
+    i += 32;
     return i - offset;
   }
 

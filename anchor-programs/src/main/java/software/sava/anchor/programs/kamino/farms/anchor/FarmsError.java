@@ -64,7 +64,8 @@ public sealed interface FarmsError extends ProgramError permits
     FarmsError.InvalidTransferOwnershipFarmStateLockingMode,
     FarmsError.InvalidTransferOwnershipFarmStateWithdrawCooldownPeriod,
     FarmsError.InvalidTransferOwnershipStakeAmount,
-    FarmsError.InvalidTransferOwnershipNewOwner {
+    FarmsError.InvalidTransferOwnershipNewOwner,
+    FarmsError.InvalidTransferOwnershipFarmStateDepositWarmupPeriod {
 
   static FarmsError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -130,6 +131,7 @@ public sealed interface FarmsError extends ProgramError permits
       case 6059 -> InvalidTransferOwnershipFarmStateWithdrawCooldownPeriod.INSTANCE;
       case 6060 -> InvalidTransferOwnershipStakeAmount.INSTANCE;
       case 6061 -> InvalidTransferOwnershipNewOwner.INSTANCE;
+      case 6062 -> InvalidTransferOwnershipFarmStateDepositWarmupPeriod.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Farms error code: " + errorCode);
     };
   }
@@ -565,6 +567,13 @@ public sealed interface FarmsError extends ProgramError permits
 
     public static final InvalidTransferOwnershipNewOwner INSTANCE = new InvalidTransferOwnershipNewOwner(
         6061, "Invalid authority for transfer ownersip new user state initialization"
+    );
+  }
+
+  record InvalidTransferOwnershipFarmStateDepositWarmupPeriod(int code, String msg) implements FarmsError {
+
+    public static final InvalidTransferOwnershipFarmStateDepositWarmupPeriod INSTANCE = new InvalidTransferOwnershipFarmStateDepositWarmupPeriod(
+        6062, "Invalid farm state deposit warmup period for transfer ownership, must be 0 if old user has stake"
     );
   }
 }

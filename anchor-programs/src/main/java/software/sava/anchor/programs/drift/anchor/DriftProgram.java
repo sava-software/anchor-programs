@@ -8529,6 +8529,58 @@ public final class DriftProgram {
     }
   }
 
+  public static final Discriminator UPDATE_PERP_MARKET_REFERENCE_PRICE_OFFSET_DEADBAND_PCT_DISCRIMINATOR = toDiscriminator(214, 73, 166, 11, 218, 76, 110, 163);
+
+  public static Instruction updatePerpMarketReferencePriceOffsetDeadbandPct(final AccountMeta invokedDriftProgramMeta,
+                                                                            final PublicKey adminKey,
+                                                                            final PublicKey stateKey,
+                                                                            final PublicKey perpMarketKey,
+                                                                            final int referencePriceOffsetDeadbandPct) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = UPDATE_PERP_MARKET_REFERENCE_PRICE_OFFSET_DEADBAND_PCT_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) referencePriceOffsetDeadbandPct;
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketReferencePriceOffsetDeadbandPctIxData(Discriminator discriminator, int referencePriceOffsetDeadbandPct) implements Borsh {  
+
+    public static UpdatePerpMarketReferencePriceOffsetDeadbandPctIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdatePerpMarketReferencePriceOffsetDeadbandPctIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var referencePriceOffsetDeadbandPct = _data[i] & 0xFF;
+      return new UpdatePerpMarketReferencePriceOffsetDeadbandPctIxData(discriminator, referencePriceOffsetDeadbandPct);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) referencePriceOffsetDeadbandPct;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator UPDATE_LP_COOLDOWN_TIME_DISCRIMINATOR = toDiscriminator(198, 133, 88, 41, 241, 119, 61, 14);
 
   public static Instruction updateLpCooldownTime(final AccountMeta invokedDriftProgramMeta,

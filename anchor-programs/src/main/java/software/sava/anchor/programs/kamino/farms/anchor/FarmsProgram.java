@@ -342,6 +342,7 @@ public final class FarmsProgram {
 
   public static Instruction transferOwnership(final AccountMeta invokedFarmsProgramMeta,
                                               final PublicKey oldOwnerKey,
+                                              final PublicKey payerKey,
                                               final PublicKey newOwnerKey,
                                               final PublicKey oldUserStateKey,
                                               final PublicKey newUserStateKey,
@@ -350,7 +351,8 @@ public final class FarmsProgram {
                                               final PublicKey systemProgramKey,
                                               final PublicKey rentKey) {
     final var keys = List.of(
-      createWritableSigner(oldOwnerKey),
+      createReadOnlySigner(oldOwnerKey),
+      createWritableSigner(payerKey),
       createRead(newOwnerKey),
       createWrite(oldUserStateKey),
       createWrite(newUserStateKey),

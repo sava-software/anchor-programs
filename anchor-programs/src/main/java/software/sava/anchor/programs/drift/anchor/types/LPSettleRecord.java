@@ -2,8 +2,10 @@ package software.sava.anchor.programs.drift.anchor.types;
 
 import java.math.BigInteger;
 
+import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
 
+import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt128LE;
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
@@ -21,9 +23,10 @@ public record LPSettleRecord(long recordId,
                              long perpAmmPnlDelta,
                              long perpAmmExFeeDelta,
                              BigInteger lpAum,
-                             BigInteger lpPrice) implements Borsh {
+                             BigInteger lpPrice,
+                             PublicKey lpPool) implements Borsh {
 
-  public static final int BYTES = 98;
+  public static final int BYTES = 130;
 
   public static LPSettleRecord read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -51,6 +54,8 @@ public record LPSettleRecord(long recordId,
     final var lpAum = getInt128LE(_data, i);
     i += 16;
     final var lpPrice = getInt128LE(_data, i);
+    i += 16;
+    final var lpPool = readPubKey(_data, i);
     return new LPSettleRecord(recordId,
                               lastTs,
                               lastSlot,
@@ -61,7 +66,8 @@ public record LPSettleRecord(long recordId,
                               perpAmmPnlDelta,
                               perpAmmExFeeDelta,
                               lpAum,
-                              lpPrice);
+                              lpPrice,
+                              lpPool);
   }
 
   @Override
@@ -89,6 +95,8 @@ public record LPSettleRecord(long recordId,
     i += 16;
     putInt128LE(_data, i, lpPrice);
     i += 16;
+    lpPool.write(_data, i);
+    i += 32;
     return i - offset;
   }
 

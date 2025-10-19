@@ -230,11 +230,12 @@ public record AMM(// oracle price data public key
                   int referencePriceOffset,
                   // signed scale amm_spread similar to fee_adjustment logic (-100 = 0, 100 = double)
                   int ammInventorySpreadAdjustment,
+                  int referencePriceOffsetDeadbandPct,
                   byte[] padding,
                   long lastFundingOracleTwap) implements Borsh {
 
   public static final int BYTES = 936;
-  public static final int PADDING_LEN = 3;
+  public static final int PADDING_LEN = 2;
 
   public static AMM read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -409,7 +410,9 @@ public record AMM(// oracle price data public key
     i += 4;
     final var ammInventorySpreadAdjustment = _data[i];
     ++i;
-    final var padding = new byte[3];
+    final var referencePriceOffsetDeadbandPct = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[2];
     i += Borsh.readArray(padding, _data, i);
     final var lastFundingOracleTwap = getInt64LE(_data, i);
     return new AMM(oracle,
@@ -496,6 +499,7 @@ public record AMM(// oracle price data public key
                    quoteAssetAmountWithUnsettledLp,
                    referencePriceOffset,
                    ammInventorySpreadAdjustment,
+                   referencePriceOffsetDeadbandPct,
                    padding,
                    lastFundingOracleTwap);
   }
@@ -668,7 +672,9 @@ public record AMM(// oracle price data public key
     i += 4;
     _data[i] = (byte) ammInventorySpreadAdjustment;
     ++i;
-    i += Borsh.writeArrayChecked(padding, 3, _data, i);
+    _data[i] = (byte) referencePriceOffsetDeadbandPct;
+    ++i;
+    i += Borsh.writeArrayChecked(padding, 2, _data, i);
     putInt64LE(_data, i, lastFundingOracleTwap);
     i += 8;
     return i - offset;

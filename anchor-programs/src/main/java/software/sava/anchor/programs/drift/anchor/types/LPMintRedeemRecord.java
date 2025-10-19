@@ -30,9 +30,10 @@ public record LPMintRedeemRecord(long ts,
                                  BigInteger lastAum,
                                  long lastAumSlot,
                                  long inMarketCurrentWeight,
-                                 long inMarketTargetWeight) implements Borsh {
+                                 long inMarketTargetWeight,
+                                 PublicKey lpPool) implements Borsh {
 
-  public static final int BYTES = 205;
+  public static final int BYTES = 237;
 
   public static LPMintRedeemRecord read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -74,6 +75,8 @@ public record LPMintRedeemRecord(long ts,
     final var inMarketCurrentWeight = getInt64LE(_data, i);
     i += 8;
     final var inMarketTargetWeight = getInt64LE(_data, i);
+    i += 8;
+    final var lpPool = readPubKey(_data, i);
     return new LPMintRedeemRecord(ts,
                                   slot,
                                   authority,
@@ -91,7 +94,8 @@ public record LPMintRedeemRecord(long ts,
                                   lastAum,
                                   lastAumSlot,
                                   inMarketCurrentWeight,
-                                  inMarketTargetWeight);
+                                  inMarketTargetWeight,
+                                  lpPool);
   }
 
   @Override
@@ -133,6 +137,8 @@ public record LPMintRedeemRecord(long ts,
     i += 8;
     putInt64LE(_data, i, inMarketTargetWeight);
     i += 8;
+    lpPool.write(_data, i);
+    i += 32;
     return i - offset;
   }
 
