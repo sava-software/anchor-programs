@@ -220,7 +220,7 @@ public record AMM(// oracle price data public key
                   int perLpBase,
                   // the override for the state.min_perp_auction_duration
                   // 0 is no override, -1 is disable speed bump, 1-100 is literal speed bump
-                  int takerSpeedBumpOverride,
+                  int oracleLowRiskSlotDelayOverride,
                   // signed scale amm_spread similar to fee_adjustment logic (-100 = 0, 100 = double)
                   int ammSpreadAdjustment,
                   int oracleSlotDelayOverride,
@@ -394,7 +394,7 @@ public record AMM(// oracle price data public key
     i += 4;
     final var perLpBase = _data[i];
     ++i;
-    final var takerSpeedBumpOverride = _data[i];
+    final var oracleLowRiskSlotDelayOverride = _data[i];
     ++i;
     final var ammSpreadAdjustment = _data[i];
     ++i;
@@ -491,7 +491,7 @@ public record AMM(// oracle price data public key
                    lastOracleValid,
                    targetBaseAssetAmountPerLp,
                    perLpBase,
-                   takerSpeedBumpOverride,
+                   oracleLowRiskSlotDelayOverride,
                    ammSpreadAdjustment,
                    oracleSlotDelayOverride,
                    mmOracleSequenceId,
@@ -656,7 +656,7 @@ public record AMM(// oracle price data public key
     i += 4;
     _data[i] = (byte) perLpBase;
     ++i;
-    _data[i] = (byte) takerSpeedBumpOverride;
+    _data[i] = (byte) oracleLowRiskSlotDelayOverride;
     ++i;
     _data[i] = (byte) ammSpreadAdjustment;
     ++i;

@@ -97,6 +97,7 @@ public final class ExtSplProgram {
   public static final Discriminator TOKEN_TRANSFER_CHECKED_DISCRIMINATOR = toDiscriminator(169, 178, 117, 156, 169, 191, 199, 116);
 
   public static Instruction tokenTransferChecked(final AccountMeta invokedExtSplProgramMeta,
+                                                 final SolanaAccounts solanaAccounts,
                                                  final PublicKey glamStateKey,
                                                  final PublicKey glamVaultKey,
                                                  final PublicKey glamSignerKey,
@@ -115,6 +116,7 @@ public final class ExtSplProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(fromKey),
       createRead(mintKey),
       createWrite(toKey)

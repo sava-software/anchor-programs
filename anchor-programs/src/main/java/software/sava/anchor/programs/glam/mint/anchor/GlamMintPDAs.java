@@ -9,6 +9,17 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 public final class GlamMintPDAs {
 
+  public static ProgramDerivedAddress claimUserAtaPDA(final PublicKey program,
+                                                      final PublicKey claimUserAccount,
+                                                      final PublicKey claimTokenProgramAccount,
+                                                      final PublicKey claimTokenMintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      claimUserAccount.toByteArray(),
+      claimTokenProgramAccount.toByteArray(),
+      claimTokenMintAccount.toByteArray()
+    ), program);
+  }
+
   public static ProgramDerivedAddress escrowAssetAtaPDA(final PublicKey program,
                                                         final PublicKey glamEscrowAccount,
                                                         final PublicKey depositTokenProgramAccount,
@@ -152,28 +163,6 @@ public final class GlamMintPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress signerAtaPDA(final PublicKey program,
-                                                   final PublicKey signerAccount,
-                                                   final PublicKey recoverTokenProgramAccount,
-                                                   final PublicKey recoverTokenMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      signerAccount.toByteArray(),
-      recoverTokenProgramAccount.toByteArray(),
-      recoverTokenMintAccount.toByteArray()
-    ), program);
-  }
-
-  public static ProgramDerivedAddress signerAta1PDA(final PublicKey program,
-                                                    final PublicKey signerAccount,
-                                                    final PublicKey claimTokenProgramAccount,
-                                                    final PublicKey claimTokenMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      signerAccount.toByteArray(),
-      claimTokenProgramAccount.toByteArray(),
-      claimTokenMintAccount.toByteArray()
-    ), program);
-  }
-
   public static ProgramDerivedAddress signerDepositAtaPDA(final PublicKey program,
                                                           final PublicKey signerAccount,
                                                           final PublicKey depositTokenProgramAccount,
@@ -204,6 +193,17 @@ public final class GlamMintPDAs {
       toAccount.toByteArray(),
       token2022ProgramAccount.toByteArray(),
       glamMintAccount.toByteArray()
+    ), program);
+  }
+
+  public static ProgramDerivedAddress userAtaPDA(final PublicKey program,
+                                                 final PublicKey userAccount,
+                                                 final PublicKey recoverTokenProgramAccount,
+                                                 final PublicKey recoverTokenMintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      userAccount.toByteArray(),
+      recoverTokenProgramAccount.toByteArray(),
+      recoverTokenMintAccount.toByteArray()
     ), program);
   }
 

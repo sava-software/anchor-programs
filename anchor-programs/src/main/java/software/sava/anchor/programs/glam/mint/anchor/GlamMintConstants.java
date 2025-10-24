@@ -6,7 +6,11 @@ public final class GlamMintConstants {
 
   public static final long PROTO_MINT_PERM_BURN_TOKENS = 2;
 
+  public static final long PROTO_MINT_PERM_CANCEL_REQUEST = 128;
+
   public static final long PROTO_MINT_PERM_CLAIM_FEES = 16;
+
+  public static final long PROTO_MINT_PERM_CLAIM_REQUEST = 256;
 
   public static final long PROTO_MINT_PERM_EMERGENCY_UPDATE = 64;
 

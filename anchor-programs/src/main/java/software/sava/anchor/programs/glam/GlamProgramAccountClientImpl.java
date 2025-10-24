@@ -26,6 +26,7 @@ import software.sava.solana.programs.stake.StakeState;
 import software.sava.solana.programs.token.AssociatedTokenProgram;
 
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.SequencedCollection;
 import java.util.concurrent.CompletableFuture;
 
@@ -474,6 +475,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
                                           final PublicKey tokenMint) {
     return ExtSplProgram.tokenTransferChecked(
         glamAccounts.invokedSplExtensionProgram(),
+        solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
@@ -514,7 +516,10 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
   }
 
   @Override
-  public Instruction fulfill(final int mintId, final PublicKey baseAssetMint, final PublicKey baseAssetTokenProgram) {
+  public Instruction fulfill(final int mintId,
+                             final PublicKey baseAssetMint,
+                             final PublicKey baseAssetTokenProgram,
+                             final OptionalInt limit) {
     final var glamProgram = invokedProtocolProgram.publicKey();
 
     final var escrow = GlamMintPDAs.glamEscrowPDA(glamProgram, glamVaultAccounts.glamPublicKey()).publicKey();
@@ -542,7 +547,8 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         vaultTokenAccount.publicKey(),
         escrowTokenAccount.publicKey(),
         baseAssetTokenProgram,
-        invokedProtocolProgram.publicKey()
+        invokedProtocolProgram.publicKey(),
+        limit
     );
   }
 
@@ -594,21 +600,6 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         globalConfigKey,
         invokedProtocolProgram.publicKey(),
         aggIndexes
-    );
-  }
-
-  @Override
-  public Instruction priceStakes(final PublicKey solUsdOracleKey, final PublicKey baseAssetUsdOracleKey) {
-    return GlamMintProgram.priceStakeAccounts(
-        glamAccounts.invokedMintExtensionProgram(),
-        glamVaultAccounts.glamPublicKey(),
-        glamVaultAccounts.vaultPublicKey(),
-        feePayer.publicKey(),
-        solUsdOracleKey,
-        baseAssetUsdOracleKey,
-        glamAccounts.readMintExtensionAuthority().publicKey(),
-        globalConfigKey,
-        invokedProtocolProgram.publicKey()
     );
   }
 

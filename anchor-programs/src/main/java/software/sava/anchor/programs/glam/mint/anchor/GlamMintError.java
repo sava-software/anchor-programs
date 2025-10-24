@@ -13,7 +13,10 @@ public sealed interface GlamMintError extends ProgramError permits
     GlamMintError.RequestNotClaimable,
     GlamMintError.RequestNotCancellable,
     GlamMintError.RequestNotFound,
-    GlamMintError.RequestQueueNotEmpty {
+    GlamMintError.RequestQueueNotEmpty,
+    GlamMintError.InvalidRequestQueueData,
+    GlamMintError.RequestQueueFull,
+    GlamMintError.ProtocolFeesNotCrystallized {
 
   static GlamMintError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -28,6 +31,9 @@ public sealed interface GlamMintError extends ProgramError permits
       case 6008 -> RequestNotCancellable.INSTANCE;
       case 6009 -> RequestNotFound.INSTANCE;
       case 6010 -> RequestQueueNotEmpty.INSTANCE;
+      case 6011 -> InvalidRequestQueueData.INSTANCE;
+      case 6012 -> RequestQueueFull.INSTANCE;
+      case 6013 -> ProtocolFeesNotCrystallized.INSTANCE;
       default -> throw new IllegalStateException("Unexpected GlamMint error code: " + errorCode);
     };
   }
@@ -106,6 +112,27 @@ public sealed interface GlamMintError extends ProgramError permits
 
     public static final RequestQueueNotEmpty INSTANCE = new RequestQueueNotEmpty(
         6010, "Request queue not empty"
+    );
+  }
+
+  record InvalidRequestQueueData(int code, String msg) implements GlamMintError {
+
+    public static final InvalidRequestQueueData INSTANCE = new InvalidRequestQueueData(
+        6011, "Invalid request queue data"
+    );
+  }
+
+  record RequestQueueFull(int code, String msg) implements GlamMintError {
+
+    public static final RequestQueueFull INSTANCE = new RequestQueueFull(
+        6012, "Request queue full"
+    );
+  }
+
+  record ProtocolFeesNotCrystallized(int code, String msg) implements GlamMintError {
+
+    public static final ProtocolFeesNotCrystallized INSTANCE = new ProtocolFeesNotCrystallized(
+        6013, "Protocol fees should be crystallized before updating"
     );
   }
 }

@@ -12,6 +12,7 @@ import software.sava.rpc.json.http.response.AccountInfo;
 import software.sava.solana.programs.clients.NativeProgramAccountClient;
 
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.concurrent.CompletableFuture;
 
 public interface GlamProgramAccountClient extends NativeProgramAccountClient {
@@ -67,19 +68,22 @@ public interface GlamProgramAccountClient extends NativeProgramAccountClient {
 
   GlamVaultAccounts vaultAccounts();
 
-  Instruction fulfill(final int mintId, final PublicKey baseAssetMint, final PublicKey baseAssetTokenProgram);
+  Instruction fulfill(final int mintId,
+                      final PublicKey baseAssetMint,
+                      final PublicKey baseAssetTokenProgram,
+                      final OptionalInt limit);
 
   default Instruction fulfill(final PublicKey baseAssetMint, final PublicKey baseAssetTokenProgram) {
-    return fulfill(0, baseAssetMint, baseAssetTokenProgram);
+    return fulfill(0, baseAssetMint, baseAssetTokenProgram, OptionalInt.empty());
   }
 
   Instruction priceVaultTokens(final PublicKey solUsdOracleKey,
                                final PublicKey baseAssetUsdOracleKey,
                                final short[][] aggIndexes);
 
-  Instruction priceStakes(final PublicKey solUsdOracleKey, final PublicKey baseAssetUsdOracleKey);
-
-  Instruction priceDriftUsers(final PublicKey solUSDOracleKey, final PublicKey baseAssetUsdOracleKey, final int numUsers);
+  Instruction priceDriftUsers(final PublicKey solUSDOracleKey,
+                              final PublicKey baseAssetUsdOracleKey,
+                              final int numUsers);
 
   Instruction priceDriftVaultDepositors(final PublicKey solOracleKey,
                                         final PublicKey baseAssetUsdOracleKey,

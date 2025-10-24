@@ -244,14 +244,14 @@ public sealed interface GlamProtocolError extends ProgramError permits
   record InvalidIxArgs(int code, String msg) implements GlamProtocolError {
 
     public static final InvalidIxArgs INSTANCE = new InvalidIxArgs(
-        49005, "Glam mint not found"
+        49005, "Invalid instruction arguments"
     );
   }
 
   record CannotCloseState(int code, String msg) implements GlamProtocolError {
 
     public static final CannotCloseState INSTANCE = new CannotCloseState(
-        49006, "Glam state cannot be closed, all mints must be closed first"
+        49006, "Glam state cannot be closed: mint must be closed and state must be disabled"
     );
   }
 

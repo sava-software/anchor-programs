@@ -9920,13 +9920,13 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator UPDATE_PERP_MARKET_TAKER_SPEED_BUMP_OVERRIDE_DISCRIMINATOR = toDiscriminator(31, 39, 5, 25, 228, 50, 1, 0);
+  public static final Discriminator UPDATE_PERP_MARKET_ORACLE_LOW_RISK_SLOT_DELAY_OVERRIDE_DISCRIMINATOR = toDiscriminator(124, 108, 147, 229, 109, 117, 123, 3);
 
-  public static Instruction updatePerpMarketTakerSpeedBumpOverride(final AccountMeta invokedDriftProgramMeta,
-                                                                   final PublicKey adminKey,
-                                                                   final PublicKey stateKey,
-                                                                   final PublicKey perpMarketKey,
-                                                                   final int takerSpeedBumpOverride) {
+  public static Instruction updatePerpMarketOracleLowRiskSlotDelayOverride(final AccountMeta invokedDriftProgramMeta,
+                                                                           final PublicKey adminKey,
+                                                                           final PublicKey stateKey,
+                                                                           final PublicKey perpMarketKey,
+                                                                           final int oracleLowRiskSlotDelayOverride) {
     final var keys = List.of(
       createReadOnlySigner(adminKey),
       createRead(stateKey),
@@ -9934,34 +9934,34 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = UPDATE_PERP_MARKET_TAKER_SPEED_BUMP_OVERRIDE_DISCRIMINATOR.write(_data, 0);
-    _data[i] = (byte) takerSpeedBumpOverride;
+    int i = UPDATE_PERP_MARKET_ORACLE_LOW_RISK_SLOT_DELAY_OVERRIDE_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) oracleLowRiskSlotDelayOverride;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record UpdatePerpMarketTakerSpeedBumpOverrideIxData(Discriminator discriminator, int takerSpeedBumpOverride) implements Borsh {  
+  public record UpdatePerpMarketOracleLowRiskSlotDelayOverrideIxData(Discriminator discriminator, int oracleLowRiskSlotDelayOverride) implements Borsh {  
 
-    public static UpdatePerpMarketTakerSpeedBumpOverrideIxData read(final Instruction instruction) {
+    public static UpdatePerpMarketOracleLowRiskSlotDelayOverrideIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 9;
 
-    public static UpdatePerpMarketTakerSpeedBumpOverrideIxData read(final byte[] _data, final int offset) {
+    public static UpdatePerpMarketOracleLowRiskSlotDelayOverrideIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var takerSpeedBumpOverride = _data[i];
-      return new UpdatePerpMarketTakerSpeedBumpOverrideIxData(discriminator, takerSpeedBumpOverride);
+      final var oracleLowRiskSlotDelayOverride = _data[i];
+      return new UpdatePerpMarketOracleLowRiskSlotDelayOverrideIxData(discriminator, oracleLowRiskSlotDelayOverride);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) takerSpeedBumpOverride;
+      _data[i] = (byte) oracleLowRiskSlotDelayOverride;
       ++i;
       return i - offset;
     }

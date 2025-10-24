@@ -20,6 +20,7 @@ import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
+import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
@@ -95,8 +96,9 @@ public final class GlamMintProgram {
                                    final PublicKey glamEscrowKey,
                                    final PublicKey requestQueueKey,
                                    final PublicKey signerKey,
+                                   final PublicKey userKey,
                                    final PublicKey recoverTokenMintKey,
-                                   final PublicKey signerAtaKey,
+                                   final PublicKey userAtaKey,
                                    final PublicKey escrowAtaKey,
                                    final PublicKey recoverTokenProgramKey) {
     final var keys = List.of(
@@ -105,8 +107,9 @@ public final class GlamMintProgram {
       createRead(glamEscrowKey),
       createWrite(requestQueueKey),
       createWritableSigner(signerKey),
+      createRead(userKey),
       createRead(recoverTokenMintKey),
-      createWrite(signerAtaKey),
+      createWrite(userAtaKey),
       createWrite(escrowAtaKey),
       createRead(solanaAccounts.systemProgram()),
       createRead(recoverTokenProgramKey),
@@ -125,10 +128,11 @@ public final class GlamMintProgram {
                                   final PublicKey glamEscrowKey,
                                   final PublicKey requestQueueKey,
                                   final PublicKey signerKey,
+                                  final PublicKey claimUserKey,
                                   final PublicKey claimTokenMintKey,
-                                  final PublicKey signerAtaKey,
+                                  final PublicKey claimUserAtaKey,
                                   final PublicKey escrowAtaKey,
-                                  final PublicKey signerPolicyKey,
+                                  final PublicKey claimUserPolicyKey,
                                   final PublicKey claimTokenProgramKey,
                                   final PublicKey glamPoliciesProgramKey) {
     final var keys = List.of(
@@ -137,10 +141,11 @@ public final class GlamMintProgram {
       createRead(glamEscrowKey),
       createWrite(requestQueueKey),
       createWritableSigner(signerKey),
+      createRead(claimUserKey),
       createRead(claimTokenMintKey),
-      createWrite(signerAtaKey),
+      createWrite(claimUserAtaKey),
       createWrite(escrowAtaKey),
-      createWrite(requireNonNullElse(signerPolicyKey, invokedGlamMintProgramMeta.publicKey())),
+      createWrite(requireNonNullElse(claimUserPolicyKey, invokedGlamMintProgramMeta.publicKey())),
       createRead(solanaAccounts.systemProgram()),
       createRead(claimTokenProgramKey),
       createRead(glamPoliciesProgramKey),
@@ -380,7 +385,8 @@ public final class GlamMintProgram {
                                     final PublicKey vaultAssetAtaKey,
                                     final PublicKey escrowAssetAtaKey,
                                     final PublicKey depositTokenProgramKey,
-                                    final PublicKey glamProtocolProgramKey) {
+                                    final PublicKey glamProtocolProgramKey,
+                                    final OptionalInt limit) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createWrite(glamVaultKey),
@@ -399,7 +405,43 @@ public final class GlamMintProgram {
       createRead(glamProtocolProgramKey)
     );
 
-    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, FULFILL_DISCRIMINATOR);
+    final byte[] _data = new byte[
+        8
+        + (limit == null || limit.isEmpty() ? 1 : 5)
+    ];
+    int i = FULFILL_DISCRIMINATOR.write(_data, 0);
+    Borsh.writeOptional(limit, _data, i);
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, _data);
+  }
+
+  public record FulfillIxData(Discriminator discriminator, OptionalInt limit) implements Borsh {  
+
+    public static FulfillIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static FulfillIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var limit = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+      return new FulfillIxData(discriminator, limit);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeOptional(limit, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + (limit == null || limit.isEmpty() ? 1 : (1 + 4));
+    }
   }
 
   public static final Discriminator INITIALIZE_MINT_DISCRIMINATOR = toDiscriminator(209, 42, 195, 4, 129, 85, 209, 44);
@@ -876,31 +918,6 @@ public final class GlamMintProgram {
     public int l() {
       return BYTES;
     }
-  }
-
-  public static final Discriminator PRICE_STAKE_ACCOUNTS_DISCRIMINATOR = toDiscriminator(119, 137, 9, 15, 196, 73, 30, 27);
-
-  public static Instruction priceStakeAccounts(final AccountMeta invokedGlamMintProgramMeta,
-                                               final PublicKey glamStateKey,
-                                               final PublicKey glamVaultKey,
-                                               final PublicKey signerKey,
-                                               final PublicKey solUsdOracleKey,
-                                               final PublicKey baseAssetUsdOracleKey,
-                                               final PublicKey integrationAuthorityKey,
-                                               final PublicKey glamConfigKey,
-                                               final PublicKey glamProtocolKey) {
-    final var keys = List.of(
-      createWrite(glamStateKey),
-      createRead(glamVaultKey),
-      createWritableSigner(signerKey),
-      createRead(solUsdOracleKey),
-      createRead(baseAssetUsdOracleKey),
-      createRead(integrationAuthorityKey),
-      createRead(glamConfigKey),
-      createRead(glamProtocolKey)
-    );
-
-    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, PRICE_STAKE_ACCOUNTS_DISCRIMINATOR);
   }
 
   public static final Discriminator PRICE_VAULT_TOKENS_DISCRIMINATOR = toDiscriminator(54, 42, 16, 199, 20, 183, 50, 137);

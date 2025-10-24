@@ -43,27 +43,30 @@ public final class GlamConfigProgram {
                                             final SolanaAccounts solanaAccounts,
                                             final PublicKey globalConfigKey,
                                             final PublicKey adminKey,
-                                            final PublicKey asset) {
+                                            final PublicKey asset,
+                                            final PublicKey oracle) {
     final var keys = List.of(
       createWrite(globalConfigKey),
       createWritableSigner(adminKey),
       createRead(solanaAccounts.systemProgram())
     );
 
-    final byte[] _data = new byte[40];
+    final byte[] _data = new byte[72];
     int i = DELETE_ASSET_META_DISCRIMINATOR.write(_data, 0);
     asset.write(_data, i);
+    i += 32;
+    oracle.write(_data, i);
 
     return Instruction.createInstruction(invokedGlamConfigProgramMeta, keys, _data);
   }
 
-  public record DeleteAssetMetaIxData(Discriminator discriminator, PublicKey asset) implements Borsh {  
+  public record DeleteAssetMetaIxData(Discriminator discriminator, PublicKey asset, PublicKey oracle) implements Borsh {  
 
     public static DeleteAssetMetaIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 40;
+    public static final int BYTES = 72;
 
     public static DeleteAssetMetaIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -72,13 +75,17 @@ public final class GlamConfigProgram {
       final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
       final var asset = readPubKey(_data, i);
-      return new DeleteAssetMetaIxData(discriminator, asset);
+      i += 32;
+      final var oracle = readPubKey(_data, i);
+      return new DeleteAssetMetaIxData(discriminator, asset, oracle);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       asset.write(_data, i);
+      i += 32;
+      oracle.write(_data, i);
       i += 32;
       return i - offset;
     }

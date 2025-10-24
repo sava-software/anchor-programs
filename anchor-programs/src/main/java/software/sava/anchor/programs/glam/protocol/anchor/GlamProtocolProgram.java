@@ -34,6 +34,17 @@ import static software.sava.core.programs.Discriminator.toDiscriminator;
 
 public final class GlamProtocolProgram {
 
+  public static final Discriminator CANCEL_TIMELOCK_DISCRIMINATOR = toDiscriminator(158, 180, 47, 81, 133, 231, 168, 238);
+
+  public static Instruction cancelTimelock(final AccountMeta invokedGlamProtocolProgramMeta, final PublicKey glamStateKey, final PublicKey glamSignerKey) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWritableSigner(glamSignerKey)
+    );
+
+    return Instruction.createInstruction(invokedGlamProtocolProgramMeta, keys, CANCEL_TIMELOCK_DISCRIMINATOR);
+  }
+
   public static final Discriminator CLOSE_STATE_DISCRIMINATOR = toDiscriminator(25, 1, 184, 101, 200, 245, 210, 246);
 
   public static Instruction closeState(final AccountMeta invokedGlamProtocolProgramMeta,

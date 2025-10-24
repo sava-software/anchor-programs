@@ -36,6 +36,7 @@ public final class ExtDriftProgram {
   public static final Discriminator CANCEL_ORDERS_DISCRIMINATOR = toDiscriminator(238, 225, 95, 158, 227, 103, 8, 194);
 
   public static Instruction cancelOrders(final AccountMeta invokedExtDriftProgramMeta,
+                                         final SolanaAccounts solanaAccounts,
                                          final PublicKey glamStateKey,
                                          final PublicKey glamVaultKey,
                                          final PublicKey glamSignerKey,
@@ -54,6 +55,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createRead(stateKey),
       createWrite(userKey)
     );
@@ -117,6 +119,7 @@ public final class ExtDriftProgram {
   public static final Discriminator CANCEL_ORDERS_BY_IDS_DISCRIMINATOR = toDiscriminator(134, 19, 144, 165, 94, 240, 210, 94);
 
   public static Instruction cancelOrdersByIds(final AccountMeta invokedExtDriftProgramMeta,
+                                              final SolanaAccounts solanaAccounts,
                                               final PublicKey glamStateKey,
                                               final PublicKey glamVaultKey,
                                               final PublicKey glamSignerKey,
@@ -133,6 +136,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createRead(stateKey),
       createWrite(userKey)
     );
@@ -176,6 +180,7 @@ public final class ExtDriftProgram {
   public static final Discriminator DELETE_USER_DISCRIMINATOR = toDiscriminator(186, 85, 17, 249, 219, 231, 98, 251);
 
   public static Instruction deleteUser(final AccountMeta invokedExtDriftProgramMeta,
+                                       final SolanaAccounts solanaAccounts,
                                        final PublicKey glamStateKey,
                                        final PublicKey glamVaultKey,
                                        final PublicKey glamSignerKey,
@@ -192,6 +197,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(userKey),
       createWrite(userStatsKey),
       createWrite(stateKey)
@@ -203,6 +209,7 @@ public final class ExtDriftProgram {
   public static final Discriminator DEPOSIT_DISCRIMINATOR = toDiscriminator(242, 35, 198, 137, 82, 225, 242, 182);
 
   public static Instruction deposit(final AccountMeta invokedExtDriftProgramMeta,
+                                    final SolanaAccounts solanaAccounts,
                                     final PublicKey glamStateKey,
                                     final PublicKey glamVaultKey,
                                     final PublicKey glamSignerKey,
@@ -225,6 +232,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createRead(stateKey),
       createWrite(userKey),
       createWrite(userStatsKey),
@@ -393,6 +401,7 @@ public final class ExtDriftProgram {
   public static final Discriminator MODIFY_ORDER_DISCRIMINATOR = toDiscriminator(47, 124, 117, 255, 201, 197, 130, 94);
 
   public static Instruction modifyOrder(final AccountMeta invokedExtDriftProgramMeta,
+                                        final SolanaAccounts solanaAccounts,
                                         final PublicKey glamStateKey,
                                         final PublicKey glamVaultKey,
                                         final PublicKey glamSignerKey,
@@ -410,6 +419,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createRead(stateKey),
       createWrite(userKey)
     );
@@ -462,6 +472,7 @@ public final class ExtDriftProgram {
   public static final Discriminator PLACE_ORDERS_DISCRIMINATOR = toDiscriminator(60, 63, 50, 123, 12, 197, 60, 190);
 
   public static Instruction placeOrders(final AccountMeta invokedExtDriftProgramMeta,
+                                        final SolanaAccounts solanaAccounts,
                                         final PublicKey glamStateKey,
                                         final PublicKey glamVaultKey,
                                         final PublicKey glamSignerKey,
@@ -478,6 +489,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createRead(stateKey),
       createWrite(userKey)
     );
@@ -538,6 +550,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(userKey),
       createWrite(userStatsKey),
       createRead(stateKey),
@@ -648,6 +661,7 @@ public final class ExtDriftProgram {
   public static final Discriminator SETTLE_MULTIPLE_PNLS_DISCRIMINATOR = toDiscriminator(127, 66, 117, 57, 40, 50, 152, 127);
 
   public static Instruction settleMultiplePnls(final AccountMeta invokedExtDriftProgramMeta,
+                                               final SolanaAccounts solanaAccounts,
                                                final PublicKey glamStateKey,
                                                final PublicKey glamVaultKey,
                                                final PublicKey glamSignerKey,
@@ -666,6 +680,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createRead(stateKey),
       createWrite(userKey),
       createRead(spotMarketVaultKey)
@@ -714,6 +729,7 @@ public final class ExtDriftProgram {
   public static final Discriminator SETTLE_PNL_DISCRIMINATOR = toDiscriminator(43, 61, 234, 45, 15, 95, 152, 153);
 
   public static Instruction settlePnl(final AccountMeta invokedExtDriftProgramMeta,
+                                      final SolanaAccounts solanaAccounts,
                                       final PublicKey glamStateKey,
                                       final PublicKey glamVaultKey,
                                       final PublicKey glamSignerKey,
@@ -731,6 +747,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createRead(stateKey),
       createWrite(userKey),
       createRead(spotMarketVaultKey)
@@ -778,6 +795,7 @@ public final class ExtDriftProgram {
   public static final Discriminator UPDATE_USER_CUSTOM_MARGIN_RATIO_DISCRIMINATOR = toDiscriminator(21, 221, 140, 187, 32, 129, 11, 123);
 
   public static Instruction updateUserCustomMarginRatio(final AccountMeta invokedExtDriftProgramMeta,
+                                                        final SolanaAccounts solanaAccounts,
                                                         final PublicKey glamStateKey,
                                                         final PublicKey glamVaultKey,
                                                         final PublicKey glamSignerKey,
@@ -794,6 +812,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(userKey)
     );
 
@@ -845,6 +864,7 @@ public final class ExtDriftProgram {
   public static final Discriminator UPDATE_USER_DELEGATE_DISCRIMINATOR = toDiscriminator(139, 205, 141, 141, 113, 36, 94, 187);
 
   public static Instruction updateUserDelegate(final AccountMeta invokedExtDriftProgramMeta,
+                                               final SolanaAccounts solanaAccounts,
                                                final PublicKey glamStateKey,
                                                final PublicKey glamVaultKey,
                                                final PublicKey glamSignerKey,
@@ -861,6 +881,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(userKey)
     );
 
@@ -912,6 +933,7 @@ public final class ExtDriftProgram {
   public static final Discriminator UPDATE_USER_MARGIN_TRADING_ENABLED_DISCRIMINATOR = toDiscriminator(194, 92, 204, 223, 246, 188, 31, 203);
 
   public static Instruction updateUserMarginTradingEnabled(final AccountMeta invokedExtDriftProgramMeta,
+                                                           final SolanaAccounts solanaAccounts,
                                                            final PublicKey glamStateKey,
                                                            final PublicKey glamVaultKey,
                                                            final PublicKey glamSignerKey,
@@ -928,6 +950,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(userKey)
     );
 
@@ -979,6 +1002,7 @@ public final class ExtDriftProgram {
   public static final Discriminator UPDATE_USER_POOL_ID_DISCRIMINATOR = toDiscriminator(219, 86, 73, 106, 56, 218, 128, 109);
 
   public static Instruction updateUserPoolId(final AccountMeta invokedExtDriftProgramMeta,
+                                             final SolanaAccounts solanaAccounts,
                                              final PublicKey glamStateKey,
                                              final PublicKey glamVaultKey,
                                              final PublicKey glamSignerKey,
@@ -995,6 +1019,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(userKey)
     );
 
@@ -1046,6 +1071,7 @@ public final class ExtDriftProgram {
   public static final Discriminator VAULTS_CANCEL_REQUEST_WITHDRAW_DISCRIMINATOR = toDiscriminator(188, 93, 159, 202, 157, 47, 143, 219);
 
   public static Instruction vaultsCancelRequestWithdraw(final AccountMeta invokedExtDriftProgramMeta,
+                                                        final SolanaAccounts solanaAccounts,
                                                         final PublicKey glamStateKey,
                                                         final PublicKey glamVaultKey,
                                                         final PublicKey glamSignerKey,
@@ -1063,6 +1089,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(vaultKey),
       createWrite(vaultDepositorKey),
       createRead(driftUserStatsKey),
@@ -1075,6 +1102,7 @@ public final class ExtDriftProgram {
   public static final Discriminator VAULTS_DEPOSIT_DISCRIMINATOR = toDiscriminator(124, 173, 191, 223, 48, 26, 84, 84);
 
   public static Instruction vaultsDeposit(final AccountMeta invokedExtDriftProgramMeta,
+                                          final SolanaAccounts solanaAccounts,
                                           final PublicKey glamStateKey,
                                           final PublicKey glamVaultKey,
                                           final PublicKey glamSignerKey,
@@ -1099,6 +1127,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(vaultKey),
       createWrite(vaultDepositorKey),
       createWrite(vaultTokenAccountKey),
@@ -1181,6 +1210,7 @@ public final class ExtDriftProgram {
   public static final Discriminator VAULTS_REQUEST_WITHDRAW_DISCRIMINATOR = toDiscriminator(138, 91, 50, 130, 167, 165, 120, 175);
 
   public static Instruction vaultsRequestWithdraw(final AccountMeta invokedExtDriftProgramMeta,
+                                                  final SolanaAccounts solanaAccounts,
                                                   final PublicKey glamStateKey,
                                                   final PublicKey glamVaultKey,
                                                   final PublicKey glamSignerKey,
@@ -1200,6 +1230,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(vaultKey),
       createWrite(vaultDepositorKey),
       createRead(driftUserStatsKey),
@@ -1253,6 +1284,7 @@ public final class ExtDriftProgram {
   public static final Discriminator VAULTS_WITHDRAW_DISCRIMINATOR = toDiscriminator(12, 8, 236, 92, 134, 144, 196, 87);
 
   public static Instruction vaultsWithdraw(final AccountMeta invokedExtDriftProgramMeta,
+                                           final SolanaAccounts solanaAccounts,
                                            final PublicKey glamStateKey,
                                            final PublicKey glamVaultKey,
                                            final PublicKey glamSignerKey,
@@ -1277,6 +1309,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createWrite(vaultKey),
       createWrite(vaultDepositorKey),
       createWrite(vaultTokenAccountKey),
@@ -1296,6 +1329,7 @@ public final class ExtDriftProgram {
   public static final Discriminator WITHDRAW_DISCRIMINATOR = toDiscriminator(183, 18, 70, 156, 148, 109, 161, 34);
 
   public static Instruction withdraw(final AccountMeta invokedExtDriftProgramMeta,
+                                     final SolanaAccounts solanaAccounts,
                                      final PublicKey glamStateKey,
                                      final PublicKey glamVaultKey,
                                      final PublicKey glamSignerKey,
@@ -1319,6 +1353,7 @@ public final class ExtDriftProgram {
       createRead(integrationAuthorityKey),
       createRead(cpiProgramKey),
       createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
       createRead(stateKey),
       createWrite(userKey),
       createWrite(userStatsKey),
