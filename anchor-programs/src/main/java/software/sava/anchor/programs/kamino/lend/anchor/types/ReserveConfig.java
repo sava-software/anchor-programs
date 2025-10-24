@@ -18,7 +18,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
                             // - Boost for side (debt or collateral)
                             // - Reward points multiplier per obligation type
                             // Can be re-used after making sure all underlying production account data is zeroed.
-                            byte[] reserved2,
+                            byte[] reserved1,
                             // Cut of the order execution bonus that the protocol receives, as a percentage
                             int protocolOrderExecutionFeePct,
                             // Protocol take rate is the amount borrowed interest protocol receives, as a percentage
@@ -69,7 +69,12 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
                             // **NOTE:** the manual "target LTV" deleveraging (enabled by the risk council for individual
                             // obligations) is NOT affected by this flag.
                             int autodeleverageEnabled,
-                            byte[] reserved1,
+                            // Boolean flag indicating whether the reserve is locked for the proposer authority.
+                            // 
+                            // Once the proposer have finished preparing the reserve, it must be locked to prevent
+                            // further changes to the reserve configuration allowing review and voting on the proposal
+                            // without alteration during the voting period.
+                            int proposerAuthorityLocked,
                             // Maximum amount liquidity of this reserve borrowed outside all elevation groups
                             // - u64::MAX for inf
                             // - 0 to disable borrows outside elevation groups
@@ -84,9 +89,8 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
                             long deleveragingBonusIncreaseBpsPerDay) implements Borsh {
 
   public static final int BYTES = 920;
-  public static final int RESERVED_2_LEN = 9;
+  public static final int RESERVED_1_LEN = 9;
   public static final int ELEVATION_GROUPS_LEN = 20;
-  public static final int RESERVED_1_LEN = 1;
   public static final int BORROW_LIMIT_AGAINST_THIS_COLLATERAL_IN_ELEVATION_GROUP_LEN = 32;
 
   public static ReserveConfig read(final byte[] _data, final int offset) {
@@ -100,8 +104,8 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     ++i;
     final var hostFixedInterestRateBps = getInt16LE(_data, i);
     i += 2;
-    final var reserved2 = new byte[9];
-    i += Borsh.readArray(reserved2, _data, i);
+    final var reserved1 = new byte[9];
+    i += Borsh.readArray(reserved1, _data, i);
     final var protocolOrderExecutionFeePct = _data[i] & 0xFF;
     ++i;
     final var protocolTakeRatePct = _data[i] & 0xFF;
@@ -146,8 +150,8 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     ++i;
     final var autodeleverageEnabled = _data[i] & 0xFF;
     ++i;
-    final var reserved1 = new byte[1];
-    i += Borsh.readArray(reserved1, _data, i);
+    final var proposerAuthorityLocked = _data[i] & 0xFF;
+    ++i;
     final var borrowLimitOutsideElevationGroup = getInt64LE(_data, i);
     i += 8;
     final var borrowLimitAgainstThisCollateralInElevationGroup = new long[32];
@@ -156,7 +160,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     return new ReserveConfig(status,
                              assetTier,
                              hostFixedInterestRateBps,
-                             reserved2,
+                             reserved1,
                              protocolOrderExecutionFeePct,
                              protocolTakeRatePct,
                              protocolLiquidationFeePct,
@@ -179,7 +183,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
                              disableUsageAsCollOutsideEmode,
                              utilizationLimitBlockBorrowingAbovePct,
                              autodeleverageEnabled,
-                             reserved1,
+                             proposerAuthorityLocked,
                              borrowLimitOutsideElevationGroup,
                              borrowLimitAgainstThisCollateralInElevationGroup,
                              deleveragingBonusIncreaseBpsPerDay);
@@ -194,7 +198,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     ++i;
     putInt16LE(_data, i, hostFixedInterestRateBps);
     i += 2;
-    i += Borsh.writeArrayChecked(reserved2, 9, _data, i);
+    i += Borsh.writeArrayChecked(reserved1, 9, _data, i);
     _data[i] = (byte) protocolOrderExecutionFeePct;
     ++i;
     _data[i] = (byte) protocolTakeRatePct;
@@ -233,7 +237,8 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     ++i;
     _data[i] = (byte) autodeleverageEnabled;
     ++i;
-    i += Borsh.writeArrayChecked(reserved1, 1, _data, i);
+    _data[i] = (byte) proposerAuthorityLocked;
+    ++i;
     putInt64LE(_data, i, borrowLimitOutsideElevationGroup);
     i += 8;
     i += Borsh.writeArrayChecked(borrowLimitAgainstThisCollateralInElevationGroup, 32, _data, i);

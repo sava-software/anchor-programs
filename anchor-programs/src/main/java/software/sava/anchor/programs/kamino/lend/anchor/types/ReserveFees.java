@@ -15,8 +15,8 @@ public record ReserveFees(// Fee assessed on `BorrowObligationLiquidity`, as sca
                           // clarity:
                           // 1% = (1 << 60) / 100 = 11529215046068470
                           // 0.01% (1 basis point) = 115292150460685
-                          // 0.00001% (Aave borrow fee) = 115292150461
-                          long borrowFeeSf,
+                          // 0.00001% (Aave origination fee) = 115292150461
+                          long originationFeeSf,
                           // Fee for flash loan, expressed as scaled fraction.
                           // 0.3% (Aave flash loan fee) = 0.003 * 2^60 = 3458764513820541
                           long flashLoanFeeSf,
@@ -31,19 +31,19 @@ public record ReserveFees(// Fee assessed on `BorrowObligationLiquidity`, as sca
       return null;
     }
     int i = offset;
-    final var borrowFeeSf = getInt64LE(_data, i);
+    final var originationFeeSf = getInt64LE(_data, i);
     i += 8;
     final var flashLoanFeeSf = getInt64LE(_data, i);
     i += 8;
     final var padding = new byte[8];
     Borsh.readArray(padding, _data, i);
-    return new ReserveFees(borrowFeeSf, flashLoanFeeSf, padding);
+    return new ReserveFees(originationFeeSf, flashLoanFeeSf, padding);
   }
 
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    putInt64LE(_data, i, borrowFeeSf);
+    putInt64LE(_data, i, originationFeeSf);
     i += 8;
     putInt64LE(_data, i, flashLoanFeeSf);
     i += 8;

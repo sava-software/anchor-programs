@@ -138,34 +138,6 @@ final class ScopeProgramClientImpl implements ScopeProgramClient {
   }
 
   @Override
-  public Instruction updateMapping(final PublicKey adminKey,
-                                   final PublicKey configurationKey,
-                                   final PublicKey oracleMappingsKey,
-                                   final PublicKey priceInfoKey,
-                                   final int token,
-                                   final int priceType,
-                                   final boolean twapEnabled,
-                                   final int twapSource,
-                                   final int refPriceIndex,
-                                   final String feedName,
-                                   final byte[] genericData) {
-    return ScopeProgram.updateMapping(
-        invokedScopeProgram,
-        adminKey,
-        configurationKey,
-        oracleMappingsKey,
-        priceInfoKey,
-        token,
-        priceType,
-        twapEnabled,
-        twapSource,
-        refPriceIndex,
-        feedName,
-        genericData
-    );
-  }
-
-  @Override
   public Instruction resetTwap(final PublicKey adminKey,
                                final PublicKey configurationKey,
                                final PublicKey oracleTwapsKey,
@@ -179,26 +151,6 @@ final class ScopeProgramClientImpl implements ScopeProgramClient {
         solanaAccounts.instructionsSysVar(),
         token,
         feedName
-    );
-  }
-
-  @Override
-  public Instruction updateTokenMetadata(final PublicKey adminKey,
-                                         final PublicKey configurationKey,
-                                         final PublicKey tokensMetadataKey,
-                                         final long index,
-                                         final long mode,
-                                         final String feedName,
-                                         final byte[] value) {
-    return ScopeProgram.updateTokenMetadata(
-        invokedScopeProgram,
-        adminKey,
-        configurationKey,
-        tokensMetadataKey,
-        index,
-        mode,
-        feedName,
-        value
     );
   }
 

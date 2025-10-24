@@ -28,7 +28,8 @@ public enum UpdateLendingMarketMode implements Borsh.Enum {
   UpdateInitialDepositAmount,
   UpdateObligationOrderExecutionEnabled,
   UpdateImmutableFlag,
-  UpdateObligationOrderCreationEnabled;
+  UpdateObligationOrderCreationEnabled,
+  UpdateProposerAuthority;
 
   public static UpdateLendingMarketMode read(final byte[] _data, final int offset) {
     return Borsh.read(UpdateLendingMarketMode.values(), _data, offset);

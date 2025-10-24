@@ -165,7 +165,7 @@ public final class KaminoLendingProgram {
   public static final Discriminator INIT_RESERVE_DISCRIMINATOR = toDiscriminator(138, 245, 71, 225, 153, 4, 3, 43);
 
   public static Instruction initReserve(final AccountMeta invokedKaminoLendingProgramMeta,
-                                        final PublicKey lendingMarketOwnerKey,
+                                        final PublicKey signerKey,
                                         final PublicKey lendingMarketKey,
                                         final PublicKey lendingMarketAuthorityKey,
                                         final PublicKey reserveKey,
@@ -180,7 +180,7 @@ public final class KaminoLendingProgram {
                                         final PublicKey collateralTokenProgramKey,
                                         final PublicKey systemProgramKey) {
     final var keys = List.of(
-      createWritableSigner(lendingMarketOwnerKey),
+      createWritableSigner(signerKey),
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),
       createWrite(reserveKey),
@@ -1146,7 +1146,7 @@ public final class KaminoLendingProgram {
                                                          final PublicKey instructionSysvarAccountKey,
                                                          final long collateralAmount) {
     final var keys = List.of(
-      createReadOnlySigner(ownerKey),
+      createWritableSigner(ownerKey),
       createWrite(obligationKey),
       createRead(lendingMarketKey),
       createRead(lendingMarketAuthorityKey),
@@ -1213,7 +1213,7 @@ public final class KaminoLendingProgram {
                                                            final PublicKey farmsProgramKey,
                                                            final long collateralAmount) {
     final var keys = List.of(
-      createReadOnlySigner(withdrawAccountsOwnerKey),
+      createWritableSigner(withdrawAccountsOwnerKey),
       createWrite(withdrawAccountsObligationKey),
       createRead(withdrawAccountsLendingMarketKey),
       createRead(withdrawAccountsLendingMarketAuthorityKey),

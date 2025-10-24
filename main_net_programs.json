@@ -243,7 +243,7 @@
     "typeRefs": [
       {
         "refProgram": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
-        "srcMismatch": "ERROR",
+        "srcMismatch": "WARN_KEEP_REF",
         "matchOnTypeName": true,
         "excludeTypes": [
           "ReserveConfig",
@@ -253,14 +253,14 @@
       },
       {
         "refProgram": "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
-        "srcMismatch": "ERROR",
+        "srcMismatch": "WARN_KEEP_REF",
         "matchOnTypeName": true,
         "excludeTypes": [],
         "explicitRules": []
       },
       {
         "refProgram": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
-        "srcMismatch": "ERROR",
+        "srcMismatch": "WARN_KEEP_REF",
         "matchOnTypeName": true,
         "excludeTypes": [
           "TimeUnit"

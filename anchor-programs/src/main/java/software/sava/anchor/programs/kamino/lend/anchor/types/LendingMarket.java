@@ -86,6 +86,8 @@ public record LendingMarket(PublicKey _address,
                             // Note: updating or cancelling existing orders is *not* affected by this flag.
                             int obligationOrderCreationEnabled,
                             byte[] padding2,
+                            // Authority that can propose creating of new reserves but cannot enable them.
+                            PublicKey proposerAuthority,
                             long[] padding1) implements Borsh {
 
   public static final int BYTES = 4664;
@@ -96,7 +98,7 @@ public record LendingMarket(PublicKey _address,
   public static final int ELEVATION_GROUP_PADDING_LEN = 90;
   public static final int NAME_LEN = 32;
   public static final int PADDING_2_LEN = 5;
-  public static final int PADDING_1_LEN = 169;
+  public static final int PADDING_1_LEN = 165;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int VERSION_OFFSET = 8;
@@ -129,7 +131,8 @@ public record LendingMarket(PublicKey _address,
   public static final int IMMUTABLE_OFFSET = 3305;
   public static final int OBLIGATION_ORDER_CREATION_ENABLED_OFFSET = 3306;
   public static final int PADDING_2_OFFSET = 3307;
-  public static final int PADDING_1_OFFSET = 3312;
+  public static final int PROPOSER_AUTHORITY_OFFSET = 3312;
+  public static final int PADDING_1_OFFSET = 3344;
 
   public static Filter createVersionFilter(final long version) {
     final byte[] _data = new byte[8];
@@ -245,6 +248,10 @@ public record LendingMarket(PublicKey _address,
     return Filter.createMemCompFilter(OBLIGATION_ORDER_CREATION_ENABLED_OFFSET, new byte[]{(byte) obligationOrderCreationEnabled});
   }
 
+  public static Filter createProposerAuthorityFilter(final PublicKey proposerAuthority) {
+    return Filter.createMemCompFilter(PROPOSER_AUTHORITY_OFFSET, proposerAuthority);
+  }
+
   public static LendingMarket read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -325,7 +332,9 @@ public record LendingMarket(PublicKey _address,
     ++i;
     final var padding2 = new byte[5];
     i += Borsh.readArray(padding2, _data, i);
-    final var padding1 = new long[169];
+    final var proposerAuthority = readPubKey(_data, i);
+    i += 32;
+    final var padding1 = new long[165];
     Borsh.readArray(padding1, _data, i);
     return new LendingMarket(_address,
                              discriminator,
@@ -359,6 +368,7 @@ public record LendingMarket(PublicKey _address,
                              immutable,
                              obligationOrderCreationEnabled,
                              padding2,
+                             proposerAuthority,
                              padding1);
   }
 
@@ -418,7 +428,9 @@ public record LendingMarket(PublicKey _address,
     _data[i] = (byte) obligationOrderCreationEnabled;
     ++i;
     i += Borsh.writeArrayChecked(padding2, 5, _data, i);
-    i += Borsh.writeArrayChecked(padding1, 169, _data, i);
+    proposerAuthority.write(_data, i);
+    i += 32;
+    i += Borsh.writeArrayChecked(padding1, 165, _data, i);
     return i - offset;
   }
 

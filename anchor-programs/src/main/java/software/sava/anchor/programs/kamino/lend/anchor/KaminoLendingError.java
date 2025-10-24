@@ -308,7 +308,7 @@ public sealed interface KaminoLendingError extends ProgramError permits
   record InvalidSigner(int code, String msg) implements KaminoLendingError {
 
     public static final InvalidSigner INSTANCE = new InvalidSigner(
-        6005, "Input account must be a signer"
+        6005, "Signer is not allowed to perform this action"
     );
   }
 

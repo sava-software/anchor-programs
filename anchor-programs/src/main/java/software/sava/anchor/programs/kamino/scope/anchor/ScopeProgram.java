@@ -4,6 +4,7 @@ import java.lang.String;
 
 import java.util.List;
 
+import software.sava.anchor.programs.kamino.scope.anchor.types.UpdateOracleMappingAndMetadataEntriesWithId;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.borsh.Borsh;
@@ -11,8 +12,6 @@ import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-
-import static java.util.Objects.requireNonNullElse;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
@@ -292,135 +291,70 @@ public final class ScopeProgram {
     }
   }
 
-  public static final Discriminator UPDATE_MAPPING_DISCRIMINATOR = toDiscriminator(56, 102, 90, 236, 243, 21, 185, 105);
+  public static final Discriminator UPDATE_MAPPING_AND_METADATA_DISCRIMINATOR = toDiscriminator(158, 81, 149, 146, 206, 154, 91, 56);
 
-  public static Instruction updateMapping(final AccountMeta invokedScopeProgramMeta,
-                                          final PublicKey adminKey,
-                                          final PublicKey configurationKey,
-                                          final PublicKey oracleMappingsKey,
-                                          final PublicKey priceInfoKey,
-                                          final int token,
-                                          final int priceType,
-                                          final boolean twapEnabled,
-                                          final int twapSource,
-                                          final int refPriceIndex,
-                                          final String feedName,
-                                          final byte[] genericData) {
+  public static Instruction updateMappingAndMetadata(final AccountMeta invokedScopeProgramMeta,
+                                                     final PublicKey adminKey,
+                                                     final PublicKey configurationKey,
+                                                     final PublicKey oracleMappingsKey,
+                                                     final PublicKey tokensMetadataKey,
+                                                     // Price entry will be reset if the corresponding mapping changes
+                                                     final PublicKey oraclePricesKey,
+                                                     // Twap entry will be reset if the corresponding mapping changes
+                                                     final PublicKey oracleTwapsKey,
+                                                     final String feedName,
+                                                     final UpdateOracleMappingAndMetadataEntriesWithId[] updates) {
     final var keys = List.of(
       createReadOnlySigner(adminKey),
       createRead(configurationKey),
       createWrite(oracleMappingsKey),
-      createRead(requireNonNullElse(priceInfoKey, invokedScopeProgramMeta.publicKey()))
+      createWrite(tokensMetadataKey),
+      createWrite(oraclePricesKey),
+      createWrite(oracleTwapsKey)
     );
 
     final byte[] _feedName = feedName.getBytes(UTF_8);
-    final byte[] _data = new byte[20 + Borsh.lenVector(_feedName) + Borsh.lenArray(genericData)];
-    int i = UPDATE_MAPPING_DISCRIMINATOR.write(_data, 0);
-    putInt16LE(_data, i, token);
-    i += 2;
-    _data[i] = (byte) priceType;
-    ++i;
-    _data[i] = (byte) (twapEnabled ? 1 : 0);
-    ++i;
-    putInt16LE(_data, i, twapSource);
-    i += 2;
-    putInt16LE(_data, i, refPriceIndex);
-    i += 2;
+    final byte[] _data = new byte[12 + Borsh.lenVector(_feedName) + Borsh.lenVector(updates)];
+    int i = UPDATE_MAPPING_AND_METADATA_DISCRIMINATOR.write(_data, 0);
     i += Borsh.writeVector(_feedName, _data, i);
-    Borsh.writeArrayChecked(genericData, 20, _data, i);
+    Borsh.writeVector(updates, _data, i);
 
     return Instruction.createInstruction(invokedScopeProgramMeta, keys, _data);
   }
 
-  public record UpdateMappingIxData(Discriminator discriminator,
-                                    int token,
-                                    int priceType,
-                                    boolean twapEnabled,
-                                    int twapSource,
-                                    int refPriceIndex,
-                                    String feedName, byte[] _feedName,
-                                    byte[] genericData) implements Borsh {  
+  public record UpdateMappingAndMetadataIxData(Discriminator discriminator, String feedName, byte[] _feedName, UpdateOracleMappingAndMetadataEntriesWithId[] updates) implements Borsh {  
 
-    public static UpdateMappingIxData read(final Instruction instruction) {
+    public static UpdateMappingAndMetadataIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int GENERIC_DATA_LEN = 20;
-    public static UpdateMappingIxData createRecord(final Discriminator discriminator,
-                                                   final int token,
-                                                   final int priceType,
-                                                   final boolean twapEnabled,
-                                                   final int twapSource,
-                                                   final int refPriceIndex,
-                                                   final String feedName,
-                                                   final byte[] genericData) {
-      return new UpdateMappingIxData(discriminator,
-                                     token,
-                                     priceType,
-                                     twapEnabled,
-                                     twapSource,
-                                     refPriceIndex,
-                                     feedName, feedName.getBytes(UTF_8),
-                                     genericData);
+    public static UpdateMappingAndMetadataIxData createRecord(final Discriminator discriminator, final String feedName, final UpdateOracleMappingAndMetadataEntriesWithId[] updates) {
+      return new UpdateMappingAndMetadataIxData(discriminator, feedName, feedName.getBytes(UTF_8), updates);
     }
 
-    public static UpdateMappingIxData read(final byte[] _data, final int offset) {
+    public static UpdateMappingAndMetadataIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var token = getInt16LE(_data, i);
-      i += 2;
-      final var priceType = _data[i] & 0xFF;
-      ++i;
-      final var twapEnabled = _data[i] == 1;
-      ++i;
-      final var twapSource = getInt16LE(_data, i);
-      i += 2;
-      final var refPriceIndex = getInt16LE(_data, i);
-      i += 2;
       final var feedName = Borsh.string(_data, i);
       i += (Integer.BYTES + getInt32LE(_data, i));
-      final var genericData = new byte[20];
-      Borsh.readArray(genericData, _data, i);
-      return new UpdateMappingIxData(discriminator,
-                                     token,
-                                     priceType,
-                                     twapEnabled,
-                                     twapSource,
-                                     refPriceIndex,
-                                     feedName, feedName.getBytes(UTF_8),
-                                     genericData);
+      final var updates = Borsh.readVector(UpdateOracleMappingAndMetadataEntriesWithId.class, UpdateOracleMappingAndMetadataEntriesWithId::read, _data, i);
+      return new UpdateMappingAndMetadataIxData(discriminator, feedName, feedName.getBytes(UTF_8), updates);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      putInt16LE(_data, i, token);
-      i += 2;
-      _data[i] = (byte) priceType;
-      ++i;
-      _data[i] = (byte) (twapEnabled ? 1 : 0);
-      ++i;
-      putInt16LE(_data, i, twapSource);
-      i += 2;
-      putInt16LE(_data, i, refPriceIndex);
-      i += 2;
       i += Borsh.writeVector(_feedName, _data, i);
-      i += Borsh.writeArrayChecked(genericData, 20, _data, i);
+      i += Borsh.writeVector(updates, _data, i);
       return i - offset;
     }
 
     @Override
     public int l() {
-      return 8 + 2
-           + 1
-           + 1
-           + 2
-           + 2
-           + Borsh.lenVector(_feedName)
-           + Borsh.lenArray(genericData);
+      return 8 + Borsh.lenVector(_feedName) + Borsh.lenVector(updates);
     }
   }
 
@@ -484,95 +418,6 @@ public final class ScopeProgram {
     @Override
     public int l() {
       return 8 + 8 + Borsh.lenVector(_feedName);
-    }
-  }
-
-  public static final Discriminator UPDATE_TOKEN_METADATA_DISCRIMINATOR = toDiscriminator(243, 6, 8, 23, 126, 181, 251, 158);
-
-  public static Instruction updateTokenMetadata(final AccountMeta invokedScopeProgramMeta,
-                                                final PublicKey adminKey,
-                                                final PublicKey configurationKey,
-                                                final PublicKey tokensMetadataKey,
-                                                final long index,
-                                                final long mode,
-                                                final String feedName,
-                                                final byte[] value) {
-    final var keys = List.of(
-      createReadOnlySigner(adminKey),
-      createRead(configurationKey),
-      createWrite(tokensMetadataKey)
-    );
-
-    final byte[] _feedName = feedName.getBytes(UTF_8);
-    final byte[] _data = new byte[28 + Borsh.lenVector(_feedName) + Borsh.lenVector(value)];
-    int i = UPDATE_TOKEN_METADATA_DISCRIMINATOR.write(_data, 0);
-    putInt64LE(_data, i, index);
-    i += 8;
-    putInt64LE(_data, i, mode);
-    i += 8;
-    i += Borsh.writeVector(_feedName, _data, i);
-    Borsh.writeVector(value, _data, i);
-
-    return Instruction.createInstruction(invokedScopeProgramMeta, keys, _data);
-  }
-
-  public record UpdateTokenMetadataIxData(Discriminator discriminator,
-                                          long index,
-                                          long mode,
-                                          String feedName, byte[] _feedName,
-                                          byte[] value) implements Borsh {  
-
-    public static UpdateTokenMetadataIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static UpdateTokenMetadataIxData createRecord(final Discriminator discriminator,
-                                                         final long index,
-                                                         final long mode,
-                                                         final String feedName,
-                                                         final byte[] value) {
-      return new UpdateTokenMetadataIxData(discriminator,
-                                           index,
-                                           mode,
-                                           feedName, feedName.getBytes(UTF_8),
-                                           value);
-    }
-
-    public static UpdateTokenMetadataIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var index = getInt64LE(_data, i);
-      i += 8;
-      final var mode = getInt64LE(_data, i);
-      i += 8;
-      final var feedName = Borsh.string(_data, i);
-      i += (Integer.BYTES + getInt32LE(_data, i));
-      final var value = Borsh.readbyteVector(_data, i);
-      return new UpdateTokenMetadataIxData(discriminator,
-                                           index,
-                                           mode,
-                                           feedName, feedName.getBytes(UTF_8),
-                                           value);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, index);
-      i += 8;
-      putInt64LE(_data, i, mode);
-      i += 8;
-      i += Borsh.writeVector(_feedName, _data, i);
-      i += Borsh.writeVector(value, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 8 + 8 + 8 + Borsh.lenVector(_feedName) + Borsh.lenVector(value);
     }
   }
 

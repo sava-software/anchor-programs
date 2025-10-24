@@ -165,43 +165,6 @@ public interface ScopeProgramClient {
     );
   }
 
-  Instruction updateMapping(final PublicKey adminKey,
-                            final PublicKey configurationKey,
-                            final PublicKey oracleMappingsKey,
-                            final PublicKey priceInfoKey,
-                            final int token,
-                            final int priceType,
-                            final boolean twapEnabled,
-                            final int twapSource,
-                            final int refPriceIndex,
-                            final String feedName,
-                            final byte[] genericData);
-
-
-  default Instruction updateMapping(final Configuration configuration,
-                                    final PublicKey priceInfoKey,
-                                    final int token,
-                                    final int priceType,
-                                    final boolean twapEnabled,
-                                    final int twapSource,
-                                    final int refPriceIndex,
-                                    final String feedName,
-                                    final byte[] genericData) {
-    return updateMapping(
-        configuration.admin(),
-        configuration._address(),
-        configuration.oracleMappings(),
-        priceInfoKey,
-        token,
-        priceType,
-        twapEnabled,
-        twapSource,
-        refPriceIndex,
-        feedName,
-        genericData
-    );
-  }
-
   Instruction resetTwap(final PublicKey adminKey,
                         final PublicKey configurationKey,
                         final PublicKey oracleTwapsKey,
@@ -217,30 +180,6 @@ public interface ScopeProgramClient {
         configuration.oracleTwaps(),
         token,
         feedName
-    );
-  }
-
-  Instruction updateTokenMetadata(final PublicKey adminKey,
-                                  final PublicKey configurationKey,
-                                  final PublicKey tokensMetadataKey,
-                                  final long index,
-                                  final long mode,
-                                  final String feedName,
-                                  final byte[] value);
-
-  default Instruction updateTokenMetadata(final Configuration configuration,
-                                          final long index,
-                                          final long mode,
-                                          final String feedName,
-                                          final byte[] value) {
-    return updateTokenMetadata(
-        configuration.admin(),
-        configuration._address(),
-        configuration.tokensMetadata(),
-        index,
-        mode,
-        feedName,
-        value
     );
   }
 

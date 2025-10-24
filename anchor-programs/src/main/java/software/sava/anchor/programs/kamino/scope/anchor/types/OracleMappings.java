@@ -16,6 +16,7 @@ public record OracleMappings(PublicKey _address,
                              byte[] priceTypes,
                              short[] twapSource,
                              byte[] twapEnabled,
+                             // reference price against which we check confidence within 5%
                              short[] refPrice,
                              byte[][] generic) implements Borsh {
 

@@ -9,7 +9,7 @@ public enum UpdateConfigMode implements Borsh.Enum {
   UpdateLiquidationThresholdPct,
   UpdateProtocolLiquidationFee,
   UpdateProtocolTakeRate,
-  UpdateFeesBorrowFee,
+  UpdateFeesOriginationFee,
   UpdateFeesFlashLoanFee,
   DeprecatedUpdateFeesReferralFeeBps,
   UpdateDepositLimit,
@@ -53,7 +53,8 @@ public enum UpdateConfigMode implements Borsh.Enum {
   UpdateHostFixedInterestRateBps,
   UpdateAutodeleverageEnabled,
   UpdateDeleveragingBonusIncreaseBpsPerDay,
-  UpdateProtocolOrderExecutionFee;
+  UpdateProtocolOrderExecutionFee,
+  UpdateProposerAuthorityLock;
 
   public static UpdateConfigMode read(final byte[] _data, final int offset) {
     return Borsh.read(UpdateConfigMode.values(), _data, offset);

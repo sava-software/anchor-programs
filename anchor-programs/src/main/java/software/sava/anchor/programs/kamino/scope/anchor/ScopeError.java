@@ -18,7 +18,7 @@ public sealed interface ScopeError extends ProgramError permits
     ScopeError.BadScopeChainOrPrices,
     ScopeError.RefreshInCPI,
     ScopeError.RefreshWithUnexpectedIxs,
-    ScopeError.InvalidTokenUpdateMode,
+    ScopeError.InvalidUpdateSequenceOrAccounts,
     ScopeError.UnableToDerivePDA,
     ScopeError.BadTimestamp,
     ScopeError.BadSlot,
@@ -58,7 +58,8 @@ public sealed interface ScopeError extends ProgramError permits
     ScopeError.ExpectedPriceAccount,
     ScopeError.WrongAccountOwner,
     ScopeError.CompositeOracleInvalidSourceIndex,
-    ScopeError.CappedFlooredBothCapAndFloorAreNone {
+    ScopeError.CappedFlooredBothCapAndFloorAreNone,
+    ScopeError.MissingPriceAccount {
 
   static ScopeError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -77,7 +78,7 @@ public sealed interface ScopeError extends ProgramError permits
       case 6012 -> BadScopeChainOrPrices.INSTANCE;
       case 6013 -> RefreshInCPI.INSTANCE;
       case 6014 -> RefreshWithUnexpectedIxs.INSTANCE;
-      case 6015 -> InvalidTokenUpdateMode.INSTANCE;
+      case 6015 -> InvalidUpdateSequenceOrAccounts.INSTANCE;
       case 6016 -> UnableToDerivePDA.INSTANCE;
       case 6017 -> BadTimestamp.INSTANCE;
       case 6018 -> BadSlot.INSTANCE;
@@ -118,6 +119,7 @@ public sealed interface ScopeError extends ProgramError permits
       case 6053 -> WrongAccountOwner.INSTANCE;
       case 6054 -> CompositeOracleInvalidSourceIndex.INSTANCE;
       case 6055 -> CappedFlooredBothCapAndFloorAreNone.INSTANCE;
+      case 6056 -> MissingPriceAccount.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Scope error code: " + errorCode);
     };
   }
@@ -227,10 +229,10 @@ public sealed interface ScopeError extends ProgramError permits
     );
   }
 
-  record InvalidTokenUpdateMode(int code, String msg) implements ScopeError {
+  record InvalidUpdateSequenceOrAccounts(int code, String msg) implements ScopeError {
 
-    public static final InvalidTokenUpdateMode INSTANCE = new InvalidTokenUpdateMode(
-        6015, "Invalid token metadata update mode"
+    public static final InvalidUpdateSequenceOrAccounts INSTANCE = new InvalidUpdateSequenceOrAccounts(
+        6015, "Invalid update sequence or accounts"
     );
   }
 
@@ -511,6 +513,13 @@ public sealed interface ScopeError extends ProgramError permits
 
     public static final CappedFlooredBothCapAndFloorAreNone INSTANCE = new CappedFlooredBothCapAndFloorAreNone(
         6055, "Can't set both cap and floor to None for CappedFloored oracle"
+    );
+  }
+
+  record MissingPriceAccount(int code, String msg) implements ScopeError {
+
+    public static final MissingPriceAccount INSTANCE = new MissingPriceAccount(
+        6056, "Missing price account for Oracle Mapping update"
     );
   }
 }
