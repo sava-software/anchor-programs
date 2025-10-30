@@ -44,10 +44,11 @@ public record State(PublicKey _address,
                     int maxNumberOfSubAccounts,
                     int maxInitializeUserFee,
                     int featureBitFlags,
+                    int lpPoolFeatureBitFlags,
                     byte[] padding) implements Borsh {
 
   public static final int BYTES = 992;
-  public static final int PADDING_LEN = 9;
+  public static final int PADDING_LEN = 8;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int ADMIN_OFFSET = 8;
@@ -75,7 +76,8 @@ public record State(PublicKey _address,
   public static final int MAX_NUMBER_OF_SUB_ACCOUNTS_OFFSET = 978;
   public static final int MAX_INITIALIZE_USER_FEE_OFFSET = 980;
   public static final int FEATURE_BIT_FLAGS_OFFSET = 982;
-  public static final int PADDING_OFFSET = 983;
+  public static final int LP_POOL_FEATURE_BIT_FLAGS_OFFSET = 983;
+  public static final int PADDING_OFFSET = 984;
 
   public static Filter createAdminFilter(final PublicKey admin) {
     return Filter.createMemCompFilter(ADMIN_OFFSET, admin);
@@ -189,6 +191,10 @@ public record State(PublicKey _address,
     return Filter.createMemCompFilter(FEATURE_BIT_FLAGS_OFFSET, new byte[]{(byte) featureBitFlags});
   }
 
+  public static Filter createLpPoolFeatureBitFlagsFilter(final int lpPoolFeatureBitFlags) {
+    return Filter.createMemCompFilter(LP_POOL_FEATURE_BIT_FLAGS_OFFSET, new byte[]{(byte) lpPoolFeatureBitFlags});
+  }
+
   public static State read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -259,7 +265,9 @@ public record State(PublicKey _address,
     i += 2;
     final var featureBitFlags = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[9];
+    final var lpPoolFeatureBitFlags = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[8];
     Borsh.readArray(padding, _data, i);
     return new State(_address,
                      discriminator,
@@ -288,6 +296,7 @@ public record State(PublicKey _address,
                      maxNumberOfSubAccounts,
                      maxInitializeUserFee,
                      featureBitFlags,
+                     lpPoolFeatureBitFlags,
                      padding);
   }
 
@@ -341,7 +350,9 @@ public record State(PublicKey _address,
     i += 2;
     _data[i] = (byte) featureBitFlags;
     ++i;
-    i += Borsh.writeArrayChecked(padding, 9, _data, i);
+    _data[i] = (byte) lpPoolFeatureBitFlags;
+    ++i;
+    i += Borsh.writeArrayChecked(padding, 8, _data, i);
     return i - offset;
   }
 

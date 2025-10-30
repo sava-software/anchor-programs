@@ -15,7 +15,10 @@ public enum DriftAction implements Borsh.Enum {
   UpdateTwap,
   UpdateAMMCurve,
   OracleOrderPrice,
-  UseMMOraclePrice;
+  UseMMOraclePrice,
+  UpdateAmmCache,
+  UpdateLpPoolAum,
+  LpPoolSwap;
 
   public static DriftAction read(final byte[] _data, final int offset) {
     return Borsh.read(DriftAction.values(), _data, offset);

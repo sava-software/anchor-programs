@@ -1,6 +1,7 @@
 package software.sava.anchor.programs.drift.anchor.types;
 
 import java.util.OptionalInt;
+import java.util.OptionalLong;
 
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.borsh.Borsh;
@@ -18,7 +19,8 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
                                                   SignedMsgTriggerOrderParams stopLossOrderParams,
                                                   OptionalInt maxMarginRatio,
                                                   OptionalInt builderIdx,
-                                                  OptionalInt builderFeeTenthBps) implements Borsh {
+                                                  OptionalInt builderFeeTenthBps,
+                                                  OptionalLong isolatedPositionDeposit) implements Borsh {
 
   public static final int UUID_LEN = 8;
   public static SignedMsgOrderParamsDelegateMessage read(final byte[] _data, final int offset) {
@@ -51,6 +53,10 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
       ++i;
     }
     final var builderFeeTenthBps = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt16LE(_data, i));
+    if (builderFeeTenthBps.isPresent()) {
+      i += 2;
+    }
+    final var isolatedPositionDeposit = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
     return new SignedMsgOrderParamsDelegateMessage(signedMsgOrderParams,
                                                    takerPubkey,
                                                    slot,
@@ -59,7 +65,8 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
                                                    stopLossOrderParams,
                                                    maxMarginRatio,
                                                    builderIdx,
-                                                   builderFeeTenthBps);
+                                                   builderFeeTenthBps,
+                                                   isolatedPositionDeposit);
   }
 
   @Override
@@ -76,6 +83,7 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
     i += Borsh.writeOptionalshort(maxMarginRatio, _data, i);
     i += Borsh.writeOptionalbyte(builderIdx, _data, i);
     i += Borsh.writeOptionalshort(builderFeeTenthBps, _data, i);
+    i += Borsh.writeOptional(isolatedPositionDeposit, _data, i);
     return i - offset;
   }
 
@@ -89,6 +97,7 @@ public record SignedMsgOrderParamsDelegateMessage(OrderParams signedMsgOrderPara
          + (stopLossOrderParams == null ? 1 : (1 + Borsh.len(stopLossOrderParams)))
          + (maxMarginRatio == null || maxMarginRatio.isEmpty() ? 1 : (1 + 2))
          + (builderIdx == null || builderIdx.isEmpty() ? 1 : (1 + 1))
-         + (builderFeeTenthBps == null || builderFeeTenthBps.isEmpty() ? 1 : (1 + 2));
+         + (builderFeeTenthBps == null || builderFeeTenthBps.isEmpty() ? 1 : (1 + 2))
+         + (isolatedPositionDeposit == null || isolatedPositionDeposit.isEmpty() ? 1 : (1 + 8));
   }
 }

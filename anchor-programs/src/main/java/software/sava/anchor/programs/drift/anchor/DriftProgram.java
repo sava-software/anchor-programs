@@ -6,16 +6,20 @@ import java.util.List;
 import java.util.OptionalInt;
 import java.util.OptionalLong;
 
+import software.sava.anchor.programs.drift.anchor.types.AddAmmConstituentMappingDatum;
 import software.sava.anchor.programs.drift.anchor.types.AssetTier;
+import software.sava.anchor.programs.drift.anchor.types.ConstituentParams;
 import software.sava.anchor.programs.drift.anchor.types.ContractTier;
 import software.sava.anchor.programs.drift.anchor.types.FeeStructure;
 import software.sava.anchor.programs.drift.anchor.types.IfRebalanceConfigParams;
+import software.sava.anchor.programs.drift.anchor.types.LpPoolParams;
 import software.sava.anchor.programs.drift.anchor.types.MarketStatus;
 import software.sava.anchor.programs.drift.anchor.types.MarketType;
 import software.sava.anchor.programs.drift.anchor.types.ModifyOrderParams;
 import software.sava.anchor.programs.drift.anchor.types.OracleGuardRails;
 import software.sava.anchor.programs.drift.anchor.types.OracleSource;
 import software.sava.anchor.programs.drift.anchor.types.OrderParams;
+import software.sava.anchor.programs.drift.anchor.types.OverrideAmmCacheParams;
 import software.sava.anchor.programs.drift.anchor.types.PositionDirection;
 import software.sava.anchor.programs.drift.anchor.types.PrelaunchOracleParams;
 import software.sava.anchor.programs.drift.anchor.types.SettlePnlMode;
@@ -5683,6 +5687,7 @@ public final class DriftProgram {
                                                  final PublicKey adminKey,
                                                  final PublicKey stateKey,
                                                  final PublicKey perpMarketKey,
+                                                 final PublicKey ammCacheKey,
                                                  final PublicKey oracleKey,
                                                  final PublicKey rentKey,
                                                  final PublicKey systemProgramKey,
@@ -5710,17 +5715,19 @@ public final class DriftProgram {
                                                  final BigInteger concentrationCoefScale,
                                                  final int curveUpdateIntensity,
                                                  final int ammJitIntensity,
-                                                 final byte[] name) {
+                                                 final byte[] name,
+                                                 final int lpPoolId) {
     final var keys = List.of(
       createWritableSigner(adminKey),
       createWrite(stateKey),
       createWrite(perpMarketKey),
+      createWrite(ammCacheKey),
       createRead(oracleKey),
       createRead(rentKey),
       createRead(systemProgramKey)
     );
 
-    final byte[] _data = new byte[169 + Borsh.len(oracleSource) + Borsh.len(contractTier) + Borsh.lenArray(name)];
+    final byte[] _data = new byte[170 + Borsh.len(oracleSource) + Borsh.len(contractTier) + Borsh.lenArray(name)];
     int i = INITIALIZE_PERP_MARKET_DISCRIMINATOR.write(_data, 0);
     putInt16LE(_data, i, marketIndex);
     i += 2;
@@ -5768,7 +5775,8 @@ public final class DriftProgram {
     ++i;
     _data[i] = (byte) ammJitIntensity;
     ++i;
-    Borsh.writeArrayChecked(name, 32, _data, i);
+    i += Borsh.writeArrayChecked(name, 32, _data, i);
+    _data[i] = (byte) lpPoolId;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
@@ -5798,13 +5806,14 @@ public final class DriftProgram {
                                            BigInteger concentrationCoefScale,
                                            int curveUpdateIntensity,
                                            int ammJitIntensity,
-                                           byte[] name) implements Borsh {  
+                                           byte[] name,
+                                           int lpPoolId) implements Borsh {  
 
     public static InitializePerpMarketIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 203;
+    public static final int BYTES = 204;
     public static final int NAME_LEN = 32;
 
     public static InitializePerpMarketIxData read(final byte[] _data, final int offset) {
@@ -5862,7 +5871,8 @@ public final class DriftProgram {
       final var ammJitIntensity = _data[i] & 0xFF;
       ++i;
       final var name = new byte[32];
-      Borsh.readArray(name, _data, i);
+      i += Borsh.readArray(name, _data, i);
+      final var lpPoolId = _data[i] & 0xFF;
       return new InitializePerpMarketIxData(discriminator,
                                             marketIndex,
                                             ammBaseAssetReserve,
@@ -5888,7 +5898,8 @@ public final class DriftProgram {
                                             concentrationCoefScale,
                                             curveUpdateIntensity,
                                             ammJitIntensity,
-                                            name);
+                                            name,
+                                            lpPoolId);
     }
 
     @Override
@@ -5941,6 +5952,8 @@ public final class DriftProgram {
       _data[i] = (byte) ammJitIntensity;
       ++i;
       i += Borsh.writeArrayChecked(name, 32, _data, i);
+      _data[i] = (byte) lpPoolId;
+      ++i;
       return i - offset;
     }
 
@@ -5948,6 +5961,40 @@ public final class DriftProgram {
     public int l() {
       return BYTES;
     }
+  }
+
+  public static final Discriminator INITIALIZE_AMM_CACHE_DISCRIMINATOR = toDiscriminator(38, 60, 171, 158, 203, 58, 137, 8);
+
+  public static Instruction initializeAmmCache(final AccountMeta invokedDriftProgramMeta,
+                                               final PublicKey adminKey,
+                                               final PublicKey stateKey,
+                                               final PublicKey ammCacheKey,
+                                               final PublicKey rentKey,
+                                               final PublicKey systemProgramKey) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createRead(stateKey),
+      createWrite(ammCacheKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, INITIALIZE_AMM_CACHE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator UPDATE_INITIAL_AMM_CACHE_INFO_DISCRIMINATOR = toDiscriminator(157, 210, 109, 67, 212, 170, 12, 107);
+
+  public static Instruction updateInitialAmmCacheInfo(final AccountMeta invokedDriftProgramMeta,
+                                                      final PublicKey stateKey,
+                                                      final PublicKey adminKey,
+                                                      final PublicKey ammCacheKey) {
+    final var keys = List.of(
+      createWrite(stateKey),
+      createReadOnlySigner(adminKey),
+      createWrite(ammCacheKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_INITIAL_AMM_CACHE_INFO_DISCRIMINATOR);
   }
 
   public static final Discriminator INITIALIZE_PREDICTION_MARKET_DISCRIMINATOR = toDiscriminator(248, 70, 198, 224, 224, 105, 125, 195);
@@ -6303,6 +6350,172 @@ public final class DriftProgram {
     @Override
     public int l() {
       return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_PERP_MARKET_LP_POOL_PAUSED_OPERATIONS_DISCRIMINATOR = toDiscriminator(181, 94, 93, 146, 51, 89, 32, 135);
+
+  public static Instruction updatePerpMarketLpPoolPausedOperations(final AccountMeta invokedDriftProgramMeta,
+                                                                   final PublicKey adminKey,
+                                                                   final PublicKey stateKey,
+                                                                   final PublicKey perpMarketKey,
+                                                                   final int lpPausedOperations) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = UPDATE_PERP_MARKET_LP_POOL_PAUSED_OPERATIONS_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) lpPausedOperations;
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketLpPoolPausedOperationsIxData(Discriminator discriminator, int lpPausedOperations) implements Borsh {  
+
+    public static UpdatePerpMarketLpPoolPausedOperationsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdatePerpMarketLpPoolPausedOperationsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var lpPausedOperations = _data[i] & 0xFF;
+      return new UpdatePerpMarketLpPoolPausedOperationsIxData(discriminator, lpPausedOperations);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) lpPausedOperations;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_PERP_MARKET_LP_POOL_STATUS_DISCRIMINATOR = toDiscriminator(67, 6, 252, 61, 54, 88, 89, 233);
+
+  public static Instruction updatePerpMarketLpPoolStatus(final AccountMeta invokedDriftProgramMeta,
+                                                         final PublicKey adminKey,
+                                                         final PublicKey stateKey,
+                                                         final PublicKey perpMarketKey,
+                                                         final PublicKey ammCacheKey,
+                                                         final int lpStatus) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(perpMarketKey),
+      createWrite(ammCacheKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = UPDATE_PERP_MARKET_LP_POOL_STATUS_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) lpStatus;
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketLpPoolStatusIxData(Discriminator discriminator, int lpStatus) implements Borsh {  
+
+    public static UpdatePerpMarketLpPoolStatusIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdatePerpMarketLpPoolStatusIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var lpStatus = _data[i] & 0xFF;
+      return new UpdatePerpMarketLpPoolStatusIxData(discriminator, lpStatus);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) lpStatus;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_PERP_MARKET_LP_POOL_FEE_TRANSFER_SCALAR_DISCRIMINATOR = toDiscriminator(94, 228, 237, 109, 100, 185, 4, 81);
+
+  public static Instruction updatePerpMarketLpPoolFeeTransferScalar(final AccountMeta invokedDriftProgramMeta,
+                                                                    final PublicKey adminKey,
+                                                                    final PublicKey stateKey,
+                                                                    final PublicKey perpMarketKey,
+                                                                    final OptionalInt optionalLpFeeTransferScalar,
+                                                                    final OptionalInt optionalLpNetPnlTransferScalar) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[
+        8
+        + (optionalLpFeeTransferScalar == null || optionalLpFeeTransferScalar.isEmpty() ? 1 : 2)
+        + (optionalLpNetPnlTransferScalar == null || optionalLpNetPnlTransferScalar.isEmpty() ? 1 : 2)
+    ];
+    int i = UPDATE_PERP_MARKET_LP_POOL_FEE_TRANSFER_SCALAR_DISCRIMINATOR.write(_data, 0);
+    i += Borsh.writeOptionalbyte(optionalLpFeeTransferScalar, _data, i);
+    Borsh.writeOptionalbyte(optionalLpNetPnlTransferScalar, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketLpPoolFeeTransferScalarIxData(Discriminator discriminator, OptionalInt optionalLpFeeTransferScalar, OptionalInt optionalLpNetPnlTransferScalar) implements Borsh {  
+
+    public static UpdatePerpMarketLpPoolFeeTransferScalarIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static UpdatePerpMarketLpPoolFeeTransferScalarIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var optionalLpFeeTransferScalar = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
+      if (optionalLpFeeTransferScalar.isPresent()) {
+        ++i;
+      }
+      final var optionalLpNetPnlTransferScalar = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
+      return new UpdatePerpMarketLpPoolFeeTransferScalarIxData(discriminator, optionalLpFeeTransferScalar, optionalLpNetPnlTransferScalar);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeOptionalbyte(optionalLpFeeTransferScalar, _data, i);
+      i += Borsh.writeOptionalbyte(optionalLpNetPnlTransferScalar, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + (optionalLpFeeTransferScalar == null || optionalLpFeeTransferScalar.isEmpty() ? 1 : (1 + 1)) + (optionalLpNetPnlTransferScalar == null || optionalLpNetPnlTransferScalar.isEmpty() ? 1 : (1 + 1));
     }
   }
 
@@ -6988,6 +7201,58 @@ public final class DriftProgram {
       i += 4;
       putInt32LE(_data, i, ifLiquidationFee);
       i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_PERP_MARKET_LP_POOL_ID_DISCRIMINATOR = toDiscriminator(119, 208, 154, 88, 165, 92, 21, 188);
+
+  public static Instruction updatePerpMarketLpPoolId(final AccountMeta invokedDriftProgramMeta,
+                                                     final PublicKey adminKey,
+                                                     final PublicKey stateKey,
+                                                     final PublicKey perpMarketKey,
+                                                     final int lpPoolId) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(stateKey),
+      createWrite(perpMarketKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = UPDATE_PERP_MARKET_LP_POOL_ID_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) lpPoolId;
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdatePerpMarketLpPoolIdIxData(Discriminator discriminator, int lpPoolId) implements Borsh {  
+
+    public static UpdatePerpMarketLpPoolIdIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdatePerpMarketLpPoolIdIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var lpPoolId = _data[i] & 0xFF;
+      return new UpdatePerpMarketLpPoolIdIxData(discriminator, lpPoolId);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) lpPoolId;
+      ++i;
       return i - offset;
     }
 
@@ -9086,6 +9351,7 @@ public final class DriftProgram {
                                                    final PublicKey perpMarketKey,
                                                    final PublicKey oracleKey,
                                                    final PublicKey oldOracleKey,
+                                                   final PublicKey ammCacheKey,
                                                    final PublicKey oracle,
                                                    final OracleSource oracleSource,
                                                    final boolean skipInvariantCheck) {
@@ -9094,7 +9360,8 @@ public final class DriftProgram {
       createRead(stateKey),
       createWrite(perpMarketKey),
       createRead(oracleKey),
-      createRead(oldOracleKey)
+      createRead(oldOracleKey),
+      createWrite(ammCacheKey)
     );
 
     final byte[] _data = new byte[41 + Borsh.len(oracleSource)];
@@ -11699,6 +11966,1931 @@ public final class DriftProgram {
     public int l() {
       return BYTES;
     }
+  }
+
+  public static final Discriminator INITIALIZE_LP_POOL_DISCRIMINATOR = toDiscriminator(242, 64, 1, 222, 142, 46, 204, 227);
+
+  public static Instruction initializeLpPool(final AccountMeta invokedDriftProgramMeta,
+                                             final PublicKey adminKey,
+                                             final PublicKey lpPoolKey,
+                                             final PublicKey mintKey,
+                                             final PublicKey lpPoolTokenVaultKey,
+                                             final PublicKey ammConstituentMappingKey,
+                                             final PublicKey constituentTargetBaseKey,
+                                             final PublicKey constituentCorrelationsKey,
+                                             final PublicKey stateKey,
+                                             final PublicKey tokenProgramKey,
+                                             final PublicKey rentKey,
+                                             final PublicKey systemProgramKey,
+                                             final int lpPoolId,
+                                             final long minMintFee,
+                                             final BigInteger maxAum,
+                                             final long maxSettleQuoteAmountPerMarket,
+                                             final PublicKey whitelistMint) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(lpPoolKey),
+      createRead(mintKey),
+      createWrite(lpPoolTokenVaultKey),
+      createWrite(ammConstituentMappingKey),
+      createWrite(constituentTargetBaseKey),
+      createWrite(constituentCorrelationsKey),
+      createRead(stateKey),
+      createRead(tokenProgramKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[73];
+    int i = INITIALIZE_LP_POOL_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) lpPoolId;
+    ++i;
+    putInt64LE(_data, i, minMintFee);
+    i += 8;
+    putInt128LE(_data, i, maxAum);
+    i += 16;
+    putInt64LE(_data, i, maxSettleQuoteAmountPerMarket);
+    i += 8;
+    whitelistMint.write(_data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record InitializeLpPoolIxData(Discriminator discriminator,
+                                       int lpPoolId,
+                                       long minMintFee,
+                                       BigInteger maxAum,
+                                       long maxSettleQuoteAmountPerMarket,
+                                       PublicKey whitelistMint) implements Borsh {  
+
+    public static InitializeLpPoolIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 73;
+
+    public static InitializeLpPoolIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var lpPoolId = _data[i] & 0xFF;
+      ++i;
+      final var minMintFee = getInt64LE(_data, i);
+      i += 8;
+      final var maxAum = getInt128LE(_data, i);
+      i += 16;
+      final var maxSettleQuoteAmountPerMarket = getInt64LE(_data, i);
+      i += 8;
+      final var whitelistMint = readPubKey(_data, i);
+      return new InitializeLpPoolIxData(discriminator,
+                                        lpPoolId,
+                                        minMintFee,
+                                        maxAum,
+                                        maxSettleQuoteAmountPerMarket,
+                                        whitelistMint);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) lpPoolId;
+      ++i;
+      putInt64LE(_data, i, minMintFee);
+      i += 8;
+      putInt128LE(_data, i, maxAum);
+      i += 16;
+      putInt64LE(_data, i, maxSettleQuoteAmountPerMarket);
+      i += 8;
+      whitelistMint.write(_data, i);
+      i += 32;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_FEATURE_BIT_FLAGS_SETTLE_LP_POOL_DISCRIMINATOR = toDiscriminator(186, 28, 78, 230, 155, 83, 242, 26);
+
+  public static Instruction updateFeatureBitFlagsSettleLpPool(final AccountMeta invokedDriftProgramMeta,
+                                                              final PublicKey adminKey,
+                                                              final PublicKey stateKey,
+                                                              final boolean enable) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createWrite(stateKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = UPDATE_FEATURE_BIT_FLAGS_SETTLE_LP_POOL_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) (enable ? 1 : 0);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateFeatureBitFlagsSettleLpPoolIxData(Discriminator discriminator, boolean enable) implements Borsh {  
+
+    public static UpdateFeatureBitFlagsSettleLpPoolIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdateFeatureBitFlagsSettleLpPoolIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var enable = _data[i] == 1;
+      return new UpdateFeatureBitFlagsSettleLpPoolIxData(discriminator, enable);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) (enable ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_FEATURE_BIT_FLAGS_SWAP_LP_POOL_DISCRIMINATOR = toDiscriminator(83, 16, 150, 12, 102, 3, 22, 58);
+
+  public static Instruction updateFeatureBitFlagsSwapLpPool(final AccountMeta invokedDriftProgramMeta,
+                                                            final PublicKey adminKey,
+                                                            final PublicKey stateKey,
+                                                            final boolean enable) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createWrite(stateKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = UPDATE_FEATURE_BIT_FLAGS_SWAP_LP_POOL_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) (enable ? 1 : 0);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateFeatureBitFlagsSwapLpPoolIxData(Discriminator discriminator, boolean enable) implements Borsh {  
+
+    public static UpdateFeatureBitFlagsSwapLpPoolIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdateFeatureBitFlagsSwapLpPoolIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var enable = _data[i] == 1;
+      return new UpdateFeatureBitFlagsSwapLpPoolIxData(discriminator, enable);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) (enable ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_FEATURE_BIT_FLAGS_MINT_REDEEM_LP_POOL_DISCRIMINATOR = toDiscriminator(26, 11, 142, 122, 206, 159, 9, 45);
+
+  public static Instruction updateFeatureBitFlagsMintRedeemLpPool(final AccountMeta invokedDriftProgramMeta,
+                                                                  final PublicKey adminKey,
+                                                                  final PublicKey stateKey,
+                                                                  final boolean enable) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createWrite(stateKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = UPDATE_FEATURE_BIT_FLAGS_MINT_REDEEM_LP_POOL_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) (enable ? 1 : 0);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateFeatureBitFlagsMintRedeemLpPoolIxData(Discriminator discriminator, boolean enable) implements Borsh {  
+
+    public static UpdateFeatureBitFlagsMintRedeemLpPoolIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdateFeatureBitFlagsMintRedeemLpPoolIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var enable = _data[i] == 1;
+      return new UpdateFeatureBitFlagsMintRedeemLpPoolIxData(discriminator, enable);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) (enable ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INITIALIZE_CONSTITUENT_DISCRIMINATOR = toDiscriminator(12, 196, 45, 218, 93, 89, 0, 33);
+
+  public static Instruction initializeConstituent(final AccountMeta invokedDriftProgramMeta,
+                                                  final PublicKey stateKey,
+                                                  final PublicKey adminKey,
+                                                  final PublicKey lpPoolKey,
+                                                  final PublicKey constituentTargetBaseKey,
+                                                  final PublicKey constituentCorrelationsKey,
+                                                  final PublicKey constituentKey,
+                                                  final PublicKey spotMarketKey,
+                                                  final PublicKey spotMarketMintKey,
+                                                  final PublicKey constituentVaultKey,
+                                                  final PublicKey rentKey,
+                                                  final PublicKey systemProgramKey,
+                                                  final PublicKey tokenProgramKey,
+                                                  final int spotMarketIndex,
+                                                  final int decimals,
+                                                  final long maxWeightDeviation,
+                                                  final long swapFeeMin,
+                                                  final long swapFeeMax,
+                                                  final long maxBorrowTokenAmount,
+                                                  final long oracleStalenessThreshold,
+                                                  final int costToTrade,
+                                                  final OptionalInt constituentDerivativeIndex,
+                                                  final long constituentDerivativeDepegThreshold,
+                                                  final long derivativeWeight,
+                                                  final long volatility,
+                                                  final int gammaExecution,
+                                                  final int gammaInventory,
+                                                  final int xi,
+                                                  final long[] newConstituentCorrelations) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWritableSigner(adminKey),
+      createWrite(lpPoolKey),
+      createWrite(constituentTargetBaseKey),
+      createWrite(constituentCorrelationsKey),
+      createWrite(constituentKey),
+      createRead(spotMarketKey),
+      createRead(spotMarketMintKey),
+      createWrite(constituentVaultKey),
+      createRead(rentKey),
+      createRead(systemProgramKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[
+        82
+        + (constituentDerivativeIndex == null || constituentDerivativeIndex.isEmpty() ? 1 : 3) + Borsh.lenVector(newConstituentCorrelations)
+    ];
+    int i = INITIALIZE_CONSTITUENT_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, spotMarketIndex);
+    i += 2;
+    _data[i] = (byte) decimals;
+    ++i;
+    putInt64LE(_data, i, maxWeightDeviation);
+    i += 8;
+    putInt64LE(_data, i, swapFeeMin);
+    i += 8;
+    putInt64LE(_data, i, swapFeeMax);
+    i += 8;
+    putInt64LE(_data, i, maxBorrowTokenAmount);
+    i += 8;
+    putInt64LE(_data, i, oracleStalenessThreshold);
+    i += 8;
+    putInt32LE(_data, i, costToTrade);
+    i += 4;
+    i += Borsh.writeOptionalshort(constituentDerivativeIndex, _data, i);
+    putInt64LE(_data, i, constituentDerivativeDepegThreshold);
+    i += 8;
+    putInt64LE(_data, i, derivativeWeight);
+    i += 8;
+    putInt64LE(_data, i, volatility);
+    i += 8;
+    _data[i] = (byte) gammaExecution;
+    ++i;
+    _data[i] = (byte) gammaInventory;
+    ++i;
+    _data[i] = (byte) xi;
+    ++i;
+    Borsh.writeVector(newConstituentCorrelations, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record InitializeConstituentIxData(Discriminator discriminator,
+                                            int spotMarketIndex,
+                                            int decimals,
+                                            long maxWeightDeviation,
+                                            long swapFeeMin,
+                                            long swapFeeMax,
+                                            long maxBorrowTokenAmount,
+                                            long oracleStalenessThreshold,
+                                            int costToTrade,
+                                            OptionalInt constituentDerivativeIndex,
+                                            long constituentDerivativeDepegThreshold,
+                                            long derivativeWeight,
+                                            long volatility,
+                                            int gammaExecution,
+                                            int gammaInventory,
+                                            int xi,
+                                            long[] newConstituentCorrelations) implements Borsh {  
+
+    public static InitializeConstituentIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static InitializeConstituentIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var spotMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var decimals = _data[i] & 0xFF;
+      ++i;
+      final var maxWeightDeviation = getInt64LE(_data, i);
+      i += 8;
+      final var swapFeeMin = getInt64LE(_data, i);
+      i += 8;
+      final var swapFeeMax = getInt64LE(_data, i);
+      i += 8;
+      final var maxBorrowTokenAmount = getInt64LE(_data, i);
+      i += 8;
+      final var oracleStalenessThreshold = getInt64LE(_data, i);
+      i += 8;
+      final var costToTrade = getInt32LE(_data, i);
+      i += 4;
+      final var constituentDerivativeIndex = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt16LE(_data, i));
+      if (constituentDerivativeIndex.isPresent()) {
+        i += 2;
+      }
+      final var constituentDerivativeDepegThreshold = getInt64LE(_data, i);
+      i += 8;
+      final var derivativeWeight = getInt64LE(_data, i);
+      i += 8;
+      final var volatility = getInt64LE(_data, i);
+      i += 8;
+      final var gammaExecution = _data[i] & 0xFF;
+      ++i;
+      final var gammaInventory = _data[i] & 0xFF;
+      ++i;
+      final var xi = _data[i] & 0xFF;
+      ++i;
+      final var newConstituentCorrelations = Borsh.readlongVector(_data, i);
+      return new InitializeConstituentIxData(discriminator,
+                                             spotMarketIndex,
+                                             decimals,
+                                             maxWeightDeviation,
+                                             swapFeeMin,
+                                             swapFeeMax,
+                                             maxBorrowTokenAmount,
+                                             oracleStalenessThreshold,
+                                             costToTrade,
+                                             constituentDerivativeIndex,
+                                             constituentDerivativeDepegThreshold,
+                                             derivativeWeight,
+                                             volatility,
+                                             gammaExecution,
+                                             gammaInventory,
+                                             xi,
+                                             newConstituentCorrelations);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, spotMarketIndex);
+      i += 2;
+      _data[i] = (byte) decimals;
+      ++i;
+      putInt64LE(_data, i, maxWeightDeviation);
+      i += 8;
+      putInt64LE(_data, i, swapFeeMin);
+      i += 8;
+      putInt64LE(_data, i, swapFeeMax);
+      i += 8;
+      putInt64LE(_data, i, maxBorrowTokenAmount);
+      i += 8;
+      putInt64LE(_data, i, oracleStalenessThreshold);
+      i += 8;
+      putInt32LE(_data, i, costToTrade);
+      i += 4;
+      i += Borsh.writeOptionalshort(constituentDerivativeIndex, _data, i);
+      putInt64LE(_data, i, constituentDerivativeDepegThreshold);
+      i += 8;
+      putInt64LE(_data, i, derivativeWeight);
+      i += 8;
+      putInt64LE(_data, i, volatility);
+      i += 8;
+      _data[i] = (byte) gammaExecution;
+      ++i;
+      _data[i] = (byte) gammaInventory;
+      ++i;
+      _data[i] = (byte) xi;
+      ++i;
+      i += Borsh.writeVector(newConstituentCorrelations, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 2
+           + 1
+           + 8
+           + 8
+           + 8
+           + 8
+           + 8
+           + 4
+           + (constituentDerivativeIndex == null || constituentDerivativeIndex.isEmpty() ? 1 : (1 + 2))
+           + 8
+           + 8
+           + 8
+           + 1
+           + 1
+           + 1
+           + Borsh.lenVector(newConstituentCorrelations);
+    }
+  }
+
+  public static final Discriminator UPDATE_CONSTITUENT_STATUS_DISCRIMINATOR = toDiscriminator(76, 159, 211, 239, 182, 214, 6, 15);
+
+  public static Instruction updateConstituentStatus(final AccountMeta invokedDriftProgramMeta,
+                                                    final PublicKey adminKey,
+                                                    final PublicKey stateKey,
+                                                    final PublicKey constituentKey,
+                                                    final int newStatus) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createRead(stateKey),
+      createWrite(constituentKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = UPDATE_CONSTITUENT_STATUS_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) newStatus;
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateConstituentStatusIxData(Discriminator discriminator, int newStatus) implements Borsh {  
+
+    public static UpdateConstituentStatusIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdateConstituentStatusIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var newStatus = _data[i] & 0xFF;
+      return new UpdateConstituentStatusIxData(discriminator, newStatus);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) newStatus;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_CONSTITUENT_PAUSED_OPERATIONS_DISCRIMINATOR = toDiscriminator(185, 122, 153, 191, 131, 177, 132, 208);
+
+  public static Instruction updateConstituentPausedOperations(final AccountMeta invokedDriftProgramMeta,
+                                                              final PublicKey adminKey,
+                                                              final PublicKey stateKey,
+                                                              final PublicKey constituentKey,
+                                                              final int pausedOperations) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createRead(stateKey),
+      createWrite(constituentKey)
+    );
+
+    final byte[] _data = new byte[9];
+    int i = UPDATE_CONSTITUENT_PAUSED_OPERATIONS_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) pausedOperations;
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateConstituentPausedOperationsIxData(Discriminator discriminator, int pausedOperations) implements Borsh {  
+
+    public static UpdateConstituentPausedOperationsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static UpdateConstituentPausedOperationsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var pausedOperations = _data[i] & 0xFF;
+      return new UpdateConstituentPausedOperationsIxData(discriminator, pausedOperations);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      _data[i] = (byte) pausedOperations;
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_CONSTITUENT_PARAMS_DISCRIMINATOR = toDiscriminator(238, 130, 122, 31, 12, 104, 192, 122);
+
+  public static Instruction updateConstituentParams(final AccountMeta invokedDriftProgramMeta,
+                                                    final PublicKey lpPoolKey,
+                                                    final PublicKey constituentTargetBaseKey,
+                                                    final PublicKey adminKey,
+                                                    final PublicKey stateKey,
+                                                    final PublicKey constituentKey,
+                                                    final ConstituentParams constituentParams) {
+    final var keys = List.of(
+      createRead(lpPoolKey),
+      createWrite(constituentTargetBaseKey),
+      createWritableSigner(adminKey),
+      createRead(stateKey),
+      createWrite(constituentKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(constituentParams)];
+    int i = UPDATE_CONSTITUENT_PARAMS_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(constituentParams, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateConstituentParamsIxData(Discriminator discriminator, ConstituentParams constituentParams) implements Borsh {  
+
+    public static UpdateConstituentParamsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static UpdateConstituentParamsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var constituentParams = ConstituentParams.read(_data, i);
+      return new UpdateConstituentParamsIxData(discriminator, constituentParams);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(constituentParams, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(constituentParams);
+    }
+  }
+
+  public static final Discriminator UPDATE_LP_POOL_PARAMS_DISCRIMINATOR = toDiscriminator(217, 92, 2, 255, 27, 167, 178, 81);
+
+  public static Instruction updateLpPoolParams(final AccountMeta invokedDriftProgramMeta,
+                                               final PublicKey lpPoolKey,
+                                               final PublicKey adminKey,
+                                               final PublicKey stateKey,
+                                               final LpPoolParams lpPoolParams) {
+    final var keys = List.of(
+      createWrite(lpPoolKey),
+      createWritableSigner(adminKey),
+      createRead(stateKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(lpPoolParams)];
+    int i = UPDATE_LP_POOL_PARAMS_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(lpPoolParams, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateLpPoolParamsIxData(Discriminator discriminator, LpPoolParams lpPoolParams) implements Borsh {  
+
+    public static UpdateLpPoolParamsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static UpdateLpPoolParamsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var lpPoolParams = LpPoolParams.read(_data, i);
+      return new UpdateLpPoolParamsIxData(discriminator, lpPoolParams);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(lpPoolParams, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(lpPoolParams);
+    }
+  }
+
+  public static final Discriminator ADD_AMM_CONSTITUENT_MAPPING_DATA_DISCRIMINATOR = toDiscriminator(164, 236, 130, 40, 118, 179, 46, 235);
+
+  public static Instruction addAmmConstituentMappingData(final AccountMeta invokedDriftProgramMeta,
+                                                         final PublicKey adminKey,
+                                                         final PublicKey lpPoolKey,
+                                                         final PublicKey ammConstituentMappingKey,
+                                                         final PublicKey constituentTargetBaseKey,
+                                                         final PublicKey stateKey,
+                                                         final PublicKey systemProgramKey,
+                                                         final AddAmmConstituentMappingDatum[] ammConstituentMappingData) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createRead(lpPoolKey),
+      createWrite(ammConstituentMappingKey),
+      createWrite(constituentTargetBaseKey),
+      createRead(stateKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.lenVector(ammConstituentMappingData)];
+    int i = ADD_AMM_CONSTITUENT_MAPPING_DATA_DISCRIMINATOR.write(_data, 0);
+    Borsh.writeVector(ammConstituentMappingData, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record AddAmmConstituentMappingDataIxData(Discriminator discriminator, AddAmmConstituentMappingDatum[] ammConstituentMappingData) implements Borsh {  
+
+    public static AddAmmConstituentMappingDataIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static AddAmmConstituentMappingDataIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var ammConstituentMappingData = Borsh.readVector(AddAmmConstituentMappingDatum.class, AddAmmConstituentMappingDatum::read, _data, i);
+      return new AddAmmConstituentMappingDataIxData(discriminator, ammConstituentMappingData);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeVector(ammConstituentMappingData, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.lenVector(ammConstituentMappingData);
+    }
+  }
+
+  public static final Discriminator UPDATE_AMM_CONSTITUENT_MAPPING_DATA_DISCRIMINATOR = toDiscriminator(84, 70, 33, 167, 133, 107, 59, 24);
+
+  public static Instruction updateAmmConstituentMappingData(final AccountMeta invokedDriftProgramMeta,
+                                                            final PublicKey adminKey,
+                                                            final PublicKey lpPoolKey,
+                                                            final PublicKey ammConstituentMappingKey,
+                                                            final PublicKey systemProgramKey,
+                                                            final PublicKey stateKey,
+                                                            final AddAmmConstituentMappingDatum[] ammConstituentMappingData) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createRead(lpPoolKey),
+      createWrite(ammConstituentMappingKey),
+      createRead(systemProgramKey),
+      createRead(stateKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.lenVector(ammConstituentMappingData)];
+    int i = UPDATE_AMM_CONSTITUENT_MAPPING_DATA_DISCRIMINATOR.write(_data, 0);
+    Borsh.writeVector(ammConstituentMappingData, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateAmmConstituentMappingDataIxData(Discriminator discriminator, AddAmmConstituentMappingDatum[] ammConstituentMappingData) implements Borsh {  
+
+    public static UpdateAmmConstituentMappingDataIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static UpdateAmmConstituentMappingDataIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var ammConstituentMappingData = Borsh.readVector(AddAmmConstituentMappingDatum.class, AddAmmConstituentMappingDatum::read, _data, i);
+      return new UpdateAmmConstituentMappingDataIxData(discriminator, ammConstituentMappingData);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.writeVector(ammConstituentMappingData, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.lenVector(ammConstituentMappingData);
+    }
+  }
+
+  public static final Discriminator REMOVE_AMM_CONSTITUENT_MAPPING_DATA_DISCRIMINATOR = toDiscriminator(20, 183, 211, 162, 16, 52, 229, 115);
+
+  public static Instruction removeAmmConstituentMappingData(final AccountMeta invokedDriftProgramMeta,
+                                                            final PublicKey adminKey,
+                                                            final PublicKey lpPoolKey,
+                                                            final PublicKey ammConstituentMappingKey,
+                                                            final PublicKey systemProgramKey,
+                                                            final PublicKey stateKey,
+                                                            final int perpMarketIndex,
+                                                            final int constituentIndex) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createRead(lpPoolKey),
+      createWrite(ammConstituentMappingKey),
+      createRead(systemProgramKey),
+      createRead(stateKey)
+    );
+
+    final byte[] _data = new byte[12];
+    int i = REMOVE_AMM_CONSTITUENT_MAPPING_DATA_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, perpMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, constituentIndex);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record RemoveAmmConstituentMappingDataIxData(Discriminator discriminator, int perpMarketIndex, int constituentIndex) implements Borsh {  
+
+    public static RemoveAmmConstituentMappingDataIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 12;
+
+    public static RemoveAmmConstituentMappingDataIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var perpMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var constituentIndex = getInt16LE(_data, i);
+      return new RemoveAmmConstituentMappingDataIxData(discriminator, perpMarketIndex, constituentIndex);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, perpMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, constituentIndex);
+      i += 2;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_CONSTITUENT_CORRELATION_DATA_DISCRIMINATOR = toDiscriminator(79, 14, 19, 73, 221, 106, 62, 109);
+
+  public static Instruction updateConstituentCorrelationData(final AccountMeta invokedDriftProgramMeta,
+                                                             final PublicKey adminKey,
+                                                             final PublicKey lpPoolKey,
+                                                             final PublicKey constituentCorrelationsKey,
+                                                             final PublicKey stateKey,
+                                                             final int index1,
+                                                             final int index2,
+                                                             final long correlation) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createRead(lpPoolKey),
+      createWrite(constituentCorrelationsKey),
+      createRead(stateKey)
+    );
+
+    final byte[] _data = new byte[20];
+    int i = UPDATE_CONSTITUENT_CORRELATION_DATA_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, index1);
+    i += 2;
+    putInt16LE(_data, i, index2);
+    i += 2;
+    putInt64LE(_data, i, correlation);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record UpdateConstituentCorrelationDataIxData(Discriminator discriminator,
+                                                       int index1,
+                                                       int index2,
+                                                       long correlation) implements Borsh {  
+
+    public static UpdateConstituentCorrelationDataIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 20;
+
+    public static UpdateConstituentCorrelationDataIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var index1 = getInt16LE(_data, i);
+      i += 2;
+      final var index2 = getInt16LE(_data, i);
+      i += 2;
+      final var correlation = getInt64LE(_data, i);
+      return new UpdateConstituentCorrelationDataIxData(discriminator, index1, index2, correlation);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, index1);
+      i += 2;
+      putInt16LE(_data, i, index2);
+      i += 2;
+      putInt64LE(_data, i, correlation);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_LP_CONSTITUENT_TARGET_BASE_DISCRIMINATOR = toDiscriminator(157, 65, 50, 207, 59, 236, 161, 110);
+
+  public static Instruction updateLpConstituentTargetBase(final AccountMeta invokedDriftProgramMeta,
+                                                          final PublicKey stateKey,
+                                                          final PublicKey keeperKey,
+                                                          final PublicKey ammConstituentMappingKey,
+                                                          final PublicKey constituentTargetBaseKey,
+                                                          final PublicKey ammCacheKey,
+                                                          final PublicKey lpPoolKey) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWritableSigner(keeperKey),
+      createRead(ammConstituentMappingKey),
+      createWrite(constituentTargetBaseKey),
+      createRead(ammCacheKey),
+      createRead(lpPoolKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_LP_CONSTITUENT_TARGET_BASE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator UPDATE_LP_POOL_AUM_DISCRIMINATOR = toDiscriminator(88, 113, 137, 206, 246, 247, 171, 142);
+
+  public static Instruction updateLpPoolAum(final AccountMeta invokedDriftProgramMeta,
+                                            final PublicKey stateKey,
+                                            final PublicKey keeperKey,
+                                            final PublicKey lpPoolKey,
+                                            final PublicKey constituentTargetBaseKey,
+                                            final PublicKey ammCacheKey) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWritableSigner(keeperKey),
+      createWrite(lpPoolKey),
+      createWrite(constituentTargetBaseKey),
+      createWrite(ammCacheKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_LP_POOL_AUM_DISCRIMINATOR);
+  }
+
+  public static final Discriminator UPDATE_AMM_CACHE_DISCRIMINATOR = toDiscriminator(88, 4, 63, 94, 83, 224, 255, 130);
+
+  public static Instruction updateAmmCache(final AccountMeta invokedDriftProgramMeta,
+                                           final PublicKey keeperKey,
+                                           final PublicKey stateKey,
+                                           final PublicKey ammCacheKey,
+                                           final PublicKey quoteMarketKey) {
+    final var keys = List.of(
+      createWritableSigner(keeperKey),
+      createRead(stateKey),
+      createWrite(ammCacheKey),
+      createRead(quoteMarketKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_AMM_CACHE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator OVERRIDE_AMM_CACHE_INFO_DISCRIMINATOR = toDiscriminator(189, 198, 128, 9, 49, 145, 201, 115);
+
+  public static Instruction overrideAmmCacheInfo(final AccountMeta invokedDriftProgramMeta,
+                                                 final PublicKey stateKey,
+                                                 final PublicKey adminKey,
+                                                 final PublicKey ammCacheKey,
+                                                 final int marketIndex,
+                                                 final OverrideAmmCacheParams overrideParams) {
+    final var keys = List.of(
+      createWrite(stateKey),
+      createReadOnlySigner(adminKey),
+      createWrite(ammCacheKey)
+    );
+
+    final byte[] _data = new byte[10 + Borsh.len(overrideParams)];
+    int i = OVERRIDE_AMM_CACHE_INFO_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, marketIndex);
+    i += 2;
+    Borsh.write(overrideParams, _data, i);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record OverrideAmmCacheInfoIxData(Discriminator discriminator, int marketIndex, OverrideAmmCacheParams overrideParams) implements Borsh {  
+
+    public static OverrideAmmCacheInfoIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static OverrideAmmCacheInfoIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var marketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var overrideParams = OverrideAmmCacheParams.read(_data, i);
+      return new OverrideAmmCacheInfoIxData(discriminator, marketIndex, overrideParams);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, marketIndex);
+      i += 2;
+      i += Borsh.write(overrideParams, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 2 + Borsh.len(overrideParams);
+    }
+  }
+
+  public static final Discriminator RESET_AMM_CACHE_DISCRIMINATOR = toDiscriminator(150, 7, 213, 149, 115, 168, 0, 41);
+
+  public static Instruction resetAmmCache(final AccountMeta invokedDriftProgramMeta,
+                                          final PublicKey adminKey,
+                                          final PublicKey stateKey,
+                                          final PublicKey ammCacheKey,
+                                          final PublicKey systemProgramKey) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createRead(stateKey),
+      createWrite(ammCacheKey),
+      createRead(systemProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, RESET_AMM_CACHE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator LP_POOL_SWAP_DISCRIMINATOR = toDiscriminator(36, 161, 39, 49, 227, 1, 35, 226);
+
+  public static Instruction lpPoolSwap(final AccountMeta invokedDriftProgramMeta,
+                                       final PublicKey stateKey,
+                                       final PublicKey lpPoolKey,
+                                       final PublicKey constituentTargetBaseKey,
+                                       final PublicKey constituentCorrelationsKey,
+                                       final PublicKey constituentInTokenAccountKey,
+                                       final PublicKey constituentOutTokenAccountKey,
+                                       final PublicKey userInTokenAccountKey,
+                                       final PublicKey userOutTokenAccountKey,
+                                       final PublicKey inConstituentKey,
+                                       final PublicKey outConstituentKey,
+                                       final PublicKey inMarketMintKey,
+                                       final PublicKey outMarketMintKey,
+                                       final PublicKey authorityKey,
+                                       final PublicKey tokenProgramKey,
+                                       final int inMarketIndex,
+                                       final int outMarketIndex,
+                                       final long inAmount,
+                                       final long minOutAmount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createRead(lpPoolKey),
+      createRead(constituentTargetBaseKey),
+      createRead(constituentCorrelationsKey),
+      createWrite(constituentInTokenAccountKey),
+      createWrite(constituentOutTokenAccountKey),
+      createWrite(userInTokenAccountKey),
+      createWrite(userOutTokenAccountKey),
+      createWrite(inConstituentKey),
+      createWrite(outConstituentKey),
+      createRead(inMarketMintKey),
+      createRead(outMarketMintKey),
+      createReadOnlySigner(authorityKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[28];
+    int i = LP_POOL_SWAP_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, inMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, outMarketIndex);
+    i += 2;
+    putInt64LE(_data, i, inAmount);
+    i += 8;
+    putInt64LE(_data, i, minOutAmount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record LpPoolSwapIxData(Discriminator discriminator,
+                                 int inMarketIndex,
+                                 int outMarketIndex,
+                                 long inAmount,
+                                 long minOutAmount) implements Borsh {  
+
+    public static LpPoolSwapIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 28;
+
+    public static LpPoolSwapIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var inMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var outMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var inAmount = getInt64LE(_data, i);
+      i += 8;
+      final var minOutAmount = getInt64LE(_data, i);
+      return new LpPoolSwapIxData(discriminator,
+                                  inMarketIndex,
+                                  outMarketIndex,
+                                  inAmount,
+                                  minOutAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, inMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, outMarketIndex);
+      i += 2;
+      putInt64LE(_data, i, inAmount);
+      i += 8;
+      putInt64LE(_data, i, minOutAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator VIEW_LP_POOL_SWAP_FEES_DISCRIMINATOR = toDiscriminator(126, 189, 109, 189, 170, 156, 3, 46);
+
+  public static Instruction viewLpPoolSwapFees(final AccountMeta invokedDriftProgramMeta,
+                                               final PublicKey driftSignerKey,
+                                               final PublicKey stateKey,
+                                               final PublicKey lpPoolKey,
+                                               final PublicKey constituentTargetBaseKey,
+                                               final PublicKey constituentCorrelationsKey,
+                                               final PublicKey constituentInTokenAccountKey,
+                                               final PublicKey constituentOutTokenAccountKey,
+                                               final PublicKey inConstituentKey,
+                                               final PublicKey outConstituentKey,
+                                               final PublicKey authorityKey,
+                                               final PublicKey tokenProgramKey,
+                                               final int inMarketIndex,
+                                               final int outMarketIndex,
+                                               final long inAmount,
+                                               final long inTargetWeight,
+                                               final long outTargetWeight) {
+    final var keys = List.of(
+      createRead(driftSignerKey),
+      createRead(stateKey),
+      createRead(lpPoolKey),
+      createRead(constituentTargetBaseKey),
+      createRead(constituentCorrelationsKey),
+      createWrite(constituentInTokenAccountKey),
+      createWrite(constituentOutTokenAccountKey),
+      createWrite(inConstituentKey),
+      createWrite(outConstituentKey),
+      createReadOnlySigner(authorityKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[36];
+    int i = VIEW_LP_POOL_SWAP_FEES_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, inMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, outMarketIndex);
+    i += 2;
+    putInt64LE(_data, i, inAmount);
+    i += 8;
+    putInt64LE(_data, i, inTargetWeight);
+    i += 8;
+    putInt64LE(_data, i, outTargetWeight);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record ViewLpPoolSwapFeesIxData(Discriminator discriminator,
+                                         int inMarketIndex,
+                                         int outMarketIndex,
+                                         long inAmount,
+                                         long inTargetWeight,
+                                         long outTargetWeight) implements Borsh {  
+
+    public static ViewLpPoolSwapFeesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 36;
+
+    public static ViewLpPoolSwapFeesIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var inMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var outMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var inAmount = getInt64LE(_data, i);
+      i += 8;
+      final var inTargetWeight = getInt64LE(_data, i);
+      i += 8;
+      final var outTargetWeight = getInt64LE(_data, i);
+      return new ViewLpPoolSwapFeesIxData(discriminator,
+                                          inMarketIndex,
+                                          outMarketIndex,
+                                          inAmount,
+                                          inTargetWeight,
+                                          outTargetWeight);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, inMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, outMarketIndex);
+      i += 2;
+      putInt64LE(_data, i, inAmount);
+      i += 8;
+      putInt64LE(_data, i, inTargetWeight);
+      i += 8;
+      putInt64LE(_data, i, outTargetWeight);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator LP_POOL_ADD_LIQUIDITY_DISCRIMINATOR = toDiscriminator(49, 135, 246, 103, 93, 146, 220, 141);
+
+  public static Instruction lpPoolAddLiquidity(final AccountMeta invokedDriftProgramMeta,
+                                               final PublicKey stateKey,
+                                               final PublicKey lpPoolKey,
+                                               final PublicKey authorityKey,
+                                               final PublicKey inMarketMintKey,
+                                               final PublicKey inConstituentKey,
+                                               final PublicKey userInTokenAccountKey,
+                                               final PublicKey constituentInTokenAccountKey,
+                                               final PublicKey userLpTokenAccountKey,
+                                               final PublicKey lpMintKey,
+                                               final PublicKey constituentTargetBaseKey,
+                                               final PublicKey lpPoolTokenVaultKey,
+                                               final PublicKey tokenProgramKey,
+                                               final int inMarketIndex,
+                                               final BigInteger inAmount,
+                                               final long minMintAmount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWrite(lpPoolKey),
+      createReadOnlySigner(authorityKey),
+      createRead(inMarketMintKey),
+      createWrite(inConstituentKey),
+      createWrite(userInTokenAccountKey),
+      createWrite(constituentInTokenAccountKey),
+      createWrite(userLpTokenAccountKey),
+      createWrite(lpMintKey),
+      createRead(constituentTargetBaseKey),
+      createWrite(lpPoolTokenVaultKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[34];
+    int i = LP_POOL_ADD_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, inMarketIndex);
+    i += 2;
+    putInt128LE(_data, i, inAmount);
+    i += 16;
+    putInt64LE(_data, i, minMintAmount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record LpPoolAddLiquidityIxData(Discriminator discriminator,
+                                         int inMarketIndex,
+                                         BigInteger inAmount,
+                                         long minMintAmount) implements Borsh {  
+
+    public static LpPoolAddLiquidityIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 34;
+
+    public static LpPoolAddLiquidityIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var inMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var inAmount = getInt128LE(_data, i);
+      i += 16;
+      final var minMintAmount = getInt64LE(_data, i);
+      return new LpPoolAddLiquidityIxData(discriminator, inMarketIndex, inAmount, minMintAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, inMarketIndex);
+      i += 2;
+      putInt128LE(_data, i, inAmount);
+      i += 16;
+      putInt64LE(_data, i, minMintAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator LP_POOL_REMOVE_LIQUIDITY_DISCRIMINATOR = toDiscriminator(164, 36, 193, 252, 196, 157, 138, 43);
+
+  public static Instruction lpPoolRemoveLiquidity(final AccountMeta invokedDriftProgramMeta,
+                                                  final PublicKey stateKey,
+                                                  final PublicKey driftSignerKey,
+                                                  final PublicKey lpPoolKey,
+                                                  final PublicKey authorityKey,
+                                                  final PublicKey outMarketMintKey,
+                                                  final PublicKey outConstituentKey,
+                                                  final PublicKey userOutTokenAccountKey,
+                                                  final PublicKey constituentOutTokenAccountKey,
+                                                  final PublicKey userLpTokenAccountKey,
+                                                  final PublicKey spotMarketTokenAccountKey,
+                                                  final PublicKey lpMintKey,
+                                                  final PublicKey constituentTargetBaseKey,
+                                                  final PublicKey lpPoolTokenVaultKey,
+                                                  final PublicKey tokenProgramKey,
+                                                  final PublicKey ammCacheKey,
+                                                  final int inMarketIndex,
+                                                  final long inAmount,
+                                                  final BigInteger minOutAmount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createRead(driftSignerKey),
+      createWrite(lpPoolKey),
+      createReadOnlySigner(authorityKey),
+      createRead(outMarketMintKey),
+      createWrite(outConstituentKey),
+      createWrite(userOutTokenAccountKey),
+      createWrite(constituentOutTokenAccountKey),
+      createWrite(userLpTokenAccountKey),
+      createWrite(spotMarketTokenAccountKey),
+      createWrite(lpMintKey),
+      createRead(constituentTargetBaseKey),
+      createWrite(lpPoolTokenVaultKey),
+      createRead(tokenProgramKey),
+      createRead(ammCacheKey)
+    );
+
+    final byte[] _data = new byte[34];
+    int i = LP_POOL_REMOVE_LIQUIDITY_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, inMarketIndex);
+    i += 2;
+    putInt64LE(_data, i, inAmount);
+    i += 8;
+    putInt128LE(_data, i, minOutAmount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record LpPoolRemoveLiquidityIxData(Discriminator discriminator,
+                                            int inMarketIndex,
+                                            long inAmount,
+                                            BigInteger minOutAmount) implements Borsh {  
+
+    public static LpPoolRemoveLiquidityIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 34;
+
+    public static LpPoolRemoveLiquidityIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var inMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var inAmount = getInt64LE(_data, i);
+      i += 8;
+      final var minOutAmount = getInt128LE(_data, i);
+      return new LpPoolRemoveLiquidityIxData(discriminator, inMarketIndex, inAmount, minOutAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, inMarketIndex);
+      i += 2;
+      putInt64LE(_data, i, inAmount);
+      i += 8;
+      putInt128LE(_data, i, minOutAmount);
+      i += 16;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator VIEW_LP_POOL_ADD_LIQUIDITY_FEES_DISCRIMINATOR = toDiscriminator(80, 66, 226, 161, 70, 142, 119, 84);
+
+  public static Instruction viewLpPoolAddLiquidityFees(final AccountMeta invokedDriftProgramMeta,
+                                                       final PublicKey stateKey,
+                                                       final PublicKey lpPoolKey,
+                                                       final PublicKey authorityKey,
+                                                       final PublicKey inMarketMintKey,
+                                                       final PublicKey inConstituentKey,
+                                                       final PublicKey lpMintKey,
+                                                       final PublicKey constituentTargetBaseKey,
+                                                       final int inMarketIndex,
+                                                       final BigInteger inAmount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createRead(lpPoolKey),
+      createReadOnlySigner(authorityKey),
+      createRead(inMarketMintKey),
+      createRead(inConstituentKey),
+      createRead(lpMintKey),
+      createRead(constituentTargetBaseKey)
+    );
+
+    final byte[] _data = new byte[26];
+    int i = VIEW_LP_POOL_ADD_LIQUIDITY_FEES_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, inMarketIndex);
+    i += 2;
+    putInt128LE(_data, i, inAmount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record ViewLpPoolAddLiquidityFeesIxData(Discriminator discriminator, int inMarketIndex, BigInteger inAmount) implements Borsh {  
+
+    public static ViewLpPoolAddLiquidityFeesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 26;
+
+    public static ViewLpPoolAddLiquidityFeesIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var inMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var inAmount = getInt128LE(_data, i);
+      return new ViewLpPoolAddLiquidityFeesIxData(discriminator, inMarketIndex, inAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, inMarketIndex);
+      i += 2;
+      putInt128LE(_data, i, inAmount);
+      i += 16;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator VIEW_LP_POOL_REMOVE_LIQUIDITY_FEES_DISCRIMINATOR = toDiscriminator(47, 12, 9, 102, 12, 226, 197, 89);
+
+  public static Instruction viewLpPoolRemoveLiquidityFees(final AccountMeta invokedDriftProgramMeta,
+                                                          final PublicKey stateKey,
+                                                          final PublicKey lpPoolKey,
+                                                          final PublicKey authorityKey,
+                                                          final PublicKey outMarketMintKey,
+                                                          final PublicKey outConstituentKey,
+                                                          final PublicKey lpMintKey,
+                                                          final PublicKey constituentTargetBaseKey,
+                                                          final int inMarketIndex,
+                                                          final long inAmount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createRead(lpPoolKey),
+      createReadOnlySigner(authorityKey),
+      createRead(outMarketMintKey),
+      createRead(outConstituentKey),
+      createRead(lpMintKey),
+      createRead(constituentTargetBaseKey)
+    );
+
+    final byte[] _data = new byte[18];
+    int i = VIEW_LP_POOL_REMOVE_LIQUIDITY_FEES_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, inMarketIndex);
+    i += 2;
+    putInt64LE(_data, i, inAmount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record ViewLpPoolRemoveLiquidityFeesIxData(Discriminator discriminator, int inMarketIndex, long inAmount) implements Borsh {  
+
+    public static ViewLpPoolRemoveLiquidityFeesIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 18;
+
+    public static ViewLpPoolRemoveLiquidityFeesIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var inMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var inAmount = getInt64LE(_data, i);
+      return new ViewLpPoolRemoveLiquidityFeesIxData(discriminator, inMarketIndex, inAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, inMarketIndex);
+      i += 2;
+      putInt64LE(_data, i, inAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator BEGIN_LP_SWAP_DISCRIMINATOR = toDiscriminator(64, 44, 24, 199, 48, 125, 67, 91);
+
+  public static Instruction beginLpSwap(final AccountMeta invokedDriftProgramMeta,
+                                        final PublicKey stateKey,
+                                        final PublicKey adminKey,
+                                        // Signer token accounts
+                                        final PublicKey signerOutTokenAccountKey,
+                                        final PublicKey signerInTokenAccountKey,
+                                        // Constituent token accounts
+                                        final PublicKey constituentOutTokenAccountKey,
+                                        final PublicKey constituentInTokenAccountKey,
+                                        // Constituents
+                                        final PublicKey outConstituentKey,
+                                        final PublicKey inConstituentKey,
+                                        final PublicKey lpPoolKey,
+                                        // Instructions Sysvar for instruction introspection
+                                        final PublicKey instructionsKey,
+                                        final PublicKey tokenProgramKey,
+                                        final int inMarketIndex,
+                                        final int outMarketIndex,
+                                        final long amountIn) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWritableSigner(adminKey),
+      createWrite(signerOutTokenAccountKey),
+      createWrite(signerInTokenAccountKey),
+      createWrite(constituentOutTokenAccountKey),
+      createWrite(constituentInTokenAccountKey),
+      createWrite(outConstituentKey),
+      createWrite(inConstituentKey),
+      createRead(lpPoolKey),
+      createRead(instructionsKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[20];
+    int i = BEGIN_LP_SWAP_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, inMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, outMarketIndex);
+    i += 2;
+    putInt64LE(_data, i, amountIn);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record BeginLpSwapIxData(Discriminator discriminator,
+                                  int inMarketIndex,
+                                  int outMarketIndex,
+                                  long amountIn) implements Borsh {  
+
+    public static BeginLpSwapIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 20;
+
+    public static BeginLpSwapIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var inMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var outMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var amountIn = getInt64LE(_data, i);
+      return new BeginLpSwapIxData(discriminator, inMarketIndex, outMarketIndex, amountIn);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, inMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, outMarketIndex);
+      i += 2;
+      putInt64LE(_data, i, amountIn);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator END_LP_SWAP_DISCRIMINATOR = toDiscriminator(99, 125, 214, 165, 129, 175, 253, 135);
+
+  public static Instruction endLpSwap(final AccountMeta invokedDriftProgramMeta,
+                                      final PublicKey stateKey,
+                                      final PublicKey adminKey,
+                                      // Signer token accounts
+                                      final PublicKey signerOutTokenAccountKey,
+                                      final PublicKey signerInTokenAccountKey,
+                                      // Constituent token accounts
+                                      final PublicKey constituentOutTokenAccountKey,
+                                      final PublicKey constituentInTokenAccountKey,
+                                      // Constituents
+                                      final PublicKey outConstituentKey,
+                                      final PublicKey inConstituentKey,
+                                      final PublicKey lpPoolKey,
+                                      // Instructions Sysvar for instruction introspection
+                                      final PublicKey instructionsKey,
+                                      final PublicKey tokenProgramKey,
+                                      final int inMarketIndex,
+                                      final int outMarketIndex) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWritableSigner(adminKey),
+      createWrite(signerOutTokenAccountKey),
+      createWrite(signerInTokenAccountKey),
+      createWrite(constituentOutTokenAccountKey),
+      createWrite(constituentInTokenAccountKey),
+      createWrite(outConstituentKey),
+      createWrite(inConstituentKey),
+      createRead(lpPoolKey),
+      createRead(instructionsKey),
+      createRead(tokenProgramKey)
+    );
+
+    final byte[] _data = new byte[12];
+    int i = END_LP_SWAP_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, inMarketIndex);
+    i += 2;
+    putInt16LE(_data, i, outMarketIndex);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record EndLpSwapIxData(Discriminator discriminator, int inMarketIndex, int outMarketIndex) implements Borsh {  
+
+    public static EndLpSwapIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 12;
+
+    public static EndLpSwapIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var inMarketIndex = getInt16LE(_data, i);
+      i += 2;
+      final var outMarketIndex = getInt16LE(_data, i);
+      return new EndLpSwapIxData(discriminator, inMarketIndex, outMarketIndex);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, inMarketIndex);
+      i += 2;
+      putInt16LE(_data, i, outMarketIndex);
+      i += 2;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator UPDATE_CONSTITUENT_ORACLE_INFO_DISCRIMINATOR = toDiscriminator(198, 117, 231, 250, 147, 33, 127, 161);
+
+  public static Instruction updateConstituentOracleInfo(final AccountMeta invokedDriftProgramMeta,
+                                                        final PublicKey stateKey,
+                                                        final PublicKey keeperKey,
+                                                        final PublicKey constituentKey,
+                                                        final PublicKey spotMarketKey,
+                                                        final PublicKey oracleKey) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWritableSigner(keeperKey),
+      createWrite(constituentKey),
+      createRead(spotMarketKey),
+      createRead(oracleKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_CONSTITUENT_ORACLE_INFO_DISCRIMINATOR);
+  }
+
+  public static final Discriminator DEPOSIT_TO_PROGRAM_VAULT_DISCRIMINATOR = toDiscriminator(235, 171, 121, 80, 57, 239, 147, 220);
+
+  public static Instruction depositToProgramVault(final AccountMeta invokedDriftProgramMeta,
+                                                  final PublicKey stateKey,
+                                                  final PublicKey adminKey,
+                                                  final PublicKey constituentKey,
+                                                  final PublicKey constituentTokenAccountKey,
+                                                  final PublicKey spotMarketKey,
+                                                  final PublicKey spotMarketVaultKey,
+                                                  final PublicKey tokenProgramKey,
+                                                  final PublicKey mintKey,
+                                                  final PublicKey oracleKey,
+                                                  final long amount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWritableSigner(adminKey),
+      createWrite(constituentKey),
+      createWrite(constituentTokenAccountKey),
+      createWrite(spotMarketKey),
+      createWrite(spotMarketVaultKey),
+      createRead(tokenProgramKey),
+      createRead(mintKey),
+      createRead(oracleKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = DEPOSIT_TO_PROGRAM_VAULT_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record DepositToProgramVaultIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static DepositToProgramVaultIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static DepositToProgramVaultIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new DepositToProgramVaultIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator WITHDRAW_FROM_PROGRAM_VAULT_DISCRIMINATOR = toDiscriminator(120, 40, 183, 149, 232, 18, 224, 151);
+
+  public static Instruction withdrawFromProgramVault(final AccountMeta invokedDriftProgramMeta,
+                                                     final PublicKey stateKey,
+                                                     final PublicKey adminKey,
+                                                     final PublicKey driftSignerKey,
+                                                     final PublicKey constituentKey,
+                                                     final PublicKey constituentTokenAccountKey,
+                                                     final PublicKey spotMarketKey,
+                                                     final PublicKey spotMarketVaultKey,
+                                                     final PublicKey tokenProgramKey,
+                                                     final PublicKey mintKey,
+                                                     final PublicKey oracleKey,
+                                                     final long amount) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWritableSigner(adminKey),
+      createRead(driftSignerKey),
+      createWrite(constituentKey),
+      createWrite(constituentTokenAccountKey),
+      createWrite(spotMarketKey),
+      createWrite(spotMarketVaultKey),
+      createRead(tokenProgramKey),
+      createRead(mintKey),
+      createRead(oracleKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = WITHDRAW_FROM_PROGRAM_VAULT_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, amount);
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
+  }
+
+  public record WithdrawFromProgramVaultIxData(Discriminator discriminator, long amount) implements Borsh {  
+
+    public static WithdrawFromProgramVaultIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static WithdrawFromProgramVaultIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var amount = getInt64LE(_data, i);
+      return new WithdrawFromProgramVaultIxData(discriminator, amount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, amount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator SETTLE_PERP_TO_LP_POOL_DISCRIMINATOR = toDiscriminator(5, 98, 46, 188, 10, 59, 2, 249);
+
+  public static Instruction settlePerpToLpPool(final AccountMeta invokedDriftProgramMeta,
+                                               final PublicKey stateKey,
+                                               final PublicKey lpPoolKey,
+                                               final PublicKey keeperKey,
+                                               final PublicKey ammCacheKey,
+                                               final PublicKey quoteMarketKey,
+                                               final PublicKey constituentKey,
+                                               final PublicKey constituentQuoteTokenAccountKey,
+                                               final PublicKey quoteTokenVaultKey,
+                                               final PublicKey tokenProgramKey,
+                                               final PublicKey driftSignerKey) {
+    final var keys = List.of(
+      createRead(stateKey),
+      createWrite(lpPoolKey),
+      createWritableSigner(keeperKey),
+      createWrite(ammCacheKey),
+      createWrite(quoteMarketKey),
+      createWrite(constituentKey),
+      createWrite(constituentQuoteTokenAccountKey),
+      createWrite(quoteTokenVaultKey),
+      createRead(tokenProgramKey),
+      createRead(driftSignerKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, SETTLE_PERP_TO_LP_POOL_DISCRIMINATOR);
   }
 
   private DriftProgram() {

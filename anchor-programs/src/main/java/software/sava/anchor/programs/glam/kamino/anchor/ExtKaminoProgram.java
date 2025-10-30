@@ -109,6 +109,34 @@ public final class ExtKaminoProgram {
     }
   }
 
+  public static final Discriminator FARMS_INITIALIZE_USER_DISCRIMINATOR = toDiscriminator(188, 148, 82, 37, 44, 46, 162, 34);
+
+  public static Instruction farmsInitializeUser(final AccountMeta invokedExtKaminoProgramMeta,
+                                                final SolanaAccounts solanaAccounts,
+                                                final PublicKey glamStateKey,
+                                                final PublicKey glamVaultKey,
+                                                final PublicKey glamSignerKey,
+                                                final PublicKey integrationAuthorityKey,
+                                                final PublicKey cpiProgramKey,
+                                                final PublicKey glamProtocolProgramKey,
+                                                final PublicKey userStateKey,
+                                                final PublicKey farmStateKey) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(integrationAuthorityKey),
+      createRead(cpiProgramKey),
+      createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
+      createWrite(userStateKey),
+      createWrite(farmStateKey),
+      createRead(solanaAccounts.rentSysVar())
+    );
+
+    return Instruction.createInstruction(invokedExtKaminoProgramMeta, keys, FARMS_INITIALIZE_USER_DISCRIMINATOR);
+  }
+
   public static final Discriminator FARMS_STAKE_DISCRIMINATOR = toDiscriminator(224, 105, 208, 179, 98, 200, 213, 238);
 
   public static Instruction farmsStake(final AccountMeta invokedExtKaminoProgramMeta,
@@ -247,6 +275,41 @@ public final class ExtKaminoProgram {
     public int l() {
       return BYTES;
     }
+  }
+
+  public static final Discriminator FARMS_WITHDRAW_UNSTAKED_DEPOSITS_DISCRIMINATOR = toDiscriminator(107, 97, 50, 15, 211, 245, 52, 96);
+
+  public static Instruction farmsWithdrawUnstakedDeposits(final AccountMeta invokedExtKaminoProgramMeta,
+                                                          final SolanaAccounts solanaAccounts,
+                                                          final PublicKey glamStateKey,
+                                                          final PublicKey glamVaultKey,
+                                                          final PublicKey glamSignerKey,
+                                                          final PublicKey integrationAuthorityKey,
+                                                          final PublicKey cpiProgramKey,
+                                                          final PublicKey glamProtocolProgramKey,
+                                                          final PublicKey userStateKey,
+                                                          final PublicKey farmStateKey,
+                                                          final PublicKey userAtaKey,
+                                                          final PublicKey farmVaultKey,
+                                                          final PublicKey farmVaultsAuthorityKey,
+                                                          final PublicKey tokenProgramKey) {
+    final var keys = List.of(
+      createWrite(glamStateKey),
+      createWrite(glamVaultKey),
+      createWritableSigner(glamSignerKey),
+      createRead(integrationAuthorityKey),
+      createRead(cpiProgramKey),
+      createRead(glamProtocolProgramKey),
+      createRead(solanaAccounts.systemProgram()),
+      createWrite(userStateKey),
+      createWrite(farmStateKey),
+      createWrite(userAtaKey),
+      createWrite(farmVaultKey),
+      createRead(farmVaultsAuthorityKey),
+      createRead(tokenProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedExtKaminoProgramMeta, keys, FARMS_WITHDRAW_UNSTAKED_DEPOSITS_DISCRIMINATOR);
   }
 
   public static final Discriminator LENDING_BORROW_OBLIGATION_LIQUIDITY_V_2_DISCRIMINATOR = toDiscriminator(149, 226, 84, 157, 124, 178, 35, 122);

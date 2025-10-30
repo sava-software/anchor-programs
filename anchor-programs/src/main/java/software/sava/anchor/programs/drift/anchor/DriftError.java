@@ -327,7 +327,26 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.RevenueShareEscrowOrdersAccountFull,
     DriftError.InvalidRevenueShareAccount,
     DriftError.CannotRevokeBuilderWithOpenOrders,
-    DriftError.UnableToLoadRevenueShareAccount {
+    DriftError.UnableToLoadRevenueShareAccount,
+    DriftError.InvalidConstituent,
+    DriftError.InvalidAmmConstituentMappingArgument,
+    DriftError.ConstituentNotFound,
+    DriftError.ConstituentCouldNotLoad,
+    DriftError.ConstituentWrongMutability,
+    DriftError.WrongNumberOfConstituents,
+    DriftError.InsufficientConstituentTokenBalance,
+    DriftError.AMMCacheStale,
+    DriftError.LpPoolAumDelayed,
+    DriftError.ConstituentOracleStale,
+    DriftError.LpInvariantFailed,
+    DriftError.InvalidConstituentDerivativeWeights,
+    DriftError.MaxDlpAumBreached,
+    DriftError.SettleLpPoolDisabled,
+    DriftError.MintRedeemLpPoolDisabled,
+    DriftError.LpPoolSettleInvariantBreached,
+    DriftError.InvalidConstituentOperation,
+    DriftError.Unauthorized,
+    DriftError.InvalidLpPoolId {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -656,6 +675,25 @@ public sealed interface DriftError extends ProgramError permits
       case 6322 -> InvalidRevenueShareAccount.INSTANCE;
       case 6323 -> CannotRevokeBuilderWithOpenOrders.INSTANCE;
       case 6324 -> UnableToLoadRevenueShareAccount.INSTANCE;
+      case 6325 -> InvalidConstituent.INSTANCE;
+      case 6326 -> InvalidAmmConstituentMappingArgument.INSTANCE;
+      case 6327 -> ConstituentNotFound.INSTANCE;
+      case 6328 -> ConstituentCouldNotLoad.INSTANCE;
+      case 6329 -> ConstituentWrongMutability.INSTANCE;
+      case 6330 -> WrongNumberOfConstituents.INSTANCE;
+      case 6331 -> InsufficientConstituentTokenBalance.INSTANCE;
+      case 6332 -> AMMCacheStale.INSTANCE;
+      case 6333 -> LpPoolAumDelayed.INSTANCE;
+      case 6334 -> ConstituentOracleStale.INSTANCE;
+      case 6335 -> LpInvariantFailed.INSTANCE;
+      case 6336 -> InvalidConstituentDerivativeWeights.INSTANCE;
+      case 6337 -> MaxDlpAumBreached.INSTANCE;
+      case 6338 -> SettleLpPoolDisabled.INSTANCE;
+      case 6339 -> MintRedeemLpPoolDisabled.INSTANCE;
+      case 6340 -> LpPoolSettleInvariantBreached.INSTANCE;
+      case 6341 -> InvalidConstituentOperation.INSTANCE;
+      case 6342 -> Unauthorized.INSTANCE;
+      case 6343 -> InvalidLpPoolId.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -2932,6 +2970,139 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final UnableToLoadRevenueShareAccount INSTANCE = new UnableToLoadRevenueShareAccount(
         6324, "Unable to load builder account"
+    );
+  }
+
+  record InvalidConstituent(int code, String msg) implements DriftError {
+
+    public static final InvalidConstituent INSTANCE = new InvalidConstituent(
+        6325, "Invalid Constituent"
+    );
+  }
+
+  record InvalidAmmConstituentMappingArgument(int code, String msg) implements DriftError {
+
+    public static final InvalidAmmConstituentMappingArgument INSTANCE = new InvalidAmmConstituentMappingArgument(
+        6326, "Invalid Amm Constituent Mapping argument"
+    );
+  }
+
+  record ConstituentNotFound(int code, String msg) implements DriftError {
+
+    public static final ConstituentNotFound INSTANCE = new ConstituentNotFound(
+        6327, "Constituent not found"
+    );
+  }
+
+  record ConstituentCouldNotLoad(int code, String msg) implements DriftError {
+
+    public static final ConstituentCouldNotLoad INSTANCE = new ConstituentCouldNotLoad(
+        6328, "Constituent could not load"
+    );
+  }
+
+  record ConstituentWrongMutability(int code, String msg) implements DriftError {
+
+    public static final ConstituentWrongMutability INSTANCE = new ConstituentWrongMutability(
+        6329, "Constituent wrong mutability"
+    );
+  }
+
+  record WrongNumberOfConstituents(int code, String msg) implements DriftError {
+
+    public static final WrongNumberOfConstituents INSTANCE = new WrongNumberOfConstituents(
+        6330, "Wrong number of constituents passed to instruction"
+    );
+  }
+
+  record InsufficientConstituentTokenBalance(int code, String msg) implements DriftError {
+
+    public static final InsufficientConstituentTokenBalance INSTANCE = new InsufficientConstituentTokenBalance(
+        6331, "Insufficient constituent token balance"
+    );
+  }
+
+  record AMMCacheStale(int code, String msg) implements DriftError {
+
+    public static final AMMCacheStale INSTANCE = new AMMCacheStale(
+        6332, "Amm Cache data too stale"
+    );
+  }
+
+  record LpPoolAumDelayed(int code, String msg) implements DriftError {
+
+    public static final LpPoolAumDelayed INSTANCE = new LpPoolAumDelayed(
+        6333, "LP Pool AUM not updated recently"
+    );
+  }
+
+  record ConstituentOracleStale(int code, String msg) implements DriftError {
+
+    public static final ConstituentOracleStale INSTANCE = new ConstituentOracleStale(
+        6334, "Constituent oracle is stale"
+    );
+  }
+
+  record LpInvariantFailed(int code, String msg) implements DriftError {
+
+    public static final LpInvariantFailed INSTANCE = new LpInvariantFailed(
+        6335, "LP Invariant failed"
+    );
+  }
+
+  record InvalidConstituentDerivativeWeights(int code, String msg) implements DriftError {
+
+    public static final InvalidConstituentDerivativeWeights INSTANCE = new InvalidConstituentDerivativeWeights(
+        6336, "Invalid constituent derivative weights"
+    );
+  }
+
+  record MaxDlpAumBreached(int code, String msg) implements DriftError {
+
+    public static final MaxDlpAumBreached INSTANCE = new MaxDlpAumBreached(
+        6337, "Max DLP AUM Breached"
+    );
+  }
+
+  record SettleLpPoolDisabled(int code, String msg) implements DriftError {
+
+    public static final SettleLpPoolDisabled INSTANCE = new SettleLpPoolDisabled(
+        6338, "Settle Lp Pool Disabled"
+    );
+  }
+
+  record MintRedeemLpPoolDisabled(int code, String msg) implements DriftError {
+
+    public static final MintRedeemLpPoolDisabled INSTANCE = new MintRedeemLpPoolDisabled(
+        6339, "Mint/Redeem Lp Pool Disabled"
+    );
+  }
+
+  record LpPoolSettleInvariantBreached(int code, String msg) implements DriftError {
+
+    public static final LpPoolSettleInvariantBreached INSTANCE = new LpPoolSettleInvariantBreached(
+        6340, "Settlement amount exceeded"
+    );
+  }
+
+  record InvalidConstituentOperation(int code, String msg) implements DriftError {
+
+    public static final InvalidConstituentOperation INSTANCE = new InvalidConstituentOperation(
+        6341, "Invalid constituent operation"
+    );
+  }
+
+  record Unauthorized(int code, String msg) implements DriftError {
+
+    public static final Unauthorized INSTANCE = new Unauthorized(
+        6342, "Unauthorized for operation"
+    );
+  }
+
+  record InvalidLpPoolId(int code, String msg) implements DriftError {
+
+    public static final InvalidLpPoolId INSTANCE = new InvalidLpPoolId(
+        6343, "Invalid Lp Pool Id for Operation"
     );
   }
 }
