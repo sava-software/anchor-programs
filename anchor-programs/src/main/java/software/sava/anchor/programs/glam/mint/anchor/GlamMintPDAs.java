@@ -75,14 +75,9 @@ public final class GlamMintPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress fromAtaPDA(final PublicKey program,
-                                                 final PublicKey fromAccount,
-                                                 final PublicKey token2022ProgramAccount,
-                                                 final PublicKey glamMintAccount) {
+  public static ProgramDerivedAddress eventAuthorityPDA(final PublicKey program) {
     return PublicKey.findProgramAddress(List.of(
-      fromAccount.toByteArray(),
-      token2022ProgramAccount.toByteArray(),
-      glamMintAccount.toByteArray()
+      "__event_authority".getBytes(US_ASCII)
     ), program);
   }
 

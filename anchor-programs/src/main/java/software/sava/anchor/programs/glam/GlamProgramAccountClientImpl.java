@@ -599,6 +599,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamAccounts.readMintExtensionAuthority().publicKey(),
         globalConfigKey,
         invokedProtocolProgram.publicKey(),
+        null, null,
         aggIndexes
     );
   }
@@ -617,6 +618,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamAccounts.readMintExtensionAuthority().publicKey(),
         globalConfigKey,
         invokedProtocolProgram.publicKey(),
+        null, null,
         numUsers
     );
   }
@@ -637,6 +639,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamAccounts.readMintExtensionAuthority().publicKey(),
         globalConfigKey,
         invokedProtocolProgram.publicKey(),
+        null, null,
         numVaultDepositors,
         numSpotMarkets,
         numPerpMarkets
@@ -665,6 +668,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamAccounts.readMintExtensionAuthority().publicKey(),
         globalConfigKey,
         invokedProtocolProgram.publicKey(),
+        null, null,
         pythOracleKey,
         switchboardPriceOracleKey,
         switchboardTwapOracleKey,
@@ -689,6 +693,7 @@ final class GlamProgramAccountClientImpl implements GlamProgramAccountClient {
         glamAccounts.readMintExtensionAuthority().publicKey(),
         globalConfigKey,
         invokedProtocolProgram.publicKey(),
+        null, null,
         numVaults
     );
   }

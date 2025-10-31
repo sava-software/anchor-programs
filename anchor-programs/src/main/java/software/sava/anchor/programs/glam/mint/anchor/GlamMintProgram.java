@@ -36,14 +36,14 @@ public final class GlamMintProgram {
                                        final PublicKey glamStateKey,
                                        final PublicKey glamSignerKey,
                                        final PublicKey glamMintKey,
-                                       final PublicKey fromAtaKey,
+                                       final PublicKey fromTokenAccountKey,
                                        final PublicKey fromKey,
                                        final long amount) {
     final var keys = List.of(
       createRead(glamStateKey),
       createWritableSigner(glamSignerKey),
       createWrite(glamMintKey),
-      createWrite(fromAtaKey),
+      createWrite(fromTokenAccountKey),
       createRead(fromKey),
       createRead(solanaAccounts.token2022Program())
     );
@@ -310,7 +310,7 @@ public final class GlamMintProgram {
                                                 final PublicKey glamStateKey,
                                                 final PublicKey glamSignerKey,
                                                 final PublicKey glamMintKey,
-                                                final PublicKey fromAtaKey,
+                                                final PublicKey fromTokenAccountKey,
                                                 final PublicKey toAtaKey,
                                                 final PublicKey fromKey,
                                                 final PublicKey toKey,
@@ -321,7 +321,7 @@ public final class GlamMintProgram {
       createWrite(glamStateKey),
       createWritableSigner(glamSignerKey),
       createWrite(glamMintKey),
-      createWrite(fromAtaKey),
+      createWrite(fromTokenAccountKey),
       createWrite(toAtaKey),
       createRead(fromKey),
       createRead(toKey),
@@ -617,6 +617,8 @@ public final class GlamMintProgram {
                                             final PublicKey integrationAuthorityKey,
                                             final PublicKey glamConfigKey,
                                             final PublicKey glamProtocolKey,
+                                            final PublicKey eventAuthorityKey,
+                                            final PublicKey eventProgramKey,
                                             final int numUsers) {
     final var keys = List.of(
       createWrite(glamStateKey),
@@ -626,7 +628,9 @@ public final class GlamMintProgram {
       createRead(baseAssetUsdOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
-      createRead(glamProtocolKey)
+      createRead(glamProtocolKey),
+      createRead(requireNonNullElse(eventAuthorityKey, invokedGlamMintProgramMeta.publicKey())),
+      createRead(requireNonNullElse(eventProgramKey, invokedGlamMintProgramMeta.publicKey()))
     );
 
     final byte[] _data = new byte[9];
@@ -684,6 +688,8 @@ public final class GlamMintProgram {
                                                       final PublicKey integrationAuthorityKey,
                                                       final PublicKey glamConfigKey,
                                                       final PublicKey glamProtocolKey,
+                                                      final PublicKey eventAuthorityKey,
+                                                      final PublicKey eventProgramKey,
                                                       final int numVaultDepositors,
                                                       final int numSpotMarkets,
                                                       final int numPerpMarkets) {
@@ -695,7 +701,9 @@ public final class GlamMintProgram {
       createRead(baseAssetUsdOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
-      createRead(glamProtocolKey)
+      createRead(glamProtocolKey),
+      createRead(requireNonNullElse(eventAuthorityKey, invokedGlamMintProgramMeta.publicKey())),
+      createRead(requireNonNullElse(eventProgramKey, invokedGlamMintProgramMeta.publicKey()))
     );
 
     final byte[] _data = new byte[11];
@@ -773,6 +781,8 @@ public final class GlamMintProgram {
                                                    final PublicKey integrationAuthorityKey,
                                                    final PublicKey glamConfigKey,
                                                    final PublicKey glamProtocolKey,
+                                                   final PublicKey eventAuthorityKey,
+                                                   final PublicKey eventProgramKey,
                                                    final PublicKey pythOracleKey,
                                                    final PublicKey switchboardPriceOracleKey,
                                                    final PublicKey switchboardTwapOracleKey,
@@ -790,6 +800,8 @@ public final class GlamMintProgram {
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
       createRead(glamProtocolKey),
+      createRead(requireNonNullElse(eventAuthorityKey, invokedGlamMintProgramMeta.publicKey())),
+      createRead(requireNonNullElse(eventProgramKey, invokedGlamMintProgramMeta.publicKey())),
       createRead(requireNonNullElse(pythOracleKey, invokedGlamMintProgramMeta.publicKey())),
       createRead(requireNonNullElse(switchboardPriceOracleKey, invokedGlamMintProgramMeta.publicKey())),
       createRead(requireNonNullElse(switchboardTwapOracleKey, invokedGlamMintProgramMeta.publicKey())),
@@ -869,6 +881,8 @@ public final class GlamMintProgram {
                                                    final PublicKey integrationAuthorityKey,
                                                    final PublicKey glamConfigKey,
                                                    final PublicKey glamProtocolKey,
+                                                   final PublicKey eventAuthorityKey,
+                                                   final PublicKey eventProgramKey,
                                                    final int numVaults) {
     final var keys = List.of(
       createWrite(glamStateKey),
@@ -878,7 +892,9 @@ public final class GlamMintProgram {
       createRead(baseAssetUsdOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
-      createRead(glamProtocolKey)
+      createRead(glamProtocolKey),
+      createRead(requireNonNullElse(eventAuthorityKey, invokedGlamMintProgramMeta.publicKey())),
+      createRead(requireNonNullElse(eventProgramKey, invokedGlamMintProgramMeta.publicKey()))
     );
 
     final byte[] _data = new byte[9];
@@ -940,6 +956,8 @@ public final class GlamMintProgram {
                                              final PublicKey integrationAuthorityKey,
                                              final PublicKey glamConfigKey,
                                              final PublicKey glamProtocolKey,
+                                             final PublicKey eventAuthorityKey,
+                                             final PublicKey eventProgramKey,
                                              final short[][] aggIndexes) {
     final var keys = List.of(
       createWrite(glamStateKey),
@@ -949,7 +967,9 @@ public final class GlamMintProgram {
       createRead(baseAssetUsdOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
-      createRead(glamProtocolKey)
+      createRead(glamProtocolKey),
+      createRead(requireNonNullElse(eventAuthorityKey, invokedGlamMintProgramMeta.publicKey())),
+      createRead(requireNonNullElse(eventProgramKey, invokedGlamMintProgramMeta.publicKey()))
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVectorArray(aggIndexes)];
