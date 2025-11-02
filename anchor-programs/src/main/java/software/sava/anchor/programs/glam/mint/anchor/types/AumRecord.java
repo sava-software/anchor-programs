@@ -7,16 +7,16 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
 
-public record PricedProtocolRecord(BigInteger baseAssetAmount) implements Borsh {
+public record AumRecord(BigInteger baseAssetAmount) implements Borsh {
 
   public static final int BYTES = 16;
 
-  public static PricedProtocolRecord read(final byte[] _data, final int offset) {
+  public static AumRecord read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
     final var baseAssetAmount = getInt128LE(_data, offset);
-    return new PricedProtocolRecord(baseAssetAmount);
+    return new AumRecord(baseAssetAmount);
   }
 
   @Override

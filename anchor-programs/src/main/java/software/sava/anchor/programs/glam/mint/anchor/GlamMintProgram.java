@@ -613,7 +613,7 @@ public final class GlamMintProgram {
                                             final PublicKey glamVaultKey,
                                             final PublicKey signerKey,
                                             final PublicKey solUsdOracleKey,
-                                            final PublicKey baseAssetUsdOracleKey,
+                                            final PublicKey baseAssetOracleKey,
                                             final PublicKey integrationAuthorityKey,
                                             final PublicKey glamConfigKey,
                                             final PublicKey glamProtocolKey,
@@ -625,7 +625,7 @@ public final class GlamMintProgram {
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
       createRead(solUsdOracleKey),
-      createRead(baseAssetUsdOracleKey),
+      createRead(baseAssetOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
       createRead(glamProtocolKey),
@@ -684,7 +684,7 @@ public final class GlamMintProgram {
                                                       final PublicKey glamVaultKey,
                                                       final PublicKey signerKey,
                                                       final PublicKey solUsdOracleKey,
-                                                      final PublicKey baseAssetUsdOracleKey,
+                                                      final PublicKey baseAssetOracleKey,
                                                       final PublicKey integrationAuthorityKey,
                                                       final PublicKey glamConfigKey,
                                                       final PublicKey glamProtocolKey,
@@ -698,7 +698,7 @@ public final class GlamMintProgram {
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
       createRead(solUsdOracleKey),
-      createRead(baseAssetUsdOracleKey),
+      createRead(baseAssetOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
       createRead(glamProtocolKey),
@@ -777,7 +777,7 @@ public final class GlamMintProgram {
                                                    final PublicKey signerKey,
                                                    final PublicKey kaminoLendingProgramKey,
                                                    final PublicKey solUsdOracleKey,
-                                                   final PublicKey baseAssetUsdOracleKey,
+                                                   final PublicKey baseAssetOracleKey,
                                                    final PublicKey integrationAuthorityKey,
                                                    final PublicKey glamConfigKey,
                                                    final PublicKey glamProtocolKey,
@@ -796,7 +796,7 @@ public final class GlamMintProgram {
       createWritableSigner(signerKey),
       createRead(kaminoLendingProgramKey),
       createRead(solUsdOracleKey),
-      createRead(baseAssetUsdOracleKey),
+      createRead(baseAssetOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
       createRead(glamProtocolKey),
@@ -877,7 +877,7 @@ public final class GlamMintProgram {
                                                    final PublicKey glamVaultKey,
                                                    final PublicKey signerKey,
                                                    final PublicKey solUsdOracleKey,
-                                                   final PublicKey baseAssetUsdOracleKey,
+                                                   final PublicKey baseAssetOracleKey,
                                                    final PublicKey integrationAuthorityKey,
                                                    final PublicKey glamConfigKey,
                                                    final PublicKey glamProtocolKey,
@@ -889,7 +889,7 @@ public final class GlamMintProgram {
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
       createRead(solUsdOracleKey),
-      createRead(baseAssetUsdOracleKey),
+      createRead(baseAssetOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
       createRead(glamProtocolKey),
@@ -952,7 +952,7 @@ public final class GlamMintProgram {
                                              final PublicKey glamVaultKey,
                                              final PublicKey signerKey,
                                              final PublicKey solUsdOracleKey,
-                                             final PublicKey baseAssetUsdOracleKey,
+                                             final PublicKey baseAssetOracleKey,
                                              final PublicKey integrationAuthorityKey,
                                              final PublicKey glamConfigKey,
                                              final PublicKey glamProtocolKey,
@@ -964,7 +964,7 @@ public final class GlamMintProgram {
       createRead(glamVaultKey),
       createWritableSigner(signerKey),
       createRead(solUsdOracleKey),
-      createRead(baseAssetUsdOracleKey),
+      createRead(baseAssetOracleKey),
       createRead(integrationAuthorityKey),
       createRead(glamConfigKey),
       createRead(glamProtocolKey),
@@ -1459,6 +1459,24 @@ public final class GlamMintProgram {
     );
 
     return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, UPDATE_MINT_APPLY_TIMELOCK_DISCRIMINATOR);
+  }
+
+  public static final Discriminator VALIDATE_AUM_DISCRIMINATOR = toDiscriminator(101, 15, 233, 89, 134, 123, 224, 99);
+
+  // Validates AUM of the vault and emits AumRecord event.
+  public static Instruction validateAum(final AccountMeta invokedGlamMintProgramMeta,
+                                        final PublicKey glamStateKey,
+                                        final PublicKey signerKey,
+                                        final PublicKey eventAuthorityKey,
+                                        final PublicKey eventProgramKey) {
+    final var keys = List.of(
+      createRead(glamStateKey),
+      createWritableSigner(signerKey),
+      createRead(requireNonNullElse(eventAuthorityKey, invokedGlamMintProgramMeta.publicKey())),
+      createRead(requireNonNullElse(eventProgramKey, invokedGlamMintProgramMeta.publicKey()))
+    );
+
+    return Instruction.createInstruction(invokedGlamMintProgramMeta, keys, VALIDATE_AUM_DISCRIMINATOR);
   }
 
   private GlamMintProgram() {
