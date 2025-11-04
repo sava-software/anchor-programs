@@ -25,6 +25,8 @@ public record RebalanceLiquidityParams(// active id
                                        long minWithdrawYAmount,
                                        // threshold for deposit token y
                                        long maxDepositYAmount,
+                                       // shrink mode
+                                       int shrinkMode,
                                        // padding 32 bytes for future usage
                                        byte[] padding,
                                        // removes
@@ -32,7 +34,7 @@ public record RebalanceLiquidityParams(// active id
                                        // adds
                                        AddLiquidityParams[] adds) implements Borsh {
 
-  public static final int PADDING_LEN = 32;
+  public static final int PADDING_LEN = 31;
   public static RebalanceLiquidityParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
@@ -54,7 +56,9 @@ public record RebalanceLiquidityParams(// active id
     i += 8;
     final var maxDepositYAmount = getInt64LE(_data, i);
     i += 8;
-    final var padding = new byte[32];
+    final var shrinkMode = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[31];
     i += Borsh.readArray(padding, _data, i);
     final var removes = Borsh.readVector(RemoveLiquidityParams.class, RemoveLiquidityParams::read, _data, i);
     i += Borsh.lenVector(removes);
@@ -67,6 +71,7 @@ public record RebalanceLiquidityParams(// active id
                                         maxDepositXAmount,
                                         minWithdrawYAmount,
                                         maxDepositYAmount,
+                                        shrinkMode,
                                         padding,
                                         removes,
                                         adds);
@@ -91,7 +96,9 @@ public record RebalanceLiquidityParams(// active id
     i += 8;
     putInt64LE(_data, i, maxDepositYAmount);
     i += 8;
-    i += Borsh.writeArrayChecked(padding, 32, _data, i);
+    _data[i] = (byte) shrinkMode;
+    ++i;
+    i += Borsh.writeArrayChecked(padding, 31, _data, i);
     i += Borsh.writeVector(removes, _data, i);
     i += Borsh.writeVector(adds, _data, i);
     return i - offset;
@@ -107,6 +114,7 @@ public record RebalanceLiquidityParams(// active id
          + 8
          + 8
          + 8
+         + 1
          + Borsh.lenArray(padding)
          + Borsh.lenVector(removes)
          + Borsh.lenVector(adds);

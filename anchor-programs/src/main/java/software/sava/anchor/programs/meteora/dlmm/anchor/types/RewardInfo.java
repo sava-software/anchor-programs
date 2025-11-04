@@ -18,11 +18,11 @@ public record RewardInfo(// Reward token mint.
                          PublicKey vault,
                          // Authority account that allows to fund rewards
                          PublicKey funder,
-                         // TODO check whether we need to store it in pool
+                         // LM reward duration in seconds.
                          long rewardDuration,
-                         // TODO check whether we need to store it in pool
+                         // LM reward duration end time.
                          long rewardDurationEnd,
-                         // TODO check whether we need to store it in pool
+                         // LM reward rate
                          BigInteger rewardRate,
                          // The last time reward states were updated.
                          long lastUpdateTime,

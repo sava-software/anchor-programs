@@ -5687,7 +5687,6 @@ public final class DriftProgram {
                                                  final PublicKey adminKey,
                                                  final PublicKey stateKey,
                                                  final PublicKey perpMarketKey,
-                                                 final PublicKey ammCacheKey,
                                                  final PublicKey oracleKey,
                                                  final PublicKey rentKey,
                                                  final PublicKey systemProgramKey,
@@ -5721,7 +5720,6 @@ public final class DriftProgram {
       createWritableSigner(adminKey),
       createWrite(stateKey),
       createWrite(perpMarketKey),
-      createWrite(ammCacheKey),
       createRead(oracleKey),
       createRead(rentKey),
       createRead(systemProgramKey)
@@ -5980,6 +5978,42 @@ public final class DriftProgram {
     );
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, INITIALIZE_AMM_CACHE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator ADD_MARKET_TO_AMM_CACHE_DISCRIMINATOR = toDiscriminator(112, 149, 195, 222, 124, 7, 87, 237);
+
+  public static Instruction addMarketToAmmCache(final AccountMeta invokedDriftProgramMeta,
+                                                final PublicKey adminKey,
+                                                final PublicKey stateKey,
+                                                final PublicKey ammCacheKey,
+                                                final PublicKey perpMarketKey,
+                                                final PublicKey rentKey,
+                                                final PublicKey systemProgramKey) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createRead(stateKey),
+      createWrite(ammCacheKey),
+      createRead(perpMarketKey),
+      createRead(rentKey),
+      createRead(systemProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, ADD_MARKET_TO_AMM_CACHE_DISCRIMINATOR);
+  }
+
+  public static final Discriminator DELETE_AMM_CACHE_DISCRIMINATOR = toDiscriminator(216, 130, 215, 206, 233, 232, 191, 88);
+
+  public static Instruction deleteAmmCache(final AccountMeta invokedDriftProgramMeta,
+                                           final PublicKey adminKey,
+                                           final PublicKey stateKey,
+                                           final PublicKey ammCacheKey) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createRead(stateKey),
+      createWrite(ammCacheKey)
+    );
+
+    return Instruction.createInstruction(invokedDriftProgramMeta, keys, DELETE_AMM_CACHE_DISCRIMINATOR);
   }
 
   public static final Discriminator UPDATE_INITIAL_AMM_CACHE_INFO_DISCRIMINATOR = toDiscriminator(157, 210, 109, 67, 212, 170, 12, 107);
@@ -13005,23 +13039,6 @@ public final class DriftProgram {
     public int l() {
       return 8 + 2 + Borsh.len(overrideParams);
     }
-  }
-
-  public static final Discriminator RESET_AMM_CACHE_DISCRIMINATOR = toDiscriminator(150, 7, 213, 149, 115, 168, 0, 41);
-
-  public static Instruction resetAmmCache(final AccountMeta invokedDriftProgramMeta,
-                                          final PublicKey adminKey,
-                                          final PublicKey stateKey,
-                                          final PublicKey ammCacheKey,
-                                          final PublicKey systemProgramKey) {
-    final var keys = List.of(
-      createWritableSigner(adminKey),
-      createRead(stateKey),
-      createWrite(ammCacheKey),
-      createRead(systemProgramKey)
-    );
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, RESET_AMM_CACHE_DISCRIMINATOR);
   }
 
   public static final Discriminator LP_POOL_SWAP_DISCRIMINATOR = toDiscriminator(36, 161, 39, 49, 227, 1, 35, 226);

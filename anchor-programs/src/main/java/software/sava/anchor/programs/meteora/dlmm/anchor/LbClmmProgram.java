@@ -1086,6 +1086,21 @@ public final class LbClmmProgram {
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_PRESET_PARAMETER_2_DISCRIMINATOR);
   }
 
+  public static final Discriminator CLOSE_TOKEN_BADGE_DISCRIMINATOR = toDiscriminator(108, 146, 86, 110, 179, 254, 10, 104);
+
+  public static Instruction closeTokenBadge(final AccountMeta invokedLbClmmProgramMeta,
+                                            final PublicKey tokenBadgeKey,
+                                            final PublicKey rentReceiverKey,
+                                            final PublicKey adminKey) {
+    final var keys = List.of(
+      createWrite(tokenBadgeKey),
+      createWrite(rentReceiverKey),
+      createReadOnlySigner(adminKey)
+    );
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_TOKEN_BADGE_DISCRIMINATOR);
+  }
+
   public static final Discriminator CREATE_CLAIM_PROTOCOL_FEE_OPERATOR_DISCRIMINATOR = toDiscriminator(51, 19, 150, 252, 105, 157, 48, 91);
 
   public static Instruction createClaimProtocolFeeOperator(final AccountMeta invokedLbClmmProgramMeta,
@@ -1475,6 +1490,66 @@ public final class LbClmmProgram {
       i += 2;
       _data[i] = (byte) side;
       ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INCREASE_POSITION_LENGTH_2_DISCRIMINATOR = toDiscriminator(255, 210, 204, 71, 115, 137, 225, 113);
+
+  public static Instruction increasePositionLength2(final AccountMeta invokedLbClmmProgramMeta,
+                                                    final SolanaAccounts solanaAccounts,
+                                                    final PublicKey funderKey,
+                                                    final PublicKey lbPairKey,
+                                                    final PublicKey positionKey,
+                                                    final PublicKey ownerKey,
+                                                    final PublicKey eventAuthorityKey,
+                                                    final PublicKey programKey,
+                                                    final int minimumUpperBinId) {
+    final var keys = List.of(
+      createWritableSigner(funderKey),
+      createRead(lbPairKey),
+      createWrite(positionKey),
+      createReadOnlySigner(ownerKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[12];
+    int i = INCREASE_POSITION_LENGTH_2_DISCRIMINATOR.write(_data, 0);
+    putInt32LE(_data, i, minimumUpperBinId);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record IncreasePositionLength2IxData(Discriminator discriminator, int minimumUpperBinId) implements Borsh {  
+
+    public static IncreasePositionLength2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 12;
+
+    public static IncreasePositionLength2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var minimumUpperBinId = getInt32LE(_data, i);
+      return new IncreasePositionLength2IxData(discriminator, minimumUpperBinId);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, minimumUpperBinId);
+      i += 4;
       return i - offset;
     }
 
@@ -1988,6 +2063,73 @@ public final class LbClmmProgram {
       i += 4;
       final var width = getInt32LE(_data, i);
       return new InitializePositionIxData(discriminator, lowerBinId, width);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt32LE(_data, i, lowerBinId);
+      i += 4;
+      putInt32LE(_data, i, width);
+      i += 4;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator INITIALIZE_POSITION_2_DISCRIMINATOR = toDiscriminator(143, 19, 242, 145, 213, 15, 104, 115);
+
+  public static Instruction initializePosition2(final AccountMeta invokedLbClmmProgramMeta,
+                                                final SolanaAccounts solanaAccounts,
+                                                final PublicKey payerKey,
+                                                final PublicKey positionKey,
+                                                final PublicKey lbPairKey,
+                                                final PublicKey ownerKey,
+                                                final PublicKey eventAuthorityKey,
+                                                final PublicKey programKey,
+                                                final int lowerBinId,
+                                                final int width) {
+    final var keys = List.of(
+      createWritableSigner(payerKey),
+      createWritableSigner(positionKey),
+      createRead(lbPairKey),
+      createReadOnlySigner(ownerKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = INITIALIZE_POSITION_2_DISCRIMINATOR.write(_data, 0);
+    putInt32LE(_data, i, lowerBinId);
+    i += 4;
+    putInt32LE(_data, i, width);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record InitializePosition2IxData(Discriminator discriminator, int lowerBinId, int width) implements Borsh {  
+
+    public static InitializePosition2IxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static InitializePosition2IxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var lowerBinId = getInt32LE(_data, i);
+      i += 4;
+      final var width = getInt32LE(_data, i);
+      return new InitializePosition2IxData(discriminator, lowerBinId, width);
     }
 
     @Override

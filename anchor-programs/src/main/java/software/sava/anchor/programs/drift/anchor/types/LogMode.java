@@ -7,7 +7,8 @@ public enum LogMode implements Borsh.Enum {
   None,
   ExchangeOracle,
   MMOracle,
-  SafeMMOracle;
+  SafeMMOracle,
+  Margin;
 
   public static LogMode read(final byte[] _data, final int offset) {
     return Borsh.read(LogMode.values(), _data, offset);

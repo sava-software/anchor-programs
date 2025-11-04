@@ -346,7 +346,8 @@ public sealed interface DriftError extends ProgramError permits
     DriftError.LpPoolSettleInvariantBreached,
     DriftError.InvalidConstituentOperation,
     DriftError.Unauthorized,
-    DriftError.InvalidLpPoolId {
+    DriftError.InvalidLpPoolId,
+    DriftError.MarketIndexNotFoundAmmCache {
 
   static DriftError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -694,6 +695,7 @@ public sealed interface DriftError extends ProgramError permits
       case 6341 -> InvalidConstituentOperation.INSTANCE;
       case 6342 -> Unauthorized.INSTANCE;
       case 6343 -> InvalidLpPoolId.INSTANCE;
+      case 6344 -> MarketIndexNotFoundAmmCache.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Drift error code: " + errorCode);
     };
   }
@@ -3103,6 +3105,13 @@ public sealed interface DriftError extends ProgramError permits
 
     public static final InvalidLpPoolId INSTANCE = new InvalidLpPoolId(
         6343, "Invalid Lp Pool Id for Operation"
+    );
+  }
+
+  record MarketIndexNotFoundAmmCache(int code, String msg) implements DriftError {
+
+    public static final MarketIndexNotFoundAmmCache INSTANCE = new MarketIndexNotFoundAmmCache(
+        6344, "MarketIndexNotFoundAmmCache"
     );
   }
 }

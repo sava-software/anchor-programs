@@ -88,7 +88,11 @@ public sealed interface LbClmmError extends ProgramError permits
     LbClmmError.NotSupportAtTheMoment,
     LbClmmError.InvalidRebalanceParameters,
     LbClmmError.InvalidRewardAccounts,
-    LbClmmError.UndeterminedError {
+    LbClmmError.UndeterminedError,
+    LbClmmError.ReallocExceedMaxLengthPerInstruction,
+    LbClmmError.InvalidBaseFeeMantissa,
+    LbClmmError.InvalidPositionOwner,
+    LbClmmError.InvalidPoolAddress {
 
   static LbClmmError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -178,6 +182,10 @@ public sealed interface LbClmmError extends ProgramError permits
       case 6083 -> InvalidRebalanceParameters.INSTANCE;
       case 6084 -> InvalidRewardAccounts.INSTANCE;
       case 6085 -> UndeterminedError.INSTANCE;
+      case 6086 -> ReallocExceedMaxLengthPerInstruction.INSTANCE;
+      case 6087 -> InvalidBaseFeeMantissa.INSTANCE;
+      case 6088 -> InvalidPositionOwner.INSTANCE;
+      case 6089 -> InvalidPoolAddress.INSTANCE;
       default -> throw new IllegalStateException("Unexpected LbClmm error code: " + errorCode);
     };
   }
@@ -781,6 +789,34 @@ public sealed interface LbClmmError extends ProgramError permits
 
     public static final UndeterminedError INSTANCE = new UndeterminedError(
         6085, "Undetermined error"
+    );
+  }
+
+  record ReallocExceedMaxLengthPerInstruction(int code, String msg) implements LbClmmError {
+
+    public static final ReallocExceedMaxLengthPerInstruction INSTANCE = new ReallocExceedMaxLengthPerInstruction(
+        6086, "Realloc exceed max length per instruction"
+    );
+  }
+
+  record InvalidBaseFeeMantissa(int code, String msg) implements LbClmmError {
+
+    public static final InvalidBaseFeeMantissa INSTANCE = new InvalidBaseFeeMantissa(
+        6087, "Mantissa cannot more than two significant digits"
+    );
+  }
+
+  record InvalidPositionOwner(int code, String msg) implements LbClmmError {
+
+    public static final InvalidPositionOwner INSTANCE = new InvalidPositionOwner(
+        6088, "Invalid position owner"
+    );
+  }
+
+  record InvalidPoolAddress(int code, String msg) implements LbClmmError {
+
+    public static final InvalidPoolAddress INSTANCE = new InvalidPoolAddress(
+        6089, "Invalid pool address"
     );
   }
 }

@@ -36,7 +36,7 @@ public final class LbClmmConstants {
 
   public static final int MAX_PROTOCOL_SHARE = 2500;
 
-  public static final long MAX_RESIZE_LENGTH = 70;
+  public static final long MAX_RESIZE_LENGTH = 91;
 
   public static final long MAX_REWARD_BIN_SPLIT = 15;
 

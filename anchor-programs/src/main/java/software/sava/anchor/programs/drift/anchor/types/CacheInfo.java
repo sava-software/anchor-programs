@@ -7,8 +7,10 @@ import software.sava.core.borsh.Borsh;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt128LE;
+import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
+import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record CacheInfo(PublicKey oracle,
@@ -27,6 +29,7 @@ public record CacheInfo(PublicKey oracle,
                         long ammInventoryLimit,
                         long oraclePrice,
                         long oracleSlot,
+                        int marketIndex,
                         int oracleSource,
                         int oracleValidity,
                         int lpStatusForPerpMarket,
@@ -34,7 +37,7 @@ public record CacheInfo(PublicKey oracle,
                         byte[] padding) implements Borsh {
 
   public static final int BYTES = 224;
-  public static final int PADDING_LEN = 36;
+  public static final int PADDING_LEN = 34;
 
   public static CacheInfo read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -71,6 +74,8 @@ public record CacheInfo(PublicKey oracle,
     i += 8;
     final var oracleSlot = getInt64LE(_data, i);
     i += 8;
+    final var marketIndex = getInt16LE(_data, i);
+    i += 2;
     final var oracleSource = _data[i] & 0xFF;
     ++i;
     final var oracleValidity = _data[i] & 0xFF;
@@ -79,7 +84,7 @@ public record CacheInfo(PublicKey oracle,
     ++i;
     final var ammPositionScalar = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[36];
+    final var padding = new byte[34];
     Borsh.readArray(padding, _data, i);
     return new CacheInfo(oracle,
                          lastFeePoolTokenAmount,
@@ -96,6 +101,7 @@ public record CacheInfo(PublicKey oracle,
                          ammInventoryLimit,
                          oraclePrice,
                          oracleSlot,
+                         marketIndex,
                          oracleSource,
                          oracleValidity,
                          lpStatusForPerpMarket,
@@ -136,6 +142,8 @@ public record CacheInfo(PublicKey oracle,
     i += 8;
     putInt64LE(_data, i, oracleSlot);
     i += 8;
+    putInt16LE(_data, i, marketIndex);
+    i += 2;
     _data[i] = (byte) oracleSource;
     ++i;
     _data[i] = (byte) oracleValidity;
@@ -144,7 +152,7 @@ public record CacheInfo(PublicKey oracle,
     ++i;
     _data[i] = (byte) ammPositionScalar;
     ++i;
-    i += Borsh.writeArrayChecked(padding, 36, _data, i);
+    i += Borsh.writeArrayChecked(padding, 34, _data, i);
     return i - offset;
   }
 
