@@ -65,7 +65,11 @@ public sealed interface FarmsError extends ProgramError permits
     FarmsError.InvalidTransferOwnershipFarmStateWithdrawCooldownPeriod,
     FarmsError.InvalidTransferOwnershipStakeAmount,
     FarmsError.InvalidTransferOwnershipNewOwner,
-    FarmsError.InvalidTransferOwnershipFarmStateDepositWarmupPeriod {
+    FarmsError.InvalidTransferOwnershipFarmStateDepositWarmupPeriod,
+    FarmsError.RewardUserOnceFeatureDisabled,
+    FarmsError.InvalidDelegatedAuthorityUpdate,
+    FarmsError.UserTokenAccountOwnerMismatch,
+    FarmsError.HarvestingNotPermissionlessPayerMismatch {
 
   static FarmsError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -132,6 +136,10 @@ public sealed interface FarmsError extends ProgramError permits
       case 6060 -> InvalidTransferOwnershipStakeAmount.INSTANCE;
       case 6061 -> InvalidTransferOwnershipNewOwner.INSTANCE;
       case 6062 -> InvalidTransferOwnershipFarmStateDepositWarmupPeriod.INSTANCE;
+      case 6063 -> RewardUserOnceFeatureDisabled.INSTANCE;
+      case 6064 -> InvalidDelegatedAuthorityUpdate.INSTANCE;
+      case 6065 -> UserTokenAccountOwnerMismatch.INSTANCE;
+      case 6066 -> HarvestingNotPermissionlessPayerMismatch.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Farms error code: " + errorCode);
     };
   }
@@ -377,7 +385,7 @@ public sealed interface FarmsError extends ProgramError permits
   record FarmNotDelegated(int code, String msg) implements FarmsError {
 
     public static final FarmNotDelegated INSTANCE = new FarmNotDelegated(
-        6034, "Farm not delegated, can not set stake"
+        6034, "Farm not delegated, can not complete operation"
     );
   }
 
@@ -574,6 +582,34 @@ public sealed interface FarmsError extends ProgramError permits
 
     public static final InvalidTransferOwnershipFarmStateDepositWarmupPeriod INSTANCE = new InvalidTransferOwnershipFarmStateDepositWarmupPeriod(
         6062, "Invalid farm state deposit warmup period for transfer ownership, must be 0 if old user has stake"
+    );
+  }
+
+  record RewardUserOnceFeatureDisabled(int code, String msg) implements FarmsError {
+
+    public static final RewardUserOnceFeatureDisabled INSTANCE = new RewardUserOnceFeatureDisabled(
+        6063, "Reward User Once feature is disabled"
+    );
+  }
+
+  record InvalidDelegatedAuthorityUpdate(int code, String msg) implements FarmsError {
+
+    public static final InvalidDelegatedAuthorityUpdate INSTANCE = new InvalidDelegatedAuthorityUpdate(
+        6064, "Can not set delegate_authority to default pubkey - farm is delegated"
+    );
+  }
+
+  record UserTokenAccountOwnerMismatch(int code, String msg) implements FarmsError {
+
+    public static final UserTokenAccountOwnerMismatch INSTANCE = new UserTokenAccountOwnerMismatch(
+        6065, "User token account owner does not match user state owner"
+    );
+  }
+
+  record HarvestingNotPermissionlessPayerMismatch(int code, String msg) implements FarmsError {
+
+    public static final HarvestingNotPermissionlessPayerMismatch INSTANCE = new HarvestingNotPermissionlessPayerMismatch(
+        6066, "Harvesting is not permissionless, payer does not match user state owner"
     );
   }
 }

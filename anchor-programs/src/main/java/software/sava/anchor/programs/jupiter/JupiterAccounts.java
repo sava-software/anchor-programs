@@ -39,7 +39,7 @@ public interface JupiterAccounts {
                                         final PublicKey jupTokenMint,
                                         final PublicKey jupBaseKey,
                                         final PublicKey merkleDistributorProgram) {
-    return new JupiterccountsRecord(
+    return new JupiterAccountsRecord(
         swapProgram, createInvoked(swapProgram),
         deriveEventAuthority(swapProgram).publicKey(),
         limitOrderProgram, createInvoked(limitOrderProgram),
