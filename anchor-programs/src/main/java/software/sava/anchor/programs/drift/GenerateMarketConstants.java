@@ -40,7 +40,6 @@ public final class GenerateMarketConstants {
 
     final var mainNetJson = quoteJson(response.substring(from, to));
 
-    System.out.println(mainNetJson);
     ji = JsonIterator.parse(mainNetJson);
     final var mainNetConfigs = configParser.apply(ji, DriftAccounts.MAIN_NET);
 
