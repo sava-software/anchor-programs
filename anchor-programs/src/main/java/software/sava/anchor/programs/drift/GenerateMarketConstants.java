@@ -40,6 +40,7 @@ public final class GenerateMarketConstants {
 
     final var mainNetJson = quoteJson(response.substring(from, to));
 
+    System.out.println(mainNetJson);
     ji = JsonIterator.parse(mainNetJson);
     final var mainNetConfigs = configParser.apply(ji, DriftAccounts.MAIN_NET);
 
@@ -56,6 +57,7 @@ public final class GenerateMarketConstants {
         .replaceAll("//.*", "")
         .replaceAll("\\s+", " ")
         .replaceAll("OracleSource\\.(\\w+)", "\"$1\"")
+        .replaceAll("MarketStatus\\.(\\w+)", "\"$1\"")
         .replace("WRAPPED_SOL_MINT", "\"So11111111111111111111111111111111111111112\"")
         .replaceAll("new PublicKey\\( *\"(\\w+)\" *\\)", "\"$1\"");
   }

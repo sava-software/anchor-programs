@@ -279,7 +279,7 @@ final class MeteoraDlmmTests {
     final var addLiquidityInstruction = instructions[6];
 
     final var ixData = LbClmmProgram.AddLiquidityByStrategy2IxData.read(addLiquidityInstruction);
-    System.out.println(ixData);
+    assertNotNull(ixData);
   }
 
   @Test
@@ -296,7 +296,7 @@ final class MeteoraDlmmTests {
     var removeLiquidityInstruction = instructions[4];
 
     var ixData = LbClmmProgram.RemoveLiquidity2IxData.read(removeLiquidityInstruction);
-    System.out.println(ixData);
+    assertNotNull(ixData);
   }
 
   @Test
@@ -313,7 +313,7 @@ final class MeteoraDlmmTests {
     var addLiquidityInstruction = instructions[6];
 
     var ixData = LbClmmProgram.AddLiquidityOneSidePrecise2IxData.read(addLiquidityInstruction);
-    System.out.println(ixData);
+    assertNotNull(ixData);
   }
 
   @Test
@@ -330,7 +330,7 @@ final class MeteoraDlmmTests {
     var addLiquidityInstruction = instructions[3];
 
     var ixData = LbClmmProgram.AddLiquidityOneSidePrecise2IxData.read(addLiquidityInstruction);
-    System.out.println(ixData);
+    assertNotNull(ixData);
   }
 
   @Test
@@ -347,6 +347,6 @@ final class MeteoraDlmmTests {
     var addLiquidityInstruction = instructions[6];
 
     var ixData = LbClmmProgram.AddLiquidity2IxData.read(addLiquidityInstruction);
-    System.out.println(ixData);
+    assertNotNull(ixData);
   }
 }
