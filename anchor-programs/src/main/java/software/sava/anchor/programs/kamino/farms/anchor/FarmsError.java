@@ -69,7 +69,8 @@ public sealed interface FarmsError extends ProgramError permits
     FarmsError.RewardUserOnceFeatureDisabled,
     FarmsError.InvalidDelegatedAuthorityUpdate,
     FarmsError.UserTokenAccountOwnerMismatch,
-    FarmsError.HarvestingNotPermissionlessPayerMismatch {
+    FarmsError.HarvestingNotPermissionlessPayerMismatch,
+    FarmsError.CurrentRewardIssuedUnclaimedMismatch {
 
   static FarmsError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -140,6 +141,7 @@ public sealed interface FarmsError extends ProgramError permits
       case 6064 -> InvalidDelegatedAuthorityUpdate.INSTANCE;
       case 6065 -> UserTokenAccountOwnerMismatch.INSTANCE;
       case 6066 -> HarvestingNotPermissionlessPayerMismatch.INSTANCE;
+      case 6067 -> CurrentRewardIssuedUnclaimedMismatch.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Farms error code: " + errorCode);
     };
   }
@@ -610,6 +612,13 @@ public sealed interface FarmsError extends ProgramError permits
 
     public static final HarvestingNotPermissionlessPayerMismatch INSTANCE = new HarvestingNotPermissionlessPayerMismatch(
         6066, "Harvesting is not permissionless, payer does not match user state owner"
+    );
+  }
+
+  record CurrentRewardIssuedUnclaimedMismatch(int code, String msg) implements FarmsError {
+
+    public static final CurrentRewardIssuedUnclaimedMismatch INSTANCE = new CurrentRewardIssuedUnclaimedMismatch(
+        6067, "Current reward issued unclaimed does not match expected value"
     );
   }
 }

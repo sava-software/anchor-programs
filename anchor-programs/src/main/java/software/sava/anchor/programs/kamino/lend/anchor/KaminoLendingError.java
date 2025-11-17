@@ -132,7 +132,10 @@ public sealed interface KaminoLendingError extends ProgramError permits
     KaminoLendingError.OperationNotPermittedWithCurrentObligationOrders,
     KaminoLendingError.OperationNotPermittedMarketImmutable,
     KaminoLendingError.OrderCreationDisabled,
-    KaminoLendingError.NoUpgradeAuthority {
+    KaminoLendingError.NoUpgradeAuthority,
+    KaminoLendingError.InitialAdminDepositExecuted,
+    KaminoLendingError.ReserveHasNotReceivedInitialDeposit,
+    KaminoLendingError.CTokenUsageBlocked {
 
   static KaminoLendingError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -266,6 +269,9 @@ public sealed interface KaminoLendingError extends ProgramError permits
       case 6127 -> OperationNotPermittedMarketImmutable.INSTANCE;
       case 6128 -> OrderCreationDisabled.INSTANCE;
       case 6129 -> NoUpgradeAuthority.INSTANCE;
+      case 6130 -> InitialAdminDepositExecuted.INSTANCE;
+      case 6131 -> ReserveHasNotReceivedInitialDeposit.INSTANCE;
+      case 6132 -> CTokenUsageBlocked.INSTANCE;
       default -> throw new IllegalStateException("Unexpected KaminoLending error code: " + errorCode);
     };
   }
@@ -1177,6 +1183,27 @@ public sealed interface KaminoLendingError extends ProgramError permits
 
     public static final NoUpgradeAuthority INSTANCE = new NoUpgradeAuthority(
         6129, "Cannot initialize global config because there is no upgrade authority to the program"
+    );
+  }
+
+  record InitialAdminDepositExecuted(int code, String msg) implements KaminoLendingError {
+
+    public static final InitialAdminDepositExecuted INSTANCE = new InitialAdminDepositExecuted(
+        6130, "Initial admin deposit in reserve already executed"
+    );
+  }
+
+  record ReserveHasNotReceivedInitialDeposit(int code, String msg) implements KaminoLendingError {
+
+    public static final ReserveHasNotReceivedInitialDeposit INSTANCE = new ReserveHasNotReceivedInitialDeposit(
+        6131, "Reserve has not received the initial deposit, cannot update config"
+    );
+  }
+
+  record CTokenUsageBlocked(int code, String msg) implements KaminoLendingError {
+
+    public static final CTokenUsageBlocked INSTANCE = new CTokenUsageBlocked(
+        6132, "CToken minting/redeeming is blocked for this reserve"
     );
   }
 }

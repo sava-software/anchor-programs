@@ -117,7 +117,12 @@ public sealed interface Swap extends RustEnum permits
   Swap.RaydiumV2,
   Swap.SarosDlmm,
   Swap.Futarchy,
-  Swap.MeteoraDammV2WithRemainingAccounts {
+  Swap.MeteoraDammV2WithRemainingAccounts,
+  Swap.Obsidian,
+  Swap.WhaleStreet,
+  Swap.DynamicV1,
+  Swap.PumpWrappedBuyV4,
+  Swap.PumpWrappedSellV4 {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -232,6 +237,11 @@ public sealed interface Swap extends RustEnum permits
       case 106 -> SarosDlmm.read(_data, i);
       case 107 -> Futarchy.read(_data, i);
       case 108 -> MeteoraDammV2WithRemainingAccounts.INSTANCE;
+      case 109 -> Obsidian.INSTANCE;
+      case 110 -> WhaleStreet.read(_data, i);
+      case 111 -> DynamicV1.read(_data, i);
+      case 112 -> PumpWrappedBuyV4.INSTANCE;
+      case 113 -> PumpWrappedSellV4.INSTANCE;
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1691,6 +1701,76 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 108;
+    }
+  }
+
+  record Obsidian() implements EnumNone, Swap {
+
+    public static final Obsidian INSTANCE = new Obsidian();
+
+    @Override
+    public int ordinal() {
+      return 109;
+    }
+  }
+
+  record WhaleStreet(Side val) implements BorshEnum, Swap {
+
+    public static WhaleStreet read(final byte[] _data, final int offset) {
+      return new WhaleStreet(Side.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 110;
+    }
+  }
+
+  record DynamicV1(CandidateSwap[] val) implements Swap {
+
+    public static DynamicV1 read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var val = Borsh.readVector(CandidateSwap.class, CandidateSwap::read, _data, offset);
+      return new DynamicV1(val);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      i += Borsh.writeVector(val, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 1 + Borsh.lenVector(val);
+    }
+
+    @Override
+    public int ordinal() {
+      return 111;
+    }
+  }
+
+  record PumpWrappedBuyV4() implements EnumNone, Swap {
+
+    public static final PumpWrappedBuyV4 INSTANCE = new PumpWrappedBuyV4();
+
+    @Override
+    public int ordinal() {
+      return 112;
+    }
+  }
+
+  record PumpWrappedSellV4() implements EnumNone, Swap {
+
+    public static final PumpWrappedSellV4 INSTANCE = new PumpWrappedSellV4();
+
+    @Override
+    public int ordinal() {
+      return 113;
     }
   }
 }

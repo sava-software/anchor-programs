@@ -53,7 +53,7 @@ public record PerpMarketConfig(String fullName,
 
   private static final class Parser implements FieldBufferPredicate {
 
-    private static Map<String, MarketStatus> STATUS_MAP = Arrays.stream(MarketStatus.values())
+    private static final Map<String, MarketStatus> STATUS_MAP = Arrays.stream(MarketStatus.values())
         .collect(Collectors.toUnmodifiableMap(e -> e.name().toUpperCase(), e -> e));
 
     private String fullName;

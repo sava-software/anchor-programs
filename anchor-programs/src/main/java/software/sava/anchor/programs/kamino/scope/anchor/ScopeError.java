@@ -59,7 +59,8 @@ public sealed interface ScopeError extends ProgramError permits
     ScopeError.WrongAccountOwner,
     ScopeError.CompositeOracleInvalidSourceIndex,
     ScopeError.CappedFlooredBothCapAndFloorAreNone,
-    ScopeError.MissingPriceAccount {
+    ScopeError.MissingPriceAccount,
+    ScopeError.ChainlinkXPriceNotSuspended {
 
   static ScopeError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -120,6 +121,7 @@ public sealed interface ScopeError extends ProgramError permits
       case 6054 -> CompositeOracleInvalidSourceIndex.INSTANCE;
       case 6055 -> CappedFlooredBothCapAndFloorAreNone.INSTANCE;
       case 6056 -> MissingPriceAccount.INSTANCE;
+      case 6057 -> ChainlinkXPriceNotSuspended.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Scope error code: " + errorCode);
     };
   }
@@ -520,6 +522,13 @@ public sealed interface ScopeError extends ProgramError permits
 
     public static final MissingPriceAccount INSTANCE = new MissingPriceAccount(
         6056, "Missing price account for Oracle Mapping update"
+    );
+  }
+
+  record ChainlinkXPriceNotSuspended(int code, String msg) implements ScopeError {
+
+    public static final ChainlinkXPriceNotSuspended INSTANCE = new ChainlinkXPriceNotSuspended(
+        6057, "Cannot resume a ChainlinkX price that was not suspended"
     );
   }
 }

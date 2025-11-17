@@ -629,6 +629,71 @@ public final class ScopeProgram {
     return Instruction.createInstruction(invokedScopeProgramMeta, keys, CLOSE_MINT_MAP_DISCRIMINATOR);
   }
 
+  public static final Discriminator RESUME_CHAINLINKX_PRICE_DISCRIMINATOR = toDiscriminator(136, 48, 103, 146, 227, 97, 87, 108);
+
+  public static Instruction resumeChainlinkxPrice(final AccountMeta invokedScopeProgramMeta,
+                                                  final PublicKey adminKey,
+                                                  final PublicKey configurationKey,
+                                                  final PublicKey oraclePricesKey,
+                                                  final PublicKey oracleMappingsKey,
+                                                  final PublicKey tokensMetadataKey,
+                                                  final int token,
+                                                  final String feedName) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createRead(configurationKey),
+      createWrite(oraclePricesKey),
+      createRead(oracleMappingsKey),
+      createRead(tokensMetadataKey)
+    );
+
+    final byte[] _feedName = feedName.getBytes(UTF_8);
+    final byte[] _data = new byte[14 + Borsh.lenVector(_feedName)];
+    int i = RESUME_CHAINLINKX_PRICE_DISCRIMINATOR.write(_data, 0);
+    putInt16LE(_data, i, token);
+    i += 2;
+    Borsh.writeVector(_feedName, _data, i);
+
+    return Instruction.createInstruction(invokedScopeProgramMeta, keys, _data);
+  }
+
+  public record ResumeChainlinkxPriceIxData(Discriminator discriminator, int token, String feedName, byte[] _feedName) implements Borsh {  
+
+    public static ResumeChainlinkxPriceIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static ResumeChainlinkxPriceIxData createRecord(final Discriminator discriminator, final int token, final String feedName) {
+      return new ResumeChainlinkxPriceIxData(discriminator, token, feedName, feedName.getBytes(UTF_8));
+    }
+
+    public static ResumeChainlinkxPriceIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var token = getInt16LE(_data, i);
+      i += 2;
+      final var feedName = Borsh.string(_data, i);
+      return new ResumeChainlinkxPriceIxData(discriminator, token, feedName, feedName.getBytes(UTF_8));
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt16LE(_data, i, token);
+      i += 2;
+      i += Borsh.writeVector(_feedName, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 2 + Borsh.lenVector(_feedName);
+    }
+  }
+
   private ScopeProgram() {
   }
 }

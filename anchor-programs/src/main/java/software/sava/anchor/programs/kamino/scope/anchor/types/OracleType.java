@@ -4,14 +4,14 @@ import software.sava.core.borsh.Borsh;
 
 public enum OracleType implements Borsh.Enum {
 
-  Pyth,
+  Unused,
   DeprecatedPlaceholder1,
-  SwitchboardV2,
   DeprecatedPlaceholder2,
-  CToken,
+  DeprecatedPlaceholder3,
+  DeprecatedPlaceholder4,
   SplStake,
   KToken,
-  PythEMA,
+  DeprecatedPlaceholder5,
   MsolStake,
   KTokenToTokenA,
   KTokenToTokenB,
@@ -42,7 +42,8 @@ public enum OracleType implements Borsh.Enum {
   ChainlinkNAV,
   FlashtradeLp,
   ChainlinkX,
-  ChainlinkExchangeRate;
+  ChainlinkExchangeRate,
+  CappedMostRecentOf;
 
   public static OracleType read(final byte[] _data, final int offset) {
     return Borsh.read(OracleType.values(), _data, offset);

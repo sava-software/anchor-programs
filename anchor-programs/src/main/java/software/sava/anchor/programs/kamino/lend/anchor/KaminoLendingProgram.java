@@ -415,6 +415,29 @@ public final class KaminoLendingProgram {
     }
   }
 
+  public static final Discriminator SEED_DEPOSIT_ON_INIT_RESERVE_DISCRIMINATOR = toDiscriminator(254, 197, 228, 118, 183, 206, 62, 226);
+
+  public static Instruction seedDepositOnInitReserve(final AccountMeta invokedKaminoLendingProgramMeta,
+                                                     final PublicKey signerKey,
+                                                     final PublicKey lendingMarketKey,
+                                                     final PublicKey reserveKey,
+                                                     final PublicKey reserveLiquidityMintKey,
+                                                     final PublicKey reserveLiquiditySupplyKey,
+                                                     final PublicKey initialLiquiditySourceKey,
+                                                     final PublicKey liquidityTokenProgramKey) {
+    final var keys = List.of(
+      createReadOnlySigner(signerKey),
+      createRead(lendingMarketKey),
+      createWrite(reserveKey),
+      createRead(reserveLiquidityMintKey),
+      createWrite(reserveLiquiditySupplyKey),
+      createWrite(initialLiquiditySourceKey),
+      createRead(liquidityTokenProgramKey)
+    );
+
+    return Instruction.createInstruction(invokedKaminoLendingProgramMeta, keys, SEED_DEPOSIT_ON_INIT_RESERVE_DISCRIMINATOR);
+  }
+
   public static final Discriminator SOCIALIZE_LOSS_DISCRIMINATOR = toDiscriminator(245, 75, 91, 0, 236, 97, 19, 3);
 
   public static Instruction socializeLoss(final AccountMeta invokedKaminoLendingProgramMeta,

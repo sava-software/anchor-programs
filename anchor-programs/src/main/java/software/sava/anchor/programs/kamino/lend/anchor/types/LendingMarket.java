@@ -85,6 +85,13 @@ public record LendingMarket(PublicKey _address,
                             // Whether new obligation orders can be created.
                             // Note: updating or cancelling existing orders is *not* affected by this flag.
                             int obligationOrderCreationEnabled,
+                            // Whether the liquidation operations that are triggered by price changes should be disabled.
+                            // This includes regular liquidation (i.e. LTV exceeding the unhealthy threshold) and some
+                            // obligation orders' execution.
+                            // 
+                            // *Caution:* this flag is *disabling* the liquidations when `1` - contrary to all the other
+                            // liquidation-driving flags (see e.g. [Self::autodeleverage_enabled]).
+                            int priceTriggeredLiquidationDisabled,
                             byte[] padding2,
                             // Authority that can propose creating of new reserves but cannot enable them.
                             PublicKey proposerAuthority,
@@ -97,7 +104,7 @@ public record LendingMarket(PublicKey _address,
   public static final int ELEVATION_GROUPS_LEN = 32;
   public static final int ELEVATION_GROUP_PADDING_LEN = 90;
   public static final int NAME_LEN = 32;
-  public static final int PADDING_2_LEN = 5;
+  public static final int PADDING_2_LEN = 4;
   public static final int PADDING_1_LEN = 165;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
@@ -130,7 +137,8 @@ public record LendingMarket(PublicKey _address,
   public static final int OBLIGATION_ORDER_EXECUTION_ENABLED_OFFSET = 3304;
   public static final int IMMUTABLE_OFFSET = 3305;
   public static final int OBLIGATION_ORDER_CREATION_ENABLED_OFFSET = 3306;
-  public static final int PADDING_2_OFFSET = 3307;
+  public static final int PRICE_TRIGGERED_LIQUIDATION_DISABLED_OFFSET = 3307;
+  public static final int PADDING_2_OFFSET = 3308;
   public static final int PROPOSER_AUTHORITY_OFFSET = 3312;
   public static final int PADDING_1_OFFSET = 3344;
 
@@ -248,6 +256,10 @@ public record LendingMarket(PublicKey _address,
     return Filter.createMemCompFilter(OBLIGATION_ORDER_CREATION_ENABLED_OFFSET, new byte[]{(byte) obligationOrderCreationEnabled});
   }
 
+  public static Filter createPriceTriggeredLiquidationDisabledFilter(final int priceTriggeredLiquidationDisabled) {
+    return Filter.createMemCompFilter(PRICE_TRIGGERED_LIQUIDATION_DISABLED_OFFSET, new byte[]{(byte) priceTriggeredLiquidationDisabled});
+  }
+
   public static Filter createProposerAuthorityFilter(final PublicKey proposerAuthority) {
     return Filter.createMemCompFilter(PROPOSER_AUTHORITY_OFFSET, proposerAuthority);
   }
@@ -330,7 +342,9 @@ public record LendingMarket(PublicKey _address,
     ++i;
     final var obligationOrderCreationEnabled = _data[i] & 0xFF;
     ++i;
-    final var padding2 = new byte[5];
+    final var priceTriggeredLiquidationDisabled = _data[i] & 0xFF;
+    ++i;
+    final var padding2 = new byte[4];
     i += Borsh.readArray(padding2, _data, i);
     final var proposerAuthority = readPubKey(_data, i);
     i += 32;
@@ -367,6 +381,7 @@ public record LendingMarket(PublicKey _address,
                              obligationOrderExecutionEnabled,
                              immutable,
                              obligationOrderCreationEnabled,
+                             priceTriggeredLiquidationDisabled,
                              padding2,
                              proposerAuthority,
                              padding1);
@@ -427,7 +442,9 @@ public record LendingMarket(PublicKey _address,
     ++i;
     _data[i] = (byte) obligationOrderCreationEnabled;
     ++i;
-    i += Borsh.writeArrayChecked(padding2, 5, _data, i);
+    _data[i] = (byte) priceTriggeredLiquidationDisabled;
+    ++i;
+    i += Borsh.writeArrayChecked(padding2, 4, _data, i);
     proposerAuthority.write(_data, i);
     i += 32;
     i += Borsh.writeArrayChecked(padding1, 165, _data, i);

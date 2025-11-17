@@ -54,7 +54,9 @@ public enum UpdateConfigMode implements Borsh.Enum {
   UpdateAutodeleverageEnabled,
   UpdateDeleveragingBonusIncreaseBpsPerDay,
   UpdateProtocolOrderExecutionFee,
-  UpdateProposerAuthorityLock;
+  UpdateProposerAuthorityLock,
+  UpdateMinDeleveragingBonusBps,
+  UpdateBlockCTokenUsage;
 
   public static UpdateConfigMode read(final byte[] _data, final int offset) {
     return Borsh.read(UpdateConfigMode.values(), _data, offset);

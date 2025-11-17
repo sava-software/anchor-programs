@@ -372,29 +372,35 @@ public final class FarmsProgram {
                                            final PublicKey farmStateKey,
                                            final PublicKey userStateKey,
                                            final long rewardIndex,
-                                           final long amount) {
+                                           final long amount,
+                                           final long expectedRewardIssuedUnclaimed) {
     final var keys = List.of(
       createWritableSigner(delegateAuthorityKey),
       createWrite(farmStateKey),
       createWrite(userStateKey)
     );
 
-    final byte[] _data = new byte[24];
+    final byte[] _data = new byte[32];
     int i = REWARD_USER_ONCE_DISCRIMINATOR.write(_data, 0);
     putInt64LE(_data, i, rewardIndex);
     i += 8;
     putInt64LE(_data, i, amount);
+    i += 8;
+    putInt64LE(_data, i, expectedRewardIssuedUnclaimed);
 
     return Instruction.createInstruction(invokedFarmsProgramMeta, keys, _data);
   }
 
-  public record RewardUserOnceIxData(Discriminator discriminator, long rewardIndex, long amount) implements Borsh {  
+  public record RewardUserOnceIxData(Discriminator discriminator,
+                                     long rewardIndex,
+                                     long amount,
+                                     long expectedRewardIssuedUnclaimed) implements Borsh {  
 
     public static RewardUserOnceIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 24;
+    public static final int BYTES = 32;
 
     public static RewardUserOnceIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -405,7 +411,9 @@ public final class FarmsProgram {
       final var rewardIndex = getInt64LE(_data, i);
       i += 8;
       final var amount = getInt64LE(_data, i);
-      return new RewardUserOnceIxData(discriminator, rewardIndex, amount);
+      i += 8;
+      final var expectedRewardIssuedUnclaimed = getInt64LE(_data, i);
+      return new RewardUserOnceIxData(discriminator, rewardIndex, amount, expectedRewardIssuedUnclaimed);
     }
 
     @Override
@@ -414,6 +422,8 @@ public final class FarmsProgram {
       putInt64LE(_data, i, rewardIndex);
       i += 8;
       putInt64LE(_data, i, amount);
+      i += 8;
+      putInt64LE(_data, i, expectedRewardIssuedUnclaimed);
       i += 8;
       return i - offset;
     }
