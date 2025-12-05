@@ -17,8 +17,13 @@ public record AddPoolParams(String name, byte[] _name,
                             String metadataSymbol, byte[] _metadataSymbol,
                             String metadataUri, byte[] _metadataUri,
                             long stakingFeeShareBps,
-                            int vpVolumeFactor) implements Borsh {
+                            int vpVolumeFactor,
+                            long[] stakingFeeBoostBps,
+                            long minLpPriceUsd,
+                            long maxLpPriceUsd,
+                            long thresholdUsd) implements Borsh {
 
+  public static final int STAKING_FEE_BOOST_BPS_LEN = 6;
   public static AddPoolParams createRecord(final String name,
                                            final Permissions permissions,
                                            final long maxAumUsd,
@@ -26,7 +31,11 @@ public record AddPoolParams(String name, byte[] _name,
                                            final String metadataSymbol,
                                            final String metadataUri,
                                            final long stakingFeeShareBps,
-                                           final int vpVolumeFactor) {
+                                           final int vpVolumeFactor,
+                                           final long[] stakingFeeBoostBps,
+                                           final long minLpPriceUsd,
+                                           final long maxLpPriceUsd,
+                                           final long thresholdUsd) {
     return new AddPoolParams(name, name.getBytes(UTF_8),
                              permissions,
                              maxAumUsd,
@@ -34,7 +43,11 @@ public record AddPoolParams(String name, byte[] _name,
                              metadataSymbol, metadataSymbol.getBytes(UTF_8),
                              metadataUri, metadataUri.getBytes(UTF_8),
                              stakingFeeShareBps,
-                             vpVolumeFactor);
+                             vpVolumeFactor,
+                             stakingFeeBoostBps,
+                             minLpPriceUsd,
+                             maxLpPriceUsd,
+                             thresholdUsd);
   }
 
   public static AddPoolParams read(final byte[] _data, final int offset) {
@@ -57,6 +70,14 @@ public record AddPoolParams(String name, byte[] _name,
     final var stakingFeeShareBps = getInt64LE(_data, i);
     i += 8;
     final var vpVolumeFactor = _data[i] & 0xFF;
+    ++i;
+    final var stakingFeeBoostBps = new long[6];
+    i += Borsh.readArray(stakingFeeBoostBps, _data, i);
+    final var minLpPriceUsd = getInt64LE(_data, i);
+    i += 8;
+    final var maxLpPriceUsd = getInt64LE(_data, i);
+    i += 8;
+    final var thresholdUsd = getInt64LE(_data, i);
     return new AddPoolParams(name, name.getBytes(UTF_8),
                              permissions,
                              maxAumUsd,
@@ -64,7 +85,11 @@ public record AddPoolParams(String name, byte[] _name,
                              metadataSymbol, metadataSymbol.getBytes(UTF_8),
                              metadataUri, metadataUri.getBytes(UTF_8),
                              stakingFeeShareBps,
-                             vpVolumeFactor);
+                             vpVolumeFactor,
+                             stakingFeeBoostBps,
+                             minLpPriceUsd,
+                             maxLpPriceUsd,
+                             thresholdUsd);
   }
 
   @Override
@@ -81,6 +106,13 @@ public record AddPoolParams(String name, byte[] _name,
     i += 8;
     _data[i] = (byte) vpVolumeFactor;
     ++i;
+    i += Borsh.writeArrayChecked(stakingFeeBoostBps, 6, _data, i);
+    putInt64LE(_data, i, minLpPriceUsd);
+    i += 8;
+    putInt64LE(_data, i, maxLpPriceUsd);
+    i += 8;
+    putInt64LE(_data, i, thresholdUsd);
+    i += 8;
     return i - offset;
   }
 
@@ -93,6 +125,10 @@ public record AddPoolParams(String name, byte[] _name,
          + Borsh.lenVector(_metadataSymbol)
          + Borsh.lenVector(_metadataUri)
          + 8
-         + 1;
+         + 1
+         + Borsh.lenArray(stakingFeeBoostBps)
+         + 8
+         + 8
+         + 8;
   }
 }

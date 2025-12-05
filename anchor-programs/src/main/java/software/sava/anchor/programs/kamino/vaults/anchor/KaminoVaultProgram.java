@@ -4,6 +4,8 @@ import java.lang.String;
 
 import java.util.List;
 
+import software.sava.anchor.programs.kamino.lend.anchor.types.UpdateGlobalConfigMode;
+import software.sava.anchor.programs.kamino.vaults.anchor.types.UpdateReserveWhitelistMode;
 import software.sava.anchor.programs.kamino.vaults.anchor.types.VaultConfigField;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
@@ -12,6 +14,8 @@ import software.sava.core.programs.Discriminator;
 import software.sava.core.tx.Instruction;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
+
+import static java.util.Objects.requireNonNullElse;
 
 import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
@@ -65,6 +69,7 @@ public final class KaminoVaultProgram {
                                                     final PublicKey reserveCollateralMintKey,
                                                     final PublicKey reserveKey,
                                                     final PublicKey ctokenVaultKey,
+                                                    final PublicKey reserveWhitelistEntryKey,
                                                     final PublicKey reserveCollateralTokenProgramKey,
                                                     final PublicKey systemProgramKey,
                                                     final PublicKey rentKey,
@@ -77,6 +82,7 @@ public final class KaminoVaultProgram {
       createWrite(reserveCollateralMintKey),
       createRead(reserveKey),
       createWrite(ctokenVaultKey),
+      createRead(requireNonNullElse(reserveWhitelistEntryKey, invokedKaminoVaultProgramMeta.publicKey())),
       createRead(reserveCollateralTokenProgramKey),
       createRead(systemProgramKey),
       createRead(rentKey)
@@ -199,11 +205,84 @@ public final class KaminoVaultProgram {
     }
   }
 
+  public static final Discriminator BUY_DISCRIMINATOR = toDiscriminator(102, 6, 61, 18, 1, 218, 235, 234);
+
+  public static Instruction buy(final AccountMeta invokedKaminoVaultProgramMeta,
+                                final PublicKey userKey,
+                                final PublicKey vaultStateKey,
+                                final PublicKey tokenVaultKey,
+                                final PublicKey tokenMintKey,
+                                final PublicKey baseVaultAuthorityKey,
+                                final PublicKey sharesMintKey,
+                                final PublicKey userTokenAtaKey,
+                                final PublicKey userSharesAtaKey,
+                                final PublicKey klendProgramKey,
+                                final PublicKey tokenProgramKey,
+                                final PublicKey sharesTokenProgramKey,
+                                final PublicKey eventAuthorityKey,
+                                final PublicKey programKey,
+                                final long maxAmount) {
+    final var keys = List.of(
+      createWritableSigner(userKey),
+      createWrite(vaultStateKey),
+      createWrite(tokenVaultKey),
+      createRead(tokenMintKey),
+      createRead(baseVaultAuthorityKey),
+      createWrite(sharesMintKey),
+      createWrite(userTokenAtaKey),
+      createWrite(userSharesAtaKey),
+      createRead(klendProgramKey),
+      createRead(tokenProgramKey),
+      createRead(sharesTokenProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = BUY_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, maxAmount);
+
+    return Instruction.createInstruction(invokedKaminoVaultProgramMeta, keys, _data);
+  }
+
+  public record BuyIxData(Discriminator discriminator, long maxAmount) implements Borsh {  
+
+    public static BuyIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static BuyIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var maxAmount = getInt64LE(_data, i);
+      return new BuyIxData(discriminator, maxAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, maxAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator WITHDRAW_DISCRIMINATOR = toDiscriminator(183, 18, 70, 156, 148, 109, 161, 34);
 
   public static Instruction withdraw(final AccountMeta invokedKaminoVaultProgramMeta,
                                      final PublicKey withdrawFromAvailableUserKey,
                                      final PublicKey withdrawFromAvailableVaultStateKey,
+                                     final PublicKey withdrawFromAvailableGlobalConfigKey,
                                      final PublicKey withdrawFromAvailableTokenVaultKey,
                                      final PublicKey withdrawFromAvailableBaseVaultAuthorityKey,
                                      final PublicKey withdrawFromAvailableUserTokenAtaKey,
@@ -230,6 +309,7 @@ public final class KaminoVaultProgram {
     final var keys = List.of(
       createWritableSigner(withdrawFromAvailableUserKey),
       createWrite(withdrawFromAvailableVaultStateKey),
+      createRead(withdrawFromAvailableGlobalConfigKey),
       createWrite(withdrawFromAvailableTokenVaultKey),
       createRead(withdrawFromAvailableBaseVaultAuthorityKey),
       createWrite(withdrawFromAvailableUserTokenAtaKey),
@@ -293,6 +373,102 @@ public final class KaminoVaultProgram {
     }
   }
 
+  public static final Discriminator SELL_DISCRIMINATOR = toDiscriminator(51, 230, 133, 164, 1, 127, 131, 173);
+
+  public static Instruction sell(final AccountMeta invokedKaminoVaultProgramMeta,
+                                 final PublicKey withdrawFromAvailableUserKey,
+                                 final PublicKey withdrawFromAvailableVaultStateKey,
+                                 final PublicKey withdrawFromAvailableGlobalConfigKey,
+                                 final PublicKey withdrawFromAvailableTokenVaultKey,
+                                 final PublicKey withdrawFromAvailableBaseVaultAuthorityKey,
+                                 final PublicKey withdrawFromAvailableUserTokenAtaKey,
+                                 final PublicKey withdrawFromAvailableTokenMintKey,
+                                 final PublicKey withdrawFromAvailableUserSharesAtaKey,
+                                 final PublicKey withdrawFromAvailableSharesMintKey,
+                                 final PublicKey withdrawFromAvailableTokenProgramKey,
+                                 final PublicKey withdrawFromAvailableSharesTokenProgramKey,
+                                 final PublicKey withdrawFromAvailableKlendProgramKey,
+                                 final PublicKey withdrawFromAvailableEventAuthorityKey,
+                                 final PublicKey withdrawFromAvailableProgramKey,
+                                 final PublicKey withdrawFromReserveAccountsVaultStateKey,
+                                 final PublicKey withdrawFromReserveAccountsReserveKey,
+                                 final PublicKey withdrawFromReserveAccountsCtokenVaultKey,
+                                 final PublicKey withdrawFromReserveAccountsLendingMarketKey,
+                                 final PublicKey withdrawFromReserveAccountsLendingMarketAuthorityKey,
+                                 final PublicKey withdrawFromReserveAccountsReserveLiquiditySupplyKey,
+                                 final PublicKey withdrawFromReserveAccountsReserveCollateralMintKey,
+                                 final PublicKey withdrawFromReserveAccountsReserveCollateralTokenProgramKey,
+                                 final PublicKey withdrawFromReserveAccountsInstructionSysvarAccountKey,
+                                 final PublicKey eventAuthorityKey,
+                                 final PublicKey programKey,
+                                 final long sharesAmount) {
+    final var keys = List.of(
+      createWritableSigner(withdrawFromAvailableUserKey),
+      createWrite(withdrawFromAvailableVaultStateKey),
+      createRead(withdrawFromAvailableGlobalConfigKey),
+      createWrite(withdrawFromAvailableTokenVaultKey),
+      createRead(withdrawFromAvailableBaseVaultAuthorityKey),
+      createWrite(withdrawFromAvailableUserTokenAtaKey),
+      createWrite(withdrawFromAvailableTokenMintKey),
+      createWrite(withdrawFromAvailableUserSharesAtaKey),
+      createWrite(withdrawFromAvailableSharesMintKey),
+      createRead(withdrawFromAvailableTokenProgramKey),
+      createRead(withdrawFromAvailableSharesTokenProgramKey),
+      createRead(withdrawFromAvailableKlendProgramKey),
+      createRead(withdrawFromAvailableEventAuthorityKey),
+      createRead(withdrawFromAvailableProgramKey),
+      createWrite(withdrawFromReserveAccountsVaultStateKey),
+      createWrite(withdrawFromReserveAccountsReserveKey),
+      createWrite(withdrawFromReserveAccountsCtokenVaultKey),
+      createRead(withdrawFromReserveAccountsLendingMarketKey),
+      createRead(withdrawFromReserveAccountsLendingMarketAuthorityKey),
+      createWrite(withdrawFromReserveAccountsReserveLiquiditySupplyKey),
+      createWrite(withdrawFromReserveAccountsReserveCollateralMintKey),
+      createRead(withdrawFromReserveAccountsReserveCollateralTokenProgramKey),
+      createRead(withdrawFromReserveAccountsInstructionSysvarAccountKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey)
+    );
+
+    final byte[] _data = new byte[16];
+    int i = SELL_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, sharesAmount);
+
+    return Instruction.createInstruction(invokedKaminoVaultProgramMeta, keys, _data);
+  }
+
+  public record SellIxData(Discriminator discriminator, long sharesAmount) implements Borsh {  
+
+    public static SellIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static SellIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var sharesAmount = getInt64LE(_data, i);
+      return new SellIxData(discriminator, sharesAmount);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, sharesAmount);
+      i += 8;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator INVEST_DISCRIMINATOR = toDiscriminator(13, 245, 180, 103, 254, 182, 121, 4);
 
   public static Instruction invest(final AccountMeta invokedKaminoVaultProgramMeta,
@@ -309,6 +485,7 @@ public final class KaminoVaultProgram {
                                    final PublicKey lendingMarketAuthorityKey,
                                    final PublicKey reserveLiquiditySupplyKey,
                                    final PublicKey reserveCollateralMintKey,
+                                   final PublicKey reserveWhitelistEntryKey,
                                    final PublicKey klendProgramKey,
                                    final PublicKey reserveCollateralTokenProgramKey,
                                    final PublicKey tokenProgramKey,
@@ -326,6 +503,7 @@ public final class KaminoVaultProgram {
       createRead(lendingMarketAuthorityKey),
       createWrite(reserveLiquiditySupplyKey),
       createWrite(reserveCollateralMintKey),
+      createRead(requireNonNullElse(reserveWhitelistEntryKey, invokedKaminoVaultProgramMeta.publicKey())),
       createRead(klendProgramKey),
       createRead(reserveCollateralTokenProgramKey),
       createRead(tokenProgramKey),
@@ -338,13 +516,15 @@ public final class KaminoVaultProgram {
   public static final Discriminator UPDATE_VAULT_CONFIG_DISCRIMINATOR = toDiscriminator(122, 3, 21, 222, 158, 255, 238, 157);
 
   public static Instruction updateVaultConfig(final AccountMeta invokedKaminoVaultProgramMeta,
-                                              final PublicKey vaultAdminAuthorityKey,
+                                              final PublicKey signerKey,
+                                              final PublicKey globalConfigKey,
                                               final PublicKey vaultStateKey,
                                               final PublicKey klendProgramKey,
                                               final VaultConfigField entry,
                                               final byte[] data) {
     final var keys = List.of(
-      createReadOnlySigner(vaultAdminAuthorityKey),
+      createReadOnlySigner(signerKey),
+      createRead(globalConfigKey),
       createWrite(vaultStateKey),
       createRead(klendProgramKey)
     );
@@ -657,6 +837,7 @@ public final class KaminoVaultProgram {
   public static Instruction withdrawFromAvailable(final AccountMeta invokedKaminoVaultProgramMeta,
                                                   final PublicKey userKey,
                                                   final PublicKey vaultStateKey,
+                                                  final PublicKey globalConfigKey,
                                                   final PublicKey tokenVaultKey,
                                                   final PublicKey baseVaultAuthorityKey,
                                                   final PublicKey userTokenAtaKey,
@@ -672,6 +853,7 @@ public final class KaminoVaultProgram {
     final var keys = List.of(
       createWritableSigner(userKey),
       createWrite(vaultStateKey),
+      createRead(globalConfigKey),
       createWrite(tokenVaultKey),
       createRead(baseVaultAuthorityKey),
       createWrite(userTokenAtaKey),
@@ -737,6 +919,136 @@ public final class KaminoVaultProgram {
     );
 
     return Instruction.createInstruction(invokedKaminoVaultProgramMeta, keys, REMOVE_ALLOCATION_DISCRIMINATOR);
+  }
+
+  public static final Discriminator INIT_GLOBAL_CONFIG_DISCRIMINATOR = toDiscriminator(140, 136, 214, 48, 87, 0, 120, 255);
+
+  public static Instruction initGlobalConfig(final AccountMeta invokedKaminoVaultProgramMeta,
+                                             final PublicKey payerKey,
+                                             final PublicKey globalConfigKey,
+                                             final PublicKey programDataKey,
+                                             final PublicKey systemProgramKey,
+                                             final PublicKey rentKey) {
+    final var keys = List.of(
+      createWritableSigner(payerKey),
+      createWrite(globalConfigKey),
+      createRead(programDataKey),
+      createRead(systemProgramKey),
+      createRead(rentKey)
+    );
+
+    return Instruction.createInstruction(invokedKaminoVaultProgramMeta, keys, INIT_GLOBAL_CONFIG_DISCRIMINATOR);
+  }
+
+  public static final Discriminator UPDATE_GLOBAL_CONFIG_DISCRIMINATOR = toDiscriminator(164, 84, 130, 189, 111, 58, 250, 200);
+
+  public static Instruction updateGlobalConfig(final AccountMeta invokedKaminoVaultProgramMeta,
+                                               final PublicKey globalAdminKey,
+                                               final PublicKey globalConfigKey,
+                                               final UpdateGlobalConfigMode update) {
+    final var keys = List.of(
+      createReadOnlySigner(globalAdminKey),
+      createWrite(globalConfigKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(update)];
+    int i = UPDATE_GLOBAL_CONFIG_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(update, _data, i);
+
+    return Instruction.createInstruction(invokedKaminoVaultProgramMeta, keys, _data);
+  }
+
+  public record UpdateGlobalConfigIxData(Discriminator discriminator, UpdateGlobalConfigMode update) implements Borsh {  
+
+    public static UpdateGlobalConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static UpdateGlobalConfigIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var update = UpdateGlobalConfigMode.read(_data, i);
+      return new UpdateGlobalConfigIxData(discriminator, update);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(update, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(update);
+    }
+  }
+
+  public static final Discriminator UPDATE_GLOBAL_CONFIG_ADMIN_DISCRIMINATOR = toDiscriminator(184, 87, 23, 193, 156, 238, 175, 119);
+
+  public static Instruction updateGlobalConfigAdmin(final AccountMeta invokedKaminoVaultProgramMeta, final PublicKey pendingAdminKey, final PublicKey globalConfigKey) {
+    final var keys = List.of(
+      createReadOnlySigner(pendingAdminKey),
+      createWrite(globalConfigKey)
+    );
+
+    return Instruction.createInstruction(invokedKaminoVaultProgramMeta, keys, UPDATE_GLOBAL_CONFIG_ADMIN_DISCRIMINATOR);
+  }
+
+  public static final Discriminator ADD_UPDATE_WHITELISTED_RESERVE_DISCRIMINATOR = toDiscriminator(219, 139, 95, 204, 7, 183, 118, 45);
+
+  public static Instruction addUpdateWhitelistedReserve(final AccountMeta invokedKaminoVaultProgramMeta,
+                                                        final PublicKey globalAdminKey,
+                                                        final PublicKey globalConfigKey,
+                                                        final PublicKey reserveKey,
+                                                        final PublicKey reserveWhitelistEntryKey,
+                                                        final PublicKey systemProgramKey,
+                                                        final UpdateReserveWhitelistMode update) {
+    final var keys = List.of(
+      createWritableSigner(globalAdminKey),
+      createRead(globalConfigKey),
+      createRead(reserveKey),
+      createWrite(reserveWhitelistEntryKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(update)];
+    int i = ADD_UPDATE_WHITELISTED_RESERVE_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(update, _data, i);
+
+    return Instruction.createInstruction(invokedKaminoVaultProgramMeta, keys, _data);
+  }
+
+  public record AddUpdateWhitelistedReserveIxData(Discriminator discriminator, UpdateReserveWhitelistMode update) implements Borsh {  
+
+    public static AddUpdateWhitelistedReserveIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static AddUpdateWhitelistedReserveIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var update = UpdateReserveWhitelistMode.read(_data, i);
+      return new AddUpdateWhitelistedReserveIxData(discriminator, update);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(update, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + Borsh.len(update);
+    }
   }
 
   private KaminoVaultProgram() {

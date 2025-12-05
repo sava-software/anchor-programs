@@ -11,7 +11,7 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
                             int status,
                             // Asset tier -> 0 - regular (collateral & debt), 1 - isolated collateral, 2 - isolated debt
-                            int assetTier,
+                            int paddingDeprecatedAssetTier,
                             // Flat rate that goes to the host
                             int hostFixedInterestRateBps,
                             // Starting bonus for deleveraging-related liquidations, in bps.
@@ -103,7 +103,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     int i = offset;
     final var status = _data[i] & 0xFF;
     ++i;
-    final var assetTier = _data[i] & 0xFF;
+    final var paddingDeprecatedAssetTier = _data[i] & 0xFF;
     ++i;
     final var hostFixedInterestRateBps = getInt16LE(_data, i);
     i += 2;
@@ -165,7 +165,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     i += Borsh.readArray(borrowLimitAgainstThisCollateralInElevationGroup, _data, i);
     final var deleveragingBonusIncreaseBpsPerDay = getInt64LE(_data, i);
     return new ReserveConfig(status,
-                             assetTier,
+                             paddingDeprecatedAssetTier,
                              hostFixedInterestRateBps,
                              minDeleveragingBonusBps,
                              blockCtokenUsage,
@@ -203,7 +203,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     int i = offset;
     _data[i] = (byte) status;
     ++i;
-    _data[i] = (byte) assetTier;
+    _data[i] = (byte) paddingDeprecatedAssetTier;
     ++i;
     putInt16LE(_data, i, hostFixedInterestRateBps);
     i += 2;

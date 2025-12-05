@@ -38,7 +38,9 @@ public enum AdminInstruction implements Borsh.Enum {
   SetTokenReward,
   SetTokenStakeLevel,
   InitRevenueTokenAccount,
-  ResizeInternalOracle;
+  ResizeInternalOracle,
+  WithdrawUnclaimedTokens,
+  InitRebateVault;
 
   public static AdminInstruction read(final byte[] _data, final int offset) {
     return Borsh.read(AdminInstruction.values(), _data, offset);

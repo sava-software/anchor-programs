@@ -52,11 +52,12 @@ public record Pool(PublicKey _address,
                    long lpPrice,
                    long compoundingLpPrice,
                    long lastUpdatedTimestamp,
-                   long[] padding2) implements Borsh {
+                   long feesObligationUsd,
+                   long rebateObligationUsd,
+                   long thresholdUsd) implements Borsh {
 
   public static final int PADDING_LEN = 3;
   public static final int STAKING_FEE_BOOST_BPS_LEN = 6;
-  public static final int PADDING_2_LEN = 1;
   public static final int NAME_OFFSET = 8;
 
   public static Pool createRecord(final PublicKey _address,
@@ -94,7 +95,9 @@ public record Pool(PublicKey _address,
                                   final long lpPrice,
                                   final long compoundingLpPrice,
                                   final long lastUpdatedTimestamp,
-                                  final long[] padding2) {
+                                  final long feesObligationUsd,
+                                  final long rebateObligationUsd,
+                                  final long thresholdUsd) {
     return new Pool(_address,
                     discriminator,
                     name, name.getBytes(UTF_8),
@@ -130,7 +133,9 @@ public record Pool(PublicKey _address,
                     lpPrice,
                     compoundingLpPrice,
                     lastUpdatedTimestamp,
-                    padding2);
+                    feesObligationUsd,
+                    rebateObligationUsd,
+                    thresholdUsd);
   }
 
   public static Pool read(final byte[] _data, final int offset) {
@@ -219,8 +224,11 @@ public record Pool(PublicKey _address,
     i += 8;
     final var lastUpdatedTimestamp = getInt64LE(_data, i);
     i += 8;
-    final var padding2 = new long[1];
-    Borsh.readArray(padding2, _data, i);
+    final var feesObligationUsd = getInt64LE(_data, i);
+    i += 8;
+    final var rebateObligationUsd = getInt64LE(_data, i);
+    i += 8;
+    final var thresholdUsd = getInt64LE(_data, i);
     return new Pool(_address,
                     discriminator,
                     name, name.getBytes(UTF_8),
@@ -256,7 +264,9 @@ public record Pool(PublicKey _address,
                     lpPrice,
                     compoundingLpPrice,
                     lastUpdatedTimestamp,
-                    padding2);
+                    feesObligationUsd,
+                    rebateObligationUsd,
+                    thresholdUsd);
   }
 
   @Override
@@ -319,7 +329,12 @@ public record Pool(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, lastUpdatedTimestamp);
     i += 8;
-    i += Borsh.writeArrayChecked(padding2, 1, _data, i);
+    putInt64LE(_data, i, feesObligationUsd);
+    i += 8;
+    putInt64LE(_data, i, rebateObligationUsd);
+    i += 8;
+    putInt64LE(_data, i, thresholdUsd);
+    i += 8;
     return i - offset;
   }
 
@@ -358,6 +373,8 @@ public record Pool(PublicKey _address,
          + 8
          + 8
          + 8
-         + Borsh.lenArray(padding2);
+         + 8
+         + 8
+         + 8;
   }
 }

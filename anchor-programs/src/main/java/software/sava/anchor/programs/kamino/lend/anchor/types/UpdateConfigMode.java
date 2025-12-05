@@ -37,7 +37,7 @@ public enum UpdateConfigMode implements Borsh.Enum {
   UpdateMinLiquidationBonusBps,
   UpdateDeleveragingMarginCallPeriod,
   UpdateBorrowFactor,
-  UpdateAssetTier,
+  DeprecatedUpdateAssetTier,
   UpdateElevationGroup,
   UpdateDeleveragingThresholdDecreaseBpsPerDay,
   DeprecatedUpdateMultiplierSideBoost,

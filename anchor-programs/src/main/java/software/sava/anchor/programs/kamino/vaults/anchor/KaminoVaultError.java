@@ -51,7 +51,14 @@ public sealed interface KaminoVaultError extends ProgramError permits
     KaminoVaultError.InvestTooSoon,
     KaminoVaultError.WrongAdminOrAllocationAdmin,
     KaminoVaultError.ReserveHasNonZeroAllocationOrCTokens,
-    KaminoVaultError.DepositAmountGreaterThanRequestedAmount {
+    KaminoVaultError.DepositAmountGreaterThanRequestedAmount,
+    KaminoVaultError.WithdrawAmountLessThanWithdrawalPenalty,
+    KaminoVaultError.CannotWithdrawZeroLamports,
+    KaminoVaultError.NoUpgradeAuthority,
+    KaminoVaultError.WithdrawalFeeBPSGreaterThanMaxAllowed,
+    KaminoVaultError.WithdrawalFeeLamportsGreaterThanMaxAllowed,
+    KaminoVaultError.ReserveNotWhitelisted,
+    KaminoVaultError.InvalidBoolLikeValue {
 
   static KaminoVaultError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -104,6 +111,13 @@ public sealed interface KaminoVaultError extends ProgramError permits
       case 7046 -> WrongAdminOrAllocationAdmin.INSTANCE;
       case 7047 -> ReserveHasNonZeroAllocationOrCTokens.INSTANCE;
       case 7048 -> DepositAmountGreaterThanRequestedAmount.INSTANCE;
+      case 7049 -> WithdrawAmountLessThanWithdrawalPenalty.INSTANCE;
+      case 7050 -> CannotWithdrawZeroLamports.INSTANCE;
+      case 7051 -> NoUpgradeAuthority.INSTANCE;
+      case 7052 -> WithdrawalFeeBPSGreaterThanMaxAllowed.INSTANCE;
+      case 7053 -> WithdrawalFeeLamportsGreaterThanMaxAllowed.INSTANCE;
+      case 7054 -> ReserveNotWhitelisted.INSTANCE;
+      case 7055 -> InvalidBoolLikeValue.INSTANCE;
       default -> throw new IllegalStateException("Unexpected KaminoVault error code: " + errorCode);
     };
   }
@@ -111,28 +125,28 @@ public sealed interface KaminoVaultError extends ProgramError permits
   record DepositAmountsZero(int code, String msg) implements KaminoVaultError {
 
     public static final DepositAmountsZero INSTANCE = new DepositAmountsZero(
-        7000, "DepositAmountsZero"
+        7000, "Cannot deposit zero tokens"
     );
   }
 
   record SharesIssuedAmountDoesNotMatch(int code, String msg) implements KaminoVaultError {
 
     public static final SharesIssuedAmountDoesNotMatch INSTANCE = new SharesIssuedAmountDoesNotMatch(
-        7001, "SharesIssuedAmountDoesNotMatch"
+        7001, "Post check failed on share issued"
     );
   }
 
   record MathOverflow(int code, String msg) implements KaminoVaultError {
 
     public static final MathOverflow INSTANCE = new MathOverflow(
-        7002, "MathOverflow"
+        7002, "Math operation overflowed"
     );
   }
 
   record IntegerOverflow(int code, String msg) implements KaminoVaultError {
 
     public static final IntegerOverflow INSTANCE = new IntegerOverflow(
-        7003, "IntegerOverflow"
+        7003, "Integer conversion overflowed"
     );
   }
 
@@ -448,6 +462,55 @@ public sealed interface KaminoVaultError extends ProgramError permits
 
     public static final DepositAmountGreaterThanRequestedAmount INSTANCE = new DepositAmountGreaterThanRequestedAmount(
         7048, "Deposit amount is greater than requested amount"
+    );
+  }
+
+  record WithdrawAmountLessThanWithdrawalPenalty(int code, String msg) implements KaminoVaultError {
+
+    public static final WithdrawAmountLessThanWithdrawalPenalty INSTANCE = new WithdrawAmountLessThanWithdrawalPenalty(
+        7049, "Withdraw amount is less than withdrawal penalty"
+    );
+  }
+
+  record CannotWithdrawZeroLamports(int code, String msg) implements KaminoVaultError {
+
+    public static final CannotWithdrawZeroLamports INSTANCE = new CannotWithdrawZeroLamports(
+        7050, "Cannot withdraw 0 lamports"
+    );
+  }
+
+  record NoUpgradeAuthority(int code, String msg) implements KaminoVaultError {
+
+    public static final NoUpgradeAuthority INSTANCE = new NoUpgradeAuthority(
+        7051, "Cannot initialize global config because there is no upgrade authority to the program"
+    );
+  }
+
+  record WithdrawalFeeBPSGreaterThanMaxAllowed(int code, String msg) implements KaminoVaultError {
+
+    public static final WithdrawalFeeBPSGreaterThanMaxAllowed INSTANCE = new WithdrawalFeeBPSGreaterThanMaxAllowed(
+        7052, "Withdrawal fee BPS is greater than maximum allowed"
+    );
+  }
+
+  record WithdrawalFeeLamportsGreaterThanMaxAllowed(int code, String msg) implements KaminoVaultError {
+
+    public static final WithdrawalFeeLamportsGreaterThanMaxAllowed INSTANCE = new WithdrawalFeeLamportsGreaterThanMaxAllowed(
+        7053, "Withdrawal fee lamports is greater than maximum allowed"
+    );
+  }
+
+  record ReserveNotWhitelisted(int code, String msg) implements KaminoVaultError {
+
+    public static final ReserveNotWhitelisted INSTANCE = new ReserveNotWhitelisted(
+        7054, "Reserve is not whitelisted"
+    );
+  }
+
+  record InvalidBoolLikeValue(int code, String msg) implements KaminoVaultError {
+
+    public static final InvalidBoolLikeValue INSTANCE = new InvalidBoolLikeValue(
+        7055, "Invalid bool-like value passed in (should be 0 or 1)"
     );
   }
 }

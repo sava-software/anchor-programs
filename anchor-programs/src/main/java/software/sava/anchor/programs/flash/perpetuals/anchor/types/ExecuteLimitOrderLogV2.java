@@ -27,7 +27,7 @@ public record ExecuteLimitOrderLogV2(PublicKey owner,
                                      int oracleAccountPriceExponent,
                                      long limitPrice,
                                      int limitPriceExponent,
-                                     long feeRebateAmount,
+                                     long feeRebateUsdAmount,
                                      long[] padding) implements Borsh {
 
   public static final int BYTES = 201;
@@ -74,7 +74,7 @@ public record ExecuteLimitOrderLogV2(PublicKey owner,
     i += 8;
     final var limitPriceExponent = getInt32LE(_data, i);
     i += 4;
-    final var feeRebateAmount = getInt64LE(_data, i);
+    final var feeRebateUsdAmount = getInt64LE(_data, i);
     i += 8;
     final var padding = new long[3];
     Borsh.readArray(padding, _data, i);
@@ -96,7 +96,7 @@ public record ExecuteLimitOrderLogV2(PublicKey owner,
                                       oracleAccountPriceExponent,
                                       limitPrice,
                                       limitPriceExponent,
-                                      feeRebateAmount,
+                                      feeRebateUsdAmount,
                                       padding);
   }
 
@@ -139,7 +139,7 @@ public record ExecuteLimitOrderLogV2(PublicKey owner,
     i += 8;
     putInt32LE(_data, i, limitPriceExponent);
     i += 4;
-    putInt64LE(_data, i, feeRebateAmount);
+    putInt64LE(_data, i, feeRebateUsdAmount);
     i += 8;
     i += Borsh.writeArrayChecked(padding, 3, _data, i);
     return i - offset;

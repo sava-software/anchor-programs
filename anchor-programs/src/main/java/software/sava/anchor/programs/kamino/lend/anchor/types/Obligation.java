@@ -45,9 +45,7 @@ public record Obligation(PublicKey _address,
                          // The dangerous borrow value at the weighted average liquidation threshold (scaled fraction)
                          BigInteger unhealthyBorrowValueSf,
                          // The asset tier of the deposits
-                         byte[] depositsAssetTiers,
-                         // The asset tier of the borrows
-                         byte[] borrowsAssetTiers,
+                         byte[] paddingDeprecatedAssetTiers,
                          // The elevation group id the obligation opted into.
                          int elevationGroup,
                          // The number of obsolete reserves the obligation has a deposit in
@@ -78,8 +76,7 @@ public record Obligation(PublicKey _address,
   public static final int BYTES = 3344;
   public static final int DEPOSITS_LEN = 8;
   public static final int BORROWS_LEN = 5;
-  public static final int DEPOSITS_ASSET_TIERS_LEN = 8;
-  public static final int BORROWS_ASSET_TIERS_LEN = 5;
+  public static final int PADDING_DEPRECATED_ASSET_TIERS_LEN = 13;
   public static final int RESERVED_LEN = 4;
   public static final int ORDERS_LEN = 2;
   public static final int PADDING_3_LEN = 93;
@@ -97,8 +94,7 @@ public record Obligation(PublicKey _address,
   public static final int BORROWED_ASSETS_MARKET_VALUE_SF_OFFSET = 2224;
   public static final int ALLOWED_BORROW_VALUE_SF_OFFSET = 2240;
   public static final int UNHEALTHY_BORROW_VALUE_SF_OFFSET = 2256;
-  public static final int DEPOSITS_ASSET_TIERS_OFFSET = 2272;
-  public static final int BORROWS_ASSET_TIERS_OFFSET = 2280;
+  public static final int PADDING_DEPRECATED_ASSET_TIERS_OFFSET = 2272;
   public static final int ELEVATION_GROUP_OFFSET = 2285;
   public static final int NUM_OF_OBSOLETE_DEPOSIT_RESERVES_OFFSET = 2286;
   public static final int HAS_DEBT_OFFSET = 2287;
@@ -255,10 +251,8 @@ public record Obligation(PublicKey _address,
     i += 16;
     final var unhealthyBorrowValueSf = getInt128LE(_data, i);
     i += 16;
-    final var depositsAssetTiers = new byte[8];
-    i += Borsh.readArray(depositsAssetTiers, _data, i);
-    final var borrowsAssetTiers = new byte[5];
-    i += Borsh.readArray(borrowsAssetTiers, _data, i);
+    final var paddingDeprecatedAssetTiers = new byte[13];
+    i += Borsh.readArray(paddingDeprecatedAssetTiers, _data, i);
     final var elevationGroup = _data[i] & 0xFF;
     ++i;
     final var numOfObsoleteDepositReserves = _data[i] & 0xFF;
@@ -299,8 +293,7 @@ public record Obligation(PublicKey _address,
                           borrowedAssetsMarketValueSf,
                           allowedBorrowValueSf,
                           unhealthyBorrowValueSf,
-                          depositsAssetTiers,
-                          borrowsAssetTiers,
+                          paddingDeprecatedAssetTiers,
                           elevationGroup,
                           numOfObsoleteDepositReserves,
                           hasDebt,
@@ -340,8 +333,7 @@ public record Obligation(PublicKey _address,
     i += 16;
     putInt128LE(_data, i, unhealthyBorrowValueSf);
     i += 16;
-    i += Borsh.writeArrayChecked(depositsAssetTiers, 8, _data, i);
-    i += Borsh.writeArrayChecked(borrowsAssetTiers, 5, _data, i);
+    i += Borsh.writeArrayChecked(paddingDeprecatedAssetTiers, 13, _data, i);
     _data[i] = (byte) elevationGroup;
     ++i;
     _data[i] = (byte) numOfObsoleteDepositReserves;

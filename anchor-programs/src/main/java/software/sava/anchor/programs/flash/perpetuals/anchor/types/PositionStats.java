@@ -17,7 +17,7 @@ public record PositionStats(long openPositions,
                             long lockedAmount,
                             long lockedUsd,
                             long collateralAmount,
-                            long collateralUsd,
+                            long collateralLiabilityUsd,
                             long unsettledFeeUsd,
                             BigInteger cumulativeLockFeeSnapshot,
                             int sizeDecimals,
@@ -47,7 +47,7 @@ public record PositionStats(long openPositions,
     i += 8;
     final var collateralAmount = getInt64LE(_data, i);
     i += 8;
-    final var collateralUsd = getInt64LE(_data, i);
+    final var collateralLiabilityUsd = getInt64LE(_data, i);
     i += 8;
     final var unsettledFeeUsd = getInt64LE(_data, i);
     i += 8;
@@ -66,7 +66,7 @@ public record PositionStats(long openPositions,
                              lockedAmount,
                              lockedUsd,
                              collateralAmount,
-                             collateralUsd,
+                             collateralLiabilityUsd,
                              unsettledFeeUsd,
                              cumulativeLockFeeSnapshot,
                              sizeDecimals,
@@ -92,7 +92,7 @@ public record PositionStats(long openPositions,
     i += 8;
     putInt64LE(_data, i, collateralAmount);
     i += 8;
-    putInt64LE(_data, i, collateralUsd);
+    putInt64LE(_data, i, collateralLiabilityUsd);
     i += 8;
     putInt64LE(_data, i, unsettledFeeUsd);
     i += 8;

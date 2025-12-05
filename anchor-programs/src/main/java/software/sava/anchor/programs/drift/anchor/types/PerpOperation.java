@@ -10,7 +10,8 @@ public enum PerpOperation implements Borsh.Enum {
   SettlePnl,
   SettlePnlWithPosition,
   Liquidation,
-  AmmImmediateFill;
+  AmmImmediateFill,
+  SettleRevPool;
 
   public static PerpOperation read(final byte[] _data, final int offset) {
     return Borsh.read(PerpOperation.values(), _data, offset);

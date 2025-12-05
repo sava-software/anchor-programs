@@ -24,7 +24,7 @@ public record PricingParams(long tradeSpreadMin,
                             int maxUtilization,
                             int degenPositionFactor,
                             int degenExposureFactor,
-                            long maxPositionLockedUsd,
+                            long maxPositionSizeUsd,
                             long maxExposureUsd) implements Borsh {
 
   public static final int BYTES = 88;
@@ -64,7 +64,7 @@ public record PricingParams(long tradeSpreadMin,
     i += 2;
     final var degenExposureFactor = getInt16LE(_data, i);
     i += 2;
-    final var maxPositionLockedUsd = getInt64LE(_data, i);
+    final var maxPositionSizeUsd = getInt64LE(_data, i);
     i += 8;
     final var maxExposureUsd = getInt64LE(_data, i);
     return new PricingParams(tradeSpreadMin,
@@ -82,7 +82,7 @@ public record PricingParams(long tradeSpreadMin,
                              maxUtilization,
                              degenPositionFactor,
                              degenExposureFactor,
-                             maxPositionLockedUsd,
+                             maxPositionSizeUsd,
                              maxExposureUsd);
   }
 
@@ -119,7 +119,7 @@ public record PricingParams(long tradeSpreadMin,
     i += 2;
     putInt16LE(_data, i, degenExposureFactor);
     i += 2;
-    putInt64LE(_data, i, maxPositionLockedUsd);
+    putInt64LE(_data, i, maxPositionSizeUsd);
     i += 8;
     putInt64LE(_data, i, maxExposureUsd);
     i += 8;

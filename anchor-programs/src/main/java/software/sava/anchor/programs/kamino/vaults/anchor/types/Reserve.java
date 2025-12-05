@@ -44,7 +44,7 @@ public record Reserve(PublicKey _address,
   public static final int BYTES = 8624;
   public static final int RESERVE_LIQUIDITY_PADDING_LEN = 150;
   public static final int RESERVE_COLLATERAL_PADDING_LEN = 150;
-  public static final int CONFIG_PADDING_LEN = 115;
+  public static final int CONFIG_PADDING_LEN = 116;
   public static final int BORROWED_AMOUNTS_AGAINST_THIS_RESERVE_IN_ELEVATION_GROUPS_LEN = 32;
   public static final int PADDING_LEN = 207;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
@@ -59,7 +59,7 @@ public record Reserve(PublicKey _address,
   public static final int COLLATERAL_OFFSET = 2560;
   public static final int RESERVE_COLLATERAL_PADDING_OFFSET = 3656;
   public static final int CONFIG_OFFSET = 4856;
-  public static final int CONFIG_PADDING_OFFSET = 5784;
+  public static final int CONFIG_PADDING_OFFSET = 5776;
   public static final int BORROWED_AMOUNT_OUTSIDE_ELEVATION_GROUP_OFFSET = 6704;
   public static final int BORROWED_AMOUNTS_AGAINST_THIS_RESERVE_IN_ELEVATION_GROUPS_OFFSET = 6712;
   public static final int PADDING_OFFSET = 6968;
@@ -132,7 +132,7 @@ public record Reserve(PublicKey _address,
     i += Borsh.readArray(reserveCollateralPadding, _data, i);
     final var config = ReserveConfig.read(_data, i);
     i += Borsh.len(config);
-    final var configPadding = new long[115];
+    final var configPadding = new long[116];
     i += Borsh.readArray(configPadding, _data, i);
     final var borrowedAmountOutsideElevationGroup = getInt64LE(_data, i);
     i += 8;
@@ -175,7 +175,7 @@ public record Reserve(PublicKey _address,
     i += Borsh.write(collateral, _data, i);
     i += Borsh.writeArrayChecked(reserveCollateralPadding, 150, _data, i);
     i += Borsh.write(config, _data, i);
-    i += Borsh.writeArrayChecked(configPadding, 115, _data, i);
+    i += Borsh.writeArrayChecked(configPadding, 116, _data, i);
     putInt64LE(_data, i, borrowedAmountOutsideElevationGroup);
     i += 8;
     i += Borsh.writeArrayChecked(borrowedAmountsAgainstThisReserveInElevationGroups, 32, _data, i);

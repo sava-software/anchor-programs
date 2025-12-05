@@ -12,8 +12,10 @@ import software.sava.rpc.json.http.response.AccountInfo;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt128LE;
+import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
+import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 
@@ -31,19 +33,20 @@ public record Position(PublicKey _address,
                        long lockedUsd,
                        long collateralAmount,
                        long collateralUsd,
-                       long unsettledAmount,
+                       long unsettledValueUsd,
                        long unsettledFeesUsd,
                        BigInteger cumulativeLockFeeSnapshot,
                        long degenSizeUsd,
-                       BigInteger buffer,
+                       OraclePrice referencePrice,
+                       int buffer,
                        int sizeDecimals,
                        int lockedDecimals,
                        int collateralDecimals,
                        int bump,
                        byte[] padding) implements Borsh {
 
-  public static final int BYTES = 252;
-  public static final int PADDING_LEN = 12;
+  public static final int BYTES = 248;
+  public static final int PADDING_LEN = 8;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int OWNER_OFFSET = 8;
@@ -58,11 +61,12 @@ public record Position(PublicKey _address,
   public static final int LOCKED_USD_OFFSET = 156;
   public static final int COLLATERAL_AMOUNT_OFFSET = 164;
   public static final int COLLATERAL_USD_OFFSET = 172;
-  public static final int UNSETTLED_AMOUNT_OFFSET = 180;
+  public static final int UNSETTLED_VALUE_USD_OFFSET = 180;
   public static final int UNSETTLED_FEES_USD_OFFSET = 188;
   public static final int CUMULATIVE_LOCK_FEE_SNAPSHOT_OFFSET = 196;
   public static final int DEGEN_SIZE_USD_OFFSET = 212;
-  public static final int BUFFER_OFFSET = 220;
+  public static final int REFERENCE_PRICE_OFFSET = 220;
+  public static final int BUFFER_OFFSET = 232;
   public static final int SIZE_DECIMALS_OFFSET = 236;
   public static final int LOCKED_DECIMALS_OFFSET = 237;
   public static final int COLLATERAL_DECIMALS_OFFSET = 238;
@@ -133,10 +137,10 @@ public record Position(PublicKey _address,
     return Filter.createMemCompFilter(COLLATERAL_USD_OFFSET, _data);
   }
 
-  public static Filter createUnsettledAmountFilter(final long unsettledAmount) {
+  public static Filter createUnsettledValueUsdFilter(final long unsettledValueUsd) {
     final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, unsettledAmount);
-    return Filter.createMemCompFilter(UNSETTLED_AMOUNT_OFFSET, _data);
+    putInt64LE(_data, 0, unsettledValueUsd);
+    return Filter.createMemCompFilter(UNSETTLED_VALUE_USD_OFFSET, _data);
   }
 
   public static Filter createUnsettledFeesUsdFilter(final long unsettledFeesUsd) {
@@ -157,9 +161,13 @@ public record Position(PublicKey _address,
     return Filter.createMemCompFilter(DEGEN_SIZE_USD_OFFSET, _data);
   }
 
-  public static Filter createBufferFilter(final BigInteger buffer) {
-    final byte[] _data = new byte[16];
-    putInt128LE(_data, 0, buffer);
+  public static Filter createReferencePriceFilter(final OraclePrice referencePrice) {
+    return Filter.createMemCompFilter(REFERENCE_PRICE_OFFSET, referencePrice.write());
+  }
+
+  public static Filter createBufferFilter(final int buffer) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, buffer);
     return Filter.createMemCompFilter(BUFFER_OFFSET, _data);
   }
 
@@ -223,7 +231,7 @@ public record Position(PublicKey _address,
     i += 8;
     final var collateralUsd = getInt64LE(_data, i);
     i += 8;
-    final var unsettledAmount = getInt64LE(_data, i);
+    final var unsettledValueUsd = getInt64LE(_data, i);
     i += 8;
     final var unsettledFeesUsd = getInt64LE(_data, i);
     i += 8;
@@ -231,8 +239,10 @@ public record Position(PublicKey _address,
     i += 16;
     final var degenSizeUsd = getInt64LE(_data, i);
     i += 8;
-    final var buffer = getInt128LE(_data, i);
-    i += 16;
+    final var referencePrice = OraclePrice.read(_data, i);
+    i += Borsh.len(referencePrice);
+    final var buffer = getInt32LE(_data, i);
+    i += 4;
     final var sizeDecimals = _data[i] & 0xFF;
     ++i;
     final var lockedDecimals = _data[i] & 0xFF;
@@ -241,7 +251,7 @@ public record Position(PublicKey _address,
     ++i;
     final var bump = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[12];
+    final var padding = new byte[8];
     Borsh.readArray(padding, _data, i);
     return new Position(_address,
                         discriminator,
@@ -257,10 +267,11 @@ public record Position(PublicKey _address,
                         lockedUsd,
                         collateralAmount,
                         collateralUsd,
-                        unsettledAmount,
+                        unsettledValueUsd,
                         unsettledFeesUsd,
                         cumulativeLockFeeSnapshot,
                         degenSizeUsd,
+                        referencePrice,
                         buffer,
                         sizeDecimals,
                         lockedDecimals,
@@ -295,7 +306,7 @@ public record Position(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, collateralUsd);
     i += 8;
-    putInt64LE(_data, i, unsettledAmount);
+    putInt64LE(_data, i, unsettledValueUsd);
     i += 8;
     putInt64LE(_data, i, unsettledFeesUsd);
     i += 8;
@@ -303,8 +314,9 @@ public record Position(PublicKey _address,
     i += 16;
     putInt64LE(_data, i, degenSizeUsd);
     i += 8;
-    putInt128LE(_data, i, buffer);
-    i += 16;
+    i += Borsh.write(referencePrice, _data, i);
+    putInt32LE(_data, i, buffer);
+    i += 4;
     _data[i] = (byte) sizeDecimals;
     ++i;
     _data[i] = (byte) lockedDecimals;
@@ -313,7 +325,7 @@ public record Position(PublicKey _address,
     ++i;
     _data[i] = (byte) bump;
     ++i;
-    i += Borsh.writeArrayChecked(padding, 12, _data, i);
+    i += Borsh.writeArrayChecked(padding, 8, _data, i);
     return i - offset;
   }
 

@@ -5,7 +5,7 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record NewPositionPricesAndFee(OraclePrice entryPrice, long fee) implements Borsh {
+public record NewPositionPricesAndFee(OraclePrice entryPrice, long feeUsd) implements Borsh {
 
   public static final int BYTES = 20;
 
@@ -16,15 +16,15 @@ public record NewPositionPricesAndFee(OraclePrice entryPrice, long fee) implemen
     int i = offset;
     final var entryPrice = OraclePrice.read(_data, i);
     i += Borsh.len(entryPrice);
-    final var fee = getInt64LE(_data, i);
-    return new NewPositionPricesAndFee(entryPrice, fee);
+    final var feeUsd = getInt64LE(_data, i);
+    return new NewPositionPricesAndFee(entryPrice, feeUsd);
   }
 
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
     i += Borsh.write(entryPrice, _data, i);
-    putInt64LE(_data, i, fee);
+    putInt64LE(_data, i, feeUsd);
     i += 8;
     return i - offset;
   }

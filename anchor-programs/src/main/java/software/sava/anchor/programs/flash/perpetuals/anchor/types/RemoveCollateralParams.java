@@ -5,7 +5,7 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record RemoveCollateralParams(long collateralDelta) implements Borsh {
+public record RemoveCollateralParams(long collateralDeltaUsd) implements Borsh {
 
   public static final int BYTES = 8;
 
@@ -13,14 +13,14 @@ public record RemoveCollateralParams(long collateralDelta) implements Borsh {
     if (_data == null || _data.length == 0) {
       return null;
     }
-    final var collateralDelta = getInt64LE(_data, offset);
-    return new RemoveCollateralParams(collateralDelta);
+    final var collateralDeltaUsd = getInt64LE(_data, offset);
+    return new RemoveCollateralParams(collateralDeltaUsd);
   }
 
   @Override
   public int write(final byte[] _data, final int offset) {
     int i = offset;
-    putInt64LE(_data, i, collateralDelta);
+    putInt64LE(_data, i, collateralDeltaUsd);
     i += 8;
     return i - offset;
   }

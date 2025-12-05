@@ -18,10 +18,13 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
                             int assetTier,
                             // Flat rate that goes to the host
                             int hostFixedInterestRateBps,
-                            // [DEPRECATED] Space that used to hold 2 fields:
-                            // - Boost for side (debt or collateral)
-                            // - Reward points multiplier per obligation type
-                            // Can be re-used after making sure all underlying production account data is zeroed.
+                            // Starting bonus for deleveraging-related liquidations, in bps.
+                            int minDeleveragingBonusBps,
+                            // Boolean flag to block minting/redeeming of ctokens
+                            // Blocks usage of ctokens (minting or withdrawing from obligation)
+                            // Effectively blocks deposit_reserve_liquidity and withdraw_obligation_collateral
+                            int blockCtokenUsage,
+                            // Past reserved space - feel free to reuse.
                             byte[] reserved1,
                             // Cut of the order execution bonus that the protocol receives, as a percentage
                             int protocolOrderExecutionFeePct,
@@ -90,14 +93,10 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
                             long[] borrowLimitAgainstThisCollateralInElevationGroup,
                             // The rate at which the deleveraging-related liquidation bonus increases, in bps per day.
                             // Only relevant when `autodeleverage_enabled == 1`, and must not be 0 in such case.
-                            long deleveragingBonusIncreaseBpsPerDay,
-                            // The timestamp at which all [Obligation::borrows] using this reserve become liquidatable
-                            // (on the same terms as reserve-wide deleveraging).
-                            // Inactive when zeroed (i.e. debt never matures).
-                            long debtMaturityTimestamp) implements Borsh {
+                            long deleveragingBonusIncreaseBpsPerDay) implements Borsh {
 
-  public static final int BYTES = 928;
-  public static final int RESERVED_1_LEN = 9;
+  public static final int BYTES = 920;
+  public static final int RESERVED_1_LEN = 6;
   public static final int ELEVATION_GROUPS_LEN = 20;
   public static final int BORROW_LIMIT_AGAINST_THIS_COLLATERAL_IN_ELEVATION_GROUP_LEN = 32;
 
@@ -112,7 +111,11 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     ++i;
     final var hostFixedInterestRateBps = getInt16LE(_data, i);
     i += 2;
-    final var reserved1 = new byte[9];
+    final var minDeleveragingBonusBps = getInt16LE(_data, i);
+    i += 2;
+    final var blockCtokenUsage = _data[i] & 0xFF;
+    ++i;
+    final var reserved1 = new byte[6];
     i += Borsh.readArray(reserved1, _data, i);
     final var protocolOrderExecutionFeePct = _data[i] & 0xFF;
     ++i;
@@ -165,11 +168,11 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     final var borrowLimitAgainstThisCollateralInElevationGroup = new long[32];
     i += Borsh.readArray(borrowLimitAgainstThisCollateralInElevationGroup, _data, i);
     final var deleveragingBonusIncreaseBpsPerDay = getInt64LE(_data, i);
-    i += 8;
-    final var debtMaturityTimestamp = getInt64LE(_data, i);
     return new ReserveConfig(status,
                              assetTier,
                              hostFixedInterestRateBps,
+                             minDeleveragingBonusBps,
+                             blockCtokenUsage,
                              reserved1,
                              protocolOrderExecutionFeePct,
                              protocolTakeRatePct,
@@ -196,8 +199,7 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
                              proposerAuthorityLocked,
                              borrowLimitOutsideElevationGroup,
                              borrowLimitAgainstThisCollateralInElevationGroup,
-                             deleveragingBonusIncreaseBpsPerDay,
-                             debtMaturityTimestamp);
+                             deleveragingBonusIncreaseBpsPerDay);
   }
 
   @Override
@@ -209,7 +211,11 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     ++i;
     putInt16LE(_data, i, hostFixedInterestRateBps);
     i += 2;
-    i += Borsh.writeArrayChecked(reserved1, 9, _data, i);
+    putInt16LE(_data, i, minDeleveragingBonusBps);
+    i += 2;
+    _data[i] = (byte) blockCtokenUsage;
+    ++i;
+    i += Borsh.writeArrayChecked(reserved1, 6, _data, i);
     _data[i] = (byte) protocolOrderExecutionFeePct;
     ++i;
     _data[i] = (byte) protocolTakeRatePct;
@@ -254,8 +260,6 @@ public record ReserveConfig(// Status of the reserve Active/Obsolete/Hidden
     i += 8;
     i += Borsh.writeArrayChecked(borrowLimitAgainstThisCollateralInElevationGroup, 32, _data, i);
     putInt64LE(_data, i, deleveragingBonusIncreaseBpsPerDay);
-    i += 8;
-    putInt64LE(_data, i, debtMaturityTimestamp);
     i += 8;
     return i - offset;
   }

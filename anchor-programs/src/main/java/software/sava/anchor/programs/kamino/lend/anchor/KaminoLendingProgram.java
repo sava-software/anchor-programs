@@ -4,7 +4,6 @@ import java.lang.String;
 
 import java.util.List;
 
-import software.sava.anchor.programs.kamino.lend.anchor.types.AssetTier;
 import software.sava.anchor.programs.kamino.lend.anchor.types.FeeCalculation;
 import software.sava.anchor.programs.kamino.lend.anchor.types.InitObligationArgs;
 import software.sava.anchor.programs.kamino.lend.anchor.types.ObligationOrder;
@@ -2857,7 +2856,6 @@ public final class KaminoLendingProgram {
                                             final PublicKey lendingMarketKey,
                                             final PublicKey reserveKey,
                                             final ReserveFarmKind reserveFarmKind,
-                                            final AssetTier assetTier,
                                             final FeeCalculation feeCalculation,
                                             final ReserveStatus reserveStatus,
                                             final UpdateConfigMode updateConfigMode,
@@ -2870,10 +2868,9 @@ public final class KaminoLendingProgram {
       createWrite(reserveKey)
     );
 
-    final byte[] _data = new byte[8 + Borsh.len(reserveFarmKind) + Borsh.len(assetTier) + Borsh.len(feeCalculation) + Borsh.len(reserveStatus) + Borsh.len(updateConfigMode) + Borsh.len(updateLendingMarketConfigValue) + Borsh.len(updateLendingMarketConfigMode)];
+    final byte[] _data = new byte[8 + Borsh.len(reserveFarmKind) + Borsh.len(feeCalculation) + Borsh.len(reserveStatus) + Borsh.len(updateConfigMode) + Borsh.len(updateLendingMarketConfigValue) + Borsh.len(updateLendingMarketConfigMode)];
     int i = IDL_MISSING_TYPES_DISCRIMINATOR.write(_data, 0);
     i += Borsh.write(reserveFarmKind, _data, i);
-    i += Borsh.write(assetTier, _data, i);
     i += Borsh.write(feeCalculation, _data, i);
     i += Borsh.write(reserveStatus, _data, i);
     i += Borsh.write(updateConfigMode, _data, i);
@@ -2885,7 +2882,6 @@ public final class KaminoLendingProgram {
 
   public record IdlMissingTypesIxData(Discriminator discriminator,
                                       ReserveFarmKind reserveFarmKind,
-                                      AssetTier assetTier,
                                       FeeCalculation feeCalculation,
                                       ReserveStatus reserveStatus,
                                       UpdateConfigMode updateConfigMode,
@@ -2904,8 +2900,6 @@ public final class KaminoLendingProgram {
       int i = offset + discriminator.length();
       final var reserveFarmKind = ReserveFarmKind.read(_data, i);
       i += Borsh.len(reserveFarmKind);
-      final var assetTier = AssetTier.read(_data, i);
-      i += Borsh.len(assetTier);
       final var feeCalculation = FeeCalculation.read(_data, i);
       i += Borsh.len(feeCalculation);
       final var reserveStatus = ReserveStatus.read(_data, i);
@@ -2917,7 +2911,6 @@ public final class KaminoLendingProgram {
       final var updateLendingMarketConfigMode = UpdateLendingMarketMode.read(_data, i);
       return new IdlMissingTypesIxData(discriminator,
                                        reserveFarmKind,
-                                       assetTier,
                                        feeCalculation,
                                        reserveStatus,
                                        updateConfigMode,
@@ -2929,7 +2922,6 @@ public final class KaminoLendingProgram {
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       i += Borsh.write(reserveFarmKind, _data, i);
-      i += Borsh.write(assetTier, _data, i);
       i += Borsh.write(feeCalculation, _data, i);
       i += Borsh.write(reserveStatus, _data, i);
       i += Borsh.write(updateConfigMode, _data, i);
@@ -2941,7 +2933,6 @@ public final class KaminoLendingProgram {
     @Override
     public int l() {
       return 8 + Borsh.len(reserveFarmKind)
-           + Borsh.len(assetTier)
            + Borsh.len(feeCalculation)
            + Borsh.len(reserveStatus)
            + Borsh.len(updateConfigMode)

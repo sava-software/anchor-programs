@@ -135,7 +135,8 @@ public sealed interface KaminoLendingError extends ProgramError permits
     KaminoLendingError.NoUpgradeAuthority,
     KaminoLendingError.InitialAdminDepositExecuted,
     KaminoLendingError.ReserveHasNotReceivedInitialDeposit,
-    KaminoLendingError.CTokenUsageBlocked {
+    KaminoLendingError.CTokenUsageBlocked,
+    KaminoLendingError.CannotUseSameReserve {
 
   static KaminoLendingError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -272,6 +273,7 @@ public sealed interface KaminoLendingError extends ProgramError permits
       case 6130 -> InitialAdminDepositExecuted.INSTANCE;
       case 6131 -> ReserveHasNotReceivedInitialDeposit.INSTANCE;
       case 6132 -> CTokenUsageBlocked.INSTANCE;
+      case 6133 -> CannotUseSameReserve.INSTANCE;
       default -> throw new IllegalStateException("Unexpected KaminoLending error code: " + errorCode);
     };
   }
@@ -1204,6 +1206,13 @@ public sealed interface KaminoLendingError extends ProgramError permits
 
     public static final CTokenUsageBlocked INSTANCE = new CTokenUsageBlocked(
         6132, "CToken minting/redeeming is blocked for this reserve"
+    );
+  }
+
+  record CannotUseSameReserve(int code, String msg) implements KaminoLendingError {
+
+    public static final CannotUseSameReserve INSTANCE = new CannotUseSameReserve(
+        6133, "Cannot call ix with same reserve"
     );
   }
 }

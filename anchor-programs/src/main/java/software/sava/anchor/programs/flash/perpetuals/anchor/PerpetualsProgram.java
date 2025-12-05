@@ -3,7 +3,6 @@ package software.sava.anchor.programs.flash.perpetuals.anchor;
 import java.util.List;
 
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.AddCollateralParams;
-import software.sava.anchor.programs.flash.perpetuals.anchor.types.AddCollectionParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.AddCompoundingLiquidityParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.AddCustodyParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.AddCustodyToken22AccountParams;
@@ -12,8 +11,6 @@ import software.sava.anchor.programs.flash.perpetuals.anchor.types.AddLiquidityA
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.AddLiquidityParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.AddMarketParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.AddPoolParams;
-import software.sava.anchor.programs.flash.perpetuals.anchor.types.BurnAndClaimParams;
-import software.sava.anchor.programs.flash.perpetuals.anchor.types.BurnAndStakeParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.CancelTriggerOrderParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.CancelUnstakeTokenRequestParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.CloseAndSwapParams;
@@ -33,11 +30,9 @@ import software.sava.anchor.programs.flash.perpetuals.anchor.types.ExecuteLimitO
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.ExecuteLimitWithSwapParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.ExecuteTriggerOrderParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.ExecuteTriggerWithSwapParams;
-import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetAddCollateralQuoteParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetAddCompoundingLiquidityAmountAndFeeParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetAddLiquidityAmountAndFeeParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetAssetsUnderManagementParams;
-import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetClosePositionQuoteParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetCompoundingTokenDataParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetCompoundingTokenPriceParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetEntryPriceAndFeeParams;
@@ -48,17 +43,16 @@ import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetLpTokenPri
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetOraclePriceParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetPnlParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetPositionDataParams;
-import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetPositionQuoteParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetRemoveCompoundingLiquidityAmountAndFeeParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetRemoveLiquidityAmountAndFeeParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.GetSwapAmountAndFeesParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.IncreaseSizeParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.InitCompoundingParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.InitParams;
+import software.sava.anchor.programs.flash.perpetuals.anchor.types.InitRebateVaultParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.InitRevenueTokenAccountParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.InitStakingParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.InitTokenVaultParams;
-import software.sava.anchor.programs.flash.perpetuals.anchor.types.LevelUpParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.LiquidateParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.MigrateFlpParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.MigrateStakeParams;
@@ -105,12 +99,12 @@ import software.sava.anchor.programs.flash.perpetuals.anchor.types.UnstakeTokenI
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.UnstakeTokenRequestParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.UpdateCustodyParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.UpdateTokenRatiosParams;
-import software.sava.anchor.programs.flash.perpetuals.anchor.types.UpdateTradingAccountParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.WithdrawFeesParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.WithdrawInstantFeesParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.WithdrawSolFeesParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.WithdrawStakeParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.WithdrawTokenParams;
+import software.sava.anchor.programs.flash.perpetuals.anchor.types.WithdrawUnclaimedTokensParams;
 import software.sava.core.accounts.PublicKey;
 import software.sava.core.accounts.meta.AccountMeta;
 import software.sava.core.borsh.Borsh;
@@ -484,61 +478,6 @@ public final class PerpetualsProgram {
       int i = offset + discriminator.length();
       final var params = AddInternalOracleParams.read(_data, i);
       return new AddInternalOracleIxData(discriminator, params);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(params, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
-  public static final Discriminator ADD_COLLECTION_DISCRIMINATOR = toDiscriminator(79, 172, 225, 142, 219, 192, 171, 80);
-
-  public static Instruction addCollection(final AccountMeta invokedPerpetualsProgramMeta,
-                                          final PublicKey adminKey,
-                                          final PublicKey multisigKey,
-                                          final PublicKey perpetualsKey,
-                                          final PublicKey collectionMintKey,
-                                          final PublicKey systemProgramKey,
-                                          final AddCollectionParams params) {
-    final var keys = List.of(
-      createWritableSigner(adminKey),
-      createWrite(multisigKey),
-      createWrite(perpetualsKey),
-      createRead(collectionMintKey),
-      createRead(systemProgramKey)
-    );
-
-    final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = ADD_COLLECTION_DISCRIMINATOR.write(_data, 0);
-    Borsh.write(params, _data, i);
-
-    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
-  }
-
-  public record AddCollectionIxData(Discriminator discriminator, AddCollectionParams params) implements Borsh {  
-
-    public static AddCollectionIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 8;
-
-    public static AddCollectionIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var params = AddCollectionParams.read(_data, i);
-      return new AddCollectionIxData(discriminator, params);
     }
 
     @Override
@@ -1109,7 +1048,7 @@ public final class PerpetualsProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 134;
+    public static final int BYTES = 142;
 
     public static SetPoolConfigIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -1578,6 +1517,69 @@ public final class PerpetualsProgram {
     }
   }
 
+  public static final Discriminator WITHDRAW_UNCLAIMED_TOKENS_DISCRIMINATOR = toDiscriminator(43, 239, 40, 75, 164, 156, 231, 139);
+
+  public static Instruction withdrawUnclaimedTokens(final AccountMeta invokedPerpetualsProgramMeta,
+                                                    final PublicKey adminKey,
+                                                    final PublicKey multisigKey,
+                                                    final PublicKey perpetualsKey,
+                                                    final PublicKey transferAuthorityKey,
+                                                    final PublicKey tokenVaultKey,
+                                                    final PublicKey tokenVaultTokenAccountKey,
+                                                    final PublicKey receivingTokenAccountKey,
+                                                    final PublicKey tokenProgramKey,
+                                                    final PublicKey receivingTokenMintKey,
+                                                    final WithdrawUnclaimedTokensParams params) {
+    final var keys = List.of(
+      createReadOnlySigner(adminKey),
+      createWrite(multisigKey),
+      createRead(perpetualsKey),
+      createRead(transferAuthorityKey),
+      createWrite(tokenVaultKey),
+      createWrite(tokenVaultTokenAccountKey),
+      createWrite(receivingTokenAccountKey),
+      createRead(tokenProgramKey),
+      createRead(receivingTokenMintKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = WITHDRAW_UNCLAIMED_TOKENS_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
+  }
+
+  public record WithdrawUnclaimedTokensIxData(Discriminator discriminator, WithdrawUnclaimedTokensParams params) implements Borsh {  
+
+    public static WithdrawUnclaimedTokensIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 8;
+
+    public static WithdrawUnclaimedTokensIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = WithdrawUnclaimedTokensParams.read(_data, i);
+      return new WithdrawUnclaimedTokensIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator WITHDRAW_SOL_FEES_DISCRIMINATOR = toDiscriminator(191, 53, 166, 97, 124, 212, 228, 219);
 
   public static Instruction withdrawSolFees(final AccountMeta invokedPerpetualsProgramMeta,
@@ -1814,7 +1816,6 @@ public final class PerpetualsProgram {
                                             final PublicKey transferAuthorityKey,
                                             final PublicKey perpetualsKey,
                                             final PublicKey poolKey,
-                                            final PublicKey custodyKey,
                                             final PublicKey lpTokenMintKey,
                                             final PublicKey compoundingVaultKey,
                                             final PublicKey compoundingTokenMintKey,
@@ -1830,7 +1831,6 @@ public final class PerpetualsProgram {
       createRead(transferAuthorityKey),
       createRead(perpetualsKey),
       createWrite(poolKey),
-      createWrite(custodyKey),
       createRead(lpTokenMintKey),
       createWrite(compoundingVaultKey),
       createWrite(compoundingTokenMintKey),
@@ -1874,6 +1874,71 @@ public final class PerpetualsProgram {
     @Override
     public int l() {
       return 8 + Borsh.len(params);
+    }
+  }
+
+  public static final Discriminator INIT_REBATE_VAULT_DISCRIMINATOR = toDiscriminator(250, 123, 188, 186, 176, 127, 253, 61);
+
+  public static Instruction initRebateVault(final AccountMeta invokedPerpetualsProgramMeta,
+                                            final PublicKey adminKey,
+                                            final PublicKey multisigKey,
+                                            final PublicKey transferAuthorityKey,
+                                            final PublicKey perpetualsKey,
+                                            final PublicKey rebateMintKey,
+                                            final PublicKey rebateTokenAccountKey,
+                                            final PublicKey rebateVaultKey,
+                                            final PublicKey systemProgramKey,
+                                            final PublicKey tokenProgramKey,
+                                            final PublicKey rentKey,
+                                            final InitRebateVaultParams params) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(multisigKey),
+      createRead(transferAuthorityKey),
+      createRead(perpetualsKey),
+      createRead(rebateMintKey),
+      createWrite(rebateTokenAccountKey),
+      createWrite(rebateVaultKey),
+      createRead(systemProgramKey),
+      createRead(tokenProgramKey),
+      createRead(rentKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = INIT_REBATE_VAULT_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
+  }
+
+  public record InitRebateVaultIxData(Discriminator discriminator, InitRebateVaultParams params) implements Borsh {  
+
+    public static InitRebateVaultIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 9;
+
+    public static InitRebateVaultIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = InitRebateVaultParams.read(_data, i);
+      return new InitRebateVaultIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
     }
   }
 
@@ -2438,10 +2503,6 @@ public final class PerpetualsProgram {
                                             final PublicKey rewardCustodyKey,
                                             final PublicKey rewardCustodyOracleAccountKey,
                                             final PublicKey rewardCustodyTokenAccountKey,
-                                            final PublicKey custodyKey,
-                                            final PublicKey custodyOracleAccountKey,
-                                            final PublicKey custodyTokenAccountKey,
-                                            final PublicKey tokenProgramKey,
                                             final PublicKey eventAuthorityKey,
                                             final PublicKey programKey,
                                             final PublicKey ixSysvarKey,
@@ -2449,14 +2510,10 @@ public final class PerpetualsProgram {
     final var keys = List.of(
       createReadOnlySigner(ownerKey),
       createRead(perpetualsKey),
-      createRead(poolKey),
+      createWrite(poolKey),
       createWrite(rewardCustodyKey),
       createRead(rewardCustodyOracleAccountKey),
-      createWrite(rewardCustodyTokenAccountKey),
-      createWrite(custodyKey),
-      createRead(custodyOracleAccountKey),
-      createWrite(custodyTokenAccountKey),
-      createRead(tokenProgramKey),
+      createRead(rewardCustodyTokenAccountKey),
       createRead(eventAuthorityKey),
       createRead(programKey),
       createRead(ixSysvarKey)
@@ -2558,7 +2615,7 @@ public final class PerpetualsProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 25;
+    public static final int BYTES = 24;
 
     public static SwapIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -2581,6 +2638,41 @@ public final class PerpetualsProgram {
     public int l() {
       return BYTES;
     }
+  }
+
+  public static final Discriminator SETTLE_REBATES_DISCRIMINATOR = toDiscriminator(12, 192, 237, 255, 81, 68, 17, 193);
+
+  public static Instruction settleRebates(final AccountMeta invokedPerpetualsProgramMeta,
+                                          final PublicKey transferAuthorityKey,
+                                          final PublicKey perpetualsKey,
+                                          final PublicKey poolKey,
+                                          final PublicKey rewardCustodyKey,
+                                          final PublicKey rewardCustodyOracleAccountKey,
+                                          final PublicKey rewardCustodyTokenAccountKey,
+                                          final PublicKey rebateVaultKey,
+                                          final PublicKey rebateTokenAccountKey,
+                                          final PublicKey tokenMintKey,
+                                          final PublicKey tokenProgramKey,
+                                          final PublicKey eventAuthorityKey,
+                                          final PublicKey programKey,
+                                          final PublicKey ixSysvarKey) {
+    final var keys = List.of(
+      createRead(transferAuthorityKey),
+      createRead(perpetualsKey),
+      createWrite(poolKey),
+      createWrite(rewardCustodyKey),
+      createRead(rewardCustodyOracleAccountKey),
+      createWrite(rewardCustodyTokenAccountKey),
+      createWrite(rebateVaultKey),
+      createWrite(rebateTokenAccountKey),
+      createRead(tokenMintKey),
+      createRead(tokenProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey),
+      createRead(ixSysvarKey)
+    );
+
+    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, SETTLE_REBATES_DISCRIMINATOR);
   }
 
   public static final Discriminator SWAP_AND_ADD_COLLATERAL_DISCRIMINATOR = toDiscriminator(135, 207, 228, 112, 247, 15, 29, 150);
@@ -2645,7 +2737,7 @@ public final class PerpetualsProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 24;
+    public static final int BYTES = 16;
 
     public static SwapAndAddCollateralIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -2738,7 +2830,7 @@ public final class PerpetualsProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 45;
+    public static final int BYTES = 37;
 
     public static SwapAndOpenIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -2831,7 +2923,7 @@ public final class PerpetualsProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 29;
+    public static final int BYTES = 21;
 
     public static CloseAndSwapIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -3637,6 +3729,37 @@ public final class PerpetualsProgram {
     }
   }
 
+  public static final Discriminator COLLECT_REBATE_DISCRIMINATOR = toDiscriminator(211, 159, 122, 61, 195, 246, 132, 15);
+
+  public static Instruction collectRebate(final AccountMeta invokedPerpetualsProgramMeta,
+                                          final PublicKey ownerKey,
+                                          final PublicKey receivingTokenAccountKey,
+                                          final PublicKey perpetualsKey,
+                                          final PublicKey transferAuthorityKey,
+                                          final PublicKey rebateVaultKey,
+                                          final PublicKey rebateTokenAccountKey,
+                                          final PublicKey tokenStakeAccountKey,
+                                          final PublicKey tokenProgramKey,
+                                          final PublicKey eventAuthorityKey,
+                                          final PublicKey programKey,
+                                          final PublicKey receivingTokenMintKey) {
+    final var keys = List.of(
+      createWritableSigner(ownerKey),
+      createWrite(receivingTokenAccountKey),
+      createRead(perpetualsKey),
+      createRead(transferAuthorityKey),
+      createWrite(rebateVaultKey),
+      createWrite(rebateTokenAccountKey),
+      createWrite(tokenStakeAccountKey),
+      createRead(tokenProgramKey),
+      createRead(eventAuthorityKey),
+      createRead(programKey),
+      createRead(receivingTokenMintKey)
+    );
+
+    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, COLLECT_REBATE_DISCRIMINATOR);
+  }
+
   public static final Discriminator COLLECT_REVENUE_DISCRIMINATOR = toDiscriminator(87, 96, 211, 36, 240, 43, 246, 87);
 
   public static Instruction collectRevenue(final AccountMeta invokedPerpetualsProgramMeta,
@@ -4370,61 +4493,6 @@ public final class PerpetualsProgram {
     }
   }
 
-  public static final Discriminator UPDATE_TRADING_ACCOUNT_DISCRIMINATOR = toDiscriminator(230, 10, 32, 132, 84, 114, 14, 255);
-
-  public static Instruction updateTradingAccount(final AccountMeta invokedPerpetualsProgramMeta,
-                                                 final PublicKey ownerKey,
-                                                 final PublicKey feePayerKey,
-                                                 final PublicKey nftTokenAccountKey,
-                                                 final PublicKey tradingAccountKey,
-                                                 final PublicKey referralAccountKey,
-                                                 final UpdateTradingAccountParams params) {
-    final var keys = List.of(
-      createWritableSigner(ownerKey),
-      createWritableSigner(feePayerKey),
-      createRead(nftTokenAccountKey),
-      createWrite(tradingAccountKey),
-      createWrite(referralAccountKey)
-    );
-
-    final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = UPDATE_TRADING_ACCOUNT_DISCRIMINATOR.write(_data, 0);
-    Borsh.write(params, _data, i);
-
-    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
-  }
-
-  public record UpdateTradingAccountIxData(Discriminator discriminator, UpdateTradingAccountParams params) implements Borsh {  
-
-    public static UpdateTradingAccountIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 10;
-
-    public static UpdateTradingAccountIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var params = UpdateTradingAccountParams.read(_data, i);
-      return new UpdateTradingAccountIxData(discriminator, params);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(params, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
   public static final Discriminator CREATE_REFERRAL_DISCRIMINATOR = toDiscriminator(61, 17, 240, 245, 172, 66, 159, 232);
 
   public static Instruction createReferral(final AccountMeta invokedPerpetualsProgramMeta,
@@ -4509,7 +4577,7 @@ public final class PerpetualsProgram {
       createWrite(fundingAccountKey),
       createRead(transferAuthorityKey),
       createRead(perpetualsKey),
-      createRead(poolKey),
+      createWrite(poolKey),
       createWrite(positionKey),
       createWrite(marketKey),
       createRead(targetCustodyKey),
@@ -4708,7 +4776,7 @@ public final class PerpetualsProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 24;
+    public static final int BYTES = 16;
 
     public static RemoveCollateralAndSwapIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -4836,7 +4904,7 @@ public final class PerpetualsProgram {
       createReadOnlySigner(ownerKey),
       createRead(transferAuthorityKey),
       createRead(perpetualsKey),
-      createRead(poolKey),
+      createWrite(poolKey),
       createWrite(positionKey),
       createWrite(marketKey),
       createRead(targetCustodyKey),
@@ -4913,7 +4981,7 @@ public final class PerpetualsProgram {
       createReadOnlySigner(ownerKey),
       createRead(transferAuthorityKey),
       createRead(perpetualsKey),
-      createRead(poolKey),
+      createWrite(poolKey),
       createWrite(positionKey),
       createWrite(marketKey),
       createRead(targetCustodyKey),
@@ -5287,7 +5355,7 @@ public final class PerpetualsProgram {
       createWritableSigner(feePayerKey),
       createRead(transferAuthorityKey),
       createRead(perpetualsKey),
-      createRead(poolKey),
+      createWrite(poolKey),
       createWrite(positionKey),
       createWrite(orderKey),
       createWrite(marketKey),
@@ -5786,7 +5854,7 @@ public final class PerpetualsProgram {
       createWrite(receivingAccountKey),
       createRead(transferAuthorityKey),
       createRead(perpetualsKey),
-      createRead(poolKey),
+      createWrite(poolKey),
       createWrite(positionKey),
       createWrite(orderKey),
       createWrite(marketKey),
@@ -5840,75 +5908,6 @@ public final class PerpetualsProgram {
     }
   }
 
-  public static final Discriminator LEVEL_UP_DISCRIMINATOR = toDiscriminator(128, 64, 197, 116, 226, 129, 119, 234);
-
-  public static Instruction levelUp(final AccountMeta invokedPerpetualsProgramMeta,
-                                    final PublicKey ownerKey,
-                                    final PublicKey perpetualsKey,
-                                    final PublicKey poolKey,
-                                    final PublicKey metadataAccountKey,
-                                    final PublicKey tradingAccountKey,
-                                    final PublicKey transferAuthorityKey,
-                                    final PublicKey metadataProgramKey,
-                                    final PublicKey nftMintKey,
-                                    final PublicKey systemProgramKey,
-                                    final PublicKey ixSysvarKey,
-                                    final PublicKey authorizationRulesProgramKey,
-                                    final PublicKey authorizationRulesAccountKey,
-                                    final LevelUpParams params) {
-    final var keys = List.of(
-      createWritableSigner(ownerKey),
-      createRead(perpetualsKey),
-      createRead(poolKey),
-      createWrite(metadataAccountKey),
-      createWrite(tradingAccountKey),
-      createRead(transferAuthorityKey),
-      createRead(metadataProgramKey),
-      createWrite(nftMintKey),
-      createRead(systemProgramKey),
-      createRead(ixSysvarKey),
-      createRead(authorizationRulesProgramKey),
-      createRead(authorizationRulesAccountKey)
-    );
-
-    final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = LEVEL_UP_DISCRIMINATOR.write(_data, 0);
-    Borsh.write(params, _data, i);
-
-    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
-  }
-
-  public record LevelUpIxData(Discriminator discriminator, LevelUpParams params) implements Borsh {  
-
-    public static LevelUpIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 8;
-
-    public static LevelUpIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var params = LevelUpParams.read(_data, i);
-      return new LevelUpIxData(discriminator, params);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(params, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
   public static final Discriminator LIQUIDATE_DISCRIMINATOR = toDiscriminator(223, 179, 226, 125, 48, 46, 39, 74);
 
   public static Instruction liquidate(final AccountMeta invokedPerpetualsProgramMeta,
@@ -5928,7 +5927,7 @@ public final class PerpetualsProgram {
     final var keys = List.of(
       createWritableSigner(signerKey),
       createRead(perpetualsKey),
-      createRead(poolKey),
+      createWrite(poolKey),
       createWrite(positionKey),
       createWrite(marketKey),
       createRead(targetCustodyKey),
@@ -6918,195 +6917,6 @@ public final class PerpetualsProgram {
     }
   }
 
-  public static final Discriminator GET_POSITION_QUOTE_DISCRIMINATOR = toDiscriminator(99, 207, 18, 150, 236, 108, 219, 147);
-
-  public static Instruction getPositionQuote(final AccountMeta invokedPerpetualsProgramMeta,
-                                             final PublicKey perpetualsKey,
-                                             final PublicKey poolKey,
-                                             final PublicKey marketKey,
-                                             final PublicKey targetCustodyKey,
-                                             final PublicKey targetOracleAccountKey,
-                                             final PublicKey collateralCustodyKey,
-                                             final PublicKey collateralOracleAccountKey,
-                                             final PublicKey receivingCustodyKey,
-                                             final PublicKey receivingCustodyOracleAccountKey,
-                                             final PublicKey ixSysvarKey,
-                                             final GetPositionQuoteParams params) {
-    final var keys = List.of(
-      createRead(perpetualsKey),
-      createRead(poolKey),
-      createRead(marketKey),
-      createRead(targetCustodyKey),
-      createRead(targetOracleAccountKey),
-      createRead(collateralCustodyKey),
-      createRead(collateralOracleAccountKey),
-      createRead(receivingCustodyKey),
-      createRead(receivingCustodyOracleAccountKey),
-      createRead(ixSysvarKey)
-    );
-
-    final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = GET_POSITION_QUOTE_DISCRIMINATOR.write(_data, 0);
-    Borsh.write(params, _data, i);
-
-    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
-  }
-
-  public record GetPositionQuoteIxData(Discriminator discriminator, GetPositionQuoteParams params) implements Borsh {  
-
-    public static GetPositionQuoteIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static GetPositionQuoteIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var params = GetPositionQuoteParams.read(_data, i);
-      return new GetPositionQuoteIxData(discriminator, params);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(params, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 8 + Borsh.len(params);
-    }
-  }
-
-  public static final Discriminator GET_ADD_COLLATERAL_QUOTE_DISCRIMINATOR = toDiscriminator(103, 106, 18, 57, 44, 127, 202, 159);
-
-  public static Instruction getAddCollateralQuote(final AccountMeta invokedPerpetualsProgramMeta,
-                                                  final PublicKey perpetualsKey,
-                                                  final PublicKey poolKey,
-                                                  final PublicKey positionKey,
-                                                  final PublicKey marketKey,
-                                                  final PublicKey targetCustodyKey,
-                                                  final PublicKey targetOracleAccountKey,
-                                                  final PublicKey collateralCustodyKey,
-                                                  final PublicKey collateralOracleAccountKey,
-                                                  final PublicKey receivingCustodyKey,
-                                                  final PublicKey receivingOracleAccountKey,
-                                                  final PublicKey ixSysvarKey,
-                                                  final GetAddCollateralQuoteParams params) {
-    final var keys = List.of(
-      createRead(perpetualsKey),
-      createRead(poolKey),
-      createRead(positionKey),
-      createRead(marketKey),
-      createRead(targetCustodyKey),
-      createRead(targetOracleAccountKey),
-      createRead(collateralCustodyKey),
-      createRead(collateralOracleAccountKey),
-      createRead(receivingCustodyKey),
-      createRead(receivingOracleAccountKey),
-      createRead(ixSysvarKey)
-    );
-
-    final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = GET_ADD_COLLATERAL_QUOTE_DISCRIMINATOR.write(_data, 0);
-    Borsh.write(params, _data, i);
-
-    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
-  }
-
-  public record GetAddCollateralQuoteIxData(Discriminator discriminator, GetAddCollateralQuoteParams params) implements Borsh {  
-
-    public static GetAddCollateralQuoteIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static GetAddCollateralQuoteIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var params = GetAddCollateralQuoteParams.read(_data, i);
-      return new GetAddCollateralQuoteIxData(discriminator, params);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(params, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 8 + Borsh.len(params);
-    }
-  }
-
-  public static final Discriminator GET_CLOSE_POSITION_QUOTE_DISCRIMINATOR = toDiscriminator(94, 207, 132, 38, 227, 145, 139, 133);
-
-  public static Instruction getClosePositionQuote(final AccountMeta invokedPerpetualsProgramMeta,
-                                                  final PublicKey perpetualsKey,
-                                                  final PublicKey poolKey,
-                                                  final PublicKey marketKey,
-                                                  final PublicKey positionKey,
-                                                  final PublicKey targetCustodyKey,
-                                                  final PublicKey targetOracleAccountKey,
-                                                  final PublicKey collateralCustodyKey,
-                                                  final PublicKey collateralOracleAccountKey,
-                                                  final PublicKey ixSysvarKey,
-                                                  final GetClosePositionQuoteParams params) {
-    final var keys = List.of(
-      createRead(perpetualsKey),
-      createRead(poolKey),
-      createRead(marketKey),
-      createRead(positionKey),
-      createRead(targetCustodyKey),
-      createRead(targetOracleAccountKey),
-      createRead(collateralCustodyKey),
-      createRead(collateralOracleAccountKey),
-      createRead(ixSysvarKey)
-    );
-
-    final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = GET_CLOSE_POSITION_QUOTE_DISCRIMINATOR.write(_data, 0);
-    Borsh.write(params, _data, i);
-
-    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
-  }
-
-  public record GetClosePositionQuoteIxData(Discriminator discriminator, GetClosePositionQuoteParams params) implements Borsh {  
-
-    public static GetClosePositionQuoteIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static GetClosePositionQuoteIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var params = GetClosePositionQuoteParams.read(_data, i);
-      return new GetClosePositionQuoteIxData(discriminator, params);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(params, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 8 + Borsh.len(params);
-    }
-  }
-
   public static final Discriminator RENAME_FLP_DISCRIMINATOR = toDiscriminator(175, 28, 157, 91, 44, 165, 11, 165);
 
   public static Instruction renameFlp(final AccountMeta invokedPerpetualsProgramMeta,
@@ -7169,176 +6979,6 @@ public final class PerpetualsProgram {
     @Override
     public int l() {
       return 8 + Borsh.len(params);
-    }
-  }
-
-  public static final Discriminator BURN_AND_CLAIM_DISCRIMINATOR = toDiscriminator(9, 220, 63, 96, 139, 201, 253, 158);
-
-  public static Instruction burnAndClaim(final AccountMeta invokedPerpetualsProgramMeta,
-                                         final PublicKey ownerKey,
-                                         final PublicKey receivingTokenAccountKey,
-                                         final PublicKey perpetualsKey,
-                                         final PublicKey tokenVaultKey,
-                                         final PublicKey tokenVaultTokenAccountKey,
-                                         final PublicKey metadataAccountKey,
-                                         final PublicKey collectionMetadataKey,
-                                         final PublicKey editionKey,
-                                         final PublicKey tokenRecordKey,
-                                         final PublicKey tradingAccountKey,
-                                         final PublicKey transferAuthorityKey,
-                                         final PublicKey metadataProgramKey,
-                                         final PublicKey nftMintKey,
-                                         final PublicKey nftTokenAccountKey,
-                                         final PublicKey systemProgramKey,
-                                         final PublicKey tokenProgramKey,
-                                         final PublicKey ixSysvarKey,
-                                         final PublicKey eventAuthorityKey,
-                                         final PublicKey programKey,
-                                         final PublicKey receivingTokenMintKey,
-                                         final BurnAndClaimParams params) {
-    final var keys = List.of(
-      createWritableSigner(ownerKey),
-      createWrite(receivingTokenAccountKey),
-      createRead(perpetualsKey),
-      createWrite(tokenVaultKey),
-      createWrite(tokenVaultTokenAccountKey),
-      createWrite(metadataAccountKey),
-      createWrite(collectionMetadataKey),
-      createWrite(editionKey),
-      createWrite(tokenRecordKey),
-      createWrite(tradingAccountKey),
-      createWrite(transferAuthorityKey),
-      createRead(metadataProgramKey),
-      createWrite(nftMintKey),
-      createWrite(nftTokenAccountKey),
-      createRead(systemProgramKey),
-      createRead(tokenProgramKey),
-      createRead(ixSysvarKey),
-      createRead(eventAuthorityKey),
-      createRead(programKey),
-      createRead(receivingTokenMintKey)
-    );
-
-    final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = BURN_AND_CLAIM_DISCRIMINATOR.write(_data, 0);
-    Borsh.write(params, _data, i);
-
-    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
-  }
-
-  public record BurnAndClaimIxData(Discriminator discriminator, BurnAndClaimParams params) implements Borsh {  
-
-    public static BurnAndClaimIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 8;
-
-    public static BurnAndClaimIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var params = BurnAndClaimParams.read(_data, i);
-      return new BurnAndClaimIxData(discriminator, params);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(params, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
-  public static final Discriminator BURN_AND_STAKE_DISCRIMINATOR = toDiscriminator(96, 188, 177, 75, 235, 215, 124, 3);
-
-  public static Instruction burnAndStake(final AccountMeta invokedPerpetualsProgramMeta,
-                                         final PublicKey ownerKey,
-                                         final PublicKey feePayerKey,
-                                         final PublicKey perpetualsKey,
-                                         final PublicKey tokenVaultKey,
-                                         final PublicKey tokenVaultTokenAccountKey,
-                                         final PublicKey tokenStakeAccountKey,
-                                         final PublicKey metadataAccountKey,
-                                         final PublicKey collectionMetadataKey,
-                                         final PublicKey editionKey,
-                                         final PublicKey tokenRecordKey,
-                                         final PublicKey tradingAccountKey,
-                                         final PublicKey transferAuthorityKey,
-                                         final PublicKey metadataProgramKey,
-                                         final PublicKey nftMintKey,
-                                         final PublicKey nftTokenAccountKey,
-                                         final PublicKey systemProgramKey,
-                                         final PublicKey tokenProgramKey,
-                                         final PublicKey ixSysvarKey,
-                                         final PublicKey eventAuthorityKey,
-                                         final PublicKey programKey,
-                                         final BurnAndStakeParams params) {
-    final var keys = List.of(
-      createWritableSigner(ownerKey),
-      createWritableSigner(feePayerKey),
-      createRead(perpetualsKey),
-      createWrite(tokenVaultKey),
-      createRead(tokenVaultTokenAccountKey),
-      createWrite(tokenStakeAccountKey),
-      createWrite(metadataAccountKey),
-      createWrite(collectionMetadataKey),
-      createWrite(editionKey),
-      createWrite(tokenRecordKey),
-      createWrite(tradingAccountKey),
-      createWrite(transferAuthorityKey),
-      createRead(metadataProgramKey),
-      createWrite(nftMintKey),
-      createWrite(nftTokenAccountKey),
-      createRead(systemProgramKey),
-      createRead(tokenProgramKey),
-      createRead(ixSysvarKey),
-      createRead(eventAuthorityKey),
-      createRead(programKey)
-    );
-
-    final byte[] _data = new byte[8 + Borsh.len(params)];
-    int i = BURN_AND_STAKE_DISCRIMINATOR.write(_data, 0);
-    Borsh.write(params, _data, i);
-
-    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
-  }
-
-  public record BurnAndStakeIxData(Discriminator discriminator, BurnAndStakeParams params) implements Borsh {  
-
-    public static BurnAndStakeIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 8;
-
-    public static BurnAndStakeIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var params = BurnAndStakeParams.read(_data, i);
-      return new BurnAndStakeIxData(discriminator, params);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(params, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
     }
   }
 

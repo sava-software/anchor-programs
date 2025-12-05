@@ -54,13 +54,20 @@ public record VaultState(PublicKey _address,
                          long creationTimestamp,
                          long unallocatedTokensCap,
                          PublicKey allocationAdmin,
+                         long withdrawalPenaltyLamports,
+                         long withdrawalPenaltyBps,
+                         PublicKey firstLossCapitalFarm,
+                         int allowAllocationsInWhitelistedReservesOnly,
+                         int allowInvestInWhitelistedReservesOnly,
+                         byte[] padding4,
                          BigInteger[] padding3) implements Borsh {
 
   public static final int BYTES = 62552;
   public static final int VAULT_ALLOCATION_STRATEGY_LEN = 25;
   public static final int PADDING_1_LEN = 256;
   public static final int NAME_LEN = 40;
-  public static final int PADDING_3_LEN = 242;
+  public static final int PADDING_4_LEN = 14;
+  public static final int PADDING_3_LEN = 238;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int VAULT_ADMIN_AUTHORITY_OFFSET = 8;
@@ -98,7 +105,13 @@ public record VaultState(PublicKey _address,
   public static final int CREATION_TIMESTAMP_OFFSET = 58632;
   public static final int UNALLOCATED_TOKENS_CAP_OFFSET = 58640;
   public static final int ALLOCATION_ADMIN_OFFSET = 58648;
-  public static final int PADDING_3_OFFSET = 58680;
+  public static final int WITHDRAWAL_PENALTY_LAMPORTS_OFFSET = 58680;
+  public static final int WITHDRAWAL_PENALTY_BPS_OFFSET = 58688;
+  public static final int FIRST_LOSS_CAPITAL_FARM_OFFSET = 58696;
+  public static final int ALLOW_ALLOCATIONS_IN_WHITELISTED_RESERVES_ONLY_OFFSET = 58728;
+  public static final int ALLOW_INVEST_IN_WHITELISTED_RESERVES_ONLY_OFFSET = 58729;
+  public static final int PADDING_4_OFFSET = 58730;
+  public static final int PADDING_3_OFFSET = 58744;
 
   public static Filter createVaultAdminAuthorityFilter(final PublicKey vaultAdminAuthority) {
     return Filter.createMemCompFilter(VAULT_ADMIN_AUTHORITY_OFFSET, vaultAdminAuthority);
@@ -272,6 +285,30 @@ public record VaultState(PublicKey _address,
     return Filter.createMemCompFilter(ALLOCATION_ADMIN_OFFSET, allocationAdmin);
   }
 
+  public static Filter createWithdrawalPenaltyLamportsFilter(final long withdrawalPenaltyLamports) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, withdrawalPenaltyLamports);
+    return Filter.createMemCompFilter(WITHDRAWAL_PENALTY_LAMPORTS_OFFSET, _data);
+  }
+
+  public static Filter createWithdrawalPenaltyBpsFilter(final long withdrawalPenaltyBps) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, withdrawalPenaltyBps);
+    return Filter.createMemCompFilter(WITHDRAWAL_PENALTY_BPS_OFFSET, _data);
+  }
+
+  public static Filter createFirstLossCapitalFarmFilter(final PublicKey firstLossCapitalFarm) {
+    return Filter.createMemCompFilter(FIRST_LOSS_CAPITAL_FARM_OFFSET, firstLossCapitalFarm);
+  }
+
+  public static Filter createAllowAllocationsInWhitelistedReservesOnlyFilter(final int allowAllocationsInWhitelistedReservesOnly) {
+    return Filter.createMemCompFilter(ALLOW_ALLOCATIONS_IN_WHITELISTED_RESERVES_ONLY_OFFSET, new byte[]{(byte) allowAllocationsInWhitelistedReservesOnly});
+  }
+
+  public static Filter createAllowInvestInWhitelistedReservesOnlyFilter(final int allowInvestInWhitelistedReservesOnly) {
+    return Filter.createMemCompFilter(ALLOW_INVEST_IN_WHITELISTED_RESERVES_ONLY_OFFSET, new byte[]{(byte) allowInvestInWhitelistedReservesOnly});
+  }
+
   public static VaultState read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -362,7 +399,19 @@ public record VaultState(PublicKey _address,
     i += 8;
     final var allocationAdmin = readPubKey(_data, i);
     i += 32;
-    final var padding3 = new BigInteger[242];
+    final var withdrawalPenaltyLamports = getInt64LE(_data, i);
+    i += 8;
+    final var withdrawalPenaltyBps = getInt64LE(_data, i);
+    i += 8;
+    final var firstLossCapitalFarm = readPubKey(_data, i);
+    i += 32;
+    final var allowAllocationsInWhitelistedReservesOnly = _data[i] & 0xFF;
+    ++i;
+    final var allowInvestInWhitelistedReservesOnly = _data[i] & 0xFF;
+    ++i;
+    final var padding4 = new byte[14];
+    i += Borsh.readArray(padding4, _data, i);
+    final var padding3 = new BigInteger[238];
     Borsh.read128Array(padding3, _data, i);
     return new VaultState(_address,
                           discriminator,
@@ -401,6 +450,12 @@ public record VaultState(PublicKey _address,
                           creationTimestamp,
                           unallocatedTokensCap,
                           allocationAdmin,
+                          withdrawalPenaltyLamports,
+                          withdrawalPenaltyBps,
+                          firstLossCapitalFarm,
+                          allowAllocationsInWhitelistedReservesOnly,
+                          allowInvestInWhitelistedReservesOnly,
+                          padding4,
                           padding3);
   }
 
@@ -474,7 +529,18 @@ public record VaultState(PublicKey _address,
     i += 8;
     allocationAdmin.write(_data, i);
     i += 32;
-    i += Borsh.write128ArrayChecked(padding3, 242, _data, i);
+    putInt64LE(_data, i, withdrawalPenaltyLamports);
+    i += 8;
+    putInt64LE(_data, i, withdrawalPenaltyBps);
+    i += 8;
+    firstLossCapitalFarm.write(_data, i);
+    i += 32;
+    _data[i] = (byte) allowAllocationsInWhitelistedReservesOnly;
+    ++i;
+    _data[i] = (byte) allowInvestInWhitelistedReservesOnly;
+    ++i;
+    i += Borsh.writeArrayChecked(padding4, 14, _data, i);
+    i += Borsh.write128ArrayChecked(padding3, 238, _data, i);
     return i - offset;
   }
 

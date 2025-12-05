@@ -28,7 +28,9 @@ public record DepositRecord(long ts,
                             long totalDepositsAfter,
                             long totalWithdrawsAfter,
                             DepositExplanation explanation,
-                            PublicKey transferUser) implements Borsh {
+                            PublicKey transferUser,
+                            PublicKey signer,
+                            BigInteger userTokenAmountAfter) implements Borsh {
 
   public static DepositRecord read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -66,6 +68,14 @@ public record DepositRecord(long ts,
     final var explanation = DepositExplanation.read(_data, i);
     i += Borsh.len(explanation);
     final var transferUser = _data[i++] == 0 ? null : readPubKey(_data, i);
+    if (transferUser != null) {
+      i += 32;
+    }
+    final var signer = _data[i++] == 0 ? null : readPubKey(_data, i);
+    if (signer != null) {
+      i += 32;
+    }
+    final var userTokenAmountAfter = getInt128LE(_data, i);
     return new DepositRecord(ts,
                              userAuthority,
                              user,
@@ -81,7 +91,9 @@ public record DepositRecord(long ts,
                              totalDepositsAfter,
                              totalWithdrawsAfter,
                              explanation,
-                             transferUser);
+                             transferUser,
+                             signer,
+                             userTokenAmountAfter);
   }
 
   @Override
@@ -116,6 +128,9 @@ public record DepositRecord(long ts,
     i += 8;
     i += Borsh.write(explanation, _data, i);
     i += Borsh.writeOptional(transferUser, _data, i);
+    i += Borsh.writeOptional(signer, _data, i);
+    putInt128LE(_data, i, userTokenAmountAfter);
+    i += 16;
     return i - offset;
   }
 
@@ -136,6 +151,8 @@ public record DepositRecord(long ts,
          + 8
          + 8
          + Borsh.len(explanation)
-         + (transferUser == null ? 1 : (1 + 32));
+         + (transferUser == null ? 1 : (1 + 32))
+         + (signer == null ? 1 : (1 + 32))
+         + 16;
   }
 }

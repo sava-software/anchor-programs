@@ -29,9 +29,11 @@ public record LiquidateLogV3(PublicKey owner,
                              long oracleAccountTime,
                              int oracleAccountType,
                              long oracleAccountPrice,
-                             int oracleAccountPriceExponent) implements Borsh {
+                             int oracleAccountPriceExponent,
+                             long[] padding) implements Borsh {
 
-  public static final int BYTES = 193;
+  public static final int BYTES = 225;
+  public static final int PADDING_LEN = 4;
 
   public static LiquidateLogV3 read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -79,6 +81,9 @@ public record LiquidateLogV3(PublicKey owner,
     final var oracleAccountPrice = getInt64LE(_data, i);
     i += 8;
     final var oracleAccountPriceExponent = getInt32LE(_data, i);
+    i += 4;
+    final var padding = new long[4];
+    Borsh.readArray(padding, _data, i);
     return new LiquidateLogV3(owner,
                               market,
                               entryPrice,
@@ -99,7 +104,8 @@ public record LiquidateLogV3(PublicKey owner,
                               oracleAccountTime,
                               oracleAccountType,
                               oracleAccountPrice,
-                              oracleAccountPriceExponent);
+                              oracleAccountPriceExponent,
+                              padding);
   }
 
   @Override
@@ -147,6 +153,7 @@ public record LiquidateLogV3(PublicKey owner,
     i += 8;
     putInt32LE(_data, i, oracleAccountPriceExponent);
     i += 4;
+    i += Borsh.writeArrayChecked(padding, 4, _data, i);
     return i - offset;
   }
 

@@ -35,11 +35,10 @@ public record TokenStake(PublicKey _address,
                          long rewardTokens,
                          long unclaimedRevenueAmount,
                          BigInteger revenueSnapshot,
-                         long[] padding) implements Borsh {
+                         long claimableRebateUsd) implements Borsh {
 
   public static final int BYTES = 196;
   public static final int WITHDRAW_REQUEST_LEN = 5;
-  public static final int PADDING_LEN = 1;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final int OWNER_OFFSET = 8;
@@ -56,7 +55,7 @@ public record TokenStake(PublicKey _address,
   public static final int REWARD_TOKENS_OFFSET = 156;
   public static final int UNCLAIMED_REVENUE_AMOUNT_OFFSET = 164;
   public static final int REVENUE_SNAPSHOT_OFFSET = 172;
-  public static final int PADDING_OFFSET = 188;
+  public static final int CLAIMABLE_REBATE_USD_OFFSET = 188;
 
   public static Filter createOwnerFilter(final PublicKey owner) {
     return Filter.createMemCompFilter(OWNER_OFFSET, owner);
@@ -126,6 +125,12 @@ public record TokenStake(PublicKey _address,
     return Filter.createMemCompFilter(REVENUE_SNAPSHOT_OFFSET, _data);
   }
 
+  public static Filter createClaimableRebateUsdFilter(final long claimableRebateUsd) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, claimableRebateUsd);
+    return Filter.createMemCompFilter(CLAIMABLE_REBATE_USD_OFFSET, _data);
+  }
+
   public static TokenStake read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -174,8 +179,7 @@ public record TokenStake(PublicKey _address,
     i += 8;
     final var revenueSnapshot = getInt128LE(_data, i);
     i += 16;
-    final var padding = new long[1];
-    Borsh.readArray(padding, _data, i);
+    final var claimableRebateUsd = getInt64LE(_data, i);
     return new TokenStake(_address,
                           discriminator,
                           owner,
@@ -192,7 +196,7 @@ public record TokenStake(PublicKey _address,
                           rewardTokens,
                           unclaimedRevenueAmount,
                           revenueSnapshot,
-                          padding);
+                          claimableRebateUsd);
   }
 
   @Override
@@ -225,7 +229,8 @@ public record TokenStake(PublicKey _address,
     i += 8;
     putInt128LE(_data, i, revenueSnapshot);
     i += 16;
-    i += Borsh.writeArrayChecked(padding, 1, _data, i);
+    putInt64LE(_data, i, claimableRebateUsd);
+    i += 8;
     return i - offset;
   }
 

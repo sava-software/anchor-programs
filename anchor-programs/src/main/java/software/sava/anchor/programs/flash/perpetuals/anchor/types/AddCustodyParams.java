@@ -2,6 +2,9 @@ package software.sava.anchor.programs.flash.perpetuals.anchor.types;
 
 import software.sava.core.borsh.Borsh;
 
+import static software.sava.core.encoding.ByteUtil.getInt64LE;
+import static software.sava.core.encoding.ByteUtil.putInt64LE;
+
 public record AddCustodyParams(boolean isStable,
                                boolean depegAdjustment,
                                boolean isVirtual,
@@ -11,7 +14,10 @@ public record AddCustodyParams(boolean isStable,
                                Permissions permissions,
                                Fees fees,
                                BorrowRateParams borrowRate,
-                               TokenRatios[] ratios) implements Borsh {
+                               TokenRatios[] ratios,
+                               long rewardThreshold,
+                               long minReserveUsd,
+                               long limitPriceBufferBps) implements Borsh {
 
   public static AddCustodyParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -37,6 +43,12 @@ public record AddCustodyParams(boolean isStable,
     final var borrowRate = BorrowRateParams.read(_data, i);
     i += Borsh.len(borrowRate);
     final var ratios = Borsh.readVector(TokenRatios.class, TokenRatios::read, _data, i);
+    i += Borsh.lenVector(ratios);
+    final var rewardThreshold = getInt64LE(_data, i);
+    i += 8;
+    final var minReserveUsd = getInt64LE(_data, i);
+    i += 8;
+    final var limitPriceBufferBps = getInt64LE(_data, i);
     return new AddCustodyParams(isStable,
                                 depegAdjustment,
                                 isVirtual,
@@ -46,7 +58,10 @@ public record AddCustodyParams(boolean isStable,
                                 permissions,
                                 fees,
                                 borrowRate,
-                                ratios);
+                                ratios,
+                                rewardThreshold,
+                                minReserveUsd,
+                                limitPriceBufferBps);
   }
 
   @Override
@@ -66,6 +81,12 @@ public record AddCustodyParams(boolean isStable,
     i += Borsh.write(fees, _data, i);
     i += Borsh.write(borrowRate, _data, i);
     i += Borsh.writeVector(ratios, _data, i);
+    putInt64LE(_data, i, rewardThreshold);
+    i += 8;
+    putInt64LE(_data, i, minReserveUsd);
+    i += 8;
+    putInt64LE(_data, i, limitPriceBufferBps);
+    i += 8;
     return i - offset;
   }
 
@@ -80,6 +101,9 @@ public record AddCustodyParams(boolean isStable,
          + Borsh.len(permissions)
          + Borsh.len(fees)
          + Borsh.len(borrowRate)
-         + Borsh.lenVector(ratios);
+         + Borsh.lenVector(ratios)
+         + 8
+         + 8
+         + 8;
   }
 }

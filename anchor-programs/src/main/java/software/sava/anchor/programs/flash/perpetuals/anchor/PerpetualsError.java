@@ -63,7 +63,8 @@ public sealed interface PerpetualsError extends ProgramError permits
     PerpetualsError.MinReserve,
     PerpetualsError.MaxWithdrawTokenRequest,
     PerpetualsError.InvalidRewardDistribution,
-    PerpetualsError.LpPriceOutOfBounds {
+    PerpetualsError.LpPriceOutOfBounds,
+    PerpetualsError.InsufficientRebateReserves {
 
   static PerpetualsError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -128,6 +129,7 @@ public sealed interface PerpetualsError extends ProgramError permits
       case 6058 -> MaxWithdrawTokenRequest.INSTANCE;
       case 6059 -> InvalidRewardDistribution.INSTANCE;
       case 6060 -> LpPriceOutOfBounds.INSTANCE;
+      case 6061 -> InsufficientRebateReserves.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Perpetuals error code: " + errorCode);
     };
   }
@@ -556,6 +558,13 @@ public sealed interface PerpetualsError extends ProgramError permits
 
     public static final LpPriceOutOfBounds INSTANCE = new LpPriceOutOfBounds(
         6060, "Liquidity Token price is out of bounds"
+    );
+  }
+
+  record InsufficientRebateReserves(int code, String msg) implements PerpetualsError {
+
+    public static final InsufficientRebateReserves INSTANCE = new InsufficientRebateReserves(
+        6061, "Insufficient rebate reserves"
     );
   }
 }

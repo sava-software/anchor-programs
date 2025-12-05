@@ -2857,23 +2857,6 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator UPDATE_USER_FUEL_BONUS_DISCRIMINATOR = toDiscriminator(88, 175, 201, 190, 222, 100, 143, 57);
-
-  public static Instruction updateUserFuelBonus(final AccountMeta invokedDriftProgramMeta,
-                                                final PublicKey stateKey,
-                                                final PublicKey authorityKey,
-                                                final PublicKey userKey,
-                                                final PublicKey userStatsKey) {
-    final var keys = List.of(
-      createRead(stateKey),
-      createReadOnlySigner(authorityKey),
-      createWrite(userKey),
-      createWrite(userStatsKey)
-    );
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_USER_FUEL_BONUS_DISCRIMINATOR);
-  }
-
   public static final Discriminator UPDATE_USER_STATS_REFERRER_STATUS_DISCRIMINATOR = toDiscriminator(174, 154, 72, 42, 191, 148, 145, 205);
 
   public static Instruction updateUserStatsReferrerStatus(final AccountMeta invokedDriftProgramMeta,
@@ -2889,13 +2872,13 @@ public final class DriftProgram {
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, UPDATE_USER_STATS_REFERRER_STATUS_DISCRIMINATOR);
   }
 
-  public static final Discriminator ADMIN_DISABLE_UPDATE_PERP_BID_ASK_TWAP_DISCRIMINATOR = toDiscriminator(17, 164, 82, 45, 183, 86, 191, 199);
+  public static final Discriminator ADMIN_UPDATE_USER_STATS_PAUSED_OPERATIONS_DISCRIMINATOR = toDiscriminator(183, 104, 63, 150, 240, 199, 3, 10);
 
-  public static Instruction adminDisableUpdatePerpBidAskTwap(final AccountMeta invokedDriftProgramMeta,
-                                                             final PublicKey adminKey,
-                                                             final PublicKey stateKey,
-                                                             final PublicKey userStatsKey,
-                                                             final boolean disable) {
+  public static Instruction adminUpdateUserStatsPausedOperations(final AccountMeta invokedDriftProgramMeta,
+                                                                 final PublicKey adminKey,
+                                                                 final PublicKey stateKey,
+                                                                 final PublicKey userStatsKey,
+                                                                 final int pausedOperations) {
     final var keys = List.of(
       createReadOnlySigner(adminKey),
       createRead(stateKey),
@@ -2903,34 +2886,34 @@ public final class DriftProgram {
     );
 
     final byte[] _data = new byte[9];
-    int i = ADMIN_DISABLE_UPDATE_PERP_BID_ASK_TWAP_DISCRIMINATOR.write(_data, 0);
-    _data[i] = (byte) (disable ? 1 : 0);
+    int i = ADMIN_UPDATE_USER_STATS_PAUSED_OPERATIONS_DISCRIMINATOR.write(_data, 0);
+    _data[i] = (byte) pausedOperations;
 
     return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
   }
 
-  public record AdminDisableUpdatePerpBidAskTwapIxData(Discriminator discriminator, boolean disable) implements Borsh {  
+  public record AdminUpdateUserStatsPausedOperationsIxData(Discriminator discriminator, int pausedOperations) implements Borsh {  
 
-    public static AdminDisableUpdatePerpBidAskTwapIxData read(final Instruction instruction) {
+    public static AdminUpdateUserStatsPausedOperationsIxData read(final Instruction instruction) {
       return read(instruction.data(), instruction.offset());
     }
 
     public static final int BYTES = 9;
 
-    public static AdminDisableUpdatePerpBidAskTwapIxData read(final byte[] _data, final int offset) {
+    public static AdminUpdateUserStatsPausedOperationsIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
         return null;
       }
       final var discriminator = createAnchorDiscriminator(_data, offset);
       int i = offset + discriminator.length();
-      final var disable = _data[i] == 1;
-      return new AdminDisableUpdatePerpBidAskTwapIxData(discriminator, disable);
+      final var pausedOperations = _data[i] & 0xFF;
+      return new AdminUpdateUserStatsPausedOperationsIxData(discriminator, pausedOperations);
     }
 
     @Override
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
-      _data[i] = (byte) (disable ? 1 : 0);
+      _data[i] = (byte) pausedOperations;
       ++i;
       return i - offset;
     }
@@ -8880,56 +8863,6 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator UPDATE_LP_COOLDOWN_TIME_DISCRIMINATOR = toDiscriminator(198, 133, 88, 41, 241, 119, 61, 14);
-
-  public static Instruction updateLpCooldownTime(final AccountMeta invokedDriftProgramMeta,
-                                                 final PublicKey adminKey,
-                                                 final PublicKey stateKey,
-                                                 final long lpCooldownTime) {
-    final var keys = List.of(
-      createReadOnlySigner(adminKey),
-      createWrite(stateKey)
-    );
-
-    final byte[] _data = new byte[16];
-    int i = UPDATE_LP_COOLDOWN_TIME_DISCRIMINATOR.write(_data, 0);
-    putInt64LE(_data, i, lpCooldownTime);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record UpdateLpCooldownTimeIxData(Discriminator discriminator, long lpCooldownTime) implements Borsh {  
-
-    public static UpdateLpCooldownTimeIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 16;
-
-    public static UpdateLpCooldownTimeIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var lpCooldownTime = getInt64LE(_data, i);
-      return new UpdateLpCooldownTimeIxData(discriminator, lpCooldownTime);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      putInt64LE(_data, i, lpCooldownTime);
-      i += 8;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
   public static final Discriminator UPDATE_PERP_FEE_STRUCTURE_DISCRIMINATOR = toDiscriminator(23, 178, 111, 203, 73, 22, 140, 75);
 
   public static Instruction updatePerpFeeStructure(final AccountMeta invokedDriftProgramMeta,
@@ -10090,77 +10023,6 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator UPDATE_PERP_MARKET_FUEL_DISCRIMINATOR = toDiscriminator(252, 141, 110, 101, 27, 99, 182, 21);
-
-  public static Instruction updatePerpMarketFuel(final AccountMeta invokedDriftProgramMeta,
-                                                 final PublicKey adminKey,
-                                                 final PublicKey stateKey,
-                                                 final PublicKey perpMarketKey,
-                                                 final OptionalInt fuelBoostTaker,
-                                                 final OptionalInt fuelBoostMaker,
-                                                 final OptionalInt fuelBoostPosition) {
-    final var keys = List.of(
-      createReadOnlySigner(adminKey),
-      createRead(stateKey),
-      createWrite(perpMarketKey)
-    );
-
-    final byte[] _data = new byte[
-        8
-        + (fuelBoostTaker == null || fuelBoostTaker.isEmpty() ? 1 : 2)
-        + (fuelBoostMaker == null || fuelBoostMaker.isEmpty() ? 1 : 2)
-        + (fuelBoostPosition == null || fuelBoostPosition.isEmpty() ? 1 : 2)
-    ];
-    int i = UPDATE_PERP_MARKET_FUEL_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.writeOptionalbyte(fuelBoostTaker, _data, i);
-    i += Borsh.writeOptionalbyte(fuelBoostMaker, _data, i);
-    Borsh.writeOptionalbyte(fuelBoostPosition, _data, i);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record UpdatePerpMarketFuelIxData(Discriminator discriminator,
-                                           OptionalInt fuelBoostTaker,
-                                           OptionalInt fuelBoostMaker,
-                                           OptionalInt fuelBoostPosition) implements Borsh {  
-
-    public static UpdatePerpMarketFuelIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static UpdatePerpMarketFuelIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var fuelBoostTaker = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
-      if (fuelBoostTaker.isPresent()) {
-        ++i;
-      }
-      final var fuelBoostMaker = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
-      if (fuelBoostMaker.isPresent()) {
-        ++i;
-      }
-      final var fuelBoostPosition = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
-      return new UpdatePerpMarketFuelIxData(discriminator, fuelBoostTaker, fuelBoostMaker, fuelBoostPosition);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeOptionalbyte(fuelBoostTaker, _data, i);
-      i += Borsh.writeOptionalbyte(fuelBoostMaker, _data, i);
-      i += Borsh.writeOptionalbyte(fuelBoostPosition, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 8 + (fuelBoostTaker == null || fuelBoostTaker.isEmpty() ? 1 : (1 + 1)) + (fuelBoostMaker == null || fuelBoostMaker.isEmpty() ? 1 : (1 + 1)) + (fuelBoostPosition == null || fuelBoostPosition.isEmpty() ? 1 : (1 + 1));
-    }
-  }
-
   public static final Discriminator UPDATE_PERP_MARKET_PROTECTED_MAKER_PARAMS_DISCRIMINATOR = toDiscriminator(249, 213, 115, 34, 253, 239, 75, 173);
 
   public static Instruction updatePerpMarketProtectedMakerParams(final AccountMeta invokedDriftProgramMeta,
@@ -10394,204 +10256,6 @@ public final class DriftProgram {
     }
   }
 
-  public static final Discriminator UPDATE_SPOT_MARKET_FUEL_DISCRIMINATOR = toDiscriminator(226, 253, 76, 71, 17, 2, 171, 169);
-
-  public static Instruction updateSpotMarketFuel(final AccountMeta invokedDriftProgramMeta,
-                                                 final PublicKey adminKey,
-                                                 final PublicKey stateKey,
-                                                 final PublicKey spotMarketKey,
-                                                 final OptionalInt fuelBoostDeposits,
-                                                 final OptionalInt fuelBoostBorrows,
-                                                 final OptionalInt fuelBoostTaker,
-                                                 final OptionalInt fuelBoostMaker,
-                                                 final OptionalInt fuelBoostInsurance) {
-    final var keys = List.of(
-      createReadOnlySigner(adminKey),
-      createRead(stateKey),
-      createWrite(spotMarketKey)
-    );
-
-    final byte[] _data = new byte[
-        8
-        + (fuelBoostDeposits == null || fuelBoostDeposits.isEmpty() ? 1 : 2)
-        + (fuelBoostBorrows == null || fuelBoostBorrows.isEmpty() ? 1 : 2)
-        + (fuelBoostTaker == null || fuelBoostTaker.isEmpty() ? 1 : 2)
-        + (fuelBoostMaker == null || fuelBoostMaker.isEmpty() ? 1 : 2)
-        + (fuelBoostInsurance == null || fuelBoostInsurance.isEmpty() ? 1 : 2)
-    ];
-    int i = UPDATE_SPOT_MARKET_FUEL_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.writeOptionalbyte(fuelBoostDeposits, _data, i);
-    i += Borsh.writeOptionalbyte(fuelBoostBorrows, _data, i);
-    i += Borsh.writeOptionalbyte(fuelBoostTaker, _data, i);
-    i += Borsh.writeOptionalbyte(fuelBoostMaker, _data, i);
-    Borsh.writeOptionalbyte(fuelBoostInsurance, _data, i);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record UpdateSpotMarketFuelIxData(Discriminator discriminator,
-                                           OptionalInt fuelBoostDeposits,
-                                           OptionalInt fuelBoostBorrows,
-                                           OptionalInt fuelBoostTaker,
-                                           OptionalInt fuelBoostMaker,
-                                           OptionalInt fuelBoostInsurance) implements Borsh {  
-
-    public static UpdateSpotMarketFuelIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static UpdateSpotMarketFuelIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var fuelBoostDeposits = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
-      if (fuelBoostDeposits.isPresent()) {
-        ++i;
-      }
-      final var fuelBoostBorrows = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
-      if (fuelBoostBorrows.isPresent()) {
-        ++i;
-      }
-      final var fuelBoostTaker = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
-      if (fuelBoostTaker.isPresent()) {
-        ++i;
-      }
-      final var fuelBoostMaker = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
-      if (fuelBoostMaker.isPresent()) {
-        ++i;
-      }
-      final var fuelBoostInsurance = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(_data[i] & 0xFF);
-      return new UpdateSpotMarketFuelIxData(discriminator,
-                                            fuelBoostDeposits,
-                                            fuelBoostBorrows,
-                                            fuelBoostTaker,
-                                            fuelBoostMaker,
-                                            fuelBoostInsurance);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeOptionalbyte(fuelBoostDeposits, _data, i);
-      i += Borsh.writeOptionalbyte(fuelBoostBorrows, _data, i);
-      i += Borsh.writeOptionalbyte(fuelBoostTaker, _data, i);
-      i += Borsh.writeOptionalbyte(fuelBoostMaker, _data, i);
-      i += Borsh.writeOptionalbyte(fuelBoostInsurance, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 8 + (fuelBoostDeposits == null || fuelBoostDeposits.isEmpty() ? 1 : (1 + 1))
-           + (fuelBoostBorrows == null || fuelBoostBorrows.isEmpty() ? 1 : (1 + 1))
-           + (fuelBoostTaker == null || fuelBoostTaker.isEmpty() ? 1 : (1 + 1))
-           + (fuelBoostMaker == null || fuelBoostMaker.isEmpty() ? 1 : (1 + 1))
-           + (fuelBoostInsurance == null || fuelBoostInsurance.isEmpty() ? 1 : (1 + 1));
-    }
-  }
-
-  public static final Discriminator INIT_USER_FUEL_DISCRIMINATOR = toDiscriminator(132, 191, 228, 141, 201, 138, 60, 48);
-
-  public static Instruction initUserFuel(final AccountMeta invokedDriftProgramMeta,
-                                         final PublicKey adminKey,
-                                         final PublicKey stateKey,
-                                         final PublicKey userKey,
-                                         final PublicKey userStatsKey,
-                                         final OptionalInt fuelBoostDeposits,
-                                         final OptionalInt fuelBoostBorrows,
-                                         final OptionalInt fuelBoostTaker,
-                                         final OptionalInt fuelBoostMaker,
-                                         final OptionalInt fuelBoostInsurance) {
-    final var keys = List.of(
-      createReadOnlySigner(adminKey),
-      createRead(stateKey),
-      createWrite(userKey),
-      createWrite(userStatsKey)
-    );
-
-    final byte[] _data = new byte[
-        8
-        + (fuelBoostDeposits == null || fuelBoostDeposits.isEmpty() ? 1 : 5)
-        + (fuelBoostBorrows == null || fuelBoostBorrows.isEmpty() ? 1 : 5)
-        + (fuelBoostTaker == null || fuelBoostTaker.isEmpty() ? 1 : 5)
-        + (fuelBoostMaker == null || fuelBoostMaker.isEmpty() ? 1 : 5)
-        + (fuelBoostInsurance == null || fuelBoostInsurance.isEmpty() ? 1 : 5)
-    ];
-    int i = INIT_USER_FUEL_DISCRIMINATOR.write(_data, 0);
-    i += Borsh.writeOptional(fuelBoostDeposits, _data, i);
-    i += Borsh.writeOptional(fuelBoostBorrows, _data, i);
-    i += Borsh.writeOptional(fuelBoostTaker, _data, i);
-    i += Borsh.writeOptional(fuelBoostMaker, _data, i);
-    Borsh.writeOptional(fuelBoostInsurance, _data, i);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record InitUserFuelIxData(Discriminator discriminator,
-                                   OptionalInt fuelBoostDeposits,
-                                   OptionalInt fuelBoostBorrows,
-                                   OptionalInt fuelBoostTaker,
-                                   OptionalInt fuelBoostMaker,
-                                   OptionalInt fuelBoostInsurance) implements Borsh {  
-
-    public static InitUserFuelIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static InitUserFuelIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var fuelBoostDeposits = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
-      if (fuelBoostDeposits.isPresent()) {
-        i += 4;
-      }
-      final var fuelBoostBorrows = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
-      if (fuelBoostBorrows.isPresent()) {
-        i += 4;
-      }
-      final var fuelBoostTaker = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
-      if (fuelBoostTaker.isPresent()) {
-        i += 4;
-      }
-      final var fuelBoostMaker = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
-      if (fuelBoostMaker.isPresent()) {
-        i += 4;
-      }
-      final var fuelBoostInsurance = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
-      return new InitUserFuelIxData(discriminator,
-                                    fuelBoostDeposits,
-                                    fuelBoostBorrows,
-                                    fuelBoostTaker,
-                                    fuelBoostMaker,
-                                    fuelBoostInsurance);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.writeOptional(fuelBoostDeposits, _data, i);
-      i += Borsh.writeOptional(fuelBoostBorrows, _data, i);
-      i += Borsh.writeOptional(fuelBoostTaker, _data, i);
-      i += Borsh.writeOptional(fuelBoostMaker, _data, i);
-      i += Borsh.writeOptional(fuelBoostInsurance, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return 8 + (fuelBoostDeposits == null || fuelBoostDeposits.isEmpty() ? 1 : (1 + 4))
-           + (fuelBoostBorrows == null || fuelBoostBorrows.isEmpty() ? 1 : (1 + 4))
-           + (fuelBoostTaker == null || fuelBoostTaker.isEmpty() ? 1 : (1 + 4))
-           + (fuelBoostMaker == null || fuelBoostMaker.isEmpty() ? 1 : (1 + 4))
-           + (fuelBoostInsurance == null || fuelBoostInsurance.isEmpty() ? 1 : (1 + 4));
-    }
-  }
-
   public static final Discriminator UPDATE_ADMIN_DISCRIMINATOR = toDiscriminator(161, 176, 40, 213, 60, 184, 179, 228);
 
   public static Instruction updateAdmin(final AccountMeta invokedDriftProgramMeta,
@@ -10632,56 +10296,6 @@ public final class DriftProgram {
     public int write(final byte[] _data, final int offset) {
       int i = offset + discriminator.write(_data, offset);
       admin.write(_data, i);
-      i += 32;
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
-  public static final Discriminator UPDATE_WHITELIST_MINT_DISCRIMINATOR = toDiscriminator(161, 15, 162, 19, 148, 120, 144, 151);
-
-  public static Instruction updateWhitelistMint(final AccountMeta invokedDriftProgramMeta,
-                                                final PublicKey adminKey,
-                                                final PublicKey stateKey,
-                                                final PublicKey whitelistMint) {
-    final var keys = List.of(
-      createReadOnlySigner(adminKey),
-      createWrite(stateKey)
-    );
-
-    final byte[] _data = new byte[40];
-    int i = UPDATE_WHITELIST_MINT_DISCRIMINATOR.write(_data, 0);
-    whitelistMint.write(_data, i);
-
-    return Instruction.createInstruction(invokedDriftProgramMeta, keys, _data);
-  }
-
-  public record UpdateWhitelistMintIxData(Discriminator discriminator, PublicKey whitelistMint) implements Borsh {  
-
-    public static UpdateWhitelistMintIxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 40;
-
-    public static UpdateWhitelistMintIxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var whitelistMint = readPubKey(_data, i);
-      return new UpdateWhitelistMintIxData(discriminator, whitelistMint);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      whitelistMint.write(_data, i);
       i += 32;
       return i - offset;
     }

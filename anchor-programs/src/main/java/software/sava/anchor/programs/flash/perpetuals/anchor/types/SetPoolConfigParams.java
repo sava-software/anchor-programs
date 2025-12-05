@@ -14,9 +14,10 @@ public record SetPoolConfigParams(Permissions permissions,
                                   int vpVolumeFactor,
                                   long[] stakingFeeBoostBps,
                                   long minLpPriceUsd,
-                                  long maxLpPriceUsd) implements Borsh {
+                                  long maxLpPriceUsd,
+                                  long thresholdUsd) implements Borsh {
 
-  public static final int BYTES = 126;
+  public static final int BYTES = 134;
   public static final int STAKING_FEE_BOOST_BPS_LEN = 6;
 
   public static SetPoolConfigParams read(final byte[] _data, final int offset) {
@@ -39,6 +40,8 @@ public record SetPoolConfigParams(Permissions permissions,
     final var minLpPriceUsd = getInt64LE(_data, i);
     i += 8;
     final var maxLpPriceUsd = getInt64LE(_data, i);
+    i += 8;
+    final var thresholdUsd = getInt64LE(_data, i);
     return new SetPoolConfigParams(permissions,
                                    oracleAuthority,
                                    maxAumUsd,
@@ -46,7 +49,8 @@ public record SetPoolConfigParams(Permissions permissions,
                                    vpVolumeFactor,
                                    stakingFeeBoostBps,
                                    minLpPriceUsd,
-                                   maxLpPriceUsd);
+                                   maxLpPriceUsd,
+                                   thresholdUsd);
   }
 
   @Override
@@ -65,6 +69,8 @@ public record SetPoolConfigParams(Permissions permissions,
     putInt64LE(_data, i, minLpPriceUsd);
     i += 8;
     putInt64LE(_data, i, maxLpPriceUsd);
+    i += 8;
+    putInt64LE(_data, i, thresholdUsd);
     i += 8;
     return i - offset;
   }

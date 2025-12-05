@@ -122,7 +122,11 @@ public sealed interface Swap extends RustEnum permits
   Swap.WhaleStreet,
   Swap.DynamicV1,
   Swap.PumpWrappedBuyV4,
-  Swap.PumpWrappedSellV4 {
+  Swap.PumpWrappedSellV4,
+  Swap.CarrotIssue,
+  Swap.CarrotRedeem,
+  Swap.Manifest,
+  Swap.BisonFi {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -242,6 +246,10 @@ public sealed interface Swap extends RustEnum permits
       case 111 -> DynamicV1.read(_data, i);
       case 112 -> PumpWrappedBuyV4.INSTANCE;
       case 113 -> PumpWrappedSellV4.INSTANCE;
+      case 114 -> CarrotIssue.INSTANCE;
+      case 115 -> CarrotRedeem.INSTANCE;
+      case 116 -> Manifest.read(_data, i);
+      case 117 -> BisonFi.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1771,6 +1779,53 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 113;
+    }
+  }
+
+  record CarrotIssue() implements EnumNone, Swap {
+
+    public static final CarrotIssue INSTANCE = new CarrotIssue();
+
+    @Override
+    public int ordinal() {
+      return 114;
+    }
+  }
+
+  record CarrotRedeem() implements EnumNone, Swap {
+
+    public static final CarrotRedeem INSTANCE = new CarrotRedeem();
+
+    @Override
+    public int ordinal() {
+      return 115;
+    }
+  }
+
+  record Manifest(Side val) implements BorshEnum, Swap {
+
+    public static Manifest read(final byte[] _data, final int offset) {
+      return new Manifest(Side.read(_data, offset));
+    }
+
+    @Override
+    public int ordinal() {
+      return 116;
+    }
+  }
+
+  record BisonFi(boolean val) implements EnumBool, Swap {
+
+    public static final BisonFi TRUE = new BisonFi(true);
+    public static final BisonFi FALSE = new BisonFi(false);
+
+    public static BisonFi read(final byte[] _data, int i) {
+      return _data[i] == 1 ? BisonFi.TRUE : BisonFi.FALSE;
+    }
+
+    @Override
+    public int ordinal() {
+      return 117;
     }
   }
 }

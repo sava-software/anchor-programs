@@ -257,6 +257,15 @@ public interface KaminoAccounts {
     return invokedKVaultsProgram().publicKey();
   }
 
+  static ProgramDerivedAddress kVaultGlobalConfig(final PublicKey programId) {
+
+    return PublicKey.findProgramAddress(List.of("global_config".getBytes(US_ASCII)), programId);
+  }
+
+  default ProgramDerivedAddress kVaultGlobalConfig() {
+    return kVaultGlobalConfig(kVaultsProgram());
+  }
+
   PublicKey kVaultsEventAuthority();
 
   default ProgramDerivedAddress cTokenVault(final PublicKey vaultKey, final PublicKey reserveKey) {

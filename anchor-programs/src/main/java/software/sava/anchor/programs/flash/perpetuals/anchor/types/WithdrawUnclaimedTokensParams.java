@@ -2,11 +2,11 @@ package software.sava.anchor.programs.flash.perpetuals.anchor.types;
 
 import software.sava.core.borsh.Borsh;
 
-public record BurnAndStakeParams() implements Borsh {
+public record WithdrawUnclaimedTokensParams() implements Borsh {
 
-  private static final BurnAndStakeParams INSTANCE = new BurnAndStakeParams();
+  private static final WithdrawUnclaimedTokensParams INSTANCE = new WithdrawUnclaimedTokensParams();
 
-  public static BurnAndStakeParams read(final byte[] _data, final int offset) {
+  public static WithdrawUnclaimedTokensParams read(final byte[] _data, final int offset) {
     return INSTANCE;
   }
 

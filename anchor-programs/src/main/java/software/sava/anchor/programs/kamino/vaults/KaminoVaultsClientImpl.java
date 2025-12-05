@@ -12,6 +12,7 @@ public class KaminoVaultsClientImpl implements KaminoVaultsClient {
   private final NativeProgramAccountClient nativeProgramAccountClient;
   private final SolanaAccounts solanaAccounts;
   private final KaminoAccounts kaminoAccounts;
+  private final PublicKey withdrawFromAvailableGlobalConfigKey;
   private final PublicKey owner;
   private final PublicKey feePayer;
 
@@ -22,6 +23,7 @@ public class KaminoVaultsClientImpl implements KaminoVaultsClient {
     this.kaminoAccounts = kaminoAccounts;
     this.owner = nativeProgramAccountClient.ownerPublicKey();
     this.feePayer = nativeProgramAccountClient.feePayer().publicKey();
+    this.withdrawFromAvailableGlobalConfigKey = kaminoAccounts.kVaultGlobalConfig().publicKey();
   }
 
   @Override
@@ -101,6 +103,7 @@ public class KaminoVaultsClientImpl implements KaminoVaultsClient {
         kaminoAccounts.invokedKVaultsProgram(),
         owner,
         withdrawFromAvailableVaultStateKey,
+        withdrawFromAvailableGlobalConfigKey,
         withdrawFromAvailableTokenVaultKey,
         withdrawFromAvailableBaseVaultAuthorityKey,
         withdrawFromAvailableUserTokenAtaKey,
