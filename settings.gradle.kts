@@ -12,7 +12,7 @@ pluginManagement {
 }
 
 plugins {
-  id("software.sava.build")  version "0.2.5"
+  id("software.sava.build")  version "0.3.0"
 }
 
 javaModules {
