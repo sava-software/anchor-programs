@@ -1,7 +1,13 @@
-# Anchor Programs [![Gradle Check](https://github.com/sava-software/anchor-programs/actions/workflows/build.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/build.yml) [![Publish Release](https://github.com/sava-software/anchor-programs/actions/workflows/publish.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/publish.yml) 
+# Anchor Programs [![Gradle Check](https://github.com/sava-software/anchor-programs/actions/workflows/build.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/build.yml) [![Publish Release](https://github.com/sava-software/anchor-programs/actions/workflows/publish.yml/badge.svg)](https://github.com/sava-software/anchor-programs/actions/workflows/publish.yml)
+
+Note: Active development of this project has moved
+to [sava-software/idl-clients](https://github.com/sava-software/idl-clients).  `idl-clients` uses a private source
+generator which supports both Anchor and Codama IDL formats, if interested in acquiring a license to use the generator
+binary please reach out to hello@sava.software.
 
 Generated programs can be found in
-the [root source package directory](anchor-programs/src/main/java/software/sava/anchor-programs/programs). For each project generated
+the [root source package directory](anchor-programs/src/main/java/software/sava/anchor-programs/programs). For each
+project generated
 code is under the `anchor` package, and manually written code is directly under the project package.
 
 Code is generated using [sava-software/anchor-src-gen](https://github.com/sava-software/anchor-src-gen), see that
