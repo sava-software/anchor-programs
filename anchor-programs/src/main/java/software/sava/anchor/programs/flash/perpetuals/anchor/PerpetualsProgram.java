@@ -20,6 +20,7 @@ import software.sava.anchor.programs.flash.perpetuals.anchor.types.CollectStakeR
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.CollectTokenRewardParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.CompoundFeesParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.CreateReferralParams;
+import software.sava.anchor.programs.flash.perpetuals.anchor.types.CreateWhitelistParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.DecreaseSizeParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.DepositStakeParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.DepositTokenStakeParams;
@@ -88,6 +89,7 @@ import software.sava.anchor.programs.flash.perpetuals.anchor.types.SetTestTimePa
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.SetTokenRewardParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.SetTokenStakeLevelParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.SetTokenVaultConfigParams;
+import software.sava.anchor.programs.flash.perpetuals.anchor.types.SetWhitelistConfigParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.SwapAndAddCollateralParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.SwapAndOpenParams;
 import software.sava.anchor.programs.flash.perpetuals.anchor.types.SwapFeeInternalParams;
@@ -2371,6 +2373,116 @@ public final class PerpetualsProgram {
       int i = offset + discriminator.length();
       final var params = SetFeeShareParams.read(_data, i);
       return new SetFeeShareIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator CREATE_WHITELIST_DISCRIMINATOR = toDiscriminator(89, 182, 231, 206, 68, 173, 60, 6);
+
+  public static Instruction createWhitelist(final AccountMeta invokedPerpetualsProgramMeta,
+                                            final PublicKey adminKey,
+                                            final PublicKey multisigKey,
+                                            final PublicKey ownerKey,
+                                            final PublicKey whitelistKey,
+                                            final PublicKey systemProgramKey,
+                                            final CreateWhitelistParams params) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(multisigKey),
+      createRead(ownerKey),
+      createWrite(whitelistKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = CREATE_WHITELIST_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
+  }
+
+  public record CreateWhitelistIxData(Discriminator discriminator, CreateWhitelistParams params) implements Borsh {  
+
+    public static CreateWhitelistIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 43;
+
+    public static CreateWhitelistIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = CreateWhitelistParams.read(_data, i);
+      return new CreateWhitelistIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator SET_WHITELIST_CONFIG_DISCRIMINATOR = toDiscriminator(73, 64, 17, 134, 219, 71, 103, 83);
+
+  public static Instruction setWhitelistConfig(final AccountMeta invokedPerpetualsProgramMeta,
+                                               final PublicKey adminKey,
+                                               final PublicKey multisigKey,
+                                               final PublicKey ownerKey,
+                                               final PublicKey whitelistKey,
+                                               final PublicKey systemProgramKey,
+                                               final SetWhitelistConfigParams params) {
+    final var keys = List.of(
+      createWritableSigner(adminKey),
+      createWrite(multisigKey),
+      createRead(ownerKey),
+      createWrite(whitelistKey),
+      createRead(systemProgramKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = SET_WHITELIST_CONFIG_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedPerpetualsProgramMeta, keys, _data);
+  }
+
+  public record SetWhitelistConfigIxData(Discriminator discriminator, SetWhitelistConfigParams params) implements Borsh {  
+
+    public static SetWhitelistConfigIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 43;
+
+    public static SetWhitelistConfigIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = SetWhitelistConfigParams.read(_data, i);
+      return new SetWhitelistConfigIxData(discriminator, params);
     }
 
     @Override
@@ -6682,7 +6794,7 @@ public final class PerpetualsProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 17;
+    public static final int BYTES = 16;
 
     public static GetSwapAmountAndFeesIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {

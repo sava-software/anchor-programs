@@ -27,28 +27,6 @@ public final class GlamProtocolPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress inputVaultAtaPDA(final PublicKey program,
-                                                       final PublicKey glamVaultAccount,
-                                                       final PublicKey inputTokenProgramAccount,
-                                                       final PublicKey inputMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      glamVaultAccount.toByteArray(),
-      inputTokenProgramAccount.toByteArray(),
-      inputMintAccount.toByteArray()
-    ), program);
-  }
-
-  public static ProgramDerivedAddress outputVaultAtaPDA(final PublicKey program,
-                                                        final PublicKey glamVaultAccount,
-                                                        final PublicKey outputTokenProgramAccount,
-                                                        final PublicKey outputMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      glamVaultAccount.toByteArray(),
-      outputTokenProgramAccount.toByteArray(),
-      outputMintAccount.toByteArray()
-    ), program);
-  }
-
   private GlamProtocolPDAs() {
   }
 }

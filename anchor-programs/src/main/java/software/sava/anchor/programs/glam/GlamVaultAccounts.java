@@ -24,7 +24,6 @@ public interface GlamVaultAccounts {
                                           final PublicKey glamPublicKey) {
     final var protocolProgram = glamAccounts.protocolProgram();
     final var vaultPDA = GlamProtocolPDAs.glamVaultPDA(protocolProgram, glamPublicKey);
-    final var metadataPDA = software.sava.anchor.programs.glam.anchor.GlamProtocolPDAs.metadataPDA(glamAccounts.program(), glamPublicKey);
     return new GlamVaultAccountsRecord(
         glamAccounts,
         AccountMeta.createReadOnlySigner(feePayer),
@@ -33,10 +32,7 @@ public interface GlamVaultAccounts {
         AccountMeta.createWrite(glamPublicKey),
         vaultPDA,
         AccountMeta.createRead(vaultPDA.publicKey()),
-        AccountMeta.createWrite(vaultPDA.publicKey()),
-        metadataPDA,
-        AccountMeta.createRead(metadataPDA.publicKey()),
-        AccountMeta.createWrite(metadataPDA.publicKey())
+        AccountMeta.createWrite(vaultPDA.publicKey())
     );
   }
 
@@ -103,9 +99,6 @@ public interface GlamVaultAccounts {
   AccountMeta writeVault();
 
   AccountMeta readVault();
-
-  @Deprecated
-  ProgramDerivedAddress metadataPDA();
 
   ProgramDerivedAddress mintPDA(final int id);
 }

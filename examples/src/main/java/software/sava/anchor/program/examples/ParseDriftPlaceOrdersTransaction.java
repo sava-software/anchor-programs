@@ -11,8 +11,6 @@ import software.sava.core.tx.Instruction;
 import software.sava.core.tx.TransactionSkeleton;
 import software.sava.rpc.json.http.client.SolanaRpcClient;
 import software.sava.rpc.json.http.response.AccountInfo;
-import software.sava.solana.web2.jupiter.client.http.JupiterClient;
-import software.sava.solana.web2.jupiter.client.http.response.TokenContext;
 
 import java.net.http.HttpClient;
 import java.util.Arrays;
@@ -26,9 +24,6 @@ public final class ParseDriftPlaceOrdersTransaction {
 
   public static void main(final String[] args) {
     try (final var httpClient = HttpClient.newHttpClient()) {
-      // Fetch token contexts to make use of convenient scaled value conversions.
-      final var jupiterClient = JupiterClient.createClient(httpClient);
-      final var verifiedTokensFuture = jupiterClient.tokensForTag("verified");
 
       final var perpMarketsFuture = DynamicPerpMarkets.fetchMarkets(httpClient);
       final var spotMarketsFuture = DynamicSpotMarkets.fetchMarkets(httpClient);
@@ -85,33 +80,22 @@ public final class ParseDriftPlaceOrdersTransaction {
       final OrderParams orderParams = orderParamsArray[0];
 
       final MarketConfig marketConfig;
-      final TokenContext baseTokenContext;
       final var spotMarketConfigs = spotMarketsFuture.join().mainNet();
-      final var verifiedTokens = verifiedTokensFuture.join();
       if (orderParams.marketType() == MarketType.Perp) {
         final var perpMarketConfigs = perpMarketsFuture.join().mainNet();
-        final var perpMarketConfig = perpMarketConfigs.marketConfig(orderParams.marketIndex());
-        final var spotConfig = spotMarketConfigs.forAsset(perpMarketConfig.baseAssetSymbol());
-        baseTokenContext = verifiedTokens.get(spotConfig.mint());
-        marketConfig = perpMarketConfig;
+        marketConfig = perpMarketConfigs.marketConfig(orderParams.marketIndex());
       } else {
-        final var spotConfig = spotMarketConfigs.marketConfig(orderParams.marketIndex());
-        baseTokenContext = verifiedTokens.get(spotConfig.mint());
-        marketConfig = spotConfig;
+        marketConfig = spotMarketConfigs.marketConfig(orderParams.marketIndex());
       }
 
-      // Assume all Drift markets are priced in USDC
-      final var usdcTokenMint = spotMarketConfigs.forAsset("USDC").mint();
-      final var usdcTokenContext = verifiedTokens.get(usdcTokenMint);
-
-      // Limit Long 0.1 @ 111 on SOL-PERP [reduceOnly=false] [postOnly=MustPostOnly]
+      // Limit Long [amount] @ [price] on SOL-PERP [reduceOnly=false] [postOnly=MustPostOnly]
       System.out.format("""
-              %s %s %s @ %s on %s [reduceOnly=%b] [postOnly=%s]
+              %s %s %d @ %d on %s [reduceOnly=%b] [postOnly=%s]
               """,
           orderParams.orderType(),
           orderParams.direction(),
-          baseTokenContext.toDecimal(orderParams.baseAssetAmount()).toPlainString(),
-          usdcTokenContext.toDecimal(orderParams.price()).toPlainString(),
+          orderParams.baseAssetAmount(),
+          orderParams.price(),
           marketConfig.symbol(),
           orderParams.reduceOnly(),
           orderParams.postOnly()

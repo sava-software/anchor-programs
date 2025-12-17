@@ -37,7 +37,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
     GlamProtocolError.SlippageLimitExceeded,
     GlamProtocolError.InvalidPlatformFeeForSwap,
     GlamProtocolError.InvalidTokenAccount,
-    GlamProtocolError.InvalidVoteSide,
+    GlamProtocolError.InvalidSwapAmount,
     GlamProtocolError.MultipleStakeAccountsDisallowed,
     GlamProtocolError.InvalidAssetPrice,
     GlamProtocolError.InvalidStableCoinPriceForSubscribe,
@@ -96,7 +96,7 @@ public sealed interface GlamProtocolError extends ProgramError permits
       case 50003 -> SlippageLimitExceeded.INSTANCE;
       case 50004 -> InvalidPlatformFeeForSwap.INSTANCE;
       case 50005 -> InvalidTokenAccount.INSTANCE;
-      case 50006 -> InvalidVoteSide.INSTANCE;
+      case 50006 -> InvalidSwapAmount.INSTANCE;
       case 50007 -> MultipleStakeAccountsDisallowed.INSTANCE;
       case 51000 -> InvalidAssetPrice.INSTANCE;
       case 51001 -> InvalidStableCoinPriceForSubscribe.INSTANCE;
@@ -360,10 +360,10 @@ public sealed interface GlamProtocolError extends ProgramError permits
     );
   }
 
-  record InvalidVoteSide(int code, String msg) implements GlamProtocolError {
+  record InvalidSwapAmount(int code, String msg) implements GlamProtocolError {
 
-    public static final InvalidVoteSide INSTANCE = new InvalidVoteSide(
-        50006, "Invalid vote side"
+    public static final InvalidSwapAmount INSTANCE = new InvalidSwapAmount(
+        50006, "Invalid swap amount"
     );
   }
 

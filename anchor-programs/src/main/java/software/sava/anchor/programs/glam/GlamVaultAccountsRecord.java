@@ -11,10 +11,7 @@ public record GlamVaultAccountsRecord(GlamAccounts glamAccounts,
                                       AccountMeta writeGlamState,
                                       ProgramDerivedAddress vaultPDA,
                                       AccountMeta readVault,
-                                      AccountMeta writeVault,
-                                      ProgramDerivedAddress metadataPDA,
-                                      AccountMeta readMetadata,
-                                      AccountMeta writeMetadata) implements GlamVaultAccounts {
+                                      AccountMeta writeVault) implements GlamVaultAccounts {
 
   @Override
   public PublicKey feePayer() {

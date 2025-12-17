@@ -7,7 +7,8 @@ import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public sealed interface CandidateSwap extends RustEnum permits
   CandidateSwap.HumidiFi,
-  CandidateSwap.TesseraV {
+  CandidateSwap.TesseraV,
+  CandidateSwap.HumidiFiV2 {
 
   static CandidateSwap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -15,6 +16,7 @@ public sealed interface CandidateSwap extends RustEnum permits
     return switch (ordinal) {
       case 0 -> HumidiFi.read(_data, i);
       case 1 -> TesseraV.read(_data, i);
+      case 2 -> HumidiFiV2.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [CandidateSwap]", ordinal
       ));
@@ -66,6 +68,42 @@ public sealed interface CandidateSwap extends RustEnum permits
     @Override
     public int ordinal() {
       return 1;
+    }
+  }
+
+  record HumidiFiV2(long swapId, boolean isBaseToQuote) implements CandidateSwap {
+
+    public static final int BYTES = 9;
+
+    public static HumidiFiV2 read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      int i = offset;
+      final var swapId = getInt64LE(_data, i);
+      i += 8;
+      final var isBaseToQuote = _data[i] == 1;
+      return new HumidiFiV2(swapId, isBaseToQuote);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      putInt64LE(_data, i, swapId);
+      i += 8;
+      _data[i] = (byte) (isBaseToQuote ? 1 : 0);
+      ++i;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+
+    @Override
+    public int ordinal() {
+      return 2;
     }
   }
 }

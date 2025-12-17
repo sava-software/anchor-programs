@@ -48,7 +48,6 @@ module software.sava.anchor_programs {
   exports software.sava.anchor.programs.jupiter.swap.anchor;
   exports software.sava.anchor.programs.jupiter.voter.anchor.types;
   exports software.sava.anchor.programs.jupiter.voter.anchor;
-  exports software.sava.anchor.programs.jupiter.voter;
   exports software.sava.anchor.programs.jupiter;
   exports software.sava.anchor.programs.kamino.farms.anchor.types;
   exports software.sava.anchor.programs.kamino.farms.anchor;
@@ -107,7 +106,6 @@ module software.sava.anchor_programs {
   requires transitive software.sava.core;
   requires transitive software.sava.rpc;
   requires transitive software.sava.solana_programs;
-  requires transitive software.sava.solana_web2;
   requires transitive systems.comodal.json_iterator;
   requires transitive systems.glam.ix_proxy;
 }

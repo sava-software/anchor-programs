@@ -11,7 +11,6 @@ import systems.comodal.jsoniter.JsonIterator;
 import java.util.*;
 
 import static software.sava.rpc.json.PublicKeyEncoding.parseBase58Encoded;
-import static software.sava.solana.web2.jupiter.client.http.response.JupiterSwapInstructions.parseInstruction;
 
 public interface GlamJupiterProgramClient {
 
@@ -43,15 +42,6 @@ public interface GlamJupiterProgramClient {
         Arrays.asList(accounts),
         swapIx.data()
     );
-  }
-
-  static Instruction parseSwapInstruction(final JsonIterator jsonResponseBody) {
-    if (jsonResponseBody.skipUntil("swapInstruction") == null) {
-      if (jsonResponseBody.reset(0).skipUntil("swapInstruction") == null) {
-        return null;
-      }
-    }
-    return parseInstruction(jsonResponseBody);
   }
 
   static Collection<PublicKey> parseLookupTables(final JsonIterator jsonResponseBody) {

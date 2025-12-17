@@ -435,34 +435,20 @@ public final class GlamProtocolProgram {
   public static final Discriminator JUPITER_SWAP_DISCRIMINATOR = toDiscriminator(116, 207, 0, 196, 252, 120, 243, 18);
 
   public static Instruction jupiterSwap(final AccountMeta invokedGlamProtocolProgramMeta,
-                                        final SolanaAccounts solanaAccounts,
                                         final PublicKey glamStateKey,
                                         final PublicKey glamVaultKey,
                                         final PublicKey glamSignerKey,
                                         final PublicKey cpiProgramKey,
-                                        final PublicKey inputVaultAtaKey,
-                                        final PublicKey outputVaultAtaKey,
-                                        final PublicKey inputMintKey,
-                                        final PublicKey outputMintKey,
                                         final PublicKey inputStakePoolKey,
                                         final PublicKey outputStakePoolKey,
-                                        final PublicKey inputTokenProgramKey,
-                                        final PublicKey outputTokenProgramKey,
                                         final byte[] data) {
     final var keys = List.of(
       createWrite(glamStateKey),
       createWrite(glamVaultKey),
       createWritableSigner(glamSignerKey),
       createRead(cpiProgramKey),
-      createWrite(inputVaultAtaKey),
-      createWrite(outputVaultAtaKey),
-      createRead(inputMintKey),
-      createRead(outputMintKey),
       createRead(requireNonNullElse(inputStakePoolKey, invokedGlamProtocolProgramMeta.publicKey())),
-      createRead(requireNonNullElse(outputStakePoolKey, invokedGlamProtocolProgramMeta.publicKey())),
-      createRead(solanaAccounts.associatedTokenAccountProgram()),
-      createRead(inputTokenProgramKey),
-      createRead(outputTokenProgramKey)
+      createRead(requireNonNullElse(outputStakePoolKey, invokedGlamProtocolProgramMeta.publicKey()))
     );
 
     final byte[] _data = new byte[8 + Borsh.lenVector(data)];
@@ -730,6 +716,9 @@ public final class GlamProtocolProgram {
 
   public static final Discriminator SYSTEM_TRANSFER_DISCRIMINATOR = toDiscriminator(167, 164, 195, 155, 219, 152, 191, 230);
 
+  // Transfers SOL from the vault to another account.
+  // 
+  // Token program ID is required as a remaining account when wrapping SOL (i.e., transfer to wSOL token account).
   public static Instruction systemTransfer(final AccountMeta invokedGlamProtocolProgramMeta,
                                            final SolanaAccounts solanaAccounts,
                                            final PublicKey glamStateKey,

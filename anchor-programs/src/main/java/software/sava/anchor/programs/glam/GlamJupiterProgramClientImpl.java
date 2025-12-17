@@ -55,30 +55,19 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
     return programAccountClient;
   }
 
-  private Instruction jupiterSwap(final PublicKey inputVaultATA,
-                                  final PublicKey outputVaultATA,
-                                  final PublicKey inputProgramStateKey,
-                                  final PublicKey inputMintKey,
-                                  final PublicKey inputTokenProgram,
+  private Instruction jupiterSwap(final PublicKey inputProgramStateKey,
                                   final PublicKey outputProgramStateKey,
-                                  final PublicKey outputMintKey,
-                                  final PublicKey outputTokenProgram,
                                   final Instruction swapInstruction) {
+    final var fixedIx = GlamJupiterProgramClient.fixCPICallerRights(swapInstruction);
     return GlamProtocolProgram.jupiterSwap(
         invokedProgram,
-        solanaAccounts,
         glamVaultAccounts.glamPublicKey(),
         glamVaultAccounts.vaultPublicKey(),
         feePayer.publicKey(),
         swapProgram,
-        inputVaultATA,
-        outputVaultATA,
-        inputMintKey, outputMintKey,
-        inputProgramStateKey,
-        outputProgramStateKey,
-        inputTokenProgram, outputTokenProgram,
+        inputProgramStateKey, outputProgramStateKey,
         swapInstruction.data()
-    ).extraAccounts(swapInstruction.accounts());
+    ).extraAccounts(fixedIx.accounts());
   }
 
   @Override
@@ -128,14 +117,8 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
     );
 
     final var glamJupiterSwap = jupiterSwap(
-        inputVaultATA,
-        outputVaultATA,
         inputProgramStateKey,
-        inputMintKey,
-        inputTokenProgramKey,
         outputProgramStateKey,
-        outputMintKey,
-        outputTokenProgramKey,
         swapInstruction
     );
 
@@ -162,23 +145,7 @@ final class GlamJupiterProgramClientImpl implements GlamJupiterProgramClient {
                                             final PublicKey outputMintKey,
                                             final AccountMeta outputTokenProgram,
                                             final Instruction swapInstruction) {
-    final var inputTokenProgramKey = inputTokenProgram.publicKey();
-    final var inputVaultATA = programAccountClient.findATA(inputTokenProgramKey, inputMintKey).publicKey();
-
-    final var outputTokenProgramKey = outputTokenProgram.publicKey();
-    final var outputVaultATA = programAccountClient.findATA(outputTokenProgramKey, outputMintKey).publicKey();
-
-    return jupiterSwap(
-        inputVaultATA,
-        outputVaultATA,
-        inputProgramStateKey,
-        inputMintKey,
-        inputTokenProgram.publicKey(),
-        outputProgramStateKey,
-        outputMintKey,
-        outputTokenProgram.publicKey(),
-        swapInstruction
-    );
+    return jupiterSwap(inputProgramStateKey, outputProgramStateKey, swapInstruction);
   }
 
   @Override

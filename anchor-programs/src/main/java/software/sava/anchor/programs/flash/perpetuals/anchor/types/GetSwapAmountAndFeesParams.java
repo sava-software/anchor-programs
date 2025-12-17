@@ -5,19 +5,16 @@ import software.sava.core.borsh.Borsh;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
-public record GetSwapAmountAndFeesParams(long amountIn, boolean useFeePool) implements Borsh {
+public record GetSwapAmountAndFeesParams(long amountIn) implements Borsh {
 
-  public static final int BYTES = 9;
+  public static final int BYTES = 8;
 
   public static GetSwapAmountAndFeesParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
     }
-    int i = offset;
-    final var amountIn = getInt64LE(_data, i);
-    i += 8;
-    final var useFeePool = _data[i] == 1;
-    return new GetSwapAmountAndFeesParams(amountIn, useFeePool);
+    final var amountIn = getInt64LE(_data, offset);
+    return new GetSwapAmountAndFeesParams(amountIn);
   }
 
   @Override
@@ -25,8 +22,6 @@ public record GetSwapAmountAndFeesParams(long amountIn, boolean useFeePool) impl
     int i = offset;
     putInt64LE(_data, i, amountIn);
     i += 8;
-    _data[i] = (byte) (useFeePool ? 1 : 0);
-    ++i;
     return i - offset;
   }
 
