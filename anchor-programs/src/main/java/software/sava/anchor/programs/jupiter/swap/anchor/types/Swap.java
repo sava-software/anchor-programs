@@ -127,7 +127,10 @@ public sealed interface Swap extends RustEnum permits
   Swap.CarrotRedeem,
   Swap.Manifest,
   Swap.BisonFi,
-  Swap.HumidiFiV2 {
+  Swap.HumidiFiV2,
+  Swap.PerenaStar,
+  Swap.JupiterRfqV2,
+  Swap.GoonFiV2 {
 
   static Swap read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -252,6 +255,9 @@ public sealed interface Swap extends RustEnum permits
       case 116 -> Manifest.read(_data, i);
       case 117 -> BisonFi.read(_data, i);
       case 118 -> HumidiFiV2.read(_data, i);
+      case 119 -> PerenaStar.read(_data, i);
+      case 120 -> JupiterRfqV2.read(_data, i);
+      case 121 -> GoonFiV2.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [Swap]", ordinal
       ));
@@ -1864,6 +1870,68 @@ public sealed interface Swap extends RustEnum permits
     @Override
     public int ordinal() {
       return 118;
+    }
+  }
+
+  record PerenaStar(boolean val) implements EnumBool, Swap {
+
+    public static final PerenaStar TRUE = new PerenaStar(true);
+    public static final PerenaStar FALSE = new PerenaStar(false);
+
+    public static PerenaStar read(final byte[] _data, int i) {
+      return _data[i] == 1 ? PerenaStar.TRUE : PerenaStar.FALSE;
+    }
+
+    @Override
+    public int ordinal() {
+      return 119;
+    }
+  }
+
+  record JupiterRfqV2(Side side, byte[] fillData) implements Swap {
+
+    public static JupiterRfqV2 read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      int i = offset;
+      final var side = Side.read(_data, i);
+      i += Borsh.len(side);
+      final var fillData = Borsh.readbyteVector(_data, i);
+      return new JupiterRfqV2(side, fillData);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = writeOrdinal(_data, offset);
+      i += Borsh.write(side, _data, i);
+      i += Borsh.writeVector(fillData, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 1 + Borsh.len(side) + Borsh.lenVector(fillData);
+    }
+
+    @Override
+    public int ordinal() {
+      return 120;
+    }
+  }
+
+  record GoonFiV2(boolean val) implements EnumBool, Swap {
+
+    public static final GoonFiV2 TRUE = new GoonFiV2(true);
+    public static final GoonFiV2 FALSE = new GoonFiV2(false);
+
+    public static GoonFiV2 read(final byte[] _data, int i) {
+      return _data[i] == 1 ? GoonFiV2.TRUE : GoonFiV2.FALSE;
+    }
+
+    @Override
+    public int ordinal() {
+      return 121;
     }
   }
 }

@@ -37,8 +37,8 @@ public record PresetParameter2(PublicKey _address,
                                int index,
                                // Base fee power factor
                                int baseFeePowerFactor,
-                               // Padding 0 for future use
-                               int padding0,
+                               // function type, to check whether the pool should have LM farming or other functions in the future, refer FunctionType
+                               int functionType,
                                // Padding 1 for future use
                                long[] padding1) implements Borsh {
 
@@ -59,7 +59,7 @@ public record PresetParameter2(PublicKey _address,
   public static final int PROTOCOL_SHARE_OFFSET = 26;
   public static final int INDEX_OFFSET = 28;
   public static final int BASE_FEE_POWER_FACTOR_OFFSET = 30;
-  public static final int PADDING_0_OFFSET = 31;
+  public static final int FUNCTION_TYPE_OFFSET = 31;
   public static final int PADDING_1_OFFSET = 32;
 
   public static Filter createBinStepFilter(final int binStep) {
@@ -120,8 +120,8 @@ public record PresetParameter2(PublicKey _address,
     return Filter.createMemCompFilter(BASE_FEE_POWER_FACTOR_OFFSET, new byte[]{(byte) baseFeePowerFactor});
   }
 
-  public static Filter createPadding0Filter(final int padding0) {
-    return Filter.createMemCompFilter(PADDING_0_OFFSET, new byte[]{(byte) padding0});
+  public static Filter createFunctionTypeFilter(final int functionType) {
+    return Filter.createMemCompFilter(FUNCTION_TYPE_OFFSET, new byte[]{(byte) functionType});
   }
 
   public static PresetParameter2 read(final byte[] _data, final int offset) {
@@ -164,7 +164,7 @@ public record PresetParameter2(PublicKey _address,
     i += 2;
     final var baseFeePowerFactor = _data[i] & 0xFF;
     ++i;
-    final var padding0 = _data[i] & 0xFF;
+    final var functionType = _data[i] & 0xFF;
     ++i;
     final var padding1 = new long[20];
     Borsh.readArray(padding1, _data, i);
@@ -180,7 +180,7 @@ public record PresetParameter2(PublicKey _address,
                                 protocolShare,
                                 index,
                                 baseFeePowerFactor,
-                                padding0,
+                                functionType,
                                 padding1);
   }
 
@@ -207,7 +207,7 @@ public record PresetParameter2(PublicKey _address,
     i += 2;
     _data[i] = (byte) baseFeePowerFactor;
     ++i;
-    _data[i] = (byte) padding0;
+    _data[i] = (byte) functionType;
     ++i;
     i += Borsh.writeArrayChecked(padding1, 20, _data, i);
     return i - offset;

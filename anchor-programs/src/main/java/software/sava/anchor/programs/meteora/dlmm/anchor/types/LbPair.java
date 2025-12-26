@@ -81,6 +81,8 @@ public record LbPair(PublicKey _address,
                      int tokenMintXProgramFlag,
                      // token_mint_y_program_flag
                      int tokenMintYProgramFlag,
+                     // version to know whether we have reset tombstone fields
+                     int version,
                      // Reserved space for future use
                      byte[] reserved) implements Borsh {
 
@@ -93,7 +95,7 @@ public record LbPair(PublicKey _address,
   public static final int BIN_ARRAY_BITMAP_LEN = 16;
   public static final int PADDING_2_LEN = 32;
   public static final int PADDING_3_LEN = 8;
-  public static final int RESERVED_LEN = 22;
+  public static final int RESERVED_LEN = 21;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(33, 11, 49, 98, 181, 101, 177, 13);
@@ -131,7 +133,8 @@ public record LbPair(PublicKey _address,
   public static final int CREATOR_OFFSET = 848;
   public static final int TOKEN_MINT_X_PROGRAM_FLAG_OFFSET = 880;
   public static final int TOKEN_MINT_Y_PROGRAM_FLAG_OFFSET = 881;
-  public static final int RESERVED_OFFSET = 882;
+  public static final int VERSION_OFFSET = 882;
+  public static final int RESERVED_OFFSET = 883;
 
   public static Filter createParametersFilter(final StaticParameters parameters) {
     return Filter.createMemCompFilter(PARAMETERS_OFFSET, parameters.write());
@@ -241,6 +244,10 @@ public record LbPair(PublicKey _address,
     return Filter.createMemCompFilter(TOKEN_MINT_Y_PROGRAM_FLAG_OFFSET, new byte[]{(byte) tokenMintYProgramFlag});
   }
 
+  public static Filter createVersionFilter(final int version) {
+    return Filter.createMemCompFilter(VERSION_OFFSET, new byte[]{(byte) version});
+  }
+
   public static LbPair read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -325,7 +332,9 @@ public record LbPair(PublicKey _address,
     ++i;
     final var tokenMintYProgramFlag = _data[i] & 0xFF;
     ++i;
-    final var reserved = new byte[22];
+    final var version = _data[i] & 0xFF;
+    ++i;
+    final var reserved = new byte[21];
     Borsh.readArray(reserved, _data, i);
     return new LbPair(_address,
                       discriminator,
@@ -361,6 +370,7 @@ public record LbPair(PublicKey _address,
                       creator,
                       tokenMintXProgramFlag,
                       tokenMintYProgramFlag,
+                      version,
                       reserved);
   }
 
@@ -420,7 +430,9 @@ public record LbPair(PublicKey _address,
     ++i;
     _data[i] = (byte) tokenMintYProgramFlag;
     ++i;
-    i += Borsh.writeArrayChecked(reserved, 22, _data, i);
+    _data[i] = (byte) version;
+    ++i;
+    i += Borsh.writeArrayChecked(reserved, 21, _data, i);
     return i - offset;
   }
 

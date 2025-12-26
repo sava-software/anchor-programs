@@ -17,19 +17,19 @@ public record Bin(// Amount of token X in the bin. This already excluded protoco
                   BigInteger price,
                   // Liquidities of the bin. This is the same as LP mint supply. q-number
                   BigInteger liquiditySupply,
-                  // reward_a_per_token_stored
-                  BigInteger[] rewardPerTokenStored,
+                  // function bytes, could be used for liquidity mining or other functions in future
+                  BigInteger[] functionBytes,
                   // Swap fee amount of token X per liquidity deposited.
                   BigInteger feeAmountXPerTokenStored,
                   // Swap fee amount of token Y per liquidity deposited.
                   BigInteger feeAmountYPerTokenStored,
-                  // Total token X swap into the bin. Only used for tracking purpose.
-                  BigInteger amountXIn,
-                  // Total token Y swap into he bin. Only used for tracking purpose.
-                  BigInteger amountYIn) implements Borsh {
+                  // _padding_0, previous amount_x_in, BE CAREFUL FOR TOMBSTONE WHEN REUSE !!
+                  BigInteger padding0,
+                  // _padding_1, previous amount_y_in, BE CAREFUL FOR TOMBSTONE WHEN REUSE !!
+                  BigInteger padding1) implements Borsh {
 
   public static final int BYTES = 144;
-  public static final int REWARD_PER_TOKEN_STORED_LEN = 2;
+  public static final int FUNCTION_BYTES_LEN = 2;
 
   public static Bin read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -44,24 +44,24 @@ public record Bin(// Amount of token X in the bin. This already excluded protoco
     i += 16;
     final var liquiditySupply = getInt128LE(_data, i);
     i += 16;
-    final var rewardPerTokenStored = new BigInteger[2];
-    i += Borsh.read128Array(rewardPerTokenStored, _data, i);
+    final var functionBytes = new BigInteger[2];
+    i += Borsh.read128Array(functionBytes, _data, i);
     final var feeAmountXPerTokenStored = getInt128LE(_data, i);
     i += 16;
     final var feeAmountYPerTokenStored = getInt128LE(_data, i);
     i += 16;
-    final var amountXIn = getInt128LE(_data, i);
+    final var padding0 = getInt128LE(_data, i);
     i += 16;
-    final var amountYIn = getInt128LE(_data, i);
+    final var padding1 = getInt128LE(_data, i);
     return new Bin(amountX,
                    amountY,
                    price,
                    liquiditySupply,
-                   rewardPerTokenStored,
+                   functionBytes,
                    feeAmountXPerTokenStored,
                    feeAmountYPerTokenStored,
-                   amountXIn,
-                   amountYIn);
+                   padding0,
+                   padding1);
   }
 
   @Override
@@ -75,14 +75,14 @@ public record Bin(// Amount of token X in the bin. This already excluded protoco
     i += 16;
     putInt128LE(_data, i, liquiditySupply);
     i += 16;
-    i += Borsh.write128ArrayChecked(rewardPerTokenStored, 2, _data, i);
+    i += Borsh.write128ArrayChecked(functionBytes, 2, _data, i);
     putInt128LE(_data, i, feeAmountXPerTokenStored);
     i += 16;
     putInt128LE(_data, i, feeAmountYPerTokenStored);
     i += 16;
-    putInt128LE(_data, i, amountXIn);
+    putInt128LE(_data, i, padding0);
     i += 16;
-    putInt128LE(_data, i, amountYIn);
+    putInt128LE(_data, i, padding1);
     i += 16;
     return i - offset;
   }

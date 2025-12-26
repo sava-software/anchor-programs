@@ -21,14 +21,13 @@ import static software.sava.core.programs.Discriminator.toDiscriminator;
 public record BinArray(PublicKey _address,
                        Discriminator discriminator,
                        long index,
-                       // Version of binArray
                        int version,
-                       byte[] padding,
+                       byte[] padding1,
                        PublicKey lbPair,
                        Bin[] bins) implements Borsh {
 
   public static final int BYTES = 10136;
-  public static final int PADDING_LEN = 7;
+  public static final int PADDING_1_LEN = 7;
   public static final int BINS_LEN = 70;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
@@ -37,7 +36,7 @@ public record BinArray(PublicKey _address,
 
   public static final int INDEX_OFFSET = 8;
   public static final int VERSION_OFFSET = 16;
-  public static final int PADDING_OFFSET = 17;
+  public static final int PADDING_1_OFFSET = 17;
   public static final int LB_PAIR_OFFSET = 24;
   public static final int BINS_OFFSET = 56;
 
@@ -79,8 +78,8 @@ public record BinArray(PublicKey _address,
     i += 8;
     final var version = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[7];
-    i += Borsh.readArray(padding, _data, i);
+    final var padding1 = new byte[7];
+    i += Borsh.readArray(padding1, _data, i);
     final var lbPair = readPubKey(_data, i);
     i += 32;
     final var bins = new Bin[70];
@@ -89,7 +88,7 @@ public record BinArray(PublicKey _address,
                         discriminator,
                         index,
                         version,
-                        padding,
+                        padding1,
                         lbPair,
                         bins);
   }
@@ -101,7 +100,7 @@ public record BinArray(PublicKey _address,
     i += 8;
     _data[i] = (byte) version;
     ++i;
-    i += Borsh.writeArrayChecked(padding, 7, _data, i);
+    i += Borsh.writeArrayChecked(padding1, 7, _data, i);
     lbPair.write(_data, i);
     i += 32;
     i += Borsh.writeArrayChecked(bins, 70, _data, i);

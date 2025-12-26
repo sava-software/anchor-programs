@@ -28,11 +28,13 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
                                int protocolShare,
                                // Base fee power factor
                                int baseFeePowerFactor,
+                               // function type
+                               int functionType,
                                // Padding for bytemuck safe alignment
                                byte[] padding) implements Borsh {
 
   public static final int BYTES = 32;
-  public static final int PADDING_LEN = 5;
+  public static final int PADDING_LEN = 4;
 
   public static StaticParameters read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -59,7 +61,9 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
     i += 2;
     final var baseFeePowerFactor = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[5];
+    final var functionType = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[4];
     Borsh.readArray(padding, _data, i);
     return new StaticParameters(baseFactor,
                                 filterPeriod,
@@ -71,6 +75,7 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
                                 maxBinId,
                                 protocolShare,
                                 baseFeePowerFactor,
+                                functionType,
                                 padding);
   }
 
@@ -97,7 +102,9 @@ public record StaticParameters(// Used for base fee calculation. base_fee_rate =
     i += 2;
     _data[i] = (byte) baseFeePowerFactor;
     ++i;
-    i += Borsh.writeArrayChecked(padding, 5, _data, i);
+    _data[i] = (byte) functionType;
+    ++i;
+    i += Borsh.writeArrayChecked(padding, 4, _data, i);
     return i - offset;
   }
 

@@ -92,7 +92,21 @@ public sealed interface LbClmmError extends ProgramError permits
     LbClmmError.ReallocExceedMaxLengthPerInstruction,
     LbClmmError.InvalidBaseFeeMantissa,
     LbClmmError.InvalidPositionOwner,
-    LbClmmError.InvalidPoolAddress {
+    LbClmmError.InvalidPoolAddress,
+    LbClmmError.InvalidTokenBadgeType,
+    LbClmmError.InvalidTransferHookAuthority,
+    LbClmmError.AmountXIsNegative,
+    LbClmmError.AmountYIsNegative,
+    LbClmmError.InvalidPoolCreator,
+    LbClmmError.InvalidFunctionType,
+    LbClmmError.InvalidPermission,
+    LbClmmError.IncorrectATA,
+    LbClmmError.InvalidWithdrawProtocolFeeZapAccounts,
+    LbClmmError.MintRestrictedFromZap,
+    LbClmmError.CpiDisabled,
+    LbClmmError.MissingZapOutInstruction,
+    LbClmmError.InvalidZapAccounts,
+    LbClmmError.InvalidZapOutParameters {
 
   static LbClmmError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -186,6 +200,20 @@ public sealed interface LbClmmError extends ProgramError permits
       case 6087 -> InvalidBaseFeeMantissa.INSTANCE;
       case 6088 -> InvalidPositionOwner.INSTANCE;
       case 6089 -> InvalidPoolAddress.INSTANCE;
+      case 6090 -> InvalidTokenBadgeType.INSTANCE;
+      case 6091 -> InvalidTransferHookAuthority.INSTANCE;
+      case 6092 -> AmountXIsNegative.INSTANCE;
+      case 6093 -> AmountYIsNegative.INSTANCE;
+      case 6094 -> InvalidPoolCreator.INSTANCE;
+      case 6095 -> InvalidFunctionType.INSTANCE;
+      case 6096 -> InvalidPermission.INSTANCE;
+      case 6097 -> IncorrectATA.INSTANCE;
+      case 6098 -> InvalidWithdrawProtocolFeeZapAccounts.INSTANCE;
+      case 6099 -> MintRestrictedFromZap.INSTANCE;
+      case 6100 -> CpiDisabled.INSTANCE;
+      case 6101 -> MissingZapOutInstruction.INSTANCE;
+      case 6102 -> InvalidZapAccounts.INSTANCE;
+      case 6103 -> InvalidZapOutParameters.INSTANCE;
       default -> throw new IllegalStateException("Unexpected LbClmm error code: " + errorCode);
     };
   }
@@ -817,6 +845,104 @@ public sealed interface LbClmmError extends ProgramError permits
 
     public static final InvalidPoolAddress INSTANCE = new InvalidPoolAddress(
         6089, "Invalid pool address"
+    );
+  }
+
+  record InvalidTokenBadgeType(int code, String msg) implements LbClmmError {
+
+    public static final InvalidTokenBadgeType INSTANCE = new InvalidTokenBadgeType(
+        6090, "Invalid token badge type"
+    );
+  }
+
+  record InvalidTransferHookAuthority(int code, String msg) implements LbClmmError {
+
+    public static final InvalidTransferHookAuthority INSTANCE = new InvalidTransferHookAuthority(
+        6091, "Invalid transfer hook authority"
+    );
+  }
+
+  record AmountXIsNegative(int code, String msg) implements LbClmmError {
+
+    public static final AmountXIsNegative INSTANCE = new AmountXIsNegative(
+        6092, "Amount x is negative"
+    );
+  }
+
+  record AmountYIsNegative(int code, String msg) implements LbClmmError {
+
+    public static final AmountYIsNegative INSTANCE = new AmountYIsNegative(
+        6093, "Amount y is negative"
+    );
+  }
+
+  record InvalidPoolCreator(int code, String msg) implements LbClmmError {
+
+    public static final InvalidPoolCreator INSTANCE = new InvalidPoolCreator(
+        6094, "Invalid pool creator"
+    );
+  }
+
+  record InvalidFunctionType(int code, String msg) implements LbClmmError {
+
+    public static final InvalidFunctionType INSTANCE = new InvalidFunctionType(
+        6095, "Invalid function type"
+    );
+  }
+
+  record InvalidPermission(int code, String msg) implements LbClmmError {
+
+    public static final InvalidPermission INSTANCE = new InvalidPermission(
+        6096, "Invalid permission"
+    );
+  }
+
+  record IncorrectATA(int code, String msg) implements LbClmmError {
+
+    public static final IncorrectATA INSTANCE = new IncorrectATA(
+        6097, "Incorrect ATA"
+    );
+  }
+
+  record InvalidWithdrawProtocolFeeZapAccounts(int code, String msg) implements LbClmmError {
+
+    public static final InvalidWithdrawProtocolFeeZapAccounts INSTANCE = new InvalidWithdrawProtocolFeeZapAccounts(
+        6098, "Invalid withdraw protocol fee zap accounts"
+    );
+  }
+
+  record MintRestrictedFromZap(int code, String msg) implements LbClmmError {
+
+    public static final MintRestrictedFromZap INSTANCE = new MintRestrictedFromZap(
+        6099, "SOL,USDC protocol fee cannot be withdrawn via zap"
+    );
+  }
+
+  record CpiDisabled(int code, String msg) implements LbClmmError {
+
+    public static final CpiDisabled INSTANCE = new CpiDisabled(
+        6100, "CPI disabled"
+    );
+  }
+
+  record MissingZapOutInstruction(int code, String msg) implements LbClmmError {
+
+    public static final MissingZapOutInstruction INSTANCE = new MissingZapOutInstruction(
+        6101, "Missing zap out instruction"
+    );
+  }
+
+  record InvalidZapAccounts(int code, String msg) implements LbClmmError {
+
+    public static final InvalidZapAccounts INSTANCE = new InvalidZapAccounts(
+        6102, "Invalid zap accounts"
+    );
+  }
+
+  record InvalidZapOutParameters(int code, String msg) implements LbClmmError {
+
+    public static final InvalidZapOutParameters INSTANCE = new InvalidZapOutParameters(
+        6103, "Invalid zap out parameters"
     );
   }
 }

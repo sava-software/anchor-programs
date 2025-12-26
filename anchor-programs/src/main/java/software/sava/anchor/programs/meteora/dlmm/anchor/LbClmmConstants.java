@@ -26,7 +26,7 @@ public final class LbClmmConstants {
 
   public static final BigInteger MAX_BASE_FEE = new BigInteger("100000000");
 
-  public static final int MAX_BIN_ID = 443636;
+  public static final int MAX_BIN_ID_PER_BIN_STEP = 351639;
 
   public static final long MAX_BIN_PER_ARRAY = 70;
 
@@ -46,11 +46,11 @@ public final class LbClmmConstants {
 
   public static final BigInteger MIN_BASE_FEE = new BigInteger("100000");
 
-  public static final int MIN_BIN_ID = -443636;
-
   public static final long MIN_REWARD_DURATION = 1;
 
   public static final long NUM_REWARDS = 2;
+
+  public static final byte[] OPERATOR_PREFIX = new byte[]{111, 112, 101, 114, 97, 116, 111, 114};
 
   public static final byte[] ORACLE = new byte[]{111, 114, 97, 99, 108, 101};
 

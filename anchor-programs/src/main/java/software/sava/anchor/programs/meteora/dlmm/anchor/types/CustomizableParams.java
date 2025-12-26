@@ -26,10 +26,12 @@ public record CustomizableParams(// Pool price
                                  boolean creatorPoolOnOffControl,
                                  // Base fee power factor
                                  int baseFeePowerFactor,
+                                 // function type
+                                 int functionType,
                                  // Padding, for future use
                                  byte[] padding) implements Borsh {
 
-  public static final int PADDING_LEN = 62;
+  public static final int PADDING_LEN = 61;
   public static CustomizableParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
       return null;
@@ -53,7 +55,9 @@ public record CustomizableParams(// Pool price
     ++i;
     final var baseFeePowerFactor = _data[i] & 0xFF;
     ++i;
-    final var padding = new byte[62];
+    final var functionType = _data[i] & 0xFF;
+    ++i;
+    final var padding = new byte[61];
     Borsh.readArray(padding, _data, i);
     return new CustomizableParams(activeId,
                                   binStep,
@@ -63,6 +67,7 @@ public record CustomizableParams(// Pool price
                                   activationPoint,
                                   creatorPoolOnOffControl,
                                   baseFeePowerFactor,
+                                  functionType,
                                   padding);
   }
 
@@ -84,7 +89,9 @@ public record CustomizableParams(// Pool price
     ++i;
     _data[i] = (byte) baseFeePowerFactor;
     ++i;
-    i += Borsh.writeArrayChecked(padding, 62, _data, i);
+    _data[i] = (byte) functionType;
+    ++i;
+    i += Borsh.writeArrayChecked(padding, 61, _data, i);
     return i - offset;
   }
 
@@ -96,6 +103,7 @@ public record CustomizableParams(// Pool price
          + 1
          + 1
          + (activationPoint == null || activationPoint.isEmpty() ? 1 : (1 + 8))
+         + 1
          + 1
          + 1
          + Borsh.lenArray(padding);

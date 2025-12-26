@@ -50,6 +50,8 @@ public record PositionV2(PublicKey _address,
                          int padding0,
                          // Address is able to claim fee in this position, only valid for bootstrap_liquidity_position
                          PublicKey feeOwner,
+                         // version to know whether we have reset tombstone fields
+                         int version,
                          // Reserved space for future use
                          byte[] reserved) implements Borsh {
 
@@ -58,7 +60,7 @@ public record PositionV2(PublicKey _address,
   public static final int REWARD_INFOS_LEN = 70;
   public static final int FEE_INFOS_LEN = 70;
   public static final int TOTAL_CLAIMED_REWARDS_LEN = 2;
-  public static final int RESERVED_LEN = 87;
+  public static final int RESERVED_LEN = 86;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(117, 176, 212, 199, 245, 180, 133, 182);
@@ -79,7 +81,8 @@ public record PositionV2(PublicKey _address,
   public static final int LOCK_RELEASE_POINT_OFFSET = 7992;
   public static final int PADDING_0_OFFSET = 8000;
   public static final int FEE_OWNER_OFFSET = 8001;
-  public static final int RESERVED_OFFSET = 8033;
+  public static final int VERSION_OFFSET = 8033;
+  public static final int RESERVED_OFFSET = 8034;
 
   public static Filter createLbPairFilter(final PublicKey lbPair) {
     return Filter.createMemCompFilter(LB_PAIR_OFFSET, lbPair);
@@ -137,6 +140,10 @@ public record PositionV2(PublicKey _address,
     return Filter.createMemCompFilter(FEE_OWNER_OFFSET, feeOwner);
   }
 
+  public static Filter createVersionFilter(final int version) {
+    return Filter.createMemCompFilter(VERSION_OFFSET, new byte[]{(byte) version});
+  }
+
   public static PositionV2 read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -187,7 +194,9 @@ public record PositionV2(PublicKey _address,
     ++i;
     final var feeOwner = readPubKey(_data, i);
     i += 32;
-    final var reserved = new byte[87];
+    final var version = _data[i] & 0xFF;
+    ++i;
+    final var reserved = new byte[86];
     Borsh.readArray(reserved, _data, i);
     return new PositionV2(_address,
                           discriminator,
@@ -206,6 +215,7 @@ public record PositionV2(PublicKey _address,
                           lockReleasePoint,
                           padding0,
                           feeOwner,
+                          version,
                           reserved);
   }
 
@@ -238,7 +248,9 @@ public record PositionV2(PublicKey _address,
     ++i;
     feeOwner.write(_data, i);
     i += 32;
-    i += Borsh.writeArrayChecked(reserved, 87, _data, i);
+    _data[i] = (byte) version;
+    ++i;
+    i += Borsh.writeArrayChecked(reserved, 86, _data, i);
     return i - offset;
   }
 

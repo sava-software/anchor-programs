@@ -1,5 +1,7 @@
 package software.sava.anchor.programs.meteora.dlmm.anchor;
 
+import java.math.BigInteger;
+
 import java.util.List;
 import java.util.OptionalInt;
 
@@ -11,7 +13,6 @@ import software.sava.anchor.programs.meteora.dlmm.anchor.types.CustomizableParam
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.DummyIx;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.DynamicFeeParameter;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.InitPermissionPairIx;
-import software.sava.anchor.programs.meteora.dlmm.anchor.types.InitPresetParameters2Ix;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.InitPresetParametersIx;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.InitializeLbPair2Params;
 import software.sava.anchor.programs.meteora.dlmm.anchor.types.LiquidityOneSideParameter;
@@ -35,9 +36,11 @@ import static software.sava.core.accounts.meta.AccountMeta.createRead;
 import static software.sava.core.accounts.meta.AccountMeta.createReadOnlySigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWritableSigner;
 import static software.sava.core.accounts.meta.AccountMeta.createWrite;
+import static software.sava.core.encoding.ByteUtil.getInt128LE;
 import static software.sava.core.encoding.ByteUtil.getInt16LE;
 import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
+import static software.sava.core.encoding.ByteUtil.putInt128LE;
 import static software.sava.core.encoding.ByteUtil.putInt16LE;
 import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
@@ -978,19 +981,34 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator CLOSE_CLAIM_PROTOCOL_FEE_OPERATOR_DISCRIMINATOR = toDiscriminator(8, 41, 87, 35, 80, 48, 121, 26);
+  public static final Discriminator CLOSE_CLAIM_FEE_OPERATOR_ACCOUNT_DISCRIMINATOR = toDiscriminator(184, 213, 88, 31, 179, 101, 130, 36);
 
-  public static Instruction closeClaimProtocolFeeOperator(final AccountMeta invokedLbClmmProgramMeta,
-                                                          final PublicKey claimFeeOperatorKey,
-                                                          final PublicKey rentReceiverKey,
-                                                          final PublicKey adminKey) {
+  public static Instruction closeClaimFeeOperatorAccount(final AccountMeta invokedLbClmmProgramMeta,
+                                                         final PublicKey claimFeeOperatorKey,
+                                                         final PublicKey rentReceiverKey,
+                                                         final PublicKey signerKey) {
     final var keys = List.of(
       createWrite(claimFeeOperatorKey),
       createWrite(rentReceiverKey),
-      createReadOnlySigner(adminKey)
+      createReadOnlySigner(signerKey)
     );
 
-    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_CLAIM_PROTOCOL_FEE_OPERATOR_DISCRIMINATOR);
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_CLAIM_FEE_OPERATOR_ACCOUNT_DISCRIMINATOR);
+  }
+
+  public static final Discriminator CLOSE_OPERATOR_ACCOUNT_DISCRIMINATOR = toDiscriminator(171, 9, 213, 74, 120, 23, 3, 29);
+
+  public static Instruction closeOperatorAccount(final AccountMeta invokedLbClmmProgramMeta,
+                                                 final PublicKey operatorKey,
+                                                 final PublicKey signerKey,
+                                                 final PublicKey rentReceiverKey) {
+    final var keys = List.of(
+      createWrite(operatorKey),
+      createReadOnlySigner(signerKey),
+      createWrite(rentReceiverKey)
+    );
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_OPERATOR_ACCOUNT_DISCRIMINATOR);
   }
 
   public static final Discriminator CLOSE_POSITION_DISCRIMINATOR = toDiscriminator(123, 134, 81, 0, 49, 68, 98, 98);
@@ -1060,11 +1078,13 @@ public final class LbClmmProgram {
 
   public static Instruction closePresetParameter(final AccountMeta invokedLbClmmProgramMeta,
                                                  final PublicKey presetParameterKey,
-                                                 final PublicKey adminKey,
+                                                 final PublicKey operatorKey,
+                                                 final PublicKey signerKey,
                                                  final PublicKey rentReceiverKey) {
     final var keys = List.of(
       createWrite(presetParameterKey),
-      createWritableSigner(adminKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
       createWrite(rentReceiverKey)
     );
 
@@ -1075,11 +1095,13 @@ public final class LbClmmProgram {
 
   public static Instruction closePresetParameter2(final AccountMeta invokedLbClmmProgramMeta,
                                                   final PublicKey presetParameterKey,
-                                                  final PublicKey adminKey,
+                                                  final PublicKey operatorKey,
+                                                  final PublicKey signerKey,
                                                   final PublicKey rentReceiverKey) {
     final var keys = List.of(
       createWrite(presetParameterKey),
-      createWritableSigner(adminKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
       createWrite(rentReceiverKey)
     );
 
@@ -1091,31 +1113,72 @@ public final class LbClmmProgram {
   public static Instruction closeTokenBadge(final AccountMeta invokedLbClmmProgramMeta,
                                             final PublicKey tokenBadgeKey,
                                             final PublicKey rentReceiverKey,
-                                            final PublicKey adminKey) {
+                                            final PublicKey operatorKey,
+                                            final PublicKey signerKey) {
     final var keys = List.of(
       createWrite(tokenBadgeKey),
       createWrite(rentReceiverKey),
-      createReadOnlySigner(adminKey)
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey)
     );
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CLOSE_TOKEN_BADGE_DISCRIMINATOR);
   }
 
-  public static final Discriminator CREATE_CLAIM_PROTOCOL_FEE_OPERATOR_DISCRIMINATOR = toDiscriminator(51, 19, 150, 252, 105, 157, 48, 91);
+  public static final Discriminator CREATE_OPERATOR_ACCOUNT_DISCRIMINATOR = toDiscriminator(221, 64, 246, 149, 240, 153, 229, 163);
 
-  public static Instruction createClaimProtocolFeeOperator(final AccountMeta invokedLbClmmProgramMeta,
-                                                           final SolanaAccounts solanaAccounts,
-                                                           final PublicKey claimFeeOperatorKey,
-                                                           final PublicKey operatorKey,
-                                                           final PublicKey adminKey) {
+  public static Instruction createOperatorAccount(final AccountMeta invokedLbClmmProgramMeta,
+                                                  final SolanaAccounts solanaAccounts,
+                                                  final PublicKey operatorKey,
+                                                  final PublicKey whitelistedSignerKey,
+                                                  final PublicKey signerKey,
+                                                  final PublicKey payerKey,
+                                                  final BigInteger permission) {
     final var keys = List.of(
-      createWrite(claimFeeOperatorKey),
-      createRead(operatorKey),
-      createWritableSigner(adminKey),
+      createWrite(operatorKey),
+      createRead(whitelistedSignerKey),
+      createReadOnlySigner(signerKey),
+      createWritableSigner(payerKey),
       createRead(solanaAccounts.systemProgram())
     );
 
-    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, CREATE_CLAIM_PROTOCOL_FEE_OPERATOR_DISCRIMINATOR);
+    final byte[] _data = new byte[24];
+    int i = CREATE_OPERATOR_ACCOUNT_DISCRIMINATOR.write(_data, 0);
+    putInt128LE(_data, i, permission);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record CreateOperatorAccountIxData(Discriminator discriminator, BigInteger permission) implements Borsh {  
+
+    public static CreateOperatorAccountIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 24;
+
+    public static CreateOperatorAccountIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var permission = getInt128LE(_data, i);
+      return new CreateOperatorAccountIxData(discriminator, permission);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt128LE(_data, i, permission);
+      i += 16;
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
   }
 
   public static final Discriminator DECREASE_POSITION_LENGTH_DISCRIMINATOR = toDiscriminator(194, 219, 136, 32, 25, 96, 105, 37);
@@ -1620,13 +1683,14 @@ public final class LbClmmProgram {
                                                               final PublicKey lbPairKey,
                                                               // Initialize an account to store if a bin array is initialized.
                                                               final PublicKey binArrayBitmapExtensionKey,
-                                                              final PublicKey funderKey) {
+                                                              final PublicKey funderKey,
+                                                              final PublicKey rentKey) {
     final var keys = List.of(
       createRead(lbPairKey),
       createWrite(binArrayBitmapExtensionKey),
       createWritableSigner(funderKey),
       createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.rentSysVar())
+      createRead(rentKey)
     );
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, INITIALIZE_BIN_ARRAY_BITMAP_EXTENSION_DISCRIMINATOR);
@@ -1792,6 +1856,7 @@ public final class LbClmmProgram {
                                              final PublicKey oracleKey,
                                              final PublicKey presetParameterKey,
                                              final PublicKey funderKey,
+                                             final PublicKey rentKey,
                                              final PublicKey eventAuthorityKey,
                                              final PublicKey programKey,
                                              final int activeId,
@@ -1808,7 +1873,7 @@ public final class LbClmmProgram {
       createWritableSigner(funderKey),
       createRead(solanaAccounts.tokenProgram()),
       createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.rentSysVar()),
+      createRead(rentKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -1947,7 +2012,9 @@ public final class LbClmmProgram {
                                                        final PublicKey reserveXKey,
                                                        final PublicKey reserveYKey,
                                                        final PublicKey oracleKey,
-                                                       final PublicKey adminKey,
+                                                       final PublicKey payerKey,
+                                                       final PublicKey operatorKey,
+                                                       final PublicKey signerKey,
                                                        final PublicKey tokenBadgeXKey,
                                                        final PublicKey tokenBadgeYKey,
                                                        final PublicKey tokenProgramXKey,
@@ -1964,13 +2031,14 @@ public final class LbClmmProgram {
       createWrite(reserveXKey),
       createWrite(reserveYKey),
       createWrite(oracleKey),
-      createWritableSigner(adminKey),
+      createWritableSigner(payerKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
       createRead(requireNonNullElse(tokenBadgeXKey, invokedLbClmmProgramMeta.publicKey())),
       createRead(requireNonNullElse(tokenBadgeYKey, invokedLbClmmProgramMeta.publicKey())),
       createRead(tokenProgramXKey),
       createRead(tokenProgramYKey),
       createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.rentSysVar()),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -2021,6 +2089,7 @@ public final class LbClmmProgram {
                                                final PublicKey positionKey,
                                                final PublicKey lbPairKey,
                                                final PublicKey ownerKey,
+                                               final PublicKey rentKey,
                                                final PublicKey eventAuthorityKey,
                                                final PublicKey programKey,
                                                final int lowerBinId,
@@ -2031,7 +2100,7 @@ public final class LbClmmProgram {
       createRead(lbPairKey),
       createReadOnlySigner(ownerKey),
       createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.rentSysVar()),
+      createRead(rentKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -2256,6 +2325,7 @@ public final class LbClmmProgram {
                                                   final PublicKey lbPairKey,
                                                   // owner
                                                   final PublicKey ownerKey,
+                                                  final PublicKey rentKey,
                                                   final PublicKey eventAuthorityKey,
                                                   final PublicKey programKey,
                                                   final int lowerBinId,
@@ -2267,7 +2337,7 @@ public final class LbClmmProgram {
       createRead(lbPairKey),
       createReadOnlySigner(ownerKey),
       createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.rentSysVar()),
+      createRead(rentKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -2322,13 +2392,16 @@ public final class LbClmmProgram {
   public static Instruction initializePresetParameter(final AccountMeta invokedLbClmmProgramMeta,
                                                       final SolanaAccounts solanaAccounts,
                                                       final PublicKey presetParameterKey,
-                                                      final PublicKey adminKey,
+                                                      final PublicKey operatorKey,
+                                                      final PublicKey signerKey,
+                                                      final PublicKey payerKey,
                                                       final InitPresetParametersIx ix) {
     final var keys = List.of(
       createWrite(presetParameterKey),
-      createWritableSigner(adminKey),
-      createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.rentSysVar())
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
+      createWritableSigner(payerKey),
+      createRead(solanaAccounts.systemProgram())
     );
 
     final byte[] _data = new byte[8 + Borsh.len(ix)];
@@ -2344,7 +2417,7 @@ public final class LbClmmProgram {
       return read(instruction.data(), instruction.offset());
     }
 
-    public static final int BYTES = 28;
+    public static final int BYTES = 32;
 
     public static InitializePresetParameterIxData read(final byte[] _data, final int offset) {
       if (_data == null || _data.length == 0) {
@@ -2369,57 +2442,6 @@ public final class LbClmmProgram {
     }
   }
 
-  public static final Discriminator INITIALIZE_PRESET_PARAMETER_2_DISCRIMINATOR = toDiscriminator(184, 7, 240, 171, 103, 47, 183, 121);
-
-  public static Instruction initializePresetParameter2(final AccountMeta invokedLbClmmProgramMeta,
-                                                       final SolanaAccounts solanaAccounts,
-                                                       final PublicKey presetParameterKey,
-                                                       final PublicKey adminKey,
-                                                       final InitPresetParameters2Ix ix) {
-    final var keys = List.of(
-      createWrite(presetParameterKey),
-      createWritableSigner(adminKey),
-      createRead(solanaAccounts.systemProgram())
-    );
-
-    final byte[] _data = new byte[8 + Borsh.len(ix)];
-    int i = INITIALIZE_PRESET_PARAMETER_2_DISCRIMINATOR.write(_data, 0);
-    Borsh.write(ix, _data, i);
-
-    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
-  }
-
-  public record InitializePresetParameter2IxData(Discriminator discriminator, InitPresetParameters2Ix ix) implements Borsh {  
-
-    public static InitializePresetParameter2IxData read(final Instruction instruction) {
-      return read(instruction.data(), instruction.offset());
-    }
-
-    public static final int BYTES = 31;
-
-    public static InitializePresetParameter2IxData read(final byte[] _data, final int offset) {
-      if (_data == null || _data.length == 0) {
-        return null;
-      }
-      final var discriminator = createAnchorDiscriminator(_data, offset);
-      int i = offset + discriminator.length();
-      final var ix = InitPresetParameters2Ix.read(_data, i);
-      return new InitializePresetParameter2IxData(discriminator, ix);
-    }
-
-    @Override
-    public int write(final byte[] _data, final int offset) {
-      int i = offset + discriminator.write(_data, offset);
-      i += Borsh.write(ix, _data, i);
-      return i - offset;
-    }
-
-    @Override
-    public int l() {
-      return BYTES;
-    }
-  }
-
   public static final Discriminator INITIALIZE_REWARD_DISCRIMINATOR = toDiscriminator(95, 135, 192, 196, 242, 129, 230, 68);
 
   public static Instruction initializeReward(final AccountMeta invokedLbClmmProgramMeta,
@@ -2428,7 +2450,9 @@ public final class LbClmmProgram {
                                              final PublicKey rewardVaultKey,
                                              final PublicKey rewardMintKey,
                                              final PublicKey tokenBadgeKey,
-                                             final PublicKey adminKey,
+                                             final PublicKey operatorKey,
+                                             final PublicKey signerKey,
+                                             final PublicKey payerKey,
                                              final PublicKey tokenProgramKey,
                                              final PublicKey eventAuthorityKey,
                                              final PublicKey programKey,
@@ -2440,10 +2464,11 @@ public final class LbClmmProgram {
       createWrite(rewardVaultKey),
       createRead(rewardMintKey),
       createRead(requireNonNullElse(tokenBadgeKey, invokedLbClmmProgramMeta.publicKey())),
-      createWritableSigner(adminKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
+      createWritableSigner(payerKey),
       createRead(tokenProgramKey),
       createRead(solanaAccounts.systemProgram()),
-      createRead(solanaAccounts.rentSysVar()),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -2508,25 +2533,19 @@ public final class LbClmmProgram {
                                                  final SolanaAccounts solanaAccounts,
                                                  final PublicKey tokenMintKey,
                                                  final PublicKey tokenBadgeKey,
-                                                 final PublicKey adminKey) {
+                                                 final PublicKey operatorKey,
+                                                 final PublicKey signerKey,
+                                                 final PublicKey payerKey) {
     final var keys = List.of(
       createRead(tokenMintKey),
       createWrite(tokenBadgeKey),
-      createWritableSigner(adminKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
+      createWritableSigner(payerKey),
       createRead(solanaAccounts.systemProgram())
     );
 
     return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, INITIALIZE_TOKEN_BADGE_DISCRIMINATOR);
-  }
-
-  public static final Discriminator MIGRATE_BIN_ARRAY_DISCRIMINATOR = toDiscriminator(17, 23, 159, 211, 101, 184, 41, 241);
-
-  public static Instruction migrateBinArray(final AccountMeta invokedLbClmmProgramMeta, final PublicKey lbPairKey) {
-    final var keys = List.of(
-      createRead(lbPairKey)
-    );
-
-    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, MIGRATE_BIN_ARRAY_DISCRIMINATOR);
   }
 
   public static final Discriminator MIGRATE_POSITION_DISCRIMINATOR = toDiscriminator(15, 132, 59, 50, 199, 6, 251, 46);
@@ -2538,7 +2557,7 @@ public final class LbClmmProgram {
                                             final PublicKey lbPairKey,
                                             final PublicKey binArrayLowerKey,
                                             final PublicKey binArrayUpperKey,
-                                            final PublicKey ownerKey,
+                                            final PublicKey signerAndPayerKey,
                                             final PublicKey rentReceiverKey,
                                             final PublicKey eventAuthorityKey,
                                             final PublicKey programKey) {
@@ -2548,7 +2567,7 @@ public final class LbClmmProgram {
       createRead(lbPairKey),
       createWrite(binArrayLowerKey),
       createWrite(binArrayUpperKey),
-      createWritableSigner(ownerKey),
+      createWritableSigner(signerAndPayerKey),
       createRead(solanaAccounts.systemProgram()),
       createWrite(rentReceiverKey),
       createRead(eventAuthorityKey),
@@ -3028,15 +3047,62 @@ public final class LbClmmProgram {
     }
   }
 
+  public static final Discriminator RESET_BIN_ARRAY_TOMBSTONE_FIELDS_DISCRIMINATOR = toDiscriminator(54, 90, 252, 63, 41, 206, 63, 63);
+
+  public static Instruction resetBinArrayTombstoneFields(final AccountMeta invokedLbClmmProgramMeta,
+                                                         final PublicKey lbPairKey,
+                                                         final PublicKey binArrayKey,
+                                                         final PublicKey operatorKey,
+                                                         final PublicKey signerKey) {
+    final var keys = List.of(
+      createRead(lbPairKey),
+      createWrite(binArrayKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey)
+    );
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, RESET_BIN_ARRAY_TOMBSTONE_FIELDS_DISCRIMINATOR);
+  }
+
+  public static final Discriminator RESET_POOL_TOMBSTONE_FIELDS_DISCRIMINATOR = toDiscriminator(246, 109, 19, 120, 108, 113, 68, 252);
+
+  public static Instruction resetPoolTombstoneFields(final AccountMeta invokedLbClmmProgramMeta,
+                                                     final PublicKey lbPairKey,
+                                                     final PublicKey operatorKey,
+                                                     final PublicKey signerKey) {
+    final var keys = List.of(
+      createWrite(lbPairKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey)
+    );
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, RESET_POOL_TOMBSTONE_FIELDS_DISCRIMINATOR);
+  }
+
+  public static final Discriminator RESET_POSITION_TOMBSTONE_FIELDS_DISCRIMINATOR = toDiscriminator(206, 6, 51, 218, 211, 30, 159, 84);
+
+  public static Instruction resetPositionTombstoneFields(final AccountMeta invokedLbClmmProgramMeta,
+                                                         final PublicKey positionKey,
+                                                         final PublicKey operatorKey,
+                                                         final PublicKey signerKey) {
+    final var keys = List.of(
+      createWrite(positionKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey)
+    );
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, RESET_POSITION_TOMBSTONE_FIELDS_DISCRIMINATOR);
+  }
+
   public static final Discriminator SET_ACTIVATION_POINT_DISCRIMINATOR = toDiscriminator(91, 249, 15, 165, 26, 129, 254, 125);
 
   public static Instruction setActivationPoint(final AccountMeta invokedLbClmmProgramMeta,
                                                final PublicKey lbPairKey,
-                                               final PublicKey adminKey,
+                                               final PublicKey signerKey,
                                                final long activationPoint) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createWritableSigner(adminKey)
+      createReadOnlySigner(signerKey)
     );
 
     final byte[] _data = new byte[16];
@@ -3082,11 +3148,13 @@ public final class LbClmmProgram {
 
   public static Instruction setPairStatus(final AccountMeta invokedLbClmmProgramMeta,
                                           final PublicKey lbPairKey,
-                                          final PublicKey adminKey,
+                                          final PublicKey operatorKey,
+                                          final PublicKey signerKey,
                                           final int status) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createReadOnlySigner(adminKey)
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey)
     );
 
     final byte[] _data = new byte[9];
@@ -3132,11 +3200,11 @@ public final class LbClmmProgram {
 
   public static Instruction setPairStatusPermissionless(final AccountMeta invokedLbClmmProgramMeta,
                                                         final PublicKey lbPairKey,
-                                                        final PublicKey creatorKey,
+                                                        final PublicKey signerKey,
                                                         final int status) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createReadOnlySigner(creatorKey)
+      createReadOnlySigner(signerKey)
     );
 
     final byte[] _data = new byte[9];
@@ -3182,11 +3250,11 @@ public final class LbClmmProgram {
 
   public static Instruction setPreActivationDuration(final AccountMeta invokedLbClmmProgramMeta,
                                                      final PublicKey lbPairKey,
-                                                     final PublicKey creatorKey,
+                                                     final PublicKey signerKey,
                                                      final long preActivationDuration) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createReadOnlySigner(creatorKey)
+      createReadOnlySigner(signerKey)
     );
 
     final byte[] _data = new byte[16];
@@ -3232,11 +3300,11 @@ public final class LbClmmProgram {
 
   public static Instruction setPreActivationSwapAddress(final AccountMeta invokedLbClmmProgramMeta,
                                                         final PublicKey lbPairKey,
-                                                        final PublicKey creatorKey,
+                                                        final PublicKey signerKey,
                                                         final PublicKey preActivationSwapAddress) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createReadOnlySigner(creatorKey)
+      createReadOnlySigner(signerKey)
     );
 
     final byte[] _data = new byte[40];
@@ -3830,13 +3898,15 @@ public final class LbClmmProgram {
 
   public static Instruction updateBaseFeeParameters(final AccountMeta invokedLbClmmProgramMeta,
                                                     final PublicKey lbPairKey,
-                                                    final PublicKey adminKey,
+                                                    final PublicKey operatorKey,
+                                                    final PublicKey signerKey,
                                                     final PublicKey eventAuthorityKey,
                                                     final PublicKey programKey,
                                                     final BaseFeeParameter feeParameter) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createReadOnlySigner(adminKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -3883,13 +3953,15 @@ public final class LbClmmProgram {
 
   public static Instruction updateDynamicFeeParameters(final AccountMeta invokedLbClmmProgramMeta,
                                                        final PublicKey lbPairKey,
-                                                       final PublicKey adminKey,
+                                                       final PublicKey operatorKey,
+                                                       final PublicKey signerKey,
                                                        final PublicKey eventAuthorityKey,
                                                        final PublicKey programKey,
                                                        final DynamicFeeParameter feeParameter) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createReadOnlySigner(adminKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -4068,7 +4140,8 @@ public final class LbClmmProgram {
 
   public static Instruction updateRewardDuration(final AccountMeta invokedLbClmmProgramMeta,
                                                  final PublicKey lbPairKey,
-                                                 final PublicKey adminKey,
+                                                 final PublicKey operatorKey,
+                                                 final PublicKey signerKey,
                                                  final PublicKey binArrayKey,
                                                  final PublicKey eventAuthorityKey,
                                                  final PublicKey programKey,
@@ -4076,7 +4149,8 @@ public final class LbClmmProgram {
                                                  final long newDuration) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createReadOnlySigner(adminKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
       createWrite(binArrayKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
@@ -4131,14 +4205,16 @@ public final class LbClmmProgram {
 
   public static Instruction updateRewardFunder(final AccountMeta invokedLbClmmProgramMeta,
                                                final PublicKey lbPairKey,
-                                               final PublicKey adminKey,
+                                               final PublicKey operatorKey,
+                                               final PublicKey signerKey,
                                                final PublicKey eventAuthorityKey,
                                                final PublicKey programKey,
                                                final long rewardIndex,
                                                final PublicKey newFunder) {
     final var keys = List.of(
       createWrite(lbPairKey),
-      createReadOnlySigner(adminKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
       createRead(eventAuthorityKey),
       createRead(programKey)
     );
@@ -4268,12 +4344,11 @@ public final class LbClmmProgram {
                                                 final PublicKey tokenYMintKey,
                                                 final PublicKey receiverTokenXKey,
                                                 final PublicKey receiverTokenYKey,
-                                                final PublicKey claimFeeOperatorKey,
-                                                // operator
                                                 final PublicKey operatorKey,
+                                                // operator
+                                                final PublicKey signerKey,
                                                 final PublicKey tokenXProgramKey,
                                                 final PublicKey tokenYProgramKey,
-                                                final PublicKey memoProgramKey,
                                                 final long maxAmountX,
                                                 final long maxAmountY,
                                                 final RemainingAccountsInfo remainingAccountsInfo) {
@@ -4285,11 +4360,10 @@ public final class LbClmmProgram {
       createRead(tokenYMintKey),
       createWrite(receiverTokenXKey),
       createWrite(receiverTokenYKey),
-      createRead(claimFeeOperatorKey),
-      createReadOnlySigner(operatorKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
       createRead(tokenXProgramKey),
-      createRead(tokenYProgramKey),
-      createRead(memoProgramKey)
+      createRead(tokenYProgramKey)
     );
 
     final byte[] _data = new byte[24 + Borsh.len(remainingAccountsInfo)];
@@ -4340,6 +4414,73 @@ public final class LbClmmProgram {
     @Override
     public int l() {
       return 8 + 8 + 8 + Borsh.len(remainingAccountsInfo);
+    }
+  }
+
+  public static final Discriminator ZAP_PROTOCOL_FEE_DISCRIMINATOR = toDiscriminator(213, 155, 187, 34, 56, 182, 91, 240);
+
+  public static Instruction zapProtocolFee(final AccountMeta invokedLbClmmProgramMeta,
+                                           final SolanaAccounts solanaAccounts,
+                                           final PublicKey lbPairKey,
+                                           final PublicKey reserveKey,
+                                           final PublicKey tokenMintKey,
+                                           final PublicKey receiverTokenKey,
+                                           final PublicKey operatorKey,
+                                           // operator
+                                           final PublicKey signerKey,
+                                           final PublicKey tokenProgramKey,
+                                           final long maxAmount,
+                                           final RemainingAccountsInfo remainingAccountsInfo) {
+    final var keys = List.of(
+      createWrite(lbPairKey),
+      createWrite(reserveKey),
+      createRead(tokenMintKey),
+      createWrite(receiverTokenKey),
+      createRead(operatorKey),
+      createReadOnlySigner(signerKey),
+      createRead(tokenProgramKey),
+      createRead(solanaAccounts.instructionsSysVar())
+    );
+
+    final byte[] _data = new byte[16 + Borsh.len(remainingAccountsInfo)];
+    int i = ZAP_PROTOCOL_FEE_DISCRIMINATOR.write(_data, 0);
+    putInt64LE(_data, i, maxAmount);
+    i += 8;
+    Borsh.write(remainingAccountsInfo, _data, i);
+
+    return Instruction.createInstruction(invokedLbClmmProgramMeta, keys, _data);
+  }
+
+  public record ZapProtocolFeeIxData(Discriminator discriminator, long maxAmount, RemainingAccountsInfo remainingAccountsInfo) implements Borsh {  
+
+    public static ZapProtocolFeeIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static ZapProtocolFeeIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var maxAmount = getInt64LE(_data, i);
+      i += 8;
+      final var remainingAccountsInfo = RemainingAccountsInfo.read(_data, i);
+      return new ZapProtocolFeeIxData(discriminator, maxAmount, remainingAccountsInfo);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      putInt64LE(_data, i, maxAmount);
+      i += 8;
+      i += Borsh.write(remainingAccountsInfo, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return 8 + 8 + Borsh.len(remainingAccountsInfo);
     }
   }
 

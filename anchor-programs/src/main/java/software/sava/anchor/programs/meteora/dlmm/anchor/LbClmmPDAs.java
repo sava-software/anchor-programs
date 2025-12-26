@@ -27,17 +27,17 @@ public final class LbClmmPDAs {
     ), program);
   }
 
-  public static ProgramDerivedAddress claimFeeOperatorPDA(final PublicKey program,
-                                                          final PublicKey operatorAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      "cf_operator".getBytes(US_ASCII),
-      operatorAccount.toByteArray()
-    ), program);
-  }
-
   public static ProgramDerivedAddress eventAuthorityPDA(final PublicKey program) {
     return PublicKey.findProgramAddress(List.of(
       "__event_authority".getBytes(US_ASCII)
+    ), program);
+  }
+
+  public static ProgramDerivedAddress operatorPDA(final PublicKey program,
+                                                  final PublicKey whitelistedSignerAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "operator".getBytes(US_ASCII),
+      whitelistedSignerAccount.toByteArray()
     ), program);
   }
 
@@ -64,42 +64,10 @@ public final class LbClmmPDAs {
   }
 
   public static ProgramDerivedAddress presetParameterPDA(final PublicKey program,
-                                                         final byte[] ixBinStep,
-                                                         final byte[] ixBaseFactor) {
-    return PublicKey.findProgramAddress(List.of(
-      "preset_parameter".getBytes(US_ASCII),
-      ixBinStep,
-      ixBaseFactor
-    ), program);
-  }
-
-  public static ProgramDerivedAddress presetParameter1PDA(final PublicKey program,
-                                                          final byte[] ixIndex) {
+                                                         final byte[] ixIndex) {
     return PublicKey.findProgramAddress(List.of(
       "preset_parameter2".getBytes(US_ASCII),
       ixIndex
-    ), program);
-  }
-
-  public static ProgramDerivedAddress receiverTokenXPDA(final PublicKey program,
-                                                        final PublicKey _4EWqcx3aNZmMetCnxwLYwyNjan6XLGp3Ca2W316vrSjv,
-                                                        final PublicKey tokenXProgramAccount,
-                                                        final PublicKey tokenXMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      _4EWqcx3aNZmMetCnxwLYwyNjan6XLGp3Ca2W316vrSjv.toByteArray(),
-      tokenXProgramAccount.toByteArray(),
-      tokenXMintAccount.toByteArray()
-    ), program);
-  }
-
-  public static ProgramDerivedAddress receiverTokenYPDA(final PublicKey program,
-                                                        final PublicKey _4EWqcx3aNZmMetCnxwLYwyNjan6XLGp3Ca2W316vrSjv,
-                                                        final PublicKey tokenYProgramAccount,
-                                                        final PublicKey tokenYMintAccount) {
-    return PublicKey.findProgramAddress(List.of(
-      _4EWqcx3aNZmMetCnxwLYwyNjan6XLGp3Ca2W316vrSjv.toByteArray(),
-      tokenYProgramAccount.toByteArray(),
-      tokenYMintAccount.toByteArray()
     ), program);
   }
 
