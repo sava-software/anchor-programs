@@ -90,11 +90,13 @@ public record PoolState(PublicKey _address,
                         int tokenProgramFlag,
                         // migrate to cpmm, creator fee on quote token or both token
                         AmmCreatorFeeOn ammCreatorFeeOn,
+                        // platform vesting token amount
+                        long platformVestingShare,
                         // padding for future updates
                         byte[] padding) implements Borsh {
 
   public static final int BYTES = 429;
-  public static final int PADDING_LEN = 62;
+  public static final int PADDING_LEN = 54;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(247, 237, 227, 245, 215, 195, 222, 70);
@@ -126,7 +128,8 @@ public record PoolState(PublicKey _address,
   public static final int CREATOR_OFFSET = 333;
   public static final int TOKEN_PROGRAM_FLAG_OFFSET = 365;
   public static final int AMM_CREATOR_FEE_ON_OFFSET = 366;
-  public static final int PADDING_OFFSET = 367;
+  public static final int PLATFORM_VESTING_SHARE_OFFSET = 367;
+  public static final int PADDING_OFFSET = 375;
 
   public static Filter createEpochFilter(final long epoch) {
     final byte[] _data = new byte[8];
@@ -254,6 +257,12 @@ public record PoolState(PublicKey _address,
     return Filter.createMemCompFilter(AMM_CREATOR_FEE_ON_OFFSET, ammCreatorFeeOn.write());
   }
 
+  public static Filter createPlatformVestingShareFilter(final long platformVestingShare) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, platformVestingShare);
+    return Filter.createMemCompFilter(PLATFORM_VESTING_SHARE_OFFSET, _data);
+  }
+
   public static PoolState read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -326,7 +335,9 @@ public record PoolState(PublicKey _address,
     ++i;
     final var ammCreatorFeeOn = AmmCreatorFeeOn.read(_data, i);
     i += Borsh.len(ammCreatorFeeOn);
-    final var padding = new byte[62];
+    final var platformVestingShare = getInt64LE(_data, i);
+    i += 8;
+    final var padding = new byte[54];
     Borsh.readArray(padding, _data, i);
     return new PoolState(_address,
                          discriminator,
@@ -356,6 +367,7 @@ public record PoolState(PublicKey _address,
                          creator,
                          tokenProgramFlag,
                          ammCreatorFeeOn,
+                         platformVestingShare,
                          padding);
   }
 
@@ -412,7 +424,9 @@ public record PoolState(PublicKey _address,
     _data[i] = (byte) tokenProgramFlag;
     ++i;
     i += Borsh.write(ammCreatorFeeOn, _data, i);
-    i += Borsh.writeArrayChecked(padding, 62, _data, i);
+    putInt64LE(_data, i, platformVestingShare);
+    i += 8;
+    i += Borsh.writeArrayChecked(padding, 54, _data, i);
     return i - offset;
   }
 

@@ -97,13 +97,6 @@
         "explicitRules": []
       },
       {
-        "refProgram": "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
-        "srcMismatch": "ERROR",
-        "matchOnTypeName": true,
-        "excludeTypes": [],
-        "explicitRules": []
-      },
-      {
         "refProgram": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
         "srcMismatch": "ERROR",
         "matchOnTypeName": true,
@@ -237,11 +230,6 @@
     "package": "kamino.liquidity"
   },
   {
-    "name": "Kamino Scope",
-    "program": "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
-    "package": "kamino.scope"
-  },
-  {
     "name": "Kamino Vaults",
     "program": "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd",
     "package": "kamino.vaults",
@@ -254,13 +242,6 @@
           "ReserveConfig",
           "Reserve"
         ],
-        "explicitRules": []
-      },
-      {
-        "refProgram": "HFn8GnPADiny6XqUoWE8uRPPxb29ikn4yTuPa9MF2fWJ",
-        "srcMismatch": "WARN_KEEP_REF",
-        "matchOnTypeName": true,
-        "excludeTypes": [],
         "explicitRules": []
       },
       {

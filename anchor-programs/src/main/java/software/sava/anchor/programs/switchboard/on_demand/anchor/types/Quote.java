@@ -33,8 +33,9 @@ public record Quote(// The address of the signer generated within an enclave.
                     PublicKey stagingEd25519Signer,
                     byte[] stagingSecp256k1Signer,
                     byte[] ethSigner,
-                    // Reserved.
                     byte[] ebuf4,
+                    long lastSignTs,
+                    // Reserved.
                     byte[] ebuf3,
                     byte[] ebuf2,
                     byte[] ebuf1) implements Borsh {
@@ -50,7 +51,7 @@ public record Quote(// The address of the signer generated within an enclave.
   public static final int PADDING_2_LEN = 7;
   public static final int STAGING_SECP_222K_1_SIGNER_LEN = 64;
   public static final int ETH_SIGNER_LEN = 20;
-  public static final int EBUF_4_LEN = 12;
+  public static final int EBUF_4_LEN = 4;
   public static final int EBUF_3_LEN = 128;
   public static final int EBUF_2_LEN = 256;
   public static final int EBUF_1_LEN = 512;
@@ -96,8 +97,10 @@ public record Quote(// The address of the signer generated within an enclave.
     i += Borsh.readArray(stagingSecp256k1Signer, _data, i);
     final var ethSigner = new byte[20];
     i += Borsh.readArray(ethSigner, _data, i);
-    final var ebuf4 = new byte[12];
+    final var ebuf4 = new byte[4];
     i += Borsh.readArray(ebuf4, _data, i);
+    final var lastSignTs = getInt64LE(_data, i);
+    i += 8;
     final var ebuf3 = new byte[128];
     i += Borsh.readArray(ebuf3, _data, i);
     final var ebuf2 = new byte[256];
@@ -123,6 +126,7 @@ public record Quote(// The address of the signer generated within an enclave.
                      stagingSecp256k1Signer,
                      ethSigner,
                      ebuf4,
+                     lastSignTs,
                      ebuf3,
                      ebuf2,
                      ebuf1);
@@ -157,7 +161,9 @@ public record Quote(// The address of the signer generated within an enclave.
     i += 32;
     i += Borsh.writeArrayChecked(stagingSecp256k1Signer, 64, _data, i);
     i += Borsh.writeArrayChecked(ethSigner, 20, _data, i);
-    i += Borsh.writeArrayChecked(ebuf4, 12, _data, i);
+    i += Borsh.writeArrayChecked(ebuf4, 4, _data, i);
+    putInt64LE(_data, i, lastSignTs);
+    i += 8;
     i += Borsh.writeArrayChecked(ebuf3, 128, _data, i);
     i += Borsh.writeArrayChecked(ebuf2, 256, _data, i);
     i += Borsh.writeArrayChecked(ebuf1, 512, _data, i);

@@ -33,6 +33,9 @@ public record QueueAccountData(PublicKey _address,
                                // The addresses of the quote oracles who have a valid
                                // verification status and have heartbeated on-chain recently.
                                PublicKey[] oracleKeys,
+                               byte[] reserved1,
+                               byte[][] secpOracleSigningKeys,
+                               PublicKey[] ed25519OracleSigningKeys,
                                // The maximum allowable time until a EnclaveAccount needs to be re-verified on-chain.
                                long maxQuoteVerificationAge,
                                // The unix timestamp when the last quote oracle heartbeated on-chain.
@@ -62,18 +65,24 @@ public record QueueAccountData(PublicKey _address,
                                PublicKey ncn,
                                long resrved,
                                VaultInfo[] vaults,
+                               long lastRewardEpoch,
+                               // The proportion of subsidy rewards that go to oracle operators (in basis points, 5000 = 50%)
+                               int oracleFeeProportionBps,
                                byte[] ebuf4,
                                byte[] ebuf2,
                                byte[] ebuf1) implements Borsh {
 
   public static final int BYTES = 6280;
   public static final int MR_ENCLAVES_LEN = 32;
-  public static final int ORACLE_KEYS_LEN = 128;
+  public static final int ORACLE_KEYS_LEN = 78;
+  public static final int RESERVED_1_LEN = 40;
+  public static final int SECP_ORACLE_SIGNING_KEYS_LEN = 30;
+  public static final int ED_22222_ORACLE_SIGNING_KEYS_LEN = 30;
   public static final int EBUF_6_LEN = 15;
   public static final int VAULTS_LEN = 4;
   public static final int EBUF_4_LEN = 32;
   public static final int EBUF_2_LEN = 256;
-  public static final int EBUF_1_LEN = 512;
+  public static final int EBUF_1_LEN = 500;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
   public static final Discriminator DISCRIMINATOR = toDiscriminator(217, 194, 55, 127, 184, 83, 138, 1);
@@ -82,6 +91,9 @@ public record QueueAccountData(PublicKey _address,
   public static final int AUTHORITY_OFFSET = 8;
   public static final int MR_ENCLAVES_OFFSET = 40;
   public static final int ORACLE_KEYS_OFFSET = 1064;
+  public static final int RESERVED_1_OFFSET = 3560;
+  public static final int SECP_ORACLE_SIGNING_KEYS_OFFSET = 3600;
+  public static final int ED_22222_ORACLE_SIGNING_KEYS_OFFSET = 4200;
   public static final int MAX_QUOTE_VERIFICATION_AGE_OFFSET = 5160;
   public static final int LAST_HEARTBEAT_OFFSET = 5168;
   public static final int NODE_TIMEOUT_OFFSET = 5176;
@@ -103,9 +115,11 @@ public record QueueAccountData(PublicKey _address,
   public static final int NCN_OFFSET = 5280;
   public static final int RESRVED_OFFSET = 5312;
   public static final int VAULTS_OFFSET = 5320;
-  public static final int EBUF_4_OFFSET = 5480;
-  public static final int EBUF_2_OFFSET = 5512;
-  public static final int EBUF_1_OFFSET = 5768;
+  public static final int LAST_REWARD_EPOCH_OFFSET = 5480;
+  public static final int ORACLE_FEE_PROPORTION_BPS_OFFSET = 5488;
+  public static final int EBUF_4_OFFSET = 5492;
+  public static final int EBUF_2_OFFSET = 5524;
+  public static final int EBUF_1_OFFSET = 5780;
 
   public static Filter createAuthorityFilter(final PublicKey authority) {
     return Filter.createMemCompFilter(AUTHORITY_OFFSET, authority);
@@ -211,6 +225,18 @@ public record QueueAccountData(PublicKey _address,
     return Filter.createMemCompFilter(RESRVED_OFFSET, _data);
   }
 
+  public static Filter createLastRewardEpochFilter(final long lastRewardEpoch) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, lastRewardEpoch);
+    return Filter.createMemCompFilter(LAST_REWARD_EPOCH_OFFSET, _data);
+  }
+
+  public static Filter createOracleFeeProportionBpsFilter(final int oracleFeeProportionBps) {
+    final byte[] _data = new byte[4];
+    putInt32LE(_data, 0, oracleFeeProportionBps);
+    return Filter.createMemCompFilter(ORACLE_FEE_PROPORTION_BPS_OFFSET, _data);
+  }
+
   public static QueueAccountData read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -235,8 +261,14 @@ public record QueueAccountData(PublicKey _address,
     i += 32;
     final var mrEnclaves = new byte[32][32];
     i += Borsh.readArray(mrEnclaves, _data, i);
-    final var oracleKeys = new PublicKey[128];
+    final var oracleKeys = new PublicKey[78];
     i += Borsh.readArray(oracleKeys, _data, i);
+    final var reserved1 = new byte[40];
+    i += Borsh.readArray(reserved1, _data, i);
+    final var secpOracleSigningKeys = new byte[30][20];
+    i += Borsh.readArray(secpOracleSigningKeys, _data, i);
+    final var ed25519OracleSigningKeys = new PublicKey[30];
+    i += Borsh.readArray(ed25519OracleSigningKeys, _data, i);
     final var maxQuoteVerificationAge = getInt64LE(_data, i);
     i += 8;
     final var lastHeartbeat = getInt64LE(_data, i);
@@ -279,17 +311,24 @@ public record QueueAccountData(PublicKey _address,
     i += 8;
     final var vaults = new VaultInfo[4];
     i += Borsh.readArray(vaults, VaultInfo::read, _data, i);
+    final var lastRewardEpoch = getInt64LE(_data, i);
+    i += 8;
+    final var oracleFeeProportionBps = getInt32LE(_data, i);
+    i += 4;
     final var ebuf4 = new byte[32];
     i += Borsh.readArray(ebuf4, _data, i);
     final var ebuf2 = new byte[256];
     i += Borsh.readArray(ebuf2, _data, i);
-    final var ebuf1 = new byte[512];
+    final var ebuf1 = new byte[500];
     Borsh.readArray(ebuf1, _data, i);
     return new QueueAccountData(_address,
                                 discriminator,
                                 authority,
                                 mrEnclaves,
                                 oracleKeys,
+                                reserved1,
+                                secpOracleSigningKeys,
+                                ed25519OracleSigningKeys,
                                 maxQuoteVerificationAge,
                                 lastHeartbeat,
                                 nodeTimeout,
@@ -311,6 +350,8 @@ public record QueueAccountData(PublicKey _address,
                                 ncn,
                                 resrved,
                                 vaults,
+                                lastRewardEpoch,
+                                oracleFeeProportionBps,
                                 ebuf4,
                                 ebuf2,
                                 ebuf1);
@@ -322,7 +363,10 @@ public record QueueAccountData(PublicKey _address,
     authority.write(_data, i);
     i += 32;
     i += Borsh.writeArrayChecked(mrEnclaves, 32, _data, i);
-    i += Borsh.writeArrayChecked(oracleKeys, 128, _data, i);
+    i += Borsh.writeArrayChecked(oracleKeys, 78, _data, i);
+    i += Borsh.writeArrayChecked(reserved1, 40, _data, i);
+    i += Borsh.writeArrayChecked(secpOracleSigningKeys, 30, _data, i);
+    i += Borsh.writeArrayChecked(ed25519OracleSigningKeys, 30, _data, i);
     putInt64LE(_data, i, maxQuoteVerificationAge);
     i += 8;
     putInt64LE(_data, i, lastHeartbeat);
@@ -363,9 +407,13 @@ public record QueueAccountData(PublicKey _address,
     putInt64LE(_data, i, resrved);
     i += 8;
     i += Borsh.writeArrayChecked(vaults, 4, _data, i);
+    putInt64LE(_data, i, lastRewardEpoch);
+    i += 8;
+    putInt32LE(_data, i, oracleFeeProportionBps);
+    i += 4;
     i += Borsh.writeArrayChecked(ebuf4, 32, _data, i);
     i += Borsh.writeArrayChecked(ebuf2, 256, _data, i);
-    i += Borsh.writeArrayChecked(ebuf1, 512, _data, i);
+    i += Borsh.writeArrayChecked(ebuf1, 500, _data, i);
     return i - offset;
   }
 

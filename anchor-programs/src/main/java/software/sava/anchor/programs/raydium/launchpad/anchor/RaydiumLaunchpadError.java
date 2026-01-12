@@ -23,7 +23,8 @@ public sealed interface RaydiumLaunchpadError extends ProgramError permits
     RaydiumLaunchpadError.NoSupportExtension,
     RaydiumLaunchpadError.NotEnoughRemainingAccounts,
     RaydiumLaunchpadError.TransferFeeCalculateNotMatch,
-    RaydiumLaunchpadError.CurveParamIsNotExist {
+    RaydiumLaunchpadError.CurveParamIsNotExist,
+    RaydiumLaunchpadError.InvalidTotalLockedAmount {
 
   static RaydiumLaunchpadError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -48,6 +49,7 @@ public sealed interface RaydiumLaunchpadError extends ProgramError permits
       case 6018 -> NotEnoughRemainingAccounts.INSTANCE;
       case 6019 -> TransferFeeCalculateNotMatch.INSTANCE;
       case 6020 -> CurveParamIsNotExist.INSTANCE;
+      case 6021 -> InvalidTotalLockedAmount.INSTANCE;
       default -> throw new IllegalStateException("Unexpected RaydiumLaunchpad error code: " + errorCode);
     };
   }
@@ -196,6 +198,13 @@ public sealed interface RaydiumLaunchpadError extends ProgramError permits
 
     public static final CurveParamIsNotExist INSTANCE = new CurveParamIsNotExist(
         6020, "Curve param is not exist"
+    );
+  }
+
+  record InvalidTotalLockedAmount(int code, String msg) implements RaydiumLaunchpadError {
+
+    public static final InvalidTotalLockedAmount INSTANCE = new InvalidTotalLockedAmount(
+        6021, "Total locked amount must great or equal to the platform vesting share amount"
     );
   }
 }

@@ -12,7 +12,8 @@ import static software.sava.core.encoding.ByteUtil.getInt64LE;
 
 public record QueueSetConfigsParams(PublicKey authority,
                                     OptionalInt reward,
-                                    OptionalLong nodeTimeout) implements Borsh {
+                                    OptionalLong nodeTimeout,
+                                    OptionalInt oracleFeeProportionBps) implements Borsh {
 
   public static QueueSetConfigsParams read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -28,7 +29,14 @@ public record QueueSetConfigsParams(PublicKey authority,
       i += 4;
     }
     final var nodeTimeout = _data[i++] == 0 ? OptionalLong.empty() : OptionalLong.of(getInt64LE(_data, i));
-    return new QueueSetConfigsParams(authority, reward, nodeTimeout);
+    if (nodeTimeout.isPresent()) {
+      i += 8;
+    }
+    final var oracleFeeProportionBps = _data[i++] == 0 ? OptionalInt.empty() : OptionalInt.of(getInt32LE(_data, i));
+    return new QueueSetConfigsParams(authority,
+                                     reward,
+                                     nodeTimeout,
+                                     oracleFeeProportionBps);
   }
 
   @Override
@@ -37,11 +45,12 @@ public record QueueSetConfigsParams(PublicKey authority,
     i += Borsh.writeOptional(authority, _data, i);
     i += Borsh.writeOptional(reward, _data, i);
     i += Borsh.writeOptional(nodeTimeout, _data, i);
+    i += Borsh.writeOptional(oracleFeeProportionBps, _data, i);
     return i - offset;
   }
 
   @Override
   public int l() {
-    return (authority == null ? 1 : (1 + 32)) + (reward == null || reward.isEmpty() ? 1 : (1 + 4)) + (nodeTimeout == null || nodeTimeout.isEmpty() ? 1 : (1 + 8));
+    return (authority == null ? 1 : (1 + 32)) + (reward == null || reward.isEmpty() ? 1 : (1 + 4)) + (nodeTimeout == null || nodeTimeout.isEmpty() ? 1 : (1 + 8)) + (oracleFeeProportionBps == null || oracleFeeProportionBps.isEmpty() ? 1 : (1 + 4));
   }
 }

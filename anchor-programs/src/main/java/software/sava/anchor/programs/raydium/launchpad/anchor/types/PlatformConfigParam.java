@@ -18,7 +18,10 @@ public sealed interface PlatformConfigParam extends RustEnum permits
   PlatformConfigParam.Web,
   PlatformConfigParam.Img,
   PlatformConfigParam.CpSwapConfig,
-  PlatformConfigParam.AllInfo {
+  PlatformConfigParam.AllInfo,
+  PlatformConfigParam.VestingWallet,
+  PlatformConfigParam.PlatformVestingScale,
+  PlatformConfigParam.PlatformCPCreator {
 
   static PlatformConfigParam read(final byte[] _data, final int offset) {
     final int ordinal = _data[offset] & 0xFF;
@@ -33,6 +36,9 @@ public sealed interface PlatformConfigParam extends RustEnum permits
       case 6 -> Img.read(_data, i);
       case 7 -> CpSwapConfig.INSTANCE;
       case 8 -> AllInfo.read(_data, i);
+      case 9 -> VestingWallet.read(_data, i);
+      case 10 -> PlatformVestingScale.read(_data, i);
+      case 11 -> PlatformCPCreator.read(_data, i);
       default -> throw new IllegalStateException(java.lang.String.format(
           "Unexpected ordinal [%d] for enum [PlatformConfigParam]", ordinal
       ));
@@ -154,6 +160,42 @@ public sealed interface PlatformConfigParam extends RustEnum permits
     @Override
     public int ordinal() {
       return 8;
+    }
+  }
+
+  record VestingWallet(PublicKey val) implements EnumPublicKey, PlatformConfigParam {
+
+    public static VestingWallet read(final byte[] _data, int i) {
+      return new VestingWallet(readPubKey(_data, i));
+    }
+
+    @Override
+    public int ordinal() {
+      return 9;
+    }
+  }
+
+  record PlatformVestingScale(long val) implements EnumInt64, PlatformConfigParam {
+
+    public static PlatformVestingScale read(final byte[] _data, int i) {
+      return new PlatformVestingScale(getInt64LE(_data, i));
+    }
+
+    @Override
+    public int ordinal() {
+      return 10;
+    }
+  }
+
+  record PlatformCPCreator(PublicKey val) implements EnumPublicKey, PlatformConfigParam {
+
+    public static PlatformCPCreator read(final byte[] _data, int i) {
+      return new PlatformCPCreator(readPubKey(_data, i));
+    }
+
+    @Override
+    public int ordinal() {
+      return 11;
     }
   }
 }

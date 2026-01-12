@@ -73,7 +73,9 @@ public sealed interface SbOnDemandError extends ProgramError permits
     SbOnDemandError.InvalidOracleSubsidyWallet,
     SbOnDemandError.InvalidOperator,
     SbOnDemandError.Max128SampleValue,
-    SbOnDemandError.RewardAlreadyPaid {
+    SbOnDemandError.RewardAlreadyPaid,
+    SbOnDemandError.InvalidOracleAuthority,
+    SbOnDemandError.InvalidRewardVault {
 
   static SbOnDemandError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -148,6 +150,8 @@ public sealed interface SbOnDemandError extends ProgramError permits
       case 6068 -> InvalidOperator.INSTANCE;
       case 6069 -> Max128SampleValue.INSTANCE;
       case 6070 -> RewardAlreadyPaid.INSTANCE;
+      case 6071 -> InvalidOracleAuthority.INSTANCE;
+      case 6072 -> InvalidRewardVault.INSTANCE;
       default -> throw new IllegalStateException("Unexpected SbOnDemand error code: " + errorCode);
     };
   }
@@ -646,6 +650,20 @@ public sealed interface SbOnDemandError extends ProgramError permits
 
     public static final RewardAlreadyPaid INSTANCE = new RewardAlreadyPaid(
         6070, "null"
+    );
+  }
+
+  record InvalidOracleAuthority(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidOracleAuthority INSTANCE = new InvalidOracleAuthority(
+        6071, "null"
+    );
+  }
+
+  record InvalidRewardVault(int code, String msg) implements SbOnDemandError {
+
+    public static final InvalidRewardVault INSTANCE = new InvalidRewardVault(
+        6072, "null"
     );
   }
 }

@@ -82,7 +82,7 @@ public final class RaydiumLaunchpadProgram {
                                        final long minimumAmountOut,
                                        final long shareFeeRate) {
     final var keys = List.of(
-      createReadOnlySigner(payerKey),
+      createWritableSigner(payerKey),
       createRead(authorityKey),
       createRead(globalConfigKey),
       createRead(platformConfigKey),
@@ -204,7 +204,7 @@ public final class RaydiumLaunchpadProgram {
                                         final long maximumAmountIn,
                                         final long shareFeeRate) {
     final var keys = List.of(
-      createReadOnlySigner(payerKey),
+      createWritableSigner(payerKey),
       createRead(authorityKey),
       createRead(globalConfigKey),
       createRead(platformConfigKey),
@@ -625,6 +625,7 @@ public final class RaydiumLaunchpadProgram {
                                                  final PublicKey platformConfigKey,
                                                  final PublicKey cpswapConfigKey,
                                                  final PublicKey transferFeeExtensionAuthorityKey,
+                                                 final PublicKey platformVestingWalletKey,
                                                  final PlatformParams platformParams) {
     final var keys = List.of(
       createWritableSigner(platformAdminKey),
@@ -633,7 +634,8 @@ public final class RaydiumLaunchpadProgram {
       createWrite(platformConfigKey),
       createRead(cpswapConfigKey),
       createRead(solanaAccounts.systemProgram()),
-      createRead(transferFeeExtensionAuthorityKey)
+      createRead(transferFeeExtensionAuthorityKey),
+      createRead(platformVestingWalletKey)
     );
 
     final byte[] _data = new byte[8 + Borsh.len(platformParams)];
@@ -670,6 +672,41 @@ public final class RaydiumLaunchpadProgram {
     public int l() {
       return 8 + Borsh.len(platformParams);
     }
+  }
+
+  public static final Discriminator CREATE_PLATFORM_VESTING_ACCOUNT_DISCRIMINATOR = toDiscriminator(146, 71, 173, 69, 98, 19, 15, 106);
+
+  // Create vesting account
+  // # Arguments
+  // 
+  // * `ctx` - The context of accounts
+  // * `share` - The share amount of base token to be vested
+  // 
+  public static Instruction createPlatformVestingAccount(final AccountMeta invokedRaydiumLaunchpadProgramMeta,
+                                                         final SolanaAccounts solanaAccounts,
+                                                         // The account paying for the initialization costs
+                                                         // This can be any account with sufficient SOL to cover the transaction
+                                                         final PublicKey platformVestingWalletKey,
+                                                         // The beneficiary is used to receive the allocated linear release of tokens.
+                                                         // Once this account is set, it cannot be modified, so please ensure the validity of this account,
+                                                         // otherwise, the unlocked tokens will not be claimable.
+                                                         final PublicKey beneficiaryKey,
+                                                         // Platform config account to be changed
+                                                         final PublicKey platformConfigKey,
+                                                         // The pool state account
+                                                         final PublicKey poolStateKey,
+                                                         // The vesting record account
+                                                         final PublicKey platformVestingRecordKey) {
+    final var keys = List.of(
+      createWritableSigner(platformVestingWalletKey),
+      createWrite(beneficiaryKey),
+      createRead(platformConfigKey),
+      createWrite(poolStateKey),
+      createWrite(platformVestingRecordKey),
+      createRead(solanaAccounts.systemProgram())
+    );
+
+    return Instruction.createInstruction(invokedRaydiumLaunchpadProgramMeta, keys, CREATE_PLATFORM_VESTING_ACCOUNT_DISCRIMINATOR);
   }
 
   public static final Discriminator CREATE_VESTING_ACCOUNT_DISCRIMINATOR = toDiscriminator(129, 178, 2, 13, 217, 172, 230, 218);
@@ -1467,7 +1504,7 @@ public final class RaydiumLaunchpadProgram {
                                         final long minimumAmountOut,
                                         final long shareFeeRate) {
     final var keys = List.of(
-      createReadOnlySigner(payerKey),
+      createWritableSigner(payerKey),
       createRead(authorityKey),
       createRead(globalConfigKey),
       createRead(platformConfigKey),
@@ -1590,7 +1627,7 @@ public final class RaydiumLaunchpadProgram {
                                          final long maximumAmountIn,
                                          final long shareFeeRate) {
     final var keys = List.of(
-      createReadOnlySigner(payerKey),
+      createWritableSigner(payerKey),
       createRead(authorityKey),
       createRead(globalConfigKey),
       createRead(platformConfigKey),

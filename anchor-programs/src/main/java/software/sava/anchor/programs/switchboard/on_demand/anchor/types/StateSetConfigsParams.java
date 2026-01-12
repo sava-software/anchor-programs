@@ -12,7 +12,7 @@ import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 
 public record StateSetConfigsParams(PublicKey newAuthority,
-                                    int testOnlyDisableMrEnclaveCheck,
+                                    int teeVerifyMode,
                                     int addAdvisory,
                                     int rmAdvisory,
                                     PublicKey switchMint,
@@ -30,7 +30,7 @@ public record StateSetConfigsParams(PublicKey newAuthority,
     int i = offset;
     final var newAuthority = readPubKey(_data, i);
     i += 32;
-    final var testOnlyDisableMrEnclaveCheck = _data[i] & 0xFF;
+    final var teeVerifyMode = _data[i] & 0xFF;
     ++i;
     final var addAdvisory = getInt16LE(_data, i);
     i += 2;
@@ -46,7 +46,7 @@ public record StateSetConfigsParams(PublicKey newAuthority,
     i += 32;
     final var rmCostWl = readPubKey(_data, i);
     return new StateSetConfigsParams(newAuthority,
-                                     testOnlyDisableMrEnclaveCheck,
+                                     teeVerifyMode,
                                      addAdvisory,
                                      rmAdvisory,
                                      switchMint,
@@ -61,7 +61,7 @@ public record StateSetConfigsParams(PublicKey newAuthority,
     int i = offset;
     newAuthority.write(_data, i);
     i += 32;
-    _data[i] = (byte) testOnlyDisableMrEnclaveCheck;
+    _data[i] = (byte) teeVerifyMode;
     ++i;
     putInt16LE(_data, i, addAdvisory);
     i += 2;

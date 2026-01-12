@@ -28,12 +28,15 @@ import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueGar
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueInitParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueInitSVMParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueOverrideSVMParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueuePayRewardsParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueuePaySubsidyParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueRemoveMrEnclaveParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueResetLutParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueResetVaultParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueSetConfigsParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueSetNcnParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.QueueSetVaultParams;
+import software.sava.anchor.programs.switchboard.on_demand.anchor.types.RandomnessCloseParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.RandomnessCommitParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.RandomnessInitParams;
 import software.sava.anchor.programs.switchboard.on_demand.anchor.types.RandomnessRevealParams;
@@ -63,6 +66,7 @@ public final class SbOnDemandProgram {
                                                 final PublicKey guardianKey,
                                                 final PublicKey oracleKey,
                                                 final PublicKey authorityKey,
+                                                final PublicKey oracleQueueKey,
                                                 final PublicKey guardianQueueKey,
                                                 final PublicKey stateKey,
                                                 final GuardianQuoteVerifyParams params) {
@@ -70,6 +74,7 @@ public final class SbOnDemandProgram {
       createWrite(guardianKey),
       createWrite(oracleKey),
       createReadOnlySigner(authorityKey),
+      createWrite(oracleQueueKey),
       createWrite(guardianQueueKey),
       createRead(stateKey),
       createRead(solanaAccounts.slotHashesSysVar())
@@ -410,8 +415,6 @@ public final class SbOnDemandProgram {
                                           final PublicKey payerKey,
                                           final PublicKey lutSignerKey,
                                           final PublicKey lutKey,
-                                          final PublicKey stakeProgramKey,
-                                          final PublicKey stakePoolKey,
                                           final OracleInitSVMParams params) {
     final var keys = List.of(
       createWrite(oracleKey),
@@ -422,9 +425,7 @@ public final class SbOnDemandProgram {
       createRead(solanaAccounts.tokenProgram()),
       createRead(lutSignerKey),
       createWrite(lutKey),
-      createRead(solanaAccounts.addressLookupTableProgram()),
-      createRead(stakeProgramKey),
-      createRead(stakePoolKey)
+      createRead(solanaAccounts.addressLookupTableProgram())
     );
 
     final byte[] _data = new byte[8 + Borsh.len(params)];
@@ -1539,6 +1540,68 @@ public final class SbOnDemandProgram {
     }
   }
 
+  public static final Discriminator QUEUE_PAY_REWARDS_DISCRIMINATOR = toDiscriminator(67, 87, 149, 166, 56, 112, 20, 12);
+
+  public static Instruction queuePayRewards(final AccountMeta invokedSbOnDemandProgramMeta,
+                                            final SolanaAccounts solanaAccounts,
+                                            final PublicKey queueKey,
+                                            final PublicKey programStateKey,
+                                            final PublicKey vaultKey,
+                                            final PublicKey rewardVaultKey,
+                                            final PublicKey payerKey,
+                                            final PublicKey escrowKey,
+                                            final QueuePayRewardsParams params) {
+    final var keys = List.of(
+      createWrite(queueKey),
+      createRead(programStateKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(vaultKey),
+      createWrite(rewardVaultKey),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.associatedTokenAccountProgram()),
+      createRead(solanaAccounts.wrappedSolTokenMint()),
+      createWritableSigner(payerKey),
+      createWrite(escrowKey)
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = QUEUE_PAY_REWARDS_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record QueuePayRewardsIxData(Discriminator discriminator, QueuePayRewardsParams params) implements Borsh {  
+
+    public static QueuePayRewardsIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 8;
+
+    public static QueuePayRewardsIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = QueuePayRewardsParams.read(_data, i);
+      return new QueuePayRewardsIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
   public static final Discriminator QUEUE_PAY_SUBSIDY_DISCRIMINATOR = toDiscriminator(85, 84, 51, 251, 144, 57, 105, 200);
 
   public static Instruction queuePaySubsidy(final AccountMeta invokedSbOnDemandProgramMeta,
@@ -1643,6 +1706,66 @@ public final class SbOnDemandProgram {
       int i = offset + discriminator.length();
       final var params = QueueRemoveMrEnclaveParams.read(_data, i);
       return new QueueRemoveMrEnclaveIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator QUEUE_RESET_LUT_DISCRIMINATOR = toDiscriminator(224, 85, 0, 204, 71, 42, 11, 242);
+
+  public static Instruction queueResetLut(final AccountMeta invokedSbOnDemandProgramMeta,
+                                          final SolanaAccounts solanaAccounts,
+                                          final PublicKey queueKey,
+                                          final PublicKey authorityKey,
+                                          final PublicKey payerKey,
+                                          final PublicKey programStateKey,
+                                          final PublicKey lutSignerKey,
+                                          final PublicKey lutKey,
+                                          final QueueResetLutParams params) {
+    final var keys = List.of(
+      createWrite(queueKey),
+      createReadOnlySigner(authorityKey),
+      createWritableSigner(payerKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(programStateKey),
+      createRead(lutSignerKey),
+      createWrite(lutKey),
+      createRead(solanaAccounts.addressLookupTableProgram())
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = QUEUE_RESET_LUT_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record QueueResetLutIxData(Discriminator discriminator, QueueResetLutParams params) implements Borsh {  
+
+    public static QueueResetLutIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 16;
+
+    public static QueueResetLutIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = QueueResetLutParams.read(_data, i);
+      return new QueueResetLutIxData(discriminator, params);
     }
 
     @Override
@@ -1855,6 +1978,68 @@ public final class SbOnDemandProgram {
       int i = offset + discriminator.length();
       final var params = QueueSetVaultParams.read(_data, i);
       return new QueueSetVaultIxData(discriminator, params);
+    }
+
+    @Override
+    public int write(final byte[] _data, final int offset) {
+      int i = offset + discriminator.write(_data, offset);
+      i += Borsh.write(params, _data, i);
+      return i - offset;
+    }
+
+    @Override
+    public int l() {
+      return BYTES;
+    }
+  }
+
+  public static final Discriminator RANDOMNESS_CLOSE_DISCRIMINATOR = toDiscriminator(146, 101, 14, 74, 225, 246, 0, 156);
+
+  public static Instruction randomnessClose(final AccountMeta invokedSbOnDemandProgramMeta,
+                                            final SolanaAccounts solanaAccounts,
+                                            final PublicKey randomnessKey,
+                                            final PublicKey rewardEscrowKey,
+                                            final PublicKey authorityKey,
+                                            final PublicKey programStateKey,
+                                            final PublicKey lutKey,
+                                            final PublicKey lutSignerKey,
+                                            final RandomnessCloseParams params) {
+    final var keys = List.of(
+      createWrite(randomnessKey),
+      createWrite(rewardEscrowKey),
+      createWritableSigner(authorityKey),
+      createRead(programStateKey),
+      createRead(solanaAccounts.systemProgram()),
+      createRead(solanaAccounts.tokenProgram()),
+      createRead(solanaAccounts.wrappedSolTokenMint()),
+      createWrite(lutKey),
+      createRead(lutSignerKey),
+      createRead(solanaAccounts.addressLookupTableProgram())
+    );
+
+    final byte[] _data = new byte[8 + Borsh.len(params)];
+    int i = RANDOMNESS_CLOSE_DISCRIMINATOR.write(_data, 0);
+    Borsh.write(params, _data, i);
+
+    return Instruction.createInstruction(invokedSbOnDemandProgramMeta, keys, _data);
+  }
+
+  public record RandomnessCloseIxData(Discriminator discriminator, RandomnessCloseParams params) implements Borsh {  
+
+    public static RandomnessCloseIxData read(final Instruction instruction) {
+      return read(instruction.data(), instruction.offset());
+    }
+
+    public static final int BYTES = 8;
+
+    public static RandomnessCloseIxData read(final byte[] _data, final int offset) {
+      if (_data == null || _data.length == 0) {
+        return null;
+      }
+      final var discriminator = createAnchorDiscriminator(_data, offset);
+      int i = offset + discriminator.length();
+      final var params = RandomnessCloseParams.read(_data, i);
+      return new RandomnessCloseIxData(discriminator, params);
     }
 
     @Override

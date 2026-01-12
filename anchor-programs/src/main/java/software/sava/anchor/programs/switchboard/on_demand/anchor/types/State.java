@@ -19,7 +19,7 @@ import static software.sava.core.programs.Discriminator.toDiscriminator;
 public record State(PublicKey _address,
                     Discriminator discriminator,
                     int bump,
-                    int testOnlyDisableMrEnclaveCheck,
+                    int teeVerifyMode,
                     int enableStaking,
                     byte[] padding1,
                     PublicKey authority,
@@ -63,7 +63,7 @@ public record State(PublicKey _address,
   public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
   public static final int BUMP_OFFSET = 8;
-  public static final int TEST_ONLY_DISABLE_MR_ENCLAVE_CHECK_OFFSET = 9;
+  public static final int TEE_VERIFY_MODE_OFFSET = 9;
   public static final int ENABLE_STAKING_OFFSET = 10;
   public static final int PADDING_1_OFFSET = 11;
   public static final int AUTHORITY_OFFSET = 16;
@@ -93,8 +93,8 @@ public record State(PublicKey _address,
     return Filter.createMemCompFilter(BUMP_OFFSET, new byte[]{(byte) bump});
   }
 
-  public static Filter createTestOnlyDisableMrEnclaveCheckFilter(final int testOnlyDisableMrEnclaveCheck) {
-    return Filter.createMemCompFilter(TEST_ONLY_DISABLE_MR_ENCLAVE_CHECK_OFFSET, new byte[]{(byte) testOnlyDisableMrEnclaveCheck});
+  public static Filter createTeeVerifyModeFilter(final int teeVerifyMode) {
+    return Filter.createMemCompFilter(TEE_VERIFY_MODE_OFFSET, new byte[]{(byte) teeVerifyMode});
   }
 
   public static Filter createEnableStakingFilter(final int enableStaking) {
@@ -187,7 +187,7 @@ public record State(PublicKey _address,
     int i = offset + discriminator.length();
     final var bump = _data[i] & 0xFF;
     ++i;
-    final var testOnlyDisableMrEnclaveCheck = _data[i] & 0xFF;
+    final var teeVerifyMode = _data[i] & 0xFF;
     ++i;
     final var enableStaking = _data[i] & 0xFF;
     ++i;
@@ -240,7 +240,7 @@ public record State(PublicKey _address,
     return new State(_address,
                      discriminator,
                      bump,
-                     testOnlyDisableMrEnclaveCheck,
+                     teeVerifyMode,
                      enableStaking,
                      padding1,
                      authority,
@@ -272,7 +272,7 @@ public record State(PublicKey _address,
     int i = offset + discriminator.write(_data, offset);
     _data[i] = (byte) bump;
     ++i;
-    _data[i] = (byte) testOnlyDisableMrEnclaveCheck;
+    _data[i] = (byte) teeVerifyMode;
     ++i;
     _data[i] = (byte) enableStaking;
     ++i;

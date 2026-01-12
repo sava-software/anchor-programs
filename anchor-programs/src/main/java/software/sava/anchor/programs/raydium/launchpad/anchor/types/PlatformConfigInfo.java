@@ -20,7 +20,9 @@ public record PlatformConfigInfo(PublicKey feeWallet,
                                  String web, byte[] _web,
                                  String img, byte[] _img,
                                  PublicKey transferFeeExtensionAuth,
-                                 long creatorFeeRate) implements Borsh {
+                                 long creatorFeeRate,
+                                 long platformVestingScale,
+                                 PublicKey vestingWallet) implements Borsh {
 
   public static PlatformConfigInfo createRecord(final PublicKey feeWallet,
                                                 final PublicKey nftWallet,
@@ -30,7 +32,9 @@ public record PlatformConfigInfo(PublicKey feeWallet,
                                                 final String web,
                                                 final String img,
                                                 final PublicKey transferFeeExtensionAuth,
-                                                final long creatorFeeRate) {
+                                                final long creatorFeeRate,
+                                                final long platformVestingScale,
+                                                final PublicKey vestingWallet) {
     return new PlatformConfigInfo(feeWallet,
                                   nftWallet,
                                   migrateNftInfo,
@@ -39,7 +43,9 @@ public record PlatformConfigInfo(PublicKey feeWallet,
                                   web, web.getBytes(UTF_8),
                                   img, img.getBytes(UTF_8),
                                   transferFeeExtensionAuth,
-                                  creatorFeeRate);
+                                  creatorFeeRate,
+                                  platformVestingScale,
+                                  vestingWallet);
   }
 
   public static PlatformConfigInfo read(final byte[] _data, final int offset) {
@@ -64,6 +70,10 @@ public record PlatformConfigInfo(PublicKey feeWallet,
     final var transferFeeExtensionAuth = readPubKey(_data, i);
     i += 32;
     final var creatorFeeRate = getInt64LE(_data, i);
+    i += 8;
+    final var platformVestingScale = getInt64LE(_data, i);
+    i += 8;
+    final var vestingWallet = readPubKey(_data, i);
     return new PlatformConfigInfo(feeWallet,
                                   nftWallet,
                                   migrateNftInfo,
@@ -72,7 +82,9 @@ public record PlatformConfigInfo(PublicKey feeWallet,
                                   web, web.getBytes(UTF_8),
                                   img, img.getBytes(UTF_8),
                                   transferFeeExtensionAuth,
-                                  creatorFeeRate);
+                                  creatorFeeRate,
+                                  platformVestingScale,
+                                  vestingWallet);
   }
 
   @Override
@@ -92,6 +104,10 @@ public record PlatformConfigInfo(PublicKey feeWallet,
     i += 32;
     putInt64LE(_data, i, creatorFeeRate);
     i += 8;
+    putInt64LE(_data, i, platformVestingScale);
+    i += 8;
+    vestingWallet.write(_data, i);
+    i += 32;
     return i - offset;
   }
 
@@ -105,6 +121,8 @@ public record PlatformConfigInfo(PublicKey feeWallet,
          + Borsh.lenVector(_web)
          + Borsh.lenVector(_img)
          + 32
-         + 8;
+         + 8
+         + 8
+         + 32;
   }
 }

@@ -44,6 +44,11 @@ public record PlatformConfig(PublicKey _address,
                              // When initializing mint, `withdraw_withheld_authority` and `transfer_fee_config_authority` both belongs to the contract.
                              // Once the token is migrated to AMM, the authorities will be reset to this value
                              PublicKey transferFeeExtensionAuth,
+                             PublicKey platformVestingWallet,
+                             long platformVestingScale,
+                             // If a valid platform_cp_creator is configured for the platform,
+                             // it will be used as the creator for the AMM pool during migration to cpswap pool.
+                             PublicKey platformCpCreator,
                              // padding for future updates
                              byte[] padding,
                              // The parameters for launching the pool
@@ -52,7 +57,7 @@ public record PlatformConfig(PublicKey _address,
   public static final int NAME_LEN = 64;
   public static final int WEB_LEN = 256;
   public static final int IMG_LEN = 256;
-  public static final int PADDING_LEN = 180;
+  public static final int PADDING_LEN = 108;
   public static final Discriminator DISCRIMINATOR = toDiscriminator(160, 78, 128, 0, 248, 83, 230, 160);
   public static final Filter DISCRIMINATOR_FILTER = Filter.createMemCompFilter(0, DISCRIMINATOR.data());
 
@@ -69,7 +74,10 @@ public record PlatformConfig(PublicKey _address,
   public static final int CPSWAP_CONFIG_OFFSET = 688;
   public static final int CREATOR_FEE_RATE_OFFSET = 720;
   public static final int TRANSFER_FEE_EXTENSION_AUTH_OFFSET = 728;
-  public static final int PADDING_OFFSET = 760;
+  public static final int PLATFORM_VESTING_WALLET_OFFSET = 760;
+  public static final int PLATFORM_VESTING_SCALE_OFFSET = 792;
+  public static final int PLATFORM_CP_CREATOR_OFFSET = 800;
+  public static final int PADDING_OFFSET = 832;
   public static final int CURVE_PARAMS_OFFSET = 940;
 
   public static Filter createEpochFilter(final long epoch) {
@@ -124,6 +132,20 @@ public record PlatformConfig(PublicKey _address,
     return Filter.createMemCompFilter(TRANSFER_FEE_EXTENSION_AUTH_OFFSET, transferFeeExtensionAuth);
   }
 
+  public static Filter createPlatformVestingWalletFilter(final PublicKey platformVestingWallet) {
+    return Filter.createMemCompFilter(PLATFORM_VESTING_WALLET_OFFSET, platformVestingWallet);
+  }
+
+  public static Filter createPlatformVestingScaleFilter(final long platformVestingScale) {
+    final byte[] _data = new byte[8];
+    putInt64LE(_data, 0, platformVestingScale);
+    return Filter.createMemCompFilter(PLATFORM_VESTING_SCALE_OFFSET, _data);
+  }
+
+  public static Filter createPlatformCpCreatorFilter(final PublicKey platformCpCreator) {
+    return Filter.createMemCompFilter(PLATFORM_CP_CREATOR_OFFSET, platformCpCreator);
+  }
+
   public static PlatformConfig read(final byte[] _data, final int offset) {
     return read(null, _data, offset);
   }
@@ -170,7 +192,13 @@ public record PlatformConfig(PublicKey _address,
     i += 8;
     final var transferFeeExtensionAuth = readPubKey(_data, i);
     i += 32;
-    final var padding = new byte[180];
+    final var platformVestingWallet = readPubKey(_data, i);
+    i += 32;
+    final var platformVestingScale = getInt64LE(_data, i);
+    i += 8;
+    final var platformCpCreator = readPubKey(_data, i);
+    i += 32;
+    final var padding = new byte[108];
     i += Borsh.readArray(padding, _data, i);
     final var curveParams = Borsh.readVector(PlatformCurveParam.class, PlatformCurveParam::read, _data, i);
     return new PlatformConfig(_address,
@@ -188,6 +216,9 @@ public record PlatformConfig(PublicKey _address,
                               cpswapConfig,
                               creatorFeeRate,
                               transferFeeExtensionAuth,
+                              platformVestingWallet,
+                              platformVestingScale,
+                              platformCpCreator,
                               padding,
                               curveParams);
   }
@@ -218,7 +249,13 @@ public record PlatformConfig(PublicKey _address,
     i += 8;
     transferFeeExtensionAuth.write(_data, i);
     i += 32;
-    i += Borsh.writeArrayChecked(padding, 180, _data, i);
+    platformVestingWallet.write(_data, i);
+    i += 32;
+    putInt64LE(_data, i, platformVestingScale);
+    i += 8;
+    platformCpCreator.write(_data, i);
+    i += 32;
+    i += Borsh.writeArrayChecked(padding, 108, _data, i);
     i += Borsh.writeVector(curveParams, _data, i);
     return i - offset;
   }
@@ -235,6 +272,9 @@ public record PlatformConfig(PublicKey _address,
          + Borsh.lenArray(name)
          + Borsh.lenArray(web)
          + Borsh.lenArray(img)
+         + 32
+         + 8
+         + 32
          + 32
          + 8
          + 32

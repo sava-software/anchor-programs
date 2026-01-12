@@ -201,6 +201,16 @@ public final class RaydiumLaunchpadPDAs {
     ), program);
   }
 
+  public static ProgramDerivedAddress platformVestingRecordPDA(final PublicKey program,
+                                                               final PublicKey poolStateAccount,
+                                                               final PublicKey beneficiaryAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      "pool_vesting".getBytes(US_ASCII),
+      poolStateAccount.toByteArray(),
+      beneficiaryAccount.toByteArray()
+    ), program);
+  }
+
   public static ProgramDerivedAddress poolStatePDA(final PublicKey program,
                                                    final PublicKey baseMintAccount,
                                                    final PublicKey quoteMintAccount) {

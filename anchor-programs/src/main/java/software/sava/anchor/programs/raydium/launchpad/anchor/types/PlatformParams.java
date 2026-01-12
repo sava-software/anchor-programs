@@ -23,20 +23,23 @@ public record PlatformParams(MigrateNftInfo migrateNftInfo,
                              String name, byte[] _name,
                              String web, byte[] _web,
                              String img, byte[] _img,
-                             long creatorFeeRate) implements Borsh {
+                             long creatorFeeRate,
+                             long platformVestingScale) implements Borsh {
 
   public static PlatformParams createRecord(final MigrateNftInfo migrateNftInfo,
                                             final long feeRate,
                                             final String name,
                                             final String web,
                                             final String img,
-                                            final long creatorFeeRate) {
+                                            final long creatorFeeRate,
+                                            final long platformVestingScale) {
     return new PlatformParams(migrateNftInfo,
                               feeRate,
                               name, name.getBytes(UTF_8),
                               web, web.getBytes(UTF_8),
                               img, img.getBytes(UTF_8),
-                              creatorFeeRate);
+                              creatorFeeRate,
+                              platformVestingScale);
   }
 
   public static PlatformParams read(final byte[] _data, final int offset) {
@@ -55,12 +58,15 @@ public record PlatformParams(MigrateNftInfo migrateNftInfo,
     final var img = Borsh.string(_data, i);
     i += (Integer.BYTES + getInt32LE(_data, i));
     final var creatorFeeRate = getInt64LE(_data, i);
+    i += 8;
+    final var platformVestingScale = getInt64LE(_data, i);
     return new PlatformParams(migrateNftInfo,
                               feeRate,
                               name, name.getBytes(UTF_8),
                               web, web.getBytes(UTF_8),
                               img, img.getBytes(UTF_8),
-                              creatorFeeRate);
+                              creatorFeeRate,
+                              platformVestingScale);
   }
 
   @Override
@@ -74,6 +80,8 @@ public record PlatformParams(MigrateNftInfo migrateNftInfo,
     i += Borsh.writeVector(_img, _data, i);
     putInt64LE(_data, i, creatorFeeRate);
     i += 8;
+    putInt64LE(_data, i, platformVestingScale);
+    i += 8;
     return i - offset;
   }
 
@@ -84,6 +92,7 @@ public record PlatformParams(MigrateNftInfo migrateNftInfo,
          + Borsh.lenVector(_name)
          + Borsh.lenVector(_web)
          + Borsh.lenVector(_img)
+         + 8
          + 8;
   }
 }

@@ -10,6 +10,17 @@ import static java.nio.charset.StandardCharsets.US_ASCII;
 
 public final class SbOnDemandPDAs {
 
+  public static ProgramDerivedAddress escrowPDA(final PublicKey program,
+                                                final PublicKey payerAccount,
+                                                final SolanaAccounts solanaAccounts,
+                                                final PublicKey wsolMintAccount) {
+    return PublicKey.findProgramAddress(List.of(
+      payerAccount.toByteArray(),
+      solanaAccounts.tokenProgram().toByteArray(),
+      wsolMintAccount.toByteArray()
+    ), program);
+  }
+
   public static ProgramDerivedAddress oraclePDA(final PublicKey program,
                                                 final byte[] paramsQueue,
                                                 final byte[] paramsSourceOracleKey) {
