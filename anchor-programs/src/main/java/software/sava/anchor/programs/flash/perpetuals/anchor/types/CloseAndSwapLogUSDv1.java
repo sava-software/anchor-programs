@@ -34,10 +34,11 @@ public record CloseAndSwapLogUSDv1(PublicKey owner,
                                    int oracleAccountType,
                                    long oracleAccountPrice,
                                    int oracleAccountPriceExponent,
+                                   long priceImpactUsd,
                                    long[] padding) implements Borsh {
 
   public static final int BYTES = 250;
-  public static final int PADDING_LEN = 4;
+  public static final int PADDING_LEN = 3;
 
   public static CloseAndSwapLogUSDv1 read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -94,7 +95,9 @@ public record CloseAndSwapLogUSDv1(PublicKey owner,
     i += 8;
     final var oracleAccountPriceExponent = getInt32LE(_data, i);
     i += 4;
-    final var padding = new long[4];
+    final var priceImpactUsd = getInt64LE(_data, i);
+    i += 8;
+    final var padding = new long[3];
     Borsh.readArray(padding, _data, i);
     return new CloseAndSwapLogUSDv1(owner,
                                     market,
@@ -121,6 +124,7 @@ public record CloseAndSwapLogUSDv1(PublicKey owner,
                                     oracleAccountType,
                                     oracleAccountPrice,
                                     oracleAccountPriceExponent,
+                                    priceImpactUsd,
                                     padding);
   }
 
@@ -177,7 +181,9 @@ public record CloseAndSwapLogUSDv1(PublicKey owner,
     i += 8;
     putInt32LE(_data, i, oracleAccountPriceExponent);
     i += 4;
-    i += Borsh.writeArrayChecked(padding, 4, _data, i);
+    putInt64LE(_data, i, priceImpactUsd);
+    i += 8;
+    i += Borsh.writeArrayChecked(padding, 3, _data, i);
     return i - offset;
   }
 

@@ -64,7 +64,8 @@ public sealed interface PerpetualsError extends ProgramError permits
     PerpetualsError.MaxWithdrawTokenRequest,
     PerpetualsError.InvalidRewardDistribution,
     PerpetualsError.LpPriceOutOfBounds,
-    PerpetualsError.InsufficientRebateReserves {
+    PerpetualsError.InsufficientRebateReserves,
+    PerpetualsError.OraclePenaltyAlreadySet {
 
   static PerpetualsError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -130,6 +131,7 @@ public sealed interface PerpetualsError extends ProgramError permits
       case 6059 -> InvalidRewardDistribution.INSTANCE;
       case 6060 -> LpPriceOutOfBounds.INSTANCE;
       case 6061 -> InsufficientRebateReserves.INSTANCE;
+      case 6062 -> OraclePenaltyAlreadySet.INSTANCE;
       default -> throw new IllegalStateException("Unexpected Perpetuals error code: " + errorCode);
     };
   }
@@ -565,6 +567,13 @@ public sealed interface PerpetualsError extends ProgramError permits
 
     public static final InsufficientRebateReserves INSTANCE = new InsufficientRebateReserves(
         6061, "Insufficient rebate reserves"
+    );
+  }
+
+  record OraclePenaltyAlreadySet(int code, String msg) implements PerpetualsError {
+
+    public static final OraclePenaltyAlreadySet INSTANCE = new OraclePenaltyAlreadySet(
+        6062, "Oracle penalty already set on this position"
     );
   }
 }

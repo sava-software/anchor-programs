@@ -12,10 +12,8 @@ import software.sava.rpc.json.http.response.AccountInfo;
 
 import static software.sava.core.accounts.PublicKey.readPubKey;
 import static software.sava.core.encoding.ByteUtil.getInt128LE;
-import static software.sava.core.encoding.ByteUtil.getInt32LE;
 import static software.sava.core.encoding.ByteUtil.getInt64LE;
 import static software.sava.core.encoding.ByteUtil.putInt128LE;
-import static software.sava.core.encoding.ByteUtil.putInt32LE;
 import static software.sava.core.encoding.ByteUtil.putInt64LE;
 import static software.sava.core.programs.Discriminator.createAnchorDiscriminator;
 
@@ -31,14 +29,15 @@ public record Position(PublicKey _address,
                        long sizeUsd,
                        long lockedAmount,
                        long lockedUsd,
-                       long collateralAmount,
+                       long priceImpactUsd,
                        long collateralUsd,
                        long unsettledValueUsd,
                        long unsettledFeesUsd,
                        BigInteger cumulativeLockFeeSnapshot,
                        long degenSizeUsd,
                        OraclePrice referencePrice,
-                       int buffer,
+                       byte[] buffer,
+                       boolean priceImpactSet,
                        int sizeDecimals,
                        int lockedDecimals,
                        int collateralDecimals,
@@ -46,6 +45,7 @@ public record Position(PublicKey _address,
                        byte[] padding) implements Borsh {
 
   public static final int BYTES = 248;
+  public static final int BUFFER_LEN = 3;
   public static final int PADDING_LEN = 8;
   public static final Filter SIZE_FILTER = Filter.createDataSizeFilter(BYTES);
 
@@ -59,7 +59,7 @@ public record Position(PublicKey _address,
   public static final int SIZE_USD_OFFSET = 140;
   public static final int LOCKED_AMOUNT_OFFSET = 148;
   public static final int LOCKED_USD_OFFSET = 156;
-  public static final int COLLATERAL_AMOUNT_OFFSET = 164;
+  public static final int PRICE_IMPACT_USD_OFFSET = 164;
   public static final int COLLATERAL_USD_OFFSET = 172;
   public static final int UNSETTLED_VALUE_USD_OFFSET = 180;
   public static final int UNSETTLED_FEES_USD_OFFSET = 188;
@@ -67,6 +67,7 @@ public record Position(PublicKey _address,
   public static final int DEGEN_SIZE_USD_OFFSET = 212;
   public static final int REFERENCE_PRICE_OFFSET = 220;
   public static final int BUFFER_OFFSET = 232;
+  public static final int PRICE_IMPACT_SET_OFFSET = 235;
   public static final int SIZE_DECIMALS_OFFSET = 236;
   public static final int LOCKED_DECIMALS_OFFSET = 237;
   public static final int COLLATERAL_DECIMALS_OFFSET = 238;
@@ -125,10 +126,10 @@ public record Position(PublicKey _address,
     return Filter.createMemCompFilter(LOCKED_USD_OFFSET, _data);
   }
 
-  public static Filter createCollateralAmountFilter(final long collateralAmount) {
+  public static Filter createPriceImpactUsdFilter(final long priceImpactUsd) {
     final byte[] _data = new byte[8];
-    putInt64LE(_data, 0, collateralAmount);
-    return Filter.createMemCompFilter(COLLATERAL_AMOUNT_OFFSET, _data);
+    putInt64LE(_data, 0, priceImpactUsd);
+    return Filter.createMemCompFilter(PRICE_IMPACT_USD_OFFSET, _data);
   }
 
   public static Filter createCollateralUsdFilter(final long collateralUsd) {
@@ -165,10 +166,8 @@ public record Position(PublicKey _address,
     return Filter.createMemCompFilter(REFERENCE_PRICE_OFFSET, referencePrice.write());
   }
 
-  public static Filter createBufferFilter(final int buffer) {
-    final byte[] _data = new byte[4];
-    putInt32LE(_data, 0, buffer);
-    return Filter.createMemCompFilter(BUFFER_OFFSET, _data);
+  public static Filter createPriceImpactSetFilter(final boolean priceImpactSet) {
+    return Filter.createMemCompFilter(PRICE_IMPACT_SET_OFFSET, new byte[]{(byte) (priceImpactSet ? 1 : 0)});
   }
 
   public static Filter createSizeDecimalsFilter(final int sizeDecimals) {
@@ -227,7 +226,7 @@ public record Position(PublicKey _address,
     i += 8;
     final var lockedUsd = getInt64LE(_data, i);
     i += 8;
-    final var collateralAmount = getInt64LE(_data, i);
+    final var priceImpactUsd = getInt64LE(_data, i);
     i += 8;
     final var collateralUsd = getInt64LE(_data, i);
     i += 8;
@@ -241,8 +240,10 @@ public record Position(PublicKey _address,
     i += 8;
     final var referencePrice = OraclePrice.read(_data, i);
     i += Borsh.len(referencePrice);
-    final var buffer = getInt32LE(_data, i);
-    i += 4;
+    final var buffer = new byte[3];
+    i += Borsh.readArray(buffer, _data, i);
+    final var priceImpactSet = _data[i] == 1;
+    ++i;
     final var sizeDecimals = _data[i] & 0xFF;
     ++i;
     final var lockedDecimals = _data[i] & 0xFF;
@@ -265,7 +266,7 @@ public record Position(PublicKey _address,
                         sizeUsd,
                         lockedAmount,
                         lockedUsd,
-                        collateralAmount,
+                        priceImpactUsd,
                         collateralUsd,
                         unsettledValueUsd,
                         unsettledFeesUsd,
@@ -273,6 +274,7 @@ public record Position(PublicKey _address,
                         degenSizeUsd,
                         referencePrice,
                         buffer,
+                        priceImpactSet,
                         sizeDecimals,
                         lockedDecimals,
                         collateralDecimals,
@@ -302,7 +304,7 @@ public record Position(PublicKey _address,
     i += 8;
     putInt64LE(_data, i, lockedUsd);
     i += 8;
-    putInt64LE(_data, i, collateralAmount);
+    putInt64LE(_data, i, priceImpactUsd);
     i += 8;
     putInt64LE(_data, i, collateralUsd);
     i += 8;
@@ -315,8 +317,9 @@ public record Position(PublicKey _address,
     putInt64LE(_data, i, degenSizeUsd);
     i += 8;
     i += Borsh.write(referencePrice, _data, i);
-    putInt32LE(_data, i, buffer);
-    i += 4;
+    i += Borsh.writeArrayChecked(buffer, 3, _data, i);
+    _data[i] = (byte) (priceImpactSet ? 1 : 0);
+    ++i;
     _data[i] = (byte) sizeDecimals;
     ++i;
     _data[i] = (byte) lockedDecimals;

@@ -145,7 +145,7 @@ public final class ConditionalVaultProgram {
       createWrite(vaultKey),
       createRead(questionKey),
       createRead(underlyingTokenMintKey),
-      createRead(vaultUnderlyingTokenAccountKey),
+      createWrite(vaultUnderlyingTokenAccountKey),
       createWritableSigner(payerKey),
       createRead(tokenProgramKey),
       createRead(associatedTokenProgramKey),
@@ -322,7 +322,7 @@ public final class ConditionalVaultProgram {
     final var keys = List.of(
       createWritableSigner(payerKey),
       createWrite(vaultKey),
-      createWrite(conditionalTokenMintKey),
+      createRead(conditionalTokenMintKey),
       createWrite(conditionalTokenMetadataKey),
       createRead(tokenMetadataProgramKey),
       createRead(systemProgramKey),

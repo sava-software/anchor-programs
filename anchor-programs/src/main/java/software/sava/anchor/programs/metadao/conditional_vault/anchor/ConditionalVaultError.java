@@ -18,7 +18,10 @@ public sealed interface ConditionalVaultError extends ProgramError permits
     ConditionalVaultError.ConditionalTokenMintMismatch,
     ConditionalVaultError.PayoutZero,
     ConditionalVaultError.QuestionAlreadyResolved,
-    ConditionalVaultError.ConditionalTokenMetadataAlreadySet {
+    ConditionalVaultError.ConditionalTokenMetadataAlreadySet,
+    ConditionalVaultError.UnauthorizedConditionalTokenAccount,
+    ConditionalVaultError.InvalidPayoutNumerators,
+    ConditionalVaultError.TooManyOutcomes {
 
   static ConditionalVaultError getInstance(final int errorCode) {
     return switch (errorCode) {
@@ -38,6 +41,9 @@ public sealed interface ConditionalVaultError extends ProgramError permits
       case 6013 -> PayoutZero.INSTANCE;
       case 6014 -> QuestionAlreadyResolved.INSTANCE;
       case 6015 -> ConditionalTokenMetadataAlreadySet.INSTANCE;
+      case 6016 -> UnauthorizedConditionalTokenAccount.INSTANCE;
+      case 6017 -> InvalidPayoutNumerators.INSTANCE;
+      case 6018 -> TooManyOutcomes.INSTANCE;
       default -> throw new IllegalStateException("Unexpected ConditionalVault error code: " + errorCode);
     };
   }
@@ -151,6 +157,27 @@ public sealed interface ConditionalVaultError extends ProgramError permits
 
     public static final ConditionalTokenMetadataAlreadySet INSTANCE = new ConditionalTokenMetadataAlreadySet(
         6015, "Conditional token metadata already set"
+    );
+  }
+
+  record UnauthorizedConditionalTokenAccount(int code, String msg) implements ConditionalVaultError {
+
+    public static final UnauthorizedConditionalTokenAccount INSTANCE = new UnauthorizedConditionalTokenAccount(
+        6016, "Conditional token account is not owned by the authority"
+    );
+  }
+
+  record InvalidPayoutNumerators(int code, String msg) implements ConditionalVaultError {
+
+    public static final InvalidPayoutNumerators INSTANCE = new InvalidPayoutNumerators(
+        6017, "Payout numerators are too large, causing an overflow"
+    );
+  }
+
+  record TooManyOutcomes(int code, String msg) implements ConditionalVaultError {
+
+    public static final TooManyOutcomes INSTANCE = new TooManyOutcomes(
+        6018, "Questions can only have up to 10 outcomes"
     );
   }
 }

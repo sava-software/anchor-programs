@@ -39,10 +39,11 @@ public record ExecuteTriggerWithSwapLogUSDv1(PublicKey owner,
                                              int oracleAccountPriceExponent,
                                              long triggerPrice,
                                              int triggerPriceExponent,
+                                             long priceImpactUsd,
                                              long[] padding) implements Borsh {
 
   public static final int BYTES = 279;
-  public static final int PADDING_LEN = 4;
+  public static final int PADDING_LEN = 3;
 
   public static ExecuteTriggerWithSwapLogUSDv1 read(final byte[] _data, final int offset) {
     if (_data == null || _data.length == 0) {
@@ -109,7 +110,9 @@ public record ExecuteTriggerWithSwapLogUSDv1(PublicKey owner,
     i += 8;
     final var triggerPriceExponent = getInt32LE(_data, i);
     i += 4;
-    final var padding = new long[4];
+    final var priceImpactUsd = getInt64LE(_data, i);
+    i += 8;
+    final var padding = new long[3];
     Borsh.readArray(padding, _data, i);
     return new ExecuteTriggerWithSwapLogUSDv1(owner,
                                               market,
@@ -141,6 +144,7 @@ public record ExecuteTriggerWithSwapLogUSDv1(PublicKey owner,
                                               oracleAccountPriceExponent,
                                               triggerPrice,
                                               triggerPriceExponent,
+                                              priceImpactUsd,
                                               padding);
   }
 
@@ -207,7 +211,9 @@ public record ExecuteTriggerWithSwapLogUSDv1(PublicKey owner,
     i += 8;
     putInt32LE(_data, i, triggerPriceExponent);
     i += 4;
-    i += Borsh.writeArrayChecked(padding, 4, _data, i);
+    putInt64LE(_data, i, priceImpactUsd);
+    i += 8;
+    i += Borsh.writeArrayChecked(padding, 3, _data, i);
     return i - offset;
   }
 
