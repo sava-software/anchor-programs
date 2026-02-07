@@ -10,168 +10,9 @@
     "package": "chainlink.store"
   },
   {
-    "name": "Drift",
-    "program": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
-    "package": "drift"
-  },
-  {
-    "name": "Drift Merkle Distributor",
-    "program": "E7HtfkEMhmn9uwL7EFNydcXBWy5WCYN1vFmKKjipEH1x",
-    "package": "drift.merkle.distributor"
-  },
-  {
-    "name": "Drift Vaults",
-    "program": "vAuLTsyrvSfZRuRB3XgvkPwNGgYSs9YRYymVebLKoxR",
-    "package": "drift.vaults",
-    "typeRefs": [
-      {
-        "refProgram": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
-        "srcMismatch": "ERROR",
-        "matchOnTypeName": true,
-        "excludeTypes": [],
-        "explicitRules": []
-      }
-    ]
-  },
-  {
     "name": "Flash Trade Perpetuals",
     "program": "FLASH6Lo6h3iasJKWDs2F8TkW2UKf3s15C8PMGuVfgBn",
     "package": "flash.perpetuals"
-  },
-  {
-    "name": "Glam Config",
-    "program": "gConFzxKL9USmwTdJoeQJvfKmqhJ2CyUaXTyQ8v9TGX",
-    "package": "glam.config",
-    "typeRefs": [
-      {
-        "refProgram": "GLAMpaME8wdTEzxtiYEAa5yD8fZbxZiz2hNtV58RZiEz",
-        "srcMismatch": "WARN_KEEP_LOCAL",
-        "matchOnTypeName": true,
-        "excludeTypes": [],
-        "explicitRules": []
-      }
-    ]
-  },
-  {
-    "name": "GLAM Drift",
-    "program": "G1NTdrBmBpW43msRQmsf7qXSw3MFBNaqJcAkGiRmRq2F",
-    "package": "glam.drift",
-    "typeRefs": [
-      {
-        "refProgram": "dRiftyHA39MWEi3m9aunc5MzRF1JYuBsbn6VPcn33UH",
-        "srcMismatch": "ERROR",
-        "matchOnTypeName": true,
-        "excludeTypes": [
-          "FeeStructure"
-        ],
-        "explicitRules": []
-      },
-      {
-        "refProgram": "vAuLTsyrvSfZRuRB3XgvkPwNGgYSs9YRYymVebLKoxR",
-        "srcMismatch": "ERROR",
-        "matchOnTypeName": true,
-        "excludeTypes": [
-          "FeeStructure"
-        ],
-        "explicitRules": []
-      },
-      {
-        "refProgram": "GLAMpaME8wdTEzxtiYEAa5yD8fZbxZiz2hNtV58RZiEz",
-        "srcMismatch": "ERROR",
-        "matchOnTypeName": true,
-        "excludeTypes": [],
-        "explicitRules": []
-      }
-    ]
-  },
-  {
-    "name": "GLAM Kamino",
-    "program": "G1NTkDEUR3pkEqGCKZtmtmVzCUEdYa86pezHkwYbLyde",
-    "package": "glam.kamino",
-    "typeRefs": [
-      {
-        "refProgram": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
-        "srcMismatch": "ERROR",
-        "matchOnTypeName": true,
-        "excludeTypes": [],
-        "explicitRules": []
-      },
-      {
-        "refProgram": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
-        "srcMismatch": "ERROR",
-        "matchOnTypeName": true,
-        "excludeTypes": [
-          "TimeUnit"
-        ],
-        "explicitRules": []
-      },
-      {
-        "refProgram": "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd",
-        "srcMismatch": "ERROR",
-        "matchOnTypeName": true,
-        "excludeTypes": [],
-        "explicitRules": []
-      },
-      {
-        "refProgram": "GLAMpaME8wdTEzxtiYEAa5yD8fZbxZiz2hNtV58RZiEz",
-        "srcMismatch": "ERROR",
-        "matchOnTypeName": true,
-        "excludeTypes": [],
-        "explicitRules": []
-      }
-    ]
-  },
-  {
-    "name": "Glam Protocol Legacy",
-    "program": "GLAMbTqav9N9witRjswJ8enwp9vv5G8bsSJ2kPJ4rcyc",
-    "package": "glam"
-  },
-  {
-    "name": "Glam Mint",
-    "program": "GM1NtvvnSXUptTrMCqbogAdZJydZSNv98DoU5AZVLmGh",
-    "package": "glam.mint",
-    "typeRefs": [
-      {
-        "refProgram": "GLAMpaME8wdTEzxtiYEAa5yD8fZbxZiz2hNtV58RZiEz",
-        "srcMismatch": "WARN_KEEP_LOCAL",
-        "matchOnTypeName": true,
-        "excludeTypes": [],
-        "explicitRules": []
-      }
-    ]
-  },
-  {
-    "name": "Glam Protocol",
-    "program": "GLAMpaME8wdTEzxtiYEAa5yD8fZbxZiz2hNtV58RZiEz",
-    "package": "glam.protocol"
-  },
-  {
-    "name": "GLAM Policy Program",
-    "program": "po1iCYakK3gHCLbuju4wGzFowTMpAJxkqK1iwUqMonY",
-    "package": "glam.policy",
-    "typeRefs": [
-      {
-        "refProgram": "GLAMpaME8wdTEzxtiYEAa5yD8fZbxZiz2hNtV58RZiEz",
-        "srcMismatch": "WARN_KEEP_LOCAL",
-        "matchOnTypeName": true,
-        "excludeTypes": [],
-        "explicitRules": []
-      }
-    ]
-  },
-  {
-    "name": "GLAM SPL",
-    "program": "G1NTsQ36mjPe89HtPYqxKsjY5HmYsDR6CbD2gd2U2pta",
-    "package": "glam.spl",
-    "typeRefs": [
-      {
-        "refProgram": "GLAMpaME8wdTEzxtiYEAa5yD8fZbxZiz2hNtV58RZiEz",
-        "srcMismatch": "WARN_KEEP_LOCAL",
-        "matchOnTypeName": true,
-        "excludeTypes": [],
-        "explicitRules": []
-      }
-    ]
   },
   {
     "name": "Jito Tip Distribution",
@@ -190,79 +31,14 @@
     "package": "jupiter.dca"
   },
   {
-    "name": "Jupiter Governance",
-    "program": "GovaE4iu227srtG2s3tZzB4RmWBzw8sTwrCLZz7kN7rY",
-    "package": "jupiter.governance"
-  },
-  {
     "name": "Jupiter Limit Order",
     "program": "jupoNjAxXgZ4rjzxzPMP4oxduvQsQtZzyknqvzYNrNu",
     "package": "jupiter.limit"
   },
   {
-    "name": "Jupiter Locked Voter",
-    "program": "voTpe3tHQ7AjQHMapgSue2HJFAh2cGsdokqN3XqmVSj",
-    "package": "jupiter.voter"
-  },
-  {
-    "name": "Jupiter Merkle Distributor",
-    "program": "DiS3nNjFVMieMgmiQFm6wgJL7nevk4NrhXKLbtEH1Z2R",
-    "package": "jupiter.merkle.distributor"
-  },
-  {
-    "name": "Jupiter Swap",
-    "program": "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4",
-    "package": "jupiter.swap"
-  },
-  {
-    "name": "Kamino Farms",
-    "program": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
-    "package": "kamino.farms"
-  },
-  {
-    "name": "Kamino Lend",
-    "program": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
-    "package": "kamino.lend"
-  },
-  {
-    "name": "Kamino Liquidity",
-    "program": "6LtLpnUFNByNXLyCoK9wA2MykKAmQNZKBdY8s47dehDc",
-    "package": "kamino.liquidity"
-  },
-  {
-    "name": "Kamino Vaults",
-    "program": "KvauGMspG5k6rtzrqqn7WNn3oZdyKqLKwK2XWQ8FLjd",
-    "package": "kamino.vaults",
-    "typeRefs": [
-      {
-        "refProgram": "KLend2g3cP87fffoy8q1mQqGKjrxjC8boSyAYavgmjD",
-        "srcMismatch": "WARN_KEEP_REF",
-        "matchOnTypeName": true,
-        "excludeTypes": [
-          "ReserveConfig",
-          "Reserve"
-        ],
-        "explicitRules": []
-      },
-      {
-        "refProgram": "FarmsPZpWu9i7Kky8tPN37rs2TpmMrAZrC7S7vJa91Hr",
-        "srcMismatch": "WARN_KEEP_REF",
-        "matchOnTypeName": true,
-        "excludeTypes": [
-          "TimeUnit"
-        ],
-        "explicitRules": []
-      }
-    ]
-  },
-  {
     "name": "Loopscale",
     "program": "1oopBoJG58DgkUVKkEzKgyG9dvRmpgeEm1AVjoHkF78",
     "package": "loopscale"
-  },
-  {
-    "name": "Marinade",
-    "program": "MarBmsSgKXdrN1egZf5sqe1TMai9K1rChYNDJgjq7aD"
   },
   {
     "name": "metaDAO AMM",
@@ -285,21 +61,9 @@
     "package": "metadao.launchpad"
   },
   {
-    "name": "Metaplex",
-    "program": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s",
-    "package": "metaplex.token.metadata",
-    "idlFile": "idls/shank/metaplex/token_metadata.json",
-    "accountsHaveDiscriminators": false
-  },
-  {
     "name": "Meteora Alpha Vault",
     "program": "vaU6kP7iNEGkbmPkLmZfGwiGxd4Mob24QQCie5R9kd2",
     "package": "meteora.alpha_vault"
-  },
-  {
-    "name": "Meteora DLMM",
-    "program": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo",
-    "package": "meteora.dlmm"
   },
   {
     "name": "Moonshot",
@@ -307,28 +71,8 @@
     "package": "moonshot"
   },
   {
-    "name": "Pyth Lazer",
-    "program": "pytd2yyk641x7ak7mkaasSJVXh6YYZnC7wTmtgAyxPt",
-    "package": "pyth.lazer"
-  },
-  {
-    "name": "Pyth Push",
-    "program": "pythWSnswVUd12oZpeFP8e9CVaEqJg25g1Vtc2biRsT",
-    "package": "pyth.push"
-  },
-  {
-    "name": "Pyth Receiver",
-    "program": "rec5EKMGg6MxZYaMdyBfgwp4d5rB9T1VQH5pJv5LtFJ",
-    "package": "pyth.receiver"
-  },
-  {
     "name": "Raydium Launchpad",
     "program": "LanMV9sAd7wArD4vJFi2qDdfnVhFxYSUg6eADduJ3uj",
     "package": "raydium.launchpad"
-  },
-  {
-    "name": "Switchboard On-Demand",
-    "program": "SBondMDrcV3K4kxZR1HNVT7osZxAHVHgYXL5Ze1oMUv",
-    "package": "switchboard.on_demand"
   }
 ]
